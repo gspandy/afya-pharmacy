@@ -1,0 +1,148 @@
+<?page  id="schduleInterview"?>
+<?component name="positionTypebox" macroURI="../macros/textfindMacro.zul" id="macro2"?>
+<?component name="positionTypebox1" macroURI="../macros/textfindMacro.zul" id="macro1"?>
+<?component name="positionTypebox2" macroURI="../macros/textfindMacro.zul" id="macro3"?>
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<zk>
+	<zscript>
+		<![CDATA[
+			import org.ofbiz.entity.*;
+			import org.ofbiz.base.util.*;
+			import org.zkoss.*;
+			import org.zkoss.util.resource.Labels;
+			import org.ofbiz.entity.condition.*;
+			GenericValue userLogin = (GenericValue) Executions.getCurrent()
+					.getDesktop().getSession().getAttribute("userLogin");
+			GenericDelegator delegator = userLogin.getDelegator();
+			List status = null;
+		
+			status = delegator.findByAnd("StatusItem", UtilMisc.toMap("statusTypeId",
+					"PERF_NOTE_STATUS"));
+			status.add(0, null);
+			statusArray = status.toArray(new GenericValue[status.size()]);
+			SimpleListModel statusList = new SimpleListModel(statusArray);
+			public class StatusItemRenderer implements ListitemRenderer {
+		
+				public StatusItemRenderer() {
+				}
+		
+				public void render(Listitem li, Object data) {
+					if (data instanceof GenericValue) {
+						GenericValue val = (GenericValue) data;
+						li.setLabel(val.getString("description"));
+						li.setValue(val.getString("statusId"));
+					}
+				}
+			}
+			ListitemRenderer statusItemRenderer = new StatusItemRenderer();
+			Map map = Executions.getCurrent().getArg();
+			String prospectId = (String) map.get("partyId");
+			List interviewTimeList = null;
+			interviewTimeList = delegator.findByAnd("EmploymentApp", UtilMisc.toMap(
+					"applyingPartyId", prospectId));
+			GenericValue interviewTimeGv = null;
+			interviewTimeGv = org.ofbiz.entity.util.EntityUtil
+					.getFirst(interviewTimeList);
+			java.sql.Timestamp beforeTime = null;
+			java.sql.Timestamp afterTime = null;
+			if (interviewTimeGv != null) {
+				beforeTime = interviewTimeGv.getTimestamp("beforeConvinientTime");
+				afterTime = interviewTimeGv.getTimestamp("afterConvinientTime");
+			}
+		]]>
+	</zscript>
+	<window width="40%" height="55%" id="scheduleInterviewWindow"
+		title="${c:l('HRMS_SCHEDULE_INTERVIEW') }" border="normal" closable="true"
+		contentStyle="overflow:auto" maximizable="true">
+		<separator height="30px" />
+		<textbox id="prospectRole" value="PROSPECT" visible="false" />
+		<hbox>
+			<div align="right" width="160px">
+				<label value="${c:l('HRMS_INTERVIEWEE_NAME') }:"
+					style="font-weight:bold" />
+			</div>
+			<div align="left" width="130px">
+				<label id="partyId" />
+			</div>
+		</hbox>
+		<textbox value="${prospectId}" id="candidateId" visible="false" />
+		<separator />
+		<hbox>
+			<div align="left" width="130px">
+				<label id="roleTypeId" value="PROSPECT" visible="false" />
+			</div>
+		</hbox>
+		<separator />
+		<hbox>
+			<div align="right" width="160px">
+				<label value="${c:l('HRMS_CONVENIENT_TIME') }"></label>
+			</div>
+			<style>
+				.borderless{border:0px solid green;} input{border:0px}
+			</style>
+			<div align="left">
+				<timebox value="${beforeTime}" buttonVisible="false"
+					width="70px" style="background:transparent;" readonly="true"
+					format="hh:mm a" sclass="borderless" />
+				<label value="-"></label>
+				<timebox value="${afterTime}" buttonVisible="false"
+					width="70px" style="background:transparent;border:0px;"
+					readonly="true" format="hh:mm a" />
+			</div>
+		</hbox>
+		<separator />
+		<hbox>
+			<div align="right" width="160px">
+				<label value="${c:l('HRMS_INTERVIEW_DATE_TIME') }" style="font-weight:bold" />
+				<label value="*" style="color:red" />
+			</div>
+			<div align="left" width="175px">
+				<datebox id="fromDate" format="dd-MM-yyyy hh:mm a" width="160px" />
+			</div>
+		</hbox>
+		<separator />
+		<hbox></hbox>
+		<separator />
+		<hbox>
+			<div align="right" width="160px">
+				<label value="${c:l('HRMS_INTERVIEWER_ID') }" style="font-weight:bold" />
+				<label value="*" style="color:red" />
+			</div>
+		<employeebox id="searchPanel" constraint="no empty: ${c:l('HRMS_REQUIRED_INTERVIEWER_ID') }"></employeebox>
+		</hbox>
+		<separator />
+		<separator />
+		<zscript>
+			<![CDATA[
+				void validateForm() {
+				if(fromDate.getValue()==null)
+					throw new WrongValueException(fromDate,Labels.getLabel("HRMS_REQUIRED_INTERVIEW_DATE"));
+				
+				
+				Object fromDate1Obj = ((Datebox) scheduleInterviewWindow
+						.getFellow("fromDate")).getRawValue();
+				java.util.Date fromDate1 = (java.util.Date) fromDate1Obj;
+				java.util.Date now = new java.util.Date();
+				if(fromDate1.before(now))
+						throw new WrongValueException(fromDate,Labels.getLabel("HRMS_SCHEDULE_DATE_TIME_CANNOT_BE_PAST"));
+				
+				
+				searchPanel.getValue();
+				List employmentGvs = delegator.findByAnd("Employment",UtilMisc.toMap("partyIdTo",searchPanel.getValue()));
+				if(UtilValidate.isEmpty(employmentGvs))
+					throw new WrongValueException(searchPanel,Labels.getLabel("HRMS_EMPLOYEE_ID_DOES_NOT_EXIST"));
+				}
+					
+			]]>
+		</zscript>
+		<hbox>
+			<div align="right" width="270px">
+				<button label="${c:l('btnSave') }"
+					onClick="validateForm();com.ndz.controller.EmployeeRequisitionController.scheduleInterview(event);scheduleInterviewWindow.detach();" />
+				<button label="${c:l('ButtonCancel') }"
+					onClick="scheduleInterviewWindow.detach();" />
+			</div>
+		</hbox>
+		<separator />
+	</window>
+</zk>

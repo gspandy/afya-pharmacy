@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<entity-eca xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://ofbiz.apache.org/dtds/entity-eca.xsd">
+	<eca entity="EmplLeave" operation="create" event="return">
+		<condition operator="equals" field-name="leaveStatusId" value="LT_SUBMITTED"/>
+		<action service="notifyLeaveApplication" mode="sync" />
+	</eca>
+
+<!--	<eca entity="Employment" operation="create" event="return">-->
+<!--		<action service="allocateEarnedLeaveForNewEmployee" mode="sync" />-->
+<!--	</eca>-->
+
+<!-- 	<eca operation="create" entity="EmplPositionFulfillment" event="return"> -->
+<!-- 		<condition operator="is-not-empty" field-name="partyId" /> -->
+<!-- 		<action service="changeEmplPositionStatus" mode="sync" /> -->
+<!-- 	</eca> -->
+
+</entity-eca>

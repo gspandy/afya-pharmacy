@@ -1,0 +1,226 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<entitymodel xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="http://ofbiz.apache.org/dtds/entitymodel.xsd">
+	<author>Pradyumna Mohapatra</author>
+	<version>1.0</version>
+		
+	<entity entity-name="TaxCategory" package-name="org.ofbiz.humanresext.tax">
+		<description> Tax Declaration Section for a GEO ID</description>
+		<field name="categoryId" type="id-ne"></field>
+		<field name="categoryName" type="id-ne"/>
+		<field name="geoId" type="id-ne"/>
+		<field name="description" type="comment"/>
+		<field name="minAmount" type="currency-amount"></field>
+		<field name="maxAmount" type="currency-amount"></field>
+		<field name="fromDate" type="date-time"></field>
+		<field name="thruDate" type="date-time"></field>
+		<field name="createdBy" type="id-ne"></field>
+		<prim-key field="categoryId"/>
+	</entity>
+
+	<entity entity-name="TaxItemType" package-name="org.ofbiz.humanresext.tax">
+		<field name="itemTypeId" type="id-ne"></field>
+		<field name="description" type="comment"></field>
+		<prim-key field="itemTypeId"/>
+	</entity>
+
+	<entity entity-name="TaxItemGroup" package-name="org.ofbiz.humanresext.tax">
+		<field name="itemGroupId" type="id-ne"></field>
+		<field name="description" type="comment"></field>
+		<prim-key field="itemGroupId"/>
+	</entity>
+	
+	<entity entity-name="TaxItem" package-name="org.ofbiz.humanresext.tax">
+		<description> Individual Line Items for a Tax Category</description>
+		<field name="itemId" type="id-ne"/>
+		<field name="categoryId" type="id-ne"/>
+		<field name="itemName" type="long-varchar"></field>
+		<field name="itemTypeId" type="id-ne"></field>
+		<field name="itemGroupId" type="id-ne"> </field>
+		<field name="description" type="very-long"></field>
+		<field name="minAmount" type="currency-amount"></field>
+		<field name="maxAmount" type="currency-amount"></field>
+		<field name="fromDate" type="date-time"></field>
+		<field name="thruDate" type="date-time"></field>
+		<field name="createdBy" type="id-ne"></field>
+		<prim-key field="itemId"/>
+		<relation rel-entity-name="TaxCategory" type="one" fk-name="TAX_ITEM_CAT">
+			<key-map field-name="categoryId"/>
+		</relation>
+		<relation rel-entity-name="TaxItemType" type="one">
+			<key-map field-name="itemTypeId"/>
+		</relation>
+		<relation rel-entity-name="TaxItemGroup" type="one">
+			<key-map field-name="itemGroupId"/>
+		</relation>
+	</entity>
+	
+	<entity entity-name="ValidTaxDecl" package-name="org.ofbiz.humanresext.tax">
+		<description> This holds the Valid Tax Declarations for an Organization</description>
+		<field name="validTaxDeclId" type="id-ne"/>
+		<field name="hrName" type="id-ne"/>
+		<field name="geoId" type="id-ne"/>
+		<field name="startDate" type="date"></field>
+		<field name="endDate" type="date"></field>
+		<field name="createdBy" type="id-ne"></field>
+		<field name="modificationType" type="id-ne"></field>
+		<field name="modifyLatestByDate" type="date"></field>
+		<field name="modifyLatestBy" type="id-ne"></field>
+		
+		<prim-key field="validTaxDeclId"/>
+	</entity>
+	
+	<entity entity-name="EmplTaxDecl" package-name="org.ofbiz.humanresext.tax">
+		<field name="partyId" type="id-ne"></field>
+		<field name="validTaxDeclId" type="id-ne"></field>
+		<field name="categoryId" type="id-ne"></field>
+		<field name="itemId" type="id-ne"></field>
+		<field name="numValue" type="currency-amount"></field>
+		<field name="acceptedValue" type="currency-amount"></field>
+		<field name="stringValue" type="very-long"></field>
+		<prim-key field="partyId"/>
+		<prim-key field="validTaxDeclId"/>
+		<prim-key field="categoryId"/>
+		<prim-key field="itemId"/>
+		
+		<relation rel-entity-name="Party" type="one" fk-name="EMPL_TAX_PARTY">
+			<key-map field-name="partyId"/>
+		</relation>
+		
+		<relation rel-entity-name="ValidTaxDecl" type="one">
+			<key-map field-name="validTaxDeclId"/>
+		</relation>
+		
+		<relation rel-entity-name="TaxCategory" type="one" fk-name="EMPL_TAX_CAT">
+			<key-map field-name="categoryId"/>
+		</relation>
+		
+		<relation rel-entity-name="TaxItem" type="one" fk-name="EMPL_TAX_ITEM">
+			<key-map field-name="itemId"/>
+		</relation>	
+	</entity>
+
+	<view-entity entity-name="EmplTaxItemView" package-name="org.ofbiz.humanres.taxdecl">
+		<member-entity entity-alias="ETD" entity-name="EmplTaxDecl"></member-entity>
+		<member-entity entity-alias="TI" entity-name="TaxItem"></member-entity>
+		<member-entity entity-alias="TC" entity-name="TaxCategory"></member-entity>
+		<alias name="partyId" entity-alias="ETD" />
+		<alias name="validTaxDeclId" entity-alias="ETD" />
+		<alias name="itemGroupId" entity-alias="TI"/>
+		<alias name="maxAmount" entity-alias="TC"/>
+		<alias name="categoryId" entity-alias="TC"/>	
+		<alias name="acceptedValue" entity-alias="ETD"/>
+		<alias name="numValue" entity-alias="ETD"/>
+
+		<view-link rel-entity-alias="TI" entity-alias="ETD">
+			<key-map field-name="itemId"/>
+		</view-link>
+		<view-link rel-entity-alias="TC" entity-alias="ETD">
+			<key-map field-name="categoryId" />
+		</view-link>
+	</view-entity>
+
+	<view-entity entity-name="EmplTaxDeclView" package-name="org.ofbiz.humanres.taxdecl">
+		<member-entity entity-alias="ETD" entity-name="EmplTaxDecl"></member-entity>
+		<member-entity entity-alias="TI" entity-name="TaxItem"></member-entity>
+		<member-entity entity-alias="TC" entity-name="TaxCategory"></member-entity>
+		<member-entity entity-alias="VT" entity-name="ValidTaxDecl"></member-entity>
+		<alias-all entity-alias="ETD"/>
+		<alias-all entity-alias="TI">
+			<exclude field="categoryId"/>
+		</alias-all>
+		<alias-all entity-alias="TC">
+			<exclude field="categoryId"/>
+			<exclude field="description"/>
+			<exclude field="minAmount"/>
+			<exclude field="maxAmount"/>
+			<exclude field="fromDate"/>
+			<exclude field="thruDate"/>
+			<exclude field="createdBy"/>
+		</alias-all>
+		<alias-all entity-alias="VT">
+			<exclude field="geoId"/>
+			<exclude field="createdBy"/>
+		</alias-all>
+		<view-link rel-entity-alias="TI" entity-alias="ETD">
+			<key-map field-name="itemId"/>
+		</view-link>
+		<view-link rel-entity-alias="TC" entity-alias="ETD">
+			<key-map field-name="categoryId"/>
+		</view-link>
+		<view-link rel-entity-alias="VT" entity-alias="ETD">
+			<key-map field-name="validTaxDeclId"/>
+		</view-link>
+	</view-entity>
+	
+	<entity entity-name="FormField" package-name="org.ofbiz.humanres.taxdecl">
+		<description>Entity for Fields in the Tax Forms</description>
+		<field name="fieldId" type="id-ne"></field>
+		<field name="formId" type="id-ne"></field>
+		<field name="fieldName" type="id"></field>
+		<field name="sequenceId" type="id"></field>
+		<field name="description" type="comment"></field>
+		<field name="hr_comment" type="comment"></field> <!-- Detailed description of form -->
+		<field name="fieldType" type="id"></field> <!-- Field will be storing numeric data or employee details -->
+		<field name="fromDate" type="date"></field>
+        <field name="thruDate" type="date"></field>
+		<prim-key field="fieldId"/>
+		<relation rel-entity-name="Enumeration" type="one" fk-name="FK_FF_ENUM">
+			<key-map field-name="formId" rel-field-name="enumId"/>
+		</relation>
+	</entity>
+	
+	<entity entity-name="TdsParty" package-name="org.ofbiz.humanres.taxdecl">
+		<description>Employee Monthly TDS Details</description>
+		<field name="partyId" type="id-ne"></field>
+		<field name="tds" type="currency-amount"></field>
+		<field name="surcharge" type="currency-amount"></field>
+		<field name="educationCess" type="currency-amount"></field>
+		<field name="higherEduCess" type="currency-amount"></field>
+		<field name="totTds" type="currency-amount"></field>
+		<field name="chequeNo" type="id"></field> <!-- Cheque/DD No default "Internet" -->
+		<field name="paymentDate" type="id"></field> <!--  Date on which tax deposited -->
+		<field name="branchCode" type="id"></field> <!-- BSR Code of Bank Branch-->
+		<field name="challanNo" type="id"></field> <!-- Challan No from IT Dept -->
+		<field name="periodFrom" type="date"></field> <!-- Period for which the tax has been paid -->
+        <field name="periodTo" type="date"></field>
+		<prim-key field="partyId"/>
+		<prim-key field="periodFrom"/>
+		<relation rel-entity-name="Party" type="one" fk-name="TDS_PARTY_FK">
+			<key-map field-name="partyId"/>
+		</relation>
+	</entity>
+	
+	<entity entity-name="TdsAcks" package-name="org.ofbiz.humanres.taxdecl">
+		<description>Company TDS Acknowledgment Numbers for Each Quarter</description>
+		<field name="partyId" type="id-ne" > <description>Company Id</description></field>
+		<field name="quarter" type="id"><description>Quarter Q1-Q4</description> </field>
+		<field name="ackNo" type="id"><description>Acknowledgment Number</description></field> 
+		<field name="periodFrom" type="date"><description>Start of Financial Year</description> </field> <!-- Period for which the tax has been paid -->
+        <field name="periodTo" type="date"><description>End of Financial Year</description> </field>
+		<prim-key field="ackNo"/>
+		<prim-key field="periodFrom"/>
+		<relation rel-entity-name="Party" type="one" fk-name="TDS_ACK_PTY">
+			<key-map field-name="partyId"/>
+		</relation>
+	</entity>
+	
+	<entity entity-name="TaxSlab" package-name="org.ofbiz.humanres.taxdecl">
+		<description>Tax Slabs for Income Groups</description>
+		<field name="geoId" type="id-ne"></field>
+		<field name="personType" type="id-ne"><description>Male, Female or Senior Citizen</description></field>
+		<field name="taxType" type="short-varchar"><description>Income or Professional Tax Rate, Surcharge or Cess</description></field>
+		<field name="slabMin" type="floating-point"><description></description> </field>
+		<field name="slabMax" type="floating-point"><description></description></field> 
+		<field name="taxRate" type="floating-point"><description></description></field> 
+		<field name="fromDate" type="date"><description>Start of Financial Year</description> </field> <!-- Period for which the tax has been paid -->
+        <field name="thruDate" type="date"><description>End of Financial Year</description> </field>
+        <prim-key field="geoId"/>
+        <prim-key field="personType"/>
+        <prim-key field="taxType"/>
+        <prim-key field="slabMin"/>
+        <prim-key field="fromDate"/>
+	</entity>
+	
+</entitymodel>

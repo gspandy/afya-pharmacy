@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<simple-methods xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+        xsi:noNamespaceSchemaLocation="http://ofbiz.apache.org/dtds/simple-methods.xsd">
+
+    <simple-method method-name="createIssueHeader" short-description="Log an Issue" login-required="false" >
+        <make-value value-field="newEntity" entity-name="IssueHeader"/>
+        <set-nonpk-fields map="parameters" value-field="newEntity"/>
+        <if-empty field="newEntity.issueId">
+            <sequenced-id sequence-name="IssueHeader" field="newEntity.issueId"/>
+        <else>
+            <check-id error-list-name="issueId" field="newEntity"/>
+            <check-errors/>
+        </else>
+        </if-empty>
+        <create-value value-field="newEntity"/>
+        <field-to-result field="newEntity.issueId" result-name="issueId"/>
+    </simple-method>
+    
+    <simple-method method-name="createIssueNote" short-description="Create an IssueNote" login-required="false">
+        <make-value value-field="newEntity" entity-name="IssueNote"/>
+        <set-nonpk-fields map="parameters" value-field="newEntity"/>
+        <sequenced-id sequence-name="IssueNote" field="newEntity.issueNoteId"/>
+        <field-to-result field="newEntity.issueNoteId" result-name="issueNoteId"/>
+        <create-value value-field="newEntity"/>
+    </simple-method>
+
+    <simple-method method-name="createIssueCategory" short-description="Create an IssueCategory" login-required="false">
+        <make-value value-field="newEntity" entity-name="IssueCategory"/>
+        <set-nonpk-fields map="parameters" value-field="newEntity"/>
+        <sequenced-id sequence-name="IssueCategory" field="newEntity.issueCategoryId"/>
+        <field-to-result field="newEntity.issueCategoryId" result-name="issueCategoryId"/>
+        <create-value value-field="newEntity"/>
+    </simple-method>
+
+    <simple-method method-name="createIssueSubCategory" short-description="Create an IssueSubCategory" login-required="false">
+        <make-value value-field="newEntity" entity-name="IssueSubCategory"/>
+        <set-nonpk-fields map="parameters" value-field="newEntity"/>
+        <sequenced-id sequence-name="IssueSubCategory" field="newEntity.issueSubCategoryId"/>
+        <field-to-result field="newEntity.issueSubCategoryId" result-name="issueSubCategoryId"/>
+        <create-value value-field="newEntity"/>
+    </simple-method>
+    
+    <simple-method method-name="createIssueHistory" short-description="Create an IssueNote" login-required="false">
+        <make-value value-field="newEntity" entity-name="IssueHistory"/>
+        <set-nonpk-fields map="parameters" value-field="newEntity"/>
+        <sequenced-id sequence-name="IssueHistory" field="newEntity.issueHistoryId"/>
+        <create-value value-field="newEntity"/>
+    </simple-method>
+
+    <simple-method method-name="createIssueAttachment" short-description="Create an Attachment" login-required="false">
+        <make-value value-field="newEntity" entity-name="IssueAttachment"/>
+        <set-nonpk-fields map="parameters" value-field="newEntity"/>
+        <sequenced-id sequence-name="IssueAttachment" field="newEntity.issueAttachmentId"/>
+        <field-to-result field="newEntity.issueAttachmentId" result-name="issueAttachmentId"/>
+        <create-value value-field="newEntity"/>
+    </simple-method>
+
+ </simple-methods>

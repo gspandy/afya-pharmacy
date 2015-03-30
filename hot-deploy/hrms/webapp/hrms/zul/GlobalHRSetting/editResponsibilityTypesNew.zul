@@ -1,0 +1,61 @@
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<zk>
+	<window id="addNewResponsibilityTypes" width="600px"
+		title="${c:l('FormFieldTitle_AddNewResponsibilityTypes') }"
+		position="center" closable="true" border="normal"
+		apply="com.ndz.controller.AddNewResponsibilityTypes" height="220px" maximizable="true" >
+		<zscript>
+                 <![CDATA[
+public void validate(Textbox comp) throws WrongValueException {
+	String value = comp.getValue();
+	                	  org.ofbiz.entity.GenericDelegator delegator=com.ndz.zkoss.util.HrmsInfrastructure.getDelegator();//org.ofbiz.entity.GenericDelegator.getGenericDelegator("default");
+	                	  List resTypes=delegator.findList("ResponsibilityType",null,null,null,null,false);
+	                	  for(org.ofbiz.entity.GenericValue res:resTypes)
+	                	  {
+	                		  String responsibility=res.getString("responsibilityTypeId");
+	                		  if(responsibility.equalsIgnoreCase(value))
+	                			  throw new WrongValueException(comp, "Responsibility Type Id already exists");
+	                	  }
+		                 String abc=txtBoxDescription.getValue();
+	                  }
+                  ]]>
+       </zscript>
+		<hbox style="margin-top:20px">
+			<div width="160px" align="right">
+				<label
+					value="${c:l('FormFieldTitle_responsibilityTypeId') }" /><label value="*" style="color:red" />
+			</div>
+			<div width="100px" align="left">
+				<textbox id="txtBoxResponsibilityTypeId" constraint="no empty:Responsibility Type Id Required">
+				<attribute name="onChange">
+				validate(txtBoxResponsibilityTypeId);
+				</attribute>
+				</textbox>
+			</div>
+		</hbox>
+		<hbox style="margin-top:10px">
+			<div width="160px" align="right">
+				<label
+					value="${c:l('HumanResAllocateEmployeeDescription') }" /><label value="*" style="color:red" />
+			</div>
+			<div width="100px" align="left">
+				<textbox id="txtBoxDescription" width="300px"
+					height="60px" multiline="true" constraint="no empty:Description Required">
+
+				</textbox>
+			</div>
+		</hbox>
+		
+		<hbox style="margin-top:15px">
+			<div align="right" width="265px">
+				<button id="btnSave" label="${c:l('btnSave') }"  onClick="validate(txtBoxResponsibilityTypeId)">
+				</button>
+			</div>
+			<div>
+				<button id="btnCancel" label="${c:l('ButtonCancel') }" onClick="addNewResponsibilityTypes.detach()" />
+
+			</div>
+		</hbox>
+
+	</window>
+</zk>

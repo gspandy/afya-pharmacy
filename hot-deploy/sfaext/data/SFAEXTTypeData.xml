@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<entity-engine-xml>
+	
+	<RoleType roleTypeId="PROSPECT" parentTypeId="" hasTable="" description="Prospect"/>
+	
+	<SalesOpportunityStage description="Prospect" defaultProbability="0.05" opportunityStageId="SOSTG_PROSPECT" sequenceNum="01"/>		
+	<SalesOpportunityStage description="Proposal" defaultProbability="0.20" opportunityStageId="SOSTG_PROPOSAL" sequenceNum="02"/>		
+	<SalesOpportunityStage description="Quoted" defaultProbability="0.40" opportunityStageId="SOSTG_QUOTED" sequenceNum="03"/>	
+	<SalesOpportunityStage description="Closed" defaultProbability="1" opportunityStageId="SOSTG_CLOSED" sequenceNum="04"/>	
+	<SalesOpportunityStage description="Lost" defaultProbability="0" opportunityStageId="SOSTG_LOST" sequenceNum="99"/>
+	
+	<EnumerationType description="Sales Opportunity Types" enumTypeId="SLSOPP_TYP_ENUM" hasTable="N" parentTypeId=""/>
+	<Enumeration description="New Business" enumCode="NEW_BUSINESS" enumId="SOTYP_NEWBIZ" sequenceId="01" enumTypeId="SLSOPP_TYP_ENUM"/>
+	<Enumeration description="Add On Sale" enumCode="ADD_ON" enumId="SOTYP_ADDON" sequenceId="02" enumTypeId="SLSOPP_TYP_ENUM"/>
+	<Enumeration description="Renewal" enumCode="RENEWAL" enumId="SOTYP_RENEW" sequenceId="03" enumTypeId="SLSOPP_TYP_ENUM"/>
+	<Enumeration description="Upgrade" enumCode="UPGRADE" enumId="SOTYP_UPGRD" sequenceId="04" enumTypeId="SLSOPP_TYP_ENUM"/>
+	<Enumeration description="Replacement" enumCode="REPLACEMENT" enumId="SOTYP_REPLC" sequenceId="05" enumTypeId="SLSOPP_TYP_ENUM"/>
+
+    <RoleType description="Account" hasTable="N" parentTypeId="CUSTOMER" roleTypeId="ACCOUNT"/>
+    <RoleType description="Account Manager" hasTable="N" parentTypeId="SALES_REP" roleTypeId="ACCOUNT_MANAGER"/>
+    <RoleType description="Account Rep" hasTable="N" parentTypeId="SALES_REP" roleTypeId="ACCOUNT_REP"/>
+    <RoleType description="Account Lead" hasTable="N" parentTypeId="CUSTOMER" roleTypeId="ACCOUNT_LEAD"/>
+    <RoleType description="Lead" hasTable="N" parentTypeId="CUSTOMER" roleTypeId="LEAD"/>
+    <RoleType description="Account Team" hasTable="N" parentTypeId="CUSTOMER" roleTypeId="ACCOUNT_TEAM"/>
+
+	
+	<RoleType description="Customer Service Rep" hasTable="N" parentTypeId="SALES_REP" roleTypeId="CUST_SERVICE_REP"/>
+    <RoleType description="Account Team" hasTable="N" parentTypeId="INTERNAL_ORGANIZATIO" roleTypeId="ACCOUNT_TEAM"/>
+	<RoleType description="SalesManager" hasTable="N" parentTypeId="SALES_REP" roleTypeId="SALES_MGR"/>
+
+   
+
+	<PartyRelationshipType description="Owner of a Sales Team" hasTable="N" parentTypeId="" partyRelationshipName="Sales Team Owner" partyRelationshipTypeId="SALES_OWNER" roleTypeIdValidFrom="" roleTypeIdValidTo=""/>
+
+	<PartyRelationshipType description="Part of Sales Team" hasTable="N" parentTypeId="" partyRelationshipName="Assigned to Team" partyRelationshipTypeId="ASSIGNED_TO" roleTypeIdValidFrom="" roleTypeIdValidTo=""/>
+
+	<PartyRelationshipType description="An account or contact owner is someone who is responsible for that account"  
+        hasTable="N" parentTypeId="" partyRelationshipName="Responsible Owner" partyRelationshipTypeId="RESPONSIBLE_FOR" roleTypeIdValidFrom="" roleTypeIdValidTo=""/>
+
+	<PartyRelationshipType description="A rep or manager on an account team is assigned to that team.  This is a different concept than GROUP_ROLLUP which implies membership." 
+        hasTable="N" parentTypeId="" partyRelationshipName="Assigned To" partyRelationshipTypeId="ASSIGNED_TO" roleTypeIdValidFrom="" roleTypeIdValidTo=""/> 
+	
+	<PartyRelationshipType description="This is for maintaining the relationship of a contact with an Account." 
+        hasTable="N" parentTypeId="" partyRelationshipName="Contact Rel Inv" partyRelationshipTypeId="CONTACT_REL_INV" roleTypeIdValidFrom="" roleTypeIdValidTo=""/> 
+		
+  
+	<!-- status codes for leads -->
+    <StatusType statusTypeId="PARTY_STATUS" hasTable="N" description="Party status"/>
+    <StatusType statusTypeId="PARTY_LEAD_STATUS" hasTable="N" parentTypeId="PARTY_STATUS" description="Status codes for parties which are leads (role = PROSPECT)"/>
+    <StatusItem statusId="PTYLEAD_NEW" statusTypeId="PARTY_LEAD_STATUS" statusCode="NEW" sequenceId="01" description="New"/>
+    <StatusItem statusId="PTYLEAD_ASSIGNED" statusTypeId="PARTY_LEAD_STATUS" statusCode="ASSIGNED" sequenceId="10" description="Assigned"/>
+    <StatusItem statusId="PTYLEAD_QUALIFIED" statusTypeId="PARTY_LEAD_STATUS" statusCode="QUALIFIED" sequenceId="20" description="Qualified"/>
+    <StatusItem statusId="PTYLEAD_CONVERTED" statusTypeId="PARTY_LEAD_STATUS" statusCode="CONVERTED" sequenceId="30" description="Converted"/>
+    <StatusItem statusId="PTYLEAD_RECYCLED" statusTypeId="PARTY_LEAD_STATUS" statusCode="RECYCLED" sequenceId="40" description="Recycled"/>
+    <StatusItem statusId="PTYLEAD_DEAD" statusTypeId="PARTY_LEAD_STATUS" statusCode="DEAD" sequenceId="99" description="Dead"/>
+    
+    <StatusValidChange statusId="PTYLEAD_NEW" statusIdTo="PTYLEAD_ASSIGNED" transitionName="Assigned"/>
+    <StatusValidChange statusId="PTYLEAD_ASSIGNED" statusIdTo="PTYLEAD_QUALIFIED" transitionName="Qualified"/>
+    <StatusValidChange statusId="PTYLEAD_QUALIFIED" statusIdTo="PTYLEAD_CONVERTED" transitionName="Converted"/>
+    <StatusValidChange statusId="PTYLEAD_NEW" statusIdTo="PTYLEAD_DEAD" transitionName="Dead"/>
+    <StatusValidChange statusId="PTYLEAD_ASSIGNED" statusIdTo="PTYLEAD_DEAD" transitionName="Dead"/>
+    <StatusValidChange statusId="PTYLEAD_QUALIFIED" statusIdTo="PTYLEAD_DEAD" transitionName="Dead"/>
+    <StatusValidChange statusId="PTYLEAD_DEAD" statusIdTo="PTYLEAD_RECYCLED" transitionName="Recycled"/>
+    <StatusValidChange statusId="PTYLEAD_RECYCLED" statusIdTo="PTYLEAD_ASSIGNED" transitionName="Assigned"/>
+    <StatusValidChange statusId="PTYLEAD_RECYCLED" statusIdTo="PTYLEAD_DEAD" transitionName="Dead"/>
+	
+
+	<ContentType contentTypeId="FILE" parentTypeId="" description="Files of CRM"/>
+</entity-engine-xml>

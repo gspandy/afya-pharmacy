@@ -1,0 +1,366 @@
+<?component name="positionTypebox" macroURI="../macros/textfindMacro.zul" id="macro2"?>
+<?init class="org.zkoss.zkplus.databind.AnnotateDataBinderInit" root="./createRequisitionWindow"?>
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<zk>
+	<zscript>
+		import org.ofbiz.base.util.UtilValidate;
+		import org.ofbiz.base.util.UtilDateTime;
+		com.hrms.composer.RecruitmentComposer recruitmentComposer = new com.hrms.composer.RecruitmentComposer();
+	</zscript>
+	<window id="createRequisitionWindow" width="100%" self="@{define(content)}" apply="${recruitmentComposer}">
+		<box width="100%" height="18px" align="center">
+			<hbox>
+				<button id="saveButton" label="${c:l('btnSave') }" forward='saveRequisition.onClick'/>
+				<button label="${c:l('ButtonCancel') }"
+					onClick='Executions.getCurrent().sendRedirect("/control/requisitionManagement");' />
+			</hbox>
+		</box>
+		<box width="100%" height="18px">
+			<label value="${c:l('HRMS_REQUISITION_REQUISITIONTYPE')}"
+				style="font-weight:bold" />
+		</box>
+		<radiogroup id="requisitionType" selectedItem="@{recruitmentComposer.requisitionVo.requisitionType,save-when='saveRequisition.onClick'}">
+			<radio id="newPos"
+				label="${c:l('HRMS_REQUISITION_REQUISITIONTYPENEW')}"
+				selected="true" value="New" style="font-weight:bold">
+				<attribute name="onCheck">
+					replacementSection.setVisible(false);
+					replacementPostionIdTextbox.setValue("");
+					recruitmentComposer.getRequisitionVo().setReplacementPositionId(null);
+					positionTypeSection.setVisible(true);
+				</attribute>
+			</radio>
+			<radio id="replcePos"
+				label="${c:l('HRMS_REQUISITION_REQUISITIONTYPEREPLACEMENT') }"
+				selected="false" checked="false" value="Replace"
+				style="font-weight:bold">
+				<attribute name="onCheck">
+					positionTypeSection.setVisible(false);
+					replacementSection.setVisible(true);
+					noOfPosition.clearErrorMessage();
+					recruitmentComposer.getRequisitionVo().setPositionTypeGv(null);
+				</attribute>
+			</radio>
+		</radiogroup>
+		<hbox id="replacementSection" visible="false">
+			<div align="right" width="158px" style="margin-right:5px">
+				<label value="${c:l('HRMS_POSITIONID') }"
+					style="font-weight:bold" />
+				<label value="*" style="color:red" />
+			</div>
+			<textbox readonly="true" id="replacementPostionIdTextbox" value="@{recruitmentComposer.requisitionVo.replacementPositionId,save-when='saveRequisition.onClick'}"/>
+			<toolbarbutton label="${c:l('HRMS_LOOK_UP') }">
+				<attribute name="onClick">	
+					Executions.createComponents("/zul/employeeRequisition/replacementPositionLookUp.zul",null,org.ofbiz.base.util.UtilMisc.toMap("recruitmentComposer",recruitmentComposer,"replacementPostionIdTextbox",replacementPostionIdTextbox));
+				</attribute>
+			</toolbarbutton>
+		</hbox>	
+		<separator />
+		<box width="100%" height="18px">
+			<label value="${c:l('HRMS_REQUISITION_POSITIONDETAILS') }"
+				style="font-weight:bold" />
+		</box>
+		<separator />
+		<hbox id="positionTypeSection">
+			<div align="right" width="150px" style="margin-right:5px">
+				<label value="${c:l('HRMS_POSITIONTYPE') }"
+					style="font-weight:bold" />
+				<label value="*" style="color:red" />
+			</div>
+			<div width="300px" align="left">
+				<combobox readonly="true" id="requisitionPositionType" model="@{recruitmentComposer.positionTypes}" width="200px"
+					name="requisitionPositionType" selectedItem="@{recruitmentComposer.requisitionVo.positionTypeGv,save-when='saveRequisition.onClick' }">
+					<comboitem self="@{each='posTypeGv'}" label="@{posTypeGv.description}" value="@{posTypeGv}"/>
+				</combobox>
+			</div>
+			<div align="right" width="110px" style="margin-right:5px">
+				<label value="${c:l('HRMS_REQUISITION_NOOFPOSITION') }"
+					style="font-weight:bold" />
+				<label value="*" style="color:red" />
+			</div>
+			<div align="left">
+				<spinner id="noOfPosition" readonly="true" name="noOfPosition" value="@{recruitmentComposer.requisitionVo.noOfPosition,save-when='saveRequisition.onClick'}"
+					constraint="no empty: ${c:l('HRMS_NO_OF_POSITIONS_CANNOT_BE_ZERO_OR_NEGATIVE') }" />
+			</div>
+		</hbox>
+		<separator />
+		<hbox>
+			<div align="right" width="150px" style="margin-right:5px">
+				<label
+					value="${c:l('HRMS_REQUISITION_MINIMUMEXPERIENCE') }"
+					style="font-weight:bold" />
+				<label value="*" style="color:red" />
+			</div>
+			<div width="192px" align="left">
+				<spinner id="minExprience" readonly="true"  value="@{recruitmentComposer.requisitionVo.minimumExprience,save-when='saveRequisition.onClick'}"/>
+					<label value="${c:l('HRMS_YEARS') }"></label>
+			</div>
+			<div align="right" width="218px" style="margin-right:5px">
+				<label
+					value="${c:l('HRMS_REQUISITION_MAXIMUMEXPERIENCE') }"
+					style="font-weight:bold" />
+				<label value="*" style="color:red" />
+			</div>
+
+			<div width="192px" align="left">
+				<spinner id="maxExprience" readonly="true" value="@{recruitmentComposer.requisitionVo.maximumExprience,save-when='saveRequisition.onClick'}"/>
+					<label value="${c:l('HRMS_YEARS') }"></label>
+			</div>
+		</hbox>
+		<separator />
+		<hbox>
+			<div align="right" width="150px" style="margin-right:5px">
+				<label value="${c:l('HRMS_STARTDATE') }" style="font-weight:bold" />
+				<label value="*" style="color:red" />
+			</div>
+			<div align="left">
+				<datebox readonly="true" id="fromDate" value="@{recruitmentComposer.requisitionVo.startDate,save-when='saveRequisition.onClick'}" constraint="no past: ${c:l('HRMS_FROM_DATE_CANNOT_BE_PAST') }"/>
+			</div>
+			<div align="right" width="309px">
+				<label value="${c:l('HRMS_ENDDATE') }" style="font-weight:bold" />
+				<label value="*" style="color:red" />
+			</div>
+			<div align="left">
+				<datebox readonly="true" id="thruDate" value="@{recruitmentComposer.requisitionVo.endDate,save-when='saveRequisition.onClick'}" constraint="no empty: ${c:l('HRMS_REQUIRED_END_DATE') }"/>
+			</div>
+		</hbox>
+		<separator />
+		<hbox>
+			<div align="right" width="150px" style="margin-right:5px">
+				<label value="${c:l('HRMS_REQUIREMENT_TYPE') }"
+					style="font-weight:bold" />
+				<label value="*" style="color:red" />
+			</div>
+			<div width="300px" align="left">
+					<combobox id="requirementType" readonly="true" constraint="no empty: ${c:l('HRMS_REQUIRED_REQUIREMENT_TYPE') }" selectedItem="@{recruitmentComposer.requisitionVo.requirementType,save-when='saveRequisition.onClick'}">
+					<comboitem value="High" label="${c:l('ListBox_High') }"/>
+					<comboitem value="Medium" label="${c:l('ListBox_Medium') }"/>
+					<comboitem value="Low" label="${c:l('ListBox_Low') }"/>
+				</combobox>
+			</div>
+            <zscript>
+                <![CDATA[
+                          import com.ndz.zkoss.*;
+                            BindingListModelList gradesArr = new BindingListModelList(HrmsUtil.getGrades(),false);
+                          ]]>
+            </zscript>
+			 <div align="right" width="150px" style="margin-left:5px">
+                 <label value="${c:l('FormFieldTitle_grades') }" />
+                 <label value="*" style="color:red" />
+              </div>
+              <div align="left">
+                <combobox id="grade" readonly="true"  constraint="no empty:Required Grade"
+                selectedItem="@{recruitmentComposer.requisitionVo.grade,save-when='saveRequisition.onClick'}" model="${gradesArr}">
+
+					</combobox>
+			  </div>
+		</hbox>
+		<separator />
+		<hbox>
+			<div align="right" width="150px" style="margin-right:5px">
+				<label value="${c:l('HRMS_REQUISITION_JOBTITLE') }"
+					style="font-weight:bold" />
+				<label value="*" style="color:red" />
+			</div>
+			<div width="300px" align="left">
+				<textbox id="jobTitle" constraint="no empty: ${c:l('HRMS_REQUIRED_JOB_TITLE') }" value="@{recruitmentComposer.requisitionVo.jobTitle,save-when='saveRequisition.onClick'}"/>
+			</div>
+			 <div align="right" width="150px" style="margin-left:5px">
+                 <label value="${c:l('FormFieldTitle_positionCategories') }" />
+                 <label value="*" style="color:red" />
+              </div>
+              <div align="left">
+                <combobox id="positionCategories" readonly="true"  constraint="no empty:Required Position Category"
+                selectedItem="@{recruitmentComposer.requisitionVo.positionCategory,save-when='saveRequisition.onClick'}">
+					<comboitem value="Employees" label="Employees"/>
+					<comboitem value="Management" label="Management"/>
+					<comboitem value="Expatriates" label="Expatriates"/>
+					</combobox>
+			  </div>
+		
+         </hbox>
+		<separator />
+		<hbox>
+			<div align="right" width="140px">
+							<label value="Employee Type" />
+							<label value="*" style="color:red" />
+			</div>
+						
+		<div>
+		<radiogroup id="emp_administration" name="emp_administration"  selectedItem="@{recruitmentComposer.requisitionVo.employeeType,save-when='saveRequisition.onClick'}">
+             <radio id="emp_administration_administrative"
+                label="${c:l('FormFieldTitle_administrative')}"
+                        				selected="true" value="Administrative" style="margin-left:50px;font-weight: bold;font-size:10px;">
+              </radio>
+             <radio id="emp_administration_non_administrative"
+                        				label="${c:l('FormFieldTitle_nonadministrative') }"
+                        				selected="false" checked="false" value="Non-Administrative"
+                        				style="margin-left:30px;font-weight: bold;font-size:10px;">
+             </radio>
+         </radiogroup>
+        </div>
+	</hbox>
+		<separator />
+		<box width="
+		100%" height="18px">
+			<label value="${c:l('HRMS_REQUISITION_SALARYDETAILS') }"
+				style="font-weight:bold" />
+		</box>
+		<separator />
+		<hbox>
+			<div align="right" width="150px" style="margin-right:5px">
+				<label value="${c:l('HRMS_CURRENCY_TYPE') }" style="font-weight:bold" />
+				<label value="*" style="color:red" />
+			</div>
+			<div width="300px" align="left">
+				<combobox id="currencyId" width="200px" readonly="true" constraint="no empty: ${c:l('HRMS_REQUIRED_CURRENCY_TYPE') }" model="@{recruitmentComposer.currencyTypes}" selectedItem="@{recruitmentComposer.requisitionVo.currencyTypeGv,save-when='saveRequisition.onClick'}">
+					<comboitem self="@{each='currencyGv'}" label="@{currencyGv.description}" value="@{currencyGv}"/>
+				</combobox>
+			</div>
+		</hbox>
+		<separator />
+		<hbox>
+			<div align="right" width="150px" style="margin-right:5px">
+				<label value="${c:l('HRMS_REQUISITION_MINIMUMCTC') }"
+					style="font-weight:bold" />
+				<label value="*" style="color:red" />
+			</div>
+			<div width="330px" align="left">
+			<hbox>
+				<spinner id="minCTC" name="minCTC" constraint="no empty,no zero: ${c:l('HRMS_MIN_CTC_CANNOT_BE_ZERO') }"  value="@{recruitmentComposer.requisitionVo.minimumSalary,save-when='saveRequisition.onClick'}"/>
+				<combobox readonly="true" id="minBaslineId" width="200px" constraint="no empty: ${c:l('HRMS_REQUIRED_CURRENCY_BASE_LINE') }" model="@{recruitmentComposer.currencyBaseLineTypes}" selectedItem="@{recruitmentComposer.requisitionVo.currencyBaseLineGv,save-when='saveRequisition.onClick'}">
+					<comboitem self="@{each='baseLineGv'}" label="@{baseLineGv.description}" value="@{baseLineGv}"/>
+				</combobox>
+			</hbox>
+			</div>
+			<div align="right" width="150px" style="margin-right:5px">
+				<label value="${c:l('HRMS_REQUISITION_MAXIMUMCTC') }"
+					style="font-weight:bold" />
+				<label value="*" style="color:red" />
+			</div>
+			<div width="330px" align="left">
+			<hbox>
+				<spinner id="maxCTC" name="maxCTC" constraint="no empty: ${c:l('HRMS_MAX_CTC_CANNOT_BE_ZERO') }" value="@{recruitmentComposer.requisitionVo.maximumSalary,save-when='saveRequisition.onClick'}"/>
+				<combobox width="200px" readonly="true" id="maxBaslineId" constraint="no empty: ${c:l('HRMS_REQUIRED_CURRENCY_BASE_LINE') }" model="@{recruitmentComposer.currencyBaseLineTypes}" selectedItem="@{recruitmentComposer.requisitionVo.maxCurrencyLineGv,save-when='saveRequisition.onClick'}">
+					<comboitem self="@{each='maxBaseLineGv'}" label="@{maxBaseLineGv.description}" value="@{maxBaseLineGv}"/>
+				</combobox>
+			</hbox>
+			</div>
+		</hbox>
+		<separator />
+		<hbox>
+			<div align="right" width="150px" style="margin-right:5px">
+				<label value="${c:l('HRMS_JOB_LOCATION') }" style="font-weight:bold" />
+				<label value="*" style="color:red" />
+			</div>
+			<div width="300px" align="left">
+				<combobox  readonly="true"  model="@{recruitmentComposer.departmentLocations}" id="jobLocation"
+				selectedItem="@{recruitmentComposer.requisitionVo.locationGv,save-when='saveRequisition.onClick'}" 
+				 constraint="no empty:Required Job Location">
+					<comboitem self="@{each='locationGv'}" label="@{locationGv.locationName}" value="@{locationGv}"/>
+				</combobox>
+				
+			</div>
+		</hbox>
+		<separator />
+		<box width="100%" height="18px">
+			<label value="${c:l('HRMS_REQUISITION_JOBDESCRIPTION') }"
+				style="font-weight:bold" />
+		</box>
+		<separator/>
+		<fckeditor id="jobDetails" toolbarSet="CustomToolbar"
+			customConfigurationsPath="/zul/JavaScript/myConfig.js"
+			height="150px">
+		</fckeditor>
+		<box width="100%" height="18px">
+			<label value="${c:l('HRMS_REQUISITION_ROLEDETAILS') }"
+				style="font-weight:bold" />
+		</box>
+		<fckeditor id="roleDetails" toolbarSet="CustomToolbar"
+			customConfigurationsPath="/zul/JavaScript/myConfig.js"
+			height="150px">
+		</fckeditor>
+		<box width="100%" height="18px">
+			<label value="${c:l('HRMS_REQUISITION_QUALIFICATION') }"
+				style="font-weight:bold" />
+		</box>
+		<fckeditor id="qualification" toolbarSet="CustomToolbar" 
+			customConfigurationsPath="/zul/JavaScript/myConfig.js"
+			height="150px">
+		</fckeditor>
+		<box width="100%" height="18px">
+			<label value="${c:l('HRMS_REQUISITION_SOFTSKILL') }"
+				style="font-weight:bold" />
+		</box>
+		<fckeditor id="softSkills" toolbarSet="CustomToolbar"
+			customConfigurationsPath="/zul/JavaScript/myConfig.js"
+			height="150px">
+		</fckeditor>
+		<box width="100%" height="18px">
+			<label
+				value="${c:l('HRMS_REQUISITION_JUSTIFICATIONFORHIRING') }"
+				style="font-weight:bold" />
+		</box>
+		<fckeditor id="justifyHire" toolbarSet="CustomToolbar" 
+			customConfigurationsPath="/zul/JavaScript/myConfig.js"
+			height="150px">
+		</fckeditor>
+		<separator />
+		<zscript>
+		<![CDATA[
+			void validateForm(){
+			if("New".equalsIgnoreCase(recruitmentComposer.getRequisitionVo().getRequisitionType()) && UtilValidate.isEmpty(requisitionPositionType.getValue()))
+	  			throw new WrongValueException(requisitionPositionType,"Position Type Required");
+	  		if("Replace".equalsIgnoreCase(recruitmentComposer.getRequisitionVo().getRequisitionType()) && UtilValidate.isEmpty(replacementPostionIdTextbox.getValue()))
+	  			throw new WrongValueException(replacementPostionIdTextbox,"Position Id Required");
+	  		if(noOfPosition.getValue()!=null && noOfPosition.getValue()<=0)
+	  			 throw new WrongValueException(noOfPosition," No of positions cannot be 0(zero) or negative");
+	  		if(fromDate.getValue() == null)
+	  			throw new WrongValueException(fromDate,"From Date Required");
+	  		if(minExprience.getValue() <0)
+	  			 throw new WrongValueException(minExprience," Minimum experience cannot be negative");
+	  		if(maxExprience.getValue() <0)
+	  			throw new WrongValueException(maxExprience," Maximum experience cannot be negative");
+	  		if(minCTC.getValue() < 0)
+	  			throw new WrongValueException(minCTC," Minimum CTC cannot be negative");
+	  		if(maxCTC.getValue() < 0)
+	  			throw new WrongValueException(maxCTC," Maximum CTC cannot be negative");
+	  		if(minExprience.getValue() > maxExprience.getValue())
+	  			throw new WrongValueException(maxExprience,"Maximum Experience must be greater than or equal to Minimum Experience");
+	  		if(fromDate.getValue().after(thruDate.getValue()))
+	  			throw new WrongValueException(thruDate,"End Date must be after Start Date");
+	  		if(minCTC.getValue() > maxCTC.getValue())
+	  			throw new WrongValueException(maxCTC,"Maximum CTC must be greater than or equal to Minimum CTC");
+	  		if(!minBaslineId.getValue().equalsIgnoreCase(maxBaslineId.getValue()))
+	  			throw new WrongValueException(maxBaslineId,"Minimum and Maxmimum currency base line must be same");
+	  		if(emp_administration.getSelectedItem()==null)
+	  			throw new WrongValueException(emp_administration,"Employee Type Required");
+	  		if(UtilValidate.isEmpty(jobLocation.getValue()))
+	  			throw new WrongValueException(jobLocation,"Job Location Required");
+			}
+		
+				
+			]]>
+		</zscript>
+		<box width="100%" height="18px" align="center">
+			<hbox>
+				<button id="saveRequisition" label="${c:l('btnSave') }">
+				  <attribute name="onClick">
+				  		<![CDATA[
+				  		validateForm();
+				  		recruitmentComposer.getRequisitionVo().setJobDescription(jobDetails.getValue());
+				  		recruitmentComposer.getRequisitionVo().setRoleDetails(roleDetails.getValue());
+				  		recruitmentComposer.getRequisitionVo().setQualifications(qualification.getValue());
+				  		recruitmentComposer.getRequisitionVo().setSoftSkills(softSkills.getValue());
+				  		recruitmentComposer.getRequisitionVo().setJustificationForHiring(justifyHire.getValue());
+				  		recruitmentComposer.getRequisitionVo().setStatusId(com.ndz.zkoss.util.HrmsConstants.REQUISITION_SAVE_STATUS);
+				  		com.ndz.zkoss.HrmsUtil.processRequisition(recruitmentComposer,"Saved successfully","Do you want to save?");
+				  		]]>
+				  </attribute>
+				</button>
+				<button id="cancel" label="${c:l('ButtonCancel') }"
+					onClick='Executions.getCurrent().sendRedirect("/control/requisitionManagement");' />
+			</hbox>
+		</box>
+	</window>
+</zk>

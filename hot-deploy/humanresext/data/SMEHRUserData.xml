@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+Licensed to the Apache Software Foundation (ASF) under one
+or more contributor license agreements.  See the NOTICE file
+distributed with this work for additional information
+regarding copyright ownership.  The ASF licenses this file
+to you under the Apache License, Version 2.0 (the
+"License"); you may not use this file except in compliance
+with the License.  You may obtain a copy of the License at
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing,
+software distributed under the License is distributed on an
+"AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+KIND, either express or implied.  See the License for the
+specific language governing permissions and limitations
+under the License.
+-->
+
+<entity-engine-xml>
+
+	<!-- For HUMAN RESOURCE -->
+
+	 <SecurityGroup groupId="HUMANRES_ADMIN" description="Full Access To Human Resource permissions."/>
+	 <SecurityGroup groupId="HUMANRES_MGR" description="Managerial Access To Human Resource."/>
+	 <SecurityGroup groupId="HUMANRES_USER" description="Employee Access To Human Resource."/>
+
+	 <SecurityPermission description="Admin permissions for HR." permissionId="HUMANRES_ADMIN"/>
+	 <SecurityPermission description="Manager permissions for HR." permissionId="HUMANRES_MGR"/>
+	 <SecurityPermission description="Employee least permissions for HR." permissionId="HUMANRES_USER"/>
+	 
+	 <SecurityGroupPermission groupId="HUMANRES_ADMIN" permissionId="HUMANRES_CREATE"/>
+	 <SecurityGroupPermission groupId="HUMANRES_ADMIN" permissionId="HUMANRES_DELETE"/>
+     <SecurityGroupPermission groupId="HUMANRES_ADMIN" permissionId="HUMANRES_UPDATE"/>
+	 <SecurityGroupPermission groupId="HUMANRES_ADMIN" permissionId="HUMANRES_VIEW"/>
+	 <SecurityGroupPermission groupId="HUMANRES_ADMIN" permissionId="HUMANRES_ADMIN"/>
+	 <SecurityGroupPermission groupId="HUMANRES_ADMIN" permissionId="MYPAGE_VIEW"/>
+	 <SecurityGroupPermission groupId="HUMANRES_ADMIN" permissionId="MYPAGE_EMPLOYEE"/>
+	 <SecurityGroupPermission groupId="HUMANRES_ADMIN" permissionId="PARTYMGR_VIEW"/>
+     <SecurityGroupPermission groupId="HUMANRES_ADMIN" permissionId="WORKEFFORTMGR_ROLE_VIEW"/>
+     <SecurityGroupPermission groupId="HUMANRES_ADMIN" permissionId="WORKEFFORTMGR_ROLE_CREATE"/>
+     <SecurityGroupPermission groupId="HUMANRES_ADMIN" permissionId="WORKEFFORTMGR_ROLE_UPDATE"/>
+     <SecurityGroupPermission groupId="HUMANRES_ADMIN" permissionId="WORKEFFORTMGR_ROLE_DELETE"/>    
+	 <SecurityGroupPermission groupId="HUMANRES_ADMIN" permissionId="WORKEFFORTMGR_VIEW"/>
+
+
+	 <SecurityGroupPermission groupId="HUMANRES_MGR" permissionId="HUMANRES_CREATE"/>
+	 <SecurityGroupPermission groupId="HUMANRES_MGR" permissionId="HUMANRES_DELETE"/>
+     <SecurityGroupPermission groupId="HUMANRES_MGR" permissionId="HUMANRES_UPDATE"/>
+	 <SecurityGroupPermission groupId="HUMANRES_MGR" permissionId="HUMANRES_VIEW"/>
+	 <SecurityGroupPermission groupId="HUMANRES_MGR" permissionId="HUMANRES_MGR"/>
+	 <SecurityGroupPermission groupId="HUMANRES_MGR" permissionId="PROJECTMGR_ADMIN"/>
+	 <SecurityGroupPermission groupId="HUMANRES_MGR" permissionId="MYPAGE_VIEW"/>
+	 <SecurityGroupPermission groupId="HUMANRES_MGR" permissionId="MYPAGE_EMPLOYEE"/>
+ 	 <SecurityGroupPermission groupId="HUMANRES_MGR" permissionId="PARTYMGR_VIEW"/>
+	 <SecurityGroupPermission groupId="HUMANRES_MGR" permissionId="WORKEFFORTMGR_ROLE_VIEW"/>
+	 <SecurityGroupPermission groupId="HUMANRES_MGR" permissionId="WORKEFFORTMGR_ROLE_CREATE"/>
+	 <SecurityGroupPermission groupId="HUMANRES_MGR" permissionId="WORKEFFORTMGR_ROLE_UPDATE"/>
+	 <SecurityGroupPermission groupId="HUMANRES_MGR" permissionId="WORKEFFORTMGR_ROLE_DELETE"/>    
+	 <SecurityGroupPermission groupId="HUMANRES_MGR" permissionId="WORKEFFORTMGR_VIEW"/>
+	 <SecurityGroupPermission groupId="HUMANRES_MGR" permissionId="PARTYMGR_ADMIN"/>
+
+
+	 <SecurityGroupPermission groupId="HUMANRES_USER" permissionId="HUMANRES_CREATE"/>
+     <SecurityGroupPermission groupId="HUMANRES_USER" permissionId="HUMANRES_UPDATE"/>
+	 <SecurityGroupPermission groupId="HUMANRES_USER" permissionId="HUMANRES_VIEW"/>
+	 <SecurityGroupPermission groupId="HUMANRES_USER" permissionId="HUMANRES_DELETE"/>
+	 <SecurityGroupPermission groupId="HUMANRES_USER" permissionId="HUMANRES_USER"/>
+	 <SecurityGroupPermission groupId="HUMANRES_USER" permissionId="PROJECTMGR_VIEW"/>
+	 <SecurityGroupPermission groupId="HUMANRES_USER" permissionId="MYPAGE_VIEW"/>
+	 <SecurityGroupPermission groupId="HUMANRES_USER" permissionId="MYPAGE_EMPLOYEE"/>
+	 <SecurityGroupPermission groupId="HUMANRES_USER" permissionId="USERPREF_ADMIN"/>
+	 <SecurityGroupPermission groupId="HUMANRES_USER" permissionId="PARTYMGR_VIEW"/>
+	 <SecurityGroupPermission groupId="HUMANRES_USER" permissionId="WORKEFFORTMGR_VIEW"/>
+	 <SecurityGroupPermission groupId="HUMANRES_USER" permissionId="WORKEFFORTMGR_ROLE_VIEW"/>
+     <SecurityGroupPermission groupId="HUMANRES_USER" permissionId="WORKEFFORTMGR_ROLE_CREATE"/>
+     <SecurityGroupPermission groupId="HUMANRES_USER" permissionId="WORKEFFORTMGR_ROLE_UPDATE"/>
+     <SecurityGroupPermission groupId="HUMANRES_USER" permissionId="WORKEFFORTMGR_ROLE_DELETE"/> 
+     <SecurityGroupPermission groupId="HUMANRES_USER" permissionId="HRMS_CREATE"/> 
+     <SecurityGroupPermission groupId="HUMANRES_USER" permissionId="HRMS_UPDATE"/>    
+
+
+
+	<StatusType description="Performance Review Status" hasTable="N" parentTypeId="" statusTypeId="PERF_REVIEW_STATUS"/>
+    <StatusItem description="In Progress" sequenceId="01" statusCode="IN_PROGRESS" statusId="PERF_IN_PROGRESS" statusTypeId="PERF_REVIEW_STATUS"/>
+    <StatusItem description="Submitted" sequenceId="02" statusCode="SUBMITTED" statusId="PERF_SUBMITTED" statusTypeId="PERF_REVIEW_STATUS"/>
+    <StatusItem description="Review Pending" sequenceId="03" statusCode="PERF_REVIEW_PENDING" statusId="PERF_REVIEW_PENDING" statusTypeId="PERF_REVIEW_STATUS"/>
+	<StatusItem description="Reviewed By Manager" sequenceId="03" statusCode="PERF_REVIEWED_BY_MGR" statusId="PERF_REVIEWED_BY_MGR" statusTypeId="PERF_REVIEW_STATUS"/>
+	<StatusItem description="Reviewed By HR" sequenceId="03" statusCode="REVIEWED_BY_HR" statusId="PERF_REVIEWED_BY_HR" statusTypeId="PERF_REVIEW_STATUS"/>
+	<StatusItem description="Review Accepted" sequenceId="03" statusCode="REVIEW_AGREED" statusId="PERF_REVIEW_AGREED" statusTypeId="PERF_REVIEW_STATUS"/>
+	<StatusItem description="Review Rejected" sequenceId="03" statusCode="REVIEW_DISAGREED" statusId="PERF_REVIEW_DISAGREE" statusTypeId="PERF_REVIEW_STATUS"/>
+	<StatusItem description="Completed" sequenceId="03" statusCode="REVIEW_COMPLETE" statusId="PERF_REVIEW_COMPLETE" statusTypeId="PERF_REVIEW_STATUS"/>	
+
+
+	<!-- yyyy-mm-dd hh:mm:ss[.fffffffff] -->
+	<!--<PerfRating description="Excels in all spheres" rating="4" ratingId="Star" fromDate="2008-01-01 00:00:00" thruDate="2008-31-12 00:00:00"/>-->
+	<!--<PerfRating description="Exceed expectations" rating="5" ratingId="Meritorious" fromDate="2008-01-01 00:00:00" thruDate="2008-31-12 00:00:00"/>-->
+	<!--<PerfRating description="Meets expectations" rating="3" ratingId="Adequate" fromDate="2008-01-01 00:00:00" thruDate="2008-31-12 00:00:00"/>-->
+	<!--<PerfRating description="Below expectations" rating="2" ratingId="Requires Improvement" fromDate="2008-01-01 00:00:00" thruDate="2008-31-12 00:00:00"/>-->
+	<!--<PerfRating description="To be put under observation" rating="1" ratingId="Far Below expectations" fromDate="2008-01-01 00:00:00" thruDate="2008-31-12 00:00:00" />-->
+
+
+	<SecurityGroupPermission groupId="FULLADMIN" permissionId="HUMANRES_ADMIN"/>
+    
+    <!-- Candidate Interview Status in Performance Note -->
+    <StatusType description="Performance Note Status" hasTable="N" parentTypeId="" statusTypeId="PERF_NOTE_STATUS"/>
+    <StatusItem description="In Progress" sequenceId="01" statusCode="IN_PROGRESS" statusId="PER_IN_PROGRESS" statusTypeId="PERF_NOTE_STATUS"/>
+    <StatusItem description="Rejected" sequenceId="02" statusCode="REJECTED" statusId="PER_REJECTED" statusTypeId="PERF_NOTE_STATUS"/>
+	<StatusItem description="Selected" sequenceId="03" statusCode="SELECTED" statusId="PER_SELECTED" statusTypeId="PERF_NOTE_STATUS"/>
+
+	<StatusType description="Offer Status" hasTable="N" parentTypeId="" statusTypeId="OFFER_STATUS"/>
+    <StatusItem description="Generated" sequenceId="01" statusCode="GENERATED" statusId="OF_GENERATED" statusTypeId="OFFER_STATUS"/>
+    <StatusItem description="Authorized" sequenceId="02" statusCode="AUTHORIZED" statusId="OF_AUTHORIZED" statusTypeId="OFFER_STATUS"/>
+    <StatusItem description="Pending Acceptance" sequenceId="03" statusCode="PENDING ACCEPTANCE" statusId="OF_PENDING_ACCEPT"  statusTypeId="OFFER_STATUS"/>
+    <StatusItem description="Accepted" sequenceId="04" statusCode="ACCEPTED" statusId="OF_ACCEPTED" statusTypeId="OFFER_STATUS"/>
+    <StatusItem description="Rejected" sequenceId="05" statusCode="REJECTED" statusId="OF_REJECTED" statusTypeId="OFFER_STATUS"/>
+    <StatusItem description="Accepted on Hold" sequenceId="06" statusCode="ACCEPTED ON HOLD" statusId="OF_ACCEPT_ON_HOLD" statusTypeId="OFFER_STATUS"/>
+    <StatusItem description="Accepted Not Joined" sequenceId="07" statusCode="ACCEPTED NOT JOINED" statusId="OF_ACCEPT_NOT_JOIN" statusTypeId="OFFER_STATUS"/>
+    <StatusItem description="Accepted Joined" sequenceId="08" statusCode="ACCEPTED JOINED" statusId="OF_ACCEPT_JOINED" statusTypeId="OFFER_STATUS"/>
+    <StatusItem description="Offer Withdrawn" sequenceId="09" statusCode="WITHDRAWN" statusId="OF_WITHDRAWN" statusTypeId="OFFER_STATUS"/>
+
+ 	<StatusType description="Qualification Status" hasTable="N" parentTypeId="" statusTypeId="QUAL_STATUS"/>
+    <StatusItem description="Planned For" sequenceId="01" statusCode="PLANNED_FOR" statusId="QUAL_PLANNEDFOR" statusTypeId="QUAL_STATUS"/>
+    <StatusItem description="In Progress" sequenceId="02" statusCode="IN_PROGRESS" statusId="QUAL_IN_PROGRESS" statusTypeId="QUAL_STATUS"/>
+	<StatusItem description="Complete" sequenceId="03" statusCode="COMPLETE" statusId="QUAL_COMPLETE" statusTypeId="QUAL_STATUS"/>
+	<StatusItem description="Incomplete" sequenceId="04" statusCode="INCOMPLETE" statusId="QUAL_INCOMPLETE" statusTypeId="QUAL_STATUS"/>
+		
+
+</entity-engine-xml>

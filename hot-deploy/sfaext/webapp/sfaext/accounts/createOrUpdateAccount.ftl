@@ -1,0 +1,1 @@
+${screens.render("component://sfaext/widget/AccountScreens.xml#NewAccountForm")}

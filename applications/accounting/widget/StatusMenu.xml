@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<menus xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://ofbiz.apache.org/dtds/widget-menu.xsd">
+
+    <menu name="statusMenu" default-menu-item-name="" id="none" type="simple" title="Invoice Status"  extends="CommonButtonBarMenu" extends-resource="component://common/widget/CommonMenus.xml">
+        <actions>
+            <script location="component://accounting/webapp/accounting/WEB-INF/actions/invoice/CheckInvoiceManager.groovy" />
+            <set field="isInvoiceMgr" default-value="${isDisplay}" />
+        </actions>
+       
+        <menu-item name="statusToApproved" title="${uiLabelMap.AccountingInvoiceStatusToApproved}">
+            <condition>
+                <and>
+                    <not><if-empty field="invoice.invoiceId"/></not>
+                   	<if-compare field="isInvoiceMgr" operator="equals" value="true"/>
+                    <or>
+                        <if-compare field="invoice.statusId" operator="equals" value="INVOICE_IN_PROCESS"/>
+                        <if-compare field="invoice.statusId" operator="equals" value="INVOICE_SENT"/>
+                        <if-compare field="invoice.statusId" operator="equals" value="INVOICE_RECEIVED"/>
+                    </or>
+                </and>
+            </condition>
+            <link target="setInvoiceStatus">
+                <parameter param-name="invoiceId" from-field="invoice.invoiceId"/>
+                <parameter param-name="statusId" value="INVOICE_APPROVED"/>
+            </link>
+       </menu-item>
+       
+       <menu-item name="statusToReceived" title="${uiLabelMap.AccountingInvoiceStatusToReceived}" >
+            <condition>
+                <and>
+                    <not><if-empty field="invoice.invoiceId"/></not>
+                    <if-compare field="invoice.statusId" operator="equals" value="INVOICE_IN_PROCESS"/>
+                    <or>
+                        <if-compare field="invoice.invoiceTypeId" operator="equals" value="PURCHASE_INVOICE"/>
+                        <if-compare field="invoice.invoiceTypeId" operator="equals" value="CUST_RTN_INVOICE"/>
+                    </or>
+                </and>
+            </condition>
+            <link target="setInvoiceStatus">
+                <parameter param-name="invoiceId" from-field="invoice.invoiceId"/>
+                <parameter param-name="statusId" value="INVOICE_RECEIVED"/>
+            </link>
+        </menu-item>
+        
+        <menu-item name="statusToSent" title="${uiLabelMap.AccountingInvoiceStatusToSent}">
+            <condition>
+                <or>
+                    <and>
+                        <not><if-empty field="invoice.invoiceId"/></not>
+                        <if-compare field="invoice.statusId" operator="equals" value="INVOICE_IN_PROCESS"/>
+                        <if-compare field="invoice.invoiceTypeId" operator="equals" value="SALES_INVOICE"/>
+                    </and>
+                    <and>
+                        <not><if-empty field="invoice.invoiceId"/></not>
+                        <if-compare field="invoice.statusId" operator="equals" value="INVOICE_APPROVED"/>
+                        <if-compare field="invoice.invoiceTypeId" operator="equals" value="SALES_INVOICE"/>
+                    </and>
+                </or>
+            </condition>
+            <link target="setInvoiceStatus">
+                <parameter param-name="invoiceId" from-field="invoice.invoiceId"/>
+                <parameter param-name="statusId" value="INVOICE_SENT"/>
+            </link>
+        </menu-item>
+        
+        <menu-item name="statusToReady" title="${uiLabelMap.AccountingInvoiceStatusToReady}">
+            <condition>
+                <and>
+                    <not><if-empty field="invoice.invoiceId"/></not>
+                    <if-compare field="isInvoiceMgr" operator="equals" value="true"/>
+                    <or>
+                        <if-compare field="invoice.statusId" operator="equals" value="INVOICE_IN_PROCESS"/>
+                        <if-compare field="invoice.statusId" operator="equals" value="INVOICE_SENT"/>
+                        <if-compare field="invoice.statusId" operator="equals" value="INVOICE_RECEIVED"/>
+                        <if-compare field="invoice.statusId" operator="equals" value="INVOICE_APPROVED"/>
+                    </or>
+                </and>
+            </condition>
+            <link target="setInvoiceStatus">
+                <parameter param-name="invoiceId" from-field="invoice.invoiceId"/>
+                <parameter param-name="statusId" value="INVOICE_READY"/>
+            </link>
+        </menu-item>
+        
+        <menu-item name="statusToPaid" title="${uiLabelMap.AccountingInvoiceStatusToPaid}">
+            <condition>
+                <and>
+                    <not><if-empty field="invoice.invoiceId"/></not>
+                    <or>
+                        <if-compare field="invoice.statusId" operator="equals" value="INVOICE_READY"/>
+                    </or>
+                </and>
+            </condition>
+            <link target="setInvoiceStatus">
+                <parameter param-name="invoiceId" from-field="invoice.invoiceId"/>
+                <parameter param-name="statusId" value="INVOICE_PAID"/>
+            </link>
+        </menu-item>
+        
+        <menu-item name="statusToWriteoff" title="${uiLabelMap.AccountingInvoiceStatusToWriteoff}">
+            <condition>
+                <and>
+                    <not><if-empty field="invoice.invoiceId"/></not>
+                    <or>
+                        <if-compare field="invoice.statusId" operator="equals" value="INVOICE_READY"/>
+                    </or>
+                </and>
+            </condition>
+            <link target="setInvoiceStatus" request-confirmation="true" confirmation-message="You want to writeoff this invoice number ${invoice.invoiceId}?">
+                <parameter param-name="invoiceId" from-field="invoice.invoiceId"/>
+                <parameter param-name="statusId" value="INVOICE_WRITEOFF"/>
+            </link>
+        </menu-item>
+        
+        <menu-item name="statusToInProcess" title="${uiLabelMap.AccountingInvoiceStatusToInProcess}">
+            <condition>
+                <and>
+                    <not><if-empty field="invoice.invoiceId"/></not>
+                    <or>
+                        <if-compare field="invoice.statusId" operator="equals" value="INVOICE_SENT"/>
+                        <if-compare field="invoice.statusId" operator="equals" value="INVOICE_RECEIVED"/>
+                    </or>
+                </and>
+            </condition>
+            <link target="setInvoiceStatus">
+                <parameter param-name="invoiceId" from-field="invoice.invoiceId"/>
+                <parameter param-name="statusId" value="INVOICE_IN_PROCESS"/>
+            </link>
+        </menu-item> 
+        
+        <menu-item name="statusToCancelled" title="${uiLabelMap.AccountingInvoiceStatusToCancelled}">
+            <condition>
+                <and>
+                    <not><if-empty field="invoice.invoiceId"/></not>
+                    <if-compare field="isInvoiceMgr" operator="equals" value="true"/>
+                    <or>
+                        <if-compare field="invoice.statusId" operator="equals" value="INVOICE_IN_PROCESS"/>
+                        <if-compare field="invoice.statusId" operator="equals" value="INVOICE_SENT"/>
+                        <if-compare field="invoice.statusId" operator="equals" value="INVOICE_RECEIVED"/>
+                        <if-compare field="invoice.statusId" operator="equals" value="INVOICE_READY"/>
+                    </or>
+                </and>
+            </condition>
+            <link target="setInvoiceStatus" request-confirmation="true" confirmation-message="You want to cancel this invoice number ${invoice.invoiceId}?">
+                <parameter param-name="invoiceId" from-field="invoice.invoiceId"/>
+                <parameter param-name="statusId" value="INVOICE_CANCELLED"/>
+            </link>
+        </menu-item>
+        
+        <!-- <menu-item name="add" title="Add Invoice Item">
+            <link target="NewReceivableInvoice" style="display:block">
+                <parameter param-name="invoiceId" from-field="parameters.invoiceId"/>
+                <parameter param-name="show" value="false"/>
+            </link>
+        </menu-item> -->
+    </menu>
+</menus>

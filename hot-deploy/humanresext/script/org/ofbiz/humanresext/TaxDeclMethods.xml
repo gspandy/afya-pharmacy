@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<simple-methods xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="http://ofbiz.apache.org/dtds/simple-methods.xsd"
+        >
+
+	<simple-method method-name="createTaxCategory" short-description="Create a Tax Category">
+		<make-value entity-name="TaxCategory" value-field="newEntity"/>
+		<sequenced-id sequence-name="TaxCategory"
+			field="newEntity.categoryId" />
+		<set-nonpk-fields map="parameters" value-field="newEntity"/>
+		<field-to-result field="newEntity.categoryId" result-name="categoryId"/>
+		<create-value value-field="newEntity"/>
+	</simple-method>
+	
+	<simple-method method-name="updateTaxCategory" short-description="Update a Tax Category">
+		<entity-one entity-name="TaxCategory" value-field="lookedUpValue" />
+		<set-nonpk-fields map="parameters" value-field="lookedUpValue"/>
+		<store-value value-field="lookedUpValue" />
+	</simple-method>
+	
+	<simple-method method-name="deleteTaxCategory" short-description="Remove a Tax Category">
+		<entity-one entity-name="TaxCategory" value-field="lookedUpValue"/>
+		<now-date-to-env field="lookedUpValue.thruDate.now()"/>
+		<remove-value value-field="lookedUpValue"/>
+	</simple-method>
+	
+	
+	<simple-method method-name="createTaxItem" short-description="Create a Tax Item">
+		<make-value entity-name="TaxItem" value-field="newEntity"/>
+		<sequenced-id sequence-name="TaxItem"
+			field="newEntity.itemId" />
+			<set-nonpk-fields map="parameters" value-field="newEntity"/>
+			<field-to-result field="newEntity.itemId" result-name="itemId"/>
+		<create-value value-field="newEntity"/>
+	</simple-method>
+	
+	<simple-method method-name="updateTaxItem" short-description="Update a Tax Item">
+		<entity-one entity-name="TaxItem" value-field="lookedUpValue" />
+		<set-nonpk-fields map="parameters" value-field="lookedUpValue"/>
+		<field-to-result field="newEntity.itemId" result-name="itemId"/>
+		<store-value value-field="lookedUpValue" />
+	</simple-method>
+	
+	<simple-method method-name="deleteTaxItem" short-description="Remove a Tax Item">
+		<entity-one entity-name="TaxItem" value-field="lookedUpValue" />
+		<now-timestamp field="lookedUpValue.thruDate.now()"/>		
+		<remove-value value-field="lookedUpValue"/>
+	</simple-method>
+
+	<simple-method method-name="updateTaxDecl" short-description="Update a Tax Decl">
+		<entity-one entity-name="ValidTaxDecl" value-field="lookedUpValue" />
+		<set-nonpk-fields map="parameters" value-field="lookedUpValue"/>
+		<field-to-result field="newEntity.validTaxDeclId" result-name="validTaxDeclId"/>
+		<store-value value-field="lookedUpValue" />
+	</simple-method>
+	
+	<simple-method method-name="deleteTaxDecl" short-description="Remove a Tax Decl">
+		<entity-one entity-name="ValidTaxDecl" value-field="lookedUpValue" />			
+		<now-timestamp field="lookedUpValue.endDate.now()"/>
+		<remove-value value-field="lookedUpValue"/>
+	</simple-method>	
+	
+	
+	<simple-method method-name="createTaxDecl" short-description="Manage Tax Declaration">
+		<entity-count count-field="returnCount" entity-name="ValidTaxDecl">
+			<condition-list combine="and">
+				<condition-expr field-name="startDate" value="${parameters.startDate}"  operator="equals"/>
+				<condition-expr field-name="endDate" value="${parameters.endDate}"  operator="equals"/>
+				<condition-expr field-name="geoId" value="${parameters.geoId}"  operator="equals" />
+			</condition-list>
+		</entity-count>						
+		<if>
+			<condition>
+				<if-compare operator="equals" value="0" field="returnCount"></if-compare>
+			</condition>
+			<then>
+				<make-value entity-name="ValidTaxDecl" value-field="newEntity"/>
+				<sequenced-id sequence-name="ValidTaxDecl"
+					field="newEntity.validTaxDeclId" />
+				<set-nonpk-fields map="parameters" value-field="newEntity"/>
+				<create-value value-field="newEntity"/>
+			</then>
+			<else>
+				<add-error>
+					<fail-message message="There is already an Active Tax Declaration existing for the Time Period."/>
+				</add-error>
+				<check-errors/>
+			</else>
+		</if>	
+	</simple-method>
+	
+</simple-methods>

@@ -1,0 +1,66 @@
+<?init class="org.zkoss.zk.ui.util.Composition"
+arg0="/zul/viewEmployeeProfileTemplate.zul"?>
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<zk xmlns:n="http://www.zkoss.org/2005/zk/native">
+<window self="@{define(viewProfileContent)}" width="100%">
+<caption label="Personal Information" left="true"></caption>
+<n:form >
+			<n:table>
+										<n:tr>
+										<n:td>
+											<n:span>EmployeeId:</n:span>
+										</n:td>
+										<n:td>
+											<n:input type="text"
+												name="partyId" size="50px" />
+										</n:td>
+									</n:tr>
+									<n:tr>
+										<n:td>
+											<n:span>Name:</n:span>
+										</n:td>
+										<n:td>
+											<n:input type="text"
+												name="name" size="50px" />
+										</n:td>
+									</n:tr>
+									<n:tr>
+										<n:td>
+											<n:span>Comments:</n:span>
+										</n:td>
+										<n:td>
+											<n:input type="text"
+												name="comments" size="50px" />
+										</n:td>
+									</n:tr>
+									<n:tr>
+										<n:td>
+											<n:span>ExternalId:</n:span>
+										</n:td>
+										<n:td>
+											<n:input type="text"
+												name="externalId" size="50px" />
+										</n:td>
+									</n:tr>
+
+									<n:tr>
+										<n:td>
+											<n:span>StatusId:</n:span>
+										</n:td>
+										<n:td>
+											<n:input type="text"
+												name="statusId" size="50px" />
+										</n:td>
+									</n:tr>
+
+									<n:tr>
+										<n:td>
+											<n:input type="submit"
+												value="Update" />
+
+										</n:td>
+									</n:tr>
+								</n:table>
+			</n:form>
+			</window>
+			</zk>

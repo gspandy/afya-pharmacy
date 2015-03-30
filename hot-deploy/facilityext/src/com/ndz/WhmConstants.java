@@ -1,0 +1,13 @@
+package com.ndz;
+
+public interface WhmConstants {
+	
+    String STATUS_REQUESTED = "STATUS_REQUESTED";
+
+    String STATUS_SCHEDULED = "STATUS_SCHEDULED";
+
+    String STATUS_COMPLETED = "STATUS_COMPLETED";
+
+    String BUNDLE_PRODUCT_ASSOCIATION_TYPE = "BUNDLED_ASSOC";
+
+}

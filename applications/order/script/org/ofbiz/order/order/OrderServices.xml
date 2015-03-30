@@ -1,0 +1,1412 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+Licensed to the Apache Software Foundation (ASF) under one
+or more contributor license agreements.  See the NOTICE file
+distributed with this work for additional information
+regarding copyright ownership.  The ASF licenses this file
+to you under the Apache License, Version 2.0 (the
+"License"); you may not use this file except in compliance
+with the License.  You may obtain a copy of the License at
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing,
+software distributed under the License is distributed on an
+"AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+KIND, either express or implied.  See the License for the
+specific language governing permissions and limitations
+under the License.
+-->
+<simple-methods xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://ofbiz.apache.org/dtds/simple-methods-v2.xsd">
+
+    <simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_" event-event-message-name="_event_message_" event-request-object-name="request" event-response-code-name="_response_code_" event-response-object-name="response" login-required="true" method-name="getOrderedSummaryInformation" service-error-message-list-name="errorMessageList" service-error-message-map-name="errorMessageMap" service-error-message-name="errorMessage" service-response-message-name="responseMessage" service-success-message-list-name="successMessageList" service-success-message-name="successMessage" short-description="Get Summary Information About Orders for a Customer" use-transaction="true">
+        <!-- The permission checking is commented out to make this service work also when triggered from ecommerce -->
+        <!--if>
+            <condition>
+                <and>
+                    <not><if-has-permission permission="ORDERMGR" action="_VIEW"/></not>
+                    <if-compare-field field="parameters.partyId" to-field="userLogin.partyId" operator="not-equals"/>
+                </and>
+            </condition>
+            <then>
+                <string-to-list string="To get order summary information you must have the ORDERMGR_VIEW permission, or be logged in as the party to get the summary information for." list="error_list"/>
+            </then>
+        </if>
+        <check-errors/>
+       -->
+        <if-not-empty field="monthsToInclude">
+            <now-timestamp field="nowTimestamp"/>
+            <!-- TODO: Change this to use the <set-calendar> operation -->
+            <call-bsh><![CDATA[
+                calendar = com.ibm.icu.util.Calendar.getInstance();
+                calendar.setTimeInMillis(nowTimestamp.getTime());
+                calendar.add(com.ibm.icu.util.Calendar.MONTH, -monthsToInclude.intValue());
+                parameters.put("fromDate", new Timestamp(calendar.getTimeInMillis()));
+            ]]></call-bsh>
+            <set field="parameters.thruDate" from="nowTimestamp" set-if-empty="true" set-if-null="false"/>
+        </if-not-empty>
+        <if-empty field="parameters.roleTypeId">
+            <set field="parameters.roleTypeId" set-if-empty="true" set-if-null="false" value="PLACING_CUSTOMER"/>
+        </if-empty>
+        <if-empty field="parameters.orderTypeId">
+            <set field="parameters.orderTypeId" set-if-empty="true" set-if-null="false" value="SALES_ORDER"/>
+        </if-empty>
+        <if-empty field="parameters.statusId">
+            <set field="parameters.statusId" set-if-empty="true" set-if-null="false" value="ORDER_COMPLETED"/>
+        </if-empty>
+        <entity-condition distinct="false" entity-name="OrderHeaderAndRoleSummary" filter-by-date="false" list="orderInfoList" use-cache="false">
+            <condition-list combine="and">
+                <condition-expr field-name="partyId" from-field="parameters.partyId" ignore="false" ignore-case="false" ignore-if-empty="false" ignore-if-null="false" operator="equals"/>
+                <condition-expr field-name="roleTypeId" from-field="parameters.roleTypeId" ignore="false" ignore-case="false" ignore-if-empty="false" ignore-if-null="false" operator="equals"/>
+                <condition-expr field-name="orderTypeId" from-field="parameters.orderTypeId" ignore="false" ignore-case="false" ignore-if-empty="false" ignore-if-null="false" operator="equals"/>
+                <condition-expr field-name="statusId" from-field="parameters.statusId" ignore="false" ignore-case="false" ignore-if-empty="false" ignore-if-null="false" operator="equals"/>
+                <condition-expr field-name="orderDate" from-field="parameters.fromDate" ignore="false" ignore-case="false" ignore-if-empty="false" ignore-if-null="true" operator="greater-equals"/>
+                <condition-expr field-name="orderDate" from-field="parameters.thruDate" ignore="false" ignore-case="false" ignore-if-empty="false" ignore-if-null="true" operator="less-equals"/>
+            </condition-list>
+            <select-field field-name="partyId"/>
+            <select-field field-name="roleTypeId"/>
+            <select-field field-name="totalGrandAmount"/>
+            <select-field field-name="totalSubRemainingAmount"/>
+            <select-field field-name="totalOrders"/>
+        </entity-condition>
+        <!-- first set the required OUT fields to zero -->
+        <calculate decimal-scale="2" field="plainDoubleZero" rounding-mode="HalfEven" type="BigDecimal">
+            <number value="0.0"/>
+        </calculate>
+        <calculate decimal-scale="2" field="plainLongZero" rounding-mode="HalfEven" type="Long">
+            <number value="0"/>
+        </calculate>
+        <field-to-result field="plainDoubleZero" result-name="totalGrandAmount"/>
+        <field-to-result field="plainDoubleZero" result-name="totalSubRemainingAmount"/>
+        <field-to-result field="plainLongZero" result-name="totalOrders"/>
+        <!-- because we specified the partyId and the roleTypeId, should only be one item in list returned -->
+        <first-from-list entry="orderInfo" list="orderInfoList"/>
+        <if-not-empty field="orderInfo">
+            <field-to-result field="orderInfo.totalGrandAmount" result-name="totalGrandAmount"/>
+            <field-to-result field="orderInfo.totalSubRemainingAmount" result-name="totalSubRemainingAmount"/>
+            <field-to-result field="orderInfo.totalOrders" result-name="totalOrders"/>
+        </if-not-empty>
+    </simple-method>
+
+    <simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_" event-event-message-name="_event_message_" event-request-object-name="request" event-response-code-name="_response_code_" event-response-object-name="response" login-required="true" method-name="createOrderShipment" service-error-message-list-name="errorMessageList" service-error-message-map-name="errorMessageMap" service-error-message-name="errorMessage" service-response-message-name="responseMessage" service-success-message-list-name="successMessageList" service-success-message-name="successMessage" short-description="Create OrderShipment" use-transaction="true">
+        <set field="operationName" set-if-empty="true" set-if-null="false" value="Create OrderShipment"/>
+        <check-permission action="_CREATE" error-list-name="error_list" permission="ORDERMGR">
+            <fail-property property="OrderSecurityErrorToRunCreateOrderShipment" resource="OrderErrorUiLabels"/>
+        </check-permission>
+        <check-errors error-code="error" error-list-name="error_list"/>
+        <make-value entity-name="OrderShipment" value-field="newEntity"/>
+        <set-pk-fields map="parameters" set-if-null="true" value-field="newEntity"/>
+        <set-nonpk-fields map="parameters" set-if-null="true" value-field="newEntity"/>
+        <create-value do-cache-clear="true" or-store="false" value-field="newEntity"/>
+    </simple-method>
+
+    <simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_" event-event-message-name="_event_message_" event-request-object-name="request" event-response-code-name="_response_code_" event-response-object-name="response" login-required="true" method-name="updateOrderShipment" service-error-message-list-name="errorMessageList" service-error-message-map-name="errorMessageMap" service-error-message-name="errorMessage" service-response-message-name="responseMessage" service-success-message-list-name="successMessageList" service-success-message-name="successMessage" short-description="Update OrderShipment" use-transaction="true">
+        <set field="operationName" set-if-empty="true" set-if-null="false" value="Update OrderShipment"/>
+        <check-permission action="_UPDATE" error-list-name="error_list" permission="ORDERMGR">
+            <fail-property property="OrderSecurityErrorToRunDeleteOrderShipment" resource="OrderErrorUiLabels"/>
+        </check-permission>
+        <check-errors error-code="error" error-list-name="error_list"/>
+        <entity-one auto-field-map="true" entity-name="OrderShipment" use-cache="false" value-field="lookedUpValue"/>
+        <set-nonpk-fields map="parameters" set-if-null="true" value-field="lookedUpValue"/>
+        <store-value do-cache-clear="true" value-field="lookedUpValue"/>
+    </simple-method>
+
+    <simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_" event-event-message-name="_event_message_" event-request-object-name="request" event-response-code-name="_response_code_" event-response-object-name="response" login-required="true" method-name="deleteOrderShipment" service-error-message-list-name="errorMessageList" service-error-message-map-name="errorMessageMap" service-error-message-name="errorMessage" service-response-message-name="responseMessage" service-success-message-list-name="successMessageList" service-success-message-name="successMessage" short-description="Delete OrderShipment" use-transaction="true">
+        <set field="operationName" set-if-empty="true" set-if-null="false" value="Delete OrderShipment"/>
+        <check-permission action="_DELETE" error-list-name="error_list" permission="ORDERMGR">
+            <fail-property property="OrderSecurityErrorToRunDeleteOrderShipment" resource="OrderErrorUiLabels"/>
+        </check-permission>
+        <check-errors error-code="error" error-list-name="error_list"/>
+        <entity-one auto-field-map="true" entity-name="OrderShipment" use-cache="false" value-field="lookedUpValue"/>
+        <remove-value do-cache-clear="true" value-field="lookedUpValue"/>
+    </simple-method>
+    <!-- order requirement methods -->
+
+    <simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_" event-event-message-name="_event_message_" event-request-object-name="request" event-response-code-name="_response_code_" event-response-object-name="response" login-required="true" method-name="createOrderRequirementCommitment" service-error-message-list-name="errorMessageList" service-error-message-map-name="errorMessageMap" service-error-message-name="errorMessage" service-response-message-name="responseMessage" service-success-message-list-name="successMessageList" service-success-message-name="successMessage" short-description="Create OrderRequirementCommitment" use-transaction="true">
+        <!-- The permission checking is commented out to make this service work also when triggered from ecommerce orders -->
+        <!--
+        <check-permission permission="ORDERMGR" action="_CREATE">
+            <fail-property resource="OrderErrorUiLabels" property="OrderSecurityErrorToRunCheckCreateOrderRequirementCommitment"/>
+        </check-permission>
+        <check-errors/>
+        -->
+        <make-value entity-name="OrderRequirementCommitment" value-field="newEntity"/>
+        <set-pk-fields map="parameters" set-if-null="true" value-field="newEntity"/>
+        <set-nonpk-fields map="parameters" set-if-null="true" value-field="newEntity"/>
+        <create-value do-cache-clear="true" or-store="false" value-field="newEntity"/>
+    </simple-method>
+
+    <simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_" event-event-message-name="_event_message_" event-request-object-name="request" event-response-code-name="_response_code_" event-response-object-name="response" login-required="true" method-name="createRequirementAndCommitment" service-error-message-list-name="errorMessageList" service-error-message-map-name="errorMessageMap" service-error-message-name="errorMessage" service-response-message-name="responseMessage" service-success-message-list-name="successMessageList" service-success-message-name="successMessage" short-description="create a requirement and commitment for it" use-transaction="true">
+        <set field="inputMap.requirementTypeId" set-if-empty="true" set-if-null="false" value="PRODUCT_REQUIREMENT"/>
+        <!-- Include the facilityId corresponding to this order by looking up the ProductStore -->
+        <entity-one auto-field-map="true" entity-name="OrderHeader" use-cache="false" value-field="orderHeader"/>
+        <get-related-one relation-name="ProductStore" to-value-field="productStore" use-cache="true" value-field="orderHeader"/>
+        <if-not-empty field="productStore.inventoryFacilityId">
+            <set field="inputMap.facilityId" from="productStore.inventoryFacilityId" set-if-empty="true" set-if-null="false"/>
+        </if-not-empty>
+        <call-service break-on-error="true" error-code="error" in-map-name="inputMap" include-user-login="true" require-new-transaction="false" service-name="createRequirement" success-code="success">
+            <result-to-field field="parameters.requirementId" result-name="requirementId"/>
+        </call-service>
+        <!-- create the OrderRequirementCommitment to record the Requirement created for an order item -->
+        <set-service-fields map="parameters" service-name="createOrderRequirementCommitment" to-map="orderReqCommitParams"/>
+        <call-service break-on-error="true" error-code="error" in-map-name="orderReqCommitParams" include-user-login="true" require-new-transaction="false" service-name="createOrderRequirementCommitment" success-code="success"/>
+        <field-to-result field="parameters.requirementId" result-name="requirementId"/>
+    </simple-method>
+
+    <simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_" event-event-message-name="_event_message_" event-request-object-name="request" event-response-code-name="_response_code_" event-response-object-name="response" login-required="true" method-name="getProductFacilityAndQuantities" service-error-message-list-name="errorMessageList" service-error-message-map-name="errorMessageMap" service-error-message-name="errorMessage" service-response-message-name="responseMessage" service-success-message-list-name="successMessageList" service-success-message-name="successMessage" short-description="finds ProductFacility and QOH, ATP inventory for an inventoryItem" use-transaction="true">
+        <!-- Get the ProductFacility for the minimum stock level -->
+        <entity-one auto-field-map="true" entity-name="ProductFacility" use-cache="false" value-field="productFacility">
+            <field-map field-name="productId" from-field="inventoryItem.productId"/>
+            <field-map field-name="facilityId" from-field="inventoryItem.facilityId"/>
+        </entity-one>
+        <!-- Get the product's total quantityOnHand in the facility -->
+        <set field="inputMap.productId" from="inventoryItem.productId" set-if-empty="true" set-if-null="false"/>
+        <set field="inputMap.facilityId" from="inventoryItem.facilityId" set-if-empty="true" set-if-null="false"/>
+        <call-service break-on-error="true" error-code="error" in-map-name="inputMap" include-user-login="true" require-new-transaction="false" service-name="getInventoryAvailableByFacility" success-code="success">
+            <result-to-field field="quantityOnHandTotal" result-name="quantityOnHandTotal"/>
+            <result-to-field field="availableToPromiseTotal" result-name="availableToPromiseTotal"/>
+        </call-service>
+        <clear-field field="inputMap"/>
+    </simple-method>
+
+    <simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_" event-event-message-name="_event_message_" event-request-object-name="request" event-response-code-name="_response_code_" event-response-object-name="response" login-required="true" method-name="getProductRequirementMethod" service-error-message-list-name="errorMessageList" service-error-message-map-name="errorMessageMap" service-error-message-name="errorMessage" service-response-message-name="responseMessage" service-success-message-list-name="successMessageList" service-success-message-name="successMessage" short-description="finds the requirement method for the product" use-transaction="true">
+        <if-not-empty field="parameters.orderId">
+            <entity-one auto-field-map="true" entity-name="OrderHeader" use-cache="false" value-field="order"/>
+        </if-not-empty>
+        <entity-one auto-field-map="true" entity-name="Product" use-cache="false" value-field="product"/>
+        <set field="requirementMethodId" from="product.requirementMethodEnumId" set-if-empty="true" set-if-null="false"/>
+        <if-empty field="requirementMethodId">
+            <set field="isMarketingPkg" from="groovy: org.ofbiz.common.CommonWorkers.hasParentType(delegator, 'ProductType', 'productTypeId', product.productTypeId, 'parentTypeId', 'MARKETING_PKG')" set-if-empty="true" set-if-null="false" type="Boolean"/>
+            <if>
+                <condition>
+                    <and>
+                        <if-compare field="isMarketingPkg" operator="equals" type="Boolean" value="false"/>
+                        <if-compare field="product.productTypeId" operator="not-equals" type="String" value="DIGITAL_GOOD"/>
+                        <not>
+                            <if-empty field="order"/>
+                        </not>
+                    </and>
+                </condition>
+                <then>
+                    <entity-one auto-field-map="true" entity-name="ProductStore" use-cache="false" value-field="productStore">
+                        <field-map field-name="productStoreId" from-field="order.productStoreId"/>
+                    </entity-one>
+                    <set field="requirementMethodId" from="productStore.requirementMethodEnumId" set-if-empty="true" set-if-null="false"/>
+                </then>
+            </if>
+        </if-empty>
+    </simple-method>
+
+    <simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_" event-event-message-name="_event_message_" event-request-object-name="request" event-response-code-name="_response_code_" event-response-object-name="response" login-required="true" method-name="checkCreateOrderRequirement" service-error-message-list-name="errorMessageList" service-error-message-map-name="errorMessageMap" service-error-message-name="errorMessage" service-response-message-name="responseMessage" service-success-message-list-name="successMessageList" service-success-message-name="successMessage" short-description="Create OrderRequirementCommitment and Requirement" use-transaction="true">
+        <check-permission action="_CREATE" error-list-name="error_list" permission="ORDERMGR">
+            <fail-property property="OrderSecurityErrorToRunCheckCreateOrderRequirement" resource="OrderErrorUiLabels"/>
+        </check-permission>
+        <check-errors error-code="error" error-list-name="error_list"/>
+        <call-simple-method method-name="getProductRequirementMethod"/>
+        <if-compare field="order.orderTypeId" operator="equals" type="String" value="SALES_ORDER">
+            <if-compare field="requirementMethodId" operator="equals" type="String" value="PRODRQM_AUTO">
+                <!-- create the requirement -->
+                <set field="inputMap.productId" from="parameters.productId" set-if-empty="true" set-if-null="false"/>
+                <set field="inputMap.quantity" from="parameters.quantity" set-if-empty="true" set-if-null="false"/>
+                <call-simple-method method-name="createRequirementAndCommitment"/>
+            </if-compare>
+        </if-compare>
+    </simple-method>
+
+    <simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_" event-event-message-name="_event_message_" event-request-object-name="request" event-response-code-name="_response_code_" event-response-object-name="response" login-required="true" method-name="checkCreateStockRequirementQoh" service-error-message-list-name="errorMessageList" service-error-message-map-name="errorMessageMap" service-error-message-name="errorMessage" service-response-message-name="responseMessage" service-success-message-list-name="successMessageList" service-success-message-name="successMessage" short-description="Create a Requirement if QOH goes under the minimum stock level" use-transaction="true">
+        <check-permission action="_CREATE" error-list-name="error_list" permission="ORDERMGR">
+            <fail-property property="OrderSecurityErrorToRunCheckCreateStockRequirement" resource="OrderErrorUiLabels"/>
+        </check-permission>
+        <check-errors error-code="error" error-list-name="error_list"/>
+        <!-- If the service is triggered by the updateItemIssuance service, get the ItemIssuance by the passed itemIssuanceId -->
+        <if-not-empty field="parameters.itemIssuanceId">
+            <entity-one auto-field-map="true" entity-name="ItemIssuance" use-cache="false" value-field="itemIssuance"/>
+            <entity-one auto-field-map="true" entity-name="InventoryItem" use-cache="false" value-field="inventoryItem">
+                <field-map field-name="inventoryItemId" from-field="itemIssuance.inventoryItemId"/>
+            </entity-one>
+            <else>
+                <entity-one auto-field-map="true" entity-name="InventoryItem" use-cache="false" value-field="inventoryItem"/>
+            </else>
+        </if-not-empty>
+        <set field="parameters.productId" from="inventoryItem.productId" set-if-empty="true" set-if-null="false"/>
+        <call-simple-method method-name="getProductRequirementMethod"/>
+        <if-compare field="requirementMethodId" operator="equals" type="String" value="PRODRQM_STOCK">
+            <!-- get QOH, ATP quantities and find ProductFacility which has the minimum stock -->
+            <call-simple-method method-name="getProductFacilityAndQuantities"/>
+            <if-not-empty field="productFacility.minimumStock">
+                <!-- No requirements are created if we are already under stock -->
+                <if-compare-field field="quantityOnHandTotal" operator="greater-equals" to-field="productFacility.minimumStock" type="BigDecimal">
+                    <calculate decimal-scale="2" field="newQuantityOnHand" rounding-mode="HalfEven" type="BigDecimal">
+                        <calcop field="quantityOnHandTotal" operator="subtract">
+                            <calcop field="parameters.quantity" operator="get"/>
+                        </calcop>
+                    </calculate>
+                    <!-- If this new issuance will cause the quantityOnHandTotal to go below the minimumStock, create a new requirement -->
+                    <if-compare-field field="newQuantityOnHand" operator="less" to-field="productFacility.minimumStock" type="BigDecimal">
+                        <set field="inputMap.productId" from="inventoryItem.productId" set-if-empty="true" set-if-null="false"/>
+                        <set field="inputMap.facilityId" from="productFacility.facilityId" set-if-empty="true" set-if-null="false"/>
+                        <if-not-empty field="productFacility.reorderQuantity">
+                            <set field="inputMap.quantity" from="productFacility.reorderQuantity" set-if-empty="true" set-if-null="false"/>
+                            <else>
+                                <set field="inputMap.quantity" from="parameters.quantity" set-if-empty="true" set-if-null="false"/>
+                            </else>
+                        </if-not-empty>
+                        <set field="inputMap.requirementTypeId" set-if-empty="true" set-if-null="false" value="PRODUCT_REQUIREMENT"/>
+                        <call-service break-on-error="true" error-code="error" in-map-name="inputMap" include-user-login="true" require-new-transaction="false" service-name="createRequirement" success-code="success">
+                            <result-to-field field="parameters.requirementId" result-name="requirementId"/>
+                        </call-service>
+                        <field-to-result field="parameters.requirementId" result-name="requirementId"/>
+                    </if-compare-field>
+                </if-compare-field>
+            </if-not-empty>
+        </if-compare>
+    </simple-method>
+
+    <simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_" event-event-message-name="_event_message_" event-request-object-name="request" event-response-code-name="_response_code_" event-response-object-name="response" login-required="true" method-name="checkCreateStockRequirementAtp" service-error-message-list-name="errorMessageList" service-error-message-map-name="errorMessageMap" service-error-message-name="errorMessage" service-response-message-name="responseMessage" service-success-message-list-name="successMessageList" service-success-message-name="successMessage" short-description="Create a Requirement if ATP goes under the minimum stock level" use-transaction="true">
+        <check-permission action="_CREATE" error-list-name="error_list" permission="ORDERMGR">
+            <fail-property property="OrderSecurityErrorToRunCheckCreateStockRequirement" resource="OrderErrorUiLabels"/>
+        </check-permission>
+        <check-errors error-code="error" error-list-name="error_list"/>
+        <!-- assumes that inventoryItemId is one of the parameters and get the inventory item of the reservation -->
+        <entity-one auto-field-map="true" entity-name="InventoryItem" use-cache="false" value-field="inventoryItem"/>
+        <!-- find the requirement method for this product -->
+        <set field="parameters.productId" from="inventoryItem.productId" set-if-empty="true" set-if-null="false"/>
+        <call-simple-method method-name="getProductRequirementMethod"/>
+        <if-compare field="requirementMethodId" operator="equals" type="String" value="PRODRQM_STOCK_ATP">
+            <!-- get QOH, ATP quantities and find ProductFacility which has the minimum stock -->
+            <call-simple-method method-name="getProductFacilityAndQuantities"/>
+            <if-not-empty field="productFacility.minimumStock">
+                <!-- No requirements are created if we are not under stock -->
+                <!-- this service is supposed to be called after inventory is reserved, so inventory should have been updated already -->
+                <if-compare-field field="availableToPromiseTotal" operator="less" to-field="productFacility.minimumStock" type="BigDecimal">
+                    <calculate decimal-scale="2" field="oldAvailableToPromise" rounding-mode="HalfEven" type="BigDecimal">
+                        <calcop field="availableToPromiseTotal" operator="add">
+                            <calcop field="parameters.quantity" operator="get"/>
+                        </calcop>
+                    </calculate>
+                    <!-- If before this reservation the availableToPromiseTotal was over minimumStock, create a new requirement -->
+                    <if-compare-field field="oldAvailableToPromise" operator="greater-equals" to-field="productFacility.minimumStock" type="BigDecimal">
+                        <set field="inputMap.productId" from="inventoryItem.productId" set-if-empty="true" set-if-null="false"/>
+                        <set field="inputMap.facilityId" from="productFacility.facilityId" set-if-empty="true" set-if-null="false"/>
+                        <if-not-empty field="productFacility.reorderQuantity">
+                            <set field="inputMap.quantity" from="productFacility.reorderQuantity" set-if-empty="true" set-if-null="false"/>
+                            <else>
+                                <set field="inputMap.quantity" from="parameters.quantity" set-if-empty="true" set-if-null="false"/>
+                            </else>
+                        </if-not-empty>
+                        <set field="inputMap.requirementTypeId" set-if-empty="true" set-if-null="false" value="PRODUCT_REQUIREMENT"/>
+                        <call-service break-on-error="true" error-code="error" in-map-name="inputMap" include-user-login="true" require-new-transaction="false" service-name="createRequirement" success-code="success">
+                            <result-to-field field="parameters.requirementId" result-name="requirementId"/>
+                        </call-service>
+                        <field-to-result field="parameters.requirementId" result-name="requirementId"/>
+                    </if-compare-field>
+                </if-compare-field>
+            </if-not-empty>
+        </if-compare>
+    </simple-method>
+
+    <simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_" event-event-message-name="_event_message_" event-request-object-name="request" event-response-code-name="_response_code_" event-response-object-name="response" login-required="true" method-name="createRequirementFromItemATP" service-error-message-list-name="errorMessageList" service-error-message-map-name="errorMessageMap" service-error-message-name="errorMessage" service-response-message-name="responseMessage" service-success-message-list-name="successMessageList" service-success-message-name="successMessage" short-description="Create a Requirement for an item based on ATP inventory quantity and minimum" use-transaction="true">
+        <!-- NOTE DEJ20090902: this service is not called anywhere, instead the createATPRequirementsForOrder service (written in Java) is called; why this is the case I don't know... -->
+        <check-permission action="_CREATE" error-list-name="error_list" permission="ORDERMGR">
+            <fail-property property="OrderSecurityErrorToRunCreateRequirementFromItemATP" resource="OrderErrorUiLabels"/>
+        </check-permission>
+        <check-errors error-code="error" error-list-name="error_list"/>
+        <!-- assumes that inventoryItemId is one of the parameters and get the inventory item of the reservation -->
+        <entity-one auto-field-map="true" entity-name="InventoryItem" use-cache="false" value-field="inventoryItem"/>
+        <!-- find the requirement method for this product -->
+        <set field="parameters.productId" from="inventoryItem.productId" set-if-empty="true" set-if-null="false"/>
+        <call-simple-method method-name="getProductRequirementMethod"/>
+        <if-compare field="requirementMethodId" operator="equals" type="String" value="PRODRQM_ATP">
+            <!-- get the ATP, QOH quantities and the product facility's minimum stock -->
+            <call-simple-method method-name="getProductFacilityAndQuantities"/>
+            <if-empty field="productFacility">
+                <set field="minimumStock" set-if-empty="true" set-if-null="false" value="0"/>
+                <else>
+                    <set field="minimumStock" from="productFacility.minimumStock" set-if-empty="true" set-if-null="false"/>
+                </else>
+            </if-empty>
+            <!-- are we below minimum stock?  this service is supposed to be called after inventory is reserved, so inventory should have been updated already -->
+            <if-compare-field field="availableToPromiseTotal" operator="less" to-field="minimumStock" type="BigDecimal">
+                <!-- what is the right quantity?  It is the lesser of the actual quantity and the quantity required to bring us back up to minimum stock -->
+                <calculate decimal-scale="2" field="quantityShortfall" rounding-mode="HalfEven" type="BigDecimal">
+                    <calcop field="minimumStock" operator="subtract">
+                        <calcop field="availableToPromiseTotal" operator="get"/>
+                    </calcop>
+                </calculate>
+                <if-compare-field field="quantityShortfall" operator="less" to-field="parameters.quantity" type="BigDecimal">
+                    <set field="inputMap.quantity" from="quantityShortfall" set-if-empty="true" set-if-null="false"/>
+                    <else>
+                        <set field="inputMap.quantity" from="parameters.quantity" set-if-empty="true" set-if-null="false"/>
+                    </else>
+                </if-compare-field>
+                <!-- TODO: we're not supporting the reorderQuantity of the productFacility.  It seems that altering the requirement quantity
+                    due to reorder quantities would affect the ability to link requirements and hence PO items back to the original order.
+                    If we can support it while at the same time linking requirements back to the original sales order, that would be better. -->
+                <set field="inputMap.productId" from="parameters.productId" set-if-empty="true" set-if-null="false"/>
+                <set field="inputMap.facilityId" from="inventoryItem.facilityId" set-if-empty="true" set-if-null="false"/>
+                <!-- Retrieve and total the quantities of existing requirements for the product/facility -->
+                <entity-condition distinct="false" entity-name="Requirement" filter-by-date="false" list="requirements" use-cache="false">
+                    <condition-list combine="and">
+                        <condition-expr field-name="productId" from-field="parameters.productId" ignore="false" ignore-case="false" ignore-if-empty="false" ignore-if-null="false" operator="equals"/>
+                        <condition-expr field-name="requirementTypeId" ignore="false" ignore-case="false" ignore-if-empty="false" ignore-if-null="false" operator="equals" value="PRODUCT_REQUIREMENT"/>
+                        <condition-expr field-name="facilityId" from-field="facilityId" ignore="false" ignore-case="false" ignore-if-empty="false" ignore-if-null="false" operator="equals"/>
+                        <condition-expr field-name="statusId" ignore="false" ignore-case="false" ignore-if-empty="false" ignore-if-null="false" operator="not-equals" value="REQ_ORDERED"/>
+                        <condition-expr field-name="statusId" ignore="false" ignore-case="false" ignore-if-empty="false" ignore-if-null="false" operator="not-equals" value="REQ_REJECTED"/>
+                    </condition-list>
+                </entity-condition>
+                <iterate entry="requirement" list="requirements">
+                    <calculate decimal-scale="2" field="existingRequirementTotal" rounding-mode="HalfEven" type="BigDecimal">
+                        <calcop field="existingRequirementTotal" operator="get"/>
+                        <calcop field="requirement.quantity" operator="get"/>
+                    </calculate>
+                </iterate>
+                <!-- Subtract the total quantity of existing requirements from the required quantity to determine if a new requirement needs to be created -->
+                <calculate decimal-scale="2" field="newRequirementTotal" rounding-mode="HalfEven" type="BigDecimal">
+                    <calcop field="inputMap.quantity" operator="subtract">
+                        <calcop field="existingRequirementTotal" operator="get"/>
+                    </calcop>
+                </calculate>
+                <!-- If a new requirement needs to be created, create it for the difference between the required quantity and the total quantity of existing requirements -->
+                <if-compare field="newRequirementTotal" operator="greater-equals" type="String" value="0">
+                    <set field="newRequirementTotal" from="inputMap.quantity" set-if-empty="true" set-if-null="false"/>
+                    <call-simple-method method-name="createRequirementAndCommitment"/>
+                </if-compare>
+            </if-compare-field>
+        </if-compare>
+    </simple-method>
+
+    <simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_" event-event-message-name="_event_message_" event-request-object-name="request" event-response-code-name="_response_code_" event-response-object-name="response" login-required="true" method-name="checkCreateProductRequirementForFacility" service-error-message-list-name="errorMessageList" service-error-message-map-name="errorMessageMap" service-error-message-name="errorMessage" service-response-message-name="responseMessage" service-success-message-list-name="successMessageList" service-success-message-name="successMessage" short-description="Create Requirements for all the products in a facility with QOH under the minimum stock level" use-transaction="true">
+        <check-permission action="_CREATE" error-list-name="error_list" permission="ORDERMGR">
+            <fail-property property="OrderSecurityErrorToRunCheckCreateStockRequirement" resource="OrderErrorUiLabels"/>
+        </check-permission>
+        <check-errors error-code="error" error-list-name="error_list"/>
+        <entity-and entity-name="ProductFacility" filter-by-date="false" list="products" use-cache="false">
+            <field-map field-name="facilityId" from-field="parameters.facilityId"/>
+        </entity-and>
+        <iterate entry="productFacility" list="products">
+            <set field="parameters.productId" from="productFacility.productId" set-if-empty="true" set-if-null="false"/>
+            <clear-field field="requirementMethodId"/>
+            <call-simple-method method-name="getProductRequirementMethod"/>
+            <if-empty field="requirementMethodId">
+                <set field="requirementMethodId" from="parameters.defaultRequirementMethodId" set-if-empty="true" set-if-null="false"/>
+            </if-empty>
+            <if>
+                <condition>
+                    <or>
+                        <if-compare field="requirementMethodId" operator="equals" type="String" value="PRODRQM_STOCK"/>
+                        <if-compare field="requirementMethodId" operator="equals" type="String" value="PRODRQM_STOCK_ATP"/>
+                    </or>
+                </condition>
+                <then>
+                    <!-- get QOH, ATP and find ProductFacility which has the minimum stock -->
+                    <if-not-empty field="productFacility.minimumStock">
+                        <!-- Get the product's total quantityOnHand in the facility -->
+                        <clear-field field="inputMap"/>
+                        <set field="inputMap.productId" from="productFacility.productId" set-if-empty="true" set-if-null="false"/>
+                        <set field="inputMap.facilityId" from="productFacility.facilityId" set-if-empty="true" set-if-null="false"/>
+                        <call-service break-on-error="true" error-code="error" in-map-name="inputMap" include-user-login="true" require-new-transaction="false" service-name="getInventoryAvailableByFacility" success-code="success">
+                            <result-to-field field="quantityOnHandTotal" result-name="quantityOnHandTotal"/>
+                            <result-to-field field="availableToPromiseTotal" result-name="availableToPromiseTotal"/>
+                        </call-service>
+                        <if-compare field="requirementMethodId" operator="equals" type="String" value="PRODRQM_STOCK">
+                            <set field="currentQuantity" from="quantityOnHandTotal" set-if-empty="true" set-if-null="false"/>
+                            <else>
+                                <set field="currentQuantity" from="availableToPromiseTotal" set-if-empty="true" set-if-null="false"/>
+                            </else>
+                        </if-compare>
+                        <!-- No requirements are created if we are already under stock -->
+                        <if-compare-field field="currentQuantity" operator="less" to-field="productFacility.minimumStock" type="BigDecimal">
+                            <clear-field field="inputMap"/>
+                            <set field="inputMap.productId" from="productFacility.productId" set-if-empty="true" set-if-null="false"/>
+                            <if-not-empty field="productFacility.reorderQuantity">
+                                <set field="inputMap.quantity" from="productFacility.reorderQuantity" set-if-empty="true" set-if-null="false" type="BigDecimal"/>
+                                <else>
+                                    <set field="inputMap.quantity" set-if-empty="true" set-if-null="false" type="BigDecimal" value="0"/>
+                                </else>
+                            </if-not-empty>
+                            <calculate decimal-scale="2" field="quantityShortfall" rounding-mode="HalfEven" type="BigDecimal">
+                                <calcop field="productFacility.minimumStock" operator="subtract">
+                                    <calcop field="currentQuantity" operator="get"/>
+                                </calcop>
+                            </calculate>
+                            <if-compare-field field="inputMap.quantity" operator="less" to-field="quantityShortfall" type="BigDecimal">
+                                <set field="inputMap.quantity" from="quantityShortfall" set-if-empty="true" set-if-null="false" type="BigDecimal"/>
+                            </if-compare-field>
+                            <set field="inputMap.requirementTypeId" set-if-empty="true" set-if-null="false" value="PRODUCT_REQUIREMENT"/>
+                            <set field="inputMap.facilityId" from="parameters.facilityId" set-if-empty="true" set-if-null="false"/>
+                            <call-service break-on-error="true" error-code="error" in-map-name="inputMap" include-user-login="true" require-new-transaction="false" service-name="createRequirement" success-code="success">
+                                <result-to-field field="requirementId" result-name="requirementId"/>
+                            </call-service>
+                            <log level="info" message="Requirement creted with id [${requirementId}] for product with id [${productFacility.productId}]."/>
+                        </if-compare-field>
+                    </if-not-empty>
+                </then>
+            </if>
+        </iterate>
+    </simple-method>
+
+    <simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_" event-event-message-name="_event_message_" event-request-object-name="request" event-response-code-name="_response_code_" event-response-object-name="response" login-required="true" method-name="getNextOrderId" service-error-message-list-name="errorMessageList" service-error-message-map-name="errorMessageMap" service-error-message-name="errorMessage" service-response-message-name="responseMessage" service-success-message-list-name="successMessageList" service-success-message-name="successMessage" short-description="Get Next orderId" use-transaction="true">
+        <!-- try to find PartyAcctgPreference for parameters.partyId, see if we need any special order number sequencing -->
+        <entity-one auto-field-map="true" entity-name="PartyAcctgPreference" use-cache="false" value-field="partyAcctgPreference"/>
+        <log level="info" message="In getNextOrderId partyId is [${parameters.partyId}], partyAcctgPreference: ${partyAcctgPreference}"/>
+        <if>
+            <condition>
+                <if-compare field="partyAcctgPreference.orderSequenceEnumId" operator="equals" type="String" value="ODRSQ_ENF_SEQ"/>
+            </condition>
+            <then>
+                <!-- <log level="info" message="In getNextOrderId sequence enum ODRSQ_ENF_SEQ"/> -->
+                <!-- this is sequential sequencing, we can't skip a number, also it must be a unique sequence per partyIdFrom -->
+                <if-not-empty field="partyAcctgPreference.lastOrderNumber">
+                    <calculate decimal-scale="2" field="partyAcctgPreference.lastOrderNumber" rounding-mode="HalfEven" type="Long">
+                        <calcop field="partyAcctgPreference.lastOrderNumber" operator="add"/>
+                        <number value="1"/>
+                    </calculate>
+                    <else>
+                        <calculate decimal-scale="2" field="partyAcctgPreference.lastOrderNumber" rounding-mode="HalfEven" type="Long">
+                            <number value="1"/>
+                        </calculate>
+                    </else>
+                </if-not-empty>
+                <store-value do-cache-clear="true" value-field="partyAcctgPreference"/>
+                <set field="orderIdTemp" from="partyAcctgPreference.lastOrderNumber" set-if-empty="true" set-if-null="false"/>
+            </then>
+            <else>
+                <!-- <log level="info" message="In getNextOrderId sequence enum ODRSQ_STANDARD"/> -->
+                <!-- default to the default sequencing: ODRSQ_STANDARD -->
+                <set field="orderIdTemp" from="parameters.orderId" set-if-empty="true" set-if-null="false"/>
+                <if-empty field="orderIdTemp">
+                    <sequenced-id field="orderIdTemp" get-long-only="false" sequence-name="OrderHeader"/>
+                    <else>
+                        <!-- check the provided ID -->
+                        <check-id error-list-name="error_list" field="orderIdTemp"/>
+                        <check-errors error-code="error" error-list-name="error_list"/>
+                    </else>
+                </if-empty>
+            </else>
+        </if>
+        <if-not-empty field="parameters.productStoreId">
+            <entity-one auto-field-map="true" entity-name="ProductStore" use-cache="false" value-field="productStore"/>
+        </if-not-empty>
+        <!-- use orderIdTemp along with the orderIdPrefix to create the real ID -->
+        <set field="orderId" set-if-empty="true" set-if-null="false" value="${productStore.orderNumberPrefix}${partyAcctgPreference.orderIdPrefix}${str:toString(orderIdTemp)}"/>
+        <field-to-result field="orderId" result-name="orderId"/>
+    </simple-method>
+
+    <simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_" event-event-message-name="_event_message_" event-request-object-name="request" event-response-code-name="_response_code_" event-response-object-name="response" login-required="true" method-name="createOrderHeader" service-error-message-list-name="errorMessageList" service-error-message-map-name="errorMessageMap" service-error-message-name="errorMessage" service-response-message-name="responseMessage" service-success-message-list-name="successMessageList" service-success-message-name="successMessage" short-description="Create OrderHeader" use-transaction="true">
+        <now-timestamp field="nowTimestamp"/>
+        <set field="operationName" set-if-empty="true" set-if-null="false" value="Create OrderHeader"/>
+        <check-permission action="_CREATE" error-list-name="error_list" permission="ORDERMGR">
+            <fail-property property="OrderSecurityErrorToRunCreateOrderShipment" resource="OrderErrorUiLabels"/>
+        </check-permission>
+        <check-errors error-code="error" error-list-name="error_list"/>
+        <make-value entity-name="OrderHeader" value-field="newEntity"/>
+        <if-not-empty field="parameters.orderId">
+            <set field="newEntity.orderId" from="parameters.orderId" set-if-empty="true" set-if-null="false"/>
+            <else>
+                <sequenced-id field="newEntity.orderId" get-long-only="false" sequence-name="OrderHeader"/>
+            </else>
+        </if-not-empty>
+        <field-to-result field="newEntity.orderId" result-name="orderId"/>
+        <set-nonpk-fields map="parameters" set-if-null="true" value-field="newEntity"/>
+        <if-empty field="newEntity.statusId">
+            <set field="newEntity.statusId" set-if-empty="true" set-if-null="false" value="ORDER_CREATED"/>
+        </if-empty>
+        <if-empty field="newEntity.orderDate">
+            <set field="newEntity.orderDate" from="nowTimestamp" set-if-empty="true" set-if-null="false"/>
+        </if-empty>
+        <if-empty field="newEntity.entryDate">
+            <set field="newEntity.entryDate" from="nowTimestamp" set-if-empty="true" set-if-null="false"/>
+        </if-empty>
+        <create-value do-cache-clear="true" or-store="false" value-field="newEntity"/>
+    </simple-method>
+
+    <simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_" event-event-message-name="_event_message_" event-request-object-name="request" event-response-code-name="_response_code_" event-response-object-name="response" login-required="true" method-name="updateOrderHeader" service-error-message-list-name="errorMessageList" service-error-message-map-name="errorMessageMap" service-error-message-name="errorMessage" service-response-message-name="responseMessage" service-success-message-list-name="successMessageList" service-success-message-name="successMessage" short-description="Update OrderHeader" use-transaction="true">
+        <set field="operationName" set-if-empty="true" set-if-null="false" value="Update OrderHeader"/>
+        <check-permission action="_UPDATE" error-list-name="error_list" permission="ORDERMGR">
+            <fail-property property="OrderSecurityErrorToRunCreateOrderShipment" resource="OrderErrorUiLabels"/>
+        </check-permission>
+        <check-errors error-code="error" error-list-name="error_list"/>
+        <entity-one auto-field-map="true" entity-name="OrderHeader" use-cache="false" value-field="orderHeader"/>
+        <if-empty field="orderHeader">
+            <add-error error-list-name="error_list">
+                <fail-message message="ERROR: Cannot update specified contact info because it does not correspond to the specified work effort"/>
+            </add-error>
+        </if-empty>
+        <check-errors error-code="error" error-list-name="error_list"/>
+        <set-nonpk-fields map="parameters" set-if-null="true" value-field="orderHeader"/>
+        <store-value do-cache-clear="true" value-field="orderHeader"/>
+    </simple-method>
+
+    <simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_" event-event-message-name="_event_message_" event-request-object-name="request" event-response-code-name="_response_code_" event-response-object-name="response" login-required="true" method-name="recreateOrderAdjustments" service-error-message-list-name="errorMessageList" service-error-message-map-name="errorMessageMap" service-error-message-name="errorMessage" service-response-message-name="responseMessage" service-success-message-list-name="successMessageList" service-success-message-name="successMessage" short-description="Auto create OrderAdjustments" use-transaction="true">
+        <check-permission action="_UPDATE" error-list-name="error_list" permission="ORDERMGR">
+            <fail-property property="OrderSecurityErrorToRunAutoCreateOrderAdjustments" resource="OrderErrorUiLabels"/>
+        </check-permission>
+        <check-errors error-code="error" error-list-name="error_list"/>
+        <entity-one auto-field-map="true" entity-name="OrderHeader" use-cache="false" value-field="order"/>
+        <!-- all existing promo order items are cancelled -->
+        <get-related list="orderItems" relation-name="OrderItem" use-cache="false" value-field="order"/>
+        <iterate entry="orderItem" list="orderItems">
+            <if>
+                <condition>
+                    <and>
+                        <if-compare field="orderItem.isPromo" operator="equals" type="String" value="Y"/>
+                        <if-compare field="orderItem.statusId" operator="not-equals" type="String" value="ITEM_CANCELLED"/>
+                    </and>
+                </condition>
+                <then>
+                    <clear-field field="cancelOrderItemInMap"/>
+                    <set-service-fields map="parameters" service-name="cancelOrderItemNoActions" to-map="cancelOrderItemInMap"/>
+                    <set field="cancelOrderItemInMap.orderItemSeqId" from="orderItem.orderItemSeqId" set-if-empty="true" set-if-null="false"/>
+                    <call-service break-on-error="true" error-code="error" in-map-name="cancelOrderItemInMap" include-user-login="true" require-new-transaction="false" service-name="cancelOrderItemNoActions" success-code="success"/>
+                </then>
+            </if>
+        </iterate>
+        <get-related list="orderAdjustments" relation-name="OrderAdjustment" use-cache="false" value-field="order"/>
+        <!-- Accumulate the total existing promotional adjustment -->
+        <set field="existingOrderAdjustmentTotal" set-if-empty="true" set-if-null="false" type="BigDecimal" value="0"/>
+        <iterate entry="orderAdjustment" list="orderAdjustments">
+            <if>
+                <condition>
+                    <not>
+                        <if-empty field="orderAdjustment.productPromoId"/>
+                    </not>
+                </condition>
+                <then>
+                    <calculate decimal-scale="3" field="existingOrderAdjustmentTotal" rounding-mode="HalfEven" type="BigDecimal">
+                        <calcop operator="add">
+                            <calcop field="orderAdjustment.amount" operator="get"/>
+                            <calcop field="existingOrderAdjustmentTotal" operator="get"/>
+                        </calcop>
+                    </calculate>
+                </then>
+            </if>
+        </iterate>
+        <!-- Recalculate the promotions for the order -->
+        <set-service-fields map="parameters" service-name="loadCartFromOrder" to-map="loadCartFromOrderInMap"/>
+        <set field="loadCartFromOrderInMap.skipInventoryChecks" set-if-empty="true" set-if-null="false" type="Boolean" value="true"/>
+        <set field="loadCartFromOrderInMap.skipProductChecks" set-if-empty="true" set-if-null="false" type="Boolean" value="true"/>
+        <call-service break-on-error="true" error-code="error" in-map-name="loadCartFromOrderInMap" include-user-login="true" require-new-transaction="false" service-name="loadCartFromOrder" success-code="success">
+            <result-to-field field="cart" result-name="shoppingCart"/>
+        </call-service>
+        <call-object-method method-name="items" obj-field="cart" ret-field="items"/>
+        <iterate entry="item" list="items">
+            <call-object-method method-name="getOrderItemSeqId" obj-field="item" ret-field="orderItemSeqId"/>
+            <if-empty field="orderItemSeqId">
+                <!-- this is a new (promo) item -->
+                <!-- a new order item is created -->
+                <make-value entity-name="OrderItem" value-field="newOrderItem"/>
+                <set field="newOrderItem.orderId" from="parameters.orderId" set-if-empty="true" set-if-null="false"/>
+                <call-object-method method-name="getItemType" obj-field="item" ret-field="newOrderItem.orderItemTypeId"/>
+                <call-object-method method-name="getSelectedAmount" obj-field="item" ret-field="newOrderItem.selectedAmount"/>
+                <call-object-method method-name="getBasePrice" obj-field="item" ret-field="newOrderItem.unitPrice"/>
+                <call-object-method method-name="getListPrice" obj-field="item" ret-field="newOrderItem.unitListPrice"/>
+                <call-object-method method-name="getName" obj-field="item" ret-field="newOrderItem.itemDescription"/>
+                <call-object-method method-name="getStatusId" obj-field="item" ret-field="newOrderItem.statusId"/>
+                <call-object-method method-name="getProductId" obj-field="item" ret-field="newOrderItem.productId"/>
+                <call-object-method method-name="getQuantity" obj-field="item" ret-field="newOrderItem.quantity"/>
+                <set field="newOrderItem.isModifiedPrice" set-if-empty="true" set-if-null="false" value="N"/>
+                <set field="newOrderItem.isPromo" set-if-empty="true" set-if-null="false" value="Y"/>
+                <if-empty field="newOrderItem.statusId">
+                    <set field="newOrderItem.statusId" set-if-empty="true" set-if-null="false" value="ITEM_CREATED"/>
+                </if-empty>
+                <make-next-seq-id increment-by="1" numeric-padding="5" seq-field-name="orderItemSeqId" value-field="newOrderItem"/>
+                <create-value do-cache-clear="true" or-store="false" value-field="newOrderItem"/>
+                <!-- and the orderItemSeqId is assigned to the shopping cart item-->
+                <call-object-method method-name="setOrderItemSeqId" obj-field="item">
+                    <field field="newOrderItem.orderItemSeqId" type="String"/>
+                </call-object-method>
+            </if-empty>
+        </iterate>
+        <call-object-method method-name="makeAllAdjustments" obj-field="cart" ret-field="adjustments"/>
+        <!-- Accumulate the new promotion total from the recalculated promotion adjustments -->
+        <set field="newOrderAdjustmentTotal" set-if-empty="true" set-if-null="false" type="BigDecimal" value="0"/>
+        <iterate entry="adjustment" list="adjustments">
+            <if>
+                <condition>
+                    <not>
+                        <if-empty field="orderAdjustment.productPromoId"/>
+                    </not>
+                </condition>
+                <then>
+                    <calculate decimal-scale="3" field="newOrderAdjustmentTotal" rounding-mode="HalfEven" type="BigDecimal">
+                        <calcop operator="add">
+                            <calcop field="adjustment.amount" operator="get"/>
+                            <calcop field="newOrderAdjustmentTotal" operator="get"/>
+                        </calcop>
+                    </calculate>
+                </then>
+            </if>
+        </iterate>
+        <!-- Determine the difference between existing and new promotion adjustment totals, if any -->
+        <calculate decimal-scale="3" field="orderAdjustmentTotalDifference" rounding-mode="HalfEven" type="BigDecimal">
+            <calcop field="newOrderAdjustmentTotal" operator="subtract">
+                <calcop field="existingOrderAdjustmentTotal" operator="get"/>
+            </calcop>
+        </calculate>
+        <!-- If the total has changed, create an OrderAdjustment to reflect the fact -->
+        <if-compare field="orderAdjustmentTotalDifference" operator="not-equals" type="BigDecimal" value="0">
+            <set field="createOrderAdjContext.orderAdjustmentTypeId" set-if-empty="true" set-if-null="false" value="PROMOTION_ADJUSTMENT"/>
+            <set field="createOrderAdjContext.orderId" from="parameters.orderId" set-if-empty="true" set-if-null="false"/>
+            <set field="createOrderAdjContext.orderItemSeqId" set-if-empty="true" set-if-null="false" value="_NA_"/>
+            <set field="createOrderAdjContext.shipGroupSeqId" set-if-empty="true" set-if-null="false" value="_NA_"/>
+            <set field="createOrderAdjContext.description" set-if-empty="true" set-if-null="false" value="Adjustment due to order change"/>
+            <set field="createOrderAdjContext.amount" from="orderAdjustmentTotalDifference" set-if-empty="true" set-if-null="false" type="BigDecimal"/>
+            <call-service break-on-error="true" error-code="error" in-map-name="createOrderAdjContext" include-user-login="true" require-new-transaction="false" service-name="createOrderAdjustment" success-code="success"/>
+            <check-errors error-code="error" error-list-name="error_list"/>
+        </if-compare>
+    </simple-method>
+    <!--UpdateOrderContactMech-->
+
+    <simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_" event-event-message-name="_event_message_" event-request-object-name="request" event-response-code-name="_response_code_" event-response-object-name="response" login-required="true" method-name="updateOrderContactMech" service-error-message-list-name="errorMessageList" service-error-message-map-name="errorMessageMap" service-error-message-name="errorMessage" service-response-message-name="responseMessage" service-success-message-list-name="successMessageList" service-success-message-name="successMessage" short-description="Update OrderContactMech" use-transaction="true">
+        <check-permission action="_UPDATE" error-list-name="error_list" permission="ORDERMGR">
+            <fail-property property="OrderSecurityErrorToRunUpdateOrderContactMech" resource="OrderErrorUiLabels"/>
+        </check-permission>
+        <check-errors error-code="error" error-list-name="error_list"/>
+        <make-value entity-name="OrderContactMech" value-field="orderContactMechMap"/>
+        <set-pk-fields map="parameters" set-if-null="true" value-field="orderContactMechMap"/>
+        <set field="inputMap.orderId" from="parameters.orderId" set-if-empty="true" set-if-null="false"/>
+        <set field="inputMap.contactMechPurposeTypeId" from="parameters.contactMechPurposeTypeId" set-if-empty="true" set-if-null="false"/>
+        <set field="inputMap.contactMechId" from="parameters.contactMechId" set-if-empty="true" set-if-null="false"/>
+        <if-compare field="parameters.contactMechPurposeTypeId" operator="equals" type="String" value="SHIPPING_LOCATION">
+            <if-compare field="parameters.contactMechId" operator="not-equals" type="String" value="parameters.oldContactMechId">
+                <set field="orderItemShipGroupMap.orderId" from="parameters.orderId" set-if-empty="true" set-if-null="false"/>
+                <set field="orderItemShipGroupMap.contactMechId" from="parameters.oldContactMechId" set-if-empty="true" set-if-null="false"/>
+                <find-by-and entity-name="OrderItemShipGroup" list="shipGroupList" map="orderItemShipGroupMap" use-cache="false" use-iterator="false"/>
+                <if-not-empty field="shipGroupList">
+                    <iterate entry="shipGroup" list="shipGroupList">
+                        <set field="inputMap.shipGroupSeqId" from="shipGroup.shipGroupSeqId" set-if-empty="true" set-if-null="false"/>
+                        <set field="inputMap.shipmentMethod" set-if-empty="true" set-if-null="false" value="${shipGroup.shipmentMethodTypeId}@${shipGroup.carrierPartyId}"/>
+                        <set field="inputMap.oldContactMechId" from="parameters.oldContactMechId" set-if-empty="true" set-if-null="false"/>
+                        <set-service-fields map="inputMap" service-name="updateOrderItemShipGroup" to-map="orderItemShipGroupMap"/>
+                        <call-service break-on-error="true" error-code="error" in-map-name="orderItemShipGroupMap" include-user-login="true" require-new-transaction="false" service-name="updateOrderItemShipGroup" success-code="success"/>
+                    </iterate>
+                </if-not-empty>
+            </if-compare>
+            <else>
+                <find-by-and entity-name="OrderContactMech" list="orderContactMechList" map="inputMap" use-cache="false" use-iterator="false"/>
+                <!-- If orderContactMechList value is null then create new entry in OrderContactMech entity-->
+                <if-empty field="orderContactMechList">
+                    <set-service-fields map="parameters" service-name="createOrderContactMech" to-map="createOrderContactMechMap"/>
+                    <call-service break-on-error="true" error-code="error" in-map-name="createOrderContactMechMap" include-user-login="true" require-new-transaction="false" service-name="createOrderContactMech" success-code="success"/>
+                    <set field="orderContactMechLookupMap.orderId" from="parameters.orderId" set-if-empty="true" set-if-null="false"/>
+                    <set field="orderContactMechLookupMap.contactMechId" from="parameters.oldContactMechId" set-if-empty="true" set-if-null="false"/>
+                    <set field="orderContactMechLookupMap.contactMechPurposeTypeId" from="parameters.contactMechPurposeTypeId" set-if-empty="true" set-if-null="false"/>
+                    <set-service-fields map="orderContactMechLookupMap" service-name="removeOrderContactMech" to-map="removeOrderContactMechMap"/>
+                    <call-service break-on-error="true" error-code="error" in-map-name="removeOrderContactMechMap" include-user-login="true" require-new-transaction="false" service-name="removeOrderContactMech" success-code="success"/>
+                </if-empty>
+                <store-value do-cache-clear="true" value-field="orderContactMechMap"/>
+            </else>
+        </if-compare>
+    </simple-method>
+    <!-- OrderItemShipGroup -->
+
+    <simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_" event-event-message-name="_event_message_" event-request-object-name="request" event-response-code-name="_response_code_" event-response-object-name="response" login-required="true" method-name="updateOrderItemShipGroup" service-error-message-list-name="errorMessageList" service-error-message-map-name="errorMessageMap" service-error-message-name="errorMessage" service-response-message-name="responseMessage" service-success-message-list-name="successMessageList" service-success-message-name="successMessage" short-description="Update OrderItemShipGroup" use-transaction="true">
+        <check-permission action="_UPDATE" error-list-name="error_list" permission="ORDERMGR">
+            <fail-property property="OrderSecurityErrorToRunUpdateOrderItemShipGroup" resource="OrderErrorUiLabels"/>
+        </check-permission>
+        <check-errors error-code="error" error-list-name="error_list"/>
+        <make-value entity-name="OrderItemShipGroup" value-field="lookupPKMap"/>
+        <set-pk-fields map="parameters" set-if-null="true" value-field="lookupPKMap"/>
+        <find-by-primary-key entity-name="OrderItemShipGroup" map="lookupPKMap" use-cache="false" value-field="lookedUpValue"/>
+        <!-- splitting shipmentMethod request parameter value that contains "@" symbol
+             into "shipmentMethodTypeId" and "carrierPartyId".
+        -->
+        <call-bsh><![CDATA[
+            shipmentMethod = parameters.get("shipmentMethod");
+            if(shipmentMethod != null){
+               parameters.put("shipmentMethodTypeId", shipmentMethod.substring(0, shipmentMethod.indexOf("@")));
+               parameters.put("carrierPartyId", shipmentMethod.substring(shipmentMethod.indexOf("@")+1));
+            }
+        ]]></call-bsh>
+        <set-nonpk-fields map="parameters" set-if-null="true" value-field="lookedUpValue"/>
+        <set field="inputMap.orderId" from="parameters.orderId" set-if-empty="true" set-if-null="false"/>
+        <set field="inputMap.contactMechPurposeTypeId" from="parameters.contactMechPurposeTypeId" set-if-empty="true" set-if-null="false"/>
+        <set field="inputMap.contactMechId" from="parameters.contactMechId" set-if-empty="true" set-if-null="false"/>
+        <find-by-and entity-name="OrderContactMech" list="orderContactMechList" map="inputMap" use-cache="false" use-iterator="false"/>
+        <!-- If orderContactMechList value is null then create new entry in OrderContactMech entity-->
+        <if-empty field="orderContactMechList">
+            <set-service-fields map="parameters" service-name="createOrderContactMech" to-map="createOrderContactMechMap"/>
+            <call-service break-on-error="true" error-code="error" in-map-name="createOrderContactMechMap" include-user-login="true" require-new-transaction="false" service-name="createOrderContactMech" success-code="success"/>
+        </if-empty>
+        <store-value do-cache-clear="true" value-field="lookedUpValue"/>
+        <!-- Remove the old values from OrderContactMech entity with the help of oldContactMechId -->
+        <set field="shipGroupLookupMap.orderId" from="parameters.orderId" set-if-empty="true" set-if-null="false"/>
+        <set field="shipGroupLookupMap.contactMechId" from="parameters.oldContactMechId" set-if-empty="true" set-if-null="false"/>
+        <find-by-and entity-name="OrderItemShipGroup" list="orderItemShipGroupList" map="shipGroupLookupMap" use-cache="false" use-iterator="false"/>
+        <if-empty field="orderItemShipGroupList">
+            <set field="inputMap.orderId" from="parameters.orderId" set-if-empty="true" set-if-null="false"/>
+            <set field="inputMap.contactMechPurposeTypeId" from="parameters.contactMechPurposeTypeId" set-if-empty="true" set-if-null="false"/>
+            <set field="inputMap.contactMechId" from="parameters.oldContactMechId" set-if-empty="true" set-if-null="false"/>
+            <find-by-and entity-name="OrderContactMech" list="orderContactMechList" map="inputMap" use-cache="false" use-iterator="false"/>
+            <set-service-fields map="inputMap" service-name="createOrderContactMech" to-map="removeOrderContactMechMap"/>
+            <call-service break-on-error="true" error-code="error" in-map-name="removeOrderContactMechMap" include-user-login="true" require-new-transaction="false" service-name="removeOrderContactMech" success-code="success"/>
+        </if-empty>
+    </simple-method>
+
+    <simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_" event-event-message-name="_event_message_" event-request-object-name="request" event-response-code-name="_response_code_" event-response-object-name="response" login-required="true" method-name="getOrderItemShipGroupEstimatedShipDate" service-error-message-list-name="errorMessageList" service-error-message-map-name="errorMessageMap" service-error-message-name="errorMessage" service-response-message-name="responseMessage" service-success-message-list-name="successMessageList" service-success-message-name="successMessage" short-description="Compute and return the OrderItemShipGroup estimated ship date based on the associated items." use-transaction="true">
+        <entity-one auto-field-map="true" entity-name="OrderItemShipGroup" use-cache="false" value-field="orderItemShipGroup"/>
+        <if-compare field="orderItemShipGroup.maySplit" operator="equals" type="String" value="Y">
+            <set field="orderByList[]" set-if-empty="true" set-if-null="false" value="+promisedDatetime"/>
+            <else>
+                <set field="orderByList[]" set-if-empty="true" set-if-null="false" value="-promisedDatetime"/>
+            </else>
+        </if-compare>
+        <get-related list="orderItemShipGroupInvResList" order-by-list="orderByList" relation-name="OrderItemShipGrpInvRes" use-cache="false" value-field="orderItemShipGroup"/>
+        <first-from-list entry="orderItemShipGroupInvRes" list="orderItemShipGroupInvResList"/>
+        <field-to-result field="orderItemShipGroupInvRes.promisedDatetime" result-name="estimatedShipDate"/>
+    </simple-method>
+
+    <!-- OrderItemShipGroup -->
+    <simple-method method-name="createOrderItemShipGroup" short-description="Create OrderItemShipGroup">
+        <check-permission permission="ORDERMGR" action="_CREATE">
+            <fail-property resource="OrderErrorUiLabels" property="OrderSecurityErrorToRunCreateOrderItemShipGroup"/>
+        </check-permission>
+        <check-errors/>
+        <make-value value-field="newEntity" entity-name="OrderItemShipGroup"/>
+        <set-pk-fields map="parameters" value-field="newEntity"/>
+        <set-nonpk-fields map="parameters" value-field="newEntity"/>
+        <if-empty field="newEntity.shipGroupSeqId">
+            <make-next-seq-id value-field="newEntity" seq-field-name="shipGroupSeqId"/> <!-- this finds the next sub-sequence ID -->
+            <field-to-result field="newEntity.shipGroupSeqId" result-name="shipGroupSeqId"/>
+        </if-empty>
+        <create-value value-field="newEntity"/>
+    </simple-method>
+
+    <simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_" event-event-message-name="_event_message_" event-request-object-name="request" event-response-code-name="_response_code_" event-response-object-name="response" login-required="true" method-name="createOrderContactMech" service-error-message-list-name="errorMessageList" service-error-message-map-name="errorMessageMap" service-error-message-name="errorMessage" service-response-message-name="responseMessage" service-success-message-list-name="successMessageList" service-success-message-name="successMessage" short-description="Create OrderContactMech" use-transaction="true">
+        <check-permission action="_CREATE" error-list-name="error_list" permission="ORDERMGR">
+            <fail-property property="OrderSecurityErrorToRunCreateOrderContactMech" resource="OrderErrorUiLabels"/>
+        </check-permission>
+        <check-errors error-code="error" error-list-name="error_list"/>
+        <make-value entity-name="OrderContactMech" value-field="newEntity"/>
+        <set-pk-fields map="parameters" set-if-null="true" value-field="newEntity"/>
+        <create-value do-cache-clear="true" or-store="false" value-field="newEntity"/>
+    </simple-method>
+
+    <simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_" event-event-message-name="_event_message_" event-request-object-name="request" event-response-code-name="_response_code_" event-response-object-name="response" login-required="true" method-name="removeOrderContactMech" service-error-message-list-name="errorMessageList" service-error-message-map-name="errorMessageMap" service-error-message-name="errorMessage" service-response-message-name="responseMessage" service-success-message-list-name="successMessageList" service-success-message-name="successMessage" short-description="Remove OrderContactMech" use-transaction="true">
+        <check-permission action="_DELETE" error-list-name="error_list" permission="ORDERMGR">
+            <fail-property property="OrderSecurityErrorToRunRemoveOrderContactMech" resource="OrderErrorUiLabels"/>
+        </check-permission>
+        <check-errors error-code="error" error-list-name="error_list"/>
+        <entity-one auto-field-map="true" entity-name="OrderContactMech" use-cache="false" value-field="lookedUpValue"/>
+        <remove-value do-cache-clear="true" value-field="lookedUpValue"/>
+    </simple-method>
+
+    <simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_" event-event-message-name="_event_message_" event-request-object-name="request" event-response-code-name="_response_code_" event-response-object-name="response" login-required="true" method-name="updateOrderNote" service-error-message-list-name="errorMessageList" service-error-message-map-name="errorMessageMap" service-error-message-name="errorMessage" service-response-message-name="responseMessage" service-success-message-list-name="successMessageList" service-success-message-name="successMessage" short-description="Update OrderNote" use-transaction="true">
+        <check-permission action="_UPDATE" error-list-name="error_list" permission="ORDERMGR">
+            <fail-property property="OrderSecurityErrorToRunUpdateOrderNote" resource="OrderErrorUiLabels"/>
+        </check-permission>
+        <check-errors error-code="error" error-list-name="error_list"/>
+        <entity-one auto-field-map="true" entity-name="OrderHeaderNote" use-cache="false" value-field="orderHeaderNote"/>
+        <set-nonpk-fields map="parameters" set-if-null="true" value-field="orderHeaderNote"/>
+        <store-value do-cache-clear="true" value-field="orderHeaderNote"/>
+    </simple-method>
+
+    <simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_" event-event-message-name="_event_message_" event-request-object-name="request" event-response-code-name="_response_code_" event-response-object-name="response" login-required="true" method-name="createOrderTerm" service-error-message-list-name="errorMessageList" service-error-message-map-name="errorMessageMap" service-error-message-name="errorMessage" service-response-message-name="responseMessage" service-success-message-list-name="successMessageList" service-success-message-name="successMessage" short-description="Create an OrderTerm" use-transaction="true">
+        <check-permission action="_CREATE" error-list-name="error_list" permission="ORDERMGR">
+            <fail-property property="OrderSecurityErrorToRunCreateOrderTerm" resource="OrderErrorUiLabels"/>
+        </check-permission>
+        <check-errors error-code="error" error-list-name="error_list"/>
+        <make-value entity-name="OrderTerm" value-field="newEntity"/>
+        <set-pk-fields map="parameters" set-if-null="true" value-field="newEntity"/>
+        <set field="newEntity.orderItemSeqId" set-if-empty="true" set-if-null="false" value="_NA_"/>
+        <set-nonpk-fields map="parameters" set-if-null="true" value-field="newEntity"/>
+        <create-value do-cache-clear="true" or-store="false" value-field="newEntity"/>
+    </simple-method>
+
+    <simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_" event-event-message-name="_event_message_" event-request-object-name="request" event-response-code-name="_response_code_" event-response-object-name="response" login-required="true" method-name="updateOrderTerm" service-error-message-list-name="errorMessageList" service-error-message-map-name="errorMessageMap" service-error-message-name="errorMessage" service-response-message-name="responseMessage" service-success-message-list-name="successMessageList" service-success-message-name="successMessage" short-description="Update OrderTerm" use-transaction="true">
+        <check-permission action="_DELETE" error-list-name="error_list" permission="ORDERMGR">
+            <fail-property property="OrderSecurityErrorToRunUpdateOrderTerm" resource="OrderErrorUiLabels"/>
+        </check-permission>
+        <check-errors error-code="error" error-list-name="error_list"/>
+        <entity-one auto-field-map="true" entity-name="OrderTerm" use-cache="false" value-field="lookedUpValue"/>
+        <set-nonpk-fields map="parameters" set-if-null="true" value-field="lookedUpValue"/>
+        <store-value do-cache-clear="true" value-field="lookedUpValue"/>
+    </simple-method>
+
+    <simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_" event-event-message-name="_event_message_" event-request-object-name="request" event-response-code-name="_response_code_" event-response-object-name="response" login-required="true" method-name="removeOrderTerm" service-error-message-list-name="errorMessageList" service-error-message-map-name="errorMessageMap" service-error-message-name="errorMessage" service-response-message-name="responseMessage" service-success-message-list-name="successMessageList" service-success-message-name="successMessage" short-description="Remove OrderTerm" use-transaction="true">
+        <check-permission action="_DELETE" error-list-name="error_list" permission="ORDERMGR">
+            <fail-property property="OrderSecurityErrorToRunRemoveOrderTerm" resource="OrderErrorUiLabels"/>
+        </check-permission>
+        <check-errors error-code="error" error-list-name="error_list"/>
+        <entity-one auto-field-map="true" entity-name="OrderTerm" use-cache="false" value-field="lookedUpValue"/>
+        <remove-value do-cache-clear="true" value-field="lookedUpValue"/>
+    </simple-method>
+
+    <simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_" event-event-message-name="_event_message_" event-request-object-name="request" event-response-code-name="_response_code_" event-response-object-name="response" login-required="true" method-name="addPaymentMethodToOrder" service-error-message-list-name="errorMessageList" service-error-message-map-name="errorMessageMap" service-error-message-name="errorMessage" service-response-message-name="responseMessage" service-success-message-list-name="successMessageList" service-success-message-name="successMessage" short-description="Create an PaymentMethodToOrder" use-transaction="true">
+        <check-permission action="_CREATE" error-list-name="error_list" permission="ORDERMGR">
+            <fail-property property="OrderSecurityErrorToRunAddPaymentMethodToOrder" resource="OrderErrorUiLabels"/>
+        </check-permission>
+        <check-errors error-code="error" error-list-name="error_list"/>
+        <set field="inputMap.paymentMethodId" from="parameters.paymentMethodId" set-if-empty="true" set-if-null="false"/>
+        <set field="inputMap.maxAmount" from="parameters.maxAmount" set-if-empty="true" set-if-null="false"/>
+        <set field="inputMap.orderId" from="parameters.orderId" set-if-empty="true" set-if-null="false"/>
+        <entity-one auto-field-map="true" entity-name="PaymentMethod" use-cache="false" value-field="paymentMethod">
+            <field-map field-name="paymentMethodId" from-field="parameters.paymentMethodId"/>
+        </entity-one>
+        <set field="inputMap.paymentMethodTypeId" from="paymentMethod.paymentMethodTypeId" set-if-empty="true" set-if-null="false"/>
+        <!--In this method we calls createOrderPaymentPreference and returns orderPaymentPreferenceId field to authOrderPaymentPreference -->
+        <call-service break-on-error="true" error-code="error" in-map-name="inputMap" include-user-login="true" require-new-transaction="false" service-name="createOrderPaymentPreference" success-code="success">
+            <result-to-field field="parameters.orderPaymentPreferenceId" result-name="orderPaymentPreferenceId"/>
+        </call-service>
+        <field-to-result field="parameters.orderPaymentPreferenceId" result-name="orderPaymentPreferenceId"/>
+    </simple-method>
+
+    <simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_" event-event-message-name="_event_message_" event-request-object-name="request" event-response-code-name="_response_code_" event-response-object-name="response" login-required="false" method-name="getOrderStatus" service-error-message-list-name="errorMessageList" service-error-message-map-name="errorMessageMap" service-error-message-name="errorMessage" service-response-message-name="responseMessage" service-success-message-list-name="successMessageList" service-success-message-name="successMessage" short-description="Gets an order status" use-transaction="true">
+        <entity-one auto-field-map="true" entity-name="OrderHeader" use-cache="false" value-field="order"/>
+        <if-empty field="order">
+            <add-error error-list-name="error_list">
+                <fail-message message="Order not found [{parameters.orderId}]"/>
+            </add-error>
+            <check-errors error-code="error" error-list-name="error_list"/>
+        </if-empty>
+        <field-to-result field="order.statusId" result-name="statusId"/>
+    </simple-method>
+
+    <simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_" event-event-message-name="_event_message_" event-request-object-name="request" event-response-code-name="_response_code_" event-response-object-name="response" login-required="false" method-name="checkOrderIsOnBackOrder" service-error-message-list-name="errorMessageList" service-error-message-map-name="errorMessageMap" service-error-message-name="errorMessage" service-response-message-name="responseMessage" service-success-message-list-name="successMessageList" service-success-message-name="successMessage" short-description="Check if an Order is on Back Order" use-transaction="true">
+        <set field="zeroEnv" set-if-empty="true" set-if-null="false" type="BigDecimal" value="0"/>
+        <entity-condition distinct="false" entity-name="OrderItemShipGrpInvRes" filter-by-date="false" list="orderItemShipGrpInvResList" use-cache="false">
+            <condition-list combine="and">
+                <condition-expr field-name="orderId" from-field="parameters.orderId" ignore="false" ignore-case="false" ignore-if-empty="false" ignore-if-null="false" operator="equals"/>
+                <condition-expr field-name="quantityNotAvailable" from-field="nullField" ignore="false" ignore-case="false" ignore-if-empty="false" ignore-if-null="false" operator="not-equals"/>
+                <condition-expr field-name="quantityNotAvailable" from-field="zeroEnv" ignore="false" ignore-case="false" ignore-if-empty="false" ignore-if-null="false" operator="greater"/>
+            </condition-list>
+        </entity-condition>
+        <if-empty field="orderItemShipGrpInvResList">
+            <set field="isBackOrder" set-if-empty="true" set-if-null="false" type="Boolean" value="false"/>
+            <else>
+                <set field="isBackOrder" set-if-empty="true" set-if-null="false" type="Boolean" value="true"/>
+            </else>
+        </if-empty>
+        <field-to-result field="isBackOrder" result-name="isBackOrder"/>
+    </simple-method>
+
+    <simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_" event-event-message-name="_event_message_" event-request-object-name="request" event-response-code-name="_response_code_" event-response-object-name="response" login-required="true" method-name="createOrderItemChange" service-error-message-list-name="errorMessageList" service-error-message-map-name="errorMessageMap" service-error-message-name="errorMessage" service-response-message-name="responseMessage" service-success-message-list-name="successMessageList" service-success-message-name="successMessage" short-description="Creates a new Order Item Change record" use-transaction="true">
+        <make-value entity-name="OrderItemChange" value-field="newEntity"/>
+        <set-nonpk-fields map="parameters" set-if-null="true" value-field="newEntity"/>
+        <if-empty field="parameters.changeDatetime">
+            <now-timestamp field="nowTimestamp"/>
+            <set field="newEntity.changeDatetime" from="nowTimestamp" set-if-empty="true" set-if-null="false"/>
+        </if-empty>
+        <if-empty field="parameters.changeUserLogin">
+            <set field="newEntity.changeUserLogin" from="userLogin.userLoginId" set-if-empty="true" set-if-null="false"/>
+        </if-empty>
+        <sequenced-id field="newEntity.orderItemChangeId" get-long-only="false" sequence-name="OrderItemChange"/>
+        <create-value do-cache-clear="true" or-store="false" value-field="newEntity"/>
+        <field-to-result field="newEntity.orderItemChangeId" result-name="orderItemChangeId"/>
+        <entity-condition distinct="false" entity-name="OrderStatus" filter-by-date="false" list="orderStatus" use-cache="false">
+            <condition-list combine="and">
+                <condition-expr field-name="orderId" from-field="parameters.orderId" ignore="false" ignore-case="false" ignore-if-empty="false" ignore-if-null="false" operator="equals"/>
+                <condition-expr field-name="statusId" ignore="false" ignore-case="false" ignore-if-empty="false" ignore-if-null="false" operator="equals" value="ORDER_APPROVED"/>
+            </condition-list>
+        </entity-condition>
+        <if-not-empty field="orderStatus">
+            <entity-condition distinct="false" entity-name="OrderStatus" filter-by-date="false" list="orderItemList" use-cache="false">
+                <condition-list combine="and">
+                    <condition-expr field-name="orderId" from-field="parameters.orderId" ignore="false" ignore-case="false" ignore-if-empty="false" ignore-if-null="false" operator="equals"/>
+                    <condition-expr field-name="orderItemSeqId" from-field="parameters.orderIteSeqId" ignore="false" ignore-case="false" ignore-if-empty="false" ignore-if-null="false" operator="equals"/>
+                </condition-list>
+            </entity-condition>
+            <iterate entry="orderItem" list="orderItemList">
+                <set field="orderItem.statusId" set-if-empty="true" set-if-null="false" value="ITEM_APPROVED"/>
+                <store-value do-cache-clear="true" value-field="orderItem"/>
+            </iterate>
+            <entity-condition distinct="false" entity-name="OrderItem" filter-by-date="false" list="orderItemList2" use-cache="false">
+                <condition-list combine="and">
+                    <condition-expr field-name="orderId" from-field="parameters.orderId" ignore="false" ignore-case="false" ignore-if-empty="false" ignore-if-null="false" operator="equals"/>
+                    <condition-expr field-name="orderItemSeqId" from-field="parameters.orderIteSeqId" ignore="false" ignore-case="false" ignore-if-empty="false" ignore-if-null="false" operator="equals"/>
+                </condition-list>
+            </entity-condition>
+            <iterate entry="orderItem2" list="orderItemList2">
+                <set field="orderItem2.statusId" set-if-empty="true" set-if-null="false" value="ITEM_APPROVED"/>
+                <store-value do-cache-clear="true" value-field="orderItem2"/>
+            </iterate>
+        </if-not-empty>
+    </simple-method>
+
+    <simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_" event-event-message-name="_event_message_" event-request-object-name="request" event-response-code-name="_response_code_" event-response-object-name="response" login-required="false" method-name="createUpdateShippingAddress" service-error-message-list-name="errorMessageList" service-error-message-map-name="errorMessageMap" service-error-message-name="errorMessage" service-response-message-name="responseMessage" service-success-message-list-name="successMessageList" service-success-message-name="successMessage" short-description="create and update Shipping address" use-transaction="true">
+        <set default="Y" field="keepAddressBook" from="parameters.keepAddressBook" set-if-empty="true" set-if-null="false"/>
+        <call-map-processor error-list-name="error_list" in-map-name="parameters" out-map-name="shipToAddressCtx" processor-name="shipToAddress" xml-resource="component://order/script/org/ofbiz/order/customer/CheckoutMapProcs.xml"/>
+        <check-errors error-code="error" error-list-name="error_list"/>
+        <set field="shipToAddressCtx.partyId" from="parameters.partyId" set-if-empty="true" set-if-null="false"/>
+        <if-empty field="shipToAddressCtx.contactMechId">
+            <set field="shipToAddressCtx.contactMechPurposeTypeId" set-if-empty="true" set-if-null="false" value="SHIPPING_LOCATION"/>
+            <call-service break-on-error="true" error-code="error" in-map-name="shipToAddressCtx" include-user-login="true" require-new-transaction="false" service-name="createPartyPostalAddress" success-code="success">
+                <result-to-field field="parameters.shipToContactMechId" result-name="contactMechId"/>
+            </call-service>
+            <log level="info" message="Shipping address created with contactMechId ${shipToAddressCtx.shipToContactMechId}"/>
+            <else>
+                <if-compare field="keepAddressBook" operator="equals" type="String" value="Y">
+                    <make-value entity-name="PostalAddress" value-field="newValue"/>
+                    <set-pk-fields map="shipToAddressCtx" set-if-null="true" value-field="newValue"/>
+                    <find-by-primary-key entity-name="PostalAddress" map="newValue" use-cache="false" value-field="oldValue"/>
+                    <set-nonpk-fields map="shipToAddressCtx" set-if-null="true" value-field="newValue"/>
+                    <if-compare-field field="oldValue" operator="not-equals" to-field="newValue" type="Object">
+                        <set field="shipToAddressCtx.contactMechId" from="nullField" set-if-empty="true" set-if-null="false"/>
+                        <call-service break-on-error="true" error-code="error" in-map-name="shipToAddressCtx" include-user-login="true" require-new-transaction="false" service-name="createPartyPostalAddress" success-code="success">
+                            <result-to-field field="parameters.shipToContactMechId" result-name="contactMechId"/>
+                        </call-service>
+                    </if-compare-field>
+                    <entity-and entity-name="PartyContactMechPurpose" filter-by-date="true" list="pcmpShipList" use-cache="false">
+                        <field-map field-name="partyId" from-field="userLogin.partyId"/>
+                        <field-map field-name="contactMechId" from-field="parameters.shipToContactMechId"/>
+                        <field-map field-name="contactMechPurposeTypeId" value="SHIPPING_LOCATION"/>
+                    </entity-and>
+                    <!-- If purpose is not exists then create -->
+                    <if-empty field="pcmpShipList">
+                        <set-service-fields map="parameters" service-name="createPartyContactMechPurpose" to-map="serviceContext"/>
+                        <set field="serviceContext.partyId" from="userLogin.partyId" set-if-empty="true" set-if-null="false"/>
+                        <entity-and entity-name="PartyContactMechPurpose" filter-by-date="true" list="pcmpList" use-cache="false">
+                            <field-map field-name="partyId" from-field="userLogin.partyId"/>
+                            <field-map field-name="contactMechPurposeTypeId" value="SHIPPING_LOCATION"/>
+                        </entity-and>
+                        <if-not-empty field="pcmpList">
+                            <first-from-list entry="pcmp" list="pcmpList"/>
+                            <set-service-fields map="pcmp" service-name="deletePartyContactMechPurposeIfExists" to-map="serviceInMap"/>
+                            <call-service break-on-error="true" error-code="error" in-map-name="serviceInMap" include-user-login="true" require-new-transaction="false" service-name="deletePartyContactMechPurposeIfExists" success-code="success"/>
+                            <clear-field field="serviceInMap"/>
+                        </if-not-empty>
+                        <set field="serviceContext.partyId" from="userLogin.partyId" set-if-empty="true" set-if-null="false"/>
+                        <set field="serviceContext.contactMechId" from="parameters.shipToContactMechId" set-if-empty="true" set-if-null="false"/>
+                        <set field="serviceContext.contactMechPurposeTypeId" set-if-empty="true" set-if-null="false" value="SHIPPING_LOCATION"/>
+                        <call-service break-on-error="true" error-code="error" in-map-name="serviceContext" include-user-login="true" require-new-transaction="false" service-name="createPartyContactMechPurpose" success-code="success"/>
+                        <clear-field field="pcmpList"/>
+                        <clear-field field="serviceContext"/>
+                    </if-empty>
+                    <if-compare field="parameters.setDefaultShipping" operator="equals" type="String" value="Y">
+                        <set-service-fields map="parameters" service-name="setPartyProfileDefaults" to-map="partyProfileDefaultsCtx"/>
+                        <set field="partyProfileDefaultsCtx.defaultShipAddr" from="parameters.shipToContactMechId" set-if-empty="true" set-if-null="false"/>
+                        <set field="partyProfileDefaultsCtx.partyId" from="userLogin.partyId" set-if-empty="true" set-if-null="false"/>
+                        <call-service break-on-error="true" error-code="error" in-map-name="partyProfileDefaultsCtx" include-user-login="true" require-new-transaction="false" service-name="setPartyProfileDefaults" success-code="success"/>
+                    </if-compare>
+                </if-compare>
+                <if-compare field="keepAddressBook" operator="equals" type="String" value="N">
+                    <set field="shipToAddressCtx.shipToContactMechId" from="shipToAddressCtx.contactMechId" set-if-empty="true" set-if-null="false"/>
+                    <if-compare-field field="shipToAddressCtx.shipToContactMechId" operator="equals" to-field="parameters.billToContactMechId" type="String">
+                        <make-value entity-name="PostalAddress" value-field="newValue"/>
+                        <set-pk-fields map="shipToAddressCtx" set-if-null="true" value-field="newValue"/>
+                        <find-by-primary-key entity-name="PostalAddress" map="newValue" use-cache="false" value-field="oldValue"/>
+                        <set-nonpk-fields map="shipToAddressCtx" set-if-null="true" value-field="newValue"/>
+                        <if-compare-field field="oldValue" operator="not-equals" to-field="newValue" type="Object">
+                            <entity-and entity-name="PartyContactMechPurpose" filter-by-date="true" list="pcmpList" use-cache="false">
+                                <field-map field-name="contactMechId" from-field="shipToAddressCtx.shipToContactMechId"/>
+                                <field-map field-name="partyId" from-field="userLogin.partyId"/>
+                                <field-map field-name="contactMechPurposeTypeId" value="SHIPPING_LOCATION"/>
+                            </entity-and>
+                            <first-from-list entry="pcmp" list="pcmpList"/>
+                            <if-not-empty field="pcmp">
+                                <set-service-fields map="pcmp" service-name="deletePartyContactMechPurposeIfExists" to-map="serviceInMap"/>
+                                <call-service break-on-error="true" error-code="error" in-map-name="serviceInMap" include-user-login="true" require-new-transaction="false" service-name="deletePartyContactMechPurposeIfExists" success-code="success"/>
+                            </if-not-empty>
+                            <set field="shipToAddressCtx.contactMechPurposeTypeId" set-if-empty="true" set-if-null="false" value="SHIPPING_LOCATION"/>
+                            <set field="shipToAddressCtx.contactMechId" from="nullField" set-if-empty="true" set-if-null="false"/>
+                            <call-service break-on-error="true" error-code="error" in-map-name="shipToAddressCtx" include-user-login="true" require-new-transaction="false" service-name="createPartyPostalAddress" success-code="success">
+                                <result-to-field field="parameters.shipToContactMechId" result-name="contactMechId"/>
+                            </call-service>
+                            <log level="info" message="Shipping address updated with contactMechId ${shipToAddressCtx.shipToContactMechId}"/>
+                        </if-compare-field>
+                        <else>
+                            <set field="shipToAddressCtx.userLogin" from="parameters.userLogin" set-if-empty="true" set-if-null="false"/>
+                            <call-service break-on-error="true" error-code="error" in-map-name="shipToAddressCtx" include-user-login="true" require-new-transaction="false" service-name="updatePartyPostalAddress" success-code="success">
+                                <result-to-field field="parameters.shipToContactMechId" result-name="contactMechId"/>
+                            </call-service>
+                            <log level="info" message="Shipping address updated with contactMechId ${shipToAddressCtx.shipToContactMechId}"/>
+                        </else>
+                    </if-compare-field>
+                </if-compare>
+            </else>
+        </if-empty>
+        <field-to-result field="parameters.shipToContactMechId" result-name="contactMechId"/>
+    </simple-method>
+
+    <simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_" event-event-message-name="_event_message_" event-request-object-name="request" event-response-code-name="_response_code_" event-response-object-name="response" login-required="true" method-name="createUpdateBillingAddress" service-error-message-list-name="errorMessageList" service-error-message-map-name="errorMessageMap" service-error-message-name="errorMessage" service-response-message-name="responseMessage" service-success-message-list-name="successMessageList" service-success-message-name="successMessage" short-description="create and update billing address" use-transaction="true">
+        <set default="Y" field="keepAddressBook" from="parameters.keepAddressBook" set-if-empty="true" set-if-null="false"/>
+        <if-compare field="parameters.useShippingAddressForBilling" operator="not-equals" type="String" value="Y">
+            <call-map-processor error-list-name="error_list" in-map-name="parameters" out-map-name="billToAddressCtx" processor-name="billToAddress" xml-resource="component://order/script/org/ofbiz/order/customer/CheckoutMapProcs.xml"/>
+        </if-compare>
+        <check-errors error-code="error" error-list-name="error_list"/>
+        <set field="partyId" from="parameters.partyId" set-if-empty="true" set-if-null="false"/>
+        <set field="billToAddressCtx.partyId" from="partyId" set-if-empty="true" set-if-null="false"/>
+        <if-compare field="parameters.useShippingAddressForBilling" operator="equals" type="String" value="Y">
+            <if-empty field="parameters.billToContactMechId">
+                <set field="billToAddressCtx.contactMechPurposeTypeId" set-if-empty="true" set-if-null="false" value="BILLING_LOCATION"/>
+                <set-service-fields map="billToAddressCtx" service-name="createPartyContactMechPurpose" to-map="serviceInMap"/>
+                <set field="serviceInMap.contactMechId" from="parameters.shipToContactMechId" set-if-empty="true" set-if-null="false"/>
+                <call-service break-on-error="true" error-code="error" in-map-name="serviceInMap" include-user-login="true" require-new-transaction="false" service-name="createPartyContactMechPurpose" success-code="success"/>
+                <else>
+                    <if-compare-field field="parameters.shipToContactMechId" operator="not-equals" to-field="parameters.billToContactMechId" type="String">
+                        <entity-and entity-name="PartyContactMechPurpose" filter-by-date="true" list="pcmpList" use-cache="false">
+                            <field-map field-name="contactMechId" from-field="parameters.billToContactMechId"/>
+                            <field-map field-name="partyId" from-field="partyId"/>
+                            <field-map field-name="contactMechPurposeTypeId" value="BILLING_LOCATION"/>
+                        </entity-and>
+                        <first-from-list entry="pcmp" list="pcmpList"/>
+                        <if-not-empty field="pcmp">
+                            <set-service-fields map="pcmp" service-name="deletePartyContactMechPurposeIfExists" to-map="serviceInMap"/>
+                            <call-service break-on-error="true" error-code="error" in-map-name="serviceInMap" include-user-login="true" require-new-transaction="false" service-name="deletePartyContactMechPurposeIfExists" success-code="success"/>
+                            <clear-field field="serviceInMap"/>
+                        </if-not-empty>
+                        <if-compare field="keepAddressBook" operator="equals" type="String" value="N">
+                            <set field="serviceInMap.contactMechId" from="parameters.billToContactMechId" set-if-empty="true" set-if-null="false"/>
+                            <call-service break-on-error="true" error-code="error" in-map-name="serviceInMap" include-user-login="true" require-new-transaction="false" service-name="deletePartyContactMech" success-code="success"/>
+                            <clear-field field="serviceInMap"/>
+                        </if-compare>
+                        <!-- Check that the ship-to address doesn't already have a bill-to purpose -->
+                        <entity-and entity-name="PartyContactMechPurpose" filter-by-date="true" list="pcmpList" use-cache="false">
+                            <field-map field-name="contactMechId" from-field="parameters.shipToContactMechId"/>
+                            <field-map field-name="partyId" from-field="partyId"/>
+                            <field-map field-name="contactMechPurposeTypeId" value="BILLING_LOCATION"/>
+                        </entity-and>
+                        <if-empty field="pcmpList">
+                            <set field="billToAddressCtx.contactMechPurposeTypeId" set-if-empty="true" set-if-null="false" value="BILLING_LOCATION"/>
+                            <set-service-fields map="billToAddressCtx" service-name="createPartyContactMechPurpose" to-map="serviceInMap"/>
+                            <set field="serviceInMap.contactMechId" from="parameters.shipToContactMechId" set-if-empty="true" set-if-null="false"/>
+                            <call-service break-on-error="true" error-code="error" in-map-name="serviceInMap" include-user-login="true" require-new-transaction="false" service-name="createPartyContactMechPurpose" success-code="success"/>
+                        </if-empty>
+                        <log level="info" message="Billing address updated with contactMechId ${parameters.billToContactMechId}"/>
+                    </if-compare-field>
+                </else>
+            </if-empty>
+            <set field="parameters.billToContactMechId" from="parameters.shipToContactMechId" set-if-empty="true" set-if-null="false"/>
+        </if-compare>
+        <if-compare field="parameters.useShippingAddressForBilling" operator="not-equals" type="String" value="Y">
+            <if-empty field="parameters.billToContactMechId">
+                <set field="billToAddressCtx.contactMechPurposeTypeId" set-if-empty="true" set-if-null="false" value="BILLING_LOCATION"/>
+                <call-service break-on-error="true" error-code="error" in-map-name="billToAddressCtx" include-user-login="true" require-new-transaction="false" service-name="createPartyPostalAddress" success-code="success">
+                    <result-to-field field="parameters.billToContactMechId" result-name="contactMechId"/>
+                </call-service>
+                <log level="info" message="Billing address created with contactmechId ${parameters.billToContactMechId}"/>
+                <else>
+                    <if-compare-field field="parameters.shipToContactMechId" operator="equals" to-field="parameters.billToContactMechId" type="String">
+                        <set field="billToAddressCtx.contactMechId" from="nullField" set-if-empty="true" set-if-null="false"/>
+                        <call-service break-on-error="true" error-code="error" in-map-name="billToAddressCtx" include-user-login="true" require-new-transaction="false" service-name="createPartyPostalAddress" success-code="success">
+                            <result-to-field field="parameters.billToContactMechId" result-name="contactMechId"/>
+                        </call-service>
+                        <log level="info" message="Billing address updated with contactMechId ${parameters.billToContactMechId}"/>
+                        <else>
+                            <if-compare field="keepAddressBook" operator="equals" type="String" value="N">
+                                <call-service break-on-error="true" error-code="error" in-map-name="billToAddressCtx" include-user-login="true" require-new-transaction="false" service-name="updatePartyPostalAddress" success-code="success">
+                                    <result-to-field field="parameters.billToContactMechId" result-name="contactMechId"/>
+                                </call-service>
+                            </if-compare>
+                            <if-compare field="keepAddressBook" operator="equals" type="String" value="Y">
+                                <make-value entity-name="PostalAddress" value-field="newValue"/>
+                                <set-pk-fields map="billToAddressCtx" set-if-null="true" value-field="newValue"/>
+                                <set-nonpk-fields map="billToAddressCtx" set-if-null="true" value-field="newValue"/>
+                                <entity-one auto-field-map="false" entity-name="PostalAddress" use-cache="false" value-field="oldValue">
+                                    <field-map field-name="contactMechId" from-field="billToAddressCtx.contactMechId"/>
+                                </entity-one>
+                                <if-compare-field field="oldValue" operator="not-equals" to-field="newValue" type="Object">
+                                    <set field="billToAddressCtx.contactMechId" from="nullField" set-if-empty="true" set-if-null="false"/>
+                                    <call-service break-on-error="true" error-code="error" in-map-name="billToAddressCtx" include-user-login="true" require-new-transaction="false" service-name="createPartyPostalAddress" success-code="success">
+                                        <result-to-field field="parameters.billToContactMechId" result-name="contactMechId"/>
+                                    </call-service>
+                                </if-compare-field>
+                            </if-compare>
+                            <log level="info" message="Billing Postal Address created billToContactMechId is ${parameters.billToContactMechId}"/>
+                        </else>
+                    </if-compare-field>
+                    <entity-and entity-name="PartyContactMechPurpose" filter-by-date="true" list="pcmpBillList" use-cache="false">
+                        <field-map field-name="partyId" from-field="userLogin.partyId"/>
+                        <field-map field-name="contactMechId" from-field="parameters.billToContactMechId"/>
+                        <field-map field-name="contactMechPurposeTypeId" value="BILLING_LOCATION"/>
+                    </entity-and>
+                    <!-- If purpose is not exists then create -->
+                    <if-empty field="pcmpBillList">
+                        <set-service-fields map="parameters" service-name="createPartyContactMechPurpose" to-map="serviceContext"/>
+                        <set field="serviceContext.partyId" from="userLogin.partyId" set-if-empty="true" set-if-null="false"/>
+                        <entity-and entity-name="PartyContactMechPurpose" filter-by-date="true" list="pcmpList" use-cache="false">
+                            <field-map field-name="partyId" from-field="userLogin.partyId"/>
+                            <field-map field-name="contactMechPurposeTypeId" value="BILLING_LOCATION"/>
+                        </entity-and>
+                        <if-not-empty field="pcmpList">
+                            <first-from-list entry="pcmp" list="pcmpList"/>
+                            <set-service-fields map="pcmp" service-name="deletePartyContactMechPurposeIfExists" to-map="serviceInMap"/>
+                            <call-service break-on-error="true" error-code="error" in-map-name="serviceInMap" include-user-login="true" require-new-transaction="false" service-name="deletePartyContactMechPurposeIfExists" success-code="success"/>
+                            <clear-field field="serviceInMap"/>
+                        </if-not-empty>
+                        <set field="serviceContext.partyId" from="userLogin.partyId" set-if-empty="true" set-if-null="false"/>
+                        <set field="serviceContext.contactMechId" from="parameters.billToContactMechId" set-if-empty="true" set-if-null="false"/>
+                        <set field="serviceContext.contactMechPurposeTypeId" set-if-empty="true" set-if-null="false" value="BILLING_LOCATION"/>
+                        <call-service break-on-error="true" error-code="error" in-map-name="serviceContext" include-user-login="true" require-new-transaction="false" service-name="createPartyContactMechPurpose" success-code="success"/>
+                        <clear-field field="pcmpList"/>
+                        <clear-field field="serviceContext"/>
+                    </if-empty>
+                    <if-compare field="parameters.setDefaultBilling" operator="equals" type="String" value="Y">
+                        <set-service-fields map="parameters" service-name="setPartyProfileDefaults" to-map="partyProfileDefaultsCtx"/>
+                        <set field="partyProfileDefaultsCtx.defaultBillAddr" from="parameters.billToContactMechId" set-if-empty="true" set-if-null="false"/>
+                        <set field="partyProfileDefaultsCtx.partyId" from="userLogin.partyId" set-if-empty="true" set-if-null="false"/>
+                        <call-service break-on-error="true" error-code="error" in-map-name="partyProfileDefaultsCtx" include-user-login="true" require-new-transaction="false" service-name="setPartyProfileDefaults" success-code="success"/>
+                    </if-compare>
+                </else>
+            </if-empty>
+        </if-compare>
+        <field-to-result field="parameters.billToContactMechId" result-name="contactMechId"/>
+    </simple-method>
+
+    <simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_" event-event-message-name="_event_message_" event-request-object-name="request" event-response-code-name="_response_code_" event-response-object-name="response" login-required="true" method-name="createUpdateCreditCard" service-error-message-list-name="errorMessageList" service-error-message-map-name="errorMessageMap" service-error-message-name="errorMessage" service-response-message-name="responseMessage" service-success-message-list-name="successMessageList" service-success-message-name="successMessage" short-description="create and update credit card" use-transaction="true">
+        <set-service-fields map="parameters" service-name="createCreditCard" to-map="creditCardContext"/>
+        <set field="creditCardContext.partyId" from="parameters.partyId" set-if-empty="true" set-if-null="false"/>
+        <set field="creditCardContext.contactMechId" from="parameters.contactMechId" set-if-empty="true" set-if-null="false"/>
+        <if-empty field="parameters.paymentMethodId">
+            <!-- call create Credit Card -->
+            <call-service break-on-error="true" error-code="error" in-map-name="creditCardContext" include-user-login="true" require-new-transaction="false" service-name="createCreditCard" success-code="success">
+                <result-to-field field="parameters.paymentMethodId" result-name="paymentMethodId"/>
+            </call-service>
+            <else>
+                <!-- call update Credit Card -->
+                <entity-and entity-name="PaymentMethod" filter-by-date="true" list="paymentMethodList" use-cache="false">
+                    <field-map field-name="partyId" from-field="partyId"/>
+                    <field-map field-name="paymentMethodTypeId" value="CREDIT_CARD"/>
+                    <order-by field-name="-fromDate"/>
+                </entity-and>
+                <first-from-list entry="paymentMethod" list="paymentMethodList"/>
+                <set field="creditCardContext.paymentMethodId" from="paymentMethod.paymentMethodId" set-if-empty="true" set-if-null="false"/>
+                <call-service break-on-error="true" error-code="error" in-map-name="creditCardContext" include-user-login="true" require-new-transaction="false" service-name="updateCreditCard" success-code="success">
+                    <result-to-field field="parameters.paymentMethodId" result-name="paymentMethodId"/>
+                </call-service>
+            </else>
+        </if-empty>
+        <set field="paymentMethodId" from="parameters.paymentMethodId" set-if-empty="true" set-if-null="false"/>
+        <field-to-result field="parameters.paymentMethodId" result-name="paymentMethodId"/>
+    </simple-method>
+
+    <simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_" event-event-message-name="_event_message_" event-request-object-name="request" event-response-code-name="_response_code_" event-response-object-name="response" login-required="true" method-name="setUnitPriceAsLastPrice" service-error-message-list-name="errorMessageList" service-error-message-map-name="errorMessageMap" service-error-message-name="errorMessage" service-response-message-name="responseMessage" service-success-message-list-name="successMessageList" service-success-message-name="successMessage" short-description="Set unitPrice as lastPrice on create purchase order, edit purchase order items and on receive inventory against a purchase order" use-transaction="true">
+        <if>
+            <condition>
+                <and>
+                    <not>
+                        <if-empty field="parameters.facilityId"/>
+                    </not>
+                    <not>
+                        <if-empty field="parameters.orderId"/>
+                    </not>
+                </and>
+            </condition>
+            <then>
+                <entity-and entity-name="OrderHeaderItemAndRoles" filter-by-date="false" list="orderSuppliers" use-cache="false">
+                    <field-map field-name="orderId" from-field="parameters.orderId"/>
+                    <field-map field-name="roleTypeId" value="BILL_FROM_VENDOR"/>
+                    <field-map field-name="orderTypeId" value="PURCHASE_ORDER"/>
+                </entity-and>
+                <first-from-list entry="orderSupplier" list="orderSuppliers"/>
+                <entity-and entity-name="SupplierProduct" filter-by-date="false" list="supplierProducts" use-cache="false">
+                    <field-map field-name="productId" from-field="parameters.productId"/>
+                    <field-map field-name="partyId" from-field="orderSupplier.partyId"/>
+                    <field-map field-name="availableThruDate" from-field="nullField"/>
+                </entity-and>
+                <iterate entry="supplierProduct" list="supplierProducts">
+                    <now-timestamp field="nowTimestamp"/>
+                    <if-not-empty field="parameters.orderCurrencyUnitPrice">
+                        <if-compare-field field="parameters.orderCurrencyUnitPrice" operator="not-equals" to-field="supplierProduct.lastPrice" type="BigDecimal">
+                            <clone-value new-value-field="newSupplierProduct" value-field="supplierProduct"/>
+                            <set field="newSupplierProduct.availableFromDate" from="nowTimestamp" set-if-empty="true" set-if-null="false"/>
+                            <set field="newSupplierProduct.lastPrice" from="parameters.orderCurrencyUnitPrice" set-if-empty="true" set-if-null="false" type="BigDecimal"/>
+                            <create-value do-cache-clear="true" or-store="false" value-field="newSupplierProduct"/>
+                            <set field="supplierProduct.availableThruDate" from="nowTimestamp" set-if-empty="true" set-if-null="false"/>
+                            <store-value do-cache-clear="true" value-field="supplierProduct"/>
+                        </if-compare-field>
+                        <else>
+                            <if-compare-field field="parameters.unitCost" operator="not-equals" to-field="supplierProduct.lastPrice" type="BigDecimal">
+                                <clone-value new-value-field="newSupplierProduct" value-field="supplierProduct"/>
+                                <set field="newSupplierProduct.availableFromDate" from="nowTimestamp" set-if-empty="true" set-if-null="false"/>
+                                <set field="newSupplierProduct.lastPrice" from="parameters.unitCost" set-if-empty="true" set-if-null="false" type="BigDecimal"/>
+                                <create-value do-cache-clear="true" or-store="false" value-field="newSupplierProduct"/>
+                                <set field="supplierProduct.availableThruDate" from="nowTimestamp" set-if-empty="true" set-if-null="false"/>
+                                <store-value do-cache-clear="true" value-field="supplierProduct"/>
+                            </if-compare-field>
+                        </else>
+                    </if-not-empty>
+                </iterate>
+            </then>
+            <else>
+                <if>
+                    <condition>
+                        <and>
+                            <if-empty field="parameters.orderItems"/>
+                            <not>
+                                <if-empty field="parameters.orderId"/>
+                            </not>
+                        </and>
+                    </condition>
+                    <then>
+                        <entity-and entity-name="OrderItem" filter-by-date="false" list="orderItems" use-cache="false">
+                            <field-map field-name="orderId" from-field="parameters.orderId"/>
+                        </entity-and>
+                        <iterate entry="orderItem" list="orderItems">
+                            <iterate-map key="orderItemSeqId" map="parameters.itemPriceMap" value="unitPrice">
+                                <if>
+                                    <condition>
+                                        <if-compare-field field="orderItem.orderItemSeqId" operator="equals" to-field="orderItemSeqId" type="String"/>
+                                    </condition>
+                                    <then>
+                                        <iterate-map key="orderItemSeqId" map="parameters.overridePriceMap" value="Y">
+                                            <if>
+                                                <condition>
+                                                    <if-compare-field field="orderItem.orderItemSeqId" operator="equals" to-field="orderItemSeqId" type="String"/>
+                                                </condition>
+                                                <then>
+                                                    <set field="orderItem.unitPrice" from="unitPrice" set-if-empty="true" set-if-null="false" type="BigDecimal"/>
+                                                    <entity-and entity-name="SupplierProduct" filter-by-date="false" list="supplierProducts" use-cache="false">
+                                                        <field-map field-name="productId" from-field="orderItem.productId"/>
+                                                        <field-map field-name="partyId" from-field="parameters.supplierPartyId"/>
+                                                        <field-map field-name="availableThruDate" from-field="nullField"/>
+                                                    </entity-and>
+                                                    <iterate entry="supplierProduct" list="supplierProducts">
+                                                        <now-timestamp field="nowTimestamp"/>
+                                                        <if>
+                                                            <condition>
+                                                                <if-compare-field field="orderItem.unitPrice" operator="not-equals" to-field="supplierProduct.lastPrice" type="BigDecimal"/>
+                                                            </condition>
+                                                            <then>
+                                                                <make-value entity-name="SupplierProduct" value-field="newSupplierProduct"/>
+                                                                <clone-value new-value-field="newSupplierProduct" value-field="supplierProduct"/>
+                                                                <set field="newSupplierProduct.availableFromDate" from="nowTimestamp" set-if-empty="true" set-if-null="false"/>
+                                                                <set field="newSupplierProduct.lastPrice" from="orderItem.unitPrice" set-if-empty="true" set-if-null="false"/>
+                                                                <create-value do-cache-clear="true" or-store="false" value-field="newSupplierProduct"/>
+                                                                <set field="supplierProduct.availableThruDate" from="nowTimestamp" set-if-empty="true" set-if-null="false"/>
+                                                                <store-value do-cache-clear="true" value-field="supplierProduct"/>
+                                                            </then>
+                                                        </if>
+                                                    </iterate>
+                                                </then>
+                                            </if>
+                                        </iterate-map>
+                                    </then>
+                                </if>
+                            </iterate-map>
+                        </iterate>
+                    </then>
+                    <else>
+                        <iterate entry="orderItem" list="parameters.orderItems">
+                            <entity-and entity-name="SupplierProduct" filter-by-date="false" list="supplierProducts" use-cache="false">
+                                <field-map field-name="productId" from-field="orderItem.productId"/>
+                                <field-map field-name="partyId" from-field="parameters.supplierPartyId"/>
+                                <field-map field-name="availableThruDate" from-field="nullField"/>
+                            </entity-and>
+                            <iterate entry="supplierProduct" list="supplierProducts">
+                                <now-timestamp field="nowTimestamp"/>
+                                <if>
+                                    <condition>
+                                        <if-compare-field field="orderItem.unitPrice" operator="not-equals" to-field="supplierProduct.lastPrice" type="BigDecimal"/>
+                                    </condition>
+                                    <then>
+                                        <make-value entity-name="SupplierProduct" value-field="newSupplierProduct"/>
+                                        <clone-value new-value-field="newSupplierProduct" value-field="supplierProduct"/>
+                                        <set field="newSupplierProduct.availableFromDate" from="nowTimestamp" set-if-empty="true" set-if-null="false"/>
+                                        <set field="newSupplierProduct.lastPrice" from="orderItem.unitPrice" set-if-empty="true" set-if-null="false" type="BigDecimal"/>
+                                        <create-value do-cache-clear="true" or-store="false" value-field="newSupplierProduct"/>
+                                        <set field="supplierProduct.availableThruDate" from="nowTimestamp" set-if-empty="true" set-if-null="false"/>
+                                        <store-value do-cache-clear="true" value-field="supplierProduct"/>
+                                    </then>
+                                </if>
+                            </iterate>
+                        </iterate>
+                    </else>
+                </if>
+            </else>
+        </if>
+    </simple-method>
+
+    <simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_" event-event-message-name="_event_message_" event-request-object-name="request" event-response-code-name="_response_code_" event-response-object-name="response" login-required="true" method-name="cancelAllBackOrders" service-error-message-list-name="errorMessageList" service-error-message-map-name="errorMessageMap" service-error-message-name="errorMessage" service-response-message-name="responseMessage" service-success-message-list-name="successMessageList" service-success-message-name="successMessage" short-description="Cancels those back orders from suppliers whose cancel back order date (cancelBackOrderDate) has passed the current date" use-transaction="true">
+        <now-timestamp field="nowTimestamp"/>
+        <entity-condition distinct="false" entity-name="OrderHeader" filter-by-date="false" list="orders" use-cache="false">
+            <condition-list combine="and">
+                <condition-expr field-name="orderTypeId" ignore="false" ignore-case="false" ignore-if-empty="false" ignore-if-null="false" operator="equals" value="PURCHASE_ORDER"/>
+                <condition-expr field-name="statusId" ignore="false" ignore-case="false" ignore-if-empty="false" ignore-if-null="false" operator="not-equals" value="ORDER_CANCELLED"/>
+                <condition-expr field-name="statusId" ignore="false" ignore-case="false" ignore-if-empty="false" ignore-if-null="false" operator="not-equals" value="ORDER_COMPLETED"/>
+            </condition-list>
+        </entity-condition>
+        <iterate entry="currentOrder" list="orders">
+            <entity-and entity-name="OrderItem" filter-by-date="false" list="orderItems" use-cache="false">
+                <field-map field-name="orderId" from-field="currentOrder.orderId"/>
+            </entity-and>
+            <iterate entry="currentOrderItem" list="orderItems">
+                <set field="backOrderDate" from="currentOrderItem.cancelBackOrderDate" set-if-empty="true" set-if-null="false" type="Timestamp"/>
+                <if>
+                    <condition>
+                        <and>
+                            <not>
+                                <if-empty field="backOrderDate"/>
+                            </not>
+                            <if-compare-field field="nowTimestamp" operator="greater" to-field="backOrderDate" type="Timestamp"/>
+                        </and>
+                    </condition>
+                    <then>
+                        <set field="orderItemMap.orderId" from="currentOrder.orderId" set-if-empty="true" set-if-null="false"/>
+                        <set field="orderItemMap.orderItemSeqId" from="currentOrderItem.orderItemSeqId" set-if-empty="true" set-if-null="false"/>
+                        <call-service break-on-error="true" error-code="error" in-map-name="orderItemMap" include-user-login="true" require-new-transaction="false" service-name="cancelOrderItem" success-code="success"/>
+                    </then>
+                </if>
+            </iterate>
+        </iterate>
+    </simple-method>
+
+    <simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_" event-event-message-name="_event_message_" event-request-object-name="request" event-response-code-name="_response_code_" event-response-object-name="response" login-required="true" method-name="updateShippingMethodAndCharges" service-error-message-list-name="errorMessageList" service-error-message-map-name="errorMessageMap" service-error-message-name="errorMessage" service-response-message-name="responseMessage" service-success-message-list-name="successMessageList" service-success-message-name="successMessage" short-description="Updates shipping method and shipping charges from Order View page when Shipment is in picked status and items of Order are packed" use-transaction="true">
+        <!-- splitting shipmentMethodAndAmount request parameter value that contains "*" symbol
+             into "shipmentMethod" and "newAmount".
+        -->
+        <!-- shipmentMethod request parameter value contains "@" symbol
+             between "shipmentMethodTypeId" and "carrierPartyId".This will be splitted in updateOrderItemShipGroup method
+        -->
+        <call-bsh><![CDATA[
+            shipmentMethodAndAmount = parameters.get("shipmentMethodAndAmount");
+            if (shipmentMethodAndAmount != null) {
+               parameters.put("shipmentMethod", shipmentMethodAndAmount.substring(0, shipmentMethodAndAmount.indexOf("*")));
+               parameters.put("amount", shipmentMethodAndAmount.substring(shipmentMethodAndAmount.indexOf("*")+1));
+               parameters.put("shipmentMethodTypeId", shipmentMethodAndAmount.substring(0, shipmentMethodAndAmount.indexOf("@")));
+            }
+        ]]></call-bsh>
+        <set field="newAmount" from="parameters.amount" set-if-empty="true" set-if-null="false" type="BigDecimal"/>
+        <set field="shippingAmount" from="parameters.shippingAmount" set-if-empty="true" set-if-null="false" type="BigDecimal"/>
+        <property-to-field field="percentAllowed" no-locale="false" property="shipment.default.cost_actual_over_estimated_percent_allowed" resource="shipment"/>
+        <if-compare-field field="newAmount" operator="greater" to-field="shippingAmount" type="BigDecimal">
+            <set field="diffPercentage" from="(newAmount - shippingAmount/shippingAmount)*100" set-if-empty="true" set-if-null="false" type="BigDecimal"/>
+            <else>
+                <set field="diffPercentage" from="(shippingAmount - newAmount/newAmount)*100" set-if-empty="true" set-if-null="false" type="BigDecimal"/>
+            </else>
+        </if-compare-field>
+        <if-compare-field field="diffPercentage" operator="greater" to-field="percentAllowed" type="BigDecimal">
+            <set-service-fields map="parameters" service-name="updateOrderItemShipGroup" to-map="updateOrderItemShipGroupContext"/>
+            <call-service break-on-error="true" error-code="error" in-map-name="updateOrderItemShipGroupContext" include-user-login="true" require-new-transaction="false" service-name="updateOrderItemShipGroup" success-code="success"/>
+            <set-service-fields map="parameters" service-name="updateOrderAdjustment" to-map="updateOrderAdjustmentContext"/>
+            <call-service break-on-error="true" error-code="error" in-map-name="updateOrderAdjustmentContext" include-user-login="true" require-new-transaction="false" service-name="updateOrderAdjustment" success-code="success"/>
+            <set-service-fields map="parameters" service-name="updateShipmentRouteSegment" to-map="updateShipmentRouteSegmentContext"/>
+            <clear-field field="updateShipmentRouteSegmentContext.trackingIdNumber"/>
+            <clear-field field="updateShipmentRouteSegmentContext.trackingDigest"/>
+            <clear-field field="updateShipmentRouteSegmentContext.carrierServiceStatusId"/>
+            <call-service break-on-error="true" error-code="error" in-map-name="updateShipmentRouteSegmentContext" include-user-login="true" require-new-transaction="false" service-name="updateShipmentRouteSegment" success-code="success"/>
+            <set-service-fields map="parameters" service-name="upsShipmentConfirm" to-map="upsShipmentConfirmContext"/>
+            <call-service break-on-error="true" error-code="error" in-map-name="upsShipmentConfirmContext" include-user-login="true" require-new-transaction="false" service-name="upsShipmentConfirm" success-code="success"/>
+            <else>
+                <set-service-fields map="parameters" service-name="updateOrderItemShipGroup" to-map="updateOrderItemShipGroupContext"/>
+                <call-service break-on-error="true" error-code="error" in-map-name="updateOrderItemShipGroupContext" include-user-login="true" require-new-transaction="false" service-name="updateOrderItemShipGroup" success-code="success"/>
+                <set-service-fields map="parameters" service-name="updateShipmentRouteSegment" to-map="updateShipmentRouteSegmentContext"/>
+                <clear-field field="updateShipmentRouteSegmentContext.trackingIdNumber"/>
+                <clear-field field="updateShipmentRouteSegmentContext.trackingDigest"/>
+                <clear-field field="updateShipmentRouteSegmentContext.carrierServiceStatusId"/>
+                <call-service break-on-error="true" error-code="error" in-map-name="updateShipmentRouteSegmentContext" include-user-login="true" require-new-transaction="false" service-name="updateShipmentRouteSegment" success-code="success"/>
+                <set-service-fields map="parameters" service-name="upsShipmentConfirm" to-map="upsShipmentConfirmContext"/>
+                <call-service break-on-error="true" error-code="error" in-map-name="upsShipmentConfirmContext" include-user-login="true" require-new-transaction="false" service-name="upsShipmentConfirm" success-code="success"/>
+            </else>
+        </if-compare-field>
+    </simple-method>
+
+    <simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_" event-event-message-name="_event_message_" event-request-object-name="request" event-response-code-name="_response_code_" event-response-object-name="response" login-required="true" method-name="productAvailabalityByFacility" service-error-message-list-name="errorMessageList" service-error-message-map-name="errorMessageMap" service-error-message-name="errorMessage" service-response-message-name="responseMessage" service-success-message-list-name="successMessageList" service-success-message-name="successMessage" short-description="Calculate ATP and Qoh According For each facility" use-transaction="true">
+        <set field="facilityMap.ownerPartyId" from="parameters.ownerPartyId" set-if-empty="true" set-if-null="false"/>
+        <find-by-and entity-name="Facility" list="facilityList" map="facilityMap" use-cache="false" use-iterator="false"/>
+        <iterate entry="facility" list="facilityList">
+            <set field="getInventoryAvailableByFacilityMap.facilityId" from="facility.facilityId" set-if-empty="true" set-if-null="false"/>
+            <set field="getInventoryAvailableByFacilityMap.productId" from="parameters.productId" set-if-empty="true" set-if-null="false"/>
+            <call-service break-on-error="true" error-code="error" in-map-name="getInventoryAvailableByFacilityMap" include-user-login="true" require-new-transaction="false" service-name="getInventoryAvailableByFacility" success-code="success">
+                <result-to-field result-name="quantityOnHandTotal"/>
+                <result-to-field result-name="availableToPromiseTotal"/>
+            </call-service>
+            <set field="availabalityMap.facilityId" from="facility.facilityId" set-if-empty="true" set-if-null="false"/>
+            <set field="availabalityMap.quantityOnHandTotal" from="quantityOnHandTotal" set-if-empty="true" set-if-null="false"/>
+            <set field="availabalityMap.availableToPromiseTotal" from="availableToPromiseTotal" set-if-empty="true" set-if-null="false"/>
+            <field-to-list field="availabalityMap" list="availabalityList"/>
+            <clear-field field="availabalityMap"/>
+        </iterate>
+        <field-to-result field="availabalityList"/>
+    </simple-method>
+</simple-methods>

@@ -1,0 +1,248 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<site-conf xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+        xsi:noNamespaceSchemaLocation="http://www.ofbiz.org/dtds/site-conf.xsd">
+
+ 		<request-map uri="ViewQualifyingService">
+ 			<security auth="true" https="true"/>
+ 			<response name="success" type="view" value="ViewQualifyingService"></response>
+ 		</request-map>
+ 		
+ 		<request-map uri="newPartyPreviousQual">
+ 			<security auth="true" https="true"/>
+ 			<response name="success" type="view" value="NewPartyPreviousQual"></response>
+ 		</request-map>
+ 		
+ 		<request-map uri="editPartyPreviousQual">
+ 			<security auth="true" https="true"/>
+ 			<response name="success" type="view" value="EditPartyPreviousQual"></response>
+ 		</request-map>
+ 		
+ 		<request-map uri="createPartyPreviousQual">
+ 			<security auth="true" https="true"/>
+ 			<event type="service" invoke="createPartyPreviousQual"/>
+ 			<response name="success" type="request-redirect" value="ViewQualifyingService">
+ 				<redirect-parameter name="partyId"/>
+ 				<redirect-parameter name="sectionId"/>
+ 			</response>
+ 		</request-map>
+ 		
+ 		<request-map uri="updatePartyPreviousQual">
+ 			<security auth="true" https="true"/>
+ 			<event type="service" invoke="updatePartyPreviousQual"/>
+ 			<response name="success" type="request-redirect" value="ViewQualifyingService">
+ 				<redirect-parameter name="partyId"/>
+ 				<redirect-parameter name="sectionId"/>
+ 			</response>
+ 		</request-map>
+ 		
+ 		<request-map uri="deletePartyPreviousQual">
+ 			<security auth="true" https="false"/>
+ 			<event type="service" invoke="deletePartyPreviousQual"/>
+ 			<response name="success" type="request-redirect" value="ViewQualifyingService">
+ 				<redirect-parameter name="partyId"/>
+ 				<redirect-parameter name="sectionId"/>
+ 			</response>
+ 		</request-map>
+ 		
+ 		<request-map uri="newPartyForeignService">
+ 			<security auth="true" https="true"/>
+ 			<response name="success" type="view" value="NewPartyForeignService"></response>
+ 		</request-map>
+ 		
+ 		<request-map uri="editPartyForeignService">
+ 			<security auth="true" https="true"/>
+ 			<response name="success" type="view" value="EditPartyForeignService"></response>
+ 		</request-map>
+ 		
+ 		<request-map uri="createPartyForeignService">
+ 			<security auth="true" https="true"/>
+ 			<event type="service" invoke="createPartyForeignService"/>
+ 			<response name="success" type="request-redirect" value="ViewQualifyingService">
+ 				<redirect-parameter name="partyId"/>
+ 				<redirect-parameter name="sectionId"/>
+ 			</response>
+ 		</request-map>
+ 		
+ 		<request-map uri="updatePartyForeignService">
+ 			<security auth="true" https="true"/>
+ 			<event type="service" invoke="updatePartyForeignService"/>
+ 			<response name="success" type="request-redirect" value="ViewQualifyingService">
+ 				<redirect-parameter name="partyId"/>
+ 				<redirect-parameter name="sectionId"/>
+ 			</response>
+ 		</request-map>
+ 		
+ 		<request-map uri="deletePartyForeignService">
+ 			<security auth="true" https="false"/>
+ 			<event type="service" invoke="deletePartyForeignService"/>
+ 			<response name="success" type="request-redirect" value="ViewQualifyingService">
+ 				<redirect-parameter name="partyId"/>
+ 				<redirect-parameter name="sectionId"/>
+ 			</response>
+ 		</request-map>
+ 		
+ 		
+ 		<request-map uri="serviceRegisterLeaveScreen">
+ 			<security auth="true" https="true"/>
+ 			<response name="success" type="view" value="ServiceRegisterLeaveScreen"></response>
+ 		</request-map>
+ 		
+ 		
+ 		<request-map uri="SelectCertificate">
+ 			<security auth="true" https="true"/>
+ 			<response name="success" type="view" value="SelectCertificate"></response>
+ 		</request-map>
+ 		
+ 		<request-map uri="EditCertificate">
+ 			<security auth="true" https="true"/>
+ 			<response name="success" type="view" value="EditCertificate"></response>
+ 		</request-map>
+ 		
+ 		<request-map uri="SaveCertificate">
+ 			<security auth="true" https="true"/>
+ 			<event type="service-multi" invoke="saveCertificate"/>
+ 			<response name="success" type="request-redirect" value="viewprofile">
+ 				<redirect-parameter name="partyId" from="${parameters.partyId}"/>
+ 			</response>
+ 		</request-map>
+ 		
+ 		<request-map uri="previewLayout">
+ 			<security auth="true" https="true"/>
+ 			<event type="java" path="com.nthdimenzion.humanres.ServiceRegisterController" invoke="execute"/>
+ 			<response name="success" type="none" value=""></response>
+ 		</request-map>
+ 		
+ 		<request-map uri="PrintServiceRegister">
+ 			<security auth="true" https="true"/>
+ 			<response name="success" type="view" value="PrintServiceRegister"/>
+ 		</request-map>
+ 		
+ 		<request-map uri="ViewLTC">
+ 			<security auth="true" https="true"/>
+ 			<response name="success" type="view" value="ViewLTC"></response>
+ 		</request-map>
+ 		
+ 		
+ 		<request-map uri="newPartyLTC">
+ 			<security auth="true" https="true"/>
+ 			<response name="success" type="view" value="NewPartyLTC"></response>
+ 		</request-map>
+ 		
+ 		<request-map uri="editPartyLTC">
+ 			<security auth="true" https="true"/>
+ 			<response name="success" type="view" value="EditPartyLTC"></response>
+ 		</request-map>
+ 		
+ 		<request-map uri="createPartyLTC">
+ 			<security auth="true" https="true"/>
+ 			<event type="service" invoke="createPartyLTC"/>
+ 			<response name="success" type="request-redirect" value="ViewLTC">
+ 				<redirect-parameter name="partyId"/>
+ 			</response>
+ 		</request-map>
+ 		
+ 		<request-map uri="updatePartyLTC">
+ 			<security auth="true" https="true"/>
+ 			<event type="service" invoke="updatePartyLTC"/>
+ 			<response name="success" type="request-redirect" value="ViewLTC">
+ 				<redirect-parameter name="partyId"/>
+ 			</response>
+ 		</request-map>
+ 		
+ 		<request-map uri="deletePartyLTC">
+ 			<security auth="true" https="false"/>
+ 			<event type="service" invoke="deletePartyLTC"/>
+ 			<response name="success" type="request-redirect" value="ViewLTC">
+ 				<redirect-parameter name="partyId"/>
+ 			</response>
+ 		</request-map>
+ 		
+ 		
+ 		<request-map uri="newPartyHTLTC">
+ 			<security auth="true" https="true"/>
+ 			<response name="success" type="view" value="NewPartyHTLTC"></response>
+ 		</request-map>
+ 		
+ 		<request-map uri="editPartyHTLTC">
+ 			<security auth="true" https="true"/>
+ 			<response name="success" type="view" value="EditPartyHTLTC"></response>
+ 		</request-map>
+ 		
+ 		<request-map uri="createPartyHTLTC">
+ 			<security auth="true" https="true"/>
+ 			<event type="service" invoke="createPartyHTLTC"/>
+ 			<response name="success" type="request-redirect" value="ViewLTC">
+ 				<redirect-parameter name="partyId"/>
+ 			</response>
+ 		</request-map>
+ 		
+ 		<request-map uri="updatePartyHTLTC">
+ 			<security auth="true" https="true"/>
+ 			<event type="service" invoke="updatePartyHTLTC"/>
+ 			<response name="success" type="request-redirect" value="ViewLTC">
+ 				<redirect-parameter name="partyId"/>
+ 			</response>
+ 		</request-map>
+ 		
+ 		<request-map uri="deletePartyPreviousQual">
+ 			<security auth="true" https="false"/>
+ 			<event type="service" invoke="deletePartyPreviousQual"/>
+ 			<response name="success" type="request-redirect" value="ViewLTC">
+ 				<redirect-parameter name="partyId"/>
+ 			</response>
+ 		</request-map>
+ 		
+ 		
+ 		<view-map name="SelectCertificate" type="screen" page="component://humanresext/widget/ServiceRegisterScreens.xml#SelectCertificate" encoding="utf-8">
+ 			<description> Display Service Register Section based on Section Id </description>
+ 		</view-map>
+ 		
+ 		<view-map name="EditCertificate" type="screen" page="component://humanresext/widget/ServiceRegisterScreens.xml#EditCertificate" encoding="utf-8">
+ 			<description> Display Screen to capture Certificate details </description>
+ 		</view-map>
+ 		
+ 		<view-map name="ViewQualifyingService" type="screen" page="component://humanresext/widget/ServiceRegisterScreens.xml#ViewQualifyingService" encoding="utf-8">
+ 			<description> Display Service Register Section based on Section Id </description>
+ 		</view-map>
+ 		
+ 		<view-map name="NewPartyPreviousQual" type="screen" page="component://humanresext/widget/ServiceRegisterScreens.xml#NewPartyPreviousQual" encoding="utf-8">
+ 			<description> For adding a new Party Previous Qual</description>
+ 		</view-map>
+ 		
+ 		<view-map name="EditPartyPreviousQual" type="screen" page="component://humanresext/widget/ServiceRegisterScreens.xml#EditPartyPreviousQual">
+ 			<description> For Editing a new Party Previous Qual</description>
+ 		</view-map>
+ 		
+ 		<view-map name="NewPartyForeignService" type="screen" page="component://humanresext/widget/ServiceRegisterScreens.xml#NewPartyForeignService">
+ 			<description> For adding a new Party Foreign Service</description>
+ 		</view-map>
+ 		
+ 		<view-map name="EditPartyForeignService" type="screen" page="component://humanresext/widget/ServiceRegisterScreens.xml#EditPartyForeignService">
+ 			<description> For Editing a new Party Foreign Service</description>
+ 		</view-map>
+ 		<view-map name="PrintServiceRegister" type="screen" page="component://humanresext/widget/ServiceRegisterScreens.xml#PrintServiceRegister"></view-map>
+ 		
+ 		<view-map name="ServiceRegisterLeaveScreen" type="screen" page="component://humanresext/widget/ServiceRegisterScreens.xml#ServiceRegisterLeaveScreen"></view-map>
+
+		<view-map name="NewPartyLTC" type="screen" page="component://humanresext/widget/ServiceRegisterScreens.xml#NewPartyLTC" encoding="utf-8">
+ 			<description> For adding a new Party LTC</description>
+ 		</view-map>
+ 		
+ 		<view-map name="EditPartyLTC" type="screen" page="component://humanresext/widget/ServiceRegisterScreens.xml#EditPartyLTC">
+ 			<description> For Editing a new Party LTC</description>
+ 		</view-map>
+ 		
+ 		<view-map name="NewPartyHTLTC" type="screen" page="component://humanresext/widget/ServiceRegisterScreens.xml#NewPartyHTLTC" encoding="utf-8">
+ 			<description> For adding a new Party Home Town LTC</description>
+ 		</view-map>
+ 		
+ 		<view-map name="EditPartyHTLTC" type="screen" page="component://humanresext/widget/ServiceRegisterScreens.xml#EditPartyHTLTC">
+ 			<description> For Editing a new Party Home Town LTC</description>
+ 		</view-map>
+ 		
+ 		<view-map name="ViewLTC" type="screen" page="component://humanresext/widget/ServiceRegisterScreens.xml#ViewLTC">
+ 			<description> For Editing a new Party Home Town LTC</description>
+ 		</view-map>
+
+</site-conf>

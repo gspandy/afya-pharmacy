@@ -1,0 +1,137 @@
+<zk>
+	<zscript>
+		<![CDATA[
+	import org.ofbiz.entity.*;
+	import org.ofbiz.base.util.*;
+	import org.ofbiz.humanresext.util.*;
+	GenericDelegator delegator = com.ndz.zkoss.util.HrmsInfrastructure.getDelegator();//GenericDelegator.getGenericDelegator("default");
+	GenericValue userLogin = (GenericValue) Executions.getCurrent().getDesktop().getSession().getAttribute("userLogin");
+	String partyId = (String) userLogin.getString("partyId");
+	GenericValue emplPosTypeIdOfPartyGv = null;
+	emplPosTypeIdOfPartyGv = HumanResUtil.getEmplPositionForParty(partyId,delegator);
+	String emplPosTypeIdOfParty = null;
+	if (emplPosTypeIdOfPartyGv != null) {
+		emplPosTypeIdOfParty = emplPosTypeIdOfPartyGv.getString("emplPositionTypeId");
+	}
+	java.math.BigDecimal totalAccrualLeave = java.math.BigDecimal.ZERO;
+	try{
+	 totalAccrualLeave = com.ndz.zkoss.HrmsUtil.getAccrualDays(partyId);
+	 if(totalAccrualLeave.compareTo(java.math.BigDecimal.ZERO) < 0)
+		 totalAccrualLeave = java.math.BigDecimal.ZERO;
+	}catch (Exception e){}
+	List leaveInfoList = null;
+	//List leaveLimitList = null;
+	leaveInfoList = delegator.findByAnd("EmployeeLeaveDetail", UtilMisc.toMap("partyId", partyId));
+	Object leaveInfoArray = leaveInfoList.toArray(new GenericValue[leaveInfoList.size()]);
+	SimpleListModel model = new SimpleListModel(leaveInfoList);
+	//leaveLimitList = delegator.findByAnd("EmployeeLeaveLimitDetail", UtilMisc.toMap("emplPosTypeId", emplPosTypeIdOfParty));
+	//Object leaveLimitArray = leaveLimitList.toArray(new GenericValue[leaveLimitList.size()]);
+
+    List emplLeaveInfoModel = com.ndz.zkoss.HrmsUtil.getEmployeeLeaveInfoByComparingTwoEntity(emplPosTypeIdOfParty,partyId);
+	//SimpleListModel leaveLimitLstboxModel = new SimpleListModel(leaveLimitList);
+	SimpleListModel leaveLimitLstboxModel = new SimpleListModel(emplLeaveInfoModel);
+
+
+	public class InterviewDetailRenderer implements ListitemRenderer {
+
+		public InterviewDetailRenderer() {
+		}
+
+		public void render(Listitem li, Object data) {
+			if (data instanceof GenericValue) {
+				GenericValue val = (GenericValue) data;
+				new Listcell(val.getString("description")).setParent(li);
+				if(com.ndz.zkoss.HrmsUtil.isPreviousYearLeave(val)){
+					new Listcell("Previous Year").setParent(li);
+				}else{
+					new Listcell("Current Year").setParent(li);
+				}
+				//Integer availedLeaveInt = val.getDouble("availedLeave").intValue();
+				Double availedLeave = val.getDouble("availedLeave");
+				new Listcell(availedLeave.toString()).setParent(li);
+				//Integer balanceLeaveInt = val.getDouble("balanceLeave").intValue();
+				Double balanceLeave = val.getDouble("balanceLeave");
+				new Listcell(balanceLeave.toString()).setParent(li);
+			}
+		}
+	}
+	ListitemRenderer listItemRenderer = new InterviewDetailRenderer();
+	public class LeaveLimitRenderer implements ListitemRenderer {
+
+		public LeaveLimitRenderer() {
+		}
+
+		public void render(Listitem li, Object data) {
+			/* if (data instanceof GenericValue) {
+				GenericValue val = (GenericValue) data;
+				if("LT_EARNED".equals(val.getString("leaveTypeId"))){
+					new Listcell(val.getString("description") + "/ Accrued leave").setParent(li);
+					//Integer numDaysInt = val.getDouble("numDays").intValue();
+					Double numDays = val.getDouble("numDays");
+					new Listcell(numDays.toString() + "/ "+totalAccrualLeave.toString()).setParent(li);
+				}else{
+					new Listcell(val.getString("description")).setParent(li);
+					//Integer numDaysInt = val.getDouble("numDays").intValue();
+					Double numDays = val.getDouble("numDays");
+					new Listcell(numDays.toString()).setParent(li);
+				}
+			}*/
+
+
+			Map val = (Map) data;
+			String description = (String)val.get("description");
+			String leaveLimit = (String)val.get("leaveLimit");
+			java.text.SimpleDateFormat formater = new java.text.SimpleDateFormat("dd-MM-yyyy");
+			String updatedFromDate = formater.format((java.sql.Timestamp)val.get("fromDate"));
+			String updatedToDate = formater.format((java.sql.Timestamp)val.get("endDate"));
+			new Listcell(description).setParent(li);
+			new Listcell(leaveLimit).setParent(li);
+			new Listcell(updatedFromDate).setParent(li);
+			new Listcell(updatedToDate).setParent(li);
+		}
+	}
+	ListitemRenderer leaveLimitItemRenderer = new LeaveLimitRenderer();
+]]>
+	</zscript>
+	<window border="normal" id="leaveInfoWindow" width="45%" maximizable="true"
+		height="50%" contentStyle="overflow:auto" closable="true">
+		<caption label="Leave Information" style="font-weight:bold"></caption>
+		<listbox itemRenderer="${leaveLimitItemRenderer}"
+			id="leaveLimitListbox">
+			<listhead>
+				<listheader label="Leave Type"  style="font-weight:bold" align="center" />
+				<listheader label="Allocated Leave Limit" align="center"
+					style="font-weight:bold" />
+				<listheader label="From" align="center"
+							style="font-weight:bold" />
+				<listheader label="To" align="center"
+							style="font-weight:bold" />
+			</listhead>
+		</listbox>
+		<separator />
+		<listbox itemRenderer="${listItemRenderer}"
+			id="leaveInfoListbox">
+			<listhead>
+				<listheader label="Leave Type" style="font-weight:bold" align="center"/>
+				<listheader label="Year" style="font-weight:bold" align="center"/>
+				<listheader label="Availed Leave" 
+					style="font-weight:bold" align="center"/>
+				<listheader label="Balance Leave" 
+					style="font-weight:bold" align="center"/>
+			</listhead>
+		</listbox>
+		<zscript>
+	import org.zkoss.zul.*;
+	Listbox lbox = (Listbox) leaveInfoWindow.getFellow("leaveInfoListbox");
+	lbox.setModel(model);
+	import org.zkoss.zul.*;
+	Listbox leaveLimitLstbox = (Listbox) leaveInfoWindow
+			.getFellow("leaveLimitListbox");
+	leaveLimitLstbox.setModel(leaveLimitLstboxModel);
+</zscript>
+		<separator />
+		<box align="center" width="100%">
+			<button label="Close" onClick="leaveInfoWindow.detach();"></button>
+		</box>
+	</window>
+</zk>

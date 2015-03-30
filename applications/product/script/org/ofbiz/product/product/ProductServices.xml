@@ -1,0 +1,1007 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+Licensed to the Apache Software Foundation (ASF) under one
+or more contributor license agreements.  See the NOTICE file
+distributed with this work for additional information
+regarding copyright ownership.  The ASF licenses this file
+to you under the Apache License, Version 2.0 (the
+"License"); you may not use this file except in compliance
+with the License.  You may obtain a copy of the License at
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing,
+software distributed under the License is distributed on an
+"AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+KIND, either express or implied.  See the License for the
+specific language governing permissions and limitations
+under the License.
+-->
+<simple-methods xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://ofbiz.apache.org/dtds/simple-methods-v2.xsd">
+
+    <simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_" event-event-message-name="_event_message_" event-request-object-name="request" event-response-code-name="_response_code_" event-response-object-name="response" login-required="true" method-name="createProduct" service-error-message-list-name="errorMessageList" service-error-message-map-name="errorMessageMap" service-error-message-name="errorMessage" service-response-message-name="responseMessage" service-success-message-list-name="successMessageList" service-success-message-name="successMessage" short-description="Create a Product" use-transaction="true">
+        <check-permission action="_CREATE" error-list-name="error_list" permission="CATALOG">
+            <alt-permission action="_CREATE" permission="CATALOG_ROLE"/>
+            <fail-message message="Security Error: to run createProduct you must have the CATALOG_CREATE or CATALOG_ADMIN permission, or the limited CATALOG_ROLE_CREATE permission"/>
+        </check-permission>
+        <check-errors error-code="error" error-list-name="error_list"/>
+        <make-value entity-name="Product" value-field="newEntity"/>
+        <set-nonpk-fields map="parameters" set-if-null="true" value-field="newEntity"/>
+        <set field="newEntity.description" from="parameters.internalName" set-if-empty="true" set-if-null="false"/>
+        <set field="newEntity.productName" from="parameters.internalName" set-if-empty="true" set-if-null="false"/>
+        <set field="newEntity.productId" from="parameters.productId" set-if-empty="true" set-if-null="false"/>
+        <if-empty field="newEntity.productId">
+            <sequenced-id field="newEntity.productId" get-long-only="false" sequence-name="Product"/>
+            <else>
+                <check-id error-list-name="error_list" field="newEntity.productId"/>
+                <check-errors error-code="error" error-list-name="error_list"/>
+            </else>
+        </if-empty>
+        <field-to-result field="newEntity.productId" result-name="productId"/>
+        <now-timestamp field="nowTimestamp"/>
+        <set field="newEntity.createdDate" from="nowTimestamp" set-if-empty="true" set-if-null="false"/>
+        <set field="newEntity.lastModifiedDate" from="nowTimestamp" set-if-empty="true" set-if-null="false"/>
+        <set field="newEntity.lastModifiedByUserLogin" from="userLogin.userLoginId" set-if-empty="true" set-if-null="false"/>
+        <set field="newEntity.createdByUserLogin" from="userLogin.userLoginId" set-if-empty="true" set-if-null="false"/>
+        <if-empty field="newEntity.isVariant">
+            <set field="newEntity.isVariant" set-if-empty="true" set-if-null="false" value="N"/>
+        </if-empty>
+        <if-empty field="newEntity.isVirtual">
+            <set field="newEntity.isVirtual" set-if-empty="true" set-if-null="false" value="N"/>
+        </if-empty>
+        <if-empty field="newEntity.billOfMaterialLevel">
+            <set field="newEntity.billOfMaterialLevel" set-if-empty="true" set-if-null="false" type="Long" value="0"/>
+        </if-empty>
+        <create-value do-cache-clear="true" or-store="false" value-field="newEntity"/>
+        <!-- if setting the primaryProductCategoryId create a member entity too -->
+        <!-- THIS IS REMOVED BECAUSE IT CAUSES PROBLEMS FOR WORKING ON PRODUCTION SITES
+        <if-not-empty field="newEntity.primaryProductCategoryId">
+            <make-value entity-name="ProductCategoryMember" value-field="newMember"/>
+            <set from-field="productId" map-name="newEntity" to-field-name="productId" to-map-name="newMember"/>
+            <set from-field="primaryProductCategoryId" map-name="newEntity" to-field-name="productCategoryId" to-map-name="newMember"/>
+            <now-timestamp field="nowStamp"/>
+            <set from-field="nowStamp" field="newMember.fromDate"/>
+            <create-value value-field="newMember"/>
+        </if-not-empty>
+        -->
+        <!-- if the user has the role limited position, add this product to the limit category/ies -->
+        <if-has-permission action="_CREATE" permission="CATALOG_ROLE">
+            <entity-and entity-name="ProductCategoryRole" filter-by-date="true" list="productCategoryRoles" use-cache="false">
+                <field-map field-name="partyId" from-field="userLogin.partyId"/>
+                <field-map field-name="roleTypeId" value="LTD_ADMIN"/>
+            </entity-and>
+            <iterate entry="productCategoryRole" list="productCategoryRoles">
+                <!-- add this new product to the category -->
+                <make-value entity-name="ProductCategoryMember" value-field="newLimitMember"/>
+                <set field="newLimitMember.productId" from="newEntity.productId" set-if-empty="true" set-if-null="false"/>
+                <set field="newLimitMember.productCategoryId" from="productCategoryRole.productCategoryId" set-if-empty="true" set-if-null="false"/>
+                <set field="newLimitMember.fromDate" from="nowTimestamp" set-if-empty="true" set-if-null="false"/>
+                <create-value do-cache-clear="true" or-store="false" value-field="newLimitMember"/>
+            </iterate>
+        </if-has-permission>
+    </simple-method>
+
+    <simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_" event-event-message-name="_event_message_" event-request-object-name="request" event-response-code-name="_response_code_" event-response-object-name="response" login-required="true" method-name="updateProduct" service-error-message-list-name="errorMessageList" service-error-message-map-name="errorMessageMap" service-error-message-name="errorMessage" service-response-message-name="responseMessage" service-success-message-list-name="successMessageList" service-success-message-name="successMessage" short-description="Update an Product" use-transaction="true">
+        <set field="callingMethodName" set-if-empty="true" set-if-null="false" value="updateProduct"/>
+        <set field="checkAction" set-if-empty="true" set-if-null="false" value="UPDATE"/>
+        <call-simple-method method-name="checkProductRelatedPermission"/>
+        <check-errors error-code="error" error-list-name="error_list"/>
+        <entity-one auto-field-map="true" entity-name="Product" use-cache="false" value-field="lookedUpValue"/>
+        <!-- save this value before overwriting it so we can compare it later -->
+        <set field="saveIdMap.primaryProductCategoryId" from="lookedUpValue.primaryProductCategoryId" set-if-empty="true" set-if-null="false"/>
+        <set-nonpk-fields map="parameters" set-if-null="true" value-field="lookedUpValue"/>
+        <set field="lookedUpValue.description" from="parameters.internalName" set-if-empty="true" set-if-null="false"/>
+        <set field="lookedUpValue.productName" from="parameters.internalName" set-if-empty="true" set-if-null="false"/>
+        <now-timestamp field="lookedUpValue.lastModifiedDate"/>
+        <set field="lookedUpValue.lastModifiedByUserLogin" from="userLogin.userLoginId" set-if-empty="true" set-if-null="false"/>
+        <store-value do-cache-clear="true" value-field="lookedUpValue"/>
+        <!-- if setting the primaryParentCategoryId, create a rollup entity too -->
+        <!-- THIS IS REMOVED BECAUSE IT CAUSES PROBLEMS FOR WORKING ON PRODUCTION SITES
+        <if-not-empty field="lookedUpValue.primaryProductCategoryId">
+            <if-compare-field to-field="saveIdMap.primaryProductCategoryId" field="lookedUpValue.primaryProductCategoryId" operator="equals">
+                <make-value entity-name="ProductCategoryMember" value-field="newMember"/>
+                <set from-field="productId" map-name="newEntity" to-field-name="productId" to-map-name="newMember"/>
+                <set from-field="primaryProductCategoryId" map-name="newEntity" to-field-name="productCategoryId" to-map-name="newMember"/>
+                <now-timestamp field="newMember.fromDate"/>
+                <create-value value-field="newMember"/>
+            </if-compare-field>
+        </if-not-empty>
+        -->
+    </simple-method>
+    <!-- update the name of a product - handles real , virtual and variant products -->
+
+    <simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_" event-event-message-name="_event_message_" event-request-object-name="request" event-response-code-name="_response_code_" event-response-object-name="response" login-required="true" method-name="updateProductQuickAdminName" service-error-message-list-name="errorMessageList" service-error-message-map-name="errorMessageMap" service-error-message-name="errorMessage" service-response-message-name="responseMessage" service-success-message-list-name="successMessageList" service-success-message-name="successMessage" short-description="Update a Product Name from quick admin" use-transaction="true">
+        <set field="callingMethodName" set-if-empty="true" set-if-null="false" value="updateProductQuickAdminName"/>
+        <set field="checkAction" set-if-empty="true" set-if-null="false" value="UPDATE"/>
+        <call-simple-method method-name="checkProductRelatedPermission"/>
+        <check-errors error-code="error" error-list-name="error_list"/>
+        <entity-one auto-field-map="true" entity-name="Product" use-cache="false" value-field="lookedUpValue"/>
+        <set field="lookedUpValue.productName" from="parameters.productName" set-if-empty="true" set-if-null="false"/>
+        <if-compare field="lookedUpValue.isVirtual" operator="equals" type="String" value="Y">
+            <set field="lookedUpValue.internalName" from="lookedUpValue.productName" set-if-empty="true" set-if-null="false"/>
+        </if-compare>
+        <now-timestamp field="lookedUpValue.lastModifiedDate"/>
+        <set field="lookedUpValue.lastModifiedByUserLogin" from="userLogin.userLoginId" set-if-empty="true" set-if-null="false"/>
+        <store-value do-cache-clear="true" value-field="lookedUpValue"/>
+        <if-compare field="lookedUpValue.isVirtual" operator="equals" type="String" value="Y">
+            <!-- get all variant products, to update their productNames -->
+            <set field="variantProductAssocMap.productId" from="parameters.productId" set-if-empty="true" set-if-null="false"/>
+            <set field="variantProductAssocMap.productAssocTypeId" set-if-empty="true" set-if-null="false" value="PRODUCT_VARIANT"/>
+            <!-- get all productAssocs, then get the actual product to update -->
+            <find-by-and entity-name="ProductAssoc" list="variantProductAssocs" map="variantProductAssocMap" use-cache="false" use-iterator="false"/>
+            <filter-list-by-date from-field-name="fromDate" list="variantProductAssocs" thru-field-name="thruDate"/>
+            <iterate entry="variantProductAssoc" list="variantProductAssocs">
+                <clear-field field="variantProduct"/>
+                <entity-one auto-field-map="false" entity-name="Product" use-cache="false" value-field="variantProduct">
+                    <field-map field-name="productId" from-field="variantProductAssoc.productIdTo"/>
+                </entity-one>
+                <set field="variantProduct.productName" from="parameters.productName" set-if-empty="true" set-if-null="false"/>
+                <now-timestamp field="variantProduct.lastModifiedDate"/>
+                <set field="variantProduct.lastModifiedByUserLogin" from="userLogin.userLoginId" set-if-empty="true" set-if-null="false"/>
+                <store-value do-cache-clear="true" value-field="variantProduct"/>
+            </iterate>
+        </if-compare>
+    </simple-method>
+
+    <simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_" event-event-message-name="_event_message_" event-request-object-name="request" event-response-code-name="_response_code_" event-response-object-name="response" login-required="true" method-name="duplicateProduct" service-error-message-list-name="errorMessageList" service-error-message-map-name="errorMessageMap" service-error-message-name="errorMessage" service-response-message-name="responseMessage" service-success-message-list-name="successMessageList" service-success-message-name="successMessage" short-description="Duplicate a Product" use-transaction="true">
+        <set field="callingMethodName" set-if-empty="true" set-if-null="false" value="duplicateProduct"/>
+        <set field="checkAction" set-if-empty="true" set-if-null="false" value="CREATE"/>
+        <call-simple-method method-name="checkProductRelatedPermission"/>
+        <set field="checkAction" set-if-empty="true" set-if-null="false" value="DELETE"/>
+        <call-simple-method method-name="checkProductRelatedPermission"/>
+        <check-errors error-code="error" error-list-name="error_list"/>
+        <!-- look up the old product and clone it -->
+        <entity-one auto-field-map="false" entity-name="Product" use-cache="false" value-field="oldProduct">
+            <field-map field-name="productId" from-field="parameters.oldProductId"/>
+        </entity-one>
+        <clone-value new-value-field="newProduct" value-field="oldProduct"/>
+        <!-- set the productId, and write it to the datasource -->
+        <set field="newProduct.productId" from="parameters.productId" set-if-empty="true" set-if-null="false"/>
+        <!-- if requested, set the new internalName field -->
+        <if-not-empty field="parameters.newInternalName">
+            <set field="newProduct.internalName" from="parameters.newInternalName" set-if-empty="true" set-if-null="false"/>
+        </if-not-empty>
+        <!-- if requested, set the new productName field -->
+        <if-not-empty field="parameters.newProductName">
+            <set field="newProduct.productName" from="parameters.newProductName" set-if-empty="true" set-if-null="false"/>
+        </if-not-empty>
+        <!-- if requested, set the new description field -->
+        <if-not-empty field="parameters.newDescription">
+            <set field="newProduct.description" from="parameters.newDescription" set-if-empty="true" set-if-null="false"/>
+        </if-not-empty>
+        <!-- if requested, set the new longDescription field -->
+        <if-not-empty field="parameters.newLongDescription">
+            <set field="newProduct.longDescription" from="parameters.newLongDescription" set-if-empty="true" set-if-null="false"/>
+        </if-not-empty>
+        <create-value do-cache-clear="true" or-store="false" value-field="newProduct"/>
+        <!-- set up entity filter -->
+        <set field="productFindContext.productId" from="parameters.oldProductId" set-if-empty="true" set-if-null="false"/>
+        <set field="reverseProductFindContext.productIdTo" from="parameters.oldProductId" set-if-empty="true" set-if-null="false"/>
+        <!-- if requested, duplicate related data as well -->
+        <if-not-empty field="parameters.duplicatePrices">
+            <find-by-and entity-name="ProductPrice" list="foundValues" map="productFindContext" use-cache="false" use-iterator="false"/>
+            <iterate entry="foundValue" list="foundValues">
+                <clone-value new-value-field="newTempValue" value-field="foundValue"/>
+                <set field="newTempValue.productId" from="parameters.productId" set-if-empty="true" set-if-null="false"/>
+                <create-value do-cache-clear="true" or-store="false" value-field="newTempValue"/>
+            </iterate>
+        </if-not-empty>
+        <if-not-empty field="parameters.duplicateIDs">
+            <find-by-and entity-name="GoodIdentification" list="foundValues" map="productFindContext" use-cache="false" use-iterator="false"/>
+            <iterate entry="foundValue" list="foundValues">
+                <clone-value new-value-field="newTempValue" value-field="foundValue"/>
+                <set field="newTempValue.productId" from="parameters.productId" set-if-empty="true" set-if-null="false"/>
+                <create-value do-cache-clear="true" or-store="false" value-field="newTempValue"/>
+            </iterate>
+        </if-not-empty>
+        <if-not-empty field="parameters.duplicateContent">
+            <find-by-and entity-name="ProductContent" list="foundValues" map="productFindContext" use-cache="false" use-iterator="false"/>
+            <iterate entry="foundValue" list="foundValues">
+                <clone-value new-value-field="newTempValue" value-field="foundValue"/>
+                <set field="newTempValue.productId" from="parameters.productId" set-if-empty="true" set-if-null="false"/>
+                <create-value do-cache-clear="true" or-store="false" value-field="newTempValue"/>
+            </iterate>
+        </if-not-empty>
+        <if-not-empty field="parameters.duplicateCategoryMembers">
+            <find-by-and entity-name="ProductCategoryMember" list="foundValues" map="productFindContext" use-cache="false" use-iterator="false"/>
+            <iterate entry="foundValue" list="foundValues">
+                <clone-value new-value-field="newTempValue" value-field="foundValue"/>
+                <set field="newTempValue.productId" from="parameters.productId" set-if-empty="true" set-if-null="false"/>
+                <create-value do-cache-clear="true" or-store="false" value-field="newTempValue"/>
+            </iterate>
+        </if-not-empty>
+        <if-not-empty field="parameters.duplicateAssocs">
+            <find-by-and entity-name="ProductAssoc" list="foundValues" map="productFindContext" use-cache="false" use-iterator="false"/>
+            <iterate entry="foundValue" list="foundValues">
+                <clone-value new-value-field="newTempValue" value-field="foundValue"/>
+                <set field="newTempValue.productId" from="parameters.productId" set-if-empty="true" set-if-null="false"/>
+                <create-value do-cache-clear="true" or-store="false" value-field="newTempValue"/>
+            </iterate>
+            <!-- small difference here, also do the reverse assocs... -->
+            <entity-and entity-name="ProductAssoc" filter-by-date="false" list="foundValues" use-cache="false">
+                <field-map field-name="productIdTo" from-field="parameters.oldProductId"/>
+            </entity-and>
+            <iterate entry="foundValue" list="foundValues">
+                <clone-value new-value-field="newTempValue" value-field="foundValue"/>
+                <set field="newTempValue.productIdTo" from="parameters.productId" set-if-empty="true" set-if-null="false"/>
+                <create-value do-cache-clear="true" or-store="false" value-field="newTempValue"/>
+            </iterate>
+        </if-not-empty>
+        <if-not-empty field="parameters.duplicateAttributes">
+            <find-by-and entity-name="ProductAttribute" list="foundValues" map="productFindContext" use-cache="false" use-iterator="false"/>
+            <iterate entry="foundValue" list="foundValues">
+                <clone-value new-value-field="newTempValue" value-field="foundValue"/>
+                <set field="newTempValue.productId" from="parameters.productId" set-if-empty="true" set-if-null="false"/>
+                <create-value do-cache-clear="true" or-store="false" value-field="newTempValue"/>
+            </iterate>
+        </if-not-empty>
+        <if-not-empty field="parameters.duplicateFeatureAppls">
+            <find-by-and entity-name="ProductFeatureAppl" list="foundValues" map="productFindContext" use-cache="false" use-iterator="false"/>
+            <iterate entry="foundValue" list="foundValues">
+                <clone-value new-value-field="newTempValue" value-field="foundValue"/>
+                <set field="newTempValue.productId" from="parameters.productId" set-if-empty="true" set-if-null="false"/>
+                <create-value do-cache-clear="true" or-store="false" value-field="newTempValue"/>
+            </iterate>
+        </if-not-empty>
+        <if-not-empty field="parameters.duplicateInventoryItems">
+            <find-by-and entity-name="InventoryItem" list="foundValues" map="productFindContext" use-cache="false" use-iterator="false"/>
+            <iterate entry="foundValue" list="foundValues">
+                <!--
+                    NOTE: new inventory items should always be created calling the
+                          createInventoryItem service because in this way we are sure
+                          that all the relevant fields are filled with default values.
+                          However, the code here should work fine because all the values
+                          for the new inventory item are inerited from the existing item.
+                    TODO: is this code correct? What is the meaning of duplicating inventory items?
+                          What about the InventoryItemDetail entries?
+                -->
+                <clone-value new-value-field="newTempValue" value-field="foundValue"/>
+                <set field="newTempValue.productId" from="parameters.productId" set-if-empty="true" set-if-null="false"/>
+                <!-- this one is slightly different because it needs a new sequenced inventoryItemId -->
+                <sequenced-id field="newTempValue.inventoryItemId" get-long-only="false" sequence-name="InventoryItem"/>
+                <create-value do-cache-clear="true" or-store="false" value-field="newTempValue"/>
+            </iterate>
+        </if-not-empty>
+        <!-- if requested, remove related data as well -->
+        <if-not-empty field="parameters.removePrices">
+            <remove-by-and do-cache-clear="true" entity-name="ProductPrice" map="productFindContext"/>
+        </if-not-empty>
+        <if-not-empty field="parameters.removeIDs">
+            <remove-by-and do-cache-clear="true" entity-name="GoodIdentification" map="productFindContext"/>
+        </if-not-empty>
+        <if-not-empty field="parameters.removeContent">
+            <remove-by-and do-cache-clear="true" entity-name="ProductContent" map="productFindContext"/>
+        </if-not-empty>
+        <if-not-empty field="parameters.removeCategoryMembers">
+            <remove-by-and do-cache-clear="true" entity-name="ProductCategoryMember" map="productFindContext"/>
+        </if-not-empty>
+        <if-not-empty field="parameters.removeAssocs">
+            <remove-by-and do-cache-clear="true" entity-name="ProductAssoc" map="productFindContext"/>
+            <!-- small difference here, also do the reverse assocs... -->
+            <remove-by-and do-cache-clear="true" entity-name="ProductAssoc" map="reverseProductFindContext"/>
+        </if-not-empty>
+        <if-not-empty field="parameters.removeAttributes">
+            <remove-by-and do-cache-clear="true" entity-name="ProductAttribute" map="productFindContext"/>
+        </if-not-empty>
+        <if-not-empty field="parameters.removeFeatureAppls">
+            <remove-by-and do-cache-clear="true" entity-name="ProductFeatureAppl" map="productFindContext"/>
+        </if-not-empty>
+        <if-not-empty field="parameters.removeInventoryItems">
+            <remove-by-and do-cache-clear="true" entity-name="InventoryItem" map="productFindContext"/>
+        </if-not-empty>
+    </simple-method>
+    <!-- Product Keyword Services -->
+
+    <simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_" event-event-message-name="_event_message_" event-request-object-name="request" event-response-code-name="_response_code_" event-response-object-name="response" login-required="true" method-name="createProductKeyword" service-error-message-list-name="errorMessageList" service-error-message-map-name="errorMessageMap" service-error-message-name="errorMessage" service-response-message-name="responseMessage" service-success-message-list-name="successMessageList" service-success-message-name="successMessage" short-description="create a ProductKeyword" use-transaction="true">
+        <make-value entity-name="ProductKeyword" value-field="newEntity"/>
+        <set-pk-fields map="parameters" set-if-null="true" value-field="newEntity"/>
+        <set-nonpk-fields map="parameters" set-if-null="true" value-field="newEntity"/>
+        <create-value do-cache-clear="true" or-store="false" value-field="newEntity"/>
+    </simple-method>
+
+    <simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_" event-event-message-name="_event_message_" event-request-object-name="request" event-response-code-name="_response_code_" event-response-object-name="response" login-required="true" method-name="updateProductKeyword" service-error-message-list-name="errorMessageList" service-error-message-map-name="errorMessageMap" service-error-message-name="errorMessage" service-response-message-name="responseMessage" service-success-message-list-name="successMessageList" service-success-message-name="successMessage" short-description="update a ProductKeyword" use-transaction="true">
+        <entity-one auto-field-map="true" entity-name="ProductKeyword" use-cache="false" value-field="lookedUpValue"/>
+        <set-nonpk-fields map="parameters" set-if-null="true" value-field="lookedUpValue"/>
+        <store-value do-cache-clear="true" value-field="lookedUpValue"/>
+    </simple-method>
+
+    <simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_" event-event-message-name="_event_message_" event-request-object-name="request" event-response-code-name="_response_code_" event-response-object-name="response" login-required="true" method-name="deleteProductKeyword" service-error-message-list-name="errorMessageList" service-error-message-map-name="errorMessageMap" service-error-message-name="errorMessage" service-response-message-name="responseMessage" service-success-message-list-name="successMessageList" service-success-message-name="successMessage" short-description="delete a ProductKeyword" use-transaction="true">
+        <entity-one auto-field-map="true" entity-name="ProductKeyword" use-cache="false" value-field="lookedUpValue"/>
+        <remove-value do-cache-clear="true" value-field="lookedUpValue"/>
+    </simple-method>
+
+    <simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_" event-event-message-name="_event_message_" event-request-object-name="request" event-response-code-name="_response_code_" event-response-object-name="response" login-required="true" method-name="forceIndexProductKeywords" service-error-message-list-name="errorMessageList" service-error-message-map-name="errorMessageMap" service-error-message-name="errorMessage" service-response-message-name="responseMessage" service-success-message-list-name="successMessageList" service-success-message-name="successMessage" short-description="induce all the keywords of a product" use-transaction="true">
+        <entity-one auto-field-map="true" entity-name="Product" use-cache="false" value-field="product"/>
+        <call-class-method class-name="org.ofbiz.product.product.KeywordIndex" method-name="forceIndexKeywords">
+            <field field="product" type="org.ofbiz.entity.GenericValue"/>
+        </call-class-method>
+    </simple-method>
+
+    <simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_" event-event-message-name="_event_message_" event-request-object-name="request" event-response-code-name="_response_code_" event-response-object-name="response" login-required="true" method-name="deleteProductKeywords" service-error-message-list-name="errorMessageList" service-error-message-map-name="errorMessageMap" service-error-message-name="errorMessage" service-response-message-name="responseMessage" service-success-message-list-name="successMessageList" service-success-message-name="successMessage" short-description="delete all the keywords of a product" use-transaction="true">
+        <entity-one auto-field-map="true" entity-name="Product" use-cache="false" value-field="product"/>
+        <remove-related do-cache-clear="true" relation-name="ProductKeyword" value-field="product"/>
+    </simple-method>
+
+    <simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_" event-event-message-name="_event_message_" event-request-object-name="request" event-response-code-name="_response_code_" event-response-object-name="response" login-required="false" method-name="indexProductKeywords" service-error-message-list-name="errorMessageList" service-error-message-map-name="errorMessageMap" service-error-message-name="errorMessage" service-response-message-name="responseMessage" service-success-message-list-name="successMessageList" service-success-message-name="successMessage" short-description="Index the Keywords for a Product" use-transaction="true">
+        <!-- this service is meant to be called from an entity ECA for entities that include a productId -->
+        <!-- if it is the Product entity itself triggering this action, then a [productInstance] parameter
+            will be passed and we can save a few cycles looking that up -->
+        <set field="productInstance" from="parameters.productInstance" set-if-empty="true" set-if-null="false"/>
+        <if-empty field="productInstance">
+            <set field="findProductMap.productId" from="parameters.productId" set-if-empty="true" set-if-null="false"/>
+            <find-by-primary-key entity-name="Product" map="findProductMap" use-cache="false" value-field="productInstance"/>
+        </if-empty>
+        <!-- induce keywords if autoCreateKeywords is emtpy or Y-->
+        <if>
+            <condition>
+                <or>
+                    <if-empty field="productInstance.autoCreateKeywords"/>
+                    <if-compare field="productInstance.autoCreateKeywords" operator="equals" type="String" value="Y"/>
+                </or>
+            </condition>
+            <then>
+                <call-class-method class-name="org.ofbiz.product.product.KeywordIndex" method-name="indexKeywords">
+                    <field field="productInstance" type="org.ofbiz.entity.GenericValue"/>
+                </call-class-method>
+            </then>
+        </if>
+    </simple-method>
+
+    <simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_" event-event-message-name="_event_message_" event-request-object-name="request" event-response-code-name="_response_code_" event-response-object-name="response" login-required="false" method-name="discontinueProductSales" service-error-message-list-name="errorMessageList" service-error-message-map-name="errorMessageMap" service-error-message-name="errorMessage" service-response-message-name="responseMessage" service-success-message-list-name="successMessageList" service-success-message-name="successMessage" short-description="Discontinue Product Sales" use-transaction="true">
+        <!-- set sales discontinuation date to now -->
+        <now-timestamp field="nowTimestamp"/>
+        <entity-one auto-field-map="true" entity-name="Product" use-cache="false" value-field="product"/>
+        <set field="product.salesDiscontinuationDate" from="nowTimestamp" set-if-empty="true" set-if-null="false"/>
+        <store-value do-cache-clear="true" value-field="product"/>
+        <!-- expire product from all categories -->
+        <get-related list="productCategoryMembers" relation-name="ProductCategoryMember" use-cache="false" value-field="product"/>
+        <iterate entry="productCategoryMember" list="productCategoryMembers">
+            <if-empty field="productCategoryMember.thruDate">
+                <set field="productCategoryMember.thruDate" from="nowTimestamp" set-if-empty="true" set-if-null="false"/>
+                <store-value do-cache-clear="true" value-field="productCategoryMember"/>
+            </if-empty>
+        </iterate>
+        <!-- expire product from all associations going to it -->
+        <get-related list="assocProductAssocs" relation-name="AssocProductAssoc" use-cache="false" value-field="product"/>
+        <iterate entry="assocProductAssoc" list="assocProductAssocs">
+            <if-empty field="assocProductAssoc.thruDate">
+                <set field="assocProductAssoc.thruDate" from="nowTimestamp" set-if-empty="true" set-if-null="false"/>
+                <store-value do-cache-clear="true" value-field="assocProductAssoc"/>
+            </if-empty>
+        </iterate>
+    </simple-method>
+
+    <simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_" event-event-message-name="_event_message_" event-request-object-name="request" event-response-code-name="_response_code_" event-response-object-name="response" login-required="false" method-name="countProductView" service-error-message-list-name="errorMessageList" service-error-message-map-name="errorMessageMap" service-error-message-name="errorMessage" service-response-message-name="responseMessage" service-success-message-list-name="successMessageList" service-success-message-name="successMessage" short-description="Count Product View" use-transaction="true">
+        <if-empty field="parameters.weight">
+            <calculate decimal-scale="2" field="parameters.weight" rounding-mode="HalfEven" type="Long">
+                <number value="1"/>
+            </calculate>
+        </if-empty>
+        <entity-one auto-field-map="true" entity-name="ProductCalculatedInfo" use-cache="false" value-field="productCalculatedInfo"/>
+        <if-empty field="productCalculatedInfo">
+            <!-- go ahead and create it -->
+            <make-value entity-name="ProductCalculatedInfo" value-field="productCalculatedInfo"/>
+            <set field="productCalculatedInfo.productId" from="parameters.productId" set-if-empty="true" set-if-null="false"/>
+            <set field="productCalculatedInfo.totalTimesViewed" from="parameters.weight" set-if-empty="true" set-if-null="false"/>
+            <create-value do-cache-clear="true" or-store="false" value-field="productCalculatedInfo"/>
+            <else>
+                <calculate decimal-scale="2" field="productCalculatedInfo.totalTimesViewed" rounding-mode="HalfEven" type="Long">
+                    <calcop field="productCalculatedInfo.totalTimesViewed" operator="add">
+                        <calcop field="parameters.weight" operator="get"/>
+                    </calcop>
+                </calculate>
+                <store-value do-cache-clear="true" value-field="productCalculatedInfo"/>
+            </else>
+        </if-empty>
+        <!-- do the same for the virtual product... -->
+        <entity-one auto-field-map="true" entity-name="Product" use-cache="true" value-field="product"/>
+        <call-class-method class-name="org.ofbiz.product.product.ProductWorker" method-name="getVariantVirtualId" ret-field="virtualProductId">
+            <field field="product" type="GenericValue"/>
+        </call-class-method>
+        <if-not-empty field="virtualProductId">
+            <set field="callSubMap.productId" from="virtualProductId" set-if-empty="true" set-if-null="false"/>
+            <set field="callSubMap.weight" from="parameters.weight" set-if-empty="true" set-if-null="false"/>
+            <call-service break-on-error="true" error-code="error" in-map-name="callSubMap" include-user-login="true" require-new-transaction="false" service-name="countProductView" success-code="success"/>
+        </if-not-empty>
+    </simple-method>
+
+    <simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_" event-event-message-name="_event_message_" event-request-object-name="request" event-response-code-name="_response_code_" event-response-object-name="response" login-required="true" method-name="countProductQuantityOrdered" service-error-message-list-name="errorMessageList" service-error-message-map-name="errorMessageMap" service-error-message-name="errorMessage" service-response-message-name="responseMessage" service-success-message-list-name="successMessageList" service-success-message-name="successMessage" short-description="Count Product Quantity Ordered" use-transaction="true">
+        <if-empty field="parameters.quantity">
+            <calculate decimal-scale="2" field="parameters.quantity" rounding-mode="HalfEven" type="BigDecimal">
+                <number value="1"/>
+            </calculate>
+        </if-empty>
+        <entity-one auto-field-map="true" entity-name="ProductCalculatedInfo" use-cache="false" value-field="productCalculatedInfo"/>
+        <if-empty field="productCalculatedInfo">
+            <!-- go ahead and create it -->
+            <make-value entity-name="ProductCalculatedInfo" value-field="productCalculatedInfo"/>
+            <set field="productCalculatedInfo.productId" from="parameters.productId" set-if-empty="true" set-if-null="false"/>
+            <set field="productCalculatedInfo.totalQuantityOrdered" from="parameters.quantity" set-if-empty="true" set-if-null="false"/>
+            <create-value do-cache-clear="true" or-store="false" value-field="productCalculatedInfo"/>
+            <else>
+                <set field="productCalculatedInfo.totalQuantityOrdered" from="productCalculatedInfo.totalQuantityOrdered + parameters.quantity" set-if-empty="true" set-if-null="false" type="BigDecimal"/>
+                <store-value do-cache-clear="true" value-field="productCalculatedInfo"/>
+            </else>
+        </if-empty>
+        <!-- do the same for the virtual product... -->
+        <entity-one auto-field-map="true" entity-name="Product" use-cache="true" value-field="product"/>
+        <call-class-method class-name="org.ofbiz.product.product.ProductWorker" method-name="getVariantVirtualId" ret-field="virtualProductId">
+            <field field="product" type="GenericValue"/>
+        </call-class-method>
+        <if-not-empty field="virtualProductId">
+            <set field="callSubMap.productId" from="virtualProductId" set-if-empty="true" set-if-null="false"/>
+            <set field="callSubMap.quantity" from="parameters.quantity" set-if-empty="true" set-if-null="false"/>
+            <call-service break-on-error="true" error-code="error" in-map-name="callSubMap" include-user-login="true" require-new-transaction="false" service-name="countProductQuantityOrdered" success-code="success"/>
+        </if-not-empty>
+    </simple-method>
+    <!-- GoodIdentification methods -->
+
+    <simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_" event-event-message-name="_event_message_" event-request-object-name="request" event-response-code-name="_response_code_" event-response-object-name="response" login-required="true" method-name="createGoodIdentification" service-error-message-list-name="errorMessageList" service-error-message-map-name="errorMessageMap" service-error-message-name="errorMessage" service-response-message-name="responseMessage" service-success-message-list-name="successMessageList" service-success-message-name="successMessage" short-description="Create an GoodIdentification" use-transaction="true">
+        <set field="callingMethodName" set-if-empty="true" set-if-null="false" value="createGoodIdentification"/>
+        <set field="checkAction" set-if-empty="true" set-if-null="false" value="CREATE"/>
+        <call-simple-method method-name="checkProductRelatedPermission"/>
+        <check-errors error-code="error" error-list-name="error_list"/>
+        <make-value entity-name="GoodIdentification" value-field="newEntity"/>
+        <set-nonpk-fields map="parameters" set-if-null="true" value-field="newEntity"/>
+        <set-pk-fields map="parameters" set-if-null="true" value-field="newEntity"/>
+        <create-value do-cache-clear="true" or-store="false" value-field="newEntity"/>
+    </simple-method>
+
+    <simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_" event-event-message-name="_event_message_" event-request-object-name="request" event-response-code-name="_response_code_" event-response-object-name="response" login-required="true" method-name="updateGoodIdentification" service-error-message-list-name="errorMessageList" service-error-message-map-name="errorMessageMap" service-error-message-name="errorMessage" service-response-message-name="responseMessage" service-success-message-list-name="successMessageList" service-success-message-name="successMessage" short-description="Update an GoodIdentification" use-transaction="true">
+        <set field="callingMethodName" set-if-empty="true" set-if-null="false" value="updateGoodIdentification"/>
+        <set field="checkAction" set-if-empty="true" set-if-null="false" value="UPDATE"/>
+        <call-simple-method method-name="checkProductRelatedPermission"/>
+        <check-errors error-code="error" error-list-name="error_list"/>
+        <make-value entity-name="GoodIdentification" value-field="lookupPKMap"/>
+        <set-pk-fields map="parameters" set-if-null="true" value-field="lookupPKMap"/>
+        <find-by-primary-key map="lookupPKMap" use-cache="false" value-field="lookedUpValue"/>
+        <set-nonpk-fields map="parameters" set-if-null="true" value-field="lookedUpValue"/>
+        <store-value do-cache-clear="true" value-field="lookedUpValue"/>
+    </simple-method>
+
+    <simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_" event-event-message-name="_event_message_" event-request-object-name="request" event-response-code-name="_response_code_" event-response-object-name="response" login-required="true" method-name="deleteGoodIdentification" service-error-message-list-name="errorMessageList" service-error-message-map-name="errorMessageMap" service-error-message-name="errorMessage" service-response-message-name="responseMessage" service-success-message-list-name="successMessageList" service-success-message-name="successMessage" short-description="Delete an GoodIdentification" use-transaction="true">
+        <set field="callingMethodName" set-if-empty="true" set-if-null="false" value="deleteGoodIdentification"/>
+        <set field="checkAction" set-if-empty="true" set-if-null="false" value="DELETE"/>
+        <call-simple-method method-name="checkProductRelatedPermission"/>
+        <check-errors error-code="error" error-list-name="error_list"/>
+        <make-value entity-name="GoodIdentification" value-field="lookupPKMap"/>
+        <set-pk-fields map="parameters" set-if-null="true" value-field="lookupPKMap"/>
+        <find-by-primary-key map="lookupPKMap" use-cache="false" value-field="lookedUpValue"/>
+        <remove-value do-cache-clear="true" value-field="lookedUpValue"/>
+    </simple-method>
+    <!-- ProductGlAccount methods -->
+
+    <simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_" event-event-message-name="_event_message_" event-request-object-name="request" event-response-code-name="_response_code_" event-response-object-name="response" login-required="true" method-name="createProductGlAccount" service-error-message-list-name="errorMessageList" service-error-message-map-name="errorMessageMap" service-error-message-name="errorMessage" service-response-message-name="responseMessage" service-success-message-list-name="successMessageList" service-success-message-name="successMessage" short-description="Create an ProductGlAccount" use-transaction="true">
+        <set field="callingMethodName" set-if-empty="true" set-if-null="false" value="createProductGlAccount"/>
+        <set field="checkAction" set-if-empty="true" set-if-null="false" value="CREATE"/>
+        <call-simple-method method-name="checkProductRelatedPermission"/>
+        <check-errors error-code="error" error-list-name="error_list"/>
+        <make-value entity-name="ProductGlAccount" value-field="newEntity"/>
+        <set-nonpk-fields map="parameters" set-if-null="true" value-field="newEntity"/>
+        <set-pk-fields map="parameters" set-if-null="true" value-field="newEntity"/>
+        <create-value do-cache-clear="true" or-store="false" value-field="newEntity"/>
+    </simple-method>
+
+    <simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_" event-event-message-name="_event_message_" event-request-object-name="request" event-response-code-name="_response_code_" event-response-object-name="response" login-required="true" method-name="updateProductGlAccount" service-error-message-list-name="errorMessageList" service-error-message-map-name="errorMessageMap" service-error-message-name="errorMessage" service-response-message-name="responseMessage" service-success-message-list-name="successMessageList" service-success-message-name="successMessage" short-description="Update an ProductGlAccount" use-transaction="true">
+        <set field="callingMethodName" set-if-empty="true" set-if-null="false" value="updateProductGlAccount"/>
+        <set field="checkAction" set-if-empty="true" set-if-null="false" value="UPDATE"/>
+        <call-simple-method method-name="checkProductRelatedPermission"/>
+        <check-errors error-code="error" error-list-name="error_list"/>
+        <make-value entity-name="ProductGlAccount" value-field="lookupPKMap"/>
+        <set-pk-fields map="parameters" set-if-null="true" value-field="lookupPKMap"/>
+        <find-by-primary-key entity-name="ProductGlAccount" map="lookupPKMap" use-cache="false" value-field="lookedUpValue"/>
+        <set-nonpk-fields map="parameters" set-if-null="true" value-field="lookedUpValue"/>
+        <store-value do-cache-clear="true" value-field="lookedUpValue"/>
+    </simple-method>
+
+    <simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_" event-event-message-name="_event_message_" event-request-object-name="request" event-response-code-name="_response_code_" event-response-object-name="response" login-required="true" method-name="deleteProductGlAccount" service-error-message-list-name="errorMessageList" service-error-message-map-name="errorMessageMap" service-error-message-name="errorMessage" service-response-message-name="responseMessage" service-success-message-list-name="successMessageList" service-success-message-name="successMessage" short-description="Delete an ProductGlAccount" use-transaction="true">
+        <set field="callingMethodName" set-if-empty="true" set-if-null="false" value="deleteProductGlAccount"/>
+        <set field="checkAction" set-if-empty="true" set-if-null="false" value="DELETE"/>
+        <call-simple-method method-name="checkProductRelatedPermission"/>
+        <check-errors error-code="error" error-list-name="error_list"/>
+        <make-value entity-name="ProductGlAccount" value-field="lookupPKMap"/>
+        <set-pk-fields map="parameters" set-if-null="true" value-field="lookupPKMap"/>
+        <find-by-primary-key entity-name="ProductGlAccount" map="lookupPKMap" use-cache="false" value-field="lookedUpValue"/>
+        <remove-value do-cache-clear="true" value-field="lookedUpValue"/>
+    </simple-method>
+
+    <simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_" event-event-message-name="_event_message_" event-request-object-name="request" event-response-code-name="_response_code_" event-response-object-name="response" login-required="false" method-name="createProductReview" service-error-message-list-name="errorMessageList" service-error-message-map-name="errorMessageMap" service-error-message-name="errorMessage" service-response-message-name="responseMessage" service-success-message-list-name="successMessageList" service-success-message-name="successMessage" short-description="Create a ProductReview" use-transaction="true">
+        <make-value entity-name="ProductReview" value-field="newEntity"/>
+        <set-nonpk-fields map="parameters" set-if-null="true" value-field="newEntity"/>
+        <set field="newEntity.userLoginId" from="userLogin.userLoginId" set-if-empty="true" set-if-null="false"/>
+        <set field="newEntity.statusId" set-if-empty="true" set-if-null="false" value="PRR_PENDING"/>
+        <!-- code to check for auto-approved reviews (store setting) -->
+        <entity-one auto-field-map="true" entity-name="ProductStore" use-cache="false" value-field="productStore"/>
+        <if-not-empty field="productStore">
+            <if-compare field="productStore.autoApproveReviews" operator="equals" type="String" value="Y">
+                <set field="newEntity.statusId" set-if-empty="true" set-if-null="false" value="PRR_APPROVED"/>
+            </if-compare>
+        </if-not-empty>
+        <!-- auto approve the review if it is just a rating and has no review text -->
+        <if-empty field="parameters.productReview">
+            <set field="newEntity.statusId" set-if-empty="true" set-if-null="false" value="PRR_APPROVED"/>
+        </if-empty>
+        <!-- create the new ProductReview -->
+        <sequenced-id field="newEntity.productReviewId" get-long-only="false" sequence-name="ProductReview"/>
+        <field-to-result field="newEntity.productReviewId" result-name="productReviewId"/>
+        <if-empty field="newEntity.postedDateTime">
+            <now-timestamp field="newEntity.postedDateTime"/>
+        </if-empty>
+        <create-value do-cache-clear="true" or-store="false" value-field="newEntity"/>
+        <set field="productId" from="newEntity.productId" set-if-empty="true" set-if-null="false"/>
+        <property-to-field field="successMessage" no-locale="false" property="ProductCreateProductReviewSuccess" resource="ProductUiLabels"/>
+        <call-simple-method method-name="updateProductWithReviewRatingAvg"/>
+    </simple-method>
+
+    <simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_" event-event-message-name="_event_message_" event-request-object-name="request" event-response-code-name="_response_code_" event-response-object-name="response" login-required="true" method-name="updateProductReview" service-error-message-list-name="errorMessageList" service-error-message-map-name="errorMessageMap" service-error-message-name="errorMessage" service-response-message-name="responseMessage" service-success-message-list-name="successMessageList" service-success-message-name="successMessage" short-description="Update ProductReview" use-transaction="true">
+        <set field="callingMethodName" set-if-empty="true" set-if-null="false" value="updateProductReview"/>
+        <set field="checkAction" set-if-empty="true" set-if-null="false" value="UPDATE"/>
+        <call-simple-method method-name="checkProductRelatedPermission"/>
+        <check-errors error-code="error" error-list-name="error_list"/>
+        <make-value entity-name="ProductReview" value-field="lookupPKMap"/>
+        <set-pk-fields map="parameters" set-if-null="true" value-field="lookupPKMap"/>
+        <find-by-primary-key map="lookupPKMap" use-cache="false" value-field="lookedUpValue"/>
+        <set-nonpk-fields map="parameters" set-if-null="true" value-field="lookedUpValue"/>
+        <store-value do-cache-clear="true" value-field="lookedUpValue"/>
+        <set field="productId" from="lookedUpValue.productId" set-if-empty="true" set-if-null="false"/>
+        <call-simple-method method-name="updateProductWithReviewRatingAvg"/>
+    </simple-method>
+
+    <simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_" event-event-message-name="_event_message_" event-request-object-name="request" event-response-code-name="_response_code_" event-response-object-name="response" login-required="false" method-name="updateProductWithReviewRatingAvg" service-error-message-list-name="errorMessageList" service-error-message-map-name="errorMessageMap" service-error-message-name="errorMessage" service-response-message-name="responseMessage" service-success-message-list-name="successMessageList" service-success-message-name="successMessage" short-description="Update Product with new Review Rating Avg" use-transaction="true">
+        <!-- this method is meant to be called in-line and depends in a productId parameter -->
+        <call-class-method class-name="org.ofbiz.product.product.ProductWorker" method-name="getAverageProductRating" ret-field="averageCustomerRating">
+            <field field="delegator" type="org.ofbiz.entity.Delegator"/>
+            <field field="productId" type="java.lang.String"/>
+        </call-class-method>
+        <log level="info" message="Got new average customer rating ${averageCustomerRating}"/>
+        <if-compare field="averageCustomerRating" operator="equals" type="BigDecimal" value="0">
+            <return response-code="success"/>
+        </if-compare>
+        <!-- update the review average on the ProductCalculatedInfo entity -->
+        <entity-one auto-field-map="true" entity-name="ProductCalculatedInfo" use-cache="false" value-field="productCalculatedInfo"/>
+        <if-empty field="productCalculatedInfo">
+            <!-- go ahead and create it -->
+            <make-value entity-name="ProductCalculatedInfo" value-field="productCalculatedInfo"/>
+            <set field="productCalculatedInfo.productId" from="parameters.productId" set-if-empty="true" set-if-null="false"/>
+            <set field="productCalculatedInfo.averageCustomerRating" from="averageCustomerRating" set-if-empty="true" set-if-null="false"/>
+            <create-value do-cache-clear="true" or-store="false" value-field="productCalculatedInfo"/>
+            <else>
+                <set field="productCalculatedInfo.averageCustomerRating" from="averageCustomerRating" set-if-empty="true" set-if-null="false"/>
+                <store-value do-cache-clear="true" value-field="productCalculatedInfo"/>
+            </else>
+        </if-empty>
+    </simple-method>
+
+    <simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_" event-event-message-name="_event_message_" event-request-object-name="request" event-response-code-name="_response_code_" event-response-object-name="response" login-required="true" method-name="copyToProductVariants" service-error-message-list-name="errorMessageList" service-error-message-map-name="errorMessageMap" service-error-message-name="errorMessage" service-response-message-name="responseMessage" service-success-message-list-name="successMessageList" service-success-message-name="successMessage" short-description="Updates the Product's Variants" use-transaction="true">
+        <set field="callingMethodName" set-if-empty="true" set-if-null="false" value="copyToProductVariants"/>
+        <set field="checkAction" set-if-empty="true" set-if-null="false" value="CREATE"/>
+        <call-simple-method method-name="checkProductRelatedPermission"/>
+        <set field="checkAction" set-if-empty="true" set-if-null="false" value="DELETE"/>
+        <call-simple-method method-name="checkProductRelatedPermission"/>
+        <check-errors error-code="error" error-list-name="error_list"/>
+        <set field="productFindContext.productId" from="parameters.virtualProductId" set-if-empty="true" set-if-null="false"/>
+        <find-by-primary-key entity-name="Product" map="productFindContext" use-cache="false" value-field="oldProduct"/>
+        <set field="variantsFindContext.productId" from="parameters.virtualProductId" set-if-empty="true" set-if-null="false"/>
+        <set field="variantsFindContext.productAssocTypeId" set-if-empty="true" set-if-null="false" value="PRODUCT_VARIANT"/>
+        <find-by-and entity-name="ProductAssoc" list="variants" map="variantsFindContext" use-cache="false" use-iterator="false"/>
+        <filter-list-by-date from-field-name="fromDate" list="variants" thru-field-name="thruDate"/>
+        <iterate entry="newProduct" list="variants">
+            <set field="productVariantContext.productId" from="newProduct.productIdTo" set-if-empty="true" set-if-null="false"/>
+            <!-- if requested, duplicate related data -->
+            <if-not-empty field="parameters.duplicatePrices">
+                <if-not-empty field="parameters.removeBefore">
+                    <find-by-and entity-name="ProductPrice" list="foundVariantValues" map="productVariantContext" use-cache="false" use-iterator="false"/>
+                    <iterate entry="foundVariantValue" list="foundVariantValues">
+                        <remove-value do-cache-clear="true" value-field="foundVariantValue"/>
+                    </iterate>
+                </if-not-empty>
+                <find-by-and entity-name="ProductPrice" list="foundValues" map="productFindContext" use-cache="false" use-iterator="false"/>
+                <iterate entry="foundValue" list="foundValues">
+                    <clone-value new-value-field="newTempValue" value-field="foundValue"/>
+                    <set field="newTempValue.productId" from="newProduct.productIdTo" set-if-empty="true" set-if-null="false"/>
+                    <create-value do-cache-clear="true" or-store="false" value-field="newTempValue"/>
+                </iterate>
+            </if-not-empty>
+            <if-not-empty field="parameters.duplicateIDs">
+                <if-not-empty field="parameters.removeBefore">
+                    <find-by-and entity-name="GoodIdentification" list="foundVariantValues" map="productVariantContext" use-cache="false" use-iterator="false"/>
+                    <iterate entry="foundVariantValue" list="foundVariantValues">
+                        <remove-value do-cache-clear="true" value-field="foundVariantValue"/>
+                    </iterate>
+                </if-not-empty>
+                <find-by-and entity-name="GoodIdentification" list="foundValues" map="productFindContext" use-cache="false" use-iterator="false"/>
+                <iterate entry="foundValue" list="foundValues">
+                    <clone-value new-value-field="newTempValue" value-field="foundValue"/>
+                    <set field="newTempValue.productId" from="newProduct.productIdTo" set-if-empty="true" set-if-null="false"/>
+                    <create-value do-cache-clear="true" or-store="false" value-field="newTempValue"/>
+                </iterate>
+            </if-not-empty>
+            <if-not-empty field="parameters.duplicateContent">
+                <if-not-empty field="parameters.removeBefore">
+                    <find-by-and entity-name="ProductContent" list="foundVariantValues" map="productVariantContext" use-cache="false" use-iterator="false"/>
+                    <iterate entry="foundVariantValue" list="foundVariantValues">
+                        <remove-value do-cache-clear="true" value-field="foundVariantValue"/>
+                    </iterate>
+                </if-not-empty>
+                <find-by-and entity-name="ProductContent" list="foundValues" map="productFindContext" use-cache="false" use-iterator="false"/>
+                <iterate entry="foundValue" list="foundValues">
+                    <clone-value new-value-field="newTempValue" value-field="foundValue"/>
+                    <set field="newTempValue.productId" from="newProduct.productIdTo" set-if-empty="true" set-if-null="false"/>
+                    <create-value do-cache-clear="true" or-store="false" value-field="newTempValue"/>
+                </iterate>
+            </if-not-empty>
+            <if-not-empty field="parameters.duplicateCategoryMembers">
+                <if-not-empty field="parameters.removeBefore">
+                    <find-by-and entity-name="ProductCategoryMember" list="foundVariantValues" map="productVariantContext" use-cache="false" use-iterator="false"/>
+                    <iterate entry="foundVariantValue" list="foundVariantValues">
+                        <remove-value do-cache-clear="true" value-field="foundVariantValue"/>
+                    </iterate>
+                </if-not-empty>
+                <find-by-and entity-name="ProductCategoryMember" list="foundValues" map="productFindContext" use-cache="false" use-iterator="false"/>
+                <iterate entry="foundValue" list="foundValues">
+                    <clone-value new-value-field="newTempValue" value-field="foundValue"/>
+                    <set field="newTempValue.productId" from="newProduct.productIdTo" set-if-empty="true" set-if-null="false"/>
+                    <create-value do-cache-clear="true" or-store="false" value-field="newTempValue"/>
+                </iterate>
+            </if-not-empty>
+            <if-not-empty field="parameters.duplicateAttributes">
+                <if-not-empty field="parameters.removeBefore">
+                    <find-by-and entity-name="ProductAttribute" list="foundVariantValues" map="productVariantContext" use-cache="false" use-iterator="false"/>
+                    <iterate entry="foundVariantValue" list="foundVariantValues">
+                        <remove-value do-cache-clear="true" value-field="foundVariantValue"/>
+                    </iterate>
+                </if-not-empty>
+                <find-by-and entity-name="ProductAttribute" list="foundValues" map="productFindContext" use-cache="false" use-iterator="false"/>
+                <iterate entry="foundValue" list="foundValues">
+                    <clone-value new-value-field="newTempValue" value-field="foundValue"/>
+                    <set field="newTempValue.productId" from="newProduct.productIdTo" set-if-empty="true" set-if-null="false"/>
+                    <create-value do-cache-clear="true" or-store="false" value-field="newTempValue"/>
+                </iterate>
+            </if-not-empty>
+            <if-not-empty field="parameters.duplicateFacilities">
+                <if-not-empty field="parameters.removeBefore">
+                    <find-by-and entity-name="ProductFacility" list="foundVariantValues" map="productVariantContext" use-cache="false" use-iterator="false"/>
+                    <iterate entry="foundVariantValue" list="foundVariantValues">
+                        <remove-value do-cache-clear="true" value-field="foundVariantValue"/>
+                    </iterate>
+                </if-not-empty>
+                <find-by-and entity-name="ProductFacility" list="foundValues" map="productFindContext" use-cache="false" use-iterator="false"/>
+                <iterate entry="foundValue" list="foundValues">
+                    <clone-value new-value-field="newTempValue" value-field="foundValue"/>
+                    <set field="newTempValue.productId" from="newProduct.productIdTo" set-if-empty="true" set-if-null="false"/>
+                    <create-value do-cache-clear="true" or-store="false" value-field="newTempValue"/>
+                </iterate>
+            </if-not-empty>
+            <if-not-empty field="parameters.duplicateLocations">
+                <if-not-empty field="parameters.removeBefore">
+                    <find-by-and entity-name="ProductFacilityLocation" list="foundVariantValues" map="productVariantContext" use-cache="false" use-iterator="false"/>
+                    <iterate entry="foundVariantValue" list="foundVariantValues">
+                        <remove-value do-cache-clear="true" value-field="foundVariantValue"/>
+                    </iterate>
+                </if-not-empty>
+                <find-by-and entity-name="ProductFacilityLocation" list="foundValues" map="productFindContext" use-cache="false" use-iterator="false"/>
+                <iterate entry="foundValue" list="foundValues">
+                    <clone-value new-value-field="newTempValue" value-field="foundValue"/>
+                    <set field="newTempValue.productId" from="newProduct.productIdTo" set-if-empty="true" set-if-null="false"/>
+                    <create-value do-cache-clear="true" or-store="false" value-field="newTempValue"/>
+                </iterate>
+            </if-not-empty>
+        </iterate>
+    </simple-method>
+    <!-- for managing product to product associations -->
+
+    <simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_" event-event-message-name="_event_message_" event-request-object-name="request" event-response-code-name="_response_code_" event-response-object-name="response" login-required="true" method-name="createProductAssoc" service-error-message-list-name="errorMessageList" service-error-message-map-name="errorMessageMap" service-error-message-name="errorMessage" service-response-message-name="responseMessage" service-success-message-list-name="successMessageList" service-success-message-name="successMessage" short-description="Create an association between two products" use-transaction="true">
+        <set field="callingMethodName" set-if-empty="true" set-if-null="false" value="createProductAssoc"/>
+        <set field="checkAction" set-if-empty="true" set-if-null="false" value="CREATE"/>
+        <call-simple-method method-name="checkProductRelatedPermission"/>
+        <check-errors error-code="error" error-list-name="error_list"/>
+        <make-value entity-name="ProductAssoc" value-field="newEntity"/>
+        <set-nonpk-fields map="parameters" set-if-null="true" value-field="newEntity"/>
+        <set-pk-fields map="parameters" set-if-null="true" value-field="newEntity"/>
+        <create-value do-cache-clear="true" or-store="false" value-field="newEntity"/>
+    </simple-method>
+
+    <simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_" event-event-message-name="_event_message_" event-request-object-name="request" event-response-code-name="_response_code_" event-response-object-name="response" login-required="true" method-name="updateProductAssoc" service-error-message-list-name="errorMessageList" service-error-message-map-name="errorMessageMap" service-error-message-name="errorMessage" service-response-message-name="responseMessage" service-success-message-list-name="successMessageList" service-success-message-name="successMessage" short-description="Update an association between two products" use-transaction="true">
+        <set field="callingMethodName" set-if-empty="true" set-if-null="false" value="updateProductAssoc"/>
+        <set field="checkAction" set-if-empty="true" set-if-null="false" value="UPDATE"/>
+        <call-simple-method method-name="checkProductRelatedPermission"/>
+        <check-errors error-code="error" error-list-name="error_list"/>
+        <make-value entity-name="ProductAssoc" value-field="lookupPKMap"/>
+        <set-pk-fields map="parameters" set-if-null="true" value-field="lookupPKMap"/>
+        <find-by-primary-key entity-name="ProductAssoc" map="lookupPKMap" use-cache="false" value-field="productAssocInstance"/>
+        <set-nonpk-fields map="parameters" set-if-null="true" value-field="productAssocInstance"/>
+        <store-value do-cache-clear="true" value-field="productAssocInstance"/>
+    </simple-method>
+
+    <simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_" event-event-message-name="_event_message_" event-request-object-name="request" event-response-code-name="_response_code_" event-response-object-name="response" login-required="true" method-name="deleteProductAssoc" service-error-message-list-name="errorMessageList" service-error-message-map-name="errorMessageMap" service-error-message-name="errorMessage" service-response-message-name="responseMessage" service-success-message-list-name="successMessageList" service-success-message-name="successMessage" short-description="Delete an association between two products" use-transaction="true">
+        <set field="callingMethodName" set-if-empty="true" set-if-null="false" value="deleteProductAssoc"/>
+        <set field="checkAction" set-if-empty="true" set-if-null="false" value="DELETE"/>
+        <call-simple-method method-name="checkProductRelatedPermission"/>
+        <check-errors error-code="error" error-list-name="error_list"/>
+        <make-value entity-name="ProductAssoc" value-field="lookupPKMap"/>
+        <set-pk-fields map="parameters" set-if-null="true" value-field="lookupPKMap"/>
+        <find-by-primary-key entity-name="ProductAssoc" map="lookupPKMap" use-cache="false" value-field="productAssocInstance"/>
+        <remove-value do-cache-clear="true" value-field="productAssocInstance"/>
+    </simple-method>
+    <!-- Create/Update/Delete Product Maint Record -->
+
+    <simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_" event-event-message-name="_event_message_" event-request-object-name="request" event-response-code-name="_response_code_" event-response-object-name="response" login-required="true" method-name="createProductMaint" service-error-message-list-name="errorMessageList" service-error-message-map-name="errorMessageMap" service-error-message-name="errorMessage" service-response-message-name="responseMessage" service-success-message-list-name="successMessageList" service-success-message-name="successMessage" short-description="Create an Product Maintenance" use-transaction="true">
+        <set field="callingMethodName" set-if-empty="true" set-if-null="false" value="createProductMaint"/>
+        <set field="checkAction" set-if-empty="true" set-if-null="false" value="CREATE"/>
+        <call-simple-method method-name="checkProductRelatedPermission"/>
+        <check-errors error-code="error" error-list-name="error_list"/>
+        <make-value entity-name="ProductMaint" value-field="newEntity"/>
+        <set-nonpk-fields map="parameters" set-if-null="true" value-field="newEntity"/>
+        <set-pk-fields map="parameters" set-if-null="true" value-field="newEntity"/>
+        <make-next-seq-id increment-by="1" numeric-padding="5" seq-field-name="productMaintSeqId" value-field="newEntity"/>
+        <!-- this finds the next sub-sequence ID -->
+        <field-to-result field="newEntity.productMaintSeqId" result-name="productMaintSeqId"/>
+        <create-value do-cache-clear="true" or-store="false" value-field="newEntity"/>
+    </simple-method>
+
+    <simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_" event-event-message-name="_event_message_" event-request-object-name="request" event-response-code-name="_response_code_" event-response-object-name="response" login-required="true" method-name="updateProductMaint" service-error-message-list-name="errorMessageList" service-error-message-map-name="errorMessageMap" service-error-message-name="errorMessage" service-response-message-name="responseMessage" service-success-message-list-name="successMessageList" service-success-message-name="successMessage" short-description="Update an existing Product Maintenance" use-transaction="true">
+        <set field="callingMethodName" set-if-empty="true" set-if-null="false" value="updateProductMaint"/>
+        <set field="checkAction" set-if-empty="true" set-if-null="false" value="UPDATE"/>
+        <call-simple-method method-name="checkProductRelatedPermission"/>
+        <check-errors error-code="error" error-list-name="error_list"/>
+        <entity-one auto-field-map="true" entity-name="ProductMaint" use-cache="false" value-field="lookedUpValue"/>
+        <set-nonpk-fields map="parameters" set-if-null="true" value-field="lookedUpValue"/>
+        <store-value do-cache-clear="true" value-field="lookedUpValue"/>
+    </simple-method>
+
+    <simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_" event-event-message-name="_event_message_" event-request-object-name="request" event-response-code-name="_response_code_" event-response-object-name="response" login-required="true" method-name="deleteProductMaint" service-error-message-list-name="errorMessageList" service-error-message-map-name="errorMessageMap" service-error-message-name="errorMessage" service-response-message-name="responseMessage" service-success-message-list-name="successMessageList" service-success-message-name="successMessage" short-description="Delete Product Maint from PRODUCT_MAINT" use-transaction="true">
+        <set field="callingMethodName" set-if-empty="true" set-if-null="false" value="deleteProductMaint"/>
+        <set field="checkAction" set-if-empty="true" set-if-null="false" value="DELETE"/>
+        <call-simple-method method-name="checkProductRelatedPermission"/>
+        <check-errors error-code="error" error-list-name="error_list"/>
+        <entity-one auto-field-map="true" entity-name="ProductMaint" use-cache="false" value-field="lookedUpValue"/>
+        <remove-value do-cache-clear="true" value-field="lookedUpValue"/>
+    </simple-method>
+    <!-- Create/Update/Delete Product Meter Record -->
+
+    <simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_" event-event-message-name="_event_message_" event-request-object-name="request" event-response-code-name="_response_code_" event-response-object-name="response" login-required="true" method-name="createProductMeter" service-error-message-list-name="errorMessageList" service-error-message-map-name="errorMessageMap" service-error-message-name="errorMessage" service-response-message-name="responseMessage" service-success-message-list-name="successMessageList" service-success-message-name="successMessage" short-description="Create an Product Meter" use-transaction="true">
+        <set field="callingMethodName" set-if-empty="true" set-if-null="false" value="createProductMeter"/>
+        <set field="checkAction" set-if-empty="true" set-if-null="false" value="CREATE"/>
+        <call-simple-method method-name="checkProductRelatedPermission"/>
+        <check-errors error-code="error" error-list-name="error_list"/>
+        <make-value entity-name="ProductMeter" value-field="newEntity"/>
+        <set-nonpk-fields map="parameters" set-if-null="true" value-field="newEntity"/>
+        <set-pk-fields map="parameters" set-if-null="true" value-field="newEntity"/>
+        <create-value do-cache-clear="true" or-store="false" value-field="newEntity"/>
+    </simple-method>
+
+    <simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_" event-event-message-name="_event_message_" event-request-object-name="request" event-response-code-name="_response_code_" event-response-object-name="response" login-required="true" method-name="updateProductMeter" service-error-message-list-name="errorMessageList" service-error-message-map-name="errorMessageMap" service-error-message-name="errorMessage" service-response-message-name="responseMessage" service-success-message-list-name="successMessageList" service-success-message-name="successMessage" short-description="Update an existing Product Meter" use-transaction="true">
+        <set field="callingMethodName" set-if-empty="true" set-if-null="false" value="updateProductMeter"/>
+        <set field="checkAction" set-if-empty="true" set-if-null="false" value="UPDATE"/>
+        <call-simple-method method-name="checkProductRelatedPermission"/>
+        <check-errors error-code="error" error-list-name="error_list"/>
+        <entity-one auto-field-map="true" entity-name="ProductMeter" use-cache="false" value-field="lookedUpValue"/>
+        <set-nonpk-fields map="parameters" set-if-null="true" value-field="lookedUpValue"/>
+        <store-value do-cache-clear="true" value-field="lookedUpValue"/>
+    </simple-method>
+
+    <simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_" event-event-message-name="_event_message_" event-request-object-name="request" event-response-code-name="_response_code_" event-response-object-name="response" login-required="true" method-name="deleteProductMeter" service-error-message-list-name="errorMessageList" service-error-message-map-name="errorMessageMap" service-error-message-name="errorMessage" service-response-message-name="responseMessage" service-success-message-list-name="successMessageList" service-success-message-name="successMessage" short-description="Delete an existing Product Meter" use-transaction="true">
+        <set field="callingMethodName" set-if-empty="true" set-if-null="false" value="deleteProductMeter"/>
+        <set field="checkAction" set-if-empty="true" set-if-null="false" value="DELETE"/>
+        <call-simple-method method-name="checkProductRelatedPermission"/>
+        <check-errors error-code="error" error-list-name="error_list"/>
+        <entity-one auto-field-map="true" entity-name="ProductMeter" use-cache="false" value-field="lookedUpValue"/>
+        <remove-value do-cache-clear="true" value-field="lookedUpValue"/>
+    </simple-method>
+    <!-- ProductGeo Services -->
+
+    <simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_" event-event-message-name="_event_message_" event-request-object-name="request" event-response-code-name="_response_code_" event-response-object-name="response" login-required="true" method-name="createProductGeo" service-error-message-list-name="errorMessageList" service-error-message-map-name="errorMessageMap" service-error-message-name="errorMessage" service-response-message-name="responseMessage" service-success-message-list-name="successMessageList" service-success-message-name="successMessage" short-description="Create an Product Geo" use-transaction="true">
+        <make-value entity-name="ProductGeo" value-field="newEntity"/>
+        <set-nonpk-fields map="parameters" set-if-null="true" value-field="newEntity"/>
+        <set-pk-fields map="parameters" set-if-null="true" value-field="newEntity"/>
+        <create-value do-cache-clear="true" or-store="false" value-field="newEntity"/>
+    </simple-method>
+
+    <simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_" event-event-message-name="_event_message_" event-request-object-name="request" event-response-code-name="_response_code_" event-response-object-name="response" login-required="true" method-name="updateProductGeo" service-error-message-list-name="errorMessageList" service-error-message-map-name="errorMessageMap" service-error-message-name="errorMessage" service-response-message-name="responseMessage" service-success-message-list-name="successMessageList" service-success-message-name="successMessage" short-description="Update an existing Product Geo" use-transaction="true">
+        <entity-one auto-field-map="true" entity-name="ProductGeo" use-cache="false" value-field="lookedUpValue"/>
+        <set-nonpk-fields map="parameters" set-if-null="true" value-field="lookedUpValue"/>
+        <store-value do-cache-clear="true" value-field="lookedUpValue"/>
+    </simple-method>
+
+    <simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_" event-event-message-name="_event_message_" event-request-object-name="request" event-response-code-name="_response_code_" event-response-object-name="response" login-required="true" method-name="deleteProductGeo" service-error-message-list-name="errorMessageList" service-error-message-map-name="errorMessageMap" service-error-message-name="errorMessage" service-response-message-name="responseMessage" service-success-message-list-name="successMessageList" service-success-message-name="successMessage" short-description="Delete an existing Product Geo" use-transaction="true">
+        <entity-one auto-field-map="true" entity-name="ProductGeo" use-cache="false" value-field="lookedUpValue"/>
+        <remove-value do-cache-clear="true" value-field="lookedUpValue"/>
+    </simple-method>
+    <!-- a method to centralize product security code, meant to be called in-line with
+        call-simple-method, and the checkAction and callingMethodName attributes should be in the method context -->
+
+    <simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_" event-event-message-name="_event_message_" event-request-object-name="request" event-response-code-name="_response_code_" event-response-object-name="response" login-required="true" method-name="checkProductRelatedPermission" service-error-message-list-name="errorMessageList" service-error-message-map-name="errorMessageMap" service-error-message-name="errorMessage" service-response-message-name="responseMessage" service-success-message-list-name="successMessageList" service-success-message-name="successMessage" short-description="Check Product Related Permission" use-transaction="true">
+        <if-empty field="callingMethodName">
+            <set field="callingMethodName" set-if-empty="true" set-if-null="false" value="this operation"/>
+        </if-empty>
+        <if-empty field="checkAction">
+            <set field="checkAction" set-if-empty="true" set-if-null="false" value="UPDATE"/>
+        </if-empty>
+        <!-- find all role-categories that this product is a member of -->
+        <if>
+            <condition>
+                <not>
+                    <if-has-permission action="_${checkAction}" permission="CATALOG"/>
+                </not>
+            </condition>
+            <then>
+                <set field="lookupRoleCategoriesMap.productId" from="parameters.productId" set-if-empty="true" set-if-null="false"/>
+                <set field="lookupRoleCategoriesMap.partyId" from="userLogin.partyId" set-if-empty="true" set-if-null="false"/>
+                <set field="lookupRoleCategoriesMap.roleTypeId" set-if-empty="true" set-if-null="false" value="LTD_ADMIN"/>
+                <find-by-and entity-name="ProductCategoryMemberAndRole" list="roleCategories" map="lookupRoleCategoriesMap" use-cache="false" use-iterator="false"/>
+                <filter-list-by-date from-field-name="fromDate" list="roleCategories" thru-field-name="thruDate"/>
+                <filter-list-by-date from-field-name="roleFromDate" list="roleCategories" thru-field-name="roleThruDate"/>
+            </then>
+        </if>
+        <if>
+            <condition>
+                <not>
+                    <or>
+                        <if-has-permission action="_${checkAction}" permission="CATALOG"/>
+                        <and>
+                            <if-has-permission action="_${checkAction}" permission="CATALOG_ROLE"/>
+                            <not>
+                                <if-empty field="roleCategories"/>
+                            </not>
+                        </and>
+                        <and>
+                            <not>
+                                <if-empty field="alternatePermissionRoot"/>
+                            </not>
+                            <if-has-permission action="_${checkAction}" permission="${alternatePermissionRoot}"/>
+                        </and>
+                    </or>
+                </not>
+            </condition>
+            <then>
+                <add-error error-list-name="error_list">
+                    <fail-message message="Security Error: to run ${callingMethodName} you must have the CATALOG_${checkAction} or CATALOG_ADMIN permission or have the CATALOG_ROLE_${checkAction} permission and be associated with a category containing this product."/>
+                </add-error>
+            </then>
+        </if>
+    </simple-method>
+
+    <simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_" event-event-message-name="_event_message_" event-request-object-name="request" event-response-code-name="_response_code_" event-response-object-name="response" login-required="true" method-name="productGenericPermission" service-error-message-list-name="errorMessageList" service-error-message-map-name="errorMessageMap" service-error-message-name="errorMessage" service-response-message-name="responseMessage" service-success-message-list-name="successMessageList" service-success-message-name="successMessage" short-description="Main permission logic" use-transaction="true">
+        <set field="mainAction" from="parameters.mainAction" set-if-empty="true" set-if-null="false"/>
+        <if-empty field="mainAction">
+            <add-error error-list-name="error_list">
+                <fail-message message="In the permission-service element for the productGenericPermission service the main-action attribute was missing but is required"/>
+            </add-error>
+            <check-errors error-code="error" error-list-name="error_list"/>
+        </if-empty>
+        <set field="callingMethodName" from="parameters.resourceDescription" set-if-empty="true" set-if-null="false"/>
+        <set field="checkAction" from="parameters.mainAction" set-if-empty="true" set-if-null="false"/>
+        <call-simple-method method-name="checkProductRelatedPermission"/>
+        <if-empty field="error_list">
+            <set field="hasPermission" set-if-empty="true" set-if-null="false" type="Boolean" value="true"/>
+            <field-to-result field="hasPermission"/>
+            <else>
+                <property-to-field field="failMessage" no-locale="false" property="ProductPermissionError" resource="ProductUiLabels"/>
+                <set field="hasPermission" set-if-empty="true" set-if-null="false" type="Boolean" value="false"/>
+                <field-to-result field="hasPermission"/>
+                <field-to-result field="failMessage"/>
+            </else>
+        </if-empty>
+    </simple-method>
+    <!-- Product Attribute Services -->
+
+    <simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_" event-event-message-name="_event_message_" event-request-object-name="request" event-response-code-name="_response_code_" event-response-object-name="response" login-required="true" method-name="createProductAttribute" service-error-message-list-name="errorMessageList" service-error-message-map-name="errorMessageMap" service-error-message-name="errorMessage" service-response-message-name="responseMessage" service-success-message-list-name="successMessageList" service-success-message-name="successMessage" short-description="create a ProductAttribute" use-transaction="true">
+        <make-value entity-name="ProductAttribute" value-field="newEntity"/>
+        <set-pk-fields map="parameters" set-if-null="true" value-field="newEntity"/>
+        <set-nonpk-fields map="parameters" set-if-null="true" value-field="newEntity"/>
+        <create-value do-cache-clear="true" or-store="false" value-field="newEntity"/>
+    </simple-method>
+
+    <simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_" event-event-message-name="_event_message_" event-request-object-name="request" event-response-code-name="_response_code_" event-response-object-name="response" login-required="true" method-name="updateProductAttribute" service-error-message-list-name="errorMessageList" service-error-message-map-name="errorMessageMap" service-error-message-name="errorMessage" service-response-message-name="responseMessage" service-success-message-list-name="successMessageList" service-success-message-name="successMessage" short-description="update a ProductAttribute" use-transaction="true">
+        <entity-one auto-field-map="true" entity-name="ProductAttribute" use-cache="false" value-field="lookedUpValue"/>
+        <set-nonpk-fields map="parameters" set-if-null="true" value-field="lookedUpValue"/>
+        <store-value do-cache-clear="true" value-field="lookedUpValue"/>
+    </simple-method>
+
+    <simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_" event-event-message-name="_event_message_" event-request-object-name="request" event-response-code-name="_response_code_" event-response-object-name="response" login-required="true" method-name="deleteProductAttribute" service-error-message-list-name="errorMessageList" service-error-message-map-name="errorMessageMap" service-error-message-name="errorMessage" service-response-message-name="responseMessage" service-success-message-list-name="successMessageList" service-success-message-name="successMessage" short-description="delete a ProductAttribute" use-transaction="true">
+        <entity-one auto-field-map="true" entity-name="ProductAttribute" use-cache="false" value-field="lookedUpValue"/>
+        <remove-value do-cache-clear="true" value-field="lookedUpValue"/>
+    </simple-method>
+    <!-- ================================================================ -->
+    <!-- ProductRole Services -->
+    <!-- ================================================================ -->
+
+    <simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_" event-event-message-name="_event_message_" event-request-object-name="request" event-response-code-name="_response_code_" event-response-object-name="response" login-required="true" method-name="addPartyToProduct" service-error-message-list-name="errorMessageList" service-error-message-map-name="errorMessageMap" service-error-message-name="errorMessage" service-response-message-name="responseMessage" service-success-message-list-name="successMessageList" service-success-message-name="successMessage" short-description="Add Party to Product" use-transaction="true">
+        <set field="callingMethodName" set-if-empty="true" set-if-null="false" value="addPartyToProduct"/>
+        <set field="checkAction" set-if-empty="true" set-if-null="false" value="CREATE"/>
+        <call-simple-method method-name="checkProductRelatedPermission"/>
+        <check-errors error-code="error" error-list-name="error_list"/>
+        <make-value entity-name="ProductRole" value-field="newEntity"/>
+        <set-pk-fields map="parameters" set-if-null="true" value-field="newEntity"/>
+        <set-nonpk-fields map="parameters" set-if-null="true" value-field="newEntity"/>
+        <if-empty field="newEntity.fromDate">
+            <now-timestamp field="newEntity.fromDate"/>
+        </if-empty>
+        <create-value do-cache-clear="true" or-store="false" value-field="newEntity"/>
+    </simple-method>
+
+    <simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_" event-event-message-name="_event_message_" event-request-object-name="request" event-response-code-name="_response_code_" event-response-object-name="response" login-required="true" method-name="updatePartyToProduct" service-error-message-list-name="errorMessageList" service-error-message-map-name="errorMessageMap" service-error-message-name="errorMessage" service-response-message-name="responseMessage" service-success-message-list-name="successMessageList" service-success-message-name="successMessage" short-description="Update Party to Product" use-transaction="true">
+        <set field="callingMethodName" set-if-empty="true" set-if-null="false" value="updatePartyToProduct"/>
+        <set field="checkAction" set-if-empty="true" set-if-null="false" value="UPDATE"/>
+        <call-simple-method method-name="checkProductRelatedPermission"/>
+        <check-errors error-code="error" error-list-name="error_list"/>
+        <make-value entity-name="ProductRole" value-field="lookupPKMap"/>
+        <set-pk-fields map="parameters" set-if-null="true" value-field="lookupPKMap"/>
+        <find-by-primary-key entity-name="ProductRole" map="lookupPKMap" use-cache="false" value-field="lookedUpValue"/>
+        <set-nonpk-fields map="parameters" set-if-null="true" value-field="lookedUpValue"/>
+        <store-value do-cache-clear="true" value-field="lookedUpValue"/>
+    </simple-method>
+
+    <simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_" event-event-message-name="_event_message_" event-request-object-name="request" event-response-code-name="_response_code_" event-response-object-name="response" login-required="true" method-name="removePartyFromProduct" service-error-message-list-name="errorMessageList" service-error-message-map-name="errorMessageMap" service-error-message-name="errorMessage" service-response-message-name="responseMessage" service-success-message-list-name="successMessageList" service-success-message-name="successMessage" short-description="Remove Party From Product" use-transaction="true">
+        <set field="callingMethodName" set-if-empty="true" set-if-null="false" value="removePartyFromProduct"/>
+        <set field="checkAction" set-if-empty="true" set-if-null="false" value="DELETE"/>
+        <call-simple-method method-name="checkProductRelatedPermission"/>
+        <check-errors error-code="error" error-list-name="error_list"/>
+        <make-value entity-name="ProductRole" value-field="lookupPKMap"/>
+        <set-pk-fields map="parameters" set-if-null="true" value-field="lookupPKMap"/>
+        <find-by-primary-key entity-name="ProductRole" map="lookupPKMap" use-cache="false" value-field="lookedUpValue"/>
+        <remove-value do-cache-clear="true" value-field="lookedUpValue"/>
+    </simple-method>
+
+    <simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_" event-event-message-name="_event_message_" event-request-object-name="request" event-response-code-name="_response_code_" event-response-object-name="response" login-required="true" method-name="createVendorProduct" service-error-message-list-name="errorMessageList" service-error-message-map-name="errorMessageMap" service-error-message-name="errorMessage" service-response-message-name="responseMessage" service-success-message-list-name="successMessageList" service-success-message-name="successMessage" short-description="Create a VendorProduct" use-transaction="true">
+        <make-value entity-name="VendorProduct" value-field="newEntity"/>
+        <set-pk-fields map="parameters" set-if-null="true" value-field="newEntity"/>
+        <create-value do-cache-clear="true" or-store="false" value-field="newEntity"/>
+    </simple-method>
+
+    <simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_" event-event-message-name="_event_message_" event-request-object-name="request" event-response-code-name="_response_code_" event-response-object-name="response" login-required="true" method-name="deleteVendorProduct" service-error-message-list-name="errorMessageList" service-error-message-map-name="errorMessageMap" service-error-message-name="errorMessage" service-response-message-name="responseMessage" service-success-message-list-name="successMessageList" service-success-message-name="successMessage" short-description="Remove the VendorProduct" use-transaction="true">
+        <make-value entity-name="VendorProduct" value-field="lookedUpValue"/>
+        <set-pk-fields map="parameters" set-if-null="true" value-field="lookedUpValue"/>
+        <remove-value do-cache-clear="true" value-field="lookedUpValue"/>
+    </simple-method>
+    <!-- ProductCategoryGlAccount methods -->
+
+    <simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_" event-event-message-name="_event_message_" event-request-object-name="request" event-response-code-name="_response_code_" event-response-object-name="response" login-required="true" method-name="createProductCategoryGlAccount" service-error-message-list-name="errorMessageList" service-error-message-map-name="errorMessageMap" service-error-message-name="errorMessage" service-response-message-name="responseMessage" service-success-message-list-name="successMessageList" service-success-message-name="successMessage" short-description="Create an ProductCategoryGlAccount" use-transaction="true">
+        <set field="callingMethodName" set-if-empty="true" set-if-null="false" value="createProductCategoryGlAccount"/>
+        <set field="checkAction" set-if-empty="true" set-if-null="false" value="CREATE"/>
+        <call-simple-method method-name="checkProductRelatedPermission"/>
+        <check-errors error-code="error" error-list-name="error_list"/>
+        <make-value entity-name="ProductCategoryGlAccount" value-field="newEntity"/>
+        <set-nonpk-fields map="parameters" set-if-null="true" value-field="newEntity"/>
+        <set-pk-fields map="parameters" set-if-null="true" value-field="newEntity"/>
+        <create-value do-cache-clear="true" or-store="false" value-field="newEntity"/>
+    </simple-method>
+
+    <simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_" event-event-message-name="_event_message_" event-request-object-name="request" event-response-code-name="_response_code_" event-response-object-name="response" login-required="true" method-name="updateProductCategoryGlAccount" service-error-message-list-name="errorMessageList" service-error-message-map-name="errorMessageMap" service-error-message-name="errorMessage" service-response-message-name="responseMessage" service-success-message-list-name="successMessageList" service-success-message-name="successMessage" short-description="Update an ProductCategoryGlAccount" use-transaction="true">
+        <set field="callingMethodName" set-if-empty="true" set-if-null="false" value="updateProductCategoryGlAccount"/>
+        <set field="checkAction" set-if-empty="true" set-if-null="false" value="UPDATE"/>
+        <call-simple-method method-name="checkProductRelatedPermission"/>
+        <check-errors error-code="error" error-list-name="error_list"/>
+        <entity-one auto-field-map="true" entity-name="ProductCategoryGlAccount" use-cache="false" value-field="lookedUpValue"/>
+        <set-nonpk-fields map="parameters" set-if-null="true" value-field="lookedUpValue"/>
+        <store-value do-cache-clear="true" value-field="lookedUpValue"/>
+    </simple-method>
+
+    <simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_" event-event-message-name="_event_message_" event-request-object-name="request" event-response-code-name="_response_code_" event-response-object-name="response" login-required="true" method-name="deleteProductCategoryGlAccount" service-error-message-list-name="errorMessageList" service-error-message-map-name="errorMessageMap" service-error-message-name="errorMessage" service-response-message-name="responseMessage" service-success-message-list-name="successMessageList" service-success-message-name="successMessage" short-description="Delete an ProductCategoryGlAccount" use-transaction="true">
+        <set field="callingMethodName" set-if-empty="true" set-if-null="false" value="deleteProductCategoryGlAccount"/>
+        <set field="checkAction" set-if-empty="true" set-if-null="false" value="DELETE"/>
+        <call-simple-method method-name="checkProductRelatedPermission"/>
+        <check-errors error-code="error" error-list-name="error_list"/>
+        <entity-one auto-field-map="true" entity-name="ProductCategoryGlAccount" use-cache="false" value-field="lookedUpValue"/>
+        <remove-value do-cache-clear="true" value-field="lookedUpValue"/>
+    </simple-method>
+    
+    <simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_" 
+       event-event-message-name="_event_message_" event-request-object-name="request" event-response-code-name="_response_code_" 
+        event-response-object-name="response" login-required="false" method-name="NewProductEmailAlert" 
+         service-error-message-list-name="errorMessageList" service-error-message-map-name="errorMessageMap" 
+         service-error-message-name="errorMessage" service-response-message-name="responseMessage" 
+         service-success-message-list-name="successMessageList" service-success-message-name="successMessage" 
+         short-description="" use-transaction="true">
+        <property-to-field resource="general.properties" property="emailAlert.sendTo" field="sendTo"/>
+        <string-append field="sendEmailMap.sendTo" string="${sendTo}" prefix=","/>
+        <set field="sendEmailMap.subject" value="New Product created with Product ID #${parameters.productId}"/>
+        <set field="sendEmailMap.contentType" value="text/html"/>
+        <property-to-field resource="general.properties" property="server.url" field="serverUrl"/>
+        <set field="sendEmailMap.body" value="New Product created with Product ID  #${parameters.productId} in environment ${serverUrl}"/>
+        <set field="sendEmailMap.templateName" value="template"/>
+        <call-service service-name="sendGenericNotificationEmail" in-map-name="sendEmailMap"/>
+        
+    </simple-method>
+    
+</simple-methods>

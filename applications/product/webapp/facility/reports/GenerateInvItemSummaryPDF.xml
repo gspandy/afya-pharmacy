@@ -1,0 +1,460 @@
+<?xml version="1.0" encoding="UTF-8"  ?>
+	<!--
+		Licensed to the Apache Software Foundation (ASF) under one or more
+		contributor license agreements. See the NOTICE file distributed with
+		this work for additional information regarding copyright ownership.
+		The ASF licenses this file to you under the Apache License, Version
+		2.0 (the "License"); you may not use this file except in compliance
+		with the License. You may obtain a copy of the License at
+
+		http://www.apache.org/licenses/LICENSE-2.0 Unless required by
+		applicable law or agreed to in writing, software distributed under the
+		License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
+		CONDITIONS OF ANY KIND, either express or implied. See the License for
+		the specific language governing permissions and limitations under the
+		License.
+	-->
+
+	<!-- Created with iReport - A designer for JasperReports -->
+<!DOCTYPE jasperReport PUBLIC "//JasperReports//DTD Report Design//EN" "http://jasperreports.sourceforge.net/dtds/jasperreport.dtd">
+<jasperReport name="sampleInventoryReport" columnCount="1"
+	printOrder="Vertical" orientation="Portrait" pageWidth="842"
+	pageHeight="595" columnWidth="782" columnSpacing="4" leftMargin="30"
+	rightMargin="30" topMargin="20" bottomMargin="20" whenNoDataType="BlankPage"
+	isTitleNewPage="false" isSummaryNewPage="false">
+	<parameter name="headOfficeImg" class="java.lang.String"/>
+	<parameter name="verticalLineImg" class="java.lang.String"/>
+	<parameter name="logoImageUrl" class="java.lang.String"/>
+	<parameter name="companyPostalAddr" class="java.lang.String"/>
+	<parameter name="companyName" class="java.lang.String"/>
+	<parameter name="address1" class="java.lang.String"/>
+	<parameter name="address2" class="java.lang.String"/>
+	<parameter name="postalCode" class="java.lang.String"/>
+	<parameter name="city" class="java.lang.String"/>
+	<parameter name="stateProvinceAbbr" class="java.lang.String"/>
+	<parameter name="countryName" class="java.lang.String"/>
+	<parameter name="telephoneNumber" class="java.lang.String"/>
+	<parameter name="faxNumber" class="java.lang.String"/>
+	<parameter name="email" class="java.lang.String"/>
+	<parameter name="companyRegNo" class="java.lang.String"/>
+	<parameter name="vatRegNo" class="java.lang.String"/>
+	<parameter name="tpinNo" class="java.lang.String"/>
+	<field name="inventoryItemId" class="java.lang.String" />
+	<field name="datetimeReceived" class="java.sql.Timestamp" />
+	<field name="productId" class="java.lang.String" />
+	<field name="locationSeqId" class="java.lang.String" />
+	<field name="quantityOnHandTotal" class="java.math.BigDecimal" />
+	<field name="availableToPromiseTotal" class="java.math.BigDecimal" />
+
+	<variable name="itemQuantityQOH" class="java.math.BigDecimal"
+		resetType="Group" resetGroup="productId" calculation="Sum">
+		<variableExpression><![CDATA[$F{quantityOnHandTotal}]]></variableExpression>
+	</variable>
+	<variable name="itemQuantityATP" class="java.math.BigDecimal"
+		resetType="Group" resetGroup="productId" calculation="Sum">
+		<variableExpression><![CDATA[$F{availableToPromiseTotal}]]></variableExpression>
+	</variable>
+ 
+	<group name="productId" isStartNewColumn="false" isStartNewPage="false"
+		isResetPageNumber="false" isReprintHeaderOnEachPage="false"
+		minHeightToStartNewPage="0">
+
+		<groupExpression>	<![CDATA[$F{productId}]]>  	</groupExpression>
+
+		<groupHeader>
+			<band height="25">
+				<rectangle radius="0">
+					<reportElement mode="Opaque" x="0" y="0" width="782"
+						height="25" forecolor="#FF0124" backcolor="#FFE1B0" positionType="FixRelativeToTop"
+						isPrintRepeatedValues="true" isRemoveLineWhenBlank="false"
+						isPrintInFirstWholeBand="false" isPrintWhenDetailOverflows="false" />
+					<graphicElement stretchType="NoStretch" pen="1Point"
+						fill="Solid" />
+				</rectangle>
+
+				<staticText>
+					<reportElement mode="Transparent" x="1" y="2" width="70"
+						height="23" forecolor="#000000" backcolor="#FFFFFF" positionType="FixRelativeToTop"
+						isPrintRepeatedValues="true" isRemoveLineWhenBlank="false"
+						isPrintInFirstWholeBand="false" isPrintWhenDetailOverflows="false" />
+					<textElement textAlignment="Right" verticalAlignment="Top"
+						lineSpacing="Single">
+						<font size="14" isBold="false" isItalic="false" isUnderline="false"
+							isPdfEmbedded="false" pdfEncoding="Cp1250" isStrikeThrough="false" />
+					</textElement>
+					<text><![CDATA[Product: ]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="false" pattern=""
+					isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None">
+					<reportElement mode="Transparent" x="80" y="2"
+						width="100" height="23" forecolor="#000000" backcolor="#FFFFFF"
+						positionType="FixRelativeToTop" isPrintRepeatedValues="true"
+						isRemoveLineWhenBlank="false" isPrintInFirstWholeBand="false"
+						isPrintWhenDetailOverflows="false" />
+					<textElement textAlignment="Left" verticalAlignment="Top"
+						lineSpacing="Single">
+						<font size="14" isBold="false" isItalic="false" isUnderline="false"
+							isPdfEmbedded="false" pdfEncoding="Cp1250" isStrikeThrough="false" />
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{productId}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="27">
+				<line direction="BottomUp">
+					<reportElement mode="Opaque" x="0" y="2" width="782"
+						height="0" forecolor="#8080FF" backcolor="#FFFFFF" positionType="FixRelativeToTop"
+						isPrintRepeatedValues="true" isRemoveLineWhenBlank="false"
+						isPrintInFirstWholeBand="false" isPrintWhenDetailOverflows="false" />
+					<graphicElement stretchType="NoStretch" pen="Thin"
+						fill="Solid" />
+				</line>
+				<staticText>
+					<reportElement mode="Transparent" x="353" y="10"
+						width="30" height="14" forecolor="#000000" backcolor="#FFFFFF"
+						positionType="FixRelativeToTop" isPrintRepeatedValues="true"
+						isRemoveLineWhenBlank="false" isPrintInFirstWholeBand="false"
+						isPrintWhenDetailOverflows="false" />
+					<textElement textAlignment="Right" verticalAlignment="Top"
+						lineSpacing="Single">
+						<font size="10" isBold="true" isItalic="false" isUnderline="false"
+							isPdfEmbedded="false" pdfEncoding="Cp1250" isStrikeThrough="false" />
+					</textElement>
+					<text><![CDATA[Total]]></text>
+				</staticText>
+				<staticText>
+					<reportElement mode="Transparent" x="508" y="10"
+						width="60" height="14" forecolor="#000000" backcolor="#FFFFFF"
+						positionType="FixRelativeToTop" isPrintRepeatedValues="true"
+						isRemoveLineWhenBlank="false" isPrintInFirstWholeBand="false"
+						isPrintWhenDetailOverflows="false" />
+					<textElement textAlignment="Right" verticalAlignment="Top"
+						lineSpacing="Single">
+						<font size="10" isBold="true" isItalic="false" isUnderline="false"
+							isPdfEmbedded="false" pdfEncoding="Cp1250" isStrikeThrough="false" />
+					</textElement>
+					<text><![CDATA[Total]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="false" pattern="###,###,###,###"
+					isBlankWhenNull="true" evaluationTime="Group" evaluationGroup="productId" 
+					hyperlinkType="None">
+					<reportElement mode="Transparent" x="383" y="10"
+						width="125" height="14" forecolor="#000000" backcolor="#FFFFFF"
+						positionType="FixRelativeToTop" isPrintRepeatedValues="true"
+						isRemoveLineWhenBlank="false" isPrintInFirstWholeBand="false"
+						isPrintWhenDetailOverflows="false" />
+					<textElement textAlignment="Right" verticalAlignment="Top"
+						lineSpacing="Single">
+						<font size="10" isBold="true" isItalic="false" isUnderline="false"
+							isPdfEmbedded="false" pdfEncoding="Cp1250" isStrikeThrough="false" />
+					</textElement>
+					<textFieldExpression class="java.math.BigDecimal"><![CDATA[$V{itemQuantityQOH}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" pattern="###,###,###,###"
+					isBlankWhenNull="true" evaluationTime="Group" evaluationGroup="productId" 
+					hyperlinkType="None">
+					<reportElement mode="Transparent" x="607" y="10"
+						width="125" height="14" forecolor="#000000" backcolor="#FFFFFF"
+						positionType="FixRelativeToTop" isPrintRepeatedValues="true"
+						isRemoveLineWhenBlank="false" isPrintInFirstWholeBand="false"
+						isPrintWhenDetailOverflows="false" />
+					<textElement textAlignment="Right" verticalAlignment="Top"
+						lineSpacing="Single">
+						<font size="10" isBold="true" isItalic="false" isUnderline="false"
+							isPdfEmbedded="false" pdfEncoding="Cp1250" isStrikeThrough="false" />
+					</textElement>
+					<textFieldExpression class="java.math.BigDecimal"><![CDATA[$V{itemQuantityATP}]]></textFieldExpression>
+				</textField>
+				
+			</band>
+		</groupFooter>
+
+	</group>
+	<background>
+		<band height="0">
+		</band>
+	</background>
+	<title>
+		<band height="50">
+			<staticText>
+				<reportElement mode="Transparent" x="90" y="5" width="600"
+					height="40" forecolor="#000000" backcolor="#FFFFFF" positionType="FixRelativeToTop"
+					isPrintRepeatedValues="true" isRemoveLineWhenBlank="false"
+					isPrintInFirstWholeBand="false" isPrintWhenDetailOverflows="false" />
+				<textElement textAlignment="Center" verticalAlignment="Top"
+					lineSpacing="Single">
+					<font size="20" isBold="true" isItalic="false" isUnderline="false"
+						isPdfEmbedded="false" pdfEncoding="Cp1250" isStrikeThrough="false" />
+				</textElement>
+				<text><![CDATA[Physical Inventory Summary]]></text>
+
+			</staticText>
+
+			<line direction="TopDown">
+				<reportElement mode="Opaque" x="0" y="48" width="782"
+					height="0" forecolor="#808080" backcolor="#FFFFFF" positionType="FixRelativeToTop"
+					isPrintRepeatedValues="true" isRemoveLineWhenBlank="false"
+					isPrintInFirstWholeBand="false" isPrintWhenDetailOverflows="false" />
+				<graphicElement stretchType="NoStretch" pen="2Point"
+					fill="Solid" />
+			</line>
+			<line direction="TopDown">
+				<reportElement mode="Opaque" x="0" y="3" width="782"
+					height="0" forecolor="#808080" backcolor="#FFFFFF" positionType="FixRelativeToTop"
+					isPrintRepeatedValues="true" isRemoveLineWhenBlank="false"
+					isPrintInFirstWholeBand="false" isPrintWhenDetailOverflows="false" />
+				<graphicElement stretchType="NoStretch" pen="2Point"
+					fill="Solid" />
+			</line>
+
+			<staticText>
+				<reportElement mode="Transparent" x="506" y="20"
+					width="100" height="25" forecolor="#000000" backcolor="#FFFFFF"
+					positionType="FixRelativeToTop" isPrintRepeatedValues="true"
+					isRemoveLineWhenBlank="false" isPrintInFirstWholeBand="false"
+					isPrintWhenDetailOverflows="false" />
+				<textElement textAlignment="Left" verticalAlignment="Top"
+					lineSpacing="Single">
+					<font size="10" isBold="false" isItalic="false" isUnderline="false"
+						isPdfEmbedded="false" pdfEncoding="Cp1250" isStrikeThrough="false" />
+				</textElement>
+			</staticText>
+		</band>
+	</title>
+	<pageHeader>
+		<band height="100">
+			<image>
+				<reportElement x="0" y="2" width="150" height="75"/>
+				<imageExpression><![CDATA[$P{logoImageUrl}]]></imageExpression>
+			</image>
+			<image>
+				<reportElement x="137" y="10" width="80" height="65"/>
+				<imageExpression><![CDATA[$P{headOfficeImg}]]></imageExpression>
+			</image>
+			<textField isBlankWhenNull="true">
+				<reportElement x="182" y="16" width="191" height="65"/>
+				<textElement markup="html">
+					<font fontName="Calibri" size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{companyName} + "<br/>" + $P{address1} + "<br/>" + $P{companyPostalAddr}]]></textFieldExpression>
+			</textField>
+			<image>
+				<reportElement x="373" y="10" width="14" height="65"/>
+				<imageExpression><![CDATA[$P{verticalLineImg}]]></imageExpression>
+			</image>
+			<textField isBlankWhenNull="true">
+				<reportElement x="382" y="15" width="191" height="35"/>
+				<textElement markup="html">
+					<font fontName="Calibri" size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{telephoneNumber}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="382" y="26" width="191" height="35"/>
+				<textElement markup="html">
+					<font fontName="Calibri" size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{faxNumber}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="382" y="37" width="191" height="35"/>
+				<textElement markup="html">
+					<font fontName="Calibri" size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{email}]]></textFieldExpression>
+			</textField>
+			<image>
+				<reportElement x="587" y="10" width="14" height="65"/>
+				<imageExpression><![CDATA[$P{verticalLineImg}]]></imageExpression>
+			</image>
+			<textField isBlankWhenNull="true">
+				<reportElement x="596" y="15" width="191" height="35"/>
+				<textElement markup="html">
+					<font fontName="Calibri" size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{companyRegNo}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="596" y="26" width="191" height="35"/>
+				<textElement markup="html">
+					<font fontName="Calibri" size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{vatRegNo}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="596" y="37" width="191" height="35"/>
+				<textElement markup="html">
+					<font fontName="Calibri" size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{tpinNo}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement positionType="FixRelativeToBottom" x="0" y="80" width="782" height="1" forecolor="#C0C0C0"/>
+				<graphicElement>
+					<pen lineWidth="1.0" lineStyle="Solid" lineColor="#959595"/>
+				</graphicElement>
+			</line>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band height="25">
+			<line direction="BottomUp">
+				<reportElement mode="Opaque" x="0" y="0" width="782"
+					height="0" forecolor="#000000" backcolor="#FFFFFF" positionType="FixRelativeToTop"
+					isPrintRepeatedValues="true" isRemoveLineWhenBlank="false"
+					isPrintInFirstWholeBand="false" isPrintWhenDetailOverflows="false" />
+				<graphicElement stretchType="NoStretch" pen="Thin"
+					fill="Solid" />
+			</line>
+			<line direction="BottomUp">
+				<reportElement mode="Opaque" x="0" y="20" width="782"
+					height="0" forecolor="#000000" backcolor="#FFFFFF" positionType="FixRelativeToTop"
+					isPrintRepeatedValues="true" isRemoveLineWhenBlank="false"
+					isPrintInFirstWholeBand="false" isPrintWhenDetailOverflows="false" />
+				<graphicElement stretchType="NoStretch" pen="Thin"
+					fill="Solid" />
+			</line>
+			<staticText>
+				<reportElement mode="Transparent" x="2" y="1" width="65"
+					height="17" forecolor="#000000" backcolor="#FFFFFF" positionType="FixRelativeToTop"
+					isPrintRepeatedValues="true" isRemoveLineWhenBlank="false"
+					isPrintInFirstWholeBand="false" isPrintWhenDetailOverflows="false" />
+				<textElement textAlignment="Center" verticalAlignment="Top"
+					lineSpacing="Single">
+					<font size="12" isBold="false" isItalic="false" isUnderline="false"
+						isPdfEmbedded="false" pdfEncoding="Cp1250" isStrikeThrough="false" />
+				</textElement>
+				<text><![CDATA[Inventory]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Transparent" x="65" y="1" width="117"
+					height="17" forecolor="#000000" backcolor="#FFFFFF" positionType="FixRelativeToTop"
+					isPrintRepeatedValues="true" isRemoveLineWhenBlank="false"
+					isPrintInFirstWholeBand="false" isPrintWhenDetailOverflows="false" />
+				<textElement textAlignment="Center" verticalAlignment="Top"
+					lineSpacing="Single">
+					<font size="12" isBold="false" isItalic="false" isUnderline="false"
+						isPdfEmbedded="false" pdfEncoding="Cp1250" isStrikeThrough="false" />
+				</textElement>
+				<text><![CDATA[DateTime Received]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Transparent" x="182" y="1" width="171"
+					height="17" forecolor="#000000" backcolor="#FFFFFF" positionType="FixRelativeToTop"
+					isPrintRepeatedValues="true" isRemoveLineWhenBlank="false"
+					isPrintInFirstWholeBand="false" isPrintWhenDetailOverflows="false" />
+				<textElement textAlignment="Center" verticalAlignment="Top"
+					lineSpacing="Single">
+					<font size="12" isBold="false" isItalic="false" isUnderline="false"
+						isPdfEmbedded="false" pdfEncoding="Cp1250" isStrikeThrough="false" />
+				</textElement>
+					<text><![CDATA[Location]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Transparent" x="353" y="1" width="215"
+					height="17" forecolor="#000000" backcolor="#FFFFFF" positionType="FixRelativeToTop"
+					isPrintRepeatedValues="true" isRemoveLineWhenBlank="false"
+					isPrintInFirstWholeBand="false" isPrintWhenDetailOverflows="false" />
+				<textElement textAlignment="Center" verticalAlignment="Top"
+					lineSpacing="Single">
+					<font size="12" isBold="false" isItalic="false" isUnderline="false"
+						isPdfEmbedded="false" pdfEncoding="Cp1250" isStrikeThrough="false" />
+				</textElement>
+				<text><![CDATA[Quantity on Hand]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Transparent" x="568" y="1" width="215"
+					height="17" forecolor="#000000" backcolor="#FFFFFF" positionType="FixRelativeToTop"
+					isPrintRepeatedValues="true" isRemoveLineWhenBlank="false"
+					isPrintInFirstWholeBand="false" isPrintWhenDetailOverflows="false" />
+				<textElement textAlignment="Center" verticalAlignment="Top"
+					lineSpacing="Single">
+					<font size="12" isBold="false" isItalic="false" isUnderline="false"
+						isPdfEmbedded="false" pdfEncoding="Cp1250" isStrikeThrough="false" />
+				</textElement>
+				<text><![CDATA[Available To Promise]]></text>
+			</staticText>
+
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="18">
+			<textField isStretchWithOverflow="false" pattern=""
+				isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None">
+				<reportElement mode="Transparent" x="2" y="2" width="65"
+					height="16" forecolor="#000000" backcolor="#FFFFFF" positionType="FixRelativeToTop"
+					isPrintRepeatedValues="true" isRemoveLineWhenBlank="false"
+					isPrintInFirstWholeBand="false" isPrintWhenDetailOverflows="false" />
+				<textElement textAlignment="Center" verticalAlignment="Top"
+					lineSpacing="Single">
+					<font size="10" isBold="false" isItalic="false" isUnderline="false"
+						isPdfEmbedded="false" pdfEncoding="Cp1250" isStrikeThrough="false" />
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{inventoryItemId}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="false" pattern=""
+				isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None">
+				<reportElement mode="Transparent" x="65" y="2" width="117"
+					height="16" forecolor="#000000" backcolor="#FFFFFF" positionType="FixRelativeToTop"
+					isPrintRepeatedValues="true" isRemoveLineWhenBlank="false"
+					isPrintInFirstWholeBand="false" isPrintWhenDetailOverflows="false" />
+				<textElement textAlignment="Center" verticalAlignment="Top"
+					lineSpacing="Single">
+					<font size="10" isBold="false" isItalic="false" isUnderline="false"
+						isPdfEmbedded="false" pdfEncoding="CP1252" isStrikeThrough="false" />
+				</textElement>
+				<textFieldExpression class="java.sql.Timestamp"><![CDATA[$F{datetimeReceived}]]></textFieldExpression>
+			</textField>
+			
+			<textField isStretchWithOverflow="true" pattern=""
+				isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None">
+				<reportElement mode="Transparent" x="182" y="2" width="171"
+					height="16" forecolor="#000000" backcolor="#FFFFFF" positionType="FixRelativeToTop"
+					isPrintRepeatedValues="true" isRemoveLineWhenBlank="false"
+					isPrintInFirstWholeBand="false" isPrintWhenDetailOverflows="false" />
+				<textElement textAlignment="Center" verticalAlignment="Top"
+					lineSpacing="Single">
+					<font size="10" isBold="false" isItalic="false" isUnderline="false"
+						isPdfEmbedded="false" pdfEncoding="Cp1250" isStrikeThrough="false" />
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{locationSeqId}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern=""
+				isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None">
+				<reportElement mode="Transparent" x="383" y="2" width="125"
+					height="16" forecolor="#000000" backcolor="#FFFFFF" positionType="FixRelativeToTop"
+					isPrintRepeatedValues="true" isRemoveLineWhenBlank="false"
+					isPrintInFirstWholeBand="false" isPrintWhenDetailOverflows="false" />
+				<textElement textAlignment="Right" verticalAlignment="Top"
+					lineSpacing="Single">
+					<font size="10" isBold="false" isItalic="false" isUnderline="false"
+						isPdfEmbedded="false" pdfEncoding="Cp1250" isStrikeThrough="false" />
+				</textElement>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{quantityOnHandTotal}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="false" pattern="###,###,###"
+				isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None">
+				<reportElement mode="Transparent" x="607" y="2" width="125"
+					height="16" forecolor="#000000" backcolor="#FFFFFF" positionType="FixRelativeToTop"
+					isPrintRepeatedValues="true" isRemoveLineWhenBlank="false"
+					isPrintInFirstWholeBand="false" isPrintWhenDetailOverflows="false" />
+				<textElement textAlignment="Right" verticalAlignment="Top"
+					lineSpacing="Single">
+					<font size="10" isBold="false" isItalic="false" isUnderline="false"
+						isPdfEmbedded="false" pdfEncoding="Cp1250" isStrikeThrough="false" />
+				</textElement>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{availableToPromiseTotal}]]></textFieldExpression>
+			</textField>
+
+		</band>
+	</detail>
+
+
+	<summary>
+		<band height="25">
+
+		</band>
+	</summary>
+
+</jasperReport>

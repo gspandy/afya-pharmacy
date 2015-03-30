@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<entity-engine-xml>
+    <SecurityPermission description="View operations in the HRMS Component." permissionId="HRMS_VIEW"/>
+    <SecurityPermission description="Create operations in the HRMS Component." permissionId="HRMS_CREATE"/>
+    <SecurityPermission description="Update operations in the HRMS Component." permissionId="HRMS_UPDATE"/>
+    <SecurityPermission description="Delete operations in the HRMS Component." permissionId="HRMS_DELETE"/>
+    <SecurityPermission description="ALL operations in the HRMS Component." permissionId="HRMS_ADMIN"/>
+    <SecurityGroupPermission groupId="FULLADMIN" permissionId="HRMS_ADMIN"/>
+    <SecurityGroupPermission groupId="FLEXADMIN" permissionId="HRMS_CREATE"/>
+    <SecurityGroupPermission groupId="FLEXADMIN" permissionId="HRMS_DELETE"/>
+    <SecurityGroupPermission groupId="FLEXADMIN" permissionId="HRMS_UPDATE"/>
+    <SecurityGroupPermission groupId="FLEXADMIN" permissionId="HRMS_VIEW"/>
+    <SecurityGroupPermission groupId="VIEWADMIN" permissionId="HRMS_VIEW"/>
+    <SecurityGroupPermission groupId="BIZADMIN" permissionId="HRMS_ADMIN"/>
+    <SecurityGroupPermission groupId="HUMANRES_ADMIN" permissionId="COMMON_UPDATE"/>
+</entity-engine-xml>

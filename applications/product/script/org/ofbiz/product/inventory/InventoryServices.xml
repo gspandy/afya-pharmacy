@@ -1,0 +1,2115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Licensed to the Apache Software Foundation (ASF) under one or more contributor license agreements. See the NOTICE file distributed with this work for additional 
+	information regarding copyright ownership. The ASF licenses this file to you under the Apache License, Version 2.0 (the "License"); you may not use this file except 
+	in compliance with the License. You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0 Unless required by applicable law or agreed to 
+	in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See 
+	the License for the specific language governing permissions and limitations under the License. -->
+<simple-methods xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                xsi:noNamespaceSchemaLocation="http://ofbiz.apache.org/dtds/simple-methods-v2.xsd">
+    <!-- a method to centralize facility security code, meant to be called in-line with call-simple-method, and the checkAction and callingMethodName attributes should 
+		be in the method context -->
+
+    <simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_"
+                   event-event-message-name="_event_message_" event-request-object-name="request"
+                   event-response-code-name="_response_code_" event-response-object-name="response"
+                   login-required="true" method-name="checkFacilityRelatedPermission"
+                   service-error-message-list-name="errorMessageList" service-error-message-map-name="errorMessageMap"
+                   service-error-message-name="errorMessage" service-response-message-name="responseMessage"
+                   service-success-message-list-name="successMessageList" service-success-message-name="successMessage"
+                   short-description="Check Facility Related Permission" use-transaction="true">
+        <if-empty field="callingMethodName">
+            <set field="callingMethodName" set-if-empty="true" set-if-null="false" value="this operation"/>
+        </if-empty>
+        <if-empty field="checkAction">
+            <set field="checkAction" set-if-empty="true" set-if-null="false" value="UPDATE"/>
+        </if-empty>
+        <if>
+            <condition>
+                <not>
+                    <or>
+                        <if-has-permission action="_${checkAction}" permission="CATALOG"/>
+                        <if-has-permission permission="CATALOG_ADMIN"/>
+                        <if-has-permission action="_${checkAction}" permission="FACILITY"/>
+                        <if-has-permission permission="FACILITY_ADMIN"/>
+                        <and>
+                            <not>
+                                <if-empty field="alternatePermissionRoot"/>
+                            </not>
+                            <if-has-permission action="_${checkAction}" permission="${alternatePermissionRoot}"/>
+                        </and>
+                    </or>
+                </not>
+            </condition>
+            <then>
+                <add-error error-list-name="error_list">
+                    <fail-message
+                            message="Security Error: to run ${callingMethodName} you must have the CATALOG_${checkAction} or CATALOG_ADMIN or FACILITY_${checkAction} or FACILITY_ADMIN permission."/>
+                </add-error>
+            </then>
+        </if>
+    </simple-method>
+
+    <simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_"
+                   event-event-message-name="_event_message_" event-request-object-name="request"
+                   event-response-code-name="_response_code_" event-response-object-name="response"
+                   login-required="true" method-name="facilityGenericPermission"
+                   service-error-message-list-name="errorMessageList" service-error-message-map-name="errorMessageMap"
+                   service-error-message-name="errorMessage" service-response-message-name="responseMessage"
+                   service-success-message-list-name="successMessageList" service-success-message-name="successMessage"
+                   short-description="Main permission logic" use-transaction="true">
+        <set field="mainAction" from="parameters.mainAction" set-if-empty="true" set-if-null="false"/>
+        <if-empty field="mainAction">
+            <add-error error-list-name="error_list">
+                <fail-message
+                        message="In the permission-service element for the facilityGenericPermission service the main-action attribute was missing but is required"/>
+            </add-error>
+            <check-errors error-code="error" error-list-name="error_list"/>
+        </if-empty>
+        <set field="callingMethodName" from="parameters.resourceDescription" set-if-empty="true" set-if-null="false"/>
+        <set field="checkAction" from="parameters.mainAction" set-if-empty="true" set-if-null="false"/>
+        <call-simple-method method-name="checkFacilityRelatedPermission"/>
+        <if-empty field="error_list">
+            <set field="hasPermission" set-if-empty="true" set-if-null="false" type="Boolean" value="true"/>
+            <field-to-result field="hasPermission"/>
+            <else>
+                <property-to-field field="failMessage" no-locale="false" property="ProductFacilityPermissionError"
+                                   resource="ProductUiLabels"/>
+                <set field="hasPermission" set-if-empty="true" set-if-null="false" type="Boolean" value="false"/>
+                <field-to-result field="hasPermission"/>
+                <field-to-result field="failMessage"/>
+            </else>
+        </if-empty>
+    </simple-method>
+
+    <simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_"
+                   event-event-message-name="_event_message_" event-request-object-name="request"
+                   event-response-code-name="_response_code_" event-response-object-name="response"
+                   login-required="true" method-name="checkProductFacilityRelatedPermission"
+                   service-error-message-list-name="errorMessageList" service-error-message-map-name="errorMessageMap"
+                   service-error-message-name="errorMessage" service-response-message-name="responseMessage"
+                   service-success-message-list-name="successMessageList" service-success-message-name="successMessage"
+                   short-description="ProductFacility Permission Checking Logic" use-transaction="true">
+        <if-empty field="mainAction">
+            <set field="mainAction" from="parameters.mainAction" set-if-empty="true" set-if-null="false"/>
+            <if-empty field="mainAction">
+                <add-error error-list-name="error_list">
+                    <fail-property property="CommonPermissionMainActionAttributeMissing" resource="CommonUiLabels"/>
+                </add-error>
+            </if-empty>
+        </if-empty>
+        <check-errors error-code="error" error-list-name="error_list"/>
+        <set field="resourceDescription" from="parameters.resourceDescription" set-if-empty="true" set-if-null="false"/>
+        <if-empty field="resourceDescription">
+            <property-to-field field="resourceDescription" no-locale="false" property="CommonPermissionThisOperation"
+                               resource="CommonUiLabels"/>
+        </if-empty>
+        <set field="callingMethodName" from="resourceDescription" set-if-empty="true" set-if-null="false"/>
+        <set field="checkAction" from="mainAction" set-if-empty="true" set-if-null="false"/>
+        <set field="alternatePermissionRoot" set-if-empty="true" set-if-null="false" value="FACILITY"/>
+        <call-simple-method method-name="checkProductRelatedPermission"
+                            xml-resource="component://product/script/org/ofbiz/product/product/ProductServices.xml"/>
+        <if-empty field="error_list">
+            <set field="hasPermission" set-if-empty="true" set-if-null="false" type="Boolean" value="true"/>
+            <field-to-result field="hasPermission"/>
+            <else>
+                <property-to-field field="failMessage" no-locale="false" property="ProductFacilityPermissionError"
+                                   resource="ProductUiLabels"/>
+                <set field="hasPermission" set-if-empty="true" set-if-null="false" type="Boolean" value="false"/>
+                <field-to-result field="hasPermission"/>
+                <field-to-result field="failMessage"/>
+            </else>
+        </if-empty>
+    </simple-method>
+    <!-- InventoryItem methods -->
+
+    <simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_"
+                   event-event-message-name="_event_message_" event-request-object-name="request"
+                   event-response-code-name="_response_code_" event-response-object-name="response"
+                   login-required="true" method-name="createInventoryItem"
+                   service-error-message-list-name="errorMessageList" service-error-message-map-name="errorMessageMap"
+                   service-error-message-name="errorMessage" service-response-message-name="responseMessage"
+                   service-success-message-list-name="successMessageList" service-success-message-name="successMessage"
+                   short-description="Create an InventoryItem" use-transaction="true">
+        <make-value entity-name="InventoryItem" value-field="inventoryItem"/>
+        <!-- TODO: make sure availableToPromiseTotal and quantityOnHandTotal are not changed -->
+        <set-nonpk-fields map="parameters" set-if-null="true" value-field="inventoryItem"/>
+        <call-simple-method method-name="inventoryItemCheckSetDefaultValues"/>
+        <check-errors error-code="error" error-list-name="error_list"/>
+        <sequenced-id field="inventoryItem.inventoryItemId" get-long-only="false" sequence-name="InventoryItem"/>
+
+        <if-empty field="inventoryItem.uomId">
+            <entity-one entity-name="Product" value-field="product"/>
+            <set field="inventoryItem.uomId" from-field="product.quantityUomId"/>
+        </if-empty>
+        <create-value do-cache-clear="true" or-store="false" value-field="inventoryItem"/>
+        <field-to-result field="inventoryItem.inventoryItemId" result-name="inventoryItemId"/>
+    </simple-method>
+
+    <simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_"
+                   event-event-message-name="_event_message_" event-request-object-name="request"
+                   event-response-code-name="_response_code_" event-response-object-name="response"
+                   login-required="false" method-name="createInventoryItemCheckSetAtpQoh"
+                   service-error-message-list-name="errorMessageList" service-error-message-map-name="errorMessageMap"
+                   service-error-message-name="errorMessage" service-response-message-name="responseMessage"
+                   service-success-message-list-name="successMessageList" service-success-message-name="successMessage"
+                   short-description="createInventoryItemCheckSetAtpQoh" use-transaction="true">
+        <if>
+            <condition>
+                <or>
+                    <not>
+                        <if-empty field="parameters.availableToPromiseTotal"/>
+                    </not>
+                    <not>
+                        <if-empty field="parameters.quantityOnHandTotal"/>
+                    </not>
+                </or>
+            </condition>
+            <then>
+                <log level="info"
+                     message="Got an InventoryItem with ATP/QOH Total with ID ${parameters.inventoryItemId}, creating InventoryItemDetail"/>
+                <set field="createDetailMap.inventoryItemId" from="parameters.inventoryItemId" set-if-empty="true"
+                     set-if-null="false"/>
+                <set field="createDetailMap.availableToPromiseDiff" from="parameters.availableToPromiseTotal"
+                     set-if-empty="true" set-if-null="false"/>
+                <set field="createDetailMap.quantityOnHandDiff" from="parameters.quantityOnHandTotal"
+                     set-if-empty="true" set-if-null="false"/>
+                <call-service break-on-error="true" error-code="error" in-map-name="createDetailMap"
+                              include-user-login="true" require-new-transaction="false"
+                              service-name="createInventoryItemDetail" success-code="success"/>
+            </then>
+        </if>
+    </simple-method>
+
+    <simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_"
+                   event-event-message-name="_event_message_" event-request-object-name="request"
+                   event-response-code-name="_response_code_" event-response-object-name="response"
+                   login-required="false" method-name="inventoryItemCheckSetDefaultValues"
+                   service-error-message-list-name="errorMessageList" service-error-message-map-name="errorMessageMap"
+                   service-error-message-name="errorMessage" service-response-message-name="responseMessage"
+                   service-success-message-list-name="successMessageList" service-success-message-name="successMessage"
+                   short-description="Check and, if empty, fills with default values ownerPartyId, currencyUomId, unitCost"
+                   use-transaction="true">
+        <if-empty field="inventoryItem">
+            <entity-one auto-field-map="true" entity-name="InventoryItem" use-cache="false"
+                        value-field="inventoryItem"/>
+            <set field="updateInventoryItem" set-if-empty="true" set-if-null="false" value="Y"/>
+        </if-empty>
+        <!-- if all the inventoryItem's fields are already filled, return with success -->
+        <if>
+            <condition>
+                <and>
+                    <not>
+                        <if-empty field="inventoryItem.facilityId"/>
+                    </not>
+                    <not>
+                        <if-empty field="inventoryItem.ownerPartyId"/>
+                    </not>
+                    <not>
+                        <if-empty field="inventoryItem.currencyUomId"/>
+                    </not>
+                    <not>
+                        <if-empty field="inventoryItem.unitCost"/>
+                    </not>
+                </and>
+            </condition>
+            <then>
+                <return response-code="success"/>
+            </then>
+        </if>
+        <if-empty field="inventoryItem.facilityId">
+            <add-error error-list-name="error_list">
+                <fail-message message="Error: you cannot create inventory items with no facility id."/>
+            </add-error>
+            <check-errors error-code="error" error-list-name="error_list"/>
+        </if-empty>
+        <!-- if inventoryItem's ownerPartyId is empty, get the ownerPartyId from the facility -->
+        <if-empty field="inventoryItem.ownerPartyId">
+            <get-related-one relation-name="Facility" to-value-field="facility" use-cache="false"
+                             value-field="inventoryItem"/>
+            <set field="inventoryItem.ownerPartyId" from="facility.ownerPartyId" set-if-empty="true"
+                 set-if-null="false"/>
+            <!-- if inventoryItem's ownerPartyId is still empty, return an error message -->
+            <if-empty field="inventoryItem.ownerPartyId">
+                <add-error error-list-name="error_list">
+                    <fail-message message="Error: you cannot create inventory items with no ownerPartyId."/>
+                </add-error>
+                <check-errors error-code="error" error-list-name="error_list"/>
+            </if-empty>
+        </if-empty>
+        <!-- if inventoryItem's currencyUomId is empty, get the currencyUomId from the party accounting preferences of the owner of the inventory item -->
+        <if-empty field="inventoryItem.currencyUomId">
+            <set field="partyAccountingPreferencesCallMap.organizationPartyId" from="inventoryItem.ownerPartyId"
+                 set-if-empty="true" set-if-null="false"/>
+            <call-service break-on-error="true" error-code="error" in-map-name="partyAccountingPreferencesCallMap"
+                          include-user-login="true" require-new-transaction="false"
+                          service-name="getPartyAccountingPreferences" success-code="success">
+                <result-to-field field="accPref" result-name="partyAccountingPreference"/>
+            </call-service>
+            <set field="inventoryItem.currencyUomId" from="accPref.baseCurrencyUomId" set-if-empty="true"
+                 set-if-null="false"/>
+            <if-empty field="inventoryItem.currencyUomId">
+                <property-to-field field="inventoryItem.currencyUomId" no-locale="false"
+                                   property="currency.uom.id.default" resource="general"/>
+            </if-empty>
+            <!-- if inventoryItem's currencyUomId is still empty, return an error message -->
+            <if-empty field="inventoryItem.currencyUomId">
+                <add-error error-list-name="error_list">
+                    <fail-message
+                            message="Error: you cannot create inventory items with no currencyUomId; you can set a default currency in the PartyAcctgPreference for the party [${inventoryItem.ownerPartyId}], or in the general.properties file under the key [currency.uom.id.default]."/>
+                </add-error>
+                <check-errors error-code="error" error-list-name="error_list"/>
+            </if-empty>
+        </if-empty>
+        <!-- if inventoryItem's unitCost is empty, get the product's standard cost by calling the getProductCost service -->
+        <if-empty field="inventoryItem.unitCost">
+            <set field="inputMap.productId" from="inventoryItem.productId" set-if-empty="true" set-if-null="false"/>
+            <set field="inputMap.currencyUomId" from="inventoryItem.currencyUomId" set-if-empty="true"
+                 set-if-null="false"/>
+            <set field="inputMap.costComponentTypePrefix" set-if-empty="true" set-if-null="false" value="EST_STD"/>
+            <!-- TODO: create a new service getProductStdCost that calls getProductCost -->
+            <call-service break-on-error="true" error-code="error" in-map-name="inputMap" include-user-login="true"
+                          require-new-transaction="false" service-name="getProductCost" success-code="success">
+                <result-to-field field="inventoryItem.unitCost" result-name="productCost"/>
+            </call-service>
+        </if-empty>
+        <!-- if inventoryItem's unitCost is still empty, or negative return an error message -->
+        <!-- TODO/WARNING: getProductCost returns 0 even if no std costs are found -->
+        <if-empty field="inventoryItem.unitCost">
+            <add-error error-list-name="error_list">
+                <fail-message message="Error: you cannot create inventory items with no unitCost."/>
+            </add-error>
+        </if-empty>
+        <check-errors error-code="error" error-list-name="error_list"/>
+        <!-- if you don't want inventory item with unitCost = 0, change the operator attribute from "less" to "less-equals". -->
+        <if-compare field="inventoryItem.unitCost" operator="less" type="BigDecimal" value="0">
+            <add-error error-list-name="error_list">
+                <fail-message message="Error: you cannot create inventory items with a negative unitCost."/>
+            </add-error>
+        </if-compare>
+        <check-errors error-code="error" error-list-name="error_list"/>
+        <if-not-empty field="updateInventoryItem">
+            <store-value do-cache-clear="true" value-field="inventoryItem"/>
+        </if-not-empty>
+    </simple-method>
+
+    <simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_"
+                   event-event-message-name="_event_message_" event-request-object-name="request"
+                   event-response-code-name="_response_code_" event-response-object-name="response"
+                   login-required="true" method-name="updateInventoryItem"
+                   service-error-message-list-name="errorMessageList" service-error-message-map-name="errorMessageMap"
+                   service-error-message-name="errorMessage" service-response-message-name="responseMessage"
+                   service-success-message-list-name="successMessageList" service-success-message-name="successMessage"
+                   short-description="Update an InventoryItem" use-transaction="true">
+        <make-value entity-name="InventoryItem" value-field="lookupPKMap"/>
+        <set-pk-fields map="parameters" set-if-null="true" value-field="lookupPKMap"/>
+        <find-by-primary-key map="lookupPKMap" use-cache="false" value-field="lookedUpValue"/>
+        <if-empty field="lookedUpValue.ownerPartyId">
+            <get-related-one relation-name="Facility" to-value-field="oldFacility" use-cache="false"
+                             value-field="lookedUpValue"/>
+            <set field="lookedUpValue.ownerPartyId" from="oldFacility.ownerPartyId" set-if-empty="true"
+                 set-if-null="false"/>
+        </if-empty>
+        <field-to-result field="lookedUpValue.ownerPartyId" result-name="oldOwnerPartyId"/>
+        <field-to-result field="lookedUpValue.statusId" result-name="oldStatusId"/>
+        <!-- special handling for the unitCost -->
+        <if-not-empty field="parameters.unitCost">
+            <if-compare field="parameters.unitCost" operator="less" type="BigDecimal" value="0.0">
+                <add-error error-list-name="error_list">
+                    <fail-message
+                            message="Unit cost for inventory item [${lookupPKMap.inventoryItemId}] cannot be negative."/>
+                </add-error>
+                <check-errors error-code="error" error-list-name="error_list"/>
+            </if-compare>
+        </if-not-empty>
+        <set field="oldUnitCost" from="lookedUpValue.unitCost" set-if-empty="true" set-if-null="false"/>
+        <set-nonpk-fields map="parameters" set-if-null="true" value-field="lookedUpValue"/>
+        <store-value do-cache-clear="true" value-field="lookedUpValue"/>
+        <!-- if the unit cost is changed create an InventoryItemDetail to keep track of unit cost history -->
+        <if-not-empty field="parameters.unitCost">
+            <if-compare-field field="parameters.unitCost" operator="not-equals" to-field="oldUnitCost" type="String">
+                <set field="createInventoryItemDetailInMap.inventoryItemId" from="lookedUpValue.inventoryItemId"
+                     set-if-empty="true" set-if-null="false"/>
+                <set field="createInventoryItemDetailInMap.unitCost" from="parameters.unitCost" set-if-empty="true"
+                     set-if-null="false"/>
+                <call-service break-on-error="true" error-code="error" in-map-name="createInventoryItemDetailInMap"
+                              include-user-login="true" require-new-transaction="false"
+                              service-name="createInventoryItemDetail" success-code="success"/>
+            </if-compare-field>
+        </if-not-empty>
+    </simple-method>
+
+    <simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_"
+                   event-event-message-name="_event_message_" event-request-object-name="request"
+                   event-response-code-name="_response_code_" event-response-object-name="response"
+                   login-required="true" method-name="createInventoryItemStatus"
+                   service-error-message-list-name="errorMessageList" service-error-message-map-name="errorMessageMap"
+                   service-error-message-name="errorMessage" service-response-message-name="responseMessage"
+                   service-success-message-list-name="successMessageList" service-success-message-name="successMessage"
+                   short-description="Create an inventory item status record" use-transaction="true">
+        <now-timestamp field="nowTimestamp"/>
+        <!-- find the most recent InventoryItemStatus record and set the statusEndDatetime -->
+        <entity-and distinct="false" entity-name="InventoryItemStatus" filter-by-date="false"
+                    list="oldInventoryItemStatusList" use-cache="false">
+            <field-map field-name="inventoryItemId" from-field="parameters.inventoryItemId"/>
+            <order-by field-name="-statusDatetime"/>
+        </entity-and>
+        <first-from-list entry="oldInventoryItemStatus" list="oldInventoryItemStatusList"/>
+        <if-not-empty field="oldInventoryItemStatus">
+            <set field="oldInventoryItemStatus.statusEndDatetime" from="nowTimestamp" set-if-empty="true"
+                 set-if-null="false"/>
+            <store-value do-cache-clear="true" value-field="oldInventoryItemStatus"/>
+        </if-not-empty>
+        <make-value entity-name="InventoryItemStatus" value-field="inventoryItemStatus"/>
+        <set-nonpk-fields map="parameters" set-if-null="true" value-field="inventoryItemStatus"/>
+        <set-pk-fields map="parameters" set-if-null="true" value-field="inventoryItemStatus"/>
+        <set field="inventoryItemStatus.statusDatetime" from="nowTimestamp" set-if-empty="true" set-if-null="false"/>
+        <!-- make sure the current productId is set, if not passed in look up the current value -->
+        <if-empty field="inventoryItemStatus.productId">
+            <entity-one auto-field-map="true" entity-name="InventoryItem" use-cache="false"
+                        value-field="inventoryItem"/>
+            <set field="inventoryItemStatus.productId" from="inventoryItem.productId" set-if-empty="true"
+                 set-if-null="false"/>
+        </if-empty>
+        <create-value do-cache-clear="true" or-store="false" value-field="inventoryItemStatus"/>
+    </simple-method>
+
+    <simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_"
+                   event-event-message-name="_event_message_" event-request-object-name="request"
+                   event-response-code-name="_response_code_" event-response-object-name="response"
+                   login-required="true" method-name="createInventoryItemDetail"
+                   service-error-message-list-name="errorMessageList" service-error-message-map-name="errorMessageMap"
+                   service-error-message-name="errorMessage" service-response-message-name="responseMessage"
+                   service-success-message-list-name="successMessageList" service-success-message-name="successMessage"
+                   short-description="Create an InventoryItemDetail" use-transaction="true">
+
+        <make-value entity-name="InventoryItemDetail" value-field="newEntity"/>
+        <set field="newEntity.inventoryItemId" from="parameters.inventoryItemId" set-if-empty="true"
+             set-if-null="false"/>
+        <!-- NOTE DEJ20070927: not using make-next-seq-id because a single InventoryItem may see traffic from lots of threads at the same time, and make-next-seq-id doesn't 
+			do well with that <make-next-seq-id seq-field-name="inventoryItemDetailSeqId" value-field="newEntity" increment-by="1" numeric-padding="4"/> -->
+        <sequenced-id field="newEntity.inventoryItemDetailSeqId" get-long-only="false"
+                      sequence-name="InventoryItemDetail"/>
+        <field-to-result field="newEntity.inventoryItemDetailSeqId" result-name="inventoryItemDetailSeqId"/>
+        <set-nonpk-fields map="parameters" value-field="newEntity"/>
+        <log level="error" message=" ********************** createInventoryItemDetail with Parameter ${parameters}"/>
+        <!-- set the effectiveDate; if from an ItemIssuance lookup the issuedDateTime -->
+        <if-not-empty field="parameters.itemIssuanceId">
+            <entity-one auto-field-map="true" entity-name="ItemIssuance" use-cache="false" value-field="itemIssuance"/>
+            <set field="newEntity.effectiveDate" from="itemIssuance.issuedDateTime" set-if-empty="true"
+                 set-if-null="false"/>
+            <else>
+                <now-timestamp field="newEntity.effectiveDate"/>
+            </else>
+        </if-not-empty>
+        <!-- if availableToPromiseDiff or quantityOnHandDiff are empty set to 0 -->
+        <if-empty field="newEntity.availableToPromiseDiff">
+            <set field="newEntity.availableToPromiseDiff" set-if-empty="true" set-if-null="false" type="BigDecimal"
+                 value="0"/>
+        </if-empty>
+        <if-empty field="newEntity.quantityOnHandDiff">
+            <set field="newEntity.quantityOnHandDiff" set-if-empty="true" set-if-null="false" type="BigDecimal"
+                 value="0"/>
+        </if-empty>
+        <set field="newEntity.itemIssuanceId" from-field="parameters.itemIssuanceId"/>
+        <create-value do-cache-clear="true" or-store="false" value-field="newEntity"/>
+    </simple-method>
+
+    <simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_"
+                   event-event-message-name="_event_message_" event-request-object-name="request"
+                   event-response-code-name="_response_code_" event-response-object-name="response"
+                   login-required="false" method-name="updateInventoryItemFromDetail"
+                   service-error-message-list-name="errorMessageList" service-error-message-map-name="errorMessageMap"
+                   service-error-message-name="errorMessage" service-response-message-name="responseMessage"
+                   service-success-message-list-name="successMessageList" service-success-message-name="successMessage"
+                   short-description="Update an InventoryItem From the Associated Detail Records"
+                   use-transaction="true">
+        <log level="error" message="Parameters Received in updateInventoryItemFromDetail ===== ${parameters}"/>
+        <entity-one auto-field-map="true" entity-name="InventoryItem" use-cache="false" value-field="inventoryItem"/>
+        <entity-one auto-field-map="true" entity-name="InventoryItemDetailSummary" use-cache="false"
+                    value-field="inventoryItemDetailSummary"/>
+        <set field="inventoryItem.availableToPromiseTotal" from="inventoryItemDetailSummary.availableToPromiseTotal"
+             set-if-empty="true" set-if-null="false"/>
+        <set field="inventoryItem.quantityOnHandTotal" from="inventoryItemDetailSummary.quantityOnHandTotal"
+             set-if-empty="true" set-if-null="false"/>
+        <set field="inventoryItem.accountingQuantityTotal" from="inventoryItemDetailSummary.accountingQuantityTotal"
+             set-if-empty="true" set-if-null="false"/>
+        <store-value do-cache-clear="true" value-field="inventoryItem"/>
+    </simple-method>
+
+    <simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_"
+                   event-event-message-name="_event_message_" event-request-object-name="request"
+                   event-response-code-name="_response_code_" event-response-object-name="response"
+                   login-required="true" method-name="updateSerializedInventoryTotals"
+                   service-error-message-list-name="errorMessageList" service-error-message-map-name="errorMessageMap"
+                   service-error-message-name="errorMessage" service-response-message-name="responseMessage"
+                   service-success-message-list-name="successMessageList" service-success-message-name="successMessage"
+                   short-description="Update the totals on serialized inventory" use-transaction="true">
+        <entity-one auto-field-map="true" entity-name="InventoryItem" use-cache="false" value-field="inventoryItem"/>
+        <if-compare field="inventoryItem.inventoryItemTypeId" operator="equals" type="String"
+                    value="SERIALIZED_INV_ITEM">
+            <if>
+                <!-- available -->
+                <condition>
+                    <and>
+                        <if-compare field="inventoryItem.statusId" operator="equals" type="String"
+                                    value="INV_AVAILABLE"/>
+                        <or>
+                            <if-compare field="inventoryItem.availableToPromiseTotal" operator="not-equals"
+                                        type="BigDecimal" value="1"/>
+                            <if-compare field="inventoryItem.quantityOnHandTotal" operator="not-equals"
+                                        type="BigDecimal" value="1"/>
+                        </or>
+                    </and>
+                </condition>
+                <then>
+                    <set field="inventoryItem.availableToPromiseTotal" set-if-empty="true" set-if-null="false"
+                         type="BigDecimal" value="1"/>
+                    <set field="inventoryItem.quantityOnHandTotal" set-if-empty="true" set-if-null="false"
+                         type="BigDecimal" value="1"/>
+                    <log level="always"
+                         message="In updateSerializedInventoryTotals Storing totals for item [${inventoryItem.inventoryItemId}] INV_AVAIABLE [1/1]"/>
+                    <store-value do-cache-clear="true" value-field="inventoryItem"/>
+                </then>
+                <!-- delivered -->
+                <else-if>
+                    <condition>
+                        <and>
+                            <if-compare field="inventoryItem.statusId" operator="equals" type="String"
+                                        value="INV_DELIVERED"/>
+                            <or>
+                                <if-compare field="inventoryItem.availableToPromiseTotal" operator="not-equals"
+                                            type="BigDecimal" value="0"/>
+                                <if-compare field="inventoryItem.quantityOnHandTotal" operator="not-equals"
+                                            type="BigDecimal" value="0"/>
+                            </or>
+                        </and>
+                    </condition>
+                    <then>
+                        <set field="inventoryItem.availableToPromiseTotal" set-if-empty="true" set-if-null="false"
+                             type="BigDecimal" value="0"/>
+                        <set field="inventoryItem.quantityOnHandTotal" set-if-empty="true" set-if-null="false"
+                             type="BigDecimal" value="0"/>
+                        <log level="always"
+                             message="In updateSerializedInventoryTotals Storing totals [${inventoryItem.inventoryItemId}] for INV_DELIVERED [0/0]"/>
+                        <store-value do-cache-clear="true" value-field="inventoryItem"/>
+                    </then>
+                </else-if>
+                <!-- any promised; or on-hand but not available status -->
+                <else-if>
+                    <condition>
+                        <and>
+                            <if-compare field="inventoryItem.statusId" operator="not-equals" type="String"
+                                        value="INV_AVAILABLE"/>
+                            <if-compare field="inventoryItem.statusId" operator="not-equals" type="String"
+                                        value="INV_DELIVERED"/>
+                            <or>
+                                <if-compare field="inventoryItem.availableToPromiseTotal" operator="not-equals"
+                                            type="BigDecimal" value="0"/>
+                                <if-compare field="inventoryItem.quantityOnHandTotal" operator="not-equals"
+                                            type="BigDecimal" value="1"/>
+                            </or>
+                        </and>
+                    </condition>
+                    <then>
+                        <set field="inventoryItem.availableToPromiseTotal" set-if-empty="true" set-if-null="false"
+                             type="BigDecimal" value="0"/>
+                        <set field="inventoryItem.quantityOnHandTotal" set-if-empty="true" set-if-null="false"
+                             type="BigDecimal" value="1"/>
+                        <log level="always"
+                             message="In updateSerializedInventoryTotals Storing totals [${inventoryItem.inventoryItemId}] for other status [0/1]"/>
+                        <store-value do-cache-clear="true" value-field="inventoryItem"/>
+                    </then>
+                </else-if>
+            </if>
+        </if-compare>
+    </simple-method>
+
+    <simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_"
+                   event-event-message-name="_event_message_"
+                   event-request-object-name="request" event-response-code-name="_response_code_"
+                   event-response-object-name="response" login-required="true"
+                   method-name="updateOldInventoryToDetailAll" service-error-message-list-name="errorMessageList"
+                   service-error-message-map-name="errorMessageMap" service-error-message-name="errorMessage"
+                   service-response-message-name="responseMessage"
+                   service-success-message-list-name="successMessageList" service-success-message-name="successMessage"
+                   short-description="Update Old Inventory To Detail All" use-transaction="true">
+        <!-- find all InventoryItem records where oldQuantityOnHand or oldAvailableToPromise are not null -->
+        <entity-condition distinct="false" entity-name="InventoryItem" filter-by-date="false" list="inventoryItemList"
+                          use-cache="false">
+            <condition-list combine="or">
+                <condition-expr field-name="oldQuantityOnHand" ignore="false" ignore-case="false"
+                                ignore-if-empty="false" ignore-if-null="false" operator="not-equals" value=""/>
+                <condition-expr field-name="oldAvailableToPromise" ignore="false" ignore-case="false"
+                                ignore-if-empty="false" ignore-if-null="false" operator="not-equals" value=""/>
+            </condition-list>
+        </entity-condition>
+        <iterate entry="inventoryItem" list="inventoryItemList">
+            <set field="callServiceMap.inventoryItem" from="inventoryItem" set-if-empty="true" set-if-null="false"/>
+            <call-service break-on-error="true" error-code="error" in-map-name="callServiceMap"
+                          include-user-login="true" require-new-transaction="false"
+                          service-name="updateOldInventoryToDetailSingle" success-code="success"/>
+            <clear-field field="callServiceMap.inventoryItem"/>
+        </iterate>
+    </simple-method>
+
+    <simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_"
+                   event-event-message-name="_event_message_" event-request-object-name="request"
+                   event-response-code-name="_response_code_" event-response-object-name="response"
+                   login-required="true" method-name="updateOldInventoryToDetailSingle"
+                   service-error-message-list-name="errorMessageList" service-error-message-map-name="errorMessageMap"
+                   service-error-message-name="errorMessage" service-response-message-name="responseMessage"
+                   service-success-message-list-name="successMessageList" service-success-message-name="successMessage"
+                   short-description="Update Old Inventory To Detail Single" use-transaction="true">
+        <!-- for each create an InventoryItemDetail representing the old QOH or ATP value, then null those fields -->
+        <set field="createDetailMap.inventoryItemId" from="parameters.inventoryItem.inventoryItemId" set-if-empty="true"
+             set-if-null="false"/>
+        <set field="createDetailMap.availableToPromiseDiff" from="parameters.inventoryItem.oldAvailableToPromise"
+             set-if-empty="true" set-if-null="false"/>
+        <set field="createDetailMap.quantityOnHandDiff" from="parameters.inventoryItem.oldQuantityOnHand"
+             set-if-empty="true" set-if-null="false"/>
+        <call-service break-on-error="true" error-code="error" in-map-name="createDetailMap" include-user-login="true"
+                      require-new-transaction="false" service-name="createInventoryItemDetail" success-code="success"/>
+        <clear-field field="parameters.inventoryItem.oldAvailableToPromise"/>
+        <clear-field field="parameters.inventoryItem.oldQuantityOnHand"/>
+        <store-value do-cache-clear="true" value-field="parameters.inventoryItem"/>
+    </simple-method>
+
+    <simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_"
+                   event-event-message-name="_event_message_" event-request-object-name="request"
+                   event-response-code-name="_response_code_" event-response-object-name="response"
+                   login-required="false" method-name="checkProductInventoryDiscontinuation"
+                   service-error-message-list-name="errorMessageList" service-error-message-map-name="errorMessageMap"
+                   service-error-message-name="errorMessage" service-response-message-name="responseMessage"
+                   service-success-message-list-name="successMessageList" service-success-message-name="successMessage"
+                   short-description="Check Product Inventory Discontinuation" use-transaction="true">
+        <set field="productIdMap.productId" from="parameters.productId" set-if-empty="true" set-if-null="false"/>
+        <find-by-primary-key entity-name="Product" map="productIdMap" use-cache="false" value-field="product"/>
+        <now-timestamp field="nowTimestamp"/>
+        <!-- if discontinueProductSales field is empty and the product is a variant, get the fieldcontent from the virtual product -->
+        <if-not-empty field="product">
+            <if-compare field="product.isVariant" operator="equals" type="String" value="Y">
+                <!-- retrieve related virtual product because also to be used later -->
+                <set field="getAssoc.productIdTo" from="product.productId" set-if-empty="true" set-if-null="false"/>
+                <set field="getAssoc.productAssocTypeId" set-if-empty="true" set-if-null="false"
+                     value="PRODUCT_VARIANT"/>
+                <find-by-and entity-name="ProductAssoc" list="assocs" map="getAssoc" use-cache="false"
+                             use-iterator="false"/>
+                <filter-list-by-date from-field-name="fromDate" list="assocs" thru-field-name="thruDate"
+                                     to-list="assocsDate"/>
+                <first-from-list entry="assoc" list="assocsDate"/>
+                <get-related-one relation-name="MainProduct" to-value-field="virtProduct" use-cache="false"
+                                 value-field="assoc"/>
+                <if-empty field="product.salesDiscWhenNotAvail">
+                    <set field="product.salesDiscWhenNotAvail" from="virtProduct.salesDiscWhenNotAvail"
+                         set-if-empty="true" set-if-null="false"/>
+                </if-empty>
+            </if-compare>
+        </if-not-empty>
+        <!-- before checking inventory availability see if the product is already discontinued, and discontinued in the past (if in the future, still check availability 
+			and discontinue now if necessary) -->
+        <if>
+            <condition>
+                <and>
+                    <not>
+                        <if-empty field="product"/>
+                    </not>
+                    <if-compare field="product.salesDiscWhenNotAvail" operator="equals" type="String" value="Y"/>
+                    <or>
+                        <if-empty field="product.salesDiscontinuationDate"/>
+                        <if-compare-field field="product.salesDiscontinuationDate" operator="greater"
+                                          to-field="nowTimestamp" type="Timestamp"/>
+                    </or>
+                </and>
+            </condition>
+            <then>
+                <!-- now for the real fun, get the inventory available if is less-equal to zero discontinue product -->
+                <call-service break-on-error="true" error-code="error" in-map-name="productIdMap"
+                              include-user-login="true" require-new-transaction="false"
+                              service-name="getProductInventoryAvailable" success-code="success">
+                    <result-to-field result-name="availableToPromiseTotal"/>
+                </call-service>
+                <if-compare field="availableToPromiseTotal" operator="less-equals" type="BigDecimal" value="0">
+                    <set field="discontinueProductSalesMap.productId" from="parameters.productId" set-if-empty="true"
+                         set-if-null="false"/>
+                    <call-service break-on-error="true" error-code="error" in-map-name="discontinueProductSalesMap"
+                                  include-user-login="true" require-new-transaction="false"
+                                  service-name="discontinueProductSales" success-code="success"/>
+                </if-compare>
+                <!-- check if related virtual product has no variant left, if yes discontinue the virtual product too when salesDiscWhenNotAvail is 'Y' -->
+                <if-not-empty field="virtProduct">
+                    <if-compare field="virtProduct.salesDiscWhenNotAvail" operator="equals" type="String" value="Y">
+                        <set field="getFromAssoc.productId" from="virtProduct.productId" set-if-empty="true"
+                             set-if-null="false"/>
+                        <set field="getFromAssoc.productAssocTypeId" set-if-empty="true" set-if-null="false"
+                             value="PRODUCT_VARIANT"/>
+                        <find-by-and entity-name="ProductAssoc" list="assocs" map="getFromAssoc" use-cache="false"
+                                     use-iterator="false"/>
+                        <filter-list-by-date from-field-name="fromDate" list="assocs" thru-field-name="thruDate"
+                                             to-list="assocsDate"/>
+                        <if-empty field="assocsDate">
+                            <set field="discontinueProductSalesMap.productId" from="virtProduct.productId"
+                                 set-if-empty="true" set-if-null="false"/>
+                            <call-service break-on-error="true" error-code="error"
+                                          in-map-name="discontinueProductSalesMap" include-user-login="true"
+                                          require-new-transaction="false" service-name="discontinueProductSales"
+                                          success-code="success"/>
+                        </if-empty>
+                    </if-compare>
+                </if-not-empty>
+            </then>
+        </if>
+    </simple-method>
+
+    <simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_"
+                   event-event-message-name="_event_message_" event-request-object-name="request"
+                   event-response-code-name="_response_code_" event-response-object-name="response"
+                   login-required="true" method-name="createInventoryItemVariance"
+                   service-error-message-list-name="errorMessageList" service-error-message-map-name="errorMessageMap"
+                   service-error-message-name="errorMessage" service-response-message-name="responseMessage"
+                   service-success-message-list-name="successMessageList" service-success-message-name="successMessage"
+                   short-description="Create an InventoryItemVariance" use-transaction="true">
+        <!-- add changes to availableToPromise and quantityOnHand -->
+        <make-value entity-name="InventoryItem" value-field="inventoryItemLookup"/>
+        <set-pk-fields map="parameters" set-if-null="true" value-field="inventoryItemLookup"/>
+        <find-by-primary-key map="inventoryItemLookup" use-cache="false" value-field="inventoryItem"/>
+        <if-compare field="inventoryItem.inventoryItemTypeId" operator="not-equals" type="String"
+                    value="NON_SERIAL_INV_ITEM">
+            <string-to-list list="error_list"
+                            string="Can only create an InventoryItemVariance for a Non-Serialized Inventory Item"/>
+        </if-compare>
+        <check-errors error-code="error" error-list-name="error_list"/>
+        <!-- instead of updating InventoryItem, add an InventoryItemDetail -->
+        <set field="createDetailMap.inventoryItemId" from="parameters.inventoryItemId" set-if-empty="true"
+             set-if-null="false"/>
+        <set field="createDetailMap.physicalInventoryId" from="parameters.physicalInventoryId" set-if-empty="true"
+             set-if-null="false"/>
+        <set field="createDetailMap.availableToPromiseDiff" from="parameters.availableToPromiseVar" set-if-empty="true"
+             set-if-null="false"/>
+        <set field="createDetailMap.quantityOnHandDiff" from="parameters.quantityOnHandVar" set-if-empty="true"
+             set-if-null="false"/>
+        <set field="createDetailMap.reasonEnumId" from="parameters.varianceReasonId" set-if-empty="true"
+             set-if-null="false"/>
+        <set field="createDetailMap.description" from="parameters.comments" set-if-empty="true" set-if-null="false"/>
+        <call-service break-on-error="true" error-code="error" in-map-name="createDetailMap" include-user-login="true"
+                      require-new-transaction="false" service-name="createInventoryItemDetail" success-code="success"/>
+        <make-value entity-name="InventoryItemVariance" value-field="newEntity"/>
+        <set-pk-fields map="parameters" set-if-null="true" value-field="newEntity"/>
+        <set-nonpk-fields map="parameters" set-if-null="true" value-field="newEntity"/>
+        <create-value do-cache-clear="true" or-store="false" value-field="newEntity"/>
+        <!-- TODO: (possibly a big deal?) check to see if any reserved inventory needs to be changed because of a change in availableToPromise -->
+        <!-- TODO: make sure availableToPromise is never greater than the quantityOnHand? -->
+    </simple-method>
+
+    <simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_"
+                   event-event-message-name="_event_message_" event-request-object-name="request"
+                   event-response-code-name="_response_code_" event-response-object-name="response"
+                   login-required="true" method-name="createPhysicalInventory"
+                   service-error-message-list-name="errorMessageList" service-error-message-map-name="errorMessageMap"
+                   service-error-message-name="errorMessage" service-response-message-name="responseMessage"
+                   service-success-message-list-name="successMessageList" service-success-message-name="successMessage"
+                   short-description="Create a PhysicalInventory" use-transaction="true">
+        <make-value entity-name="PhysicalInventory" value-field="newEntity"/>
+        <set-nonpk-fields map="parameters" set-if-null="true" value-field="newEntity"/>
+        <if-empty field="newEntity.physicalInventoryDate">
+            <now-timestamp field="newEntity.physicalInventoryDate"/>
+        </if-empty>
+        <if-empty field="newEntity.partyId">
+            <set field="newEntity.partyId" from="userLogin.partyId" set-if-empty="true" set-if-null="false"/>
+        </if-empty>
+        <sequenced-id field="physicalInventoryId" get-long-only="false" sequence-name="PhysicalInventory"/>
+        <set field="newEntity.physicalInventoryId" from="physicalInventoryId" set-if-empty="true" set-if-null="false"/>
+        <field-to-result field="physicalInventoryId" result-name="physicalInventoryId"/>
+        <create-value do-cache-clear="true" or-store="false" value-field="newEntity"/>
+    </simple-method>
+
+    <simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_"
+                   event-event-message-name="_event_message_" event-request-object-name="request"
+                   event-response-code-name="_response_code_" event-response-object-name="response"
+                   login-required="true" method-name="createPhysicalInventoryAndVariance"
+                   service-error-message-list-name="errorMessageList" service-error-message-map-name="errorMessageMap"
+                   service-error-message-name="errorMessage" service-response-message-name="responseMessage"
+                   service-success-message-list-name="successMessageList" service-success-message-name="successMessage"
+                   short-description="Create a PhysicalInventory and an InventoryItemVariance" use-transaction="true">
+        <if-not-empty field="parameters.quantity">
+            <set field="qty" set-if-empty="true" set-if-null="false" type="BigDecimal" value="-${parameters.quantity}"/>
+            <set field="parameters.availableToPromiseVar" from="qty" set-if-empty="true" set-if-null="false"/>
+            <set field="parameters.quantityOnHandVar" from="qty" set-if-empty="true" set-if-null="false"/>
+        </if-not-empty>
+        <set-service-fields map="parameters" service-name="createPhysicalInventory"
+                            to-map="createPhysicalInventoryMap"/>
+        <call-service break-on-error="true" error-code="error" in-map-name="createPhysicalInventoryMap"
+                      include-user-login="true" require-new-transaction="false" service-name="createPhysicalInventory"
+                      success-code="success">
+            <result-to-field field="parameters.physicalInventoryId" result-name="physicalInventoryId"/>
+            <result-to-result result-name="physicalInventoryId" service-result-name="physicalInventoryId"/>
+        </call-service>
+        <set-service-fields map="parameters" service-name="createInventoryItemVariance"
+                            to-map="createInventoryItemVarianceMap"/>
+        <call-service break-on-error="true" error-code="error" in-map-name="createInventoryItemVarianceMap"
+                      include-user-login="true" require-new-transaction="false"
+                      service-name="createInventoryItemVariance" success-code="success"/>
+    </simple-method>
+    <!-- ProductFacility methods -->
+
+    <simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_"
+                   event-event-message-name="_event_message_" event-request-object-name="request"
+                   event-response-code-name="_response_code_" event-response-object-name="response"
+                   login-required="true" method-name="createProductFacility"
+                   service-error-message-list-name="errorMessageList" service-error-message-map-name="errorMessageMap"
+                   service-error-message-name="errorMessage" service-response-message-name="responseMessage"
+                   service-success-message-list-name="successMessageList" service-success-message-name="successMessage"
+                   short-description="Create a ProductFacility" use-transaction="true">
+        <make-value entity-name="ProductFacility" value-field="newEntity"/>
+        <set-nonpk-fields map="parameters" set-if-null="true" value-field="newEntity"/>
+        <set-pk-fields map="parameters" set-if-null="true" value-field="newEntity"/>
+        <create-value do-cache-clear="true" or-store="false" value-field="newEntity"/>
+    </simple-method>
+
+    <simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_"
+                   event-event-message-name="_event_message_" event-request-object-name="request"
+                   event-response-code-name="_response_code_" event-response-object-name="response"
+                   login-required="true" method-name="updateProductFacility"
+                   service-error-message-list-name="errorMessageList" service-error-message-map-name="errorMessageMap"
+                   service-error-message-name="errorMessage" service-response-message-name="responseMessage"
+                   service-success-message-list-name="successMessageList" service-success-message-name="successMessage"
+                   short-description="Update a ProductFacility" use-transaction="true">
+        <make-value entity-name="ProductFacility" value-field="lookupPKMap"/>
+        <set-pk-fields map="parameters" set-if-null="true" value-field="lookupPKMap"/>
+        <find-by-primary-key map="lookupPKMap" use-cache="false" value-field="lookedUpValue"/>
+        <set-nonpk-fields map="parameters" set-if-null="true" value-field="lookedUpValue"/>
+        <store-value do-cache-clear="true" value-field="lookedUpValue"/>
+    </simple-method>
+
+    <simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_"
+                   event-event-message-name="_event_message_" event-request-object-name="request"
+                   event-response-code-name="_response_code_" event-response-object-name="response"
+                   login-required="true" method-name="deleteProductFacility"
+                   service-error-message-list-name="errorMessageList" service-error-message-map-name="errorMessageMap"
+                   service-error-message-name="errorMessage" service-response-message-name="responseMessage"
+                   service-success-message-list-name="successMessageList" service-success-message-name="successMessage"
+                   short-description="Delete a ProductFacility" use-transaction="true">
+        <make-value entity-name="ProductFacility" value-field="lookupPKMap"/>
+        <set-pk-fields map="parameters" set-if-null="true" value-field="lookupPKMap"/>
+        <find-by-primary-key map="lookupPKMap" use-cache="false" value-field="lookedUpValue"/>
+        <remove-value do-cache-clear="true" value-field="lookedUpValue"/>
+    </simple-method>
+    <!-- ProductFacilityLocation methods -->
+
+    <simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_"
+                   event-event-message-name="_event_message_" event-request-object-name="request"
+                   event-response-code-name="_response_code_" event-response-object-name="response"
+                   login-required="true" method-name="createProductFacilityLocation"
+                   service-error-message-list-name="errorMessageList" service-error-message-map-name="errorMessageMap"
+                   service-error-message-name="errorMessage" service-response-message-name="responseMessage"
+                   service-success-message-list-name="successMessageList" service-success-message-name="successMessage"
+                   short-description="Create a ProductFacilityLocation" use-transaction="true">
+        <make-value entity-name="ProductFacilityLocation" value-field="newEntity"/>
+        <set-nonpk-fields map="parameters" set-if-null="true" value-field="newEntity"/>
+        <set-pk-fields map="parameters" set-if-null="true" value-field="newEntity"/>
+        <create-value do-cache-clear="true" or-store="false" value-field="newEntity"/>
+    </simple-method>
+
+    <simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_"
+                   event-event-message-name="_event_message_" event-request-object-name="request"
+                   event-response-code-name="_response_code_" event-response-object-name="response"
+                   login-required="true" method-name="updateProductFacilityLocation"
+                   service-error-message-list-name="errorMessageList" service-error-message-map-name="errorMessageMap"
+                   service-error-message-name="errorMessage" service-response-message-name="responseMessage"
+                   service-success-message-list-name="successMessageList" service-success-message-name="successMessage"
+                   short-description="Update a ProductFacilityLocation" use-transaction="true">
+        <make-value entity-name="ProductFacilityLocation" value-field="lookupPKMap"/>
+        <set-pk-fields map="parameters" set-if-null="true" value-field="lookupPKMap"/>
+        <find-by-primary-key map="lookupPKMap" use-cache="false" value-field="lookedUpValue"/>
+        <set-nonpk-fields map="parameters" set-if-null="true" value-field="lookedUpValue"/>
+        <store-value do-cache-clear="true" value-field="lookedUpValue"/>
+    </simple-method>
+
+    <simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_"
+                   event-event-message-name="_event_message_" event-request-object-name="request"
+                   event-response-code-name="_response_code_" event-response-object-name="response"
+                   login-required="true" method-name="deleteProductFacilityLocation"
+                   service-error-message-list-name="errorMessageList" service-error-message-map-name="errorMessageMap"
+                   service-error-message-name="errorMessage" service-response-message-name="responseMessage"
+                   service-success-message-list-name="successMessageList" service-success-message-name="successMessage"
+                   short-description="Delete a ProductFacilityLocation" use-transaction="true">
+        <make-value entity-name="ProductFacilityLocation" value-field="lookupPKMap"/>
+        <set-pk-fields map="parameters" set-if-null="true" value-field="lookupPKMap"/>
+        <find-by-primary-key map="lookupPKMap" use-cache="false" value-field="lookedUpValue"/>
+        <remove-value do-cache-clear="true" value-field="lookedUpValue"/>
+    </simple-method>
+    <!-- ================================================================ -->
+    <!-- Check/Reserve Inventory Services -->
+    <!-- ================================================================ -->
+
+    <simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_"
+                   event-event-message-name="_event_message_"
+                   event-request-object-name="request" event-response-code-name="_response_code_"
+                   event-response-object-name="response" login-required="false"
+                   method-name="getProductInventoryAvailable" service-error-message-list-name="errorMessageList"
+                   service-error-message-map-name="errorMessageMap" service-error-message-name="errorMessage"
+                   service-response-message-name="responseMessage"
+                   service-success-message-list-name="successMessageList" service-success-message-name="successMessage"
+                   short-description="Get Inventory Available for a Product" use-transaction="true">
+        <!-- this method can be called with some optional parameters: -facilityId -locationSeqId -containerId If the service definitions are used then only some of these 
+			will ever be specified, or none of them. Whatever it is called with, it will basically get a list of InventoryItems and total the available amount. -->
+        <!-- <log level="info" message="Getting inventory available to promise count; parameters are: ${parameters}"/> -->
+        <!-- FIXME: this is an hack to get all the items with a null location: if the parameters.locationSeqId string is equal to "nullField" then set the lookupFieldMap.locationSeqId 
+			to null -->
+        <if-compare field="parameters.locationSeqId" operator="equals" type="String" value="nullField">
+            <set field="lookupFieldMap.locationSeqId" from="nullField" set-if-empty="true" set-if-null="false"/>
+        </if-compare>
+        <set field="lookupFieldMap.inventoryItemId" from="parameters.inventoryItemId" set-if-empty="true"
+             set-if-null="false"/>
+        <set field="lookupFieldMap.productId" from="parameters.productId" set-if-empty="true" set-if-null="false"/>
+        <set field="lookupFieldMap.facilityId" from="parameters.facilityId" set-if-empty="true" set-if-null="false"/>
+        <set field="lookupFieldMap.locationSeqId" from="parameters.locationSeqId" set-if-empty="true"
+             set-if-null="false"/>
+        <set field="lookupFieldMap.containerId" from="parameters.containerId" set-if-empty="true" set-if-null="false"/>
+        <!-- we might get away with a cache here since real serious errors will occur during the reservation service... but only if we need the speed -->
+        <find-by-and entity-name="InventoryItem" list="inventoryItems" map="lookupFieldMap"
+                     use-cache="${parameters.useCache}" use-iterator="true"/>
+        <set field="parameters.availableToPromiseTotal" set-if-empty="true" set-if-null="false" type="BigDecimal"
+             value="0"/>
+        <set field="parameters.quantityOnHandTotal" set-if-empty="true" set-if-null="false" type="BigDecimal"
+             value="0"/>
+        <iterate entry="inventoryItem" list="inventoryItems">
+            <!-- NOTE: this code no longer distinguishes between serialized and non-serialized because both now have availableToPromiseTotal and quantityOnHandTotal populated 
+				(for serialized are based on status, non-serialized are based on InventoryItemDetail) -->
+            <if>
+                <condition>
+                    <or>
+                        <and>
+                            <not>
+                                <if-empty field="parameters.statusId"/>
+                            </not>
+                            <if-compare-field field="parameters.statusId" operator="equals"
+                                              to-field="inventoryItem.statusId" type="String"/>
+                        </and>
+                        <and>
+                            <if-empty field="parameters.statusId"/>
+                            <or>
+                                <if-empty field="inventoryItem.statusId"/>
+                                <if-compare field="inventoryItem.statusId" operator="equals" type="String"
+                                            value="INV_AVAILABLE"/>
+                                <if-compare field="inventoryItem.inventoryItemTypeId" operator="equals" type="String"
+                                            value="SERIALIZED_INV_ITEM"/>
+                                <!-- status is reflected in total fields -->
+                            </or>
+                        </and>
+                    </or>
+                </condition>
+                <then>
+                    <set field="parameters.quantityOnHandTotal"
+                         from="parameters.quantityOnHandTotal + inventoryItem.quantityOnHandTotal" set-if-empty="true"
+                         set-if-null="false" type="BigDecimal"/>
+                    <set field="parameters.availableToPromiseTotal"
+                         from="parameters.availableToPromiseTotal + inventoryItem.availableToPromiseTotal"
+                         set-if-empty="true" set-if-null="false" type="BigDecimal"/>
+                </then>
+            </if>
+        </iterate>
+        <field-to-result field="parameters.availableToPromiseTotal" result-name="availableToPromiseTotal"/>
+        <field-to-result field="parameters.quantityOnHandTotal" result-name="quantityOnHandTotal"/>
+    </simple-method>
+
+    <simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_"
+                   event-event-message-name="_event_message_" event-request-object-name="request"
+                   event-response-code-name="_response_code_" event-response-object-name="response"
+                   login-required="true" method-name="countProductInventoryOnHand"
+                   service-error-message-list-name="errorMessageList" service-error-message-map-name="errorMessageMap"
+                   service-error-message-name="errorMessage" service-response-message-name="responseMessage"
+                   service-success-message-list-name="successMessageList" service-success-message-name="successMessage"
+                   short-description="Count Inventory On Hand for a Product constrained by a facilityId at a given date."
+                   use-transaction="false">
+        <entity-condition distinct="false" entity-name="InventoryItemDetailForSum" filter-by-date="false"
+                          list="inventoryItemDetailTotals" use-cache="false">
+            <condition-list combine="and">
+                <condition-expr field-name="effectiveDate" from-field="parameters.inventoryCountDate" ignore="false"
+                                ignore-case="false" ignore-if-empty="false" ignore-if-null="false"
+                                operator="less-equals"/>
+                <condition-expr field-name="facilityId" from-field="parameters.facilityId" ignore="false"
+                                ignore-case="false" ignore-if-empty="false" ignore-if-null="false" operator="equals"/>
+                <condition-expr field-name="productId" from-field="parameters.productId" ignore="false"
+                                ignore-case="false" ignore-if-empty="false" ignore-if-null="false" operator="equals"/>
+            </condition-list>
+            <select-field field-name="quantityOnHandSum"/>
+        </entity-condition>
+        <first-from-list entry="inventoryItemDetailTotal" list="inventoryItemDetailTotals"/>
+        <set default="0" field="quantityOnHandTotal" from="inventoryItemDetailTotal.quantityOnHandSum"
+             set-if-empty="true" set-if-null="false" type="BigDecimal"/>
+        <field-to-result field="quantityOnHandTotal" result-name="quantityOnHandTotal"/>
+    </simple-method>
+
+    <simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_"
+                   event-event-message-name="_event_message_" event-request-object-name="request"
+                   event-response-code-name="_response_code_" event-response-object-name="response"
+                   login-required="true" method-name="countProductInventoryShippedForSales"
+                   service-error-message-list-name="errorMessageList" service-error-message-map-name="errorMessageMap"
+                   service-error-message-name="errorMessage" service-response-message-name="responseMessage"
+                   service-success-message-list-name="successMessageList" service-success-message-name="successMessage"
+                   short-description="Count Inventory Shipped for Sales Orders for a Product constrained by a facilityId in a given date range."
+                   use-transaction="false">
+        <if-empty field="parameters.thruDate">
+            <now-timestamp field="parameters.thruDate"/>
+        </if-empty>
+        <entity-condition distinct="false" entity-name="InventoryItemDetailForSum" filter-by-date="false"
+                          list="inventoryItemDetailTotals" use-cache="false">
+            <condition-list combine="and">
+                <condition-expr field-name="effectiveDate" from-field="parameters.fromDate" ignore="false"
+                                ignore-case="false" ignore-if-empty="false" ignore-if-null="false"
+                                operator="greater-equals"/>
+                <condition-expr field-name="effectiveDate" from-field="parameters.thruDate" ignore="false"
+                                ignore-case="false" ignore-if-empty="false" ignore-if-null="false" operator="less"/>
+                <condition-expr field-name="facilityId" from-field="parameters.facilityId" ignore="false"
+                                ignore-case="false" ignore-if-empty="false" ignore-if-null="false" operator="equals"/>
+                <condition-expr field-name="productId" from-field="parameters.productId" ignore="false"
+                                ignore-case="false" ignore-if-empty="false" ignore-if-null="false" operator="equals"/>
+                <condition-expr field-name="orderId" from-field="nullField" ignore="false" ignore-case="false"
+                                ignore-if-empty="false" ignore-if-null="false" operator="not-equals"/>
+                <condition-expr field-name="quantityOnHandDiff" ignore="false" ignore-case="false"
+                                ignore-if-empty="false" ignore-if-null="false" operator="less" value="0"/>
+            </condition-list>
+            <select-field field-name="quantityOnHandSum"/>
+        </entity-condition>
+        <first-from-list entry="inventoryItemDetailTotal" list="inventoryItemDetailTotals"/>
+        <set default="0" field="quantityOnHandTotal" from="${inventoryItemDetailTotal.quantityOnHandSum * -1}"
+             set-if-empty="true" set-if-null="false" type="BigDecimal"/>
+        <field-to-result field="quantityOnHandTotal" result-name="quantityOnHandTotal"/>
+    </simple-method>
+
+    <simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_"
+                   event-event-message-name="_event_message_"
+                   event-request-object-name="request" event-response-code-name="_response_code_"
+                   event-response-object-name="response" login-required="false" method-name="getMktgPackagesAvailable"
+                   service-error-message-list-name="errorMessageList" service-error-message-map-name="errorMessageMap"
+                   service-error-message-name="errorMessage" service-response-message-name="responseMessage"
+                   service-success-message-list-name="successMessageList" service-success-message-name="successMessage"
+                   short-description="Get Marketing Packages Available From Components In Inventory"
+                   use-transaction="false">
+        <set field="availableToPromiseTotal" set-if-empty="true" set-if-null="false" type="BigDecimal" value="0"/>
+        <set field="quantityOnHandTotal" set-if-empty="true" set-if-null="false" type="BigDecimal" value="0"/>
+        <set field="lookupMktgPkgParams.productId" from="parameters.productId" set-if-empty="true" set-if-null="false"/>
+        <entity-one auto-field-map="true" entity-name="Product" use-cache="false" value-field="product"/>
+        <set field="isMarketingPkgAuto"
+             from="groovy: org.ofbiz.common.CommonWorkers.hasParentType(delegator, 'ProductType', 'productTypeId', product.productTypeId, 'parentTypeId', 'MARKETING_PKG_AUTO')"
+             set-if-empty="true" set-if-null="false" type="Boolean"/>
+        <if-compare field="isMarketingPkgAuto" operator="equals" type="Boolean" value="true">
+            <set field="lookupMktgPkgParams.type" set-if-empty="true" set-if-null="false" value="MANUF_COMPONENT"/>
+            <else>
+                <set field="lookupMktgPkgParams.type" set-if-empty="true" set-if-null="false"
+                     value="PRODUCT_COMPONENT"/>
+            </else>
+        </if-compare>
+        <call-service break-on-error="true" error-code="error" in-map-name="lookupMktgPkgParams"
+                      include-user-login="true" require-new-transaction="false" service-name="getAssociatedProducts"
+                      success-code="success">
+            <result-to-field result-name="assocProducts"/>
+        </call-service>
+        <!-- if there are any components, then the ATP and QOH are based on the quantities of those component products and found with another service -->
+        <if-not-empty field="assocProducts">
+            <set field="inventoryByAssocProductsParams.assocProducts" from="assocProducts" set-if-empty="true"
+                 set-if-null="false"/>
+            <set field="inventoryByAssocProductsParams.facilityId" from="parameters.facilityId" set-if-empty="true"
+                 set-if-null="false"/>
+            <set field="inventoryByAssocProductsParams.statusId" from="parameters.statusId" set-if-empty="true"
+                 set-if-null="false"/>
+            <call-service break-on-error="true" error-code="error" in-map-name="inventoryByAssocProductsParams"
+                          include-user-login="true" require-new-transaction="false"
+                          service-name="getProductInventoryAvailableFromAssocProducts" success-code="success">
+                <result-to-field result-name="quantityOnHandTotal"/>
+                <result-to-field result-name="availableToPromiseTotal"/>
+            </call-service>
+        </if-not-empty>
+        <field-to-result field="availableToPromiseTotal"/>
+        <field-to-result field="quantityOnHandTotal"/>
+    </simple-method>
+
+    <simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_"
+                   event-event-message-name="_event_message_"
+                   event-request-object-name="request" event-response-code-name="_response_code_"
+                   event-response-object-name="response" login-required="true" method-name="balanceInventoryItems"
+                   service-error-message-list-name="errorMessageList" service-error-message-map-name="errorMessageMap"
+                   service-error-message-name="errorMessage" service-response-message-name="responseMessage"
+                   service-success-message-list-name="successMessageList" service-success-message-name="successMessage"
+                   short-description="Balances available-to-promise on inventory items" use-transaction="true">
+        <entity-one auto-field-map="true" entity-name="InventoryItem" use-cache="false" value-field="inventoryItem"/>
+        <!-- find all items which have a negative ATP -->
+        <entity-condition distinct="false" entity-name="BalanceInventoryItemsView" filter-by-date="false"
+                          list="inventoryItems" use-cache="false">
+            <condition-list combine="or">
+                <condition-list combine="and">
+                    <condition-expr field-name="productId" from-field="inventoryItem.productId" ignore="false"
+                                    ignore-case="false" ignore-if-empty="false" ignore-if-null="false"
+                                    operator="equals"/>
+                    <condition-expr field-name="facilityId" from-field="inventoryItem.facilityId" ignore="false"
+                                    ignore-case="false" ignore-if-empty="false" ignore-if-null="false"
+                                    operator="equals"/>
+                    <condition-expr field-name="inventoryItemTypeId" ignore="false" ignore-case="false"
+                                    ignore-if-empty="false" ignore-if-null="false" operator="equals"
+                                    value="NON_SERIAL_INV_ITEM"/>
+                    <condition-list combine="or">
+                        <condition-expr field-name="availableToPromiseTotal" from-field="nullField" ignore="false"
+                                        ignore-case="false" ignore-if-empty="false" ignore-if-null="false"
+                                        operator="equals"/>
+                        <condition-expr field-name="availableToPromiseTotal" ignore="false" ignore-case="false"
+                                        ignore-if-empty="false" ignore-if-null="false" operator="equals" value=""/>
+                        <condition-expr field-name="availableToPromiseTotal" ignore="false" ignore-case="false"
+                                        ignore-if-empty="false" ignore-if-null="false" operator="less" value="0"/>
+                    </condition-list>
+                </condition-list>
+                <!-- the current item is added to the list, even if its atp is greater than zero, because there could be negative reservations (backorders) on it, if the atp 
+					has been increased by an inventory variance -->
+                <condition-expr field-name="inventoryItemId" from-field="inventoryItem.inventoryItemId" ignore="false"
+                                ignore-case="false" ignore-if-empty="false" ignore-if-null="false" operator="equals"/>
+            </condition-list>
+            <order-by field-name="reservedDatetime"/>
+            <order-by field-name="sequenceId"/>
+        </entity-condition>
+        <if-empty field="inventoryItems">
+            <return/>
+        </if-empty>
+        <!-- find their current reservations -->
+        <set field="reserveQtyAccum" set-if-empty="true" set-if-null="false" type="Double" value="0"/>
+        <iterate entry="item" list="inventoryItems">
+            <!-- If quantityOnHandTotal is not equal to availableToPromiseTotal this means that there are pending reservations on the item that cause availableToPromiseTotal
+                to be lower than the quantityOnHandTotal (the opposite can never happen).
+                In fact, if availableToPromiseTotal is negative, this doesn't mean that there are reservations;
+                for example, if we have a negative quantityOnHandTotal and quantityOnHandTotal equal to availableToPromiseTotal, then no reservations are present. -->
+            <if>
+                <condition>
+                    <and>
+                        <if-compare-field field="reserveQtyAccum" operator="less"
+                                          to-field="inventoryItem.quantityOnHandTotal" type="Double"/>
+                        <if-compare-field field="item.quantityOnHandTotal" operator="not-equals"
+                                          to-field="item.availableToPromiseTotal" type="String"/>
+                    </and>
+                </condition>
+                <then>
+
+                    <entity-condition distinct="false" entity-name="PicklistAndBinAndItem" filter-by-date="false"
+                                      list="picklistItemList" use-cache="false">
+                        <condition-list combine="and">
+                            <condition-expr field-name="orderId" from-field="item.orderId" ignore="false"
+                                            ignore-case="false" ignore-if-empty="false" ignore-if-null="false"
+                                            operator="equals"/>
+                            <condition-expr field-name="shipGroupSeqId" from-field="item.shipGroupSeqId" ignore="false"
+                                            ignore-case="false" ignore-if-empty="false" ignore-if-null="false"
+                                            operator="equals"/>
+                            <condition-expr field-name="orderItemSeqId" from-field="item.orderItemSeqId" ignore="false"
+                                            ignore-case="false" ignore-if-empty="false" ignore-if-null="false"
+                                            operator="equals"/>
+                            <condition-expr field-name="inventoryItemId" from-field="item.inventoryItemId"
+                                            ignore="false" ignore-case="false" ignore-if-empty="false"
+                                            ignore-if-null="false" operator="equals"/>
+                            <condition-expr field-name="statusId" ignore="false" ignore-case="false"
+                                            ignore-if-empty="false" ignore-if-null="false" operator="not-equals"
+                                            value="PICKLIST_CANCELLED"/>
+                            <condition-expr field-name="statusId" ignore="false" ignore-case="false"
+                                            ignore-if-empty="false" ignore-if-null="false" operator="not-equals"
+                                            value="PICKLIST_PICKED"/>
+                        </condition-list>
+                    </entity-condition>
+                    <!-- only cancel/re-reserve when there are no picklists associated; this will prevent orders appearing on duplicate pick lists -->
+                    <if-empty field="picklistItemList">
+                        <log level="info"
+                             message="Order [${item.orderId}] was not found on any picklist for InventoryItem [${item.inventoryItemId}]"/>
+                        <if>
+                            <condition>
+                                <and>
+                                    <if-compare-field field="parameters.priorityOrderId" operator="equals"
+                                                      to-field="item.orderId" type="String"/>
+                                    <if-compare-field field="parameters.priorityOrderItemSeqId" operator="equals"
+                                                      to-field="item.orderItemSeqId" type="String"/>
+                                </and>
+                            </condition>
+                            <then>
+                                <field-to-list field="item" list="privilegedReservations"/>
+                            </then>
+                            <else>
+                                <field-to-list field="item" list="reservations"/>
+                            </else>
+                        </if>
+                        <set field="reserveQtyAccum" from="reserveQtyAccum + item.quantity" set-if-empty="true"
+                             set-if-null="false" type="BigDecimal"/>
+                    </if-empty>
+                </then>
+            </if>
+        </iterate>
+        <list-to-list list="privilegedReservations" to-list="allReservations"/>
+        <list-to-list list="reservations" to-list="allReservations"/>
+        <if-compare field="inventoryItem.inventoryItemTypeId" operator="equals" type="String"
+                    value="SERIALIZED_INV_ITEM">
+            <!-- if the new item is serialized, i.e. qoh is 1, we just need the first reservation -->
+            <first-from-list entry="inventoryReservation" list="allReservations"/>
+            <clear-field field="allReservations"/>
+            <field-to-list field="inventoryReservation" list="allReservations"/>
+        </if-compare>
+        <!-- FIRST, cancel all the reservations -->
+        <if-not-empty field="allReservations">
+        <iterate entry="oisgir" list="allReservations">
+            <set-service-fields map="oisgir" service-name="cancelOrderItemShipGrpInvRes" to-map="cancelOisgirMap"/>
+            <call-service break-on-error="true" error-code="error" in-map-name="cancelOisgirMap"
+                          include-user-login="true" require-new-transaction="false"
+                          service-name="cancelOrderItemShipGrpInvRes" success-code="success"/>
+        </iterate>
+        </if-not-empty>
+        <!-- THEN, re-reserve the cancelled items -->
+        <if-not-empty field="allReservations">
+        <iterate entry="oisgir" list="allReservations">
+            <!-- maintain a Set (in a Map) of orderIds that we have reallocated for, but only if they had some quantityNotReserved -->
+            <if-not-empty field="oisgir.quantityNotAvailable">
+                <if-compare field="oisgir.quantityNotAvailable" operator="greater" type="BigDecimal" value="0">
+                    <set field="touchedOrderIdMap[oisgir.orderId]" set-if-empty="true" set-if-null="false" value="Y"/>
+                    <log level="verbose" message="Adding ${oisgir.orderId} to touchedOrderIdMap"/>
+                </if-compare>
+            </if-not-empty>
+            <set-service-fields map="oisgir" service-name="reserveProductInventory" to-map="resMap"/>
+            <set field="resMap.productId" from="inventoryItem.productId" set-if-empty="true" set-if-null="false"/>
+            <!-- require inventory is N because it had to be N to begin with to have a negative ATP -->
+            <set field="resMap.requireInventory" set-if-empty="true" set-if-null="false" value="N"/>
+            <log level="info"
+                 message="Re-reserving product [${resMap.productId}] for order item [${resMap.orderId}:${resMap.orderItemSeqId}] quantity [${resMap.quantity}]; facility [${inventoryItem.facilityId}]"/>
+            <if-empty field="inventoryItem.facilityId">
+                <log level="warning"
+                     message="In balanceInventoryItems there is no facilityId, so reserving from any facility for order item [${resMap.orderId}:${resMap.orderItemSeqId}]"/>
+                <call-service break-on-error="true" error-code="error" in-map-name="resMap" include-user-login="true"
+                              require-new-transaction="false" service-name="reserveProductInventory"
+                              success-code="success"/>
+                <else>
+                    <set field="resMap.facilityId" from="inventoryItem.facilityId" set-if-empty="true"
+                         set-if-null="false"/>
+                    <call-service break-on-error="true" error-code="error" in-map-name="resMap"
+                                  include-user-login="true" require-new-transaction="false"
+                                  service-name="reserveProductInventoryByFacility" success-code="success"/>
+                </else>
+            </if-empty>
+        </iterate>
+        </if-not-empty>
+        <!-- now go through touchedOrderIdMap keys and make a Set/Map of orderIds that are no longer on back-order -->
+        <log level="info" message=" touchedOrderIdMap = ${touchedOrderIdMap}"/>
+        <iterate-map key="touchedOrderId" map="touchedOrderIdMap" value="throwAwayValue">
+            <set field="checkOrderIsOnBackOrderMap.orderId" from="touchedOrderId" set-if-empty="true"
+                 set-if-null="false"/>
+            <call-service break-on-error="true" error-code="error" in-map-name="checkOrderIsOnBackOrderMap"
+                          include-user-login="true" require-new-transaction="false"
+                          service-name="checkOrderIsOnBackOrder" success-code="success">
+                <result-to-field result-name="isBackOrder"/>
+            </call-service>
+            <if-compare field="isBackOrder" operator="equals" type="Boolean" value="false">
+                <set field="noLongerOnBackOrderIdMap[touchedOrderId]" set-if-empty="true" set-if-null="false"
+                     value="Y"/>
+            </if-compare>
+        </iterate-map>
+        <if-not-empty field="noLongerOnBackOrderIdMap">
+            <call-object-method method-name="keySet" obj-field="noLongerOnBackOrderIdMap"
+                                ret-field="noLongerOnBackOrderIdSet"/>
+            <field-to-result field="noLongerOnBackOrderIdSet"/>
+        </if-not-empty>
+    </simple-method>
+
+    <simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_"
+                   event-event-message-name="_event_message_"
+                   event-request-object-name="request" event-response-code-name="_response_code_"
+                   event-response-object-name="response" login-required="true"
+                   method-name="reassignInventoryReservations" service-error-message-list-name="errorMessageList"
+                   service-error-message-map-name="errorMessageMap" service-error-message-name="errorMessage"
+                   service-response-message-name="responseMessage"
+                   service-success-message-list-name="successMessageList" service-success-message-name="successMessage"
+                   short-description="Balances available-to-promise on inventory items" use-transaction="true">
+        <entity-condition distinct="false" entity-name="OrderItemShipGrpInvResAndItem" filter-by-date="false"
+                          list="relatedRes" use-cache="false">
+            <condition-list combine="and">
+                <condition-expr field-name="productId" from-field="parameters.productId" ignore="false"
+                                ignore-case="false" ignore-if-empty="false" ignore-if-null="false" operator="equals"/>
+                <condition-expr field-name="facilityId" from-field="parameters.facilityId" ignore="false"
+                                ignore-case="false" ignore-if-empty="false" ignore-if-null="false" operator="equals"/>
+                <condition-expr field-name="inventoryItemTypeId" ignore="false" ignore-case="false"
+                                ignore-if-empty="false" ignore-if-null="false" operator="equals"
+                                value="NON_SERIAL_INV_ITEM"/>
+                <condition-list combine="or">
+                    <condition-expr field-name="currentPromisedDate" from-field="parameters.fromDate" ignore="false"
+                                    ignore-case="false" ignore-if-empty="false" ignore-if-null="true"
+                                    operator="greater"/>
+                    <condition-list combine="or">
+                        <condition-expr field-name="quantityNotAvailable" ignore="false" ignore-case="false"
+                                        ignore-if-empty="false" ignore-if-null="false" operator="greater" value="0"/>
+                        <condition-expr field-name="availableToPromiseTotal" from-field="nullField" ignore="false"
+                                        ignore-case="false" ignore-if-empty="false" ignore-if-null="false"
+                                        operator="equals"/>
+                        <condition-expr field-name="availableToPromiseTotal" ignore="false" ignore-case="false"
+                                        ignore-if-empty="false" ignore-if-null="false" operator="equals" value=""/>
+                        <condition-expr field-name="availableToPromiseTotal" ignore="false" ignore-case="false"
+                                        ignore-if-empty="false" ignore-if-null="false" operator="less" value="0"/>
+                    </condition-list>
+                </condition-list>
+            </condition-list>
+            <order-by field-name="priority"/>
+            <order-by field-name="currentPromisedDate"/>
+            <order-by field-name="reservedDatetime"/>
+            <order-by field-name="sequenceId"/>
+        </entity-condition>
+
+        <iterate entry="oneRelatedRes" list="relatedRes">
+            <entity-condition distinct="false" entity-name="PicklistAndBinAndItem" filter-by-date="false"
+                              list="picklistItemList" use-cache="false">
+                <condition-list combine="and">
+                    <condition-expr field-name="orderId" from-field="oneRelatedRes.orderId" ignore="false"
+                                    ignore-case="false" ignore-if-empty="false" ignore-if-null="false"
+                                    operator="equals"/>
+                    <condition-expr field-name="shipGroupSeqId" from-field="oneRelatedRes.shipGroupSeqId" ignore="false"
+                                    ignore-case="false" ignore-if-empty="false" ignore-if-null="false"
+                                    operator="equals"/>
+                    <condition-expr field-name="orderItemSeqId" from-field="oneRelatedRes.orderItemSeqId" ignore="false"
+                                    ignore-case="false" ignore-if-empty="false" ignore-if-null="false"
+                                    operator="equals"/>
+                    <condition-expr field-name="inventoryItemId" from-field="oneRelatedRes.inventoryItemId"
+                                    ignore="false" ignore-case="false" ignore-if-empty="false" ignore-if-null="false"
+                                    operator="equals"/>
+                    <condition-expr field-name="statusId" ignore="false" ignore-case="false" ignore-if-empty="false"
+                                    ignore-if-null="false" operator="not-equals" value="PICKLIST_CANCELLED"/>
+                    <condition-expr field-name="statusId" ignore="false" ignore-case="false" ignore-if-empty="false"
+                                    ignore-if-null="false" operator="not-equals" value="PICKLIST_PICKED"/>
+                </condition-list>
+            </entity-condition>
+            <!-- only cancel/re-reserve when there are no picklists associated; this will prevent orders appearing on duplicate pick lists -->
+            <if-empty field="picklistItemList">
+                <log level="info"
+                     message="Order [${oneRelatedRes.orderId}] was not found on any picklist for InventoryItem [${oneRelatedRes.inventoryItemId}]"/>
+                <if>
+                    <condition>
+                        <and>
+                            <if-compare-field field="parameters.priorityOrderId" operator="equals"
+                                              to-field="oneRelatedRes.orderId" type="String"/>
+                            <if-compare-field field="parameters.priorityOrderItemSeqId" operator="equals"
+                                              to-field="oneRelatedRes.orderItemSeqId" type="String"/>
+                        </and>
+                    </condition>
+                    <then>
+                        <field-to-list field="oneRelatedRes" list="privilegedReservations"/>
+                    </then>
+                    <else>
+                        <field-to-list field="oneRelatedRes" list="reservations"/>
+                    </else>
+                </if>
+            </if-empty>
+        </iterate>
+        <list-to-list list="privilegedReservations" to-list="allReservations"/>
+        <list-to-list list="reservations" to-list="allReservations"/>
+        <!-- FIRST, cancel all the reservations -->
+        <iterate entry="oisgir" list="allReservations">
+            <clear-field field="cancelOisgirMap"/>
+            <set field="cancelOisgirMap.orderId" from="oisgir.orderId" set-if-empty="true" set-if-null="false"/>
+            <set field="cancelOisgirMap.orderItemSeqId" from="oisgir.orderItemSeqId" set-if-empty="true"
+                 set-if-null="false"/>
+            <set field="cancelOisgirMap.inventoryItemId" from="oisgir.inventoryItemId" set-if-empty="true"
+                 set-if-null="false"/>
+            <set field="cancelOisgirMap.shipGroupSeqId" from="oisgir.shipGroupSeqId" set-if-empty="true"
+                 set-if-null="false"/>
+            <call-service break-on-error="true" error-code="error" in-map-name="cancelOisgirMap"
+                          include-user-login="true" require-new-transaction="false"
+                          service-name="cancelOrderItemShipGrpInvRes" success-code="success"/>
+        </iterate>
+        <log level="info" message=" helloRR : ${allReservations}"/>
+        <!-- THEN, re-reserve the cancelled items -->
+        <iterate entry="oisgir" list="allReservations">
+            <!-- maintain a Set (in a Map) of orderIds that we have reallocated for, but only if they had some quantityNotReserved -->
+            <if-not-empty field="oisgir.quantityNotAvailable">
+                <if-compare field="oisgir.quantityNotAvailable" operator="greater" type="BigDecimal" value="0">
+                    <set field="touchedOrderIdMap[oisgir.orderId]" set-if-empty="true" set-if-null="false" value="Y"/>
+                    <log level="verbose" message="Adding ${oisgir.orderId} to touchedOrderIdMap"/>
+                </if-compare>
+            </if-not-empty>
+            <entity-one auto-field-map="true" entity-name="OrderHeader" use-cache="false" value-field="orderHeader">
+                <field-map field-name="orderId" from-field="oisgir.orderId"/>
+            </entity-one>
+            <!-- require inventory is N because it had to be N to begin with to have a negative ATP -->
+            <clear-field field="resMap"/>
+            <set field="resMap.productId" from="parameters.productId" set-if-empty="true" set-if-null="false"/>
+            <set field="resMap.orderId" from="oisgir.orderId" set-if-empty="true" set-if-null="false"/>
+            <set field="resMap.orderItemSeqId" from="oisgir.orderItemSeqId" set-if-empty="true" set-if-null="false"/>
+            <set field="resMap.quantity" from="oisgir.quantity" set-if-empty="true" set-if-null="false"/>
+            <set field="resMap.reservedDatetime" from="oisgir.reservedDatetime" set-if-empty="true"
+                 set-if-null="false"/>
+            <set field="resMap.reserveOrderEnumId" from="oisgir.reserveOrderEnumId" set-if-empty="true"
+                 set-if-null="false"/>
+            <set field="resMap.requireInventory" set-if-empty="true" set-if-null="false" value="N"/>
+            <set field="resMap.shipGroupSeqId" from="oisgir.shipGroupSeqId" set-if-empty="true" set-if-null="false"/>
+            <set field="resMap.sequenceId" from="oisgir.sequenceId" set-if-empty="true" set-if-null="false"/>
+            <set field="resMap.facilityId" from="parameters.facilityId" set-if-empty="true" set-if-null="false"/>
+            <set field="resMap.priority" from="orderHeader.priority" set-if-empty="true" set-if-null="false"/>
+            <log level="info"
+                 message="Re-reserving product [${resMap.productId}] for order item [${resMap.orderId}:${resMap.orderItemSeqId}] quantity [${resMap.quantity}]; facility [${parameters.facilityId}]"/>
+            <call-service break-on-error="true" error-code="error" in-map-name="resMap" include-user-login="true"
+                          require-new-transaction="false" service-name="reserveProductInventoryByFacility"
+                          success-code="success"/>
+        </iterate>
+        <!-- now go through touchedOrderIdMap keys and make a Set/Map of orderIds that are no longer on back-order -->
+        <iterate-map key="touchedOrderId" map="touchedOrderIdMap" value="throwAwayValue">
+            <set field="checkOrderIsOnBackOrderMap.orderId" from="touchedOrderId" set-if-empty="true"
+                 set-if-null="false"/>
+            <call-service break-on-error="true" error-code="error" in-map-name="checkOrderIsOnBackOrderMap"
+                          include-user-login="true" require-new-transaction="false"
+                          service-name="checkOrderIsOnBackOrder" success-code="success">
+                <result-to-field result-name="isBackOrder"/>
+            </call-service>
+            <if-compare field="isBackOrder" operator="equals" type="Boolean" value="false">
+                <set field="noLongerOnBackOrderIdMap[touchedOrderId]" set-if-empty="true" set-if-null="false"
+                     value="Y"/>
+            </if-compare>
+        </iterate-map>
+        <if-not-empty field="noLongerOnBackOrderIdMap">
+            <call-object-method method-name="keySet" obj-field="noLongerOnBackOrderIdMap"
+                                ret-field="noLongerOnBackOrderIdSet"/>
+            <field-to-result field="noLongerOnBackOrderIdSet"/>
+        </if-not-empty>
+    </simple-method>
+
+    <simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_"
+                   event-event-message-name="_event_message_"
+                   event-request-object-name="request" event-response-code-name="_response_code_"
+                   event-response-object-name="response" login-required="true"
+                   method-name="balanceOrderItemsWithNegativeReservations"
+                   service-error-message-list-name="errorMessageList" service-error-message-map-name="errorMessageMap"
+                   service-error-message-name="errorMessage" service-response-message-name="responseMessage"
+                   service-success-message-list-name="successMessageList" service-success-message-name="successMessage"
+                   short-description="To balance order items with negative reservations" use-transaction="true">
+        <entity-one auto-field-map="true" entity-name="OrderHeader" use-cache="false" value-field="orderHeader"/>
+        <get-related-one relation-name="ProductStore" to-value-field="productStore" use-cache="false"
+                         value-field="orderHeader"/>
+        <if-compare field="productStore.balanceResOnOrderCreation" operator="equals" type="String" value="Y">
+            <entity-condition distinct="false" entity-name="OrderItemAndShipGrpInvResAndItem" filter-by-date="false"
+                              list="oisgirais" use-cache="false">
+                <condition-list combine="and">
+                    <condition-expr field-name="orderId" from-field="parameters.orderId" ignore="false"
+                                    ignore-case="false" ignore-if-empty="false" ignore-if-null="false"
+                                    operator="equals"/>
+                    <condition-expr field-name="quantityNotAvailable" ignore="false" ignore-case="false"
+                                    ignore-if-empty="false" ignore-if-null="false" operator="greater" value="0"/>
+                    <condition-expr field-name="quantityNotAvailable" ignore="false" ignore-case="false"
+                                    ignore-if-empty="false" ignore-if-null="false" operator="not-equals" value=""/>
+                    <condition-expr field-name="quantityNotAvailable" from-field="nullField" ignore="false"
+                                    ignore-case="false" ignore-if-empty="false" ignore-if-null="false"
+                                    operator="not-equals"/>
+                </condition-list>
+            </entity-condition>
+            <iterate entry="oisgir" list="oisgirais">
+                <set field="orderItems[oisgir.orderItemSeqId]" from="oisgir" set-if-empty="true" set-if-null="false"/>
+            </iterate>
+            <now-timestamp field="nowTimestamp"/>
+            <iterate-map key="orderItemSeqId" map="orderItems" value="oisgir">
+                <set field="reassignInventoryReservationsCtx.productId" from="oisgir.productId" set-if-empty="true"
+                     set-if-null="false"/>
+                <set field="reassignInventoryReservationsCtx.facilityId" from="oisgir.facilityId" set-if-empty="true"
+                     set-if-null="false"/>
+                <if-not-empty field="oisgir.shipBeforeDate">
+                    <set field="reassignInventoryReservationsCtx.fromDate" from="oisgir.shipBeforeDate"
+                         set-if-empty="true" set-if-null="false"/>
+                    <else>
+                        <set field="reassignInventoryReservationsCtx.fromDate" from="nowTimestamp" set-if-empty="true"
+                             set-if-null="false"/>
+                    </else>
+                </if-not-empty>
+                <call-service break-on-error="true" error-code="error" in-map-name="reassignInventoryReservationsCtx"
+                              include-user-login="true" require-new-transaction="false"
+                              service-name="reassignInventoryReservations" success-code="success"/>
+            </iterate-map>
+            <else>
+                <log level="info"
+                     message="Not reassigning the reservations because productStore.balanceResOnOrderCreation is set to N or null."/>
+            </else>
+        </if-compare>
+    </simple-method>
+    <!-- Inventory Transfer Services -->
+
+    <simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_"
+                   event-event-message-name="_event_message_" event-request-object-name="request"
+                   event-response-code-name="_response_code_" event-response-object-name="response"
+                   login-required="true" method-name="createInventoryTransfer"
+                   service-error-message-list-name="errorMessageList" service-error-message-map-name="errorMessageMap"
+                   service-error-message-name="errorMessage" service-response-message-name="responseMessage"
+                   service-success-message-list-name="successMessageList" service-success-message-name="successMessage"
+                   short-description="Create an Inventory Transfer" use-transaction="true">
+        <make-value entity-name="InventoryTransfer" value-field="newEntity"/>
+        <set-nonpk-fields map="parameters" set-if-null="true" value-field="newEntity"/>
+        <sequenced-id field="newEntity.inventoryTransferId" get-long-only="false" sequence-name="InventoryTransfer"/>
+        <field-to-result field="newEntity.inventoryTransferId" result-name="inventoryTransferId"/>
+        <create-value do-cache-clear="true" or-store="false" value-field="newEntity"/>
+    </simple-method>
+
+    <simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_"
+                   event-event-message-name="_event_message_" event-request-object-name="request"
+                   event-response-code-name="_response_code_" event-response-object-name="response"
+                   login-required="true" method-name="updateInventoryTransfer"
+                   service-error-message-list-name="errorMessageList" service-error-message-map-name="errorMessageMap"
+                   service-error-message-name="errorMessage" service-response-message-name="responseMessage"
+                   service-success-message-list-name="successMessageList" service-success-message-name="successMessage"
+                   short-description="Update an Inventory Transfer" use-transaction="true">
+        <set field="lookupPKMap.inventoryTransferId" from="parameters.inventoryTransferId" set-if-empty="true"
+             set-if-null="false"/>
+        <find-by-primary-key entity-name="InventoryTransfer" map="lookupPKMap" use-cache="false"
+                             value-field="inventoryTransfer"/>
+        <if-not-empty field="parameters.statusId">
+            <if-compare-field field="parameters.statusId" operator="not-equals" to-field="inventoryTransfer.statusId"
+                              type="String">
+                <!-- make sure a StatusValidChange record exists, if not return error -->
+                <entity-one auto-field-map="false" entity-name="StatusValidChange" use-cache="false"
+                            value-field="checkStatusValidChange">
+                    <field-map field-name="statusId" from-field="inventoryTransfer.statusId"/>
+                    <field-map field-name="statusIdTo" from-field="parameters.statusId"/>
+                </entity-one>
+                <if-empty field="checkStatusValidChange">
+                    <set field="error_list[]" set-if-empty="true" set-if-null="false"
+                         value="ERROR: Changing the status from ${inventoryTransfer.statusId} to ${parameters.statusId} is not allowed."/>
+                </if-empty>
+                <check-errors error-code="error" error-list-name="error_list"/>
+            </if-compare-field>
+        </if-not-empty>
+        <set-nonpk-fields map="parameters" set-if-null="true" value-field="inventoryTransfer"/>
+        <store-value do-cache-clear="true" value-field="inventoryTransfer"/>
+    </simple-method>
+
+    <simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_"
+                   event-event-message-name="_event_message_" event-request-object-name="request"
+                   event-response-code-name="_response_code_" event-response-object-name="response"
+                   login-required="true" method-name="createInventoryTransfersForProduct"
+                   service-error-message-list-name="errorMessageList" service-error-message-map-name="errorMessageMap"
+                   service-error-message-name="errorMessage" service-response-message-name="responseMessage"
+                   service-success-message-list-name="successMessageList" service-success-message-name="successMessage"
+                   short-description="Create inventory transfers for the given product and quantity. Return the units not available for transfers."
+                   use-transaction="true">
+        <set field="lookupFieldMap.productId" from="parameters.productId" set-if-empty="true" set-if-null="false"/>
+        <set field="lookupFieldMap.facilityId" from="parameters.facilityId" set-if-empty="true" set-if-null="false"/>
+        <set field="lookupFieldMap.containerId" from="parameters.containerId" set-if-empty="true" set-if-null="false"/>
+        <now-timestamp field="nowTimestamp"/>
+        <!-- check the product; make sure its a physical item -->
+        <entity-one auto-field-map="true" entity-name="Product" use-cache="false" value-field="product"/>
+        <entity-one auto-field-map="true" entity-name="Facility" use-cache="true" value-field="facility"/>
+        <get-related-one relation-name="ProductType" to-value-field="productType" use-cache="false"
+                         value-field="product"/>
+        <if-compare field="productType.isPhysical" operator="equals" type="String" value="N">
+            <set field="quantityNotTransferred" set-if-empty="true" set-if-null="false" type="BigDecimal" value="0"/>
+            <else>
+                <!-- before we do the find, put together the orderBy list based on which reserveOrderEnumId is specified -->
+                <!-- FIFO=first in first out, so it should be order by ASCending receive or expire date LIFO=last in first out, so it means order by DESCending receive or expire 
+					date -->
+                <if-compare field="parameters.reserveOrderEnumId" operator="equals" type="String"
+                            value="INVRO_GUNIT_COST">
+                    <set field="orderByString" set-if-empty="true" set-if-null="false" value="unitCost DESC"/>
+                    <else>
+                        <if-compare field="parameters.reserveOrderEnumId" operator="equals" type="String"
+                                    value="INVRO_LUNIT_COST">
+                            <set field="orderByString" set-if-empty="true" set-if-null="false" value="+unitCost"/>
+                            <else>
+                                <if-compare field="parameters.reserveOrderEnumId" operator="equals" type="String"
+                                            value="INVRO_FIFO_EXP">
+                                    <set field="orderByString" set-if-empty="true" set-if-null="false"
+                                         value="+expireDate"/>
+                                    <else>
+                                        <if-compare field="parameters.reserveOrderEnumId" operator="equals"
+                                                    type="String" value="INVRO_LIFO_EXP">
+                                            <set field="orderByString" set-if-empty="true" set-if-null="false"
+                                                 value="-expireDate"/>
+                                            <else>
+                                                <if-compare field="parameters.reserveOrderEnumId" operator="equals"
+                                                            type="String" value="INVRO_LIFO_REC">
+                                                    <set field="orderByString" set-if-empty="true" set-if-null="false"
+                                                         value="-datetimeReceived"/>
+                                                    <else>
+                                                        <!-- the default reserveOrderEnumId is INVRO_FIFO_REC, ie FIFO based on date received -->
+                                                        <set field="orderByString" set-if-empty="true"
+                                                             set-if-null="false" value="+datetimeReceived"/>
+                                                        <set field="parameters.reserveOrderEnumId" set-if-empty="true"
+                                                             set-if-null="false" value="INVRO_FIFO_REC"/>
+                                                    </else>
+                                                </if-compare>
+                                            </else>
+                                        </if-compare>
+                                    </else>
+                                </if-compare>
+                            </else>
+                        </if-compare>
+                    </else>
+                </if-compare>
+                <set field="orderByList[]" from="orderByString" set-if-empty="true" set-if-null="false"/>
+                <set field="quantityNotTransferred" from="parameters.quantity" set-if-empty="true" set-if-null="false"/>
+                <!-- first transfer InventoryItems in FLT_PICKLOC type locations, then FLT_BULK locations, then InventoryItems with no locations -->
+                <find-by-and entity-name="InventoryItemAndLocation" list="inventoryItemAndLocations"
+                             map="lookupFieldMap" order-by-list="orderByList" use-cache="false" use-iterator="true"/>
+                <iterate entry="inventoryItemAndLocation" list="inventoryItemAndLocations">
+                    <if>
+                        <condition>
+                            <and>
+                                <if-compare field="inventoryItemAndLocation.locationTypeEnumId" operator="equals"
+                                            type="String" value="FLT_PICKLOC"/>
+                                <if-compare field="quantityNotTransferred" operator="greater" type="BigDecimal"
+                                            value="0.0"/>
+                                <if-compare field="inventoryItemAndLocation.availableToPromiseTotal" operator="greater"
+                                            type="BigDecimal" value="0.0"/>
+                            </and>
+                        </condition>
+                        <then>
+                            <clear-field field="inputMap"/>
+                            <set field="inputMap.inventoryItemId" from="inventoryItemAndLocation.inventoryItemId"
+                                 set-if-empty="true" set-if-null="false"/>
+                            <set field="inputMap.statusId" set-if-empty="true" set-if-null="false"
+                                 value="IXF_REQUESTED"/>
+                            <set field="inputMap.facilityId" from="parameters.facilityId" set-if-empty="true"
+                                 set-if-null="false"/>
+                            <set field="inputMap.facilityIdTo" from="parameters.facilityIdTo" set-if-empty="true"
+                                 set-if-null="false"/>
+                            <set field="inputMap.sendDate" from="parameters.sendDate" set-if-empty="true"
+                                 set-if-null="false"/>
+                            <set field="inputMap.invRequisitionId" from="parameters.invRequisitionId"
+                                 set-if-empty="true" set-if-null="false"/>
+                            <!-- TODO: inventory transfers for serialized items are not yet implemented -->
+                            <if-compare field="inventoryItemAndLocation.inventoryItemTypeId" operator="equals"
+                                        type="String" value="NON_SERIAL_INV_ITEM">
+                                <if-compare-field field="quantityNotTransferred" operator="greater"
+                                                  to-field="inventoryItemAndLocation.availableToPromiseTotal"
+                                                  type="BigDecimal">
+                                    <set field="inputMap.xferQty"
+                                         from="inventoryItemAndLocation.availableToPromiseTotal" set-if-empty="true"
+                                         set-if-null="false"/>
+                                    <else>
+                                        <set field="inputMap.xferQty" from="quantityNotTransferred" set-if-empty="true"
+                                             set-if-null="false"/>
+                                    </else>
+                                </if-compare-field>
+                                <call-service break-on-error="true" error-code="error" in-map-name="inputMap"
+                                              include-user-login="true" require-new-transaction="false"
+                                              service-name="createInventoryTransfer" success-code="success"/>
+                                <calculate decimal-scale="2" field="quantityNotTransferred" rounding-mode="HalfEven"
+                                           type="BigDecimal">
+                                    <calcop field="quantityNotTransferred" operator="subtract">
+                                        <calcop field="inputMap.xferQty" operator="get"/>
+                                    </calcop>
+                                </calculate>
+                            </if-compare>
+                        </then>
+                    </if>
+                </iterate>
+                <!-- still some left? try the FLT_BULK locations -->
+                <if-compare field="quantityNotTransferred" operator="greater" type="BigDecimal" value="0">
+                    <find-by-and entity-name="InventoryItemAndLocation" list="inventoryItemAndLocations"
+                                 map="lookupFieldMap" order-by-list="orderByList" use-cache="false"
+                                 use-iterator="true"/>
+                    <iterate entry="inventoryItemAndLocation" list="inventoryItemAndLocations">
+                        <if>
+                            <condition>
+                                <and>
+                                    <if-compare field="inventoryItemAndLocation.locationTypeEnumId" operator="equals"
+                                                type="String" value="FLT_BULK"/>
+                                    <if-compare field="quantityNotTransferred" operator="greater" type="BigDecimal"
+                                                value="0.0"/>
+                                    <if-compare field="inventoryItemAndLocation.availableToPromiseTotal"
+                                                operator="greater" type="BigDecimal" value="0.0"/>
+                                </and>
+                            </condition>
+                            <then>
+                                <clear-field field="inputMap"/>
+                                <set field="inputMap.inventoryItemId" from="inventoryItemAndLocation.inventoryItemId"
+                                     set-if-empty="true" set-if-null="false"/>
+                                <set field="inputMap.statusId" set-if-empty="true" set-if-null="false"
+                                     value="IXF_REQUESTED"/>
+                                <set field="inputMap.facilityId" from="parameters.facilityId" set-if-empty="true"
+                                     set-if-null="false"/>
+                                <set field="inputMap.facilityIdTo" from="parameters.facilityIdTo" set-if-empty="true"
+                                     set-if-null="false"/>
+                                <set field="inputMap.sendDate" from="parameters.sendDate" set-if-empty="true"
+                                     set-if-null="false"/>
+                                <set field="inputMap.invRequisitionId" from="parameters.invRequisitionId"
+                                     set-if-empty="true" set-if-null="false"/>
+                                <!-- TODO: inventory transfers for serialized items are not yet implemented -->
+                                <if-compare field="inventoryItemAndLocation.inventoryItemTypeId" operator="equals"
+                                            type="String" value="NON_SERIAL_INV_ITEM">
+                                    <if-compare-field field="quantityNotTransferred" operator="greater"
+                                                      to-field="inventoryItemAndLocation.availableToPromiseTotal"
+                                                      type="BigDecimal">
+                                        <set field="inputMap.xferQty"
+                                             from="inventoryItemAndLocation.availableToPromiseTotal" set-if-empty="true"
+                                             set-if-null="false"/>
+                                        <else>
+                                            <set field="inputMap.xferQty" from="quantityNotTransferred"
+                                                 set-if-empty="true" set-if-null="false"/>
+                                        </else>
+                                    </if-compare-field>
+                                    <call-service break-on-error="true" error-code="error" in-map-name="inputMap"
+                                                  include-user-login="true" require-new-transaction="false"
+                                                  service-name="createInventoryTransfer" success-code="success"/>
+                                    <calculate decimal-scale="2" field="quantityNotTransferred" rounding-mode="HalfEven"
+                                               type="BigDecimal">
+                                        <calcop field="quantityNotTransferred" operator="subtract">
+                                            <calcop field="inputMap.xferQty" operator="get"/>
+                                        </calcop>
+                                    </calculate>
+                                </if-compare>
+                            </then>
+                        </if>
+                    </iterate>
+                </if-compare>
+                <!-- last of all transfer InventoryItems that have no locationSeqId, ie are not in any particular location -->
+                <if-compare field="quantityNotTransferred" operator="greater" type="BigDecimal" value="0">
+                    <find-by-and entity-name="InventoryItem" list="inventoryItems" map="lookupFieldMap"
+                                 order-by-list="orderByList" use-cache="false" use-iterator="true"/>
+                    <iterate entry="inventoryItem" list="inventoryItems">
+                        <if>
+                            <condition>
+                                <and>
+                                    <if-empty field="inventoryItem.locationSeqId"/>
+                                    <if-compare field="quantityNotTransferred" operator="greater" type="BigDecimal"
+                                                value="0.0"/>
+                                    <if-compare field="inventoryItem.availableToPromiseTotal" operator="greater"
+                                                type="BigDecimal" value="0.0"/>
+                                </and>
+                            </condition>
+                            <then>
+                                <clear-field field="inputMap"/>
+                                <set field="inputMap.inventoryItemId" from="inventoryItem.inventoryItemId"
+                                     set-if-empty="true" set-if-null="false"/>
+                                <set field="inputMap.statusId" set-if-empty="true" set-if-null="false"
+                                     value="IXF_REQUESTED"/>
+                                <set field="inputMap.facilityId" from="parameters.facilityId" set-if-empty="true"
+                                     set-if-null="false"/>
+                                <set field="inputMap.facilityIdTo" from="parameters.facilityIdTo" set-if-empty="true"
+                                     set-if-null="false"/>
+                                <set field="inputMap.sendDate" from="parameters.sendDate" set-if-empty="true"
+                                     set-if-null="false"/>
+                                <set field="inputMap.invRequisitionId" from="parameters.invRequisitionId"
+                                     set-if-empty="true" set-if-null="false"/>
+                                <!-- TODO: inventory transfers for serialized items are not yet implemented -->
+                                <if-compare field="inventoryItem.inventoryItemTypeId" operator="equals" type="String"
+                                            value="NON_SERIAL_INV_ITEM">
+                                    <if-compare-field field="quantityNotTransferred" operator="greater"
+                                                      to-field="inventoryItem.availableToPromiseTotal"
+                                                      type="BigDecimal">
+                                        <set field="inputMap.xferQty" from="inventoryItem.availableToPromiseTotal"
+                                             set-if-empty="true" set-if-null="false"/>
+                                        <else>
+                                            <set field="inputMap.xferQty" from="quantityNotTransferred"
+                                                 set-if-empty="true" set-if-null="false"/>
+                                        </else>
+                                    </if-compare-field>
+                                    <call-service break-on-error="true" error-code="error" in-map-name="inputMap"
+                                                  include-user-login="true" require-new-transaction="false"
+                                                  service-name="createInventoryTransfer" success-code="success"/>
+                                    <calculate decimal-scale="2" field="quantityNotTransferred" rounding-mode="HalfEven"
+                                               type="BigDecimal">
+                                        <calcop field="quantityNotTransferred" operator="subtract">
+                                            <calcop field="inputMap.xferQty" operator="get"/>
+                                        </calcop>
+                                    </calculate>
+                                </if-compare>
+                            </then>
+                        </if>
+                    </iterate>
+                </if-compare>
+            </else>
+        </if-compare>
+        <field-to-result field="quantityNotTransferred"/>
+    </simple-method>
+    <!-- Inventory Label Services -->
+
+    <simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_"
+                   event-event-message-name="_event_message_"
+                   event-request-object-name="request" event-response-code-name="_response_code_"
+                   event-response-object-name="response" login-required="true"
+                   method-name="createInventoryItemLabelType" service-error-message-list-name="errorMessageList"
+                   service-error-message-map-name="errorMessageMap" service-error-message-name="errorMessage"
+                   service-response-message-name="responseMessage"
+                   service-success-message-list-name="successMessageList" service-success-message-name="successMessage"
+                   short-description="Create an InventoryItemLabelType" use-transaction="true">
+        <make-value entity-name="InventoryItemLabelType" value-field="newEntity"/>
+        <set-pk-fields map="parameters" set-if-null="true" value-field="newEntity"/>
+        <set-nonpk-fields map="parameters" set-if-null="true" value-field="newEntity"/>
+        <create-value do-cache-clear="true" or-store="false" value-field="newEntity"/>
+    </simple-method>
+
+    <simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_"
+                   event-event-message-name="_event_message_" event-request-object-name="request"
+                   event-response-code-name="_response_code_" event-response-object-name="response"
+                   login-required="true" method-name="updateInventoryItemLabelType"
+                   service-error-message-list-name="errorMessageList" service-error-message-map-name="errorMessageMap"
+                   service-error-message-name="errorMessage" service-response-message-name="responseMessage"
+                   service-success-message-list-name="successMessageList" service-success-message-name="successMessage"
+                   short-description="Update an InventoryItemLabelType" use-transaction="true">
+        <entity-one auto-field-map="true" entity-name="InventoryItemLabelType" use-cache="false"
+                    value-field="lookedUpValue"/>
+        <set-nonpk-fields map="parameters" set-if-null="true" value-field="lookedUpValue"/>
+        <store-value do-cache-clear="true" value-field="lookedUpValue"/>
+    </simple-method>
+
+    <simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_"
+                   event-event-message-name="_event_message_" event-request-object-name="request"
+                   event-response-code-name="_response_code_" event-response-object-name="response"
+                   login-required="true" method-name="deleteInventoryItemLabelType"
+                   service-error-message-list-name="errorMessageList" service-error-message-map-name="errorMessageMap"
+                   service-error-message-name="errorMessage" service-response-message-name="responseMessage"
+                   service-success-message-list-name="successMessageList" service-success-message-name="successMessage"
+                   short-description="Delete an InventoryItemLabelType" use-transaction="true">
+        <entity-one auto-field-map="true" entity-name="InventoryItemLabelType" use-cache="false"
+                    value-field="lookedUpValue"/>
+        <remove-value do-cache-clear="true" value-field="lookedUpValue"/>
+    </simple-method>
+
+    <simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_"
+                   event-event-message-name="_event_message_" event-request-object-name="request"
+                   event-response-code-name="_response_code_" event-response-object-name="response"
+                   login-required="true" method-name="createInventoryItemLabel"
+                   service-error-message-list-name="errorMessageList" service-error-message-map-name="errorMessageMap"
+                   service-error-message-name="errorMessage" service-response-message-name="responseMessage"
+                   service-success-message-list-name="successMessageList" service-success-message-name="successMessage"
+                   short-description="Create an InventoryItemLabel" use-transaction="true">
+        <make-value entity-name="InventoryItemLabel" value-field="newEntity"/>
+        <set-pk-fields map="parameters" set-if-null="true" value-field="newEntity"/>
+        <set-nonpk-fields map="parameters" set-if-null="true" value-field="newEntity"/>
+        <create-value do-cache-clear="true" or-store="false" value-field="newEntity"/>
+    </simple-method>
+
+    <simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_"
+                   event-event-message-name="_event_message_" event-request-object-name="request"
+                   event-response-code-name="_response_code_" event-response-object-name="response"
+                   login-required="true" method-name="updateInventoryItemLabel"
+                   service-error-message-list-name="errorMessageList" service-error-message-map-name="errorMessageMap"
+                   service-error-message-name="errorMessage" service-response-message-name="responseMessage"
+                   service-success-message-list-name="successMessageList" service-success-message-name="successMessage"
+                   short-description="Update an InventoryItemLabel" use-transaction="true">
+        <entity-one auto-field-map="true" entity-name="InventoryItemLabel" use-cache="false"
+                    value-field="lookedUpValue"/>
+        <set-nonpk-fields map="parameters" set-if-null="true" value-field="lookedUpValue"/>
+        <store-value do-cache-clear="true" value-field="lookedUpValue"/>
+    </simple-method>
+
+    <simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_"
+                   event-event-message-name="_event_message_" event-request-object-name="request"
+                   event-response-code-name="_response_code_" event-response-object-name="response"
+                   login-required="true" method-name="deleteInventoryItemLabel"
+                   service-error-message-list-name="errorMessageList" service-error-message-map-name="errorMessageMap"
+                   service-error-message-name="errorMessage" service-response-message-name="responseMessage"
+                   service-success-message-list-name="successMessageList" service-success-message-name="successMessage"
+                   short-description="Delete an InventoryItemLabel" use-transaction="true">
+        <entity-one auto-field-map="true" entity-name="InventoryItemLabel" use-cache="false"
+                    value-field="lookedUpValue"/>
+        <remove-value do-cache-clear="true" value-field="lookedUpValue"/>
+    </simple-method>
+
+    <simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_"
+                   event-event-message-name="_event_message_" event-request-object-name="request"
+                   event-response-code-name="_response_code_" event-response-object-name="response"
+                   login-required="true" method-name="createInventoryItemLabelAppl"
+                   service-error-message-list-name="errorMessageList" service-error-message-map-name="errorMessageMap"
+                   service-error-message-name="errorMessage" service-response-message-name="responseMessage"
+                   service-success-message-list-name="successMessageList" service-success-message-name="successMessage"
+                   short-description="Create an InventoryItemLabelAppl" use-transaction="true">
+        <make-value entity-name="InventoryItemLabelAppl" value-field="newEntity"/>
+        <set-pk-fields map="parameters" set-if-null="true" value-field="newEntity"/>
+        <set-nonpk-fields map="parameters" set-if-null="true" value-field="newEntity"/>
+        <entity-one auto-field-map="true" entity-name="InventoryItemLabel" use-cache="false"
+                    value-field="inventoryItemLabel"/>
+        <set field="newEntity.inventoryItemLabelTypeId" from="inventoryItemLabel.inventoryItemLabelTypeId"
+             set-if-empty="true" set-if-null="false"/>
+        <create-value do-cache-clear="true" or-store="false" value-field="newEntity"/>
+    </simple-method>
+
+    <simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_"
+                   event-event-message-name="_event_message_" event-request-object-name="request"
+                   event-response-code-name="_response_code_" event-response-object-name="response"
+                   login-required="true" method-name="updateInventoryItemLabelAppl"
+                   service-error-message-list-name="errorMessageList" service-error-message-map-name="errorMessageMap"
+                   service-error-message-name="errorMessage" service-response-message-name="responseMessage"
+                   service-success-message-list-name="successMessageList" service-success-message-name="successMessage"
+                   short-description="Update an InventoryItemLabel" use-transaction="true">
+        <entity-one auto-field-map="true" entity-name="InventoryItemLabelAppl" use-cache="false"
+                    value-field="lookedUpValue"/>
+        <set-nonpk-fields map="parameters" set-if-null="true" value-field="lookedUpValue"/>
+        <store-value do-cache-clear="true" value-field="lookedUpValue"/>
+    </simple-method>
+
+    <simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_"
+                   event-event-message-name="_event_message_" event-request-object-name="request"
+                   event-response-code-name="_response_code_" event-response-object-name="response"
+                   login-required="true" method-name="deleteInventoryItemLabelAppl"
+                   service-error-message-list-name="errorMessageList" service-error-message-map-name="errorMessageMap"
+                   service-error-message-name="errorMessage" service-response-message-name="responseMessage"
+                   service-success-message-list-name="successMessageList" service-success-message-name="successMessage"
+                   short-description="Delete an InventoryItemLabel" use-transaction="true">
+        <entity-one auto-field-map="true" entity-name="InventoryItemLabelAppl" use-cache="false"
+                    value-field="lookedUpValue"/>
+        <remove-value do-cache-clear="true" value-field="lookedUpValue"/>
+    </simple-method>
+
+    <simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_"
+                   event-event-message-name="_event_message_" event-request-object-name="request"
+                   event-response-code-name="_response_code_" event-response-object-name="response"
+                   login-required="true" method-name="changeOwnerUponIssuance"
+                   service-error-message-list-name="errorMessageList" service-error-message-map-name="errorMessageMap"
+                   service-error-message-name="errorMessage" service-response-message-name="responseMessage"
+                   service-success-message-list-name="successMessageList" service-success-message-name="successMessage"
+                   short-description="If product store setOwnerUponIssuance is Y or empty, set the inventory item owner upon issuance."
+                   use-transaction="true">
+        <entity-one auto-field-map="true" entity-name="ItemIssuance" use-cache="false" value-field="itemIssuance"/>
+        <get-related-one relation-name="InventoryItem" to-value-field="inventoryItem" use-cache="false"
+                         value-field="itemIssuance"/>
+        <if-not-empty field="inventoryItem">
+            <if-compare field="inventoryItem.inventoryItemTypeId" operator="equals" type="String"
+                        value="SERIALIZED_INV_ITEM">
+                <get-related-one relation-name="OrderHeader" to-value-field="orderHeader" use-cache="false"
+                                 value-field="itemIssuance"/>
+                <if-not-empty field="orderHeader">
+                    <set field="orderRoleAndMap.orderId" from="orderHeader.orderId" set-if-empty="true"
+                         set-if-null="false"/>
+                    <set field="orderRoleAndMap.roleTypeId" set-if-empty="true" set-if-null="false"
+                         value="END_USER_CUSTOMER"/>
+                    <find-by-and entity-name="OrderRole" list="orderRoles" map="orderRoleAndMap" use-cache="false"
+                                 use-iterator="false"/>
+                    <first-from-list entry="orderRole" list="orderRoles"/>
+                    <entity-one auto-field-map="false" entity-name="ProductStore" use-cache="false"
+                                value-field="productStore">
+                        <field-map field-name="productStoreId" from-field="orderHeader.productStoreId"/>
+                    </entity-one>
+                    <if>
+                        <condition>
+                            <and>
+                                <not>
+                                    <if-empty field="orderRole"/>
+                                </not>
+                                <or>
+                                    <if-empty field="productStore"/>
+                                    <if-empty field="productStore.setOwnerUponIssuance"/>
+                                    <if-compare field="productStore.setOwnerUponIssuance" operator="equals"
+                                                type="String" value="Y"/>
+                                </or>
+                            </and>
+                        </condition>
+                        <then>
+                            <set field="updateContext.ownerPartyId" from="orderRole.partyId" set-if-empty="true"
+                                 set-if-null="false"/>
+                        </then>
+                    </if>
+                </if-not-empty>
+                <set field="updateContext.inventoryItemId" from="inventoryItem.inventoryItemId" set-if-empty="true"
+                     set-if-null="false"/>
+                <call-service break-on-error="true" error-code="error" in-map-name="updateContext"
+                              include-user-login="true" require-new-transaction="false"
+                              service-name="updateInventoryItem" success-code="success"/>
+            </if-compare>
+        </if-not-empty>
+    </simple-method>
+
+    <simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_"
+                   event-event-message-name="_event_message_" event-request-object-name="request"
+                   event-response-code-name="_response_code_" event-response-object-name="response"
+                   login-required="true" method-name="setOrderReservationPriority"
+                   service-error-message-list-name="errorMessageList" service-error-message-map-name="errorMessageMap"
+                   service-error-message-name="errorMessage" service-response-message-name="responseMessage"
+                   service-success-message-list-name="successMessageList" service-success-message-name="successMessage"
+                   short-description="Sets priority of an order for Inventory Reservation, orders with HIGH priority would be served first."
+                   use-transaction="true">
+        <set field="orderId" from="parameters.orderId" set-if-empty="true" set-if-null="false"/>
+        <entity-one auto-field-map="true" entity-name="OrderHeader" use-cache="false" value-field="orderHeader">
+            <field-map field-name="orderId" from-field="orderId"/>
+        </entity-one>
+        <set field="priority" from="parameters.priority" set-if-empty="true" set-if-null="false"/>
+        <if-empty field="priority">
+            <entity-and distinct="false" entity-name="OrderItemShipGrpInvRes" filter-by-date="false" list="oisgirs"
+                        use-cache="false">
+                <field-map field-name="orderId" from-field="orderId"/>
+            </entity-and>
+            <iterate entry="oisgir" list="oisgirs">
+                <set default="2" field="oisgir.priority" set-if-empty="true" set-if-null="false"/>
+                <store-value do-cache-clear="true" value-field="oisgir"/>
+            </iterate>
+            <set default="2" field="orderHeader.priority" set-if-empty="true" set-if-null="false"/>
+            <store-value do-cache-clear="true" value-field="orderHeader"/>
+            <else>
+                <set field="orderHeader.priority" from="priority" set-if-empty="true" set-if-null="false"/>
+                <store-value do-cache-clear="true" value-field="orderHeader"/>
+                <entity-and distinct="false" entity-name="OrderItemShipGrpInvRes" filter-by-date="false" list="oisgirs"
+                            use-cache="false">
+                    <field-map field-name="orderId" from-field="orderId"/>
+                </entity-and>
+                <iterate entry="oisgir" list="oisgirs">
+                    <set field="oisgir.priority" from="priority" set-if-empty="true" set-if-null="false"/>
+                    <store-value do-cache-clear="true" value-field="oisgir"/>
+                    <clear-field field="oisgir"/>
+                </iterate>
+                <entity-condition distinct="false" entity-name="OrderItemAndShipGrpInvResAndItem" filter-by-date="false"
+                                  list="oisgirais" use-cache="false">
+                    <condition-expr field-name="orderId" from-field="orderId" ignore="false" ignore-case="false"
+                                    ignore-if-empty="false" ignore-if-null="false" operator="equals"/>
+                </entity-condition>
+                <iterate entry="oisgir" list="oisgirais">
+                    <set field="reassignInventoryReservationsCtx.productId" from="oisgir.productId" set-if-empty="true"
+                         set-if-null="false"/>
+                    <set field="reassignInventoryReservationsCtx.facilityId" from="oisgir.facilityId"
+                         set-if-empty="true" set-if-null="false"/>
+                    <call-service break-on-error="true" error-code="error"
+                                  in-map-name="reassignInventoryReservationsCtx" include-user-login="true"
+                                  require-new-transaction="false" service-name="reassignInventoryReservations"
+                                  success-code="success"/>
+                    <clear-field field="reassignInventoryReservationsCtx"/>
+                </iterate>
+            </else>
+        </if-empty>
+    </simple-method>
+
+    <simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_"
+                   event-event-message-name="_event_message_" event-request-object-name="request"
+                   event-response-code-name="_response_code_" event-response-object-name="response"
+                   login-required="true" method-name="setLastInventoryCount"
+                   service-error-message-list-name="errorMessageList" service-error-message-map-name="errorMessageMap"
+                   service-error-message-name="errorMessage" service-response-message-name="responseMessage"
+                   service-success-message-list-name="successMessageList" service-success-message-name="successMessage"
+                   short-description="Service that updates stock availability of products" use-transaction="true">
+        <entity-one auto-field-map="false" entity-name="InventoryItem" use-cache="false" value-field="inventoryItem">
+            <field-map field-name="inventoryItemId" from-field="parameters.inventoryItemId"/>
+        </entity-one>
+        <entity-and distinct="false" entity-name="ProductFacility" filter-by-date="false" list="productFacilities"
+                    use-cache="false">
+            <field-map field-name="productId" from-field="inventoryItem.productId"/>
+        </entity-and>
+        <if-not-empty field="productFacilities">
+            <iterate entry="productFacility" list="productFacilities">
+                <set field="serviceInMap.productId" from="productFacility.productId" set-if-empty="true"
+                     set-if-null="false"/>
+                <set field="serviceInMap.facilityId" from="productFacility.facilityId" set-if-empty="true"
+                     set-if-null="false"/>
+                <call-service break-on-error="true" error-code="error" in-map-name="serviceInMap"
+                              include-user-login="true" require-new-transaction="false"
+                              service-name="getInventoryAvailableByFacility" success-code="success">
+                    <result-to-field result-name="availableToPromiseTotal"/>
+                </call-service>
+                <clear-field field="serviceInMap"/>
+                <set field="productFacility.lastInventoryCount" from="availableToPromiseTotal" set-if-empty="true"
+                     set-if-null="false"/>
+                <set-service-fields map="productFacility" service-name="updateProductFacility" to-map="serviceInMap"/>
+                <call-service break-on-error="true" error-code="error" in-map-name="serviceInMap"
+                              include-user-login="true" require-new-transaction="false"
+                              service-name="updateProductFacility" success-code="success"/>
+                <clear-field field="productFacility"/>
+                <clear-field field="serviceInMap"/>
+            </iterate>
+        </if-not-empty>
+    </simple-method>
+
+    <simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_"
+                   event-event-message-name="_event_message_" event-request-object-name="request"
+                   event-response-code-name="_response_code_" event-response-object-name="response"
+                   login-required="true" method-name="createUpdateFacilityGeoPoint"
+                   service-error-message-list-name="errorMessageList" service-error-message-map-name="errorMessageMap"
+                   service-error-message-name="errorMessage" service-response-message-name="responseMessage"
+                   service-success-message-list-name="successMessageList" service-success-message-name="successMessage"
+                   short-description="Create or update GeoPoint assigned to facility" use-transaction="true">
+        <if-empty field="parameters.geoPointId">
+            <set-service-fields map="parameters" service-name="createGeoPoint" to-map="createGeoPointMap"/>
+            <call-service break-on-error="true" error-code="error" in-map-name="createGeoPointMap"
+                          include-user-login="true" require-new-transaction="false" service-name="createGeoPoint"
+                          success-code="success">
+                <result-to-field field="geoPointId" result-name="geoPointId"/>
+            </call-service>
+            <entity-one auto-field-map="true" entity-name="Facility" use-cache="false" value-field="facility"/>
+            <set field="facility.geoPointId" from="geoPointId" set-if-empty="true" set-if-null="false"/>
+            <store-value do-cache-clear="true" value-field="facility"/>
+            <else>
+                <set-service-fields map="parameters" service-name="updateGeoPoint" to-map="updateGeoPointMap"/>
+                <call-service break-on-error="true" error-code="error" in-map-name="updateGeoPointMap"
+                              include-user-login="true" require-new-transaction="false" service-name="updateGeoPoint"
+                              success-code="success"/>
+            </else>
+        </if-empty>
+    </simple-method>
+
+    <simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_"
+                   event-event-message-name="_event_message_" event-request-object-name="request"
+                   event-response-code-name="_response_code_" event-response-object-name="response"
+                   login-required="true" method-name="inventoryRequisitionRoleCheck"
+                   service-error-message-list-name="errorMessageList" service-error-message-map-name="errorMessageMap"
+                   service-error-message-name="errorMessage" service-response-message-name="responseMessage"
+                   service-success-message-list-name="successMessageList" service-success-message-name="successMessage"
+                   short-description="Request Inventory Transfer Roll Check" use-transaction="true">
+        <set field="inputMap.partyId" from="userLogin.partyId" set-if-empty="true" set-if-null="false"/>
+        <set field="inputMap.roleTypeId" value="MANAGER"/>
+        <find-by-and list="roleList" map="inputMap" entity-name="PartyRole"/>
+        <if-empty field="roleList">
+            <set field="hasPermission" set-if-empty="true" set-if-null="false" type="Boolean" value="false"/>
+            <field-to-result field="hasPermission"/>
+            <field-to-result field="failMessage"/>
+            <else>
+                <set field="hasPermission" set-if-empty="true" set-if-null="false" type="Boolean" value="true"/>
+                <field-to-result field="hasPermission"/>
+            </else>
+        </if-empty>
+    </simple-method>
+
+    <simple-method method-name="createEmployeeItemIssuance">
+        <make-value entity-name="EmployeeItemIssuance" value-field="newEntity"/>
+        <make-next-seq-id value-field="newEntity" seq-field-name="itemIssuanceId"/>
+        <set-pk-fields map="parameters" set-if-null="true" value-field="newEntity"/>
+        <set-nonpk-fields map="parameters" set-if-null="true" value-field="newEntity"/>
+        <now-timestamp field="issuedOn"/>
+        <set field="newEntity.issuedOn" from-field="issuedOn"/>
+        <create-value do-cache-clear="true" or-store="false" value-field="newEntity"/>
+        <entity-one entity-name="InventoryItem" value-field="inventoryItem" auto-field-map="true"/>
+        <entity-one entity-name="Product" value-field="product">
+            <field-map field-name="productId" from-field="inventoryItem.productId"/>
+        </entity-one>
+        <set field="createDetailMap.inventoryItemId" from="parameters.inventoryItemId"/>
+        <set field="createDetailMap.description" from="parameters.employeeId"/>
+
+        <calculate field="parameters.quantity" type="BigDecimal">
+            <calcop field="parameters.quantity" operator="negative"/>
+        </calculate>
+
+        <!-- ATP condition -->
+
+        <if>
+            <condition>
+                <if-compare field="inventoryItem.inventoryItemTypeId" operator="equals" type="String"
+                            value="SERIALIZED_INV_ITEM"/>
+            </condition>
+            <then>
+                <set field="createDetailMap.availableToPromiseDiff" value="-1"/>
+            </then>
+            <else-if>
+                <condition>
+                    <if-compare field="inventoryItem.inventoryItemTypeId" operator="equals" type="String"
+                                value="NON_SERIAL_INV_ITEM"/>
+                </condition>
+                <then>
+                    <set field="createDetailMap.availableToPromiseDiff" from="parameters.quantity"/>
+                </then>
+            </else-if>
+        </if>
+
+        <!-- QOH Condition-->
+        <if>
+            <condition>
+                <and>
+                    <if-compare field="inventoryItem.inventoryItemTypeId" operator="equals" type="String"
+                                value="SERIALIZED_INV_ITEM"/>
+                    <if-compare field="product.returnable" operator="not-equals" type="String"
+                                value="Y"/>
+                </and>
+            </condition>
+            <then>
+                <set field="createDetailMap.quantityOnHandDiff" from="-1"/>
+            </then>
+            <else-if>
+
+                <condition>
+                    <and>
+                        <if-compare field="inventoryItem.inventoryItemTypeId" operator="equals" type="String"
+                                    value="NON_SERIAL_INV_ITEM"/>
+                        <if-compare field="product.returnable" operator="not-equals" type="String"
+                                    value="Y"/>
+                    </and>
+                </condition>
+                <then>
+                    <set field="createDetailMap.quantityOnHandDiff" from="parameters.quantity"/>
+                </then>
+            </else-if>
+        </if>
+        <call-service break-on-error="true" error-code="error" in-map-name="createDetailMap" include-user-login="true"
+                      require-new-transaction="false" service-name="createInventoryItemDetail" success-code="success"/>
+        <field-to-result field="parameters.inventoryItemId" result-name="inventoryItemId"/>
+    </simple-method>
+</simple-methods>

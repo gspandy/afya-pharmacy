@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<services xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="http://ofbiz.apache.org/dtds/services.xsd">
+	<description>Services Related to Policy</description>
+	<vendor>NthDimenzion</vendor>
+	<version>1.0</version>
+		
+		
+	<service name="monthlyPolicyCron" engine="java" auth="true" 
+		location="com.nthdimenzion.humanres.cron.PolicyJobService" invoke="executeMonthlyCron"/>
+		
+		
+	<service name="executeRollup" engine="java" auth="true" 
+		location="com.nthdimenzion.humanres.cron.PolicyJobService" invoke="executeRollup"/>
+		
+		
+	<service name="allocateEarnedLeaveForNewEmployee" engine="java" location="com.nthdimenzion.humanres.cron.PolicyJobService" 
+	invoke="allocateEarnedLeave">
+		<description>Allocates the New Employee Earned Leave for the month he joined.
+		 It starts with value marked against EARNED_LEAVES_PER_MONTH in leave policy.</description>
+        <attribute name="partyIdTo" type="String" mode="IN" optional="false"/>
+	</service>
+
+<!--	<service name="createCharacters" engine="simple" auth="true" default-entity-name="CharacterTest"-->
+<!--            location="org/ofbiz/humanresext/serviceregister/ServiceRegisterServices.xml" invoke="createCharacters">-->
+<!--			<auto-attributes mode="IN" include="nonpk" optional="false"></auto-attributes>-->
+<!--	</service>-->
+		
+</services>

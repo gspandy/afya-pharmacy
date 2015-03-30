@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<entity-engine-xml>
+    <Geo abbreviation="LS" geoCode="LS" geoId="ZMB-LS" geoName="Lusaka" geoTypeId="STATE"/>
+    <Geo abbreviation="LP" geoCode="LP" geoId="ZMB-LP" geoName="Luapula" geoTypeId="STATE"/>
+    <Geo abbreviation="ZM" geoCode="ZM" geoId="ZMB-ZM" geoName="Copperbelt" geoTypeId="STATE"/>
+    <Geo abbreviation="CE" geoCode="CE" geoId="ZMB-CE" geoName="Central" geoTypeId="STATE"/>
+    <Geo abbreviation="ES" geoCode="ES" geoId="ZMB-ES" geoName="Eastern" geoTypeId="STATE"/>
+    <Geo abbreviation="WS" geoCode="WS" geoId="ZMB-WS" geoName="Western" geoTypeId="STATE"/>
+    <Geo abbreviation="SO" geoCode="SO" geoId="ZMB-SO" geoName="Southern" geoTypeId="STATE"/>
+    <Geo abbreviation="NR" geoCode="NR" geoId="ZMB-NR" geoName="Northern" geoTypeId="STATE"/>
+    <Geo abbreviation="NW" geoCode="NW" geoId="ZMB-NW" geoName="North-Western" geoTypeId="STATE"/>
+
+
+
+    <GeoAssoc geoId="ZMB" geoIdTo="ZMB-LS" geoAssocTypeId="REGIONS"/>
+    <GeoAssoc geoId="ZMB" geoIdTo="ZMB-LP" geoAssocTypeId="REGIONS"/>
+    <GeoAssoc geoId="ZMB" geoIdTo="ZMB-ZM" geoAssocTypeId="REGIONS"/>
+    <GeoAssoc geoId="ZMB" geoIdTo="ZMB-CE" geoAssocTypeId="REGIONS"/>
+    <GeoAssoc geoId="ZMB" geoIdTo="ZMB-ES" geoAssocTypeId="REGIONS"/>
+    <GeoAssoc geoId="ZMB" geoIdTo="ZMB-WS" geoAssocTypeId="REGIONS"/>
+    <GeoAssoc geoId="ZMB" geoIdTo="ZMB-SO" geoAssocTypeId="REGIONS"/>
+    <GeoAssoc geoId="ZMB" geoIdTo="ZMB-NR" geoAssocTypeId="REGIONS"/>
+    <GeoAssoc geoId="ZMB" geoIdTo="ZMB-NW" geoAssocTypeId="REGIONS"/>
+
+</entity-engine-xml>

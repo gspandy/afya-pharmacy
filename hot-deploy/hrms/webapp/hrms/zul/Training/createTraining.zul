@@ -1,0 +1,79 @@
+<?init class="org.zkoss.zk.ui.util.Composition"
+arg0="/WEB-INF/layout/Template.zul"?>
+
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<zk>
+	<window self="@{define(content)}" id="createTraining"
+		title="${c:l('HRMS_CREATE_TRAINING') }" apply="com.ndz.controller.Training">
+		<div  align="center" style="margin-top:40px">
+		<vbox>
+			<hbox>
+				<div width="150px" align="right"
+					style="margin-right:4px">
+					<label value="${c:l('FormFieldTitle_trainingName') }"
+						style="font-weight:bold">
+					</label>
+				</div>
+				<textbox id="trainingName" name="trainingName"></textbox>
+			</hbox>
+			<hbox>
+				<div width="150px" align="right"
+					style="margin-right:4px">
+					<label value="${c:l('HRMS_TRAINING_CLASS_TYPE_ID') }"
+						style="font-weight:bold">
+					</label>
+				</div>
+				<listbox id="trainingClassTypeId"
+					name="trainingClassTypeId" mold="select">
+					<listitem></listitem>
+				</listbox>
+			</hbox>
+			<hbox>
+				<div width="150px" align="right"
+					style="margin-right:4px">
+					<label value="${c:l('HRMS_STATUS') }" style="font-weight:bold"></label>
+				</div>
+				<div style="margin-right:20px">
+				<listbox id="status" name="status" mold="select">
+					<listitem></listitem>
+				</listbox></div>
+			</hbox>
+			<hbox>
+				<div width="150px" align="right"
+					style="margin-right:4px">
+					<label value="${c:l('HumanResAllocateEmployeeDescription') }"
+						style="font-weight:bold">
+					</label>
+				</div>
+					<textbox id="description" name="description"
+						width="350px" height="100px" >
+					</textbox>
+				
+			</hbox>
+			<hbox>
+				<div width="150px" align="right"
+					style="margin-right:4px">
+					<label value="${c:l('HRMS_START_DATE') }"
+						style="font-weight:bold">
+					</label>
+				</div>
+				<datebox id="startDate" name="startDate" cols="20" format="yyyy/MM/dd a hh:mm:ss"  mold="rounded" >
+				</datebox>
+			</hbox>
+			<hbox>
+				<div width="150px" align="right"
+					style="margin-right:4px">
+					<label value="${c:l('HRMS_END_DATE') }" style="font-weight:bold"></label>
+				</div>
+				<datebox id="endDate" cols="20" mold="rounded" format="yyyy/MM/dd a hh:mm:ss"></datebox>
+			</hbox>
+			<hbox>
+			<div style="margin-left:156px">
+			<button label="${c:l('btnSave') }" id="save"></button>
+			</div>
+			</hbox>
+			</vbox>
+		</div>
+		<button label="${c:l('HRMS_CALENDAR') }" href="/zul/Training/test.zul"></button>
+	</window>
+</zk>

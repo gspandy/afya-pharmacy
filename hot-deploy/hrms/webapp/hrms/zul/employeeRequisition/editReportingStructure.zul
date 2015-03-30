@@ -1,0 +1,113 @@
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<?component name="positionTypebox" macroURI="../macros/textfindMacro.zul" id="macro2"?>
+<?component name="positionTypebox1" macroURI="../macros/textfindMacro.zul" id="macro3"?>
+<?component name="positionTypebox2" macroURI="../macros/textfindMacro.zul" id="macro4"?>
+<zk xmlns:h="http://www.zkoss.org/2005/zk/native">
+	<zscript>
+		import org.ofbiz.entity.*;
+		import java.util.*;
+		import org.ofbiz.humanresext.util.HumanResUtil;
+		GenericDelegator delegator = com.ndz.zkoss.util.HrmsInfrastructure.getDelegator();//GenericDelegator.getGenericDelegator("default");
+		Set fieldToSelect = new HashSet();
+		fieldToSelect.add("partyId");
+		fieldToSelect.add("firstName");
+		fieldToSelect.add("lastName");
+		List emplPos = null;
+		emplPos = delegator.findList("Person", null, fieldToSelect, null, null, false);
+	
+		Object emplPosArray = emplPos.toArray(new GenericValue[emplPos.size()]);
+		SimpleListModel model = new SimpleListModel(emplPos);
+		com.ndz.zkoss.GenericValueRenderer listItemRenderer = new com.ndz.zkoss.GenericValueRenderer(new String[] { "partyId", "firstName",
+				"lastName" });
+	
+		GenericValue gv = Executions.getCurrent().getArg().get("gv");
+		String employeeId = HumanResUtil.getPartyIdForPositionId(gv.getString("emplPositionIdManagedBy"), delegator);
+		String employeeName="";
+		if(employeeId!=null){
+		GenericValue personGv = delegator.findByPrimaryKey("Person", org.ofbiz.base.util.UtilMisc.toMap("partyId", employeeId));
+		employeeName = personGv.getString("firstName") + " " + personGv.getString("lastName");
+		}
+		String managerId = HumanResUtil.getPartyIdForPositionId(gv.getString("emplPositionIdReportingTo"), delegator);
+		java.sql.Timestamp fromDateType = gv.getTimestamp("fromDate");
+		Date fromDate = new Date(fromDateType.getTime());
+		String mgrPosId = gv.getString("emplPositionIdReportingTo");
+	</zscript>
+	<window closable="true" id="editReportingStructureWindow" width="40%" height="45%" border="normal" contentStyle="overflow:auto" maximizable="true">
+		<caption label="${c:l('HRMS_EDIT_REPORTING_STRUCTURE') }" />
+		<separator height="20px"/>
+		<label id="magePosId" value="${mgrPosId}" visible="false" />
+		<hbox>
+			<div align="right" width="150px">
+				<label value="${c:l('HRMS_EMPLOYEEID') }" style="font-weight:bold;" />
+			</div>
+			<div align="left">
+				<label value="${employeeId }" id="employeeId" style="font-weight:regular" />
+			</div>
+		</hbox>
+		<separator />
+		<hbox>
+			<div align="right" width="150px">
+				<label value="${c:l('Hrms_EmployeeName') }" style="font-weight:bold;" />
+			</div>
+			<div align="left">
+				<label value="${employeeName}" style="font-weight:regular" />
+			</div>
+		</hbox>
+		<separator />
+		<hbox>
+			<div align="right" width="150px">
+				<label value="${c:l('HRMS_MANAGER_ID') }" style="font-weight:bold;" />
+			</div>
+			<div align="left">
+				<managerbox id="positionIdReportingTo" value="${managerId}" constraint="no empty: ${c:l('HRMS_REQUIRED_MANAGER_ID') }"/>
+			</div>
+		</hbox>
+		<separator />
+		<hbox>
+			<div align="right" width="150px">
+				<label value="${c:l('HRMS_FROMDATE') }" style="font-weight:bold" />
+			</div>
+			<div align="left">
+				<label>
+					<attribute name="onCreate">
+						self.setValue(org.ofbiz.base.util.UtilDateTime.formatDate(fromDate));
+					</attribute>
+				</label>
+			</div>
+		</hbox>
+		<separator />
+		<hbox visible="false">
+			<div align="right" width="150px">
+				<label value="${c:l('FormFieldTitle_primaryFlag') }" style="font-weight:bold" />
+			</div>
+			<div align="left">
+				<listbox id="primaryFlag" mold="select">
+					<listitem value="" />
+					<listitem label="${c:l('ListBox_Yes') }" value="Y" selected="true" />
+					<listitem label="${c:l('ListBox_No') }" value="N" />
+				</listbox>
+			</div>
+		</hbox>
+		<separator />
+		<zscript>
+			<![CDATA[
+				import org.zkoss.*;
+				import org.zkoss.util.resource.Labels;
+				void validateForm(){
+					positionIdReportingTo.getValue();
+					List managerList = delegator.findByAnd("Person",org.ofbiz.base.util.UtilMisc.toMap("partyId",positionIdReportingTo.getValue()));
+					if(managerList.size()<=0){
+						throw new WrongValueException(positionIdReportingTo,Labels.getLabel("HRMS_PROVIDE_VALID_MANAGER_ID"));
+					}
+				}
+			]]>
+		</zscript>
+		<hbox>
+			<div align="right" width="265px">
+				<button id="add" label="${c:l('btnSave') }"
+					onClick='validateForm();com.ndz.controller.EmployeeRequisitionController.editReportingStructure(event,editReportingStructureWindow);' />
+				<button id="cancel" label="${c:l('ButtonCancel') }" onClick="editReportingStructureWindow.detach()" />
+			</div>
+		</hbox>
+	</window>
+</zk>

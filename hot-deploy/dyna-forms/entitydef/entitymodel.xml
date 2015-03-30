@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<entitymodel xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+    xsi:noNamespaceSchemaLocation="http://ofbiz.apache.org/dtds/entitymodel.xsd">
+    <!-- ========================================================= -->
+    <!-- ======================== Defaults ======================= -->
+    <!-- ========================================================= -->
+    <title>Entity of DynaFormLabels Component</title>
+    <description>None</description>
+    <copyright></copyright>
+    <author>None</author>
+    <version></version>
+    	
+    	
+    <entity entity-name="CustomForms" package-name="com.ndz.dynaforms">
+    	<description>This entity represents the Custom Form.</description>
+    	<field name="formId" type="id-ne"></field>
+    	<field name="formName" type="short-varchar"></field>
+    	<field name="description" type="very-long"></field>
+		<field name="fromdate" type="date-time"></field>
+		<field name="thrudate" type="date-time"></field>
+		<prim-key field="formId"/>
+    </entity>
+    
+    <entity entity-name="CustomFormComponents" package-name="com.ndz.dynaforms">
+    	<description>This represents a section of a form</description>
+    	<field name="formId" type="id-ne"></field>
+    	<field name="compId" type="id-ne"></field>
+    	<field name="parentCompId" type="id-ne"></field>
+    	<field name="compType" type="short-varchar"></field>
+    	<field name="compName" type="short-varchar"></field>
+    	<field name="description" type="very-long"></field>
+    	<field name="dynamicRuleId" type="short-varchar"></field>
+    	<prim-key field="compId"/>
+    	<relation rel-entity-name="CustomForms" type="one">
+    		<key-map field-name="formId"/>
+    	</relation>
+    </entity>
+	
+</entitymodel>

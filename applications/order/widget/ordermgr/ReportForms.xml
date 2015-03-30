@@ -1,0 +1,647 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+Licensed to the Apache Software Foundation (ASF) under one
+or more contributor license agreements.  See the NOTICE file
+distributed with this work for additional information
+regarding copyright ownership.  The ASF licenses this file
+to you under the Apache License, Version 2.0 (the
+"License"); you may not use this file except in compliance
+with the License.  You may obtain a copy of the License at
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing,
+software distributed under the License is distributed on an
+"AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+KIND, either express or implied.  See the License for the
+specific language governing permissions and limitations
+under the License.
+-->
+
+<forms xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+        xsi:noNamespaceSchemaLocation="http://ofbiz.apache.org/dtds/widget-form.xsd">
+    <form name="OrderPurchaseReportOptions" type="single" title=""
+        header-row-style="header-row" default-table-style="basic-table" >
+        <field name="productStoreId" title="Product Store">
+            <drop-down allow-empty="false">
+                <option key="" description="- ${uiLabelMap.CommonAny} -"/>
+                <entity-options entity-name="ProductStore" description="${storeName} [${productStoreId}]">
+                    <entity-order-by field-name="storeName"/>
+                </entity-options>
+            </drop-down>
+        </field>
+        <field name="orderTypeId" title="Order Type">
+            <drop-down allow-empty="false">
+                <option key="" description="- ${uiLabelMap.CommonAny} -"/>
+                <entity-options entity-name="OrderType" description="${description}">
+                    <entity-order-by field-name="orderTypeId"/>
+                </entity-options>
+            </drop-down>
+        </field>
+        <!-- <field name="originFacilityId">
+            <drop-down allow-empty="false">
+                <option key="" description="- ${uiLabelMap.CommonAny} -"/>
+                <entity-options entity-name="Facility" key-field-name="facilityId" description="${facilityName} [${facilityId}]">
+                    <entity-order-by field-name="facilityName"/>
+                </entity-options>
+            </drop-down>
+        </field> -->
+        <!-- <field name="terminalId"><text size="10" maxlength="20"/></field>  -->
+        <field name="statusId" title="Status">
+            <drop-down allow-empty="false" no-current-selected-key="ORDER_COMPLETED">
+                <option key="" description="- ${uiLabelMap.CommonAny} -"/>
+                <entity-options entity-name="StatusItem" description="${description}">
+                    <entity-constraint value="ORDER_STATUS" name="statusTypeId"/>
+                    <entity-order-by field-name="sequenceId"/>
+                </entity-options>
+            </drop-down>
+        </field>
+    </form>
+    <form name="OrderPurchaseProductOptions" type="single" target="OrderPurchaseReportProductDocument.xls" title="" target-window="_blank">
+        <field name="productId" title="Product">
+            <lookup target-form-name="LookupProductName"></lookup>
+        </field>
+        <field name="fromOrderDate" title="${uiLabelMap.OrderReportFromDate}"><date-time type="date"/></field>
+        <field name="thruOrderDate" title="${uiLabelMap.OrderReportThruDate}"><date-time type="date"/></field>
+        <field name="orderTypeId" title="Order Type">
+            <drop-down allow-empty="false">
+                <option key="" description="- ${uiLabelMap.CommonAny} -"/>
+                <entity-options entity-name="OrderType" description="${description}">
+                    <entity-order-by field-name="orderTypeId"/>
+                </entity-options>
+            </drop-down>
+        </field>
+        <field name="exportType" title="Export Type">
+            <drop-down current="first-in-list">
+                <option key="pdf" description="PDF"/>
+                <option key="xls" description="EXCEL"/>
+            </drop-down>
+        </field>
+        <field name="submitButton" title="${uiLabelMap.CommonRun}" widget-style="btn btn-primary" event="onClick" action="javascript:jQuery('#OrderPurchaseProductOptions').validate();invokeExport(this.form);">
+            <submit button-type="button"/>
+        </field>
+    </form>
+    
+    <form name="SalesByDeliveryDateReport" type="single" target="SalesByDeliveryDateReportPDF.xls"  title="" 
+        header-row-style="header-row" default-table-style="basic-table" target-window="_blank">
+        <field name="productId" title="Product">
+            <lookup target-form-name="LookupProductName"></lookup>
+        </field>
+        <field name="partyId" title="Customer">
+            <lookup target-form-name="LookupCustomerName"/>
+        </field>
+        <field name="fromOrderDate" title="${uiLabelMap.OrderReportFromDate}"><date-time type="date"/></field>
+        <field name="thruOrderDate" title="${uiLabelMap.OrderReportDeliveryThruDate}"><date-time type="date"/></field> 
+        <field name="exportType" title="Export Type">
+            <drop-down current="first-in-list">
+                <option key="pdf" description="PDF"/>
+                <option key="xls" description="EXCEL"/>
+            </drop-down>
+        </field>
+        <field name="submitButton" title="${uiLabelMap.CommonRun}" widget-style="btn btn-primary" event="onClick" action="javascript:jQuery('#SalesByDeliveryDateReport').validate();invokeExport(this.form);">
+            <submit button-type="button"/>
+        </field>
+    </form>
+	<form name="ListSalesByDeliveryDateReportExcel"  type="list" view-size="1000" separate-columns="true" list-name="orderItemList" target="">
+		<field name="orderId"><display/> </field>
+		<field name="orderStatusId"><display/> </field>
+		<field name="productId"><display/> </field>
+		<field name="itemDescription"><display/> </field>
+		<field name="unitPrice"><display/> </field>
+		<field name="quantity"><display/> </field>
+		<field name="estimatedDeliveryDate"><display/> </field>
+	</form>
+	
+	<form name="ListOrderPurchaseReportExcel"  type="list" view-size="1000" separate-columns="true" list-name="orderPurchaseProductSummaryList" target="">
+		<field name="productStoreId" title="Product Store"><display/> </field>
+		<field name="productId" title="Product"><display/> </field>
+		<field name="statusId" title="Status"><display/> </field>
+		<!-- <field name="orderTypeId"><display/> </field> -->
+		<field name="internalName" title="Internal Name"><display/> </field>
+		<field name="quantity" title="Quantity"><display/> </field>
+		<field name="cancelQuantity" title="Cancel Quantity"><display/> </field>
+		<!-- <field name="orderDate"><display/> </field> -->
+	</form>
+    <form name="OrderPurchasePaymentOptions" type="single" target="OrderPurchaseReportPayment.pdf" title="" extends="OrderPurchaseReportOptions" target-window="_blank">
+        <field name="fromOrderDate" title="${uiLabelMap.OrderReportFromDate}"><date-time type="date"/></field>
+        <field name="thruOrderDate" title="${uiLabelMap.OrderReportThruDate}"><date-time type="date"/></field>
+
+        <field name="submitButton" title="${uiLabelMap.CommonRun}" widget-style="btn btn-primary" event="onClick" action="javascript:jQuery('#OrderPurchasePaymentOptions').validate();invokeExport(this.form);">
+            <submit button-type="button"/>
+        </field>
+    </form>
+
+    <!-- form for generating a report of total product sales (quantity and value) -->
+    <form name="SalesByStoreReport" type="single" target="SalesByStoreDocument" title=""
+        header-row-style="header-row" default-table-style="basic-table" target-window="_blank">
+        <field name="productStoreId" title="Product Store">
+            <drop-down allow-empty="false">
+                <option key="" description="- ${uiLabelMap.CommonSelectAny} -"/>
+                <entity-options entity-name="ProductStore" description="${storeName} [${productStoreId}]">
+                    <entity-order-by field-name="storeName"/>
+                </entity-options>
+            </drop-down>
+        </field>
+        <field name="toPartyId" title="${uiLabelMap.AccountingToPartyId}">
+            <lookup target-form-name="LookupPartyName"/>
+        </field>
+        <field name="orderStatusId" title="Order Status">
+            <drop-down allow-empty="false">
+                <option key="" description="- ${uiLabelMap.CommonSelectAny} -"/>
+                <entity-options entity-name="StatusItem" description="${description}" key-field-name="statusId">
+                    <entity-constraint name="statusTypeId" operator="equals" value="ORDER_STATUS"/>
+                </entity-options>
+            </drop-down>
+        </field>
+        <field name="fromOrderDate" title="${uiLabelMap.CommonFromDate}"><date-time type="date"/></field>
+        <field name="thruOrderDate" title="${uiLabelMap.CommonThruDate}"><date-time type="date"/></field>
+        <field name="exportType" title="Export Type">
+            <drop-down current="first-in-list">
+                <option key="pdf" description="PDF"/>
+                <option key="xls" description="EXCEL"/>
+            </drop-down>
+        </field>
+        <field name="submitButton" title="${uiLabelMap.CommonRun}" widget-style="btn btn-primary" event="onClick" action="javascript:jQuery('#SalesByStoreReport').validate();invokeExport(this.form);">
+        <submit button-type="button"/></field>
+    </form>
+    
+	<form name="ListSalesByStoreExcel"  type="list" separate-columns="true" list-name="salesByStore" target="">
+		<field name="productId"><display/> </field>
+		<field name="storeName"><display/> </field>
+		<field name="internalName"><display/> </field>
+		<field name="quantity"><display/> </field>
+		<field name="unitPrice"><display/> </field>
+	</form>
+    
+
+    <!-- form for generating a report of open order items -->
+    <form name="OpenOrderItemsReport" type="single" target="OpenOrderItemsReport.xls" title=""
+        header-row-style="header-row" default-table-style="basic-table" target-window="_blank">
+        <field name="productStoreId" title="Product Store">
+            <drop-down allow-empty="false">
+                <option key="" description="- ${uiLabelMap.CommonSelectAny} -"/>
+                <entity-options entity-name="ProductStore" description="${storeName} [${productStoreId}]">
+                    <entity-order-by field-name="storeName"/>
+                </entity-options>
+            </drop-down>
+        </field>
+        <field name="orderTypeId" title="OrderType">
+            <drop-down allow-empty="false">
+                <option key="SALES_ORDER" description="${uiLabelMap.OrderSalesOrder}"/>
+                <option key="PURCHASE_ORDER" description="${uiLabelMap.OrderPurchaseOrder}"/>
+            </drop-down>
+        </field>
+        <field name="fromOrderDate" title="${uiLabelMap.OrderReportFromDate}"><date-time type="date"/></field>
+        <field name="thruOrderDate" title="${uiLabelMap.OrderReportThruDate}"><date-time type="date"/></field>
+         <field name="exportType" title="Export Type">
+        	<drop-down current="first-in-list">
+        		<option key="pdf" description="PDF"/>
+        		<option key="xls" description="EXCEL"/>
+        	</drop-down>
+        </field>
+        <field name="submitButton" title="${uiLabelMap.CommonRun}" widget-style="btn btn-primary" event="onClick" action="javascript:jQuery('#OpenOrderItemsReport').validate();invokeExport(this.form);">
+        	<submit button-type="button"/>
+        </field>
+    </form>
+    <form name="ListOpenOrderItemsReportExcel" type="list" view-size="1000"  separate-columns="true" list-name="orderItemList"  target="">
+		<field name="orderId"><display/> </field>
+		<field name="productId"><display/> </field>
+		<field name="itemDescription"><display/> </field>
+		<field name="quantityOrdered"><display/> </field>
+		<field name="quantityOpen"><display/> </field>
+		<field name="quantityIssued"><display/> </field>
+		<field name="retailPrice"><display/> </field> 
+		<field name="orderDate"><display/> </field>
+	</form>
+    <!-- list open order items -->
+    
+    <form name="ComparativeOrderItemReports" type="single" target="ComparativeOrderItemReport.xls" title="" target-window="new_blank">
+        <field name="productId" title="Product">
+			<lookup target-form-name="LookupProductName"></lookup>
+		</field>
+        <field name="orderTypeId" title="OrderType">
+            <drop-down allow-empty="false">
+                <option key="SALES_ORDER" description="${uiLabelMap.OrderSalesOrder}"/>
+                <option key="PURCHASE_ORDER" description="${uiLabelMap.OrderPurchaseOrder}"/>
+            </drop-down>
+        </field>
+       <field name="statusId" title="Status">
+            <drop-down allow-empty="false" no-current-selected-key="ORDER_COMPLETED">
+                <entity-options entity-name="StatusItem" description="${description}">
+                    <entity-constraint value="ORDER_STATUS" name="statusTypeId"/>
+                    <entity-order-by field-name="sequenceId"/>
+                </entity-options>
+            </drop-down>
+        </field> 
+        <field name="fromOrderDate" title="${uiLabelMap.OrderReportFromDate}"><date-time type="date"/></field>
+        <field name="thruOrderDate" title="${uiLabelMap.OrderReportThruDate}"><date-time type="date"/></field>
+         <field name="exportType" title="Export Type">
+        	<drop-down current="first-in-list">
+        		<option key="pdf" description="PDF"/>
+        		<option key="xls" description="EXCEL"/>
+        	</drop-down>
+        </field>
+        <field name="submitButton" title="${uiLabelMap.CommonRun}" widget-style="btn btn-primary" event="onClick" action="javascript:jQuery('#ComparativeOrderItemReports').validate();invokeExport(this.form);">
+        	<submit button-type="button"/>
+        </field>
+    </form>
+    <form name="OpenOrderItemsList" type="list" list-name="orderItemList" odd-row-style="alternate-row" default-table-style="basic-table hover-bar" paginate-target="OpenOrderItemsReport">
+        <field name="orderDate" title="${uiLabelMap.OrderDate}"><display /></field>
+        <field name="orderId" title="${uiLabelMap.OrderOrderId}" widget-style="buttontext">
+            <hyperlink target="orderview" description="${orderId}">
+                <parameter param-name="orderId" />
+            </hyperlink>
+        </field>
+        <field name="productId" title="${uiLabelMap.ProductProduct}"><display /></field>
+        <field name="itemDescription" title="${uiLabelMap.CommonDescription}"><display /></field>
+        <field name="quantityOrdered" title="${uiLabelMap.ProductQuantity}"><display /></field>
+        <field name="quantityIssued" title="${uiLabelMap.OrderQtyShipped}"><display /></field>
+        <field name="quantityOpen" title="${uiLabelMap.ProductOpenQuantity}"><display /></field>
+        <field name="shipAfterDate" title="${uiLabelMap.OrderShipAfterDate}"><display /></field>
+        <field name="shipBeforeDate" title="${uiLabelMap.OrderShipBeforeDate}"><display /></field>
+        <field name="comments" title="${uiLabelMap.CommonComments}"><display /></field>
+        <field name="costPrice" title="${uiLabelMap.ProductCostPrice}"><display /></field>
+        <field name="listPrice" title="${uiLabelMap.ProductListPrice}"><display /></field>
+        <field name="retailPrice" title="${uiLabelMap.ProductRetailPrice}"><display /></field>
+        <field name="discount" title="${uiLabelMap.ProductDiscount}"><display /></field>
+        <field name="calculatedMarkup" title="${uiLabelMap.OrderCalculatedMarkup}"><display /></field>
+        <field name="percentMarkup" title="${uiLabelMap.OrderPercentageMarkup}"><display /></field>
+    </form>
+    <form name="OpenOrderItemsTotal" type="list" list-name="totalAmountList"
+        odd-row-style="alternate-row" default-table-style="basic-table hover-bar">
+        <field name="total" title="${uiLabelMap.CommonTotal}"><display/></field>
+        <field name="totalQuantityOrdered"><display/></field>
+        <field name="totalQuantityOpen"><display/></field>
+        <field name="totalCostPrice"><display/></field>
+        <field name="totalListPrice"><display/></field>
+        <field name="totalRetailPrice"><display/></field>
+        <field name="totalDiscount"><display/></field>
+        <field name="totalMarkup"><display/></field>
+        <field name="totalPercentMarkup"><display/></field>
+    </form>
+
+    <!-- form for generating a report of total product purchases (quantity and value) -->
+    <form name="PurchasesByOrganizationReport" type="single" target="PurchasesBySupplierReportDocument.xls" title=""
+        header-row-style="header-row" default-table-style="basic-table" target-window="_blank">
+        <field name="fromPartyId" title="Supplier" >
+            <lookup target-form-name="LookupSupplierName"/>
+            <!-- <drop-down allow-empty="false">
+                <option key="" description="- ${uiLabelMap.CommonSelectAny} -"/>
+                <entity-options entity-name="PartyRoleAndPartyDetail" description="${groupName} ${firstName} ${lastName} [${partyId}]" key-field-name="partyId">
+                    <entity-constraint name="roleTypeId" operator="equals" value="SUPPLIER"/>
+                </entity-options>
+            </drop-down> -->
+        </field>
+        <!-- <field name="toPartyId" title="${uiLabelMap.AccountingToParty}">
+            <drop-down allow-empty="false">
+                <entity-options entity-name="PartyRoleAndPartyDetail" description="${groupName} ${firstName} ${lastName} [${partyId}]" key-field-name="partyId">
+                    <entity-constraint name="roleTypeId" operator="equals" value="INTERNAL_ORGANIZATIO"/>
+                </entity-options>
+            </drop-down>
+        </field> -->
+        <field name="orderStatusId" title="Order Status">
+            <drop-down allow-empty="false">
+                <option key="" description="- ${uiLabelMap.CommonSelectAny} -"/>
+                <entity-options entity-name="StatusItem" description="${description}" key-field-name="statusId">
+                    <entity-constraint name="statusTypeId" operator="equals" value="ORDER_STATUS"/>
+                </entity-options>
+            </drop-down>
+        </field>
+        <field name="fromOrderDate" title="${uiLabelMap.CommonFromDate}"><date-time type="date"/></field>
+        <field name="thruOrderDate" title="${uiLabelMap.CommonThruDate}"><date-time type="date"/></field>
+        <field name="exportType" title="Export Type">
+        	<drop-down current="first-in-list">
+        		<option key="pdf" description="PDF"/>
+        		<option key="xls" description="EXCEL"/>
+        	</drop-down>
+        </field>
+        <field name="submitButton" title="${uiLabelMap.CommonRun}" widget-style="btn btn-primary" event="onClick" action="javascript:jQuery('#orderStatusId').validate();invokeExport(this.form);">
+        <submit button-type="button"/></field>
+    </form>
+     <form name="ListPurchasesByOrganizationReportExcel" view-size="1000"  type="list" separate-columns="true" list-name="purchasesByOrganizationReportList" target="">
+		<field name="productId"><display/> </field>
+		<field name="internalName"><display/> </field>
+		<field name="orderStatusId"><display/> </field>
+		 <field name="quantity"><display/> </field>
+		<field name="unitPrice"><display/> </field> 
+		<field name="orderDate"><display/> </field> 
+	</form>
+    
+    <!--New From-->
+    <form name="SalesReport" type="single" target="SalesReport.pdf" title=""
+        header-row-style="header-row" default-table-style="basic-table" target-window="_blank">
+<!--        <field name="report">
+            <drop-down allow-empty="false">
+                <option key="BIC" description="BIC"/>
+                <option key="NBO" description="NBO"/>
+            </drop-down>
+        </field>-->
+<!--        <field name="productStoreId">
+            <drop-down allow-empty="false">
+                <option key="" description="- ${uiLabelMap.CommonSelectAny} -"/>
+                <entity-options entity-name="ProductStore" description="${storeName} [${productStoreId}]">
+                    <entity-order-by field-name="storeName"/>
+                </entity-options>
+            </drop-down>
+        </field>-->
+<!--        <field name="orderTypeId">
+            <drop-down allow-empty="false">
+                <option key="SALES_ORDER" description="${uiLabelMap.OrderSalesOrder}"/>
+                <option key="PURCHASE_ORDER" description="${uiLabelMap.OrderPurchaseOrder}"/>
+            </drop-down>
+        </field>-->
+<!--        <field name="orderStatusId">
+            <drop-down allow-empty="false">
+                <option key="" description="- ${uiLabelMap.CommonSelectAny} -"/>
+                <entity-options entity-name="StatusItem" description="${description}" key-field-name="statusId">
+                    <entity-constraint name="statusTypeId" operator="equals" value="ORDER_STATUS"/>
+                </entity-options>
+            </drop-down>
+        </field>-->
+        <field name="fromDate" title="${uiLabelMap.OrderReportFromDate}"><date-time type="date"/></field>
+        <field name="thruDate" title="${uiLabelMap.OrderReportThruDate}"><date-time type="date"/></field>
+        <field name="submitButton" title="${uiLabelMap.CommonRun}" widget-style="btn btn-primary" event="onClick" action="javascript:jQuery('#SalesReport').validate();invokeExport(this.form);">
+        <submit button-type="button"/></field>
+    </form>
+
+    <form name="NetBeforeOverheadReport" type="single" target="NetBeforeOverheadReport.pdf" title=""
+        header-row-style="header-row" default-table-style="basic-table" target-window="_blank">
+        <field name="productStoreId">
+            <drop-down allow-empty="false">
+                <option key="" description="- ${uiLabelMap.CommonSelectAny} -"/>
+                <entity-options entity-name="ProductStore" description="${storeName} [${productStoreId}]">
+                    <entity-order-by field-name="storeName"/>
+                </entity-options>
+            </drop-down>
+        </field>
+        <field name="submitButton" title="${uiLabelMap.CommonRun}" widget-style="btn btn-primary"><submit button-type="button"/></field>
+    </form>
+    
+    <form name="ProductDemandReport" type="single" target="ProductDemandReport.pdf" title=""
+        header-row-style="header-row" default-table-style="basic-table" target-window="_blank">
+        <field name="productStoreId">
+            <drop-down allow-empty="false">
+                <option key="" description="- ${uiLabelMap.CommonSelectAny} -"/>
+                <entity-options entity-name="ProductStore" description="${storeName} [${productStoreId}]">
+                    <entity-order-by field-name="storeName"/>
+                </entity-options>
+            </drop-down>
+        </field>
+        <field name="submitButton" title="${uiLabelMap.CommonRun}" widget-style="btn btn-primary"><submit button-type="button"/></field>
+    </form>
+    
+    <form name="OrderByReferrer" type="single" target="OrderByReferrer.pdf" target-window="_blank">
+        <!--field name="referrerUrl"><text-find default-option="contains"/></field-->
+        <field name="referrerUrl" title="${uiLabelMap.CommonEmptyHeader}"><display description="All Referrer"></display></field>
+        <field name="submit" title="${uiLabelMap.CommonRun}"><submit button-type="button"/></field>
+    </form>
+    <form name="SaleOrdersByChannel" type="single" target="OrdersByChannel.pdf" target-window="_blank">
+        <field name="saleChannel">
+            <drop-down allow-empty="false">
+                <option key="" description="- ${uiLabelMap.CommonSelectAny} -"/>
+                <entity-options description="${description}" entity-name="Enumeration" key-field-name="description">
+                    <entity-constraint name="enumTypeId" operator="equals" value="ORDER_SALES_CHANNEL"/>
+                </entity-options>
+            </drop-down>
+        </field>
+        <field name="submit" title="${uiLabelMap.CommonRun}"><submit button-type="button"/></field>
+    </form>
+    <form name="SaleOrderDiscountCode" type="single" target="OrderDiscountCode.pdf" target-window="_blank">
+        <field name="discountCodeUrl" title="${uiLabelMap.CommonEmptyHeader}"><display description="All order items with discount code"></display></field>
+        <field name="submit" title="${uiLabelMap.CommonRun}"><submit button-type="button"/></field>
+    </form>
+    <form name="Last3MonthsSalesReport" type="single" target="Last3MonthsSalesReport.pdf" target-window="_blank">
+        <field name="submit" title="${uiLabelMap.CommonRun}"><submit button-type="button"/></field>
+    </form>
+    <form name="CouponSalesReport" type="single" target="CouponSalesReport.pdf" target-window="_blank">
+        <field name="submit" title="${uiLabelMap.CommonRun}"><submit button-type="button"/></field>
+    </form>
+    <form name="ComparativeOrderItemReportExcel" view-size="1000" type="list" separate-columns="true" list-name="resultList" target="" >
+		<field name="productId">
+		<display />
+		</field>
+		<field name="productName">
+			<display />
+		</field>
+		<field name="currentYearQty">
+			<display />
+		</field>
+	
+		<field name="lastYearQty">
+			<display />
+		</field>
+		<field name="fromDate">
+			<display />
+		</field>
+		<field name="thruDate">
+			<display />
+		</field>
+		<field name="prfromDate">
+			<display />
+		</field>
+		<field name="prthruDate">
+			<display />
+		</field>
+	</form>
+
+    <!-- form for generating a report of pending loading slips -->
+    <form name="PendingLoadingSlipsReport" type="single" target="PendingShipmentsReport.pdf"  title=""
+          header-row-style="header-row" default-table-style="basic-table" target-window="_blank">
+        <field name="partyId" title="Customer">
+            <lookup target-form-name="LookupCustomerName"/>
+        </field>
+        <field name="fromDate" title="From Date"><date-time type="date"/></field>
+        <field name="thruDate" title="Thru Date"><date-time type="date"/></field>
+        <field name="exportType" title="Export Type">
+            <drop-down current="first-in-list">
+                <option key="pdf" description="PDF"/>
+            </drop-down>
+        </field>
+        <field name="submit" title="${uiLabelMap.CommonRun}" widget-style="btn btn-primary">
+            <submit />
+        </field>
+    </form>
+    
+    <!-- form for generating a report of customer balance -->
+    <form name="CustomerBalanceReport" type="single" target="CustomerBalancesReport.pdf" title=""
+        header-row-style="header-row" default-table-style="basic-table" target-window="_blank">
+        <field name="orderTypeId" title="OrderType">
+            <hidden value="SALES_ORDER" />
+        </field>
+        <field name="partyId" title="Customer">
+            <lookup target-form-name="LookupCustomerName"></lookup>
+        </field>
+        <field name="fromDate" title="${uiLabelMap.OrderReportFromDate}"><date-time type="date"/></field>
+        <field name="thruDate" title="${uiLabelMap.OrderReportDeliveryThruDate}"><date-time type="date"/></field>
+        <field name="exportType" title="Export Type">
+            <drop-down current="first-in-list">
+                <option key="pdf" description="PDF"/>
+            </drop-down>
+        </field>
+        <field name="submitButton" title="${uiLabelMap.CommonRun}" widget-style="btn btn-primary" event="onClick" action="javascript:jQuery('#CustomerBalanceReport').validate();invokeExport(this.form);">
+            <submit button-type="button"/>
+        </field>
+    </form>
+    
+    <!-- form for generating a report of debit balance -->
+    <form name="DebitBalanceReport" type="single" target="DebitBalanceReport.pdf" title=""
+        header-row-style="header-row" default-table-style="basic-table" target-window="_blank">
+        <field name="invoiceTypeId">
+            <hidden value="SALES_INVOICE"/>
+        </field>
+        <field name="partyIdFrom">
+            <hidden value="Company" />
+        </field>
+        <field name="partyId" title="Customer">
+            <lookup target-form-name="LookupCustomerName"></lookup>
+        </field>
+        <field name="daysOffset"><text default-value="0"/></field>
+        <field name="exportType" title="Export Type">
+            <drop-down current="first-in-list">
+                <option key="pdf" description="PDF"/>
+            </drop-down>
+        </field>
+        <field name="submitButton" title="${uiLabelMap.CommonRun}" widget-style="btn btn-primary" event="onClick" action="javascript:jQuery('#DebitBalanceReport').validate();invokeExport(this.form);">
+            <submit button-type="button"/>
+        </field>
+    </form>
+    
+    <!-- form for generating a report of customer balance -->
+    <form name="SalesByProductReport" type="single" target="SalesReport.pdf" title=""
+        header-row-style="header-row" default-table-style="basic-table" target-window="_blank">
+        <field name="orderTypeId" title="OrderType">
+            <hidden value="SALES_ORDER" />
+        </field>
+        <field name="productId" title="Product">
+            <lookup target-form-name="LookupProductName"></lookup>
+        </field>
+        <field name="partyId" title="Customer">
+            <lookup target-form-name="LookupCustomerName"/>
+        </field>
+        <field name="orderStatusId" title="Order Status">
+            <drop-down allow-empty="false">
+                <option key="" description="- ${uiLabelMap.CommonSelectAny} -"/>
+                <entity-options entity-name="StatusItem" description="${description}" key-field-name="statusId">
+                    <entity-constraint name="statusTypeId" operator="equals" value="ORDER_STATUS"/>
+                </entity-options>
+            </drop-down>
+        </field>
+        <field name="fromDate" title="${uiLabelMap.OrderReportFromDate}"><date-time type="date"/></field>
+        <field name="thruDate" title="${uiLabelMap.OrderReportDeliveryThruDate}"><date-time type="date"/></field> 
+        <field name="exportType" title="Export Type">
+            <drop-down current="first-in-list">
+                <option key="pdf" description="PDF"/>
+            </drop-down>
+        </field>
+        <field name="submitButton" title="${uiLabelMap.CommonRun}" widget-style="btn btn-primary" event="onClick" action="javascript:jQuery('#SalesByProductReport').validate();invokeExport(this.form);">
+            <submit button-type="button"/>
+        </field>
+    </form>
+    
+    <form name="customerPaymentSummary" type="single"  title="" target="customerPaymentSummary"
+        header-row-style="header-row" default-table-style="basic-table">
+        <field name="partyId" title="Customer">
+            <lookup target-form-name="LookupCustomerName"/>
+        </field>
+        <field name="fromDate" title="From Date" required-field="true"><date-time type="timestamp"/></field>
+        <field name="thruDate" title="Thru Date" ><date-time type="timestamp"/></field> 
+
+        <field name="exportType" title="Export Type">
+            <drop-down current="first-in-list">
+            	<option key="screen" description="Screen"/>
+                <option key="pdf" description="PDF"/>
+            </drop-down>
+        </field>
+        <field name="submitButton" title="${uiLabelMap.CommonRun}" widget-style="btn btn-primary" event="onClick" 
+        	action="javascript:
+        	jQuery('#customerPaymentSummary').validate();
+        	if(exportType.value == 'pdf'){
+        	 document.customerPaymentSummary.action = 'customerPaymentSummary.pdf';
+        	 document.customerPaymentSummary.target = '_blank'
+        	 }else{
+        	 document.customerPaymentSummary.action = 'customerPaymentSummary';
+        	 document.customerPaymentSummary.target = '_self'};">
+            <submit button-type="button"/>
+        </field>
+        
+    </form>
+    
+    <form name="supplierPaymentSummary" type="single" target="supplierPaymentSummary"  title="" 
+        header-row-style="header-row" default-table-style="basic-table" target-window="_blank">
+        <field name="partyId" title="Supplier">
+            <lookup target-form-name="LookupSupplierName"/>
+        </field>
+        <field name="fromDate" title="From Date" required-field="true"><date-time type="timestamp"/></field>
+        <field name="thruDate" title="Thru Date"><date-time type="timestamp"/></field> 
+        
+        <field name="exportType" title="Export Type">
+            <drop-down current="first-in-list">
+            	<option key="screen" description="Screen"/>
+                <option key="pdf" description="PDF"/>
+            </drop-down>
+        </field>
+        <field name="submitButton" title="${uiLabelMap.CommonRun}" widget-style="btn btn-primary" event="onClick" 
+        	action="javascript:
+        	jQuery('#supplierPaymentSummary').validate();
+        	if(exportType.value == 'pdf'){
+        	 document.supplierPaymentSummary.action = 'supplierPaymentSummary.pdf';
+        	 document.supplierPaymentSummary.target = '_blank'
+        	 }else{
+        	 document.supplierPaymentSummary.action = 'supplierPaymentSummary';
+        	 document.supplierPaymentSummary.target = '_self'};">
+            <submit button-type="button"/>
+        </field>
+    </form>
+    
+    <form name="customerPaymentDetail" type="single" title="Customer Payment Detail" target="customerPaymentDetail"
+        header-row-style="header-row" default-table-style="basic-table">
+        <field name="partyId" title="Customer">
+            <lookup target-form-name="LookupCustomerName"/>
+        </field>
+        <field name="fromDate" title="From Date" required-field="true"><date-time type="timestamp"/></field>
+        <field name="thruDate" title="Thru Date" ><date-time type="timestamp"/></field> 
+        <field name="exportType" title="Export Type">
+            <drop-down current="first-in-list">
+            	<option key="screen" description="Screen"/>
+                <option key="pdf" description="PDF"/>
+            </drop-down>
+        </field>
+        <field name="submitButton" title="${uiLabelMap.CommonRun}" widget-style="btn btn-primary" event="onClick" 
+        	action="javascript:
+        	jQuery('#customerPaymentDetail').validate();
+        	if(exportType.value == 'pdf'){
+        	 document.customerPaymentDetail.action = 'customerPaymentDetail.pdf';
+        	 document.customerPaymentDetail.target = '_blank'
+        	 }else{
+        	 document.customerPaymentDetail.action = 'customerPaymentDetail';
+        	 document.customerPaymentDetail.target = '_self'};">
+            <submit button-type="button"/>
+        </field>
+    </form>
+    
+    <form name="supplierPaymentDetail" type="single" title="Supplier Payment Summary" 
+        header-row-style="header-row" default-table-style="basic-table">
+        <field name="partyId" title="Supplier">
+            <lookup target-form-name="LookupSupplierName"/>
+        </field>
+        <field name="fromDate" title="From Date" required-field="true"><date-time type="timestamp"/></field>
+        <field name="thruDate" title="Thru Date" ><date-time type="timestamp"/></field> 
+        <field name="exportType" title="Export Type">
+            <drop-down current="first-in-list">
+            	<option key="screen" description="Screen"/>
+                <option key="pdf" description="PDF"/>
+            </drop-down>
+        </field>
+        <field name="submitButton" title="${uiLabelMap.CommonRun}" widget-style="btn btn-primary" event="onClick" 
+        	action="javascript:
+        	jQuery('#supplierPaymentDetail').validate();
+        	if(exportType.value == 'pdf'){
+        	 document.supplierPaymentDetail.action = 'supplierPaymentDetail.pdf';
+        	 document.supplierPaymentDetail.target = '_blank'
+        	 }else{document.supplierPaymentDetail.target = '_self'};">
+            <submit button-type="button"/>
+        </field>
+    </form>
+    
+    
+</forms>

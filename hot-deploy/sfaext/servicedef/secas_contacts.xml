@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<service-eca xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.ofbiz.org/dtds/service-eca.xsd">
+   
+    <!-- after creating a contact, if the initial account was specified, assign the contact to the account -->
+    <eca service="sfaext.createContact" event="commit">
+        <condition field-name="accountPartyId" operator="is-not-empty"/>
+        <action service="sfaext.assignContactToAccount" mode="sync"/>
+    </eca>
+
+</service-eca>

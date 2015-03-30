@@ -1,0 +1,52 @@
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<zk>
+	<zscript>
+	import com.ndz.controller.*;
+	CompanyInformation controller = new CompanyInformation();
+</zscript>
+	<window title="${c:l('HRMS_SEARCHCOMPANY') }" border="normal" id="searchPanel" apply="${controller}" >
+		
+		
+		<zscript>
+	import com.ndz.controller.CompanyInformation;
+	import org.ofbiz.base.util.*;
+	import org.zkoss.util.resource.Labels;
+	CompanyInformation CompanyInformation = new CompanyInformation();
+	class MyRowRenderer implements RowRenderer {
+
+		MyRowRenderer() {
+		}
+
+		public void render(Row row, Object data) {
+			org.ofbiz.entity.GenericValue gv = ((org.ofbiz.entity.GenericValue) data);
+
+			new Label(gv.getString("partyId")).setParent(row);
+			new Label(gv.getString("groupName")).setParent(row);
+			new Label(gv.getString("logoImageUrl")).setParent(row);
+			row.setTooltiptext(Labels.getLabel("ToolTipText_DoubleClickToEdit"));
+
+			row.addEventListener("onDoubleClick",
+					new org.zkoss.zk.ui.event.EventListener() {
+						public void onEvent(Event event) throws Exception {
+							Window win = (Window)Executions.createComponents("/zul/company/editCompanyInformation.zul",null,null);
+							win.doModal();
+						}
+					});
+
+			
+
+		}
+	}
+	RowRenderer tableRenderer = new MyRowRenderer();
+</zscript>
+		<grid width="100%" id="dataGrid"
+			rowRenderer="${tableRenderer}" mold="paging" pageSize="8">
+			<columns menupopup="auto">
+				<column label="${c:l('FormFieldTitle_EmployeeId') }"/>
+				<column label="${c:l('FormFieldTitle_companyName') }" />
+				<column label="${c:l('FormFieldTitle_imageURL') }"></column>
+			</columns>
+		</grid>
+
+	</window>
+</zk>

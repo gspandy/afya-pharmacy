@@ -1,0 +1,39 @@
+<ENVELOPE>
+	<HEADER>
+		<VERSION>1</VERSION>
+		<TALLYREQUEST>Export</TALLYREQUEST>
+		<TYPE>Collection</TYPE>
+		<ID>Collection of Units</ID>
+	</HEADER>
+	<BODY>
+		<DESC>
+			<TDL>
+				<TDLMESSAGE>
+					<REPORT NAME="List of Units" ISMODIFY="No" ISFIXED="No" ISINITIALIZE="No" ISOPTION="No" ISINTERNAL="No">
+						<FORMS>List of Units</FORMS>
+					</REPORT>
+					<FORM NAME="List of Units" ISMODIFY="No" ISFIXED="No" ISINITIALIZE="No" ISOPTION="No" ISINTERNAL="No">
+						<TOPPARTS>List of Units</TOPPARTS>
+						<XMLTAG>"List of Units"</XMLTAG>
+					</FORM>
+					<PART NAME="List of Units" ISMODIFY="No" ISFIXED="No" ISINITIALIZE="No" ISOPTION="No" ISINTERNAL="No">
+						<TOPLINES>List of Units</TOPLINES>
+						<REPEAT>List of Units : Collection of Units</REPEAT>
+						<SCROLLED>Vertical</SCROLLED>
+					</PART>
+					<LINE NAME="List of Units" ISMODIFY="No" ISFIXED="No" ISINITIALIZE="No" ISOPTION="No" ISINTERNAL="No">
+						<LEFTFIELDS>List of Units</LEFTFIELDS>
+					</LINE>
+					<FIELD NAME="List of Units" ISMODIFY="No" ISFIXED="No" ISINITIALIZE="No" ISOPTION="No" ISINTERNAL="No">
+						<SET>$Name</SET>
+						<XMLTAG>"NAME"</XMLTAG>
+					</FIELD>
+					<COLLECTION NAME="Collection of Units" ISMODIFY="No" ISFIXED="No" ISINITIALIZE="No" ISOPTION="No"
+						ISINTERNAL="No">
+						<TYPE>Units</TYPE>
+					</COLLECTION>
+				</TDLMESSAGE>
+			</TDL>
+		</DESC>
+	</BODY>
+</ENVELOPE>

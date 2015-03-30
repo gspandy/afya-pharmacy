@@ -1,0 +1,103 @@
+<zk>
+<zscript><![CDATA[
+		Map map = Executions.getCurrent().getArg();
+		String id =(String) map.get(0);
+		String mapLabel = (String) map.get(1);
+		String description1 = "Search" + " " + mapLabel +" " +"Using";
+		String hiddenValue = (String) map.get(2);
+		org.ofbiz.entity.GenericDelegator delegator = com.ndz.zkoss.util.HrmsInfrastructure.getDelegator();//org.ofbiz.entity.GenericDelegator.getGenericDelegator("default");
+		String enumIdValue = delegator.getNextSeqId("Enumeration");
+		]]>
+		</zscript>
+	<window id="addEnumerationWindow" closable="true" width="45%"
+		height="45%" border="normal">
+		
+		<caption label="Add ${mapLabel }"
+			/>
+		<separator height="20px" />
+		
+				<textbox id="enumId" maxlength="20"  value='${enumIdValue}' visible="false"/>
+		<hbox visible="false">
+			<textbox id="enumTypeId" value="${hiddenValue }" ></textbox>
+		</hbox>
+		<separator />
+		<hbox>
+			<div align="right" width="170px">
+				<label id="label2" value="${mapLabel }"
+					style="font-weight:bold" /><label value="*" style="color:red" />
+			</div>
+			<div align="right">
+				<textbox id="enumCode" maxlength="50" />
+			</div>
+		</hbox>
+		<hbox visible="false">
+			<div align="right" width="170px">
+				<label id="label3" value="Sequence Id" style="font-weight:bold" /><label value="*" style="color:red" />
+			</div>
+			<div align="right">
+				<textbox id="sequenceId" maxlength="20" />
+			</div>
+		</hbox>
+		<separator />
+		<hbox>
+			<div align="right" width="170px">
+				<label id="label4" value="Description" style="font-weight:bold" /><label value="*" style="color:red" />
+			</div>
+			<div align="right">
+				<textbox id="description" rows="3" cols="30" maxlength="190" />
+			</div>
+		</hbox>
+		<separator />
+		<zscript>
+		 void validate(){
+		 	
+		 	/*String enumIdStr = enumId.getValue();
+		    boolean isNotEnumIdStr = org.ofbiz.base.util.UtilValidate.isAlphanumeric(enumIdStr) || enumIdStr.contains("_")||enumIdStr.contains(".")||enumIdStr.contains(" ");
+		    if (!isNotEnumIdStr) {
+			throw new WrongValueException(enumId, label1.getValue()+ " "+"can not be special characters/blank space. Only _ and . are allowed");
+			}	
+		 	if(com.ndz.zkoss.HrmsUtil.checkSpaceValidation(enumIdStr)){
+		 	    throw new WrongValueException(enumId,label1.getValue()+" "+"Required");
+		 	}
+		 	org.ofbiz.entity.GenericValue enumeration = delegator.findOne("Enumeration",org.ofbiz.base.util.UtilMisc.toMap("enumId",enumIdStr),false);
+		 	if(org.ofbiz.base.util.UtilValidate.isNotEmpty(enumeration)){
+		 			throw new WrongValueException(enumId,label1.getValue()+" "+"Already Exist");
+		 	}*/
+		 	
+		 	
+		 	String enumCodeStr = enumCode.getValue();
+		 	//boolean isNotEnumCodeStr = true;
+		 	boolean isNotEnumCodeStr=com.ndz.zkoss.HrmsUtil.checkSpecialCharacter(enumCodeStr);
+		 	//alert(isNotEnumCodeStr);
+			//isNotEnumCodeStr = org.ofbiz.base.util.UtilValidate.isAlphanumeric(enumCodeStr) || enumCodeStr.contains("_")||enumCodeStr.contains(".")||enumCodeStr.contains(" ");
+			if (isNotEnumCodeStr) {
+			throw new WrongValueException(enumCode, label2.getValue()+ " "+"can not be special characters/blank space. Only _ is allowed");
+			}
+		 	
+		 	if(com.ndz.zkoss.HrmsUtil.checkSpaceValidation(enumCodeStr)){
+		 		throw new WrongValueException(enumCode,label2.getValue()+" "+"Required");
+		 	}
+		 	String descriptionStr = description.getValue();
+		 	if(descriptionStr.equals("")){
+		 		throw new WrongValueException(description,label4.getValue()+" "+"Required");
+		 	}
+		 	if(com.ndz.zkoss.HrmsUtil.checkSpaceValidation(descriptionStr)){
+		 		throw new WrongValueException(description,label4.getValue()+" "+"Required");
+		 	}
+		 }
+		 
+		</zscript>
+		<hbox>
+			<div align="right" width="290px">
+				<button id="add" label="Save"
+					onClick='validate();com.ndz.controller.BudgetManagementController.createEnumeration(event);
+					Component searchButtonComp = Path.getComponent("/searchPanel//searchPerCompany");
+					if(searchButtonComp != null)
+					    Events.postEvent("onClick", searchButtonComp, null);
+					addEnumerationWindow.detach();' />
+				<button id="cancel" label="Close"
+					onClick="addEnumerationWindow.detach();" />
+			</div>
+		</hbox>
+	</window>
+</zk>

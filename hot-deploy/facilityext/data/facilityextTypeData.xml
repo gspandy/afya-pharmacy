@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<entity-engine-xml>
+<OrderType description="Reserve" hasTable="N" orderTypeId="RESERVE_ORDER" parentTypeId=""/>
+</entity-engine-xml>

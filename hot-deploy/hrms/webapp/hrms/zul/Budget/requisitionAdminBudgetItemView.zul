@@ -1,0 +1,102 @@
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<zk>
+	<zscript>
+<![CDATA[
+	import org.ofbiz.entity.*;
+	import org.ofbiz.base.util.*;
+	GenericValue userLogin = (GenericValue) Executions.getCurrent()
+			.getDesktop().getSession().getAttribute("userLogin");
+	employeeId = userLogin.getString("partyId");
+	GenericDelegator delegator = userLogin.getDelegator();
+	String budgetItemSeqId = (String) Executions.getCurrent().getArg().get(
+			"budgetItemSeqId");
+	GenericValue budgetItemGv = null;
+	List budgetItemList = null;
+	budgetItemList = delegator.findByAnd("BudgetItem", UtilMisc.toMap(
+			"budgetItemSeqId", budgetItemSeqId));
+	budgetItemGv = org.ofbiz.entity.util.EntityUtil.getFirst(budgetItemList);
+
+]]>
+</zscript>
+	<window border="normal" closable="true" width="30%" height="35%"
+		id="budgetWindow" contentStyle="overflow:auto" mode="modal">
+		<caption label="${c:l('HRMS_BUDGETITEMDETAILS') }"
+			style="font-weight:bold;color:black">
+		</caption>
+		<separator />
+		<hbox>
+			<div align="right" width="150px">
+				<label value="${c:l('FormFieldTitle_budgetItemId') }"
+					style="font-weight:bold" />
+			</div>
+			<div align="right">
+				<label value="${budgetItemGv.budgetItemSeqId}"
+					style="font-weight:bold;color:#666666" />
+			</div>
+		</hbox>
+		<separator />
+		<hbox>
+			<div align="right" width="150px">
+				<label value="${c:l('FormFieldTitle_budgetId') }" style="font-weight:bold" />
+			</div>
+			<div align="right">
+				<label value="${budgetItemGv.budgetId}"
+					style="font-weight:bold;color:#666666" />
+			</div>
+		</hbox>
+		<separator />
+		<hbox>
+			<div align="right" width="150px">
+				<label value="${c:l('FormFieldTitle_budgetItemType') }"
+					style="font-weight:bold" />
+			</div>
+			<div align="right">
+				<label 
+					style="font-weight:bold;color:#666666" >
+					<attribute name="onCreate">
+					if(budgetItemGv!=null)
+					self.setValue(com.ndz.zkoss.HrmsUtil.getBudgetItemType(budgetItemGv.getString("budgetItemTypeId")));
+					</attribute>
+					</label>
+			</div>
+		</hbox>
+		<separator />
+		<hbox>
+			<div align="right" width="150px">
+				<label value="${c:l('FormFieldTitle_amount') }" style="font-weight:bold" />
+			</div>
+			<div align="right">
+				<label value="${budgetItemGv.amount}"
+					style="font-weight:bold;color:#666666" />
+			</div>
+		</hbox>
+		<separator />
+		<hbox>
+			<div align="right" width="150px">
+				<label value="${c:l('FormFieldTitle_purpose') }" style="font-weight:bold" />
+			</div>
+			<div align="right">
+				<label value="${budgetItemGv.purpose}"
+					style="font-weight:bold;color:#666666" />
+			</div>
+		</hbox>
+		<separator />
+		<hbox>
+			<div align="right" width="150px">
+				<label value="${c:l('FormFieldTitle_justification') }" style="font-weight:bold" />
+			</div>
+			<div align="right">
+				<label value="${budgetItemGv.justification}"
+					style="font-weight:bold;color:#666666" />
+			</div>
+		</hbox>
+		<separator />
+		<div align="center">
+			<box align="center">
+				<button label="${c:l('ButtonCancel') }" onClick="budgetWindow.detach();"
+					mold="os">
+				</button>
+			</box>
+		</div>
+	</window>
+</zk>

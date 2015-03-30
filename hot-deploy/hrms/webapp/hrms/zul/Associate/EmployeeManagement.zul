@@ -1,0 +1,107 @@
+<?init class="org.zkoss.zk.ui.util.Composition" arg0="/WEB-INF/layout/templateWestCollapsible.zul"?>
+<?page title="HRMS-EmployeeManagement" id="employeemgmt"?>
+<?link rel="icon" type="image/x-icon" href="/images/companyLogo.png"?>
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<zk>
+	<zscript>
+	import org.zkoss.zk.ui.event.EventListener;
+<![CDATA[
+	org.ofbiz.security.Security security = requestScope.get("security");
+	boolean isAdmin = security.hasPermission("HUMANRES_ADMIN", userLogin);
+	boolean isManager = security.hasPermission("HUMANRES_MGR", userLogin);
+	boolean bothAccess = false;
+	if (isAdmin || isManager) {
+		bothAccess = true;
+	}
+]]>
+</zscript>
+	<div width="100%" self="@{define(westContent)}" id="terminationTemplateDiv">
+		<cell width="18%">
+			<groupbox mold="3d">
+				<caption label="${c:l('HRMS_EMPLOYEEMANAGEMENT') }"></caption>
+				<toolbarbutton label="${c:l('HRMS_SEARCHEMPLOYEE') }" id="myTerminationBtn">
+					<attribute name="onClick">
+						<![CDATA[
+	String tlBarBtnLabel = ((Toolbarbutton) terminationTemplateDiv.getFellow("myTerminationBtn")).getLabel();
+	Caption caption = (Caption) terminationTemplateDiv.getFellow("grpBoxCaption");
+	caption.setLabel(tlBarBtnLabel);
+	Component cmp1 = caption.getFirstChild();
+	if (cmp1 != null)
+		cmp1.detach();
+	Div div = (Div) terminationTemplateDiv.getFellow("appendWindow");
+	Component cmp = div.getFirstChild();
+	if (cmp != null)
+		cmp.detach();
+	Window win = (Window) Executions.createComponents("/zul/Associate/searchEmployeeAssociate.zul", null,org.ofbiz.base.util.UtilMisc.toMap("myTerminationBtn",myTerminationBtn));
+	div.appendChild(win);
+	unselectedToolbarbuttonColor(self);
+	selectedToolbarbuttonColor(self);
+]]>
+</attribute>
+				</toolbarbutton>
+				<separator />
+				<toolbarbutton label="${c:l('HRMS_CREATEEMPLOYEE') }" id="processTerminationBtn" if="${isAdmin}">
+					<attribute name="onClick">
+	String tlBarBtnLabel = ((Toolbarbutton) terminationTemplateDiv.getFellow("processTerminationBtn")).getLabel();
+	Caption caption = (Caption) terminationTemplateDiv.getFellow("grpBoxCaption");
+	caption.setLabel(tlBarBtnLabel);
+	Component cmp1 = caption.getFirstChild();
+	if (cmp1 != null)
+		cmp1.detach();
+	Div div = (Div) terminationTemplateDiv.getFellow("appendWindow");
+	Component cmp = div.getFirstChild();
+	if (cmp != null)
+		cmp.detach();
+	Map arg = new HashMap();
+	arg.put("window", terminationTemplateDiv);
+	Window win = (Window) Executions.createComponents("/zul/Associate/createNewEmployeeAssociate.zul", null, arg);
+	div.appendChild(win);
+	unselectedToolbarbuttonColor(self);
+	selectedToolbarbuttonColor(self);
+</attribute>
+				</toolbarbutton>
+				<separator />
+				<toolbarbutton label="${c:l('HumanResEmplPositionReportingStruct') }" id="reportingStructBtn" if="${isAdmin}">
+					<attribute name="onClick">
+	String tlBarBtnLabel = ((Toolbarbutton) terminationTemplateDiv.getFellow("reportingStructBtn")).getLabel();
+	Caption caption = (Caption) terminationTemplateDiv.getFellow("grpBoxCaption");
+	caption.setLabel(tlBarBtnLabel);
+	Component cmp1 = caption.getFellowIfAny("new");
+	if (cmp1 != null)
+		cmp1.detach();
+	caption.setLabel(tlBarBtnLabel);
+	Toolbarbutton newToolBarBtn = new Toolbarbutton();
+newToolBarBtn.setLabel(org.zkoss.util.resource.Labels.getLabel("HRMS_NEW"));
+	newToolBarBtn.setId("new");
+	newToolBarBtn.setImage("/images/icon/update.png");
+	newToolBarBtn.setStyle("color:#FFF");
+	newToolBarBtn.setParent(caption);
+	newToolBarBtn.addEventListener("onClick", new EventListener() {
+	public void onEvent(Event event) throws Exception {
+		Window applyWin = (Window) Executions.createComponents("/zul/employeeRequisition/addPositionReportingStructure.zul", null, null);
+		applyWin.doModal();
+	}
+});
+	Div div = (Div) terminationTemplateDiv.getFellow("appendWindow");
+	Component cmp = div.getFirstChild();
+	if (cmp != null)
+		cmp.detach();
+	Window win = (Window) Executions.createComponents("/zul/employeeRequisition/emplPositionReportingStructure.zul", null,org.ofbiz.base.util.UtilMisc.toMap("reportingStructBtn",reportingStructBtn));
+	div.appendChild(win);
+	unselectedToolbarbuttonColor(self);
+	selectedToolbarbuttonColor(self);
+</attribute>
+				</toolbarbutton>
+				<separator />
+			</groupbox>
+		</cell>
+
+
+	</div>
+	<div self="@{define(content)}">
+		<groupbox mold="3d" width="100%" closable="false" self="@{define(content)}">
+			<caption id="grpBoxCaption"></caption>
+			<div id="appendWindow" onCreate='Events.postEvent("onClick",myTerminationBtn,null)'></div>
+		</groupbox>
+	</div>
+</zk>

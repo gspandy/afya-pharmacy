@@ -1,0 +1,51 @@
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<zk>
+	<div id="taxCatagoryDiv">
+		<tabbox>
+			<tabs>
+				<tab label="${c:l('HRMS_TAX_CATEGORY') }" style="font-weight:bold"
+					selected="true" id="taxCatagoryTab">
+					<attribute name="onClick">
+	Div div = (Div) taxCatagoryDiv.getFellow("appendWindow");
+	Component firstChild = div.getFirstChild();
+	if (firstChild != null) {
+		div.removeChild(firstChild);
+	}
+	Window win = (Window) Executions.createComponents(
+			"/zul/payRollManagement/hrmsTaxCategory.zul", null, org.ofbiz.base.util.UtilMisc.toMap("taxCatagoryTab",taxCatagoryTab));
+	div.appendChild(win);
+</attribute>
+				</tab>
+				<tab label="${c:l('HRMS_TAX_ITEM') }" style="font-weight:bold" id="taxItem" >
+					<attribute name="onClick">
+	Div div = (Div) taxCatagoryDiv.getFellow("appendWindow");
+	Component firstChild = div.getFirstChild();
+	if (firstChild != null) {
+		div.removeChild(firstChild);
+	}
+	Window win = (Window) Executions.createComponents(
+			"/zul/payRollManagement/hrmsTaxItem.zul", null,org.ofbiz.base.util.UtilMisc.toMap("taxItem",taxItem));
+	div.appendChild(win);
+</attribute>
+				</tab>
+				<tab label="${c:l('HRMS_MANAGE_TAX_DECLARATION_DEFINITIONS') }" style="font-weight:bold" id="manageTaxDecDefn">
+					<attribute name="onClick">
+	Div div = (Div) taxCatagoryDiv.getFellow("appendWindow");
+	Component firstChild = div.getFirstChild();
+	if (firstChild != null) {
+		div.removeChild(firstChild);
+	}
+	Window win = (Window) Executions.createComponents(
+			"/zul/payRollManagement/hrmsTaxDeclarationDefinition.zul", null,org.ofbiz.base.util.UtilMisc.toMap("manageTaxDecDefn",manageTaxDecDefn));
+	div.appendChild(win);
+</attribute>
+				</tab>
+
+			</tabs>
+		</tabbox>
+		<div id="appendWindow"> 
+		<div onCreate='Events.postEvent("onClick",taxCatagoryTab,null)'/>
+
+		</div>
+	</div>
+</zk>

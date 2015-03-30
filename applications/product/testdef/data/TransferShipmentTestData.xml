@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<entity-engine-xml>
+
+    <Party partyId="IND-COMPANY" partyType="PARTY_GROUP" statusId="PARTY_ENABLED"></Party>
+    <PartyGroup partyId="IND-COMPANY" groupName="Indian Company"/>
+    <PartyRole partyId="IND-COMPANY" roleTypeId="_NA_"/>
+    <PartyRole partyId="ÏND-COMPANY" roleTypeId="INTERNAL_ORGANIZATIO"/>
+    <PartyAcctgPreference partyId="IND-COMPANY" baseCurrencyUomId="INR"/>
+
+    <Party partyId="DUBAI-BRANCH" partyType="PARTY_GROUP" statusId="PARTY_ENABLED"></Party>
+    <PartyGroup partyId="DUBAI-BRANCH" groupName="Indian Company"/>
+    <PartyRole partyId="DUBAI-BRANCH" roleTypeId="_NA_"/>
+    <PartyRole partyId="DUBAI-BRANCH" roleTypeId="INTERNAL_ORGANIZATIO"/>
+    <PartyAcctgPreference partyId="DUBAI-BRANCH" baseCurrencyUomId="AED"/>
+
+    <UomConversionDated uomId="AED" uomIdTo="INR" conversionFactor="0.0600" fromDate="2014-03-23 23:05:32.915" />
+
+    <Facility facilityId="FACILITY-1" ownerPartyId="IND-COMPANY" facilityName="India Warehouse"/>
+    <Facility facilityId="FACILITY-2" ownerPartyId="DUBAI-BRANCH" facilityName="Dubai Warehouse"/>
+
+    <Product productId="Xfer-Product-1" productTypeId="FINISHED_GOOD" productName="Xfr Product 1" internalName="Xfr Product 1" isVirtual="N" isVariant="N" createdDate="2006-03-23 23:05:32.915" />
+    <Product productId="Xfer-Product-2" productTypeId="FINISHED_GOOD" productName="Xfr Product 2" internalName="Xfr Product 2" isVirtual="N" isVariant="N" createdDate="2006-03-23 23:05:32.915" />
+
+    <InventoryItem inventoryItemId="9001" productId="Xfer-Product-1" inventoryItemTypeId="NON_SERIAL_INV_ITEM" statusId="INV_AVAILABLE" availableToPromiseTotal="2"  quantityOnHandTotal="2" unitCost="200" currencyUomId="INR" facilityId="Facility-1" dateTimeReceived="2006-03-23 23:05:32.915"/>
+    <InventoryItem inventoryItemId="9002" productId="Xfer-Product-2" inventoryItemTypeId="NON_SERIAL_INV_ITEM" statusId="INV_AVAILABLE" availableToPromiseTotal="8"  quantityOnHandTotal="8" unitCost="800" currencyUomId="INR" facilityId="Facility-1" dateTimeReceived="2006-03-23 23:05:32.915"/>
+
+    <Shipment shipmentId="9000" statusId="SHIPMENT_INPUT"  shipmentTypeId="TRANSFER" originFacilityId="Facility-1" destinationFacilityId="Facility-2" currencyUomId="INR" estimatedShipCost="80"
+              additionalShippingCharge="20" methodOfApportion="BASED_ON_VALUE"/>
+
+    <ShipmentItem shipmentId="9000" shipmentItemSeqId="00001" productId="Xfer-Product-1" quantity="2"/>
+    <ShipmentItem shipmentId="9000" shipmentItemSeqId="00002" productId="Xfer-Product-2" quantity="8"/>
+
+</entity-engine-xml>

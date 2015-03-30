@@ -1,0 +1,28 @@
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<zk>
+	<window title="Reasons to Disagree" border="normal" height="200px"
+		id="reasonstoDisagree" self="@{define(content)}" apply="com.ndz.controller.PerformanceReview"
+		width="650px">
+		<div align="center">
+		<label id="hiddenemplPerfReviewIdForApproval" visible="false" />
+		<label id="hiddenemplmanagerId" visible="false"/>
+<zscript>
+   Map map = Executions.getCurrent().getArg();
+   String approvalId =(String) map.get(0);
+   hiddenemplPerfReviewIdForApproval.setValue(approvalId);
+   hiddenemplmanagerId.setValue(arg.get("hiddenemplmanagerId").toString());
+</zscript>
+		<separator />
+		<label value="${c:l('HRMS_REASONS_TO_DISAGREE_IF_ANY') } "
+			style="font-weight:bold" />
+		<separator />
+		<textbox width="90%" height="60px" multiline="true"
+			id="textboxDisagreeComments" onBlur="self.setValue(self.getValue().trim());"/>
+
+		<hbox style="margin-top:20px">
+			<button label="${c:l('HRMS_DISAGREE') }" id="buttonPerfReviewDisagree" />
+			<button label="${c:l('HRMS_CANCEL') }" onClick="reasonstoDisagree.detach()" />
+		</hbox>
+	</div>
+	</window>
+</zk>

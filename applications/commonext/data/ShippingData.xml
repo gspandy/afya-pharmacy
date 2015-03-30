@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<entity-engine-xml>
+    <ShipmentMethodType description="Customer Truck" shipmentMethodTypeId="CUSTOMER_TRUCK"/>
+    <ShipmentMethodType description="ZPC Truck" shipmentMethodTypeId="ZPC_TRUCK"/>
+    <ShipmentMethodType description="Third Party Truck" shipmentMethodTypeId="THIRD_PARTY_TRUCK"/>
+</entity-engine-xml>

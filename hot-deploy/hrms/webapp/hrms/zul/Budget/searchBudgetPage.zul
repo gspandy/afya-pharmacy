@@ -1,0 +1,169 @@
+<?component name="findbox" macroURI="../macros/textFindIgnoreCase.zul" id="macro1"?>
+<?component name="fromDatebox" macroURI="../macros/datefindMacro.zul" id="macro2"?>
+<?component name="thruDatebox" macroURI="../macros/datefindMacro.zul" id="macro3"?>
+<?component name="selectbox" macroURI="../macros/findselectbox.zul" id="macro4"?>
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<zk xmlns:h="http://www.zkoss.org/2005/zk/native">
+	<zscript>
+	import com.ndz.controller.*;
+	SearchController controller = new SearchController();
+	org.ofbiz.security.Security security = (org.ofbiz.security.Security )requestScope.get("security");
+	org.ofbiz.entity.GenericValue userLogin = (org.ofbiz.entity.GenericValue) Executions.getCurrent().getDesktop().getSession().getAttribute("userLogin");
+	boolean isAdmin = security.hasPermission("HUMANRES_ADMIN", userLogin);
+	Toolbarbutton budgetToolbarButton = (Toolbarbutton)Executions.getCurrent().getArg().get("budgetToolbarButton");
+</zscript>
+	<window id="searchPanel" apply="${controller}" border="normal" onOK="activateSearch()">
+	<caption label="Budget">
+	<div align="right">
+					<toolbarbutton label="${c:l('HRMS_NEW') }" image="/images/icon/update.png" style="font-weight:bold;color:#FFFFFF" if="${isAdmin}">
+					<attribute name="onClick" >
+						{
+							final Window win = (Window) Executions.createComponents("/zul/budget/addBudget.zul", null, null);
+							win.setMaximizable(true);
+							win.doModal();
+						}
+					</attribute>
+					</toolbarbutton>
+				</div>
+	</caption>
+		<custom-attributes entityName="Budget"></custom-attributes>
+		<separator height="10px"></separator>
+		<h:table  style="margin-left:20%">
+			<div align="center">
+				<h:tr height="50px">
+					<h:td>
+						<findbox fieldLabel="${c:l('FormFieldTitle_budgetId') }" name="budgetId"
+							type="text" cols="40" />
+					</h:td>
+				</h:tr>
+			</div>
+		</h:table>
+		<box width="100%" height="30px" align="center">
+			<hbox>
+				<button label="${c:l('HumanResSearch') }" mold="os"
+					id="searchButton"
+					onClick="results.setVisible(true);results.setFocus(true)">
+				</button>
+				<button label="${c:l('HRMS_ResetButton') }"
+					onClick='Events.postEvent("onClick",budgetToolbarButton,null)'  />
+			</hbox>
+		</box>
+		<zscript>
+	void activateSearch() {
+		Events.postEvent("onClick", searchPerCompany, null);
+	}
+</zscript>
+		<zscript>
+		<![CDATA[
+	import org.zkoss.util.resource.Labels;
+	import org.ofbiz.base.util.*;
+	import org.zkoss.zk.ui.event.EventListener;
+	import org.ofbiz.entity.*;
+	class MyRowRenderer implements RowRenderer {
+
+		MyRowRenderer() {
+		}
+
+		public void render(Row row, Object data) {
+			org.ofbiz.entity.GenericValue gv = ((org.ofbiz.entity.GenericValue) data);
+			if(isAdmin){
+			row.setTooltiptext("DoubleClick To Edit");
+			}
+			new Label(gv.getString("budgetId")).setParent(row);
+			GenericValue budgetTypeGv = delegator.findByPrimaryKey(
+					"BudgetType", UtilMisc.toMap("budgetTypeId", gv
+							.getString("budgetTypeId")));
+			String budgetType = budgetTypeGv.getString("description");
+			new Label(budgetType).setParent(row);
+			GenericDelegator delegator = com.ndz.zkoss.util.HrmsInfrastructure.getDelegator();//GenericDelegator.getGenericDelegator("default");
+			GenericValue customTimePeriodGv = delegator.findByPrimaryKey(
+					"CustomTimePeriod", UtilMisc.toMap("customTimePeriodId", gv
+							.getString("customTimePeriodId")));
+			String periodType = customTimePeriodGv.getString("periodName");
+			new Label(periodType).setParent(row);
+			new Label(gv.getString("comments")).setParent(row);
+			if(isAdmin){
+				Button btn = new com.ndz.zkoss.HrmsButton();
+				btn.setParent(row);
+				btn.setLabel("Delete");
+				btn.setTooltiptext("Click here to delete");
+				btn.setSclass("btnDelete");
+				btn.addEventListener("onClick", new EventListener() {
+					public void onEvent(Event event) throws Exception {
+						com.ndz.controller.BudgetManagementController.deleteBudget(event, gv);
+					}
+			});
+			}
+			Map arg = new HashMap();
+			arg.put("gv", gv);
+			if(isAdmin){
+			row.addEventListener("onDoubleClick", new EventListener() {
+
+				public void onEvent(Event event) throws Exception {
+					Window win = (Window) Executions.createComponents(
+							"/zul/Budget/editBudget.zul", null, arg);
+					win.doModal();
+				}
+			});
+			}
+
+		}
+	}
+	RowRenderer tableRenderer = new MyRowRenderer();
+]]>
+</zscript>
+<separator/>
+	<panel id="results" visible="false">
+			<panelchildren>
+			<h:table width="100%" style="border:0px" cellspacing="0px" cellpadding="0px">
+				<h:tr>
+					<h:td width="90%">
+						<label value="${c:l('HRMS_SEARCHRESULTS') }" ></label>
+					</h:td>
+					<h:td width="10%" style="text-align:right">
+						<paging id="paging" />
+					</h:td>
+				</h:tr>
+			</h:table>
+			<grid width="100%" id="dataGrid"
+				rowRenderer="${tableRenderer}">
+				<columns menupopup="auto">
+					<column label="${c:l('FormFieldTitle_budgetId') }"
+						onDrop="move(event.dragged)" draggable="col" droppable="col"
+						style="font-weight:bold" sortDirection="ascending" />
+					<column label="${c:l('FormFieldTitle_budgetType') }"
+						onDrop="move(event.dragged)" draggable="col" droppable="col"
+						style="font-weight:bold" sortDirection="ascending" />
+					<column label="${c:l('FormFieldTitle_customTimePeriod') }"
+						onDrop="move(event.dragged)" draggable="col" droppable="col"
+						style="font-weight:bold" />
+					<column label="${c:l('FormFieldTitle_comments') }"
+						onDrop="move(event.dragged)" draggable="col" droppable="col"
+						style="font-weight:bold" />
+					<column label="${c:l('FormFieldTitle_Action') }" onDrop="move(event.dragged)"
+						draggable="col" droppable="col" style="font-weight:bold" align="center" onClick="giveAlert()" if="${isAdmin}"/>
+				</columns>
+			</grid>
+		</panelchildren>
+		</panel>
+		<zscript><![CDATA[
+	void move(Component dragged) {
+		if (dragged.getClass().getName().endsWith("Column")) {
+			int maxRows = dragged.getGrid().getRows().getChildren().size();
+			int i = dragged.getParent().getChildren().indexOf(dragged);
+			int j = self.getParent().getChildren().indexOf(self);
+
+			//move celles for each row 
+			for (int k = 0; k < maxRows; k++)
+				self.getGrid().getCell(k, j).parent.insertBefore(self.getGrid()
+						.getCell(k, i), self.getGrid().getCell(k, j));
+		}
+
+		self.parent.insertBefore(dragged, self);
+	}
+	
+	
+	
+]]></zscript>
+	</window>
+</zk>

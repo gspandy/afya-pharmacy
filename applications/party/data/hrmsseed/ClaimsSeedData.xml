@@ -1,0 +1,22 @@
+<entity-engine-xml>
+    <StatusType description="Employee Claims Status Changes" hasTable="N" parentTypeId="" statusTypeId="CLAIM_STATUS"/>
+ 
+    <StatusItem statusId="CL_SAVED" statusTypeId="CLAIM_STATUS" statusCode="SAVED" sequenceId="01" description="Saved"/>
+    <StatusItem statusId="CL_SUBMITTED" statusTypeId="CLAIM_STATUS" statusCode="SUBMITTED" sequenceId="02" description="Submitted"/>
+    <StatusItem statusId="CL_MGR_APPROVED" statusTypeId="CLAIM_STATUS" statusCode="MGR_APPROVED" sequenceId="03" description="Manager Approved"/>
+    <StatusItem statusId="CL_MGR_REJECTED" statusTypeId="CLAIM_STATUS" statusCode="MGR_REJECTED" sequenceId="04" description="Manager Rejected"/> 
+	<StatusItem statusId="CL_ADM_APPROVED" statusTypeId="CLAIM_STATUS" statusCode="ADM_APPROVED" sequenceId="05" description="Admin Approved"/>
+	<StatusItem statusId="CL_ADM_REJECTED" statusTypeId="CLAIM_STATUS" statusCode="ADM_REJECTED" sequenceId="06" description="Admin Rejected"/>
+ 
+ 	<EnumerationType enumTypeId="CLAIM_TYPE" hasTable="N" description="Claim Types" />
+ 	
+ 	<Enumeration enumId="CT_TRAVEL" enumTypeId="CLAIM_TYPE" enumCode="TRAVEL" sequenceId="01" description="Local Travel Allowance"/>
+	<Enumeration enumId="CT_LUNCH" enumTypeId="CLAIM_TYPE" enumCode="LUNCH" sequenceId="02" description="Lunch Allowance"/>
+	<Enumeration enumId="CT_MEDICAL" enumTypeId="CLAIM_TYPE" enumCode="MEDICAL" sequenceId="03" description="Medical Allowance"/>
+ 	<Enumeration enumId="CT_FUEL" enumTypeId="CLAIM_TYPE" enumCode="FUEL" sequenceId="04" description="Weekly Fuel Allowance"/>
+	<Enumeration enumId="CT_PHONE" enumTypeId="CLAIM_TYPE" enumCode="PHONE" sequenceId="05" description="Phone Allowance"/>
+
+	
+	<UomConversionDated uomId="USD" uomIdTo="ZMW" fromDate="2014-01-01 00:00:00.0" conversionFactor="6.16"/>
+	<UomConversionDated uomId="EUR" uomIdTo="ZMW" fromDate="2014-01-01 00:00:00.0" conversionFactor="7.94995"/>
+ </entity-engine-xml>

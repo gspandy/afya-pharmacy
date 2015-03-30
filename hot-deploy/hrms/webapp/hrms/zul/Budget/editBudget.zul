@@ -1,0 +1,181 @@
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<zk>
+	<zscript>
+	<![CDATA[
+	import org.ofbiz.entity.*;
+	GenericValue gv = Executions.getCurrent().getArg().get("gv");
+	String budgetId = gv.getString("budgetId");
+	String budgetTypeId = gv.getString("budgetTypeId");
+	String customTimePeriodId = gv.getString("customTimePeriodId");
+	String commentsValue = gv.getString("comments");
+	GenericDelegator delegator = com.ndz.zkoss.util.HrmsInfrastructure.getDelegator();//GenericDelegator.getGenericDelegator("default");
+	Set fieldToSelect = new HashSet();
+	fieldToSelect.add("budgetTypeId");
+	fieldToSelect.add("description");
+	Set periodTypeToSelect = new HashSet();
+	periodTypeToSelect.add("customTimePeriodId");
+	periodTypeToSelect.add("periodTypeId");
+	periodTypeToSelect.add("periodName");
+	
+	List budgetTypeList = null;
+	budgetTypeList = delegator.findList("BudgetType", null, fieldToSelect,
+			null, null, false);
+	budgetTypeList.add(0, null);
+	budgetTypeArray = budgetTypeList.toArray(new GenericValue[budgetTypeList
+			.size()]);
+	SimpleListModel budgetTypeModel = new SimpleListModel(budgetTypeArray);
+	List periodTypeList = null;
+	periodTypeList = delegator.findList("CustomTimePeriod", null,
+			periodTypeToSelect, null, null, false);
+	periodTypeList.add(0, null);
+	periodTypeArray = periodTypeList.toArray(new GenericValue[periodTypeList
+			.size()]);
+	SimpleListModel periodTypeModel = new SimpleListModel(periodTypeArray);
+	public class BudgetItemRenderer implements ListitemRenderer {
+
+		public BudgetItemRenderer() {
+		}
+
+		public void render(Listitem li, Object data) {
+			if (data instanceof GenericValue) {
+				GenericValue val = (GenericValue) data;
+				li.setLabel(val.getString("description"));
+				li.setValue(val.getString("budgetTypeId"));
+				if ((val.getString("budgetTypeId")).equals(budgetTypeId)) {
+					li.setSelected(true);
+				}
+			}
+		}
+	}
+	
+	ListitemRenderer budgetItemRenderer = new BudgetItemRenderer();
+	public class PeriodItemRenderer implements ListitemRenderer {
+
+		public PeriodItemRenderer() {
+		}
+
+		public void render(Listitem li, Object data) {
+			if (data instanceof GenericValue) {
+				GenericValue val = (GenericValue) data;
+				li.setLabel(val.getString("periodName"));
+				li.setValue(val.getString("customTimePeriodId"));
+				if ((val.getString("customTimePeriodId"))
+						.equals(customTimePeriodId)) {
+					li.setSelected(true);
+				}
+			}
+		}
+	}
+	ListitemRenderer periodItemRenderer = new PeriodItemRenderer();
+	
+	
+	
+]]>
+</zscript>
+	
+		<window id="editBudgetWindow" closable="true" width="50%" maximizable="true"
+		height="50%" border="normal" contentStyle="overflow:auto" >
+		<caption label="${c:l('FormFieldTitle_editBudget') }" />
+		<separator height="20px" />
+		<hbox>
+			<div align="right" width="150px">
+				<label value="${c:l('FormFieldTitle_budgetId') }" style="font-weight:bold" />
+			</div>
+			<div align="right">
+				<textbox id="budgetId" value="${budgetId}"
+					visible="false" />
+				<label value="${budgetId}" />
+			</div>
+		</hbox>
+		<separator />
+		<hbox>
+			<div align="right" width="150px">
+				<label value="${c:l('FormFieldTitle_budgetTypeId') }" style="font-weight:bold" />
+				<label value="*" style="color:red" />
+			</div>
+			<div align="right">
+				<listbox id="budgetTypeId" mold="select" 
+					model="${budgetTypeModel}" itemRenderer="${budgetItemRenderer}" />
+			</div>
+		</hbox>
+		<separator />
+		<hbox>
+			<div align="right" width="150px">
+				<label value="${c:l('FormFieldTitle_customTimePeriod') }"
+					style="font-weight:bold" />
+					<label value="*" style="color:red" />
+			</div>
+			<div align="right">
+				<listbox id="customTimePeriodId"
+					model="${periodTypeModel}" mold="select"
+					itemRenderer="${periodItemRenderer}" 
+					onSelect="showPeriod(self.selectedItem);Clients.closeErrorBox(self)" />
+					<label id="fromDate"  />
+					<label id="delemeter" value="/" visible="false"/>
+					<label id="thruDate"  />
+			</div>
+		</hbox>
+		<zscript>
+		<![CDATA[
+	import org.ofbiz.entity.*;
+	GenericDelegator delegator = com.ndz.zkoss.util.HrmsInfrastructure.getDelegator();//GenericDelegator.getGenericDelegator("default");
+	void showPeriod(Listitem periodTypeIdItem) {
+		String periodTypeId = (String) periodTypeIdItem.getValue();
+		List periodList = delegator.findByAnd("CustomTimePeriod",
+				org.ofbiz.base.util.UtilMisc.toMap("customTimePeriodId",
+						periodTypeId));
+		GenericValue periodGv = org.ofbiz.entity.util.EntityUtil
+				.getFirst(periodList);
+		if(customTimePeriodId.getSelectedItem().getValue()!= null){
+		String fromDate = org.ofbiz.base.util.UtilDateTime.formatDate(periodGv.getDate("fromDate"));
+		String thruDate = org.ofbiz.base.util.UtilDateTime.formatDate(periodGv.getDate("thruDate"));
+		Label fromDateLbl = editBudgetWindow.getFellow("fromDate");
+		fromDateLbl.setValue("Start Date:"+fromDate);
+		Label thruDateLbl = editBudgetWindow.getFellow("thruDate");
+		thruDateLbl.setValue("End Date:"+thruDate);
+		Label showDate = editBudgetWindow.getFellow("delemeter");
+		showDate.setVisible(true);
+		}
+	}
+		]]>
+		</zscript>
+		<separator />
+		<hbox>
+			<div align="right" width="150px">
+				<label value="${c:l('FormFieldTitle_comments') }" style="font-weight:bold" />
+				
+			</div>
+			<div align="right">
+				<textbox id="comments" rows="3" cols="30"
+					value="${commentsValue}" />
+			</div>
+		</hbox>
+		
+		<zscript>
+		validate(){
+		
+		
+		if (com.ndz.zkoss.HrmsUtil.listboxValidation(budgetTypeId)) {
+			throw new WrongValueException(budgetTypeId, "Budget Type Id Required");
+		}
+		if (com.ndz.zkoss.HrmsUtil.listboxValidation(customTimePeriodId)) {
+			throw new WrongValueException(customTimePeriodId, "Custom Time Period Required");
+		}
+		}
+		
+		</zscript>
+		
+		<separator />
+		<hbox>
+			<div align="right" width="261px">
+				<button id="update" label="${c:l('btnSave') }"
+					onClick='validate();com.ndz.controller.BudgetManagementController.updateBudget(event);Events.postEvent("onClick", Path
+				.getComponent("/searchPanel//searchButton"), null);editBudgetWindow.detach();' />
+				<button id="cancel" label="${c:l('ButtonCancel') }"
+					onClick="editBudgetWindow.detach();" />
+			</div>
+		</hbox>
+		
+		
+	</window>
+</zk>

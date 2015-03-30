@@ -1,0 +1,922 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+Licensed to the Apache Software Foundation (ASF) under one
+or more contributor license agreements.  See the NOTICE file
+distributed with this work for additional information
+regarding copyright ownership.  The ASF licenses this file
+to you under the Apache License, Version 2.0 (the
+"License"); you may not use this file except in compliance
+with the License.  You may obtain a copy of the License at
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing,
+software distributed under the License is distributed on an
+"AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+KIND, either express or implied.  See the License for the
+specific language governing permissions and limitations
+under the License.
+-->
+
+<screens xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:noNamespaceSchemaLocation="http://ofbiz.apache.org/dtds/widget-screen.xsd">
+
+    <screen name="CommonManufacturingReportsDecorator">
+        <section>
+            <actions>
+                <set field="headerItem" value="reports"/>
+            </actions>
+            <widgets>
+                <decorator-screen name="main-decorator" location="${parameters.mainDecoratorLocation}">
+                    <decorator-section name="body">
+                        <section>
+                            <widgets>
+                                <container>
+                                    <decorator-section-include name="body" />
+                                </container>
+                            </widgets>
+                        </section>
+                    </decorator-section>
+                </decorator-screen>
+            </widgets>
+        </section>
+    </screen>
+
+    <!-- orignal ManufacturingReports
+       <screen name="ManufacturingReports">
+        <section>
+            <actions>
+                <set field="titleProperty" value="ManufacturingReports"/>
+                <set field="headerItem" value="ManufacturingReports"/>
+                <set field="mrpName" from-field="parameters.mrpName"/>
+            </actions>
+            <widgets>
+                <decorator-screen name="main-decorator" location="${parameters.mainDecoratorLocation}">
+                    <decorator-section name="body">
+                        <screenlet title="${uiLabelMap.ManufacturingReports}">
+                            <include-form name="SelectMrpName" location="component://manufacturing/webapp/manufacturing/jobshopmgt/ProductionRunForms.xml"/>
+                            <platform-specific>
+                                <html><html-template location="component://manufacturing/webapp/manufacturing/jobshopmgt/MrpReports.ftl"/></html>
+                            </platform-specific>
+                        </screenlet>
+                    </decorator-section>
+                </decorator-screen>
+            </widgets>
+        </section>
+    </screen>
+
+    -->
+
+    <screen name="ManufacturingReports">
+        <section>
+            <actions>
+                <set field="titleProperty" value="ManufacturingReports"/>
+                <set field="headerItem" value="mnfReports"/>
+                <set field="parameters.portalPageId" value="MnfReportPage"/>
+            </actions>
+            <widgets>
+                <decorator-screen name="main-decorator" location="${parameters.mainDecoratorLocation}">
+                    <decorator-section name="body">
+                        <include-screen name="PortalPageScreen" location="component://common/widget/CommonScreens.xml" />
+                    </decorator-section>
+                </decorator-screen>
+            </widgets>
+        </section>
+    </screen>
+    <screen name="ProdRunReport">
+        <section>
+            <actions>
+                <entity-condition list="facilities" entity-name="Facility">
+
+                </entity-condition>
+            </actions>
+            <widgets>
+                <screenlet title="Production Run">
+                    <section>
+                        <widgets>
+                            <platform-specific>
+                                <html><html-template location="component://manufacturing/webapp/manufacturing/reports/prodRunForm.ftl"/></html>
+                            </platform-specific>
+                        </widgets>
+                    </section>
+                </screenlet>
+            </widgets>
+        </section>
+    </screen>
+    <screen name="ProdRunCompletedOnTimeExcel">
+        <section>
+            <actions>
+                <set field="titleProperty" value="ProdRunCompletedOnTimeExcel"/>
+                <set field="headerItem" value="reports"/>
+
+                <set field="fromDate" from-field="parameters.fromOrderDate" type="Timestamp"/>
+                <set field="thruDate" from-field="parameters.thruOrderDate" type="Timestamp"/>
+                <set field="pRunStatusId" from-field="parameters.currentStatusId"/>
+                <set field="workEffortTypeId" from-field="parameters.workEffortTypeId"/>
+                <set field="facilityId" from-field="parameters.facilityId"/>
+                <set field="productId" from-field="parameters.productId"/>
+                <script location="component://manufacturing/webapp/manufacturing/WEB-INF/actions/reports/PrunCompletedOnTime.groovy"/>
+            </actions>
+            <widgets>
+                <include-form name="ListPRunCompletedOnTimeExcel" location="component://manufacturing/widget/manufacturing/ReportForms.xml"/>
+            </widgets>
+        </section>
+    </screen>
+    <screen name="ProdRunCompletedOnTimePdf">
+        <section>
+            <actions>
+                <set field="titleProperty" value="ProdRunCompletedOnTimeExcel"/>
+                <set field="headerItem" value="reports"/>
+                <set field="viewIndex" value="${parameters.VIEW_INDEX}" default-value="0" type="Integer"/>
+                <set field="fromDate" from-field="parameters.fromOrderDate" type="Timestamp"/>
+                <set field="thruDate" from-field="parameters.thruOrderDate" type="Timestamp"/>
+                <set field="pRunStatusId" from-field="parameters.currentStatusId"/>
+                <set field="workEffortTypeId" from-field="parameters.workEffortTypeId"/>
+                <set field="facilityId" from-field="parameters.facilityId"/>
+                <set field="productId" from-field="parameters.productId"/>
+                <property-map resource="OrderUiLabels" map-name="uiLabelMap" global="true"/>
+                <property-map resource="ProductUiLabels" map-name="uiLabelMap" global="true"/>
+                <property-map resource="ManufacturingUiLabels" map-name="uiLabelMap" global="true"/>
+                <property-map resource="CommonUiLabels" map-name="uiLabelMap" global="true"/>
+                <script location="component://manufacturing/webapp/manufacturing/WEB-INF/actions/reports/PrunCompletedOnTime.groovy"/>
+            </actions>
+            <widgets>
+                <platform-specific>
+                    <xsl-fo><html-template location="component://manufacturing/webapp/manufacturing/reports/ProdRunFilteredDoc.fo.ftl"/></xsl-fo>
+                </platform-specific>
+            </widgets>
+        </section>
+    </screen>
+
+    <screen name="PrunAvgEstCostRep">
+        <section>
+            <actions>
+                <entity-condition list="facilities" entity-name="Facility">
+
+                </entity-condition>
+            </actions>
+            <widgets>
+                <screenlet title="Actual Average Cost Vs Estimated Average Cost">
+                    <platform-specific>
+                        <html><html-template location="component://manufacturing/webapp/manufacturing/reports/pRunAvgCostVsEstiCostForm.ftl"/></html>
+                    </platform-specific>
+                </screenlet>
+            </widgets>
+        </section>
+    </screen>
+
+    <screen name="PrunAvgCostEstCostPdf">
+        <section>
+            <actions>
+                <set field="titleProperty" value="PrunAvgCostEstCostPdf"/>
+                <set field="headerItem" value="reports"/>
+                <set field="viewIndex" value="${parameters.VIEW_INDEX}" default-value="0" type="Integer"/>
+                <property-map resource="OrderUiLabels" map-name="uiLabelMap" global="true"/>
+                <property-map resource="ProductUiLabels" map-name="uiLabelMap" global="true"/>
+                <property-map resource="ManufacturingUiLabels" map-name="uiLabelMap" global="true"/>
+                <property-map resource="CommonUiLabels" map-name="uiLabelMap" global="true"/>
+                <script location="component://manufacturing/webapp/manufacturing/WEB-INF/actions/reports/PrunAvgCostVsEstCost.groovy"/>
+            </actions>
+            <widgets>
+                <platform-specific>
+                    <xsl-fo><html-template location="component://manufacturing/webapp/manufacturing/reports/PrunAvgCostVsEstDoc.fo.ftl"/></xsl-fo>
+                </platform-specific>
+            </widgets>
+        </section>
+    </screen>
+
+    <screen name="PrunAvgCostEstCostExcel">
+        <section>
+            <actions>
+                <script location="component://manufacturing/webapp/manufacturing/WEB-INF/actions/reports/PrunAvgCostVsEstCost.groovy"/>
+            </actions>
+            <widgets>
+                <include-form name="PrunAvgCostEstCostResForm" location="component://manufacturing/widget/manufacturing/ReportForms.xml"/>
+            </widgets>
+        </section>
+    </screen>
+
+    <screen name="StoppageAnalysisRep">
+        <section>
+            <actions>
+                <entity-condition list="facilities" entity-name="Facility">
+                </entity-condition>
+            </actions>
+            <widgets>
+                <screenlet title="Stoppage Analysis">
+                    <include-form name="StoppageAnalysisRepForm" location="component://manufacturing/widget/manufacturing/ReportForms.xml"/>
+                </screenlet>
+            </widgets>
+        </section>
+    </screen>
+
+    <screen name="StoppageAnalysisRepPdf">
+        <section>
+            <actions>
+                <set field="titleProperty" value="StoppageAnalysisRepPdf"/>
+                <set field="headerItem" value="reports"/>
+                <set field="footerLabel" value="Stoppage Analysis"/>
+                <set field="viewIndex" value="${parameters.VIEW_INDEX}" default-value="0" type="Integer"/>
+                <property-map resource="OrderUiLabels" map-name="uiLabelMap" global="true"/>
+                <property-map resource="ProductUiLabels" map-name="uiLabelMap" global="true"/>
+                <property-map resource="ManufacturingUiLabels" map-name="uiLabelMap" global="true"/>
+                <property-map resource="CommonUiLabels" map-name="uiLabelMap" global="true"/>
+                <set field="fromDate" from-field="parameters.fromDate"
+                     type="Timestamp" />
+                <set field="thruDate" from-field="parameters.thruDate"
+                     type="Timestamp" />
+                <set field="workEffortTypeId" from-field="parameters.workEffortTypeId" type="String" />
+                <script location="component://manufacturing/webapp/manufacturing/WEB-INF/actions/reports/StoppageAnalysis.groovy"/>
+            </actions>
+            <widgets>
+                <decorator-screen name="FoReportDecorator" location="component://common/widget/CommonScreens.xml">
+                    <decorator-section name="header">
+                        <section>
+                            <widgets>
+                                <include-screen name="ZPCHeader"
+                                                location="component://manufacturing/widget/manufacturing/ReportScreens.xml"/>
+                            </widgets>
+                        </section>
+                    </decorator-section>
+                    <decorator-section name="body">
+                        <section>
+                            <widgets>
+                                <platform-specific>
+                                    <xsl-fo><html-template location="component://manufacturing/webapp/manufacturing/reports/StoppageAnalysisDoc.fo.ftl"/></xsl-fo>
+                                </platform-specific>
+                            </widgets>
+                        </section>
+                    </decorator-section>
+                </decorator-screen>
+            </widgets>
+        </section>
+    </screen>
+
+    <screen name="TaskAvgEstCostRep">
+        <section>
+            <actions>
+                <entity-condition list="facilities" entity-name="Facility">
+
+                </entity-condition>
+            </actions>
+            <widgets>
+                <screenlet title="Task Wise Actual Average Cost Vs Estimated Average Cost">
+                    <platform-specific>
+                        <html><html-template location="component://manufacturing/webapp/manufacturing/reports/taskAvgCostVsEstiCostForm.ftl"/></html>
+                    </platform-specific>
+                </screenlet>
+            </widgets>
+        </section>
+    </screen>
+
+    <screen name="TaskAvgCostEstCostPdf">
+        <section>
+            <actions>
+                <set field="titleProperty" value="PrunAvgCostEstCostPdf"/>
+                <set field="headerItem" value="reports"/>
+                <set field="viewIndex" value="${parameters.VIEW_INDEX}" default-value="0" type="Integer"/>
+                <property-map resource="OrderUiLabels" map-name="uiLabelMap" global="true"/>
+                <property-map resource="ProductUiLabels" map-name="uiLabelMap" global="true"/>
+                <property-map resource="ManufacturingUiLabels" map-name="uiLabelMap" global="true"/>
+                <property-map resource="CommonUiLabels" map-name="uiLabelMap" global="true"/>
+
+
+                <script location="component://manufacturing/webapp/manufacturing/WEB-INF/actions/reports/TaskAvgCostVsEstCost.groovy"/>
+            </actions>
+            <widgets>
+                <platform-specific>
+                    <xsl-fo><html-template location="component://manufacturing/webapp/manufacturing/reports/TaskAvgCostVsEstDoc.fo.ftl"/></xsl-fo>
+                </platform-specific>
+            </widgets>
+        </section>
+    </screen>
+
+    <screen name="TaskAvgCostEstCostExcel">
+        <section>
+            <actions>
+                <script location="component://manufacturing/webapp/manufacturing/WEB-INF/actions/reports/TaskAvgCostVsEstCost.groovy"/>
+            </actions>
+            <widgets>
+                <include-form name="TaskAvgCostEstCostResForm" location="component://manufacturing/widget/manufacturing/ReportForms.xml"/>
+            </widgets>
+        </section>
+    </screen>
+    <screen name="CuttingListReport">
+        <section>
+            <actions>
+                <set field="titlePropery" value="ManufacturingCuttingListReport"/>
+                <property-map resource="ManufacturingReportsUiLabels" map-name="uiLabelMap" global="true"/>
+                <property-map resource="OrderUiLabels" map-name="uiLabelMap" global="true"/>
+                <property-map resource="PartyUiLabels" map-name="uiLabelMap" global="true"/>
+                <property-map resource="CommonUiLabels" map-name="uiLabelMap" global="true"/>
+
+                <script location="component://manufacturing/widget/manufacturing/CuttingListReport.groovy"/>
+            </actions>
+            <widgets>
+                <platform-specific>
+                    <xsl-fo><html-template location="component://manufacturing/webapp/manufacturing/jobshopmgt/CuttingListReport.fo.ftl"/></xsl-fo>
+                </platform-specific>
+            </widgets>
+        </section>
+    </screen>
+    <screen name="MRPPRunsProductsByFeature">
+        <section>
+            <actions>
+                <set field="titleProperty" value="ManufacturingProductionRunComponentsByFeature"/>
+                <property-map resource="ManufacturingReportsUiLabels" map-name="uiLabelMap" global="true"/>
+                <property-map resource="OrderUiLabels" map-name="uiLabelMap" global="true"/>
+                <property-map resource="PartyUiLabels" map-name="uiLabelMap" global="true"/>
+                <property-map resource="CommonUiLabels" map-name="uiLabelMap" global="true"/>
+                <set field="mrpName" from-field="parameters.mrpName"/>
+                <set field="planName" value="MRP_${mrpName}"/>
+
+                <set field="taskNamePar" from-field="parameters.taskNamePar"/>
+                <set field="productCategoryIdPar" from-field="parameters.productCategoryIdPar"/>
+                <set field="productFeatureTypeIdPar" from-field="parameters.productFeatureTypeIdPar"/>
+
+                <script location="component://manufacturing/webapp/manufacturing/WEB-INF/actions/reports/PRunsProductsByFeature.groovy"/>
+            </actions>
+            <widgets>
+                <platform-specific>
+                    <xsl-fo><html-template location="component://manufacturing/webapp/manufacturing/reports/PRunsProductsByFeature.fo.ftl"/></xsl-fo>
+                </platform-specific>
+            </widgets>
+        </section>
+    </screen>
+    <screen name="SPPRunsProductsByFeature">
+        <section>
+            <actions>
+                <set field="titleProperty" value="ManufacturingProductionRunComponentsByFeature"/>
+                <set field="shipmentId" from-field="parameters.shipmentId"/>
+                <set field="planName" value="SP_${shipmentId}"/>
+
+                <set field="taskNamePar" from-field="parameters.taskNamePar"/>
+                <set field="productCategoryIdPar" from-field="parameters.productCategoryIdPar"/>
+                <set field="productFeatureTypeIdPar" from-field="parameters.productFeatureTypeIdPar"/>
+
+                <property-map resource="ManufacturingReportsUiLabels" map-name="uiLabelMap" global="true"/>
+                <property-map resource="OrderUiLabels" map-name="uiLabelMap" global="true"/>
+                <property-map resource="PartyUiLabels" map-name="uiLabelMap" global="true"/>
+                <property-map resource="CommonUiLabels" map-name="uiLabelMap" global="true"/>
+
+                <entity-one entity-name="Shipment" value-field="shipment"/>
+
+                <script location="component://manufacturing/webapp/manufacturing/WEB-INF/actions/reports/PRunsProductsByFeature.groovy"/>
+            </actions>
+            <widgets>
+                <platform-specific>
+                    <xsl-fo><html-template location="component://manufacturing/webapp/manufacturing/reports/PRunsProductsByFeature.fo.ftl"/></xsl-fo>
+                </platform-specific>
+            </widgets>
+        </section>
+    </screen>
+    <screen name="MRPPRunsComponentsByFeature">
+        <section>
+            <actions>
+                <set field="titleProperty" value="ManufacturingProductionRunComponentsByFeature"/>
+                <property-map resource="ManufacturingReportsUiLabels" map-name="uiLabelMap" global="true"/>
+                <property-map resource="OrderUiLabels" map-name="uiLabelMap" global="true"/>
+                <property-map resource="PartyUiLabels" map-name="uiLabelMap" global="true"/>
+                <property-map resource="CommonUiLabels" map-name="uiLabelMap" global="true"/>
+                <set field="mrpName" from-field="parameters.mrpName"/>
+                <set field="planName" value="MRP_${mrpName}"/>
+                <set field="showLocation" from-field="parameters.showLocation"/>
+
+                <set field="taskNamePar" from-field="parameters.taskNamePar"/>
+                <set field="productCategoryIdPar" from-field="parameters.productCategoryIdPar"/>
+                <set field="productFeatureTypeIdPar" from-field="parameters.productFeatureTypeIdPar"/>
+
+                <script location="component://manufacturing/webapp/manufacturing/WEB-INF/actions/reports/PRunsComponentsByFeature.groovy"/>
+            </actions>
+            <widgets>
+                <platform-specific>
+                    <xsl-fo><html-template location="component://manufacturing/webapp/manufacturing/reports/PRunsComponentsByFeature.fo.ftl"/></xsl-fo>
+                </platform-specific>
+            </widgets>
+        </section>
+    </screen>
+    <screen name="SPPRunsComponentsByFeature">
+        <section>
+            <actions>
+                <set field="titleProperty" value="ManufacturingProductionRunComponentsByFeature"/>
+                <set field="shipmentId" from-field="parameters.shipmentId"/>
+                <set field="planName" value="SP_${shipmentId}"/>
+                <set field="showLocation" from-field="parameters.showLocation"/>
+
+                <set field="taskNamePar" from-field="parameters.taskNamePar"/>
+                <set field="productCategoryIdPar" from-field="parameters.productCategoryIdPar"/>
+                <set field="productFeatureTypeIdPar" from-field="parameters.productFeatureTypeIdPar"/>
+
+                <property-map resource="ManufacturingReportsUiLabels" map-name="uiLabelMap" global="true"/>
+                <property-map resource="OrderUiLabels" map-name="uiLabelMap" global="true"/>
+                <property-map resource="PartyUiLabels" map-name="uiLabelMap" global="true"/>
+                <property-map resource="CommonUiLabels" map-name="uiLabelMap" global="true"/>
+
+                <entity-one entity-name="Shipment" value-field="shipment"/>
+
+                <script location="component://manufacturing/webapp/manufacturing/WEB-INF/actions/reports/PRunsComponentsByFeature.groovy"/>
+            </actions>
+            <widgets>
+                <platform-specific>
+                    <!-- NOTE: this is really generating XSL:FO, but the HTML oriented renderer should do fine, the screen will need to be called differently though to get binary output from it -->
+                    <html><html-template location="component://manufacturing/webapp/manufacturing/reports/PRunsComponentsByFeature.fo.ftl"/></html>
+                </platform-specific>
+            </widgets>
+        </section>
+    </screen>
+    <screen name="PRunsProductsStacks">
+        <section>
+            <actions>
+                <set field="titleProperty" value="ManufacturingProductsStacks"/>
+                <set field="mrpName" from-field="parameters.mrpName"/>
+                <set field="planName" value="MRP_${mrpName}"/>
+
+                <set field="stackQty" value="50" type="Integer"/>
+                <set field="taskNamePar" from-field="parameters.taskNamePar"/>
+                <set field="productCategoryIdPar" from-field="parameters.productCategoryIdPar"/>
+                <set field="productFeatureTypeIdPar" from-field="parameters.productFeatureTypeIdPar"/>
+
+                <property-map resource="ManufacturingReportsUiLabels" map-name="uiLabelMap" global="true"/>
+                <property-map resource="PartyUiLabels" map-name="uiLabelMap" global="true"/>
+                <property-map resource="CommonUiLabels" map-name="uiLabelMap" global="true"/>
+
+                <script location="component://manufacturing/webapp/manufacturing/WEB-INF/actions/reports/PRunsProductsStacks.groovy"/>
+            </actions>
+            <widgets>
+                <platform-specific>
+                    <xsl-fo><html-template location="component://manufacturing/webapp/manufacturing/reports/PRunsProductsStacks.fo.ftl"/></xsl-fo>
+                </platform-specific>
+            </widgets>
+        </section>
+    </screen>
+
+    <screen name="PackageContentsAndOrder">
+        <section>
+            <actions>
+                <set field="titleProperty" value="ManufacturingPackageContentsAndOrder"/>
+                <set field="shipmentId" from-field="parameters.shipmentId"/>
+                <set field="planName" value="SP_${shipmentId}"/>
+
+                <set field="taskNamePar" from-field="parameters.taskNamePar"/>
+                <set field="productCategoryIdPar" from-field="parameters.productCategoryIdPar"/>
+                <set field="productFeatureTypeIdPar" from-field="parameters.productFeatureTypeIdPar"/>
+
+                <property-map resource="ManufacturingUiLabels" map-name="uiLabelMap" global="true"/>
+                <property-map resource="ManufacturingReportsUiLabels" map-name="uiLabelMap" global="true"/>
+                <property-map resource="PartyUiLabels" map-name="uiLabelMap" global="true"/>
+                <property-map resource="CommonUiLabels" map-name="uiLabelMap" global="true"/>
+
+                <script location="component://manufacturing/webapp/manufacturing/WEB-INF/actions/reports/PackageContentsAndOrder.groovy"/>
+            </actions>
+            <widgets>
+                <platform-specific>
+                    <!-- NOTE: this is really generating XSL:FO, but the HTML oriented renderer should do fine, the screen will need to be called differently though to get binary output from it -->
+                    <html><html-template location="component://manufacturing/webapp/manufacturing/reports/PackageContentsAndOrder.fo.ftl"/></html>
+                </platform-specific>
+            </widgets>
+        </section>
+    </screen>
+
+    <screen name="PRunsProductsAndOrder">
+        <section>
+            <actions>
+                <set field="titleProperty" value="ManufacturingPackageContentsAndOrder"/>
+                <set field="shipmentId" from-field="parameters.shipmentId"/>
+                <set field="planName" value="SP_${shipmentId}"/>
+
+                <set field="taskNamePar" from-field="parameters.taskNamePar"/>
+                <set field="productCategoryIdPar" from-field="parameters.productCategoryIdPar"/>
+                <set field="productFeatureTypeIdPar" from-field="parameters.productFeatureTypeIdPar"/>
+
+                <property-map resource="ManufacturingReportsUiLabels" map-name="uiLabelMap" global="true"/>
+                <property-map resource="PartyUiLabels" map-name="uiLabelMap" global="true"/>
+                <property-map resource="CommonUiLabels" map-name="uiLabelMap" global="true"/>
+
+                <script location="component://manufacturing/webapp/manufacturing/WEB-INF/actions/reports/PRunsProductsAndOrder.groovy"/>
+            </actions>
+            <widgets>
+                <platform-specific>
+                    <xsl-fo><html-template location="component://manufacturing/webapp/manufacturing/reports/PRunsProductsAndOrder.fo.ftl"/></xsl-fo>
+                </platform-specific>
+            </widgets>
+        </section>
+    </screen>
+
+    <screen name="PRunsInfoAndOrder">
+        <section>
+            <actions>
+                <set field="titleProperty" value="ManufacturingProductionRunInfoAndOrder"/>
+                <set field="shipmentId" from-field="parameters.shipmentId"/>
+                <set field="planName" value="SP_${shipmentId}"/>
+
+                <set field="taskNamePar" from-field="parameters.taskNamePar"/>
+                <set field="productCategoryIdPar" from-field="parameters.productCategoryIdPar"/>
+                <set field="productFeatureTypeIdPar" from-field="parameters.productFeatureTypeIdPar"/>
+
+                <property-map resource="ManufacturingReportsUiLabels" map-name="uiLabelMap" global="true"/>
+                <property-map resource="PartyUiLabels" map-name="uiLabelMap" global="true"/>
+                <property-map resource="CommonUiLabels" map-name="uiLabelMap" global="true"/>
+
+                <script location="component://manufacturing/webapp/manufacturing/WEB-INF/actions/reports/PRunsInfoAndOrder.groovy"/>
+            </actions>
+            <widgets>
+                <platform-specific>
+                    <xsl-fo><html-template location="component://manufacturing/webapp/manufacturing/reports/PRunsInfoAndOrder.fo.ftl"/></xsl-fo>
+                </platform-specific>
+            </widgets>
+        </section>
+    </screen>
+
+    <screen name="ShipmentPlanStockReport">
+        <section>
+            <actions>
+                <set field="titleProperty" value="ManufacturingShipmentPlanStockReport"/>
+                <set field="shipmentId" from-field="parameters.shipmentId"/>
+                <property-map resource="ManufacturingReportsUiLabels" map-name="uiLabelMap" global="true"/>
+                <property-map resource="PartyUiLabels" map-name="uiLabelMap" global="true"/>
+                <property-map resource="CommonUiLabels" map-name="uiLabelMap" global="true"/>
+
+                <script location="component://manufacturing/webapp/manufacturing/WEB-INF/actions/reports/ShipmentPlanStockReport.groovy"/>
+            </actions>
+            <widgets>
+                <platform-specific>
+                    <xsl-fo><html-template location="component://manufacturing/webapp/manufacturing/reports/ShipmentPlanStockReport.fo.ftl"/></xsl-fo>
+                </platform-specific>
+            </widgets>
+        </section>
+    </screen>
+
+    <screen name="ShipmentLabel">
+        <section>
+            <actions>
+                <set field="titleProperty" value="ProductShippingLabel"/>
+                <set field="shipmentId" from-field="parameters.shipmentId"/>
+                <property-map resource="ManufacturingReportsUiLabels" map-name="uiLabelMap" global="true"/>
+                <property-map resource="PartyUiLabels" map-name="uiLabelMap" global="true"/>
+                <property-map resource="ProductUiLabels" map-name="uiLabelMap" global="true"/>
+                <property-map resource="CommonUiLabels" map-name="uiLabelMap" global="true"/>
+
+                <script location="component://manufacturing/webapp/manufacturing/WEB-INF/actions/reports/ShipmentLabel.groovy"/>
+            </actions>
+            <widgets>
+                <platform-specific>
+                    <xsl-fo><html-template location="component://manufacturing/webapp/manufacturing/reports/ShipmentLabel.fo.ftl"/></xsl-fo>
+                </platform-specific>
+            </widgets>
+        </section>
+    </screen>
+
+    <screen name="ShipmentWorkEffortTasks">
+        <section>
+            <actions>
+                <set field="titleProperty" value="ManufacturingShipmentWorkEffortTasks"/>
+                <set field="shipmentId" from-field="parameters.shipmentId"/>
+                <property-map resource="ManufacturingReportsUiLabels" map-name="uiLabelMap" global="true"/>
+                <property-map resource="PartyUiLabels" map-name="uiLabelMap" global="true"/>
+                <property-map resource="CommonUiLabels" map-name="uiLabelMap" global="true"/>
+
+                <script location="component://manufacturing/webapp/manufacturing/WEB-INF/actions/reports/ShipmentWorkEffortTasks.groovy"/>
+            </actions>
+            <widgets>
+                <platform-specific>
+                    <xsl-fo><html-template location="component://manufacturing/webapp/manufacturing/reports/ShipmentWorkEffortTasks.fo.ftl"/></xsl-fo>
+                </platform-specific>
+            </widgets>
+        </section>
+    </screen>
+
+    <screen name="ProdMaterialStatusRep">
+        <section>
+            <actions>
+                <entity-condition list="facilities" entity-name="Facility">
+                </entity-condition>
+            </actions>
+            <widgets>
+                <screenlet title="Daily Material Status">
+                    <include-form name="ProdMaterialStatusRepForm" location="component://manufacturing/widget/manufacturing/ReportForms.xml"/>
+                </screenlet>
+            </widgets>
+        </section>
+    </screen>
+
+    <screen name="ProdMaterialStatusReport">
+        <section>
+            <actions>
+                <entity-condition list="facilities" entity-name="Facility">
+
+                </entity-condition>
+            </actions>
+            <widgets>
+                <decorator-screen name="CommonManufacturingReportsDecorator" location="component://manufacturing/widget/manufacturing/ReportScreens.xml">
+                    <decorator-section name="body">
+                        <screenlet title="Daily Material Status">
+                            <include-form name="ProdMaterialStatusRepForm" location="component://manufacturing/widget/manufacturing/ReportForms.xml"/>
+                        </screenlet>
+                    </decorator-section>
+                </decorator-screen>
+            </widgets>
+        </section>
+    </screen>
+
+    <screen name="ProdMaterialStatusReportPdf">
+        <section>
+            <actions>
+                <set field="titleProperty" value="ProdMaterialStatusReportPdf"/>
+                <set field="headerItem" value="reports"/>
+                <set field="footerLabel" value="Daily Material Status"/>
+                <set field="viewSize" value="${parameters.VIEW_SIZE}" default-value="20" type="Integer"/>
+                <set field="viewIndex" value="${parameters.VIEW_INDEX}" default-value="0" type="Integer"/>
+                <set field="productId" from-field="parameters.productId" />
+                <set field="fromDate" from-field="parameters.fromDate" type="Timestamp"/>
+                <set field="thruDate" from-field="parameters.thruDate" type="Timestamp"/>
+                <script location="component://manufacturing/webapp/manufacturing/WEB-INF/actions/reports/ProductionMaterialStatus.groovy"/>
+            </actions>
+            <widgets>
+                <decorator-screen name="FoReportDecorator" location="component://common/widget/CommonScreens.xml">
+                    <decorator-section name="header">
+                        <section>
+                            <widgets>
+                                <include-screen name="ZPCHeader"
+                                                location="component://manufacturing/widget/manufacturing/ReportScreens.xml"/>
+                            </widgets>
+                        </section>
+                    </decorator-section>
+                    <decorator-section name="body">
+                        <section>
+                            <widgets>
+                                <platform-specific>
+                                    <xsl-fo><html-template location="component://manufacturing/webapp/manufacturing/reports/ProductionMaterialStatusDoc.fo.ftl"/></xsl-fo>
+                                </platform-specific>
+                            </widgets>
+                        </section>
+                    </decorator-section>
+                </decorator-screen>
+            </widgets>
+        </section>
+    </screen>
+
+    <screen name="ZPCHeader">
+        <section>
+            <actions>
+                <script location="component://order/webapp/ordermgr/WEB-INF/actions/order/CompanyHeader.groovy"/>
+            </actions>
+            <widgets>
+                <platform-specific>
+                    <xsl-fo>
+                        <html-template location="component://order/webapp/ordermgr/order/companyHeaderInfo.fo.ftl"/>
+                    </xsl-fo>
+                </platform-specific>
+            </widgets>
+        </section>
+    </screen>
+
+
+    <screen name="managementReports">
+        <section>
+            <actions>
+                <set field="titleProperty" value="Management Report"/>
+                <script location="component://manufacturing/webapp/manufacturing/WEB-INF/actions/reports/ManagementReportListGenerator.groovy" />
+            </actions>
+            <widgets>
+                <decorator-screen name="main-decorator" location="${parameters.mainDecoratorLocation}">
+                    <decorator-section name="body">
+                        <section>
+                            <widgets>
+                                <section>
+                                    <widgets>
+                                        <container style="page-title">
+                                            <label text="Management Report"></label>
+                                        </container>
+                                    </widgets>
+                                </section>
+                                <screenlet id="searchOptions" name="findScreenlet" collapsible="true" title="${uiLabelMap.CommonSearchOptions}">
+                                    <container id="search-options">
+                                        <include-form name="managementReportsForm" location="component://manufacturing/widget/manufacturing/ReportForms.xml"/>
+                                    </container>
+                                </screenlet>
+                                <screenlet padded="false">
+                                    <label style="h3" text="Management Report Details" />
+                                    <container id="search-results">
+                                        <platform-specific>
+                                            <html>
+                                                <html-template location="component://manufacturing/webapp/manufacturing/reports/listManagementReport.ftl" />
+                                            </html>
+                                        </platform-specific>
+                                    </container>
+                                </screenlet>
+                            </widgets>
+                        </section>
+                    </decorator-section>
+                </decorator-screen>
+            </widgets>
+        </section>
+    </screen>
+
+    <screen name="managementReportPdf">
+        <section>
+            <widgets>
+                <decorator-screen name="FoReportDecoratorWithoutFooter" location="component://common/widget/CommonScreens.xml">
+                    <decorator-section name="header">
+                        <section>
+                            <widgets>
+                                <include-screen name="ZPCHeader"
+                                                location="component://product/widget/facility/ShipmentScreens.xml"/>
+                            </widgets>
+                        </section>
+                    </decorator-section>
+                    <decorator-section name="body">
+                        <section>
+                            <widgets>
+                                <platform-specific>
+                                    <xsl-fo>
+                                        <html-template
+                                                location="component://manufacturing/webapp/manufacturing/reports/managementReport.fo.ftl" />
+                                    </xsl-fo>
+                                </platform-specific>
+                            </widgets>
+                        </section>
+                    </decorator-section>
+                </decorator-screen>
+            </widgets>
+        </section>
+    </screen>
+
+    <screen name="manufacturedReport">
+        <section>
+            <actions>
+                <set field="titleProperty" value="Manufacturing Reports"/>
+            </actions>
+            <widgets>
+                <decorator-screen name="main-decorator" location="${parameters.mainDecoratorLocation}">
+                    <decorator-section name="body">
+                        <section>
+                            <widgets>
+                                <section>
+                                    <widgets>
+                                        <container style="page-title">
+                                            <label text="Manufacturing Report"></label>
+                                        </container>
+                                    </widgets>
+                                </section>
+                                <screenlet id="searchOptions" name="findScreenlet" collapsible="true" title="${uiLabelMap.CommonSearchOptions}">
+                                    <container id="search-options">
+                                        <include-form name="manufacturedReportForm" location="component://manufacturing/widget/manufacturing/ReportForms.xml"/>
+                                    </container>
+                                </screenlet>
+                            </widgets>
+                        </section>
+                    </decorator-section>
+                </decorator-screen>
+            </widgets>
+        </section>
+    </screen>
+
+    <screen name="manufacturedReportPdf">
+        <section>
+            <actions>
+                <script location="component://manufacturing/webapp/manufacturing/WEB-INF/actions/reports/ManufacturedReport.groovy" />
+            </actions>
+            <widgets>
+                <decorator-screen name="FoReportDecoratorWithoutFooter" location="component://common/widget/CommonScreens.xml">
+                    <decorator-section name="header">
+                        <section>
+                            <widgets>
+                                <include-screen name="ZPCHeader"
+                                                location="component://product/widget/facility/ShipmentScreens.xml"/>
+                            </widgets>
+                        </section>
+                    </decorator-section>
+                    <decorator-section name="body">
+                        <section>
+                            <widgets>
+                                <platform-specific>
+                                    <xsl-fo>
+                                        <html-template
+                                                location="component://manufacturing/webapp/manufacturing/reports/manufacturedReport.fo.ftl" />
+                                    </xsl-fo>
+                                </platform-specific>
+                            </widgets>
+                        </section>
+                    </decorator-section>
+                </decorator-screen>
+            </widgets>
+        </section>
+    </screen>
+    <screen name="stoppageAnalysis">
+        <section>
+            <actions>
+                <set field="titleProperty" value="Stoppage Analysis"/>
+            </actions>
+            <widgets>
+                <decorator-screen name="main-decorator" location="${parameters.mainDecoratorLocation}">
+                    <decorator-section name="body">
+                        <section>
+                            <widgets>
+                                <section>
+                                    <widgets>
+                                        <container style="page-title">
+                                            <label text="Stoppage Analysis"></label>
+                                        </container>
+                                    </widgets>
+                                </section>
+                                <screenlet id="searchOptions" name="findScreenlet" collapsible="true" title="${uiLabelMap.CommonSearchOptions}">
+                                    <container id="search-options">
+                                        <include-form name="stoppageAnalysisForm" location="component://manufacturing/widget/manufacturing/ReportForms.xml"/>
+                                    </container>
+                                </screenlet>
+                            </widgets>
+                        </section>
+                    </decorator-section>
+                </decorator-screen>
+            </widgets>
+        </section>
+    </screen>
+    <screen name="stoppageAnalysisPdf">
+        <section>
+            <actions>
+                <script location="component://manufacturing/webapp/manufacturing/WEB-INF/actions/reports/StoppageAnalysisReport.groovy" />
+            </actions>
+            <widgets>
+                <decorator-screen name="FoReportDecoratorWithoutFooter" location="component://common/widget/CommonScreens.xml">
+                    <decorator-section name="header">
+                        <section>
+                            <widgets>
+                                <include-screen name="ZPCHeader" location="component://product/widget/facility/ShipmentScreens.xml"/>
+                            </widgets>
+                        </section>
+                    </decorator-section>
+                    <decorator-section name="body">
+                        <section>
+                            <widgets>
+                                <platform-specific>
+                                    <xsl-fo>
+                                        <html-template location="component://manufacturing/webapp/manufacturing/reports/stoppageAnalysis.fo.ftl" />
+                                    </xsl-fo>
+                                </platform-specific>
+                            </widgets>
+                        </section>
+                    </decorator-section>
+                </decorator-screen>
+            </widgets>
+        </section>
+    </screen>
+    <screen name="dailyEfficiencyReport">
+        <section>
+            <actions>
+                <set field="titleProperty" value="Daily Efficiency Report"/>
+            </actions>
+            <widgets>
+                <decorator-screen name="main-decorator" location="${parameters.mainDecoratorLocation}">
+                    <decorator-section name="body">
+                        <section>
+                            <widgets>
+                                <section>
+                                    <widgets>
+                                        <container style="page-title">
+                                            <label text="Daily Efficiency Report"></label>
+                                        </container>
+                                    </widgets>
+                                </section>
+                                <screenlet id="searchOptions" name="findScreenlet" collapsible="true" title="${uiLabelMap.CommonSearchOptions}">
+                                    <container id="search-options">
+                                        <include-form name="dailyEfficiencyReportForm" location="component://manufacturing/widget/manufacturing/ReportForms.xml"/>
+                                    </container>
+                                </screenlet>
+                            </widgets>
+                        </section>
+                    </decorator-section>
+                </decorator-screen>
+            </widgets>
+        </section>
+    </screen>
+    <screen name="dailyEfficiencyReportPdf">
+        <section>
+            <actions>
+                <script location="component://manufacturing/webapp/manufacturing/WEB-INF/actions/reports/DailyEfficiencyReport.groovy" />
+            </actions>
+            <widgets>
+                <decorator-screen name="FoReportDecoratorWithoutFooter" location="component://common/widget/CommonScreens.xml">
+                    <decorator-section name="header">
+                        <section>
+                            <widgets>
+                                <include-screen name="ZPCHeader" location="component://product/widget/facility/ShipmentScreens.xml"/>
+                            </widgets>
+                        </section>
+                    </decorator-section>
+                    <decorator-section name="body">
+                        <section>
+                            <widgets>
+                                <platform-specific>
+                                    <xsl-fo>
+                                        <html-template location="component://manufacturing/webapp/manufacturing/reports/dailyEfficiencyReport.fo.ftl" />
+                                    </xsl-fo>
+                                </platform-specific>
+                            </widgets>
+                        </section>
+                    </decorator-section>
+                </decorator-screen>
+            </widgets>
+        </section>
+    </screen>
+</screens>
+

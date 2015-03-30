@@ -1,0 +1,33 @@
+<?init class="org.zkoss.zk.ui.util.Composition"
+arg0="/WEB-INF/layout/template.zul"?>
+<zk xmlns:n="http://www.zkoss.org/2005/zk/native">
+<div self="@{define(content)}">
+ <menubar autodrop="true">
+			<menu label="GlobalHrSetting">
+				<menupopup>
+				    <menu label="Types">
+				    <menupopup>
+					<menuitem href="/control/EditSkillTypes" label="Skill Type" />
+					<menuitem href="/control/EditResponsibilityTypes" label="Responsibility Type" />
+					<menuitem href="/control/PositionType" label="Position Type" />
+					<menuitem href="/control/LeaveTypes" label="Leave Type" />
+					</menupopup>
+					</menu>
+					<menuitem href="/control/PublicHoliday" label="Public Holiday" />
+					<menu label="Performance">
+				    <menupopup>
+					<menuitem href="/control/PerformancePlanSections" label="Performance Plan Sections" />
+					<menuitem href="/control/PerformancePlanAttributes" label="Performance Plan Attributes" />
+					<menuitem href="/control/PerformanceRating" label="Performance Rating" />
+					</menupopup>
+					</menu>
+					<menuitem href="/control/Announcement" label="Announcement" />
+					</menupopup>
+			</menu>
+		</menubar>
+
+</div>
+</zk>
+
+
+

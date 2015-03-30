@@ -1,0 +1,75 @@
+<?component name="positionTypebox" macroURI="../macros/textfindMacro.zul" id="macro1"?>
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<zk>
+	<window id="EditSalaryHeadWindow" width="400px" height="250px" title="${c:l('HRMS_ADD_EXTRA_SALARY_HEAD') }" position="center" closable="true"
+		border="normal">
+		<separator height="30px" />
+
+
+		<zscript>
+		<![CDATA[
+	import com.ndz.controller.*;
+	import org.ofbiz.entity.GenericValue;
+	import javax.servlet.http.HttpServletRequest;
+	import org.ofbiz.entity.condition.EntityCondition;
+	import org.ofbiz.entity.condition.EntityOperator;
+	import org.ofbiz.entity.GenericValue;
+	import org.ofbiz.base.util.UtilMisc;
+	import java.util.*;
+	import org.ofbiz.entity.GenericDelegator;
+	import org.ofbiz.entity.condition.EntityExpr;
+	SearchController controller = new SearchController();
+	GenericDelegator delegator = com.ndz.zkoss.util.HrmsInfrastructure.getDelegator();//GenericDelegator.getGenericDelegator("default");
+	List salaryHead = null;
+	EntityCondition condition = EntityCondition.makeCondition("salaryHeadTypeId", EntityOperator.EQUALS, "Adhoc");
+	salaryHead = delegator.findList("SalaryHead", condition, null, null, null, false);
+	ArrayList<String> arrayListofHeads = new ArrayList<String>();
+	Window win = Executions.getCurrent().getArg().get("window");
+	Component newFields = win.getFellowIfAny("newFields", true);
+	String headIds = null;
+]]>
+</zscript>
+
+		<hbox forEach="${salaryHead}">
+			<separator></separator>
+
+			<div align="left" width="80px">
+				<label value="${each.hrName}"></label>
+			</div>
+			<div align="left" visible="false">
+				<label value="${each.salaryHeadId}"></label>
+			</div>
+
+			<div align="left">
+				<checkbox name="N" id="${each.salaryHeadId}"></checkbox>
+			</div>
+		</hbox>
+		<separator height="30px"></separator>
+		<div align="center">
+			<button label="${c:l('HRMS_ADD_HEADS') }">
+
+				<attribute name="onClick">
+			<![CDATA[
+	String hrName = null;
+	GenericValue salaryHeadsGv = null;
+	for (String salaryHeadId : arrayListofHeads) {
+		Hbox hbox = new Hbox();
+		hbox.setParent(newFields);
+		{
+			salaryHeadsGv = delegator.findByPrimaryKey("SalaryHead", UtilMisc.toMap("salaryHeadId", salaryHeadId));
+			hrName = salaryHeadsGv.getString("hrName");
+			Label label = new Label(hrName);
+			label.setParent(hbox);
+		}
+	}
+	win.setAttribute("arrayListofHeads", arrayListofHeads);
+	EditSalaryHeadWindow.detach();
+]]>
+			</attribute>
+
+
+			</button>
+		</div>
+
+	</window>
+</zk>

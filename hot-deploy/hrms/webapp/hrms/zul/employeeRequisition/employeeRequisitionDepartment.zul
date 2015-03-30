@@ -1,0 +1,227 @@
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<zk xmlns="http://www.zkoss.org/2005/zul"
+    xmlns:h="http://www.w3.org/1999/xhtml"
+    xmlns:w="http://www.zkoss.org/2005/zk/client"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:n="http://www.zkoss.org/2005/zk/native"
+    xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
+<zscript>
+    import org.ofbiz.base.util.*;
+    import org.ofbiz.entity.*;
+    import org.ofbiz.entity.condition.EntityExpr;
+    import org.ofbiz.entity.condition.EntityOperator;
+    import org.ofbiz.entity.condition.EntityCondition;
+    import java.util.*;
+    import org.zkoss.zul.*;
+    GenericDelegator delegator = com.ndz.zkoss.util.HrmsInfrastructure.getDelegator();//GenericDelegator.getGenericDelegator("default");
+    EntityCondition countryCondition = EntityCondition.makeCondition("geoTypeId",
+    EntityOperator.EQUALS, "COUNTRY");
+    Set fieldToSelect = new HashSet();
+    fieldToSelect.add("locationId");
+    fieldToSelect.add("locationName");
+    List locations = delegator.findList("Location", null, fieldToSelect, null,
+    null, false);
+    locations.add(0, null);
+    locationsArray = locations.toArray(new GenericValue[locations.size()]);
+    SimpleListModel locationList = new SimpleListModel(locationsArray);
+    public class LocationItemRenderer implements ListitemRenderer {
+
+    public LocationItemRenderer() {
+    }
+
+    public void render(Listitem li, Object data) {
+    if (data instanceof GenericValue) {
+    GenericValue val = (GenericValue) data;
+    li.setLabel(val.getString("locationName"));
+    li.setValue(val.getString("locationId"));
+    }
+    }
+    }
+    ListitemRenderer locationItemRenderer = new LocationItemRenderer();
+    SimpleListModel divisionList = com.ndz.controller.DivisionController.getAllDivisions();
+    public class DivisionItemRenderer implements ListitemRenderer {
+
+    public DivisionItemRenderer() {
+    }
+
+    public void render(Listitem li, Object data) {
+    if (data instanceof GenericValue) {
+    GenericValue val = (GenericValue) data;
+    li.appendChild(new Listcell(val.getString("divisionCode")));
+    li.appendChild(new Listcell(val.getString("divisionName")));
+    li.setValue(val.getString("divisionId"));
+    }
+    }
+    }
+    ListitemRenderer divisionItemRenderer = new DivisionItemRenderer();
+
+</zscript>
+<window id="createDepartment"
+        apply="com.ndz.controller.CreateDepartmentController"
+        title="${c:l('HRMS_CREATE_DEPARTMENT') }" border="normal" width="40%" height="50%" closable="true" maximizable="true">
+    <separator height="15px" />
+    <hbox>
+        <div align="right" width="180px">
+            <label value="Department Code:"/>
+            <label value="*" style="color:red" />
+        </div>
+        <div width="300px" align="left">
+            <textbox id="departmentCode" name="departmentCode" onChange="self.setValue(self.getValue().toUpperCase());" constraint="no empty: Department Code is Required"/>
+        </div>
+    </hbox>
+    <separator />
+    <hbox>
+        <div align="right" width="180px">
+            <label value="${c:l('HRMS_DEPARTMENT_NAME') }:"/>
+            <label value="*" style="color:red" />
+        </div>
+        <div width="300px" align="left">
+            <textbox id="departmentName" name="departmentName" onChange="self.setValue(self.getValue().toUpperCase());"/>
+            <zscript>
+                <![CDATA[
+						import org.zkoss.util.resource.Labels;
+						public void departmentNameValidation(Textbox comp) throws WrongValueException {
+							String value = comp.getValue();
+							if (value == "") {
+								throw new WrongValueException(comp, Labels.getLabel("HRMS_REQUIRED_DEPARTMENT_NAME"));
+							}
+							boolean isNotString = true;
+							isNotString = UtilValidate.isAlphanumeric(value) || value.contains("_")||value.contains(".")||value.contains(" ");
+							if (!isNotString) {
+								throw new WrongValueException(comp, Labels.getLabel("HRMS_DEPT_NAME_CAN_NOT_BE_SPECIAL_CHARACTERS/BLANK_SPACE"));
+							}
+						}
+					]]>
+            </zscript>
+        </div>
+    </hbox>
+    <separator />
+    <hbox>
+        <div align="right" width="180px">
+            <label value="${c:l('HRMS_DEPARTMENT_LOCATION') }:"/>
+            <label value="*" style="color:red" />
+        </div>
+        <div width="300px" align="left">
+            <listbox id="locationId" model="${locationList}"
+                     itemRenderer="${locationItemRenderer}" mold="select"
+                     onSelect="Clients.closeErrorBox(self)" />
+        </div>
+    </hbox>
+    <separator />
+    <hbox>
+        <div align="right" width="180px">
+            <label value="${c:l('HRMS_HOD_POSITION_ID') }:"/>
+        </div>
+        <div width="300px" align="left">
+            <zscript>
+                import org.ofbiz.base.util.*;
+                import org.zkoss.zk.ui.event.EventListener;
+                class MyRowRenderer  implements ListitemRenderer {
+
+                MyRowRenderer() {
+                }
+
+                public void render(Listitem li, Object data) {
+                org.ofbiz.entity.GenericValue gv = ((org.ofbiz.entity.GenericValue) data);
+
+                new Listcell(gv.getString("emplPositionId")).setParent(li);
+                //new Label(gv.getString("partyId")).setParent(row);
+                GenericValue  departmentPositionGV = delegator.findByPrimaryKey("DepartmentPosition",UtilMisc.toMap("departmentId",gv.getString("partyId")));
+                String departmentName = "";
+                if(departmentPositionGV!=null){
+                departmentName = (String)departmentPositionGV.getString("departmentName");
+                }
+                new Listcell(departmentName).setParent(li);
+
+                }
+                }
+                ListitemRenderer tableRenderer = new MyRowRenderer();
+            </zscript>
+            <bandbox id="headPositionId">
+                <bandpopup>
+                    <paging id="paging" width="425px" />
+                    <listbox id="dataGrid" width="425px" itemRenderer="${tableRenderer}"
+                             onSelect="headPositionId.value=self.selectedItem.label; headPositionId.close();">
+                        <listhead>
+                            <listheader label="${c:l('HRMS_HOD_POSITION_ID') }" />
+                            <listheader label="${c:l('HRMS_DEPARTMENT_NAME') }" />
+                        </listhead>
+                    </listbox>
+
+                </bandpopup>
+            </bandbox>
+        </div>
+    </hbox>
+    <separator />
+    <hbox>
+        <div align="right" width="180px">
+            <label value="${c:l('FormFieldTitle_Date') }" />
+            <label value="*" style="color:red" />
+        </div>
+        <div width="300px" align="left">
+            <datebox id="createDepartmentFromDate" width="110px"
+                     constraint="no empty: ${c:l('HRMS_REQUIRED_FROM_DATE') }">
+            </datebox>
+        </div>
+    </hbox>
+    <separator />
+    <zscript>
+        <![CDATA[
+				import org.zkoss.zk.ui.event.EventListener;
+				import org.zkoss.util.resource.Labels;
+				import org.ofbiz.base.util.UtilValidate;
+				void validateForm() {
+			
+					//departmentIdValidation(departmentId);
+					departmentNameValidation(departmentName);
+					if (locationId.getSelectedItem() == null) {
+						throw new WrongValueException(locationId, Labels.getLabel("HRMS_REQUIRED_LOCATION"));
+					}
+					createDepartmentFromDate.getValue();
+					
+					//String departmentIdString = departmentId.getValue();
+					//if(UtilValidate.isInteger(departmentIdString)){
+					// throw new WrongValueException(departmentId,"Integer not allow in department id");
+					//}
+					Set divisionIdSelected = divisionId.getSelectedItems();
+		if(UtilValidate.isEmpty(divisionIdSelected)){
+           throw new WrongValueException(divisionId, "Division Required");
+        }
+				}
+			]]>
+    </zscript>
+    <hbox>
+        <div align="right" width="165px">
+            <label value="Division"
+                   style="font-weight:bold" />
+            <label value="*" style="color:red" />
+        </div>
+        <div align="left" width="300px">
+            <paging id="divisionPaging" pageSize="5"
+                    pageIncrement="1" />
+            <listbox id="divisionId" mold="paging"
+                     itemRenderer="${divisionItemRenderer}"
+                     model="${divisionList}"
+                     onSelect="Clients.closeErrorBox(self)" checkmark="true"
+                     multiple="true" pagingPosition="top"
+                     paginal="${divisionPaging}" >
+                <listhead>
+                    <listheader label="Division Code"/>
+                    <listheader label="Division Name"/>
+                </listhead>
+            </listbox>
+        </div>
+    </hbox>
+    <separator/>
+    <hbox>
+        <div align="right" width="314px">
+            <button id="createDepartmentButton" label="${c:l('btnSave') }"
+                    onClick='validateForm();com.ndz.controller.CreateDepartmentController.createDepartment(event);'>
+            </button>
+            <button id="cancelDepartmentButton" label="${c:l('HRMS_CANCEL') }"
+                    onClick="createDepartment.detach()">
+            </button>
+        </div>
+    </hbox>
+</window>
+</zk>

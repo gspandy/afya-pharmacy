@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<screens xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="http://ofbiz.apache.org/dtds/widget-screen.xsd">
+
+	<screen name="EmployeeAppraisalDecorator">
+		<section>
+			<actions>
+				<set field="leftbarScreenName" value="AppraisalLeftBar" />
+				<set field="leftbarScreenLocation"
+					value="component://humanresext/widget/EmplAppraisalScreens.xml" />
+				<set field="MainColumnStyle" value="leftonly" />
+				<set field="headerItem" value="PerfReview" />
+			</actions>
+			<widgets>
+				<decorator-screen name="main-decorator"
+					location="${parameters.mainDecoratorLocation}">
+					<decorator-section name="body">
+						<section>
+							<widgets>
+								<decorator-section-include name="body" />
+							</widgets>
+						</section>
+					</decorator-section>
+				</decorator-screen>
+			</widgets>
+		</section>
+	</screen>
+
+	<screen name="AppraisalLeftBar">
+		<section>
+			<widgets>
+				<container style="left">
+					<include-screen name="AppraisalSections"
+						location="component://humanresext/widget/EmplAppraisalScreens.xml" />
+				</container>
+			</widgets>
+		</section>
+	</screen>
+
+	<screen name="AppraisalSections">
+		<section>
+			<widgets>
+				<platform-specific>
+					<html>
+						<html-template
+							location="component://humanresext/webapp/humanresext/appraisal/AppraisalSections.ftl" />
+					</html>
+				</platform-specific>
+			</widgets>
+		</section>
+	</screen>
+
+	<screen name="Appraisal">
+		<section>
+			<condition>
+				<if-has-permission permission="HUMANRES"
+					action="_ADMIN" />
+			</condition>
+			<actions>
+				<set field="titleProperty" value="EmployeeAppraisal" />
+				<set field="headerItem" value="PerfReview" />
+			</actions>
+			<widgets>
+				<decorator-screen name="main-decorator"
+					location="${parameters.mainDecoratorLocation}">
+					<decorator-section name="body">
+						<screenlet
+							title="${uiLabelMap.InitiateAppraisal}">
+							<section>
+								<widgets>
+									<platform-specific>
+										<html>
+											<html-template
+												location="component://humanresext/webapp/humanresext/appraisal/hrAppraisal.ftl" />
+										</html>
+									</platform-specific>
+								</widgets>
+							</section>
+						</screenlet>
+					</decorator-section>
+				</decorator-screen>
+			</widgets>
+			<fail-widgets>
+				<section>
+					<condition>
+						<if-has-permission permission="HUMANRES"
+							action="_MGR" />
+					</condition>
+					<actions>
+						<set field="titleProperty"
+							value="EmployeeAppraisal" />
+						<set field="headerItem" value="PerfReview" />
+					</actions>
+					<widgets>
+						<decorator-screen name="main-decorator"
+							location="${parameters.mainDecoratorLocation}">
+							<decorator-section name="body">
+								<screenlet
+									title="${uiLabelMap.ManagerAppraisal}">
+									<section>
+										<widgets>
+											<platform-specific>
+												<html>
+													<html-template
+														location="component://humanresext/webapp/humanresext/appraisal/mgrAppraisal.ftl" />
+												</html>
+											</platform-specific>
+										</widgets>
+									</section>
+								</screenlet>
+							</decorator-section>
+						</decorator-screen>
+					</widgets>
+					<fail-widgets>
+						<section>
+							<actions>
+								<set field="titleProperty"
+									value="EmployeeAppraisal" />
+								<set field="headerItem"
+									value="PerfReview" />
+							</actions>
+							<widgets>
+								<decorator-screen
+									name="EmployeeAppraisalDecorator"
+									location="component://humanresext/widget/EmplAppraisalScreens.xml">
+									<decorator-section name="body">
+										<section>
+											<widgets>
+												<platform-specific>
+													<html>
+														<html-template
+															location="component://humanresext/webapp/humanresext/appraisal/emplAppraisal.ftl" />
+													</html>
+												</platform-specific>
+											</widgets>
+										</section>
+									</decorator-section>
+								</decorator-screen>
+							</widgets>
+						</section>
+					</fail-widgets>
+				</section>
+			</fail-widgets>
+		</section>
+	</screen>
+</screens>

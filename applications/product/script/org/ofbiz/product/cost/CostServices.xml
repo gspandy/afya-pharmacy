@@ -1,0 +1,751 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Licensed to the Apache Software Foundation (ASF) under one or more contributor license agreements. See the NOTICE file distributed with this work for additional 
+	information regarding copyright ownership. The ASF licenses this file to you under the Apache License, Version 2.0 (the "License"); you may not use this file except 
+	in compliance with the License. You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0 Unless required by applicable law or agreed to 
+	in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See 
+	the License for the specific language governing permissions and limitations under the License. -->
+<simple-methods xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://ofbiz.apache.org/dtds/simple-methods-v2.xsd">
+	<!-- CostComponent services -->
+
+	<simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_" event-event-message-name="_event_message_"
+		event-request-object-name="request" event-response-code-name="_response_code_" event-response-object-name="response" login-required="true" method-name="createCostComponent"
+		service-error-message-list-name="errorMessageList" service-error-message-map-name="errorMessageMap" service-error-message-name="errorMessage"
+		service-response-message-name="responseMessage" service-success-message-list-name="successMessageList" service-success-message-name="successMessage"
+		short-description="Create a CostComponent" use-transaction="true">
+		<make-value entity-name="CostComponent" value-field="newEntity" />
+		<set-nonpk-fields map="parameters" set-if-null="true" value-field="newEntity" />
+		<sequenced-id field="newEntity.costComponentId" get-long-only="false" sequence-name="CostComponent" />
+		<field-to-result field="newEntity.costComponentId" result-name="costComponentId" />
+		<if-empty field="newEntity.fromDate">
+			<now-timestamp field="newEntity.fromDate" />
+		</if-empty>
+		<create-value do-cache-clear="true" or-store="false" value-field="newEntity" />
+	</simple-method>
+
+	<simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_" event-event-message-name="_event_message_"
+		event-request-object-name="request" event-response-code-name="_response_code_" event-response-object-name="response" login-required="true" method-name="updateCostComponent"
+		service-error-message-list-name="errorMessageList" service-error-message-map-name="errorMessageMap" service-error-message-name="errorMessage"
+		service-response-message-name="responseMessage" service-success-message-list-name="successMessageList" service-success-message-name="successMessage"
+		short-description="Update a CostComponent" use-transaction="true">
+		<entity-one auto-field-map="true" entity-name="CostComponent" use-cache="false" value-field="costComponent" />
+		<set-nonpk-fields map="parameters" set-if-null="true" value-field="costComponent" />
+		<store-value do-cache-clear="true" value-field="costComponent" />
+	</simple-method>
+
+	<simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_" event-event-message-name="_event_message_"
+		event-request-object-name="request" event-response-code-name="_response_code_" event-response-object-name="response" login-required="true" method-name="deleteCostComponent"
+		service-error-message-list-name="errorMessageList" service-error-message-map-name="errorMessageMap" service-error-message-name="errorMessage"
+		service-response-message-name="responseMessage" service-success-message-list-name="successMessageList" service-success-message-name="successMessage"
+		short-description="Delete a CostComponent" use-transaction="true">
+		<entity-one auto-field-map="true" entity-name="CostComponent" use-cache="false" value-field="costComponent" />
+		<remove-value do-cache-clear="true" value-field="costComponent" />
+	</simple-method>
+
+	<simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_" event-event-message-name="_event_message_"
+		event-request-object-name="request" event-response-code-name="_response_code_" event-response-object-name="response" login-required="true" method-name="cancelCostComponents"
+		service-error-message-list-name="errorMessageList" service-error-message-map-name="errorMessageMap" service-error-message-name="errorMessage"
+		service-response-message-name="responseMessage" service-success-message-list-name="successMessageList" service-success-message-name="successMessage"
+		short-description="Cancels CostComponents" use-transaction="true">
+		<set field="costsAndMap.costComponentId" from="parameters.costComponentId" set-if-empty="true" set-if-null="false" />
+		<set field="costsAndMap.productId" from="parameters.productId" set-if-empty="true" set-if-null="false" />
+		<set field="costsAndMap.costUomId" from="parameters.costUomId" set-if-empty="true" set-if-null="false" />
+		<set field="costsAndMap.costComponentTypeId" from="parameters.costComponentTypeId" set-if-empty="true" set-if-null="false" />
+		<find-by-and entity-name="CostComponent" list="existingCosts" map="costsAndMap" use-cache="false" use-iterator="false" />
+		<filter-list-by-date from-field-name="fromDate" list="existingCosts" thru-field-name="thruDate" />
+		<iterate entry="existingCost" list="existingCosts">
+			<now-timestamp field="existingCost.thruDate" />
+			<store-value do-cache-clear="true" value-field="existingCost" />
+		</iterate>
+	</simple-method>
+
+	<simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_" event-event-message-name="_event_message_"
+		event-request-object-name="request" event-response-code-name="_response_code_" event-response-object-name="response" login-required="true" method-name="recreateCostComponent"
+		service-error-message-list-name="errorMessageList" service-error-message-map-name="errorMessageMap" service-error-message-name="errorMessage"
+		service-response-message-name="responseMessage" service-success-message-list-name="successMessageList" service-success-message-name="successMessage"
+		short-description="Create a CostComponent and cancel the existing ones" use-transaction="true">
+		<!-- The existing costs of the same type are expired -->
+		<set field="costsAndMap.productId" from="parameters.productId" set-if-empty="true" set-if-null="false" />
+		<set field="costsAndMap.costUomId" from="parameters.costUomId" set-if-empty="true" set-if-null="false" />
+		<set field="costsAndMap.costComponentTypeId" from="parameters.costComponentTypeId" set-if-empty="true" set-if-null="false" />
+		<find-by-and entity-name="CostComponent" list="existingCosts" map="costsAndMap" use-cache="false" use-iterator="false" />
+		<filter-list-by-date from-field-name="fromDate" list="existingCosts" thru-field-name="thruDate" />
+		<iterate entry="existingCost" list="existingCosts">
+			<now-timestamp field="existingCost.thruDate" />
+			<store-value do-cache-clear="true" value-field="existingCost" />
+		</iterate>
+		<!-- The new cost is created -->
+		<make-value entity-name="CostComponent" value-field="newEntity" />
+		<set-nonpk-fields map="parameters" set-if-null="true" value-field="newEntity" />
+		<sequenced-id field="newEntity.costComponentId" get-long-only="false" sequence-name="CostComponent" />
+		<if-empty field="newEntity.fromDate">
+			<now-timestamp field="newEntity.fromDate" />
+		</if-empty>
+		<create-value do-cache-clear="true" or-store="false" value-field="newEntity" />
+		<field-to-result field="newEntity.costComponentId" result-name="costComponentId" />
+	</simple-method>
+	<!-- Services to get the product and tasks costs -->
+
+	<simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_" event-event-message-name="_event_message_"
+		event-request-object-name="request" event-response-code-name="_response_code_" event-response-object-name="response" login-required="true" method-name="getProductCost"
+		service-error-message-list-name="errorMessageList" service-error-message-map-name="errorMessageMap" service-error-message-name="errorMessage"
+		service-response-message-name="responseMessage" service-success-message-list-name="successMessageList" service-success-message-name="successMessage"
+		short-description="Gets the product's costs (from CostComponent or ProductPrice)" use-transaction="true">
+		<entity-condition distinct="false" entity-name="CostComponent" filter-by-date="true" list="costComponents" use-cache="false">
+			<condition-list combine="and">
+				<condition-expr field-name="productId" from-field="parameters.productId" ignore="false" ignore-case="false" ignore-if-empty="false"
+					ignore-if-null="false" operator="equals" />
+				<condition-expr field-name="costUomId" from-field="parameters.currencyUomId" ignore="false" ignore-case="false" ignore-if-empty="false"
+					ignore-if-null="false" operator="equals" />
+				<condition-expr field-name="costComponentTypeId" ignore="false" ignore-case="false" ignore-if-empty="false" ignore-if-null="false" operator="like"
+					value="${parameters.costComponentTypePrefix}_%" />
+			</condition-list>
+		</entity-condition>
+		<set field="productCost" set-if-empty="true" set-if-null="false" type="BigDecimal" value="0" />
+		<iterate entry="costComponent" list="costComponents">
+			<calculate decimal-scale="6" field="productCost" rounding-mode="HalfEven" type="BigDecimal">
+				<calcop field="costComponent.cost" operator="add">
+					<calcop field="productCost" operator="get" />
+				</calcop>
+			</calculate>
+			<!--set field="productCost" value="${costComponent.cost + productCost}" type="BigDecimal"/ -->
+		</iterate>
+		<!-- if the cost is zero, and the product is a variant, get the cost of the virtual -->
+		<if-compare field="productCost" operator="equals" type="BigDecimal" value="0">
+			<entity-one auto-field-map="true" entity-name="Product" use-cache="false" value-field="product" />
+			<set field="assocAndMap.productIdTo" from="product.productId" set-if-empty="true" set-if-null="false" />
+			<set field="assocAndMap.productAssocTypeId" set-if-empty="true" set-if-null="false" value="PRODUCT_VARIANT" />
+			<find-by-and entity-name="ProductAssoc" list="virtualAssocs" map="assocAndMap" use-cache="false" use-iterator="false" />
+			<filter-list-by-date from-field-name="fromDate" list="virtualAssocs" thru-field-name="thruDate" />
+			<first-from-list entry="virtualAssoc" list="virtualAssocs" />
+			<if-not-empty field="virtualAssoc">
+				<set field="inputMap.productId" from="virtualAssoc.productId" set-if-empty="true" set-if-null="false" />
+				<set field="inputMap.currencyUomId" from="parameters.currencyUomId" set-if-empty="true" set-if-null="false" />
+				<set field="inputMap.costComponentTypePrefix" from="parameters.costComponentTypePrefix" set-if-empty="true" set-if-null="false" />
+				<call-service break-on-error="true" error-code="error" in-map-name="inputMap" include-user-login="true" require-new-transaction="false"
+					service-name="getProductCost" success-code="success">
+					<result-to-field result-name="productCost" />
+				</call-service>
+			</if-not-empty>
+		</if-compare>
+		<!-- if the cost is zero, get the purchase cost from the SupplierProduct -->
+		<if-compare field="productCost" operator="equals" type="BigDecimal" value="0">
+			<set field="orderByList[]" set-if-empty="true" set-if-null="false" value="+supplierPrefOrderId" />
+			<set field="orderByList[]" set-if-empty="true" set-if-null="false" value="+lastPrice" />
+			<clear-field field="costsAndMap" />
+			<set field="costsAndMap.productId" from="parameters.productId" set-if-empty="true" set-if-null="false" />
+			<set field="costsAndMap.currencyUomId" from="parameters.currencyUomId" set-if-empty="true" set-if-null="false" />
+			<find-by-and entity-name="SupplierProduct" list="priceCosts" map="costsAndMap" order-by-list="orderByList" use-cache="false" use-iterator="false" />
+			<filter-list-by-date from-field-name="availableFromDate" list="priceCosts" thru-field-name="availableThruDate" />
+			<first-from-list entry="priceCost" list="priceCosts" />
+			<if-not-empty field="priceCost.lastPrice">
+				<set field="productCost" from="priceCost.lastPrice" set-if-empty="true" set-if-null="false" />
+			</if-not-empty>
+			<!-- if the cost is zero, get the purchase cost from the SupplierProduct in a different currency and try to convert -->
+			<if-compare field="productCost" operator="equals" type="BigDecimal" value="0">
+				<clear-field field="costsAndMap" />
+				<set field="costsAndMap.productId" from="parameters.productId" set-if-empty="true" set-if-null="false" />
+				<set field="costsAndMap.productPriceTypeId" from="parameters.productPriceTypeId" set-if-empty="true" set-if-null="false" />
+				<find-by-and entity-name="SupplierProduct" list="priceCosts" map="costsAndMap" order-by-list="orderByList" use-cache="false" use-iterator="false" />
+				<filter-list-by-date from-field-name="availableFromDate" list="priceCosts" thru-field-name="availableThruDate" />
+				<first-from-list entry="priceCost" list="priceCosts" />
+				<if-not-empty field="priceCost.lastPrice">
+					<!-- we try to convert the lastPrice to the desired currency -->
+					<clear-field field="inputMap" />
+					<set field="inputMap.originalValue" from="priceCost.lastPrice" set-if-empty="true" set-if-null="false" />
+					<set field="inputMap.uomId" from="priceCost.currencyUomId" set-if-empty="true" set-if-null="false" />
+					<set field="inputMap.uomIdTo" from="parameters.currencyUomId" set-if-empty="true" set-if-null="false" />
+					<call-service break-on-error="false" error-code="error" in-map-name="inputMap" include-user-login="true" require-new-transaction="true"
+						service-name="convertUom" success-code="success">
+						<result-to-field field="productCost" result-name="convertedValue" />
+					</call-service>
+					<!-- if currency conversion fails then a 0 cost will be returned -->
+					<if-empty field="productCost">
+						<log level="warning" message="Currency conversion failed for ProductCost lookup; unable to convert from ${priceCost.currencyUomId} to ${parameters.currencyUomId}" />
+						<set field="productCost" set-if-empty="true" set-if-null="false" type="BigDecimal" value="0" />
+					</if-empty>
+				</if-not-empty>
+			</if-compare>
+		</if-compare>
+		<!-- <if-compare field="productCost" operator="equals" value="0" type="BigDecimal"> <clear-field field="costsAndMap"/> <set from-field="parameters.productId" field="costsAndMap.productId"/> 
+			<set from-field="parameters.currencyUomId" field="costsAndMap.currencyUomId"/> <set from-field="parameters.productPriceTypeId" field="costsAndMap.productPriceTypeId"/> 
+			<find-by-and entity-name="ProductPrice" map="costsAndMap" list="priceCosts"/> <filter-list-by-date list="priceCosts"/> <first-from-list list="priceCosts" entry="priceCost"/> 
+			<if-not-empty field="priceCost.price"> <set from-field="priceCost.price" field="productCost"/> </if-not-empty> </if-compare> -->
+		<field-to-result field="productCost" />
+	</simple-method>
+
+	<simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_" event-event-message-name="_event_message_"
+		event-request-object-name="request" event-response-code-name="_response_code_" event-response-object-name="response" login-required="true" method-name="getTaskCost"
+		service-error-message-list-name="errorMessageList" service-error-message-map-name="errorMessageMap" service-error-message-name="errorMessage"
+		service-response-message-name="responseMessage" service-success-message-list-name="successMessageList" service-success-message-name="successMessage"
+		short-description="Gets the production run task's costs" use-transaction="true">
+		<!-- First of all, the estimated task time is computed -->
+		<set-service-fields map="parameters" service-name="getEstimatedTaskTime" to-map="inputMap" />
+		<set field="inputMap.taskId" from="parameters.workEffortId" set-if-empty="true" set-if-null="false" />
+		<call-service break-on-error="true" error-code="error" in-map-name="inputMap" include-user-login="true" require-new-transaction="false"
+			service-name="getEstimatedTaskTime" success-code="success">
+			<result-to-field field="totalEstimatedTaskTime" result-name="estimatedTaskTime" />
+			<result-to-field result-name="setupTime" />
+		</call-service>
+		<calculate decimal-scale="6" field="estimatedTaskTime" rounding-mode="HalfEven" type="BigDecimal">
+			<calcop field="totalEstimatedTaskTime" operator="subtract">
+				<calcop field="setupTime" operator="get" />
+			</calcop>
+		</calculate>
+		<entity-one auto-field-map="true" entity-name="WorkEffort" use-cache="false" value-field="task" />
+		<if-not-empty field="task">
+			<get-related-one relation-name="FixedAsset" to-value-field="fixedAsset" use-cache="false" value-field="task" />
+			<set field="costsAndMap.amountUomId" from="parameters.currencyUomId" set-if-empty="true" set-if-null="false" />
+			<set field="costsAndMap.fixedAssetStdCostTypeId" set-if-empty="true" set-if-null="false" value="SETUP_COST" />
+			<get-related list="setupCosts" map="costsAndMap" relation-name="FixedAssetStdCost" use-cache="false" value-field="fixedAsset" />
+			<filter-list-by-date from-field-name="fromDate" list="setupCosts" thru-field-name="thruDate" />
+			<!--<filter-list-by-and list-name="costs" map-name="costsAndMap"/> -->
+			<first-from-list entry="setupCost" list="setupCosts" />
+			<set field="costsAndMap.fixedAssetStdCostTypeId" set-if-empty="true" set-if-null="false" value="USAGE_COST" />
+			<get-related list="usageCosts" map="costsAndMap" relation-name="FixedAssetStdCost" use-cache="false" value-field="fixedAsset" />
+			<filter-list-by-date from-field-name="fromDate" list="usageCosts" thru-field-name="thruDate" />
+			<first-from-list entry="usageCost" list="usageCosts" />
+		</if-not-empty>
+		<calculate decimal-scale="6" field="taskCost" rounding-mode="HalfEven" type="BigDecimal">
+			<calcop operator="add">
+				<calcop field="estimatedTaskTime" operator="multiply">
+					<calcop field="usageCost.amount" operator="get" />
+				</calcop>
+				<calcop field="setupTime" operator="multiply">
+					<calcop field="setupCost.amount" operator="get" />
+				</calcop>
+			</calcop>
+		</calculate>
+		<!-- Time is converted from milliseconds to hours -->
+		<calculate decimal-scale="6" field="taskCost" rounding-mode="HalfEven" type="BigDecimal">
+			<calcop field="taskCost" operator="divide">
+				<number value="3600000" />
+			</calcop>
+		</calculate>
+		<!-- Now compute the costs derived from CostComponentCalc records associated with the task -->
+		<get-related list="weccs" relation-name="WorkEffortCostCalc" use-cache="false" value-field="task" />
+		<filter-list-by-date from-field-name="fromDate" list="weccs" thru-field-name="thruDate" />
+		<iterate entry="wecc" list="weccs">
+			<clear-field field="totalCostComponentCost" />
+			<clear-field field="totalCostComponentTime" />
+			<get-related-one relation-name="CostComponentCalc" to-value-field="costComponentCalc" use-cache="false" value-field="wecc" />
+			<get-related-one relation-name="CustomMethod" to-value-field="customMethod" use-cache="false" value-field="costComponentCalc" />
+			<if-empty field="customMethod">
+				<if-not-empty field="costComponentCalc.perMilliSecond">
+					<if-compare field="costComponentCalc.perMilliSecond" operator="not-equals" type="BigDecimal" value="0">
+						<calculate decimal-scale="6" field="totalCostComponentTime" rounding-mode="HalfEven" type="BigDecimal">
+							<calcop field="totalEstimatedTaskTime" operator="divide">
+								<calcop field="costComponentCalc.perMilliSecond" operator="get" />
+							</calcop>
+						</calculate>
+						<calculate decimal-scale="6" field="totalCostComponentCost" rounding-mode="HalfEven" type="BigDecimal">
+							<calcop field="totalCostComponentTime" operator="multiply">
+								<calcop field="costComponentCalc.variableCost" operator="get" />
+							</calcop>
+						</calculate>
+						<calculate decimal-scale="6" field="totalCostComponentCost" rounding-mode="HalfEven" type="BigDecimal">
+							<calcop field="totalCostComponentCost" operator="add">
+								<calcop field="costComponentCalc.fixedCost" operator="get" />
+							</calcop>
+						</calculate>
+						<set field="costsByType.${wecc.costComponentTypeId}" from="totalCostComponentCost" set-if-empty="true" set-if-null="false" />
+					</if-compare>
+				</if-not-empty>
+				<else>
+					<!-- FIXME: formulas are still not supported for standard costs -->
+				</else>
+			</if-empty>
+		</iterate>
+		<field-to-result field="taskCost" />
+		<field-to-result field="costsByType" />
+	</simple-method>
+	<!-- services to automatically generate cost information -->
+
+	<simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_" event-event-message-name="_event_message_"
+		event-request-object-name="request" event-response-code-name="_response_code_" event-response-object-name="response" login-required="true"
+		method-name="calculateAllProductsCosts" service-error-message-list-name="errorMessageList" service-error-message-map-name="errorMessageMap"
+		service-error-message-name="errorMessage" service-response-message-name="responseMessage" service-success-message-list-name="successMessageList"
+		service-success-message-name="successMessage" short-description="Calculates estimated costs for all the products" use-transaction="true">
+		<!--filter-by-date="true" -->
+		<entity-condition distinct="false" entity-name="Product" filter-by-date="false" list="products" use-cache="false">
+			<select-field field-name="productId" />
+			<order-by field-name="-billOfMaterialLevel" />
+		</entity-condition>
+		<set field="inMap.currencyUomId" from="parameters.currencyUomId" set-if-empty="true" set-if-null="false" />
+		<set field="inMap.costComponentTypePrefix" from="parameters.costComponentTypePrefix" set-if-empty="true" set-if-null="false" />
+		<iterate entry="product" list="products">
+			<set field="inMap.productId" from="product.productId" set-if-empty="true" set-if-null="false" />
+			<call-service break-on-error="true" error-code="error" in-map-name="inMap" include-user-login="true" require-new-transaction="false"
+				service-name="calculateProductCosts" success-code="success" />
+		</iterate>
+	</simple-method>
+
+	<simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_" event-event-message-name="_event_message_"
+		event-request-object-name="request" event-response-code-name="_response_code_" event-response-object-name="response" login-required="true" method-name="calculateProductCosts"
+		service-error-message-list-name="errorMessageList" service-error-message-map-name="errorMessageMap" service-error-message-name="errorMessage"
+		service-response-message-name="responseMessage" service-success-message-list-name="successMessageList" service-success-message-name="successMessage"
+		short-description="Calculates the product's cost" use-transaction="true">
+		<!-- the existing costs are expired -->
+		<set field="cancelMap.costComponentTypeId" set-if-empty="true" set-if-null="false" value="${parameters.costComponentTypePrefix}_ROUTE_COST" />
+		<set field="cancelMap.productId" from="parameters.productId" set-if-empty="true" set-if-null="false" />
+		<set field="cancelMap.costUomId" from="parameters.currencyUomId" set-if-empty="true" set-if-null="false" />
+		<call-service break-on-error="true" error-code="error" in-map-name="cancelMap" include-user-login="true" require-new-transaction="false"
+			service-name="cancelCostComponents" success-code="success" />
+		<set field="cancelMap.costComponentTypeId" set-if-empty="true" set-if-null="false" value="${parameters.costComponentTypePrefix}_MAT_COST" />
+		<call-service break-on-error="true" error-code="error" in-map-name="cancelMap" include-user-login="true" require-new-transaction="false"
+			service-name="cancelCostComponents" success-code="success" />
+		<!-- calculate the total materials' cost -->
+		<set field="callSvcMap.productId" from="parameters.productId" set-if-empty="true" set-if-null="false" />
+		<call-service break-on-error="true" error-code="error" in-map-name="callSvcMap" include-user-login="true" require-new-transaction="false"
+			service-name="getManufacturingComponents" success-code="success">
+			<result-to-field result-name="componentsMap" />
+		</call-service>
+		<if-not-empty field="componentsMap">
+			<iterate entry="componentMap" list="componentsMap">
+				<clear-field field="inputMap" />
+				<set field="product" from="componentMap.product" set-if-empty="true" set-if-null="false" />
+				<set field="inputMap.productId" from="product.productId" set-if-empty="true" set-if-null="false" />
+				<set field="inputMap.currencyUomId" from="parameters.currencyUomId" set-if-empty="true" set-if-null="false" />
+				<set field="inputMap.costComponentTypePrefix" from="parameters.costComponentTypePrefix" set-if-empty="true" set-if-null="false" />
+				<call-service break-on-error="true" error-code="error" in-map-name="inputMap" include-user-login="true" require-new-transaction="false"
+					service-name="getProductCost" success-code="success">
+					<result-to-field result-name="productCost" />
+				</call-service>
+				<calculate decimal-scale="6" field="totalProductsCost" rounding-mode="HalfEven" type="BigDecimal">
+					<calcop field="totalProductsCost" operator="add">
+						<calcop field="componentMap.quantity" operator="multiply">
+							<calcop field="productCost" operator="get" />
+						</calcop>
+					</calcop>
+				</calculate>
+			</iterate>
+			<else>
+				<clear-field field="inputMap" />
+				<set field="inputMap.productId" from="parameters.productId" set-if-empty="true" set-if-null="false" />
+				<set field="inputMap.currencyUomId" from="parameters.currencyUomId" set-if-empty="true" set-if-null="false" />
+				<set field="inputMap.costComponentTypePrefix" from="parameters.costComponentTypePrefix" set-if-empty="true" set-if-null="false" />
+				<call-service break-on-error="true" error-code="error" in-map-name="inputMap" include-user-login="true" require-new-transaction="false"
+					service-name="getProductCost" success-code="success">
+					<result-to-field result-name="productCost" />
+				</call-service>
+				<calculate decimal-scale="6" field="totalProductsCost" rounding-mode="HalfEven" type="BigDecimal">
+					<calcop field="productCost" operator="get" />
+				</calculate>
+			</else>
+		</if-not-empty>
+		<!-- calculate the total tasks' cost -->
+		<set field="callSvcMap.ignoreDefaultRouting" set-if-empty="true" set-if-null="false" value="Y" />
+		<call-service break-on-error="true" error-code="error" in-map-name="callSvcMap" include-user-login="true" require-new-transaction="false"
+			service-name="getProductRouting" success-code="success">
+			<result-to-field result-name="tasks" />
+			<result-to-field result-name="routing" />
+		</call-service>
+		<iterate entry="task" list="tasks">
+			<clear-field field="callSvcMap" />
+			<set field="callSvcMap.workEffortId" from="task.workEffortIdTo" set-if-empty="true" set-if-null="false" />
+			<set field="callSvcMap.currencyUomId" from="parameters.currencyUomId" set-if-empty="true" set-if-null="false" />
+			<set field="callSvcMap.productId" from="parameters.productId" set-if-empty="true" set-if-null="false" />
+			<set field="callSvcMap.routingId" from="routing.workEffortId" set-if-empty="true" set-if-null="false" />
+			<call-service break-on-error="true" error-code="error" in-map-name="callSvcMap" include-user-login="true" require-new-transaction="false"
+				service-name="getTaskCost" success-code="success">
+				<result-to-field field="taskCost" result-name="taskCost" />
+				<result-to-field field="costsByType" result-name="costsByType" />
+			</call-service>
+			<calculate decimal-scale="6" field="totalTaskCost" rounding-mode="HalfEven" type="BigDecimal">
+				<calcop field="totalTaskCost" operator="add">
+					<calcop field="taskCost" operator="get" />
+				</calcop>
+			</calculate>
+			<iterate-map key="costType" map="costsByType" value="costAmount">
+				<if-not-empty field="totalCostsByType.${costType}">
+					<calculate decimal-scale="6" field="totalCostsByType.${costType}" rounding-mode="HalfEven" type="BigDecimal">
+						<calcop field="costAmount" operator="add">
+							<calcop field="totalCostsByType.${costType}" operator="get" />
+						</calcop>
+					</calculate>
+					<else>
+						<set field="totalCostsByType.${costType}" from="costAmount" set-if-empty="true" set-if-null="false" />
+					</else>
+				</if-not-empty>
+				<calculate decimal-scale="6" field="totalOtherTaskCost" rounding-mode="HalfEven" type="BigDecimal">
+					<calcop field="totalOtherTaskCost" operator="add">
+						<calcop field="costAmount" operator="get" />
+					</calcop>
+				</calculate>
+			</iterate-map>
+		</iterate>
+		<calculate decimal-scale="6" field="totalCost" rounding-mode="HalfEven" type="BigDecimal">
+			<calcop field="totalTaskCost" operator="add">
+				<calcop field="totalProductsCost" operator="get" />
+				<calcop field="totalOtherTaskCost" operator="get" />
+			</calcop>
+		</calculate>
+		<!-- The CostComponent records are created. -->
+		<if-not-empty field="totalTaskCost">
+			<if-compare field="totalTaskCost" operator="greater" type="BigDecimal" value="0">
+				<clear-field field="callSvcMap" />
+				<set field="callSvcMap.costComponentTypeId" set-if-empty="true" set-if-null="false" value="${parameters.costComponentTypePrefix}_ROUTE_COST" />
+				<set field="callSvcMap.productId" from="parameters.productId" set-if-empty="true" set-if-null="false" />
+				<set field="callSvcMap.costUomId" from="parameters.currencyUomId" set-if-empty="true" set-if-null="false" />
+				<set field="callSvcMap.cost" from="totalTaskCost" set-if-empty="true" set-if-null="false" />
+				<call-service break-on-error="true" error-code="error" in-map-name="callSvcMap" include-user-login="true" require-new-transaction="false"
+					service-name="recreateCostComponent" success-code="success" />
+			</if-compare>
+		</if-not-empty>
+		<if-not-empty field="totalProductsCost">
+			<if-compare field="totalProductsCost" operator="greater" type="BigDecimal" value="0">
+				<clear-field field="callSvcMap" />
+				<set field="callSvcMap.costComponentTypeId" set-if-empty="true" set-if-null="false" value="${parameters.costComponentTypePrefix}_MAT_COST" />
+				<set field="callSvcMap.productId" from="parameters.productId" set-if-empty="true" set-if-null="false" />
+				<set field="callSvcMap.costUomId" from="parameters.currencyUomId" set-if-empty="true" set-if-null="false" />
+				<set field="callSvcMap.cost" from="totalProductsCost" set-if-empty="true" set-if-null="false" />
+				<call-service break-on-error="true" error-code="error" in-map-name="callSvcMap" include-user-login="true" require-new-transaction="false"
+					service-name="recreateCostComponent" success-code="success" />
+			</if-compare>
+		</if-not-empty>
+		<iterate-map key="costType" map="totalCostsByType" value="totalCostAmount">
+			<clear-field field="callSvcMap" />
+			<set field="callSvcMap.costComponentTypeId" set-if-empty="true" set-if-null="false" value="${parameters.costComponentTypePrefix}_${costType}" />
+			<set field="callSvcMap.productId" from="parameters.productId" set-if-empty="true" set-if-null="false" />
+			<set field="callSvcMap.costUomId" from="parameters.currencyUomId" set-if-empty="true" set-if-null="false" />
+			<set field="callSvcMap.cost" from="totalCostAmount" set-if-empty="true" set-if-null="false" />
+			<call-service break-on-error="true" error-code="error" in-map-name="callSvcMap" include-user-login="true" require-new-transaction="false"
+				service-name="recreateCostComponent" success-code="success" />
+		</iterate-map>
+		<!-- Now compute the costs derived from CostComponentCalc records associated with the product -->
+		<entity-condition distinct="false" entity-name="ProductCostComponentCalc" filter-by-date="true" list="productCostComponentCalcs" use-cache="false">
+			<condition-expr field-name="productId" from-field="parameters.productId" ignore="false" ignore-case="false" ignore-if-empty="false"
+				ignore-if-null="false" operator="equals" />
+			<order-by field-name="sequenceNum" />
+		</entity-condition>
+		<iterate entry="productCostComponentCalc" list="productCostComponentCalcs">
+			<get-related-one relation-name="CostComponentCalc" to-value-field="costComponentCalc" use-cache="false" value-field="productCostComponentCalc" />
+			<get-related-one relation-name="CustomMethod" to-value-field="customMethod" use-cache="false" value-field="costComponentCalc" />
+			<if-empty field="customMethod">
+				<!-- TODO: not supported for CostComponentCalc entries directly associated to a product -->
+				<log level="warning" message="Unable to create cost component for cost component calc with id [${costComponentCalc.costComponentCalcId}] because customMethod is not set" />
+				<else>
+					<clear-field field="customMethodParameters" />
+					<set field="customMethodParameters.productCostComponentCalc" from="productCostComponentCalc" set-if-empty="true" set-if-null="false" />
+					<set field="customMethodParameters.costComponentCalc" from="costComponentCalc" set-if-empty="true" set-if-null="false" />
+					<set field="customMethodParameters.currencyUomId" from="parameters.currencyUomId" set-if-empty="true" set-if-null="false" />
+					<set field="customMethodParameters.costComponentTypePrefix" from="parameters.costComponentTypePrefix" set-if-empty="true" set-if-null="false" />
+					<set field="customMethodParameters.baseCost" from="totalCost" set-if-empty="true" set-if-null="false" />
+					<call-service break-on-error="true" error-code="error" in-map-name="customMethodParameters" include-user-login="true" require-new-transaction="false"
+						service-name="${customMethod.customMethodName}" success-code="success">
+						<result-to-field result-name="productCostAdjustment" />
+					</call-service>
+					<clear-field field="callSvcMap" />
+					<set field="callSvcMap.costComponentTypeId" set-if-empty="true" set-if-null="false"
+						value="${parameters.costComponentTypePrefix}_${productCostComponentCalc.costComponentTypeId}" />
+					<set field="callSvcMap.productId" from="productCostComponentCalc.productId" set-if-empty="true" set-if-null="false" />
+					<set field="callSvcMap.costUomId" from="parameters.currencyUomId" set-if-empty="true" set-if-null="false" />
+					<set field="callSvcMap.cost" from="productCostAdjustment" set-if-empty="true" set-if-null="false" />
+					<call-service break-on-error="true" error-code="error" in-map-name="callSvcMap" include-user-login="true" require-new-transaction="false"
+						service-name="recreateCostComponent" success-code="success" />
+					<!--set field="totalCost" value="${totalCost + productCostAdjustment}" type="BigDecimal"/ -->
+					<calculate decimal-scale="6" field="totalCost" rounding-mode="HalfEven" type="BigDecimal">
+						<calcop field="totalCost" operator="add">
+							<calcop field="productCostAdjustment" operator="get" />
+						</calcop>
+					</calculate>
+				</else>
+			</if-empty>
+		</iterate>
+		<field-to-result field="totalCost" />
+	</simple-method>
+
+	<simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_" event-event-message-name="_event_message_"
+		event-request-object-name="request" event-response-code-name="_response_code_" event-response-object-name="response" login-required="true"
+		method-name="calculateProductAverageCost" service-error-message-list-name="errorMessageList" service-error-message-map-name="errorMessageMap"
+		service-error-message-name="errorMessage" service-response-message-name="responseMessage" service-success-message-list-name="successMessageList"
+		service-success-message-name="successMessage" short-description="Calculate inventory average cost for a product" use-transaction="true">
+		<entity-condition distinct="false" entity-name="InventoryItem" filter-by-date="false" list="inventoryItems" use-cache="false">
+			<condition-list combine="and">
+				<condition-expr field-name="productId" from-field="parameters.productId" ignore="false" ignore-case="false" ignore-if-empty="false"
+					ignore-if-null="false" operator="equals" />
+				<condition-expr field-name="facilityId" from-field="parameters.facilityId" ignore="false" ignore-case="false" ignore-if-empty="true"
+					ignore-if-null="false" operator="equals" />
+				<condition-expr field-name="ownerPartyId" from-field="parameters.ownerPartyId" ignore="false" ignore-case="false" ignore-if-empty="true"
+					ignore-if-null="false" operator="equals" />
+				<condition-expr field-name="unitCost" from-field="nullField" ignore="false" ignore-case="false" ignore-if-empty="false" ignore-if-null="false"
+					operator="not-equals" />
+			</condition-list>
+			<select-field field-name="quantityOnHandTotal" />
+			<select-field field-name="unitCost" />
+			<select-field field-name="currencyUomId" />
+		</entity-condition>
+		<set field="totalQuantityOnHand" set-if-empty="true" set-if-null="false" type="BigDecimal" value="0" />
+		<set field="totalInventoryCost" set-if-empty="true" set-if-null="false" type="BigDecimal" value="0" />
+		<set field="absValOfTotalQOH" set-if-empty="true" set-if-null="false" type="BigDecimal" value="0" />
+		<set field="absValOfTotalInvCost" set-if-empty="true" set-if-null="false" type="BigDecimal" value="0" />
+		<set field="differentCurrencies" set-if-empty="true" set-if-null="false" type="Boolean" value="false" />
+		<iterate entry="inventoryItem" list="inventoryItems">
+			<calculate decimal-scale="2" field="totalQuantityOnHand" rounding-mode="HalfEven" type="BigDecimal">
+				<calcop operator="add">
+					<calcop field="totalQuantityOnHand" operator="get" />
+					<calcop field="inventoryItem.quantityOnHandTotal" operator="get" />
+				</calcop>
+			</calculate>
+			<if-empty field="currencyUomId">
+				<set field="currencyUomId" from="inventoryItem.currencyUomId" set-if-empty="true" set-if-null="false" />
+			</if-empty>
+			<if-compare field="differentCurrencies" operator="equals" type="Boolean" value="false">
+				<if-compare-field field="inventoryItem.currencyUomId" operator="equals" to-field="currencyUomId" type="String">
+					<calculate decimal-scale="2" field="totalInventoryCost" rounding-mode="HalfEven" type="BigDecimal">
+						<calcop operator="add">
+							<calcop field="totalInventoryCost" operator="get" />
+							<calcop operator="multiply">
+								<calcop field="inventoryItem.quantityOnHandTotal" operator="get" />
+								<calcop field="inventoryItem.unitCost" operator="get" />
+							</calcop>
+						</calcop>
+					</calculate>
+					<!-- calculation of absolute values of QOH and total inventory cost -->
+					<if-compare field="inventoryItem.quantityOnHandTotal" operator="less" type="String" value="0">
+						<calculate decimal-scale="2" field="absValOfTotalQOH" rounding-mode="HalfEven" type="BigDecimal">
+							<calcop operator="add">
+								<calcop field="absValOfTotalQOH" operator="get" />
+								<calcop field="inventoryItem.quantityOnHandTotal" operator="negative" />
+							</calcop>
+						</calculate>
+						<calculate decimal-scale="2" field="absValOfTotalInvCost" rounding-mode="HalfEven" type="BigDecimal">
+							<calcop operator="add">
+								<calcop field="absValOfTotalInvCost" operator="get" />
+								<calcop operator="multiply">
+									<calcop field="inventoryItem.quantityOnHandTotal" operator="negative" />
+									<calcop field="inventoryItem.unitCost" operator="get" />
+								</calcop>
+							</calcop>
+						</calculate>
+						<else>
+							<calculate decimal-scale="2" field="absValOfTotalQOH" rounding-mode="HalfEven" type="BigDecimal">
+								<calcop operator="add">
+									<calcop field="absValOfTotalQOH" operator="get" />
+									<calcop field="inventoryItem.quantityOnHandTotal" operator="get" />
+								</calcop>
+							</calculate>
+							<calculate decimal-scale="2" field="absValOfTotalInvCost" rounding-mode="HalfEven" type="BigDecimal">
+								<calcop operator="add">
+									<calcop field="absValOfTotalInvCost" operator="get" />
+									<calcop operator="multiply">
+										<calcop field="inventoryItem.quantityOnHandTotal" operator="get" />
+										<calcop field="inventoryItem.unitCost" operator="get" />
+									</calcop>
+								</calcop>
+							</calculate>
+						</else>
+					</if-compare>
+					<else>
+						<set field="differentCurrencies" set-if-empty="true" set-if-null="false" type="Boolean" value="true" />
+					</else>
+				</if-compare-field>
+			</if-compare>
+		</iterate>
+		<if-compare field="absValOfTotalQOH" operator="not-equals" type="BigDecimal" value="0">
+			<calculate decimal-scale="2" field="productAverageCost" rounding-mode="HalfEven" type="BigDecimal">
+				<calcop operator="divide">
+					<calcop field="absValOfTotalInvCost" operator="get" />
+					<calcop field="absValOfTotalQOH" operator="get" />
+				</calcop>
+			</calculate>
+			<else>
+				<set field="productAverageCost" set-if-empty="true" set-if-null="false" type="BigDecimal" value="0" />
+			</else>
+		</if-compare>
+		<field-to-result field="totalQuantityOnHand" />
+		<if-compare field="differentCurrencies" operator="equals" type="Boolean" value="false">
+			<field-to-result field="totalInventoryCost" />
+			<field-to-result field="productAverageCost" />
+			<field-to-result field="currencyUomId" />
+		</if-compare>
+	</simple-method>
+
+	<simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_" event-event-message-name="_event_message_"
+		event-request-object-name="request" event-response-code-name="_response_code_" event-response-object-name="response" login-required="true"
+		method-name="updateProductAverageCostOnReceiveInventory" service-error-message-list-name="errorMessageList" service-error-message-map-name="errorMessageMap"
+		service-error-message-name="errorMessage" service-response-message-name="responseMessage" service-success-message-list-name="successMessageList"
+		service-success-message-name="successMessage" short-description="Update a Product Average Cost record on receive inventory" use-transaction="true">
+		<entity-one auto-field-map="true" entity-name="InventoryItem" use-cache="false" value-field="inventoryItem" />
+		<set field="organizationPartyId" from="inventoryItem.ownerPartyId" set-if-empty="true" set-if-null="false" />
+		<if-empty field="organizationPartyId">
+			<entity-one auto-field-map="true" entity-name="Facility" use-cache="false" value-field="facility" />
+			<set field="organizationPartyId" from="facility.ownerPartyId" set-if-empty="true" set-if-null="false" />
+			<if-empty field="organizationPartyId">
+				<get-related-one relation-name="ProductStore" to-value-field="productStore" use-cache="false" value-field="facility" />
+				<set field="organizationPartyId" from="productStore.ownerPartyId" set-if-empty="true" set-if-null="false" />
+				<if-empty field="organizationPartyId">
+					<add-error error-list-name="error_list">
+						<fail-message message="Owner Party is missing, please provide any of the Inventory Owner or Facility Owner or ProductStore Owner." />
+					</add-error>
+				</if-empty>
+				<check-errors error-code="error" error-list-name="error_list" />
+			</if-empty>
+		</if-empty>
+		<entity-and entity-name="ProductAverageCost" filter-by-date="true" list="productAverageCostList" use-cache="false">
+			<field-map field-name="productId" from-field="parameters.productId" />
+			<field-map field-name="facilityId" from-field="parameters.facilityId" />
+			<field-map field-name="productAverageCostTypeId" value="SIMPLE_AVG_COST" />
+			<field-map field-name="organizationPartyId" />
+		</entity-and>
+		<first-from-list entry="productAverageCost" list="productAverageCostList" />
+		<set-service-fields map="parameters" service-name="createProductAverageCost" to-map="productAverageCostMap" />
+		<set field="productAverageCostMap.productAverageCostTypeId" set-if-empty="true" set-if-null="false" value="SIMPLE_AVG_COST" />
+		<set field="productAverageCostMap.organizationPartyId" from="organizationPartyId" set-if-empty="true" set-if-null="false" />
+		<if-empty field="productAverageCost">
+			<set field="productAverageCostMap.averageCost" from="inventoryItem.unitCost" set-if-empty="true" set-if-null="false" />
+			<else>
+				<!-- Expire existing one and calculate average cost -->
+				<set-service-fields map="productAverageCost" service-name="updateProductAverageCost" to-map="updateProductAverageCostMap" />
+				<now-timestamp field="updateProductAverageCostMap.thruDate" />
+				<call-service break-on-error="true" error-code="error" in-map-name="updateProductAverageCostMap" include-user-login="true"
+					require-new-transaction="false" service-name="updateProductAverageCost" success-code="success" />
+				<set field="serviceInMap.productId" from="parameters.productId" set-if-empty="true" set-if-null="false" />
+				<set field="serviceInMap.facilityId" from="parameters.facilityId" set-if-empty="true" set-if-null="false" />
+				<call-service break-on-error="true" error-code="error" in-map-name="serviceInMap" include-user-login="true" require-new-transaction="false"
+					service-name="getInventoryAvailableByFacility" success-code="success">
+					<result-to-field result-name="quantityOnHandTotal" />
+				</call-service>
+				<set field="oldProductQuantity" from="quantityOnHandTotal - parameters.quantityAccepted" set-if-empty="true" set-if-null="false" />
+				<set field="productAverageCostMap.averageCost" from="((productAverageCost.averageCost * oldProductQuantity) + (inventoryItem.unitCost * parameters.quantityAccepted))/(quantityOnHandTotal)"
+					set-if-empty="true" set-if-null="false" type="BigDecimal" />
+				<property-to-field default="2" field="roundingDecimals" no-locale="false" property="finaccount.decimals" resource="arithmetic" />
+				<property-to-field default="HalfUp" field="roundingMode" no-locale="false" property="finaccount.roundingSimpleMethod" resource="arithmetic" />
+				<calculate decimal-scale="${roundingDecimals}" field="productAverageCostMap.averageCost" rounding-mode="${roundingMode}" type="BigDecimal">
+					<calcop field="productAverageCostMap.averageCost" operator="get" />
+				</calculate>
+			</else>
+		</if-empty>
+		<call-service break-on-error="true" error-code="error" in-map-name="productAverageCostMap" include-user-login="true" require-new-transaction="false"
+			service-name="createProductAverageCost" success-code="success" />
+		<log level="info"
+			message="For facilityId ${parameters.facilityId}, Average cost of product ${parameters.productId} is set from  ${updateProductAverageCostMap.averageCost} to ${productAverageCostMap.averageCost}" />
+	</simple-method>
+
+	<simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_" event-event-message-name="_event_message_"
+		event-request-object-name="request" event-response-code-name="_response_code_" event-response-object-name="response" login-required="true" method-name="getProductAverageCost"
+		service-error-message-list-name="errorMessageList" service-error-message-map-name="errorMessageMap" service-error-message-name="errorMessage"
+		service-response-message-name="responseMessage" service-success-message-list-name="successMessageList" service-success-message-name="successMessage"
+		short-description="Service to get the average cost of product" use-transaction="true">
+		<set field="inventoryItem" from="parameters.inventoryItem" set-if-empty="true" set-if-null="false" />
+		<set field="getPartyAcctgPrefMap.organizationPartyId" from="inventoryItem.ownerPartyId" set-if-empty="true" set-if-null="false" />
+		<call-service break-on-error="true" error-code="error" in-map-name="getPartyAcctgPrefMap" include-user-login="true" require-new-transaction="false"
+			service-name="getPartyAccountingPreferences" success-code="success">
+			<result-to-field result-name="partyAccountingPreference" />
+		</call-service>
+		<if-compare field="partyAccountingPreference.cogsMethodId" operator="equals" type="String" value="COGS_AVG_COST">
+			<entity-and entity-name="ProductAverageCost" filter-by-date="true" list="productAverageCostList" use-cache="false">
+				<field-map field-name="productAverageCostTypeId" value="SIMPLE_AVG_COST" />
+				<!-- TODO: handle for WEIGHTED_AVG_COST and MOVING_AVG_COST -->
+				<field-map field-name="organizationPartyId" from-field="inventoryItem.ownerPartyId" />
+				<field-map field-name="productId" from-field="inventoryItem.productId" />
+				<field-map field-name="facilityId" from-field="inventoryItem.facilityId" />
+			</entity-and>
+			<first-from-list entry="productAverageCost" list="productAverageCostList" />
+		</if-compare>
+		<if-not-empty field="productAverageCost">
+			<set field="unitCost" from="productAverageCost.averageCost" set-if-empty="true" set-if-null="false" type="BigDecimal" />
+			<else>
+				<set field="unitCost" from="inventoryItem.unitCost" set-if-empty="true" set-if-null="false" type="BigDecimal" />
+			</else>
+		</if-not-empty>
+		<field-to-result field="unitCost" />
+	</simple-method>
+
+	<simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_" event-event-message-name="_event_message_"
+		event-request-object-name="request" event-response-code-name="_response_code_" event-response-object-name="response" login-required="true"
+		method-name="productCostPercentageFormula" service-error-message-list-name="errorMessageList" service-error-message-map-name="errorMessageMap"
+		service-error-message-name="errorMessage" service-response-message-name="responseMessage" service-success-message-list-name="successMessageList"
+		service-success-message-name="successMessage" short-description="Formula that creates a cost component equal to a percentage of total product cost"
+		use-transaction="true">
+		<set field="productCostComponentCalc" from="parameters.productCostComponentCalc" set-if-empty="true" set-if-null="false" />
+		<set field="costComponentCalc" from="parameters.costComponentCalc" set-if-empty="true" set-if-null="false" />
+		<set field="inputMap.productId" from="productCostComponentCalc.productId" set-if-empty="true" set-if-null="false" />
+		<set field="inputMap.currencyUomId" from="parameters.currencyUomId" set-if-empty="true" set-if-null="false" />
+		<set field="inputMap.costComponentTypePrefix" from="parameters.costComponentTypePrefix" set-if-empty="true" set-if-null="false" />
+		<!--<call-service service-name="getProductCost" in-map-name="inputMap"> <result-to-field result-name="productCost"/> </call-service> -->
+		<!--set field="productCostAdjustment" value="${parameters.baseCost * costComponentCalc.fixedCost}" type="BigDecimal"/ -->
+		<calculate decimal-scale="6" field="productCostAdjustment" rounding-mode="HalfEven" type="BigDecimal">
+			<calcop field="costComponentCalc.fixedCost" operator="add">
+				<calcop field="parameters.baseCost" operator="get" />
+			</calcop>
+		</calculate>
+		<field-to-result field="productCostAdjustment" />
+	</simple-method>
+
+	<simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_" event-event-message-name="_event_message_"
+		event-request-object-name="request" event-response-code-name="_response_code_" event-response-object-name="response" login-required="true"
+		method-name="productCostBasePlusFixedFormula" service-error-message-list-name="errorMessageList" service-error-message-map-name="errorMessageMap"
+		service-error-message-name="errorMessage" service-response-message-name="responseMessage" service-success-message-list-name="successMessageList"
+		service-success-message-name="successMessage" short-description="Formula that creates overheads as base cost Plus fixed cost" use-transaction="true">
+		<set field="productCostComponentCalc" from="parameters.productCostComponentCalc" set-if-empty="true" set-if-null="false" />
+		<set field="costComponentCalc" from="parameters.costComponentCalc" set-if-empty="true" set-if-null="false" />
+		<set field="inputMap.productId" from="productCostComponentCalc.productId" set-if-empty="true" set-if-null="false" />
+		<set field="inputMap.currencyUomId" from="parameters.currencyUomId" set-if-empty="true" set-if-null="false" />
+		<set field="inputMap.costComponentTypePrefix" from="parameters.costComponentTypePrefix" set-if-empty="true" set-if-null="false" />
+		<calculate decimal-scale="6" field="productCostAdjustment" rounding-mode="HalfEven" type="BigDecimal">
+			<calcop field="costComponentCalc.fixedCost" operator="multiply">
+				<calcop field="parameters.baseCost" operator="get" />
+			</calcop>
+		</calculate>
+		<field-to-result field="productCostAdjustment" />
+	</simple-method>
+
+	<simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_" event-event-message-name="_event_message_"
+		event-request-object-name="request" event-response-code-name="_response_code_" event-response-object-name="response" login-required="true"
+		method-name="productCostBasePlusFixedFormula" service-error-message-list-name="errorMessageList" service-error-message-map-name="errorMessageMap"
+		service-error-message-name="errorMessage" service-response-message-name="responseMessage" service-success-message-list-name="successMessageList"
+		service-success-message-name="successMessage" short-description="Formula that creates overheads as base cost Plus fixed cost" use-transaction="true">
+		<set field="productCostComponentCalc" from="parameters.productCostComponentCalc" set-if-empty="true" set-if-null="false" />
+		<set field="costComponentCalc" from="parameters.costComponentCalc" set-if-empty="true" set-if-null="false" />
+		<set field="inputMap.productId" from="productCostComponentCalc.productId" set-if-empty="true" set-if-null="false" />
+		<set field="inputMap.currencyUomId" from="parameters.currencyUomId" set-if-empty="true" set-if-null="false" />
+		<set field="inputMap.costComponentTypePrefix" from="parameters.costComponentTypePrefix" set-if-empty="true" set-if-null="false" />
+		<calculate decimal-scale="6" field="productCostAdjustment" rounding-mode="HalfEven" type="BigDecimal">
+			<calcop field="costComponentCalc.fixedCost" operator="add">
+				<calcop field="parameters.baseCost" operator="get" />
+			</calcop>
+		</calculate>
+		<field-to-result field="productCostAdjustment" />
+	</simple-method>
+
+	<simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_" event-event-message-name="_event_message_"
+		event-request-object-name="request" event-response-code-name="_response_code_" event-response-object-name="response" login-required="true"
+		method-name="productCostBaseMultiFixedFormula" service-error-message-list-name="errorMessageList" service-error-message-map-name="errorMessageMap"
+		service-error-message-name="errorMessage" service-response-message-name="responseMessage" service-success-message-list-name="successMessageList"
+		service-success-message-name="successMessage" short-description="Formula that creates overheads as base cost Plus fixed cost" use-transaction="true">
+		<set field="productCostComponentCalc" from="parameters.productCostComponentCalc" set-if-empty="true" set-if-null="false" />
+		<set field="costComponentCalc" from="parameters.costComponentCalc" set-if-empty="true" set-if-null="false" />
+		<set field="inputMap.productId" from="productCostComponentCalc.productId" set-if-empty="true" set-if-null="false" />
+		<set field="inputMap.currencyUomId" from="parameters.currencyUomId" set-if-empty="true" set-if-null="false" />
+		<set field="inputMap.costComponentTypePrefix" from="parameters.costComponentTypePrefix" set-if-empty="true" set-if-null="false" />
+		<calculate decimal-scale="6" field="productCostAdjustment" rounding-mode="HalfEven" type="BigDecimal">
+			<calcop field="costComponentCalc.fixedCost" operator="multiply">
+				<calcop field="parameters.baseCost" operator="get" />
+			</calcop>
+		</calculate>
+		<field-to-result field="productCostAdjustment" />
+	</simple-method>
+
+	<simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_" event-event-message-name="_event_message_"
+		event-request-object-name="request" event-response-code-name="_response_code_" event-response-object-name="response" login-required="true"
+		method-name="productCostBaseMinusFixedFormula" service-error-message-list-name="errorMessageList" service-error-message-map-name="errorMessageMap"
+		service-error-message-name="errorMessage" service-response-message-name="responseMessage" service-success-message-list-name="successMessageList"
+		service-success-message-name="successMessage" short-description="Formula that creates overheads as base cost 2 times of fixed cost" use-transaction="true">
+		<set field="productCostComponentCalc" from="parameters.productCostComponentCalc" set-if-empty="true" set-if-null="false" />
+		<set field="costComponentCalc" from="parameters.costComponentCalc" set-if-empty="true" set-if-null="false" />
+		<set field="inputMap.productId" from="productCostComponentCalc.productId" set-if-empty="true" set-if-null="false" />
+		<set field="inputMap.currencyUomId" from="parameters.currencyUomId" set-if-empty="true" set-if-null="false" />
+		<set field="inputMap.costComponentTypePrefix" from="parameters.costComponentTypePrefix" set-if-empty="true" set-if-null="false" />
+		<calculate decimal-scale="6" field="productCostAdjustment" rounding-mode="HalfEven" type="BigDecimal">
+			<calcop field="parameters.baseCost" operator="add">
+				<calcop field="costComponentCalc.fixedCost" operator="get" />
+			</calcop>
+		</calculate>
+		<calculate decimal-scale="6" field="productCostAdjustment" rounding-mode="HalfEven" type="BigDecimal">
+			<calcop field="parameters.baseCost" operator="add">
+				<calcop field="costComponentCalc.fixedCost" operator="get" />
+			</calcop>
+		</calculate>
+		<field-to-result field="productCostAdjustment" />
+	</simple-method>
+</simple-methods>

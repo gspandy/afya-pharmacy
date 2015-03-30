@@ -1,0 +1,31 @@
+<?page title="Manage Attendance Register Summary" contentType="text/html;charset=UTF-8"?>
+<?init class="org.zkoss.zkplus.databind.AnnotateDataBinderInit"  arg0="attendanceRegisterSummaryWin" ?>
+<zk>
+    <window vflex="1" hflex="1" border="" apply="org.zkoss.bind.BindComposer" viewModel="@id('vm') @init('com.zpc.timesheet.view.ManageAttendanceRegisterSummaryVM')" id="attendanceRegisterSummaryWin">
+        <style src="/images/mainCSS.css"/>
+
+        <div>
+            <grid  mold="paging" pageSize="7" model="@load(vm.attendanceRegisterSummaries)"  id="grid" height="100%" emptyMessage="Currently No Attendance Register">
+                <columns>
+                    <column label="Description" align="left"/>
+                    <column label="From Date" align="left"/>
+                    <column label="To Date" align="left"/>
+                    <column label="Department" align="left" />
+                    <column label="Status" align="left"/>
+                    <column label="Action" align="left"/>
+                </columns>
+                <template name="model" var="attendanceRegister">
+                    <row>
+                        <label value="@load(attendanceRegister.description)"/>
+                        <label value="@load(attendanceRegister.fromDate)"/>
+                        <label value="@load(attendanceRegister.thruDate)"/>
+                        <label value="@load(attendanceRegister.departmentName)"/>
+                        <label value="@load(attendanceRegister.status)"/>
+                        <button label="Update" if="${attendanceRegister.status eq 'NEW' || attendanceRegister.status eq 'SAVED'}" href="/zul/attendanceRegister.zul?attendanceRegisterId=${attendanceRegister.attendanceRegisterId}"/>
+                    </row>
+                </template>
+            </grid>
+        </div>
+
+    </window>
+</zk>

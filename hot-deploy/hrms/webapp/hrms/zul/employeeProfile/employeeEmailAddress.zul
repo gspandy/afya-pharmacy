@@ -1,0 +1,95 @@
+<?xel-method prefix="cmpt" name="getContactMechPurPoseType"
+class="com.ndz.controller.UpdateEmployeeProfileController" signature="String getContactMechPurPoseType(java.lang.String)"?>
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<zk>
+	<zscript>
+		<![CDATA[
+			import org.ofbiz.entity.*;
+			import org.ofbiz.entity.condition.*;
+			import org.ofbiz.entity.condition.EntityConditionFunction;
+			import org.zkoss.zk.ui.event.EventListener;
+			import org.ofbiz.entity.util.*;
+			import java.util.*;
+			import org.ofbiz.base.util.*;
+			String partyId = Executions.getCurrent().getArg().get("partyId");
+			GenericValue userLogin = (GenericValue) Executions.getCurrent().getDesktop().getSession().getAttribute("userLogin");
+			GenericDelegator delegator = com.ndz.zkoss.util.HrmsInfrastructure.getDelegator();//GenericDelegator.getGenericDelegator("default");
+			List emailAddressDetails = org.ofbiz.party.contact.ContactMechWorker.getPartyContactMechValueMaps(delegator, partyId, false,
+					"EMAIL_ADDRESS");
+			boolean sameUser = Executions.getCurrent().getArg().get("sameUser");
+			org.ofbiz.security.Security security = requestScope.get("security");
+			boolean isAdmin = security.hasPermission("HUMANRES_ADMIN", userLogin);
+			boolean isManager = security.hasPermission("HUMANRES_MGR", userLogin);
+			boolean anyOne = false;
+		    boolean isVisible = true;
+		    String managerpositionid=null;
+			String emplpositionid=null;
+			boolean flag=com.ndz.zkoss.HrmsUtil.checkAccess(userLogin,security);
+			/*if (isAdmin || isManager || sameUser) {
+				anyOne = true;
+			}*/
+			if(flag)
+			{
+				anyOne = true;
+			}
+			String employeeId = Executions.getCurrent().getParameter("partyId"); 
+			String manageremployeeId=userLogin.getString("partyId");
+		    List manager=delegator.findByAnd("EmplPositionFulfillment",UtilMisc.toMap("partyId",manageremployeeId));
+		    if(manager.size()>0)
+		    {
+		    	 managerpositionid=(String)EntityUtil.getFirst(manager).getString("emplPositionId");		
+		    }
+		    List employee=delegator.findByAnd("EmplPositionFulfillment",UtilMisc.toMap("partyId",employeeId));
+		    if(employee.size()>0)
+		    {
+		     emplpositionid=(String)EntityUtil.getFirst(employee).getString("emplPositionId"); 	
+		    }
+		    if(isManager)
+			{
+				if(manageremployeeId.equals(partyId))
+				{
+					isVisible = true;
+					
+				}
+				else
+				{
+				List result=delegator.findByAnd("EmplPositionReportingStruct",UtilMisc.toMap("emplPositionIdReportingTo",managerpositionid,"emplPositionIdManagedBy",emplpositionid));
+				if(result.size()==0)
+				{
+					isVisible = false;
+				}
+				}			
+		   }
+		]]>
+	</zscript>
+	<window id="emailAddressWindow">
+		<groupbox>
+				<div align="right" if="${anyOne}">
+			 <toolbarbutton label="${c:l('HRMS_NEW') }" image="/images/icon/update.png" if="${flag}">
+					<attribute name="onClick">
+		Map map = new HashMap();
+		map.put(0, partyId);
+		final Window win = (Window) Executions.createComponents("/zul/employeeProfile/createNewEmailAddress.zul", null, map);
+		win.setMaximizable(true);
+		win.doModal();
+                 </attribute>
+
+				</toolbarbutton>
+			</div>
+			<groupbox closable="false" forEach="${emailAddressDetails }">
+				<caption label="${cmpt:getContactMechPurPoseType(each.contactMech.contactMechId)}"
+					style="font-family:Verdana, Tahoma, Arial, Helvetica, sans-serif;font-weight:bold;font-size:10px;">
+
+				</caption>
+				<toolbarbutton label="${c:l('HRMS_EDIT') }" image="/images/icon/update.png" style="font-weight:bold" if="${flag}"
+					id="${each.contactMech.contactMechId}"
+					onClick="com.ndz.controller.UpdateEmployeeProfileController.showUpdateEmailAddressWindow(self.id,partyId)">
+				</toolbarbutton>
+				<hbox>
+					<label value="${c:l('HRMS_EMAILADDRESS') }:" style="font-weight:bold"></label>
+					<label value="${each.contactMech.infoString}" style="font-weight:regular"></label>
+				</hbox>
+			</groupbox>
+		</groupbox>
+	</window>
+</zk>

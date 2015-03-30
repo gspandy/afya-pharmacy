@@ -1,0 +1,70 @@
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<?component name="positionTypebox" macroURI="../macros/textfindMacro.zul" id="macro2"?>
+<?component name="findbox1" macroURI="../macros/textfindMacro.zul" id="macro6"?>
+<zk xmlns:n="http://www.zkoss.org/2005/zk/native">
+	<zscript>
+	<![CDATA[
+	import org.ofbiz.entity.*;
+	GenericValue userLogin = (GenericValue) Executions.getCurrent().getDesktop().getSession().getAttribute("userLogin");
+	String employeeId = (String) userLogin.getString("partyId");
+	boolean isAdmin = security.hasPermission("HUMANRES_ADMIN", userLogin);
+	boolean isManager = security.hasPermission("HUMANRES_MGR", userLogin);
+]]>
+</zscript>
+	<window title="${c:l('HRMS_PAYROLL_DEDUCTIONS') }" border="none" id="tdsReportWindow" self="@{define(content) }">
+		<n:form method="post" name="generateReportForm" action="/hrms/control/myTotalTDSReport" id="totalTDSForm" target="_New">
+			<n:table width="100%" CELLSPACING="12">
+				<n:tr>
+					<n:td style="text-align:right">
+						<label value="${c:l('Hrms_EmployeeId') }" if="${isAdmin||isManager}"></label>
+					</n:td>
+					<n:td>
+						<textbox if="${!(isAdmin||isManager)}" value="${employeeId}" visible="false"></textbox>
+						<employeebox id="employeeId" name="partyId" constraint="no empty:${c:l('HRMS_REQUIRED_EMPLOYEE_ID') }" if="${isAdmin||isManager}" />
+					</n:td>
+				</n:tr>
+				<n:tr>
+					<n:td style="text-align:right">
+						<label value="${c:l('Hrms_From') }" />
+					</n:td>
+					<n:td>
+						<datebox id="periodFrom" name="periodFrom"></datebox>
+					</n:td>
+					<n:td style="text-align:right">
+						<label value="${c:l('HRMS_TO') }" />
+					</n:td>
+					<n:td>
+						<datebox id="periodTo" name="periodTo"></datebox>
+					</n:td>
+				</n:tr>
+				<n:tr>
+					<n:td style="text-align:right">
+						<label value="${c:l('HRMS_TAX_TYPE') }" />
+					</n:td>
+					<n:td>
+						<listbox mold="select" name="taxType" width="158px">
+							<listitem label="" selected="true" />
+							<listitem label="${c:l('HRMS_INCOMETAX') }" value="INCOMETAX"></listitem>
+							<listitem label="${c:l('HRMS_PROFESSIONALTAX') }" value="PROFESSIONALTAX"></listitem>
+						</listbox>
+					</n:td>
+				</n:tr>
+			</n:table>
+			<box width="100%" height="30px" align="center">
+				<hbox style="margin-top:10px;margin-bottom:10px">
+					<label value="${c:l('HRMS_EXPORT_TO') }" style="margin:5px 5px 5px 5px;font-weight:bold"></label>
+
+					<listbox mold="select" id="reportFormat" name="reportFormat">
+						<attribute name="onSelect">
+	Clients.submitForm("totalTDSForm");
+</attribute>
+						<listitem label="--${c:l('HRMS_SELECT') }--" focus="true"></listitem>
+						<listitem label="${c:l('HRMS_PDF') }"></listitem>
+
+					</listbox>
+				</hbox>
+			</box>
+			<separator width="100%" height="3px" bar="true" />
+		</n:form>
+	</window>
+</zk>

@@ -1,0 +1,107 @@
+<zk>
+    <window vflex="1" hflex="1" apply="org.zkoss.bind.BindComposer" viewModel="@id('vm') @init('com.zpc.timesheet.view.VerifyTimesheetVM')" id="attendanceRegisterWin" validationMessages="@id('vmsgs')">
+        <style src="/images/mainCSS.css"/>
+        <div height="20%">
+            <groupbox>
+                <caption label="LEGEND"></caption>
+                <vbox hflex="1" align="center">
+                    <auxhead hflex="1">
+                        <auxheader label="P - Present" align="center" width="10%"/>
+                        <auxheader label="A - Absent" align="center" width="10%"/>
+                        <auxheader label="AD - Away on Duty" align="center" width="10%"/>
+                        <auxheader label="SB - StandBy" align="center" width="10%"/>
+                        <auxheader label="D - Deserted" align="center" width="10%"/>
+                        <auxheader label="F - Free Day" align="center" width="10%"/>
+                        <auxheader label="L - Annual Leave" align="center" width="10%"/>
+                        <auxheader label="S - Sick" align="center"/>
+                        <auxheader label="R - Resigned" align="center"/>
+                    </auxhead>
+                    <auxhead>
+                        <auxheader label="CL - Compassionate Leave" align="center" width="10%"/>
+                        <auxheader label="LP - Annual Leave Passage" align="center" width="10%"/>
+                        <auxheader label="ML - Maternity Leave" align="center"/>
+                        <auxheader label="UL - Unpaid Leave" align="center"/>
+                        <auxheader label="SL - Special Leave" align="center"/>
+                        <auxheader label="SU - Suspended" align="center"/>
+                        <auxheader label="T - Terminated/Dismissed" align="center"/>
+                        <auxheader label="TR - Transferred" align="center"/>
+                        <auxheader label="WD - Wrong Department" align="center"/>
+                    </auxhead>
+                    <auxhead>
+                        <auxheader label="PF - Present on Free Day" align="center" width="10%"/>
+                    </auxhead>
+                </vbox>
+            </groupbox>
+        </div>
+        <div height="75%">
+            <spreadsheet src="/WEB-INF/template/admin_template.xlsx" vflex="1" hflex="1" showFormulabar="true" id="adminAttendanceRegisterSpreadsheet" maxVisibleColumns="152" showSheetbar="true" preloadColumnSize="152" preloadRowSize="200"/>
+        </div>
+        <grid width="100%" height="5%">
+            <rows>
+                <row>
+                    <cell width="95%">
+                        <button label="Save" onClick="@command('save')"/>
+                        <button label="Back" onClick="@command('redirect')" visible="${vm.timesheetStatus ne 'SIP'}" style="margin-left:30px;"/>
+                        <button label="View Consolidated Sheet" onClick="@command('redirectToConsolidatedSheet')" visible="${vm.timesheetStatus ne 'SIP'}" style="margin-left:30px;"/>
+                        <button label="Email Attendance Register" style="margin-left:30px;" popup="clickOne, after_pointer"/>
+                        <window border="0px" height="0px" width="0px" hflex="0" vflex="0" style="margin-left:120%">
+                            <popup id="clickOne" width="500px" vflex="1">
+                                <grid form="@id('fx')  @load(vm) @save(vm, before='emailConsolidatedSheet')) @validator(vm.formValidator)">
+                                    <columns>
+                                        <column width="40%"/>
+                                        <column label="Enter Details To Email"/>
+                                    </columns>
+                                    <rows>
+                                        <row>
+                                            <cell width = "40%">
+                                                <label value = "Recipient's Name"/>
+                                                <label value="@bind(vmsgs['recipientNameEmpty'])" style="color: red;" />
+                                            </cell>
+                                            <cell>
+                                                <textbox value="@bind(vm.recipientName)" hflex="1"/>
+                                            </cell>
+                                        </row>
+                                        <row>
+                                            <cell>
+                                                <label value = "Recipient's Email-id"/>
+                                                <label value="@bind(vmsgs['emailIdEmpty'])" style="color: red;" />
+                                            </cell>
+                                            <cell>
+                                                <textbox value="@bind(vm.emailId)" hflex="1"/>
+                                            </cell>
+                                        </row>
+                                        <row>
+                                            <cell>
+                                                <label value = "CC"/>
+                                            </cell>
+                                            <cell>
+                                                <textbox value="@bind(vm.cc)" hflex="1"/>
+                                            </cell>
+                                        </row>
+                                        <row>
+                                            <cell>
+                                                <label value = "BCC"/>
+                                            </cell>
+                                            <cell>
+                                                <textbox value="@bind(vm.bcc)" hflex="1"/>
+                                            </cell>
+                                        </row>
+                                        <row>
+                                            <cell>
+                                                <button label="Send Mail" onClick="@command('emailConsolidatedSheet')"  hflex="1"/>
+                                            </cell>
+                                        </row>
+                                    </rows>
+                                </grid>
+                            </popup>
+                        </window>
+                    </cell>
+                    <cell width="5%">
+                        <button label="Verify" onClick="@command('verifyTimesheet')" visible="${vm.timesheetStatus eq 'SC'}"/>
+                        <button label="Export" onClick="@command('exportTimesheet')" visible = "${vm.timesheetStatus eq 'VERIFIED' || vm.timesheetStatus eq 'EXPORTED'}"/>
+                    </cell>
+                </row>
+            </rows>
+        </grid>
+    </window>
+</zk>

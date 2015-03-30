@@ -1,0 +1,237 @@
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<?component name="positionTypebox" macroURI="../macros/textfindMacro.zul" id="macro2"?>
+<?component name="findbox1" macroURI="../macros/textfindMacro.zul" id="macro6"?>
+<zk xmlns:n="http://www.zkoss.org/2005/zk/native">
+	<zscript>
+		<![CDATA[
+	import com.ndz.controller.*;
+	import org.ofbiz.entity.GenericValue;
+	import javax.servlet.http.HttpServletRequest;
+	import org.ofbiz.entity.condition.EntityCondition;
+	import org.ofbiz.entity.condition.EntityOperator;
+	import org.ofbiz.humanresext.util.HumanResUtil;
+	import org.ofbiz.entity.GenericValue;
+	import org.ofbiz.base.util.UtilMisc;
+	import java.util.*;
+	import org.ofbiz.service.DispatchContext;
+	import org.ofbiz.security.Security;
+	import org.ofbiz.entity.GenericDelegator;
+	import org.ofbiz.entity.condition.EntityExpr;
+	SearchController controller = new SearchController();
+	GenericValue person = (GenericValue) Executions.getCurrent().getDesktop()
+			.getSession().getAttribute("person");
+	GenericDelegator delegator = com.ndz.zkoss.util.HrmsInfrastructure.getDelegator();//GenericDelegator.getGenericDelegator("default");
+	String partyId = (String) person.get("partyId");
+	String firstName = (String) person.get("firstName");
+	String lastName = (String) person.get("lastName");
+	String location=(String) person.get("locationId");
+	if (firstName == null)
+		firstName = "";
+	if (lastName == null)
+		lastName = "";
+	firstName = firstName + " " + lastName;
+	GenericValue userLogin = (GenericValue) Executions.getCurrent()
+			.getDesktop().getSession().getAttribute("userLogin");
+	EntityCondition cond1 = EntityCondition.makeCondition(UtilMisc.toMap(
+			"partyId", userLogin.getString("partyId"),
+			"contactMechPurposeTypeId", "PRIMARY_LOCATION"));
+	List locationList=null;
+	EntityCondition condLocation = EntityCondition.makeCondition(UtilMisc.toMap(
+			"locationId", location));
+	String locationGeo="";
+	 String geoIdUser=null;
+	locationList = delegator.findList("Location", condLocation, null,null, null, false);
+	for(GenericValue locate:locationList)
+	 locationGeo=locate.getString("contactMechId");
+	
+	 GenericValue GeoGV = null;
+	 
+		 
+	 GeoGV = delegator.findByPrimaryKey("PostalAddress",UtilMisc.toMap("contactMechId",locationGeo));
+	 if(GeoGV!=null)
+	  geoIdUser=GeoGV.getString("countryGeoId");
+	 
+	System.out.println("\n\n\n\n\n\n\n\n  geoIdUser" +geoIdUser);
+
+	EntityCondition condition = EntityCondition.makeCondition("userLoginId",
+			EntityOperator.EQUALS, userLogin.getString("userLoginId"));
+	List SecurityList = delegator.findList("UserLoginSecurityGroup", condition,
+			null, null, null, false);
+	String securityGroupId = "";
+	boolean hasPermission = false;
+	for (GenericValue Security : SecurityList) {
+
+		//System.out.println("\n\n\n\n\nSalaryHeadhrName:"+SalaryHead.getString("hrName"));
+		securityGroupId = Security.getString("groupId");
+		if (securityGroupId != null) {
+			if (securityGroupId.equals("HUMANRES_MGR")
+					|| securityGroupId.equals("HUMANRES_ADMIN")
+					|| securityGroupId.equals("FULLADMIN")) {
+				hasPermission = true;
+				break;
+			}
+		}
+	}
+	boolean noPermission = true;
+	if (hasPermission == true)
+		noPermission = false;
+]]>
+</zscript>
+
+	<window title="${c:l('HRMS_APPROVE_TAX_DECLARATION') }" border="none" id="leaveReportWindow"
+		self="@{define(content) }" contentStyle="background-color:#F9F9F9">
+		<separator height="10px"></separator>
+
+		
+
+		<n:form method="post" name="generateReportForm"
+			action="/hrms/control/employeeeditTaxDecl" id="taxDecl">
+			<separator height="20px"></separator>
+
+			<hbox if="${noPermission}">
+				<div align="right" width="55px"
+					style="margin-right:5px">
+				</div>
+				<div width="297px" align="left">
+					<label value="${c:l('Hrms_EmployeeName') }"
+						style="font-weight:bold">
+					</label>
+					<label value="${firstName}"></label>
+				</div>
+			</hbox>
+			<separator height="10px" />
+			<hbox if="${hasPermission}">
+				<div align="right" width="5px"
+					style="margin-right:5px">
+				</div>
+				<div align="right" width="150px"
+					style="margin-right:5px">
+					<label value="*${c:l('FormFieldTitle_EmployeeId') }" style="font-weight:bold" />
+				</div>
+				<div align="left">
+					<zscript>
+	com.ndz.controller.SearchController controller = new com.ndz.controller.SearchController();
+	com.ndz.zkoss.GenericValueRenderer listItemRenderer = new com.ndz.zkoss.GenericValueRenderer(
+			new String[] { "partyId", "firstName", "lastName" });
+</zscript>
+
+					<bandbox mold="rounded" name="partyId" width="130px"
+						apply="${controller}" id="searchPanel" constraint="no empty">
+						<custom-attributes entityName="Person"
+							companyWide="true">
+
+						</custom-attributes>
+						<bandpopup>
+							<vbox>
+								<hbox>
+
+
+									<positionTypebox
+										fieldLabel="PartyId" name="partyId" type="text" cols="18" />
+								</hbox>
+								<hbox></hbox>
+								<button mold="os" label="${c:l('HumanResSearch') }"
+									id="searchPerCompany" autodisable="self" />
+							</vbox>
+							<paging id="paging" width="550px" />
+							<listbox id="dataGrid"
+								itemRenderer="${listItemRenderer}" width="550px"
+								onSelect="searchPanel.value=self.selectedItem.label; searchPanel.close();">
+								<listhead>
+									<listheader label="${c:l('FormFieldTitle_EmployeeId') }" />
+									<listheader label="${c:l('HRMS_FirstName') }" />
+									<listheader label="${c:l('HRMS_LastName') }" />
+								</listhead>
+							</listbox>
+						</bandpopup>
+					</bandbox>
+				</div>
+			</hbox>
+
+			<hbox visible="false" if="${noPermission}">
+				<separator height="20px"></separator>
+				<div align="left" width="150px">
+					<label value="${c:l('HRMS_PARTY_ID') }"
+						style="float:right;text-align:right;display: block;font-weight:bold" />
+				</div>
+				<div align="right" width="165px">
+					<textbox id="partyId" name="partyId"
+						value="${partyId}" />
+				</div>
+			</hbox>
+
+			<hbox visible="false">
+				<separator height="20px"></separator>
+				<div align="left" width="150px">
+					<label value="${c:l('HRMS_HAS_PERMISSION') }"
+						style="float:right;text-align:right;display: block;font-weight:bold" />
+				</div>
+				<div align="right" width="50px">
+					<textbox id="hasPermission" name="hasPermission"
+						value="${hasPermission}" />
+				</div>
+			</hbox>
+
+			<separator height="20px"></separator>
+			<hbox visible="false">
+				<div align="left" width="170px">
+					<label value="${c:l('HRMS_FISCAL_YEAR') }"
+						style="float:right;text-align:right;display: block;font-weight:bold" />
+				</div>
+				<div align="right" width="50px">
+
+					<textbox name="validTaxDeclId" id="validTaxDeclId"
+						value="" constraint="no empty">
+					</textbox>
+				</div>
+			</hbox>
+
+			<hbox>
+				<div align="left" width="170px">
+					<label value="*${c:l('HRMS_FISCAL_YEAR') }"
+						style="float:right;text-align:right;display: block;font-weight:bold" />
+				</div>
+				<div align="right" width="50px">
+
+					<listbox id="fiscalYear" name="validTaxDeclIdTest"
+						onSelect="validTaxDeclId.value=self.selectedItem.value"
+						mold="select" width="130px">
+					</listbox>
+				</div>
+			</hbox>
+			<zscript>
+<![CDATA[
+	EntityCondition validtaxdeclcondition = EntityCondition.makeCondition("geoId",
+			EntityOperator.EQUALS, geoIdUser);
+	List validTaxDecl = delegator.findList("ValidTaxDecl",
+			validtaxdeclcondition, null, null, null, false);
+	validTaxDecl.add(0, null);
+	SimpleListModel validTaxDeclList = new SimpleListModel(validTaxDecl);
+	ListitemRenderer validTaxDeclRenderer = new ValidTaxDeclRenderer();
+	Listbox fiscalYearBox = (Listbox) leaveReportWindow.getFellow("fiscalYear");
+	fiscalYearBox.setModel(validTaxDeclList);
+	fiscalYearBox.setItemRenderer(new ValidTaxDeclRenderer());
+	
+	void update(){
+		
+		searchPanel.getValue();
+		validTaxDeclId.getValue();
+		
+		
+	}
+]]>
+</zscript>
+			<separator height="50px"></separator>
+			<box width="100%" height="30px" align="center">
+				<hbox style="margin-top:10px;margin-bottom:10px">
+					<button id="SubmitAttachEmployee" label="${c:l('HRMS_FETCH') }"
+						width="100px" height="25px" mold="os"
+						onClick='update();Clients.submitForm("taxDecl");'>
+					</button>
+				</hbox>
+			</box>
+
+		</n:form>
+	</window>
+
+</zk>

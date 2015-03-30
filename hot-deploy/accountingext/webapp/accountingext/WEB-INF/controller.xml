@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<site-conf xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+        xsi:noNamespaceSchemaLocation="http://ofbiz.apache.org/dtds/site-conf.xsd">
+    <!-- The controller elements that are common to all OFBiz components
+         can be found in the following xml file. A component can override the
+         elements found in the common-controller.xml file. -->
+    <include location="component://accounting/webapp/accounting/WEB-INF/controller.xml"/>
+    
+    <description>AccountingExt Component Site Configuration File</description>
+    <owner></owner>
+	
+	<handler name="fop" type="view" class="org.ofbiz.widget.screen.ScreenFopViewHandler"/>
+    <handler name="excel" type="view" class="com.smebiz.widget.screen.ScreenExcelViewHandler"/>
+	
+	<request-map uri="reports">
+        <security https="true" auth="true"/>
+        <response name="success" type="view" value="reports"/>
+    </request-map>
+	<request-map uri="AgreementsReport.pdf">
+        <response name="success" type="view" value="AgreementsReport.pdf"/>
+    </request-map>
+	<request-map uri="AgreementsReport.xls">
+        <response name="success" type="view" value="AgreementsReport.xls"/>
+    </request-map>
+    <request-map uri="VendorReport.pdf">
+        <response name="success" type="view" value="VendorReport.pdf"/>
+    </request-map>
+	 <request-map uri="VendorReport.xls">
+        <response name="success" type="view" value="VendorReport.xls"/>
+    </request-map>
+    <request-map uri="ReportByPaymenttype.pdf">
+        <response name="success" type="view" value="ReportByPaymenttype.pdf"/>
+    </request-map>
+    <request-map uri="ReportByPaymenttype.xls">
+        <response name="success" type="view" value="ReportByPaymenttype.xls"/>
+    </request-map>
+    <request-map uri="ReportByPaymentmethod.pdf">
+        <response name="success" type="view" value="ReportByPaymentmethod.pdf"/>
+    </request-map>
+     <request-map uri="ReportByPaymentmethod.xls">
+        <response name="success" type="view" value="ReportByPaymentmethod.xls"/>
+    </request-map>
+    <request-map uri="ReportByPaymentstatus.pdf">
+        <response name="success" type="view" value="ReportByPaymentstatus.pdf"/>
+    </request-map>
+     <request-map uri="ReportByPaymentstatus.xls">
+        <response name="success" type="view" value="ReportByPaymentstatus.xls"/>
+    </request-map>
+    <request-map uri="ReportByInvoicetype.pdf">
+        <response name="success" type="view" value="ReportByInvoicetype.pdf"/>
+    </request-map>
+    <request-map uri="ReportByInvoicetype.xls">
+        <response name="success" type="view" value="ReportByInvoicetype.xls"/>
+    </request-map>
+    <request-map uri="ReportByInvoicestatus.pdf">
+        <response name="success" type="view" value="ReportByInvoicestatus.pdf"/>
+    </request-map>
+    <request-map uri="ReportByInvoicestatus.xls">
+        <response name="success" type="view" value="ReportByInvoicestatus.xls"/>
+    </request-map>
+    <request-map uri="BillingAccountsReport.pdf">
+        <response name="success" type="view" value="BillingAccountsReport.pdf"/>
+    </request-map>
+    <request-map uri="BillingAccountsReport.xls">
+        <response name="success" type="view" value="BillingAccountsReport.xls"/>
+    </request-map>
+    <request-map uri="FixedAssetsReport.pdf">
+        <response name="success" type="view" value="FixedAssetsReport.pdf"/>
+    </request-map>
+    <request-map uri="FixedAssetsReport.xls">
+        <response name="success" type="view" value="FixedAssetsReport.xls"/>
+    </request-map>
+    <request-map uri="FinancialAccountsReport.pdf">
+        <response name="success" type="view" value="FinancialAccountsReport.pdf"/>
+    </request-map>
+    <request-map uri="FinancialAccountsReport.xls">
+        <response name="success" type="view" value="FinancialAccountsReport.xls"/>
+    </request-map>
+    <request-map uri="BillingAccountsReport.pdf">
+        <response name="success" type="view" value="BillingAccountsReport.pdf"/>
+    </request-map>
+	<request-map uri="BillingAccountsReport.xls">
+        <response name="success" type="view" value="BillingAccountsReport.xls"/>
+    </request-map>
+
+	<view-map name="reports" type="screen" page="component://accountingext/widget/ReportScreens.xml#listReports"/>
+	<view-map name="AgreementsReport.pdf" type="fop" page="component://accountingext/widget/ReportScreens.xml#AgreementsReportPdf" content-type="application/pdf"/>
+    <view-map name="AgreementsReport.xls" type="excel" page="component://accountingext/widget/ReportScreens.xml#AgreementsReportXls" content-type="application/vnd.ms-excel"/>
+    <view-map name="BillingAccountsReport.pdf" type="fop" page="component://accountingext/widget/ReportScreens.xml#BillingAccountsReportPdf" content-type="application/pdf"/>
+    <view-map name="BillingAccountsReport.xls" type="excel" page="component://accountingext/widget/ReportScreens.xml#BillingAccountsReportXls" content-type="application/vnd.ms-excel"/>
+    <view-map name="FixedAssetsReport.pdf" type="fop" page="component://accountingext/widget/ReportScreens.xml#FixedAssetsReportPdf" content-type="application/pdf"/>
+	<view-map name="FixedAssetsReport.xls" type="excel" page="component://accountingext/widget/ReportScreens.xml#FixedAssetsReportXls" content-type="application/vnd.ms-excel"/>
+    <view-map name="FinancialAccountsReport.pdf" type="fop" page="component://accountingext/widget/ReportScreens.xml#FinancialAccountsReportPdf" content-type="application/pdf"/>
+    <view-map name="FinancialAccountsReport.xls" type="excel" page="component://accountingext/widget/ReportScreens.xml#FinancialAccountsReportXls" content-type="application/vnd.ms-excel"/>
+
+</site-conf>

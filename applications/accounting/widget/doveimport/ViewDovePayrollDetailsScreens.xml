@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+
+<screens xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:noNamespaceSchemaLocation="http://ofbiz.apache.org/dtds/widget-screen.xsd">
+    <screen name="viewDovePayrollDetails">
+        <section>
+            <actions>
+                <entity-and list="salaryItemList" entity-name="SalaryItem">
+                    <field-map field-name="salaryId" from-field="parameters.salaryId" />
+                    <order-by field-name="-transactionType" />
+                </entity-and>
+                <entity-condition entity-name="AcctgTrans" list="AcctgTransAndEntries">
+                    <condition-expr field-name="salaryId"   from-field="parameters.salaryId"/>
+                    <order-by field-name="-acctgTransId"/>
+                </entity-condition>
+            </actions>
+            <widgets>
+                <decorator-screen name="main-decorator" location="${parameters.mainDecoratorLocation}">
+                    <decorator-section name="body">
+                        <container style="screenlet-body">
+                            <screenlet title="Salary Item Details">
+                                <platform-specific>
+                                    <html>
+                                        <html-template location="component://accounting/webapp/accounting/import/viewDovePayrollDetails.ftl" />
+                                    </html>
+                                </platform-specific>
+                            </screenlet>
+                        </container>
+                    </decorator-section>
+                </decorator-screen>
+            </widgets>
+        </section>
+    </screen>
+</screens>

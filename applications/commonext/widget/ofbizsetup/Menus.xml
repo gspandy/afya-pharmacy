@@ -1,0 +1,225 @@
+<?xml version="1.0" encoding="UTF-8"?>
+	<!--
+		Licensed to the Apache Software Foundation (ASF) under one or more contributor license agreements. See the NOTICE file
+		distributed with this work for additional information regarding copyright ownership. The ASF licenses this file to you
+		under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the
+		License. You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0 Unless required by
+		applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS,
+		WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language
+		governing permissions and limitations under the License.
+	-->
+
+<menus xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://ofbiz.apache.org/dtds/widget-menu.xsd">
+
+	<menu name="SetupAppBar" title="${uiLabelMap.SetupApp}" extends="CommonAppBarMenu" extends-resource="component://common/widget/CommonMenus.xml">
+		<menu-item name="tally" title="Tally">
+			<link target="EditTallyConfig">
+				<parameter param-name="partyId" />
+			</link>
+		</menu-item>
+		<menu-item name="init" title="${uiLabelMap.SetupInitialSetup}">
+			<link target="initialsetup" />
+		</menu-item>
+		<menu-item name="export" title="${uiLabelMap.PageTitleEntityExportAll}">
+			<link target="EntityExportAll" />
+		</menu-item>
+	</menu>
+
+	<menu name="SetupSubTabBar" extends="CommonTabBarMenu" extends-resource="component://common/widget/CommonMenus.xml"
+		selected-menuitem-context-field-name="tabButtonItemTop">
+
+		<menu-item name="organization" title="${uiLabelMap.SetupOrganization}">
+			<link target="viewprofile">
+				<parameter param-name="partyId" />
+			</link>
+		</menu-item>
+		<menu-item name="PartyAcctgPreference" title="${uiLabelMap.AccountingPreference}">
+            <link target="PartyAcctgPreference">
+                <parameter param-name="partyId"/>
+            </link>
+        </menu-item>
+		<menu-item name="facility" title="${uiLabelMap.SetupFacility}">
+			<link target="EditFacility">
+				<parameter param-name="partyId" />
+			</link>
+		</menu-item>
+		<menu-item name="productstore" title="${uiLabelMap.SetupProductStore}">
+			<link target="EditProductStore">
+				<parameter param-name="partyId" />
+			</link>
+		</menu-item>
+		<!-- <menu-item name="website" title="${uiLabelMap.SetupWebSite}">
+			<link target="EditWebSite">
+				<parameter param-name="partyId" />
+			</link>
+		</menu-item> -->
+		<!-- <menu-item name="firstcustomer" title="${uiLabelMap.SetupFirstCustomer}">
+			<link target="firstcustomer">
+				<parameter param-name="partyId" />
+			</link>
+		</menu-item> -->
+		<menu-item name="chartOfAccounts" title="Create Chart of Accounts">
+			<link text="Chart of Accounts Setup" target="GlAccountNavigate">
+				<parameter param-name="partyId" />
+			</link>
+		</menu-item>
+		<!-- <menu-item name="firstproduct" title="${uiLabelMap.SetupFirstProduct}">
+			<link target="firstproduct">
+				<parameter param-name="partyId" />
+			</link>
+		</menu-item> -->
+		<menu-item name="ledgers" title="Tally Ledgers">
+			<link target="LedgerInfo">
+				<parameter param-name="partyId" from-field="organizationPartyId" />
+			</link>
+		</menu-item>
+		<menu-item name="unitOfMeasure" title="Tally Uom">
+			<link target="UomList">
+				<parameter param-name="partyId" from-field="organizationPartyId" />
+			</link>
+		</menu-item>
+		<menu-item name="stockItem" title="Tally Stock Item">
+			<link target="TallyStockList">
+				<parameter param-name="partyId" from-field="organizationPartyId" />
+			</link>
+		</menu-item>
+	</menu>
+
+	<menu name="FirstProductTabBar" extends="CommonTabBarMenu" extends-resource="component://common/widget/CommonMenus.xml"
+		default-menu-item-name="productcatalog">
+		<menu-item name="productcatalog" title="${uiLabelMap.SetupProductCatalog}">
+			<link target="firstproduct">
+				<parameter param-name="partyId" />
+			</link>
+		</menu-item>
+		<menu-item name="productcategory" title="${uiLabelMap.ProductCategory}">
+			<link target="EditCategory">
+				<parameter param-name="partyId" />
+			</link>
+		</menu-item>
+		<menu-item name="product" title="${uiLabelMap.ProductProduct}">
+			<link target="EditProduct">
+				<parameter param-name="partyId" />
+			</link>
+		</menu-item>
+	</menu>
+
+	<menu name="personUpdate">
+		<menu-item name="update" title="${uiLabelMap.CommonUpdate}">
+			<link target="editperson">
+				<parameter param-name="customerPartyId" from-field="customerPartyId" />
+				<parameter param-name="organizationPartyId" from-field="organizationPartyId" />
+			</link>
+		</menu-item>
+	</menu>
+
+	<menu name="groupUpdate">
+		<menu-item name="update" title="${uiLabelMap.CommonUpdate}">
+			<link target="editpartygroup">
+				<parameter param-name="partyId" from-field="organizationPartyId" />
+			</link>
+		</menu-item>
+	</menu>
+
+	<menu name="LedgerMenu">
+		<menu-item name="taxAuth" title="Tax Authorities">
+			<condition>
+				<not>
+					<if-empty field="dutyLedgers" />
+				</not>
+			</condition>
+			<link target="LedgerInfo">
+				<parameter param-name="partyId" from-field="organizationPartyId" />
+				<parameter param-name="tab" from-field="1" />
+			</link>
+		</menu-item>
+		<menu-item name="suppliers" title="Suppliers">
+			<condition>
+				<not>
+					<if-empty field="dutyLedgers" />
+				</not>
+			</condition>
+			<link target="LedgerInfo">
+				<parameter param-name="partyId" from-field="organizationPartyId" />
+				<parameter param-name="tab" from-field="2" />
+			</link>
+		</menu-item>
+		<menu-item name="customers" title="Customers">
+			<condition>
+				<not>
+					<if-empty field="dutyLedgers" />
+				</not>
+			</condition>
+			<link target="LedgerInfo">
+				<parameter param-name="partyId" from-field="organizationPartyId" />
+				<parameter param-name="tab" from-field="3" />
+			</link>
+		</menu-item>
+		<menu-item name="update" title="Import Ledgers">
+			<condition>
+				<if-empty field="dutyLedgers" />
+			</condition>
+			<link target="ImportLedger">
+				<parameter param-name="tab" from-field="4" />
+				<parameter param-name="partyId" from-field="organizationPartyId" />
+			</link>
+		</menu-item>
+
+	</menu>
+	<menu name="ChartOfAccounts">
+		<menu-item name="update" title="${uiLabelMap.CommonCreate}">
+			<link target="setupDefaultGeneralLedger">
+				<parameter param-name="partyId" from-field="organizationPartyId" />
+			</link>
+		</menu-item>
+	</menu>
+
+	<menu name="TallyTabBar" extends="CommonTabBarMenu" extends-resource="component://common/widget/CommonMenus.xml"
+		default-menu-item-name="connection" selected-menuitem-context-field-name="tabButtonItem">
+		<menu-item name="connection" title="Connection">
+			<link target="EditTallyConfig">
+				<parameter param-name="partyId" from-field="organizationPartyId" />
+			</link>
+		</menu-item>
+	</menu>
+
+	<menu name="UOM">
+		<menu-item name="unitOfMeasure" title="Import UOM">
+			<link target="ImportUoms">
+				<parameter param-name="partyId" from-field="organizationPartyId" />
+			</link>
+		</menu-item>
+	</menu>
+	
+	<menu name="ProductMenu">
+		<menu-item name="importStockItem" title="Import Stock Item">
+			<condition>
+				<if-empty field="productList"/>
+			</condition>
+			<link target="ImportStockItem">
+				<parameter param-name="partyId" from-field="organizationPartyId" />
+			</link>
+		</menu-item>
+		<menu-item name="ProductFacAssoc" title="Product Facility Assoc">
+			<condition>
+				<not><if-empty field="productList"/></not>
+			</condition>
+			<link target="ProductFacilityAssoc">
+			</link>
+		</menu-item>
+		
+	</menu>
+	
+	
+	<menu name="PartyAcctgPref">
+		<menu-item name="PartyAcctgPref" title="Create Excise Tax Authorities">
+			<condition>
+				<if-compare field="partyAcctgPreference.exciseEnabled" value="Y" operator="equals"/>
+			</condition>
+			<link target="createExciseTaxAuthorities" style="btn btn-link">
+				<parameter param-name="partyId" from-field="organizationPartyId" />
+			</link>
+		</menu-item>
+	</menu>
+
+</menus>

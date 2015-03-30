@@ -1,0 +1,54 @@
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<zk>
+	<window id="addBudgetTypeWindow" closable="true" width="40%"
+		height="40%" border="normal">
+		<caption label="${c:l('FormFieldTitle_addBudgetType')}" />
+		<separator height="20px" />
+		<hbox>
+			<div align="right" width="150px">
+				<label value="${c:l('FormFieldTitle_budgetTypeId')}"/><label value="*" style="color:red" />
+			</div>
+			<div align="right">
+				<textbox id="budgetTypeId"
+					constraint="no empty:Budget Type Id Required" maxlength="18" />
+			</div>
+		</hbox>
+		<separator />
+		
+		<separator />
+		<hbox>
+			<div align="right" width="150px">
+				<label value="${c:l('FormFieldTitle_description')}"/><label value="*" style="color:red" />
+			</div>
+			<div align="right">
+				<textbox id="description" rows="3" cols="30"
+					constraint="no empty:Description Required" maxlength="200" />
+			</div>
+		</hbox>
+		<separator />
+		<zscript>
+		void valid(){
+		
+		org.ofbiz.entity.GenericDelegator delegator = com.ndz.zkoss.util.HrmsInfrastructure.getDelegator();//org.ofbiz.entity.GenericDelegator.getGenericDelegator("default");
+		 	org.ofbiz.entity.GenericValue bType = delegator.findOne("BudgetType",org.ofbiz.base.util.UtilMisc.toMap("budgetTypeId",budgetTypeId.getValue()),false);
+		 	if(org.ofbiz.base.util.UtilValidate.isNotEmpty(bType)){
+		 			throw new WrongValueException(budgetTypeId,"Budget Type Id Already Exists");
+		 	}
+		budgetTypeId.getValue();
+		description.getValue();
+		}
+		</zscript>
+		<hbox>
+			<div align="right" width="250px">
+				<button id="add" label="${c:l('HRMS_AddButton')}"
+					onClick='valid();com.ndz.controller.BudgetManagementController.createBudgetType(event);
+					Component comp = Path.getComponent("/searchPanel//searchButton");
+					if(comp != null){
+					Events.postEvent("onClick", comp, null);
+					}addBudgetTypeWindow.detach();' />
+				<button id="cancel" label="${c:l('ButtonCancel')}"
+					onClick="addBudgetTypeWindow.detach();" />
+			</div>
+		</hbox>
+	</window>
+</zk>

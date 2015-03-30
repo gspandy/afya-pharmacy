@@ -1,0 +1,129 @@
+<?page title="new page title" contentType="text/html;charset=UTF-8"?>
+<?component name="findbox" macroURI="../macros/textfindMacro.zul" id="macro1"?>
+
+<zk xmlns:h="http://www.zkoss.org/2005/zk/native">
+
+<zscript>
+	import com.ndz.controller.*;
+	SearchController controller = new SearchController();
+	org.ofbiz.security.Security security = requestScope.get("security");
+	org.ofbiz.entity.GenericValue userLogin = (org.ofbiz.entity.GenericValue) Executions
+			.getCurrent().getDesktop().getSession().getAttribute("userLogin");
+	boolean isAdmin = security.hasPermission("HUMANRES_ADMIN", userLogin);
+	Toolbarbutton taxSlab = arg.get("taxSlab");
+</zscript>
+
+<window  border="normal" id="searchPanel" apply="${controller}">
+		<custom-attributes entityName="TaxSlab"></custom-attributes>
+
+<caption label="Tax Slab">
+				<div align="right">
+					<toolbarbutton label="New" style="color:#FFFFFF"
+						image="/images/icon/update.png">
+						<attribute name="onClick" >
+	{
+		final Window win = (Window) Executions.createComponents(
+				"/zul/GlobalHRSetting/newTaxSlab.zul",
+				null, null);
+		win.doModal();
+	}
+</attribute>
+					</toolbarbutton>
+				</div>
+			</caption>
+			
+			<hbox>
+				<div align="left" width="100%" style="margin-left">
+					<findbox fieldLabel="Person Type"
+						name="personType" type="text" cols="17" />
+				</div>
+			</hbox>
+			
+			<box width="100%" height="30px" align="center">
+			<hbox>
+				<button label="Search" mold="os"
+					onClick="results.setVisible(true);results.setFocus(true)"
+					id="searchPerCompany">
+				</button>
+				<button label="Reset" mold="os"
+					onClick='Events.postEvent("onClick",taxSlab,null)'>
+				</button>
+			</hbox>
+		</box>
+			
+			<zscript>
+				<![CDATA[
+	import org.ofbiz.base.util.*;
+	class MyRowRenderer implements RowRenderer {
+
+		MyRowRenderer() {
+		}
+
+		public void render(Row row, Object data) {
+			org.ofbiz.entity.GenericValue gv = ((org.ofbiz.entity.GenericValue) data);
+
+			
+			new Label(gv.getString("geoId")).setParent(row);
+			new Label(gv.getString("personType")).setParent(row);
+			new Label(gv.getString("taxType")).setParent(row);
+			new Label(gv.getString("slabMin")).setParent(row);
+			new Label(gv.getString("slabMax")).setParent(row);
+			new Label(gv.getString("taxRate")).setParent(row);
+			new Label(UtilDateTime.formatDate(gv.getDate("fromDate"))).setParent(row);
+			new Label(UtilDateTime.formatDate(gv.getDate("thruDate"))).setParent(row);
+
+			Button btn = new com.ndz.zkoss.HrmsButton();
+			btn.setParent(row);
+			btn.setMold("os");
+			btn.setLabel(org.zkoss.util.resource.Labels.getLabel("ButtonDelete"));
+			btn.setTooltiptext("Click here to delete");
+			btn.setSclass("btnDelete");
+			btn.addEventListener("onClick",
+					new org.zkoss.zk.ui.event.EventListener() {
+						public void onEvent(Event event) throws Exception {
+							TaxSlab.deleteTaxSlab(gv,searchPerCompany);
+						}
+					});
+
+		}
+	}
+	RowRenderer tableRenderer = new MyRowRenderer();
+]]>
+</zscript>
+			
+			<panel id="results" visible="false">
+			<panelchildren>
+				<h:table  style="border:0px"
+					cellspacing="0px" cellpadding="0px">
+					<h:tr>
+						<h:td width="90%">
+							<label
+								value="${c:l('HRMS_SEARCHRESULTS') }">
+							</label>
+						</h:td>
+						<h:td width="10%" style="text-align:right">
+							<paging id="paging"  />
+						</h:td>
+					</h:tr>
+				</h:table>
+
+				<grid id="dataGrid" rowRenderer="${tableRenderer}">
+					<columns menupopup="auto">
+						<column label="Geo Id" />
+						<column label="Person Type" />
+						<column label="Tax Type"  />
+						<column label="Minimum Slab" />
+						<column label="Maximum Slab" />
+						<column label="Tax Rate"  />
+						<column label="From Date"  />
+						<column label="Thru Date" />
+						<column label="Action" />
+					</columns>
+				</grid>
+			</panelchildren>
+		</panel>
+<zscript>
+Events.postEvent("onClick",searchPerCompany,null);
+</zscript>			
+</window>
+</zk>

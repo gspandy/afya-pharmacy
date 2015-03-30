@@ -1,0 +1,11 @@
+<zk>
+	<hbox style="margin:5px 5px 5px 5px" forward="onChange=onChange">
+		<div align="right" width="150px" style="float:right;margin-right:4px">
+			<label style="margin:15px 5px 5px 5px;font-weight:bold"
+				value="${arg.fieldLabel}">
+			</label>
+		</div>
+		<listbox id="${arg.name}" mold="select" style="float:left" model="${arg.list}" itemRenderer="${arg.renderer}" forward="onSelect=onChange">
+		</listbox>
+	</hbox>
+</zk>

@@ -1,0 +1,172 @@
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<?component name="findbox" macroURI="../macros/textfindMacro.zul" id="macro4"?>
+<?component name="findbox1" macroURI="../macros/textfindMacro.zul" id="macro3"?>
+<?component name="findbox2" macroURI="../macros/textfindMacro.zul" id="macro5"?>
+<?component name="fromDatebox" macroURI="../macros/datefindMacro.zul" id="macro2"?>
+<?component name="thruDatebox" macroURI="../macros/datefindMacro.zul" id="macro1"?>
+<?page title="${c:l('HumanResFindPerfReview') }"?>
+<zk xmlns:h="http://www.zkoss.org/2005/zk/native">
+	<zscript>
+	import com.ndz.controller.*;
+	SearchController controller = new SearchController();
+	
+	org.ofbiz.security.Security security = requestScope.get("security");
+	org.ofbiz.entity.GenericValue userLogin = (org.ofbiz.entity.GenericValue) Executions.getCurrent().getDesktop().getSession().getAttribute("userLogin");
+	boolean isAdmin = security.hasPermission("HUMANRES_ADMIN", userLogin);
+	Toolbarbutton toolBarButtonPerformancePlan = arg.get("toolBarButtonPerformancePlan");
+</zscript>
+	<window border="normal" id="searchPanel" self="@{define(content)}"
+		apply="${controller}" if="${isAdmin }">
+		<caption label="${c:l('HRMS_PERFORMANCE_PLAN_AND_POSITION') }"
+			style="font-weight: bold;">
+			<div align="right">
+				<toolbarbutton label="${c:l('HRMS_NEW') }" style="color:#FFFFFF"
+					image="/images/icon/update.png">
+					<attribute name="onClick" >
+	{
+		Events.postEvent("onClick",searchPanel.getParent().getParent().getParent().getFellow("appraisalMain").getFellow("creatPerformancePlanAndPosition"),null);		
+	}
+</attribute>
+				</toolbarbutton>
+			</div>
+		</caption>
+		<custom-attributes
+			entityName="PerfReviewTemplateAndPerfTemplateSection">
+		</custom-attributes>
+		<div align="center" style="margin-right:120px">
+			<vbox>
+				<div>
+					<hbox style="margin-top:40px">
+						<findbox
+							fieldLabel="${c:l('HRMS_PLAN_NAME') }"
+							name="perfTemplateId" cols="25" type="text" />
+					</hbox>
+					<hbox >
+						<findbox1
+							fieldLabel="${c:l('HumanResEmployeePositionTypeId') }"
+							name="emplPositionTypeId" cols="25" type="text" />
+					</hbox>
+				</div>
+			</vbox>
+			<separator height="10px" />
+			<div align="center">
+				<hbox>
+		<button label="${c:l('HRMS_SearchButton') }" id="searchButton" onClick="results.setVisible(true)"></button>
+		<button label="${c:l('HRMS_ResetButton') }" onClick='Events.postEvent("onClick",toolBarButtonPerformancePlan,null)'>
+			</button>
+			</hbox>
+				</div>
+		</div>
+
+
+		<zscript>
+	import org.ofbiz.base.util.*;
+	import com.ndz.controller.PerformanceReview;
+	import org.zkoss.util.resource.Labels;
+	import org.ofbiz.entity.condition.EntityCondition;
+	PerformanceReview PerformanceReview = new PerformanceReview();
+	class MyRowRenderer implements RowRenderer {
+
+		MyRowRenderer() {
+		}
+
+		public void render(Row row, Object data) {
+			org.ofbiz.entity.GenericValue gv = ((org.ofbiz.entity.GenericValue) data);
+			org.ofbiz.entity.GenericDelegator delegator = com.ndz.zkoss.util.HrmsInfrastructure.getDelegator();//org.ofbiz.entity.GenericDelegator.getGenericDelegator("default");
+
+			new Label(gv.getString("perfTemplateId")).setParent(row);
+			String emplPositionId = gv.getString("emplPositionTypeId");
+			if (emplPositionId == null) {
+				new Label(org.zkoss.util.resource.Labels.getLabel("HRMS_ALL")).setParent(row);
+			} else {
+				new Label(gv.getString("emplPositionTypeId")).setParent(row);
+			}
+			EntityCondition condition = EntityCondition.makeCondition(
+					"perfReviewSectionId",
+					org.ofbiz.entity.condition.EntityOperator.EQUALS, gv
+							.getString("perfReviewSectionId"));
+			List findsectionName = delegator.findList("PerfReviewSection",
+					condition, null, null, null, false);
+			org.ofbiz.entity.GenericValue sectionNameGV = (org.ofbiz.entity.GenericValue) findsectionName
+					.get(0);
+			new Label(sectionNameGV.getString("sectionName")).setParent(row);
+			
+			
+			java.sql.Timestamp fromDateT = (java.sql.Timestamp) gv.getTimestamp("fromDate");
+			if (fromDateT!=null)
+			{
+			Date fDate = new Date(fromDateT.getTime());
+				new Label(fDate.toString()).setParent(row);
+			}
+			else{
+			new Label(gv.getString("fromDate")).setParent(row);
+			}
+			
+			
+			
+			java.sql.Timestamp thruDateT = (java.sql.Timestamp) gv.getTimestamp("thruDate");
+			if (thruDateT!=null)
+			{
+			Date tDate = new Date(thruDateT.getTime());
+				new Label(tDate.toString()).setParent(row);
+			}
+			else{
+			new Label(gv.getString("thruDate")).setParent(row);
+			}
+			
+			
+			new Label(gv.getString("comments")).setParent(row);
+
+			Button img = new com.ndz.zkoss.HrmsButton();
+			img.setLabel(org.zkoss.util.resource.Labels.getLabel("ButtonDelete"));
+			img.setParent(row);
+			img.setTooltiptext(org.zkoss.util.resource.Labels.getLabel("ToolTipText_DoubleClickToDelete"));
+			img.setSclass("btnDelete");
+			img.addEventListener("onClick",
+					new org.zkoss.zk.ui.event.EventListener() {
+						public void onEvent(Event event) throws Exception {
+							PerformanceReview.delete(event, gv
+									.getString("perfTemplateId"),gv.getString("perfReviewSectionId"));
+						}
+					});
+
+		}
+	}
+	RowRenderer tableRenderer = new MyRowRenderer();
+</zscript>
+		<panel id="results" visible="false">
+			<panelchildren>
+			<h:table width="100%" style="border:0px" cellspacing="0px" cellpadding="0px">
+				<h:tr>
+					<h:td width="80%">
+						<label value="${c:l('HRMS_SEARCHRESULTS') }" ></label>
+					</h:td>
+					<h:td width="20%" style="text-align:right">
+						<paging id="paging" width="100%"/>
+					</h:td>
+				</h:tr>
+			</h:table>
+			<grid width="100%" id="dataGrid"
+				rowRenderer="${tableRenderer}">
+
+				<columns menupopup="auto" >
+					<column label="${c:l('Hrms_PerformancePlanName') }"/>
+					<column
+						label="${c:l('FormFieldTitle_emplPositionTypeId') }" />
+					<column label="${c:l('HumanResPerfReviewSectionName') }" />
+					<column
+						label="${c:l('HumanResLeaveSummaryFromDate') }" />
+					<column
+						label="${c:l('HumanResLeaveSummaryThruDate') }" />
+					<column label="${c:l('FormFieldTitle_comments') }"/>
+					<column label="${c:l('HRMS_ACTION') }"
+						width="100px" />
+				</columns>
+			</grid>
+		</panelchildren>
+		</panel>
+		<zscript>
+		 Events.postEvent("onClick",searchPanel.getFellow("searchButton"),null);
+		</zscript>
+	</window>
+</zk>

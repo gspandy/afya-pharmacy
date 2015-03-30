@@ -1,0 +1,375 @@
+<?component name="findbox" macroURI="../macros/textFindIgnoreCase.zul" id="macro1"?>
+<?component name="fromDatebox" macroURI="../macros/fromDateMacro.zul" id="macro2"?>
+<?component name="thruDatebox" macroURI="../macros/thruDateMacro.zul" id="macro3"?>
+<?component list="${claimTypesList}" renderer="${claimTypeItemRenderer}" name="selectbox" macroURI="../macros/findselectbox.zul" id="macro4"?>
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<zk xmlns:h="http://www.zkoss.org/2005/zk/native">
+	<zscript>
+	<![CDATA[
+	import com.ndz.controller.*;
+	import org.ofbiz.entity.*;
+	import org.ofbiz.base.util.*;
+	Button processClaimBtn = arg.get("processClaimBtn");
+	GenericValue userLogin = (GenericValue) Executions.getCurrent().getDesktop().getSession().getAttribute("userLogin");
+	GenericDelegator delegator = com.ndz.zkoss.util.HrmsInfrastructure.getDelegator();//GenericDelegator.getGenericDelegator("default");
+	employeeId = userLogin.getString("partyId");
+	GenericValue employeePosIdGv = org.ofbiz.humanresext.util.HumanResUtil.getEmplPositionForParty(employeeId,
+			delegator);
+	String employeePosId = null;
+if (employeePosIdGv != null) {
+	employeePosId = employeePosIdGv.getString("emplPositionId");
+}
+	org.ofbiz.security.Security security = requestScope.get("security");
+	boolean isAdmin = security.hasPermission("HUMANRES_ADMIN", userLogin);
+	List claimTypes = null;
+claimTypes = delegator.findByAnd("Enumeration", UtilMisc.toMap("enumTypeId", "CLAIM_TYPE"));
+claimTypes.add(0, null);
+claimTypesArray = claimTypes.toArray(new GenericValue[claimTypes.size()]);
+	SimpleListModel claimTypesList = new SimpleListModel(claimTypesArray);
+	public class ClaimTypeItemRenderer implements ListitemRenderer {
+
+		public ClaimTypeItemRenderer() {
+		}
+
+		public void render(Listitem li, Object data) {
+		if (data instanceof GenericValue) {
+			GenericValue val = (GenericValue) data;
+			li.setLabel(val.getString("description"));
+			li.setValue(val.getString("enumId"));
+		}
+		}
+	}
+	ListitemRenderer claimTypeItemRenderer = new ClaimTypeItemRenderer();
+	SearchController controller = new SearchController();
+	boolean isManager = security.hasPermission("HUMANRES_MGR", userLogin);
+	boolean both = false;
+	if (isAdmin && isManager) both = true;
+]]>
+</zscript>
+	<window id="searchPanel" apply="${controller}" onCreate="activateSearch()">
+		<custom-attributes entityName="MaxClaimDetail" companyWide="true">
+		</custom-attributes>
+		<separator height="10px"/>
+		<label id="permissionId" value="${isAdmin}" visible="false"></label>
+		<textbox visible="false" id="mgrPositionId_searchfld" value="${employeePosId}"/>
+		
+		<textbox visible="false" id="statusType_searchfld">
+		<attribute name = "onCreate">
+			if(!both)	self.setValue("1");
+		</attribute>
+		</textbox>
+		
+		<textbox visible="false" id="adminStatusType_1adminfld">
+		<attribute name = "onCreate">
+		if(!both)	self.setValue("2");
+		</attribute>
+		</textbox>
+		
+		<textbox visible="false" id="partyId" value="${employeeId}" if="${isAdmin || isManager}"/>
+		<separator height="10px"></separator>
+		<h:table >
+			<h:tr>
+				<h:td style="text-align:left" >
+				<div align="right">
+					<hbox>
+						<div width="150px" align="right">
+							<label value="${c:l('HRMS_EmployeeId') }" visible="true" if="${isAdmin || isManager}"/>
+						</div>
+						<div align="left" style="margin-left:8px">
+						<employeebox id="partyId_searchfld" visible="true" if="${isAdmin || isManager}">
+						<attribute name="onChange"><![CDATA[
+							if(searchPanel.getFellowIfAny("partyId") != null)
+								searchPanel.getFellow("partyId").detach();
+							Textbox txt = new Textbox();
+							txt.setVisible(false);
+							txt.setId("partyId");
+							txt.setParent(searchPanel);
+							if(isAdmin)
+								partyId.setValue(self.getValue());
+							if(isManager)
+								partyId.setValue(self.getValue());
+						]]></attribute>
+						</employeebox>
+						</div>
+					</hbox>
+					</div>
+				</h:td>
+				<h:td>
+					<selectbox value="${values}" fieldLabel="${c:l('Hrms_ClaimType') }" name="claimType" />
+				</h:td>
+				<h:td>
+						<hbox>
+							<div width="150px" align="right">
+								<label value="${c:l('Hrms_StatusType') }"/>
+							</div>	
+							<div style="margin-left:6px;">
+								<listbox mold="select">
+								<attribute name="onSelect">
+								if(UtilValidate.isNotEmpty(self.getSelectedItem()))
+									statusId.setValue(self.getSelectedItem().getValue().toString());
+								</attribute>
+									<listitem label="" value=""></listitem>
+									<listitem label="${c:l('ListBox_AdminApproved') }" value="CL_ADM_APPROVED"></listitem>
+									<listitem label="${c:l('ListBox_AdminRejected') }" value="CL_ADM_REJECTED"></listitem>
+									<listitem label="${c:l('ListBox_ManagerApproved') }" value="CL_MGR_APPROVED"></listitem>
+									<listitem label="${c:l('ListBox_ManagerRejected') }" value="CL_MGR_REJECTED" if="${isManager || both}"></listitem>
+									<listitem label="${c:l('ListBox_Submitted') }" value="CL_SUBMITTED" if="${isManager || both}"></listitem>
+								</listbox>
+								<textbox visible="false" id="statusId" value=""/>
+							</div>					
+						</hbox>
+				</h:td>
+			</h:tr>
+			<h:tr>
+				<h:td>
+					<fromDatebox
+					fieldLabel="${c:l('HumanResLeaveSummaryFromDate') }"
+					name="beginDate" type="date" />
+				</h:td>
+				<h:td style="text-align:left">
+					<thruDatebox
+					fieldLabel="${c:l('HumanResLeaveSummaryThruDate') }"
+					name="endDate" type="date" />
+				</h:td>
+			</h:tr>
+		</h:table>
+		<separator />
+		<box width="100%" height="30px" align="center">
+			<hbox>
+				<button label="${c:l('HumanResSearch') }" mold="os" id="searchPerCompany">
+					<attribute name="onClick"><![CDATA[
+					 if(UtilValidate.isEmpty(partyId_searchfld.getValue()) && searchPanel.getFellowIfAny("partyId") != null)
+								partyId.detach();
+					 results.setVisible(true);results.setFocus(true);
+					 ]]></attribute>
+				</button>
+				<button label="${c:l('HRMS_ResetButton') }"
+					onClick='Events.postEvent("onClick",processClaimBtn,null)' />
+			</hbox>
+		</box>
+<zscript>
+	void activateSearch() {
+		Events.postEvent("onClick", searchPerCompany, null);
+	}
+</zscript>
+		<zscript>
+		<![CDATA[
+	import org.ofbiz.base.util.*;
+	import org.zkoss.zk.ui.event.EventListener;
+	ClaimManagementController claimManagementController = new ClaimManagementController();
+	class MyRowRenderer implements RowRenderer {
+
+		MyRowRenderer() {
+		}
+
+		public void render(Row row, Object data) {
+			org.ofbiz.entity.GenericValue gv = ((org.ofbiz.entity.GenericValue) data);
+
+			row.setTooltiptext("DoubleClick To Approve/Reject");
+			new Label(gv.getString("claimId")).setParent(row);
+			org.ofbiz.entity.GenericValue personGV = delegator.findByPrimaryKey("Person",UtilMisc.toMap("partyId",gv.getString("partyId")));
+	        new Label(gv.getString("partyId") + " "+"-"+" " +personGV.getString("firstName") + " " + personGV.getString("lastName")).setParent(row);
+	        new Label(gv.getString("description")).setParent(row);
+	        java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("dd-MM-yyyy");
+			new Label(sdf.format(gv.getDate("beginDate"))).setParent(row);
+			new Label(sdf.format(gv.getDate("endDate"))).setParent(row);
+			new Label((com.ndz.zkoss.util.CurrencyFormatter.format(gv.getBigDecimal("amount").doubleValue()))+ " " + gv.getString("currencyUomId")).setParent(row);
+			org.ofbiz.entity.condition.EntityCondition condition = org.ofbiz.entity.condition.EntityCondition.makeCondition("statusId",
+							org.ofbiz.entity.condition.EntityOperator.EQUALS,
+							gv.getString("statusId"));
+			List statusItemList = delegator.findList("StatusItem", condition,
+					null, null, null, false);
+			GenericValue statusItemGV = (GenericValue) statusItemList.get(0);
+			new Label(statusItemGV.getString("description")).setParent(row);
+			if(gv.getString("baseCurrencyAmount") != null){
+			new Label(com.ndz.zkoss.util.CurrencyFormatter.format(gv.getBigDecimal("baseCurrencyAmount").doubleValue())+ " " + gv.getString("admincurrencyUomId")).setParent(row);
+			}else{
+				new Label("").setParent(row);
+			}
+			row.addEventListener("onDoubleClick", new EventListener() {
+				public void onEvent(Event event) throws Exception {
+					if ((!isAdmin || both)	&& gv.getString("statusId").equals("CL_SUBMITTED")) {
+						
+						claimManagementController.showClaimWindow(event, gv);
+					} 
+					
+					else if ((!isAdmin || both)	&& gv.getString("statusId").equals("CL_SAVED")) {
+						
+						Messagebox.show("Employee Has not Submitted the claim;Cannot  be processed now","Warning", 1, null);
+					} 
+					else if (!isAdmin	&& ((gv.getString("statusId").equals("CL_MGR_APPROVED"))
+									|| (gv.getString("statusId").equals("CL_MGR_REJECTED")))) {
+						
+						Messagebox.show("Claim is Already Approved/Rejected ","Warning", 1, null);
+
+					} 
+					else if ((isAdmin || both)	&& gv.getString("statusId").equals("CL_MGR_APPROVED")) {
+						
+						claimManagementController.showClaimWindow(event, gv);
+
+					} 
+					else if ((isAdmin || both) && gv.getString("statusId").equals("CL_MGR_REJECTED")) {
+						
+						Messagebox.show("Claim is Already Rejected by Manager;Cannot be processed further ","Warning", 1, null);
+					}
+					
+					else if (( isAdmin || both)		&& ((gv.getString("statusId").equals("CL_ADM_APPROVED")) 
+							|| (gv.getString("statusId").equals("CL_ADM_REJECTED")))) {
+						
+						Messagebox.show("Claim is Already Approved/Rejected ","Warning", 1, null);
+					}
+				}
+			});
+			if (gv.getDouble("fxRate") != null && (gv.getString("statusId").equals("CL_MGR_APPROVED")||gv.getString("statusId").equals("CL_ADM_APPROVED"))) {
+				new Label(com.ndz.zkoss.util.CurrencyFormatter.format(gv.getBigDecimal("fxRate").doubleValue())).setParent(row);
+				//new Label(gv.getDouble("fxRate").toString()).setParent(row);
+			}else{
+				new Label("").setParent(row);
+			}
+			if (gv.getDouble("receipts") != null) {
+				java.math.BigDecimal receiptsBigDecimal = gv.getBigDecimal("receipts");
+				java.math.BigInteger receiptsBigInteger = receiptsBigDecimal.toBigInteger();
+				new Label(receiptsBigInteger.toString()).setParent(row);
+			}else{
+				new Label("").setParent(row);
+			}
+			
+			if (gv.getDouble("acceptedAmount") != null) {
+				new Label(com.ndz.zkoss.util.CurrencyFormatter.format(gv.getBigDecimal("acceptedAmount").doubleValue())+ " " + gv.getString("currencyUomId")).setParent(row);
+			}else{
+				new Label("").setParent(row);
+			}
+			
+			if (gv.getDouble("rejectedAmount") != null) {
+				new Label(com.ndz.zkoss.util.CurrencyFormatter.format(gv.getBigDecimal("rejectedAmount").doubleValue())+ " " + gv.getString("currencyUomId")).setParent(row);
+			}else{
+				new Label("").setParent(row);
+			}
+			if (gv.getString("hr_comment") != null) {
+				new Label(gv.getString("hr_comment").toString()).setParent(row);
+			}else{
+				new Label("").setParent(row);
+			}
+			if (gv.getString("adminComment") != null) {
+				new Label(gv.getString("adminComment").toString()).setParent(row);
+			}else{
+				new Label("").setParent(row);
+			}
+			if (gv.getString("employeeComment") != null) {
+				new Label(gv.getString("employeeComment").toString()).setParent(row);
+			}else{
+				new Label("").setParent(row);
+			}
+			
+			if (gv.getString("updatedBy") != null) {
+				org.ofbiz.entity.GenericValue personGV1 = delegator.findByPrimaryKey("Person",UtilMisc.toMap("partyId",gv.getString("updatedBy")));
+		        new Label(personGV1.getString("firstName") + " " + personGV1.getString("lastName")).setParent(row);
+			}else{
+				new Label("").setParent(row);
+			}
+			
+			if (gv.getTimestamp("updateDate") != null) {
+				java.text.SimpleDateFormat formater = new java.text.SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
+				new Label(formater.format(gv.getTimestamp("updateDate")).toString()).setParent(row);
+			}else{
+				new Label("").setParent(row);
+			}
+			if (gv.getDate("reimbDate") != null && (gv.getString("statusId").equals("CL_MGR_APPROVED")||gv.getString("statusId").equals("CL_ADM_APPROVED"))) {
+				new Label(sdf.format(gv.getDate("reimbDate"))).setParent(row);
+			}else{
+				new Label("").setParent(row);
+			}
+		}
+
+	}
+	RowRenderer tableRenderer = new MyRowRenderer();
+]]>
+</zscript>
+		<separator />
+		<div id="results" visible="false">
+			<h:table width="100%" style="border:0px" cellspacing="0px" cellpadding="0px">
+				<h:tr>
+					<h:td width="90%">
+						<label value="${c:l('HRMS_SEARCHRESULTS') }"></label>
+					</h:td>
+					<h:td width="10%" style="text-align:right">
+						<paging id="paging"/>
+					</h:td>
+				</h:tr>
+			</h:table>
+			<grid id="dataGrid" mold="paging"
+				rowRenderer="${tableRenderer }">
+				<columns sizable="true" menupopup="auto"  >
+					<column label="${c:l('Hrms_ClaimId') }"
+						sortDirection="ascending"
+						onDrop="move(event.dragged)" draggable="col" droppable="col" />
+					<column label="${c:l('FormFieldTitle_employeeId-Name') }"
+						 onDrop="move(event.dragged)"
+						draggable="col" droppable="col" />
+					<column label="${c:l('Hrms_ClaimType') }"
+						 onDrop="move(event.dragged)"
+						draggable="col" droppable="col" />
+					<column
+						label="${c:l('HumanResLeaveSummaryFromDate')}"
+						 onDrop="move(event.dragged)"
+						draggable="col" droppable="col" />
+					<column
+						label="${c:l('HumanResLeaveSummaryThruDate')}"
+						 onDrop="move(event.dragged)"
+						draggable="col" droppable="col" />
+					<column label="${c:l('FormFieldTitle_amount') }"
+						 onDrop="move(event.dragged)"
+						draggable="col" droppable="col" />
+					<column label="${c:l('FormFieldTitle_status') }"
+						 onDrop="move(event.dragged)"
+						draggable="col" droppable="col" />
+					<column label="${c:l('Hrms_BaseCurrencyAmount') }"
+						visible="false" 
+						onDrop="move(event.dragged)" draggable="col" droppable="col" />
+					<column label="${c:l('Hrms_FixRate') }"
+						onDrop="move(event.dragged)" draggable="col" droppable="col" />
+					<column label="${c:l('Hrms_Receipts') }"
+						visible="false" 
+						onDrop="move(event.dragged)" draggable="col" droppable="col" />
+					<column label="${c:l('Hrms_AcceptedAmount') }"
+						visible="false" 
+						onDrop="move(event.dragged)" draggable="col" droppable="col" />
+					<column label="${c:l('Hrms_RejectedAmount') }"
+						visible="false" 
+						onDrop="move(event.dragged)" draggable="col" droppable="col" />
+					<column label="${c:l('HumanResManagerComments') }"
+						onDrop="move(event.dragged)" draggable="col" droppable="col" />
+					<column label="${c:l('HumanResAdminComments') }" 
+						onDrop="move(event.dragged)" draggable="col" droppable="col" />
+					<column label="${c:l('HumanResEmployeeComments') }"
+						onDrop="move(event.dragged)" draggable="col" droppable="col" />
+					<column label="${c:l('Hrms_UpdatedBy') }"
+						visible="false" 
+						onDrop="move(event.dragged)" draggable="col" droppable="col" />
+					<column label="${c:l('Hrms_UpdateDate') }"
+						visible="false" 
+						onDrop="move(event.dragged)" draggable="col" droppable="col" />
+					<column label="${c:l('Hrms_ReimbursementDate') }"
+						visible="false" 
+						onDrop="move(event.dragged)" draggable="col" droppable="col" />
+				</columns>
+			</grid>
+		</div>
+		<zscript><![CDATA[
+	void move(Component dragged) {
+		if (dragged.getClass().getName().endsWith("Column")) {
+			int maxRows = dragged.getGrid().getRows().getChildren().size();
+			int i = dragged.getParent().getChildren().indexOf(dragged);
+			int j = self.getParent().getChildren().indexOf(self);
+
+			//move celles for each row 
+			for (int k = 0; k < maxRows; k++)
+				self.getGrid().getCell(k, j).parent.insertBefore(self.getGrid()
+						.getCell(k, i), self.getGrid().getCell(k, j));
+		}
+
+		self.parent.insertBefore(dragged, self);
+	}
+]]></zscript>
+	</window>
+</zk>

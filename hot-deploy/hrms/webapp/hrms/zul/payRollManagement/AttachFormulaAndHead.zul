@@ -1,0 +1,422 @@
+<?init class="org.zkoss.zk.ui.util.Composition" arg0="/WEB-INF/layout/templateWestCollapsible.zul"?>
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+
+<zk xmlns:n="http://www.zkoss.org/2005/zk/native">
+	<zscript>
+	<![CDATA[
+	import com.ndz.controller.*;
+	import org.ofbiz.entity.*;
+	import java.util.*;
+	import org.ofbiz.entity.condition.*;
+	import org.ofbiz.entity.GenericDelegator;
+	import org.ofbiz.base.util.*;
+	import java.util.List;
+	import java.util.Set;
+	import org.ofbiz.entity.GenericValue;
+	import org.zkoss.zul.Listitem;
+	import org.zkoss.zul.ListitemRenderer;
+	import com.ndz.zkoss.GenericValueRenderer;
+	import javax.servlet.http.HttpServletRequest;
+	import javax.servlet.http.HttpServletResponse;
+	import org.ofbiz.entity.GenericEntityException;
+	import org.zkoss.zk.ui.util.GenericForwardComposer;
+	import com.nthdimenzion.humanres.payroll.SalaryBean;
+	import java.util.LinkedList;
+	HttpServletRequest request = (HttpServletRequest) Executions.getCurrent()
+			.getNativeRequest();
+	GenericValue userLogin = (GenericValue) Executions.getCurrent()
+			.getDesktop().getSession().getAttribute("userLogin");
+	System.out.println("*******userLogin Object*********" + userLogin);
+
+	GenericDelegator delegator = userLogin.getDelegator();
+
+	String salaryStructureId = request.getParameter("salaryStructureId");
+	System.out.println("\n\n\n\n\nsamir salary structure" + salaryStructureId);
+	String salaryStructureHeadId = request
+			.getParameter("salaryStructureHeadId");
+
+	String ruleId = request.getParameter("ruleId");
+	List salryHeadList = null;
+	salryHeadList = delegator.findByAnd("SalaryStructureHead", UtilMisc.toMap(
+			"salaryStructureId", salaryStructureId));
+
+	GenericValue salaryHeadGV = null;
+	String ruleAttchedwithSalary = null;
+	System.out.println("\n\n\n\n\nList Size GV" + salryHeadList.size());
+
+	List ruleListSal = new ArrayList();
+	for (int i = 0; i < salryHeadList.size(); i++)
+
+	{
+		salaryHeadGV = salryHeadList.get(i);
+		System.out.println("\n\n\n\n\nsalary structure GV" + salaryHeadGV);
+		String headId = (String) salaryHeadGV
+				.getString("salaryStructureHeadId");
+		System.out.println("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n  headId" + headId);
+		List rulesForSalary = delegator.findByAnd("PayrollHeadRuleDetail",
+				UtilMisc.toMap("salaryStructureHeadId", headId));
+		for (int j = 0; j < rulesForSalary.size(); j++) {
+			GenericValue salaryHeadRuleGV = rulesForSalary.get(j);
+			String ruleIdAttached = (String) salaryHeadRuleGV
+					.getString("ruleId");
+
+			ruleListSal.add(salaryHeadRuleGV);
+			System.out.println("\n\n\n\n\n\n  ruleListSal" + ruleListSal);
+		}
+	}
+	Object theRulesAttached = ruleListSal.toArray(new GenericValue[ruleListSal
+			.size()]);
+	SimpleListModel model1 = new SimpleListModel(ruleListSal);
+	com.ndz.zkoss.GenericValueRenderer listItemRenderer1 = new com.ndz.zkoss.GenericValueRenderer(
+			new String[] { "ruleId", "ruleName","salaryStructureHeadId","hrName","ruleDescription" });
+
+	EntityCondition condition1 = EntityCondition.makeCondition(
+			"salaryStructureId", EntityOperator.EQUALS, salaryStructureId);
+	EntityCondition condition2 = EntityCondition.makeCondition(
+			"salaryComputationTypeId", EntityOperator.EQUALS, "FORMULA");
+	EntityCondition condition = EntityCondition.makeCondition(condition1,
+			EntityOperator.AND, condition2);
+	Set SalaryHeadDisplay = new HashSet();
+	Set SalaryStructureDisplay = new HashSet();
+	Set PayrollRuleDisplay = new HashSet();
+	SalaryHeadDisplay.add("salaryStructureId");
+	SalaryHeadDisplay.add("salaryComputationTypeId");
+	SalaryHeadDisplay.add("hrName");
+	SalaryHeadDisplay.add("salaryHeadTypeId");
+	SalaryHeadDisplay.add("salaryHeadId");
+	SalaryHeadDisplay.add("salaryStructureHeadId");
+	SalaryStructureDisplay.add("salaryStructureId");
+	SalaryStructureDisplay.add("hrName");
+	PayrollRuleDisplay.add("ruleName");
+	PayrollRuleDisplay.add("ruleId");
+
+	List SalaryStructureHeadDetail = null;
+	List SalaryStructure = null;
+	List PayrollRule = null;
+	try {
+		SalaryStructureHeadDetail = delegator.findList(
+				"SalaryStructureHeadDetail", condition, SalaryHeadDisplay,
+				null, null, true);
+		SalaryStructure = delegator.findList("SalaryStructure", condition1,
+				SalaryStructureDisplay, null, null, true);
+		PayrollRule = delegator.findList("PayrollRule", null,
+				PayrollRuleDisplay, null, null, false);
+	} catch (Exception e) {
+		System.out.println(e);
+	}
+	GenericValue SalaryStructureIndividual = org.ofbiz.entity.util.EntityUtil
+			.getFirst(SalaryStructure);
+
+	String hrName = SalaryStructureIndividual.getString("hrName");
+	GenericValue SalaryHead1 = null;
+
+	SalaryStructureHeadDetail.remove(SalaryHead1);
+
+	SalaryStructureHeadDetail.add(0, null);
+
+	PayrollRule.add(0, null);
+	SimpleListModel SalaryStructureHeadDetailModel = new SimpleListModel(
+			SalaryStructureHeadDetail);
+	SalaryStructureHeadDetailRenderer ItemRenderer = new SalaryStructureHeadDetailRenderer();
+	SimpleListModel PayrollRuleModel = new SimpleListModel(PayrollRule);
+	PayrollRuleRenderer RuleRenderer = new PayrollRuleRenderer();
+
+	List ruleList = null;
+	EntityCondition conditionHead = EntityCondition.makeCondition("salaryStructureHeadId",
+			EntityComparisonOperator.EQUALS, salaryStructureHeadId);
+
+	EntityCondition conditionRule = EntityCondition.makeCondition("ruleId",
+			EntityOperator.EQUALS, ruleId);
+
+	EntityCondition conditionRuleHead = EntityCondition.makeCondition(
+			conditionHead, EntityOperator.AND, conditionRule);
+	ruleList = delegator.findByAnd("PayrollHeadRuleDetail", UtilMisc.toMap(
+			"salaryStructureHeadId", salaryStructureHeadId));
+
+	Object openedPosArray = ruleList.toArray(new GenericValue[ruleList.size()]);
+	SimpleListModel model = new SimpleListModel(ruleList);
+	com.ndz.zkoss.GenericValueRenderer listItemRenderer = new com.ndz.zkoss.GenericValueRenderer(
+			new String[] { "ruleId", "ruleName", "ruleDescription" });
+]]>	
+</zscript>
+
+
+
+<groupbox self="@{define(westContent)}" mold="3d" id="payrollMain">
+		<caption label="${c:l('HRMS_PAYROLL') }" />
+		<vbox>
+			<toolbarbutton label="${c:l('HRMS_SALARY_HEAD') }" id="salaryHead">
+				<attribute name="onClick">
+	Executions.sendRedirect("/control/PayRoll?id=salaryHead");
+	unselectedToolbarbuttonColor(self);
+	selectedToolbarbuttonColor(self);
+</attribute>
+			</toolbarbutton>
+			<toolbarbutton label="${c:l('HRMS_EXEMPTION_FOR_SALARY_HEAD') }" id="exemtionForSalaryHead">
+				<attribute name="onClick">
+	Executions.sendRedirect("/control/PayRoll?id=exemtionForSalaryHead");
+	unselectedToolbarbuttonColor(self);
+	selectedToolbarbuttonColor(self);
+</attribute>
+			</toolbarbutton>
+
+			<toolbarbutton label="${c:l('HRMS_CONDITIONS') }" id="condition">
+				<attribute name="onClick">
+	Executions.sendRedirect("/control/PayRoll?id=condition");
+	unselectedToolbarbuttonColor(self);
+	selectedToolbarbuttonColor(self);
+</attribute>
+			</toolbarbutton>
+<toolbarbutton label="${c:l('HRMS_ACTION') }" id="action">
+				<attribute name="onClick">
+				Executions.sendRedirect("/control/PayRoll?id=action");
+	unselectedToolbarbuttonColor(self);
+	selectedToolbarbuttonColor(self);
+</attribute>
+			</toolbarbutton>
+			<toolbarbutton label="${c:l('HRMS_RULES') }" id="rules">
+				<attribute name="onClick">
+				Executions.sendRedirect("/control/PayRoll?id=rules");
+	unselectedToolbarbuttonColor(self);
+	selectedToolbarbuttonColor(self);
+</attribute>
+			</toolbarbutton>
+
+			<toolbarbutton label="${c:l('HRMS_SALARY_STRUCTURE') }" id="salaryStructure">
+				<attribute name="onClick">
+				Executions.sendRedirect("/control/PayRoll?id=salaryStructure");
+	unselectedToolbarbuttonColor(self);
+	selectedToolbarbuttonColor(self);
+</attribute>
+			</toolbarbutton>
+			<toolbarbutton label="${c:l('HRMS_TAX') }" id="tax">
+				<attribute name="onClick">
+				Executions.sendRedirect("/control/PayRoll?id=tax");
+	unselectedToolbarbuttonColor(self);
+	selectedToolbarbuttonColor(self);
+</attribute>
+			</toolbarbutton>
+			<toolbarbutton label="${c:l('HRMS_EMPLOYEE_SALARY_STRUCTURE') }" id="empSalaryStructure">
+				<attribute name="onClick">
+				Executions.sendRedirect("/control/PayRoll?id=empSalaryStructure");
+	unselectedToolbarbuttonColor(self);
+	selectedToolbarbuttonColor(self);
+</attribute>
+			</toolbarbutton>
+			
+			
+		</vbox>
+	</groupbox>
+
+
+
+	<window title="${c:l('HRMS_FORMULA_AND_HEAD') }" border="none"
+		id="AttachRuleToSalaryHead" self="@{define(content)}"
+		contentStyle="background-color:#F5F5F5">
+		<separator height="10px" />
+
+		
+		<n:form method="post" name="ShowHeadAndRule"
+			action="/hrms/control/GeneratePayrollHeadRule"
+			id="ShowHeadAndRule">
+
+			<separator height="20px"></separator>
+
+			<hbox>
+				<div align="right" width="45px"
+					style="margin-right:5px">
+				</div>
+				<div width="150px" align="right">
+					<label value="${c:l('HRMS_SALARY_STRUCTURE_ID') }"
+						style="font-weight:bold">
+					</label>
+				</div>
+				<div align="left" width="198px" height="20px"
+					style="margin-left:5px;">
+					<label value="${salaryStructureId}" width="204px"></label>
+				</div>
+			</hbox>
+
+			<separator height="10px"></separator>
+
+			<hbox visible="false">
+				<div align="right" width="45px"
+					style="margin-right:5px">
+				</div>
+				<div width="150px" align="right">
+					<label value="${c:l('HRMS_SALARY_STRUCTURE_ID') }"
+						style="font-weight:bold">
+					</label>
+				</div>
+				<div align="left" width="198px" height="20px"
+					style="margin-left:5px">
+					<textbox name="salaryStructureId"
+						id="salaryStructureId" value="${salaryStructureId}"
+						visible="false" width="198px">
+					</textbox>
+				</div>
+			</hbox>
+
+			<hbox>
+				<div align="right" width="22px"
+					style="margin-right:5px">
+				</div>
+				<div width="175px" align="right">
+					<label value="${c:l('HRMS_SALARY_STRUCTURE_NAME') }"
+						style="font-weight:bold">
+					</label>
+				</div>
+				<div align="left" width="550px"
+					style="margin-left:5px">
+					<label value="${hrName}" width="198px"></label>
+				</div>
+			</hbox>
+
+			<separator height="10px"></separator>
+
+			<hbox visible="false">
+				<div align="right" width="45px"
+					style="margin-right:5px">
+				</div>
+				<div width="150px" align="right">
+					<label value="${c:l('HRMS_SALARY_STRUCTURE_HEAD_ID') }"
+						style="font-weight:bold">
+					</label>
+				</div>
+				<div align="left" width="550px"
+					style="margin-left:5px">
+					<textbox name="salaryStructureHeadId"
+						id="salaryStructureHeadId" width="198px">
+					</textbox>
+				</div>
+			</hbox>
+
+			<hbox visible="false">
+				<div align="right" width="45px"
+					style="margin-right:5px">
+				</div>
+				<div width="150px" align="right">
+					<label value="${c:l('HRMS_RULE_ID') }" style="font-weight:bold">
+					</label>
+				</div>
+				<div align="left" width="550px"
+					style="margin-left:5px">
+					<textbox name="ruleId" id="ruleId" width="198px">
+					</textbox>
+				</div>
+			</hbox>
+
+
+
+			<hbox>
+				<div align="right" width="45px"
+					style="margin-right:5px">
+				</div>
+				<div width="150px" align="right"
+					style="margin-left:5px">
+					<label value="${c:l('HRMS_SALARY_HEAD') }"
+						style="font-weight:bold">
+					</label>
+				</div>
+				<div align="left" width="550px">
+					<listbox itemRenderer="${ItemRenderer}"
+						width="198px" model="${SalaryStructureHeadDetailModel}"
+						mold="select"
+						onSelect='salaryStructureHeadId.setValue(self.getSelectedItem().getValue())'>
+					</listbox>
+				</div>
+			</hbox>
+
+			<separator height="10px"></separator>
+
+			<hbox>
+				<div align="right" width="45px"
+					style="margin-right:5px">
+				</div>
+				<div width="150px" align="right"
+					style="margin-left:5px">
+					<label value="${c:l('HRMS_RULE') }" style="font-weight:bold">
+					</label>
+				</div>
+				<div align="left" width="550px">
+					<listbox itemRenderer="${RuleRenderer}"
+						width="198px" model="${PayrollRuleModel}" mold="select"
+						onSelect='ruleId.setValue(self.getSelectedItem().getValue())'>
+					</listbox>
+				</div>
+			</hbox>
+			<separator height="10px"></separator>
+
+			<hbox>
+				<div align="right" width="45px"
+					style="margin-right:5px">
+				</div>
+				<div width="150px" align="right">
+					<label value="${c:l('HumanResLeaveSummaryFromDate') }" style="font-weight:bold"></label>
+				</div>
+				<div align="left" width="550px"
+					style="margin-left:5px">
+					<datebox name="fromDate" id="fromDate"
+						width="198px">
+					</datebox>
+				</div>
+			</hbox>
+
+			<separator height="10px"></separator>
+			<hbox>
+				<div align="right" width="45px"
+					style="margin-right:5px">
+				</div>
+				<div width="150px" align="right">
+					<label value="${c:l('HumanResLeaveSummaryThruDate') }" style="font-weight:bold"></label>
+				</div>
+				<div align="left" width="550px"
+					style="margin-left:5px">
+					<datebox name="thruDate" id="thruDate"
+						width="198px">
+					</datebox>
+				</div>
+			</hbox>
+			<separator height="10px"></separator>
+			<separator height="35px"></separator>
+
+			<box width="100%" height="30px" align="center"
+				style="background-color:#FFE4E1">
+				<hbox>
+					<button label="${c:l('HRMS_ADD') }" mold="os" id="Submit"
+						onClick='Clients.submitForm("ShowHeadAndRule"); '>
+					</button>
+					<button id="Cancel" label="${c:l('ButtonCancel') }"
+						onClick='Executions.sendRedirect("/control/PayRoll?id=empSalaryStructure");'>
+					</button>
+					<button id="Back" label="${c:l('HRMS_BACK') }"
+						onClick='Executions.getCurrent().sendRedirect("HrmsAddSalaryHead?salaryStructureId="
+					+ salaryStructureId.getValue())'>
+					</button>
+
+				</hbox>
+			</box>
+			<separator height="15px" />
+		</n:form>
+		
+		<listbox id="ruleListSal" itemRenderer="${listItemRenderer1}"
+			visible="true">
+			<listhead>
+				<listheader label="${c:l('HRMS_RULE_ID') }" />
+				<listheader label="${c:l('HRMS_RULE_NAME') }" />
+				<listheader label="${c:l('HRMS_SALARY_HEAD_ID') }" />
+				<listheader label="${c:l('HRMS_SALARY_HEAD') }" />
+				<listheader label="${c:l('HRMS_RULE_DESCRIPTION') }" />
+
+			</listhead>
+		</listbox>
+
+
+		<zscript>
+
+	import org.zkoss.zul.*;
+	Listbox lbox1 = (Listbox) AttachRuleToSalaryHead.getFellow("ruleListSal");
+	lbox1.setModel(model1);
+</zscript>
+	</window>
+</zk>

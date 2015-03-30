@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<forms xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://ofbiz.apache.org/dtds/widget-form.xsd">
+	<form name="AddAdjustmentTypeGlAccount" type="single" target="createOrderAdjustmentType" title="" header-row-style="header-row" default-table-style="basic-table">
+		<field name="orderAdjustmentTypeId" widget-style="nowhitespace" required-field="true">
+			<text maxlength="15" size="11" />
+		</field>
+		<field name="glAccountId" title="Gl Account" required-field="true" position="2">
+			<lookup target-form-name="LookupGlAccount" />
+		</field>
+		<field name="description" tooltip="This label is used for display" required-field="true">
+			<text />
+		</field>
+		<field name="assessableValueCalculation" position="2">
+			<check></check>
+		</field>
+		<field name="applicableOn">
+			<drop-down>
+				<option key="SALES" description="On Sales" />
+				<option key="PURCHASES" description="On Purchases" />
+				<option key="BOTH" description="On both Sales and Purchases" />
+			</drop-down>
+		</field>
+		<field name="methodOfApportion" position="2">
+			<drop-down allow-empty="true">
+				<option key="Based on Value" description="Based on Value" />
+				<option key="Based on Quantity" description="Based on Quantity" />
+			</drop-down>
+		</field>
+		<field name="taxType" position="1">
+			<drop-down allow-empty="true">
+				<option key="VAT" description="VAT" />
+				<option key="EXCISE" description="Excise" />
+				<option key="EXCISE&amp;VAT" description="Excise &amp; VAT" />
+			</drop-down>
+		</field>
+		<field name="submitButton" title="Create" widget-style="btn btn-success" event="onClick" action="javascript:jQuery('#AddAdjustmentTypeGlAccount').validate();invokeExport(this.form);">
+			<submit button-type="button" />
+		</field>
+	</form>
+
+	<form name="AdjustmentTypeGlAccounts" type="multi" list-name="orderAdjustmentType" odd-row-style="alternate-row" header-row-style="header-row-2"
+		default-table-style="basic-table hover-bar" target="updateOrderAdjustmentType" separate-columns="true" use-row-submit="true" item-index-separator="_o_">
+		<actions>
+			<entity-condition entity-name="OrderAdjustmentType" list="orderAdjustmentType">
+			</entity-condition>
+		</actions>
+        <field name="_rowSubmit" title="${uiLabelMap.CommonSelect}"><check/></field>
+        
+		<field name="orderAdjustmentTypeId">
+			<display/>
+		</field>
+		<field name="description" title="Description">
+			<text/>
+		</field>
+		<field name="glAccountId" title="Gl Account" widget-style="required">
+			<lookup target-form-name="LookupGlAccount" />
+		</field>
+		<field name="applicableOn" title="Applicable On">
+			<drop-down>
+				<option key="SALES" description="On Sales" />
+				<option key="PURCHASES" description="On Purchases" />
+				<option key="BOTH" description="On both Sales and Purchases" />
+			</drop-down>
+		</field>
+		<field name="assessableValueCalculation" >
+			<check></check>
+		</field>
+		<field name="methodOfApportion">
+				<drop-down allow-empty="true">
+				<option key="Based on Value" description="Based on Value" />
+				<option key="Based on Quantity" description="Based on Quantity" />
+			</drop-down>
+		</field>
+		
+		<field name="taxType">
+			<drop-down allow-empty="true">
+				<option key="VAT" description="VAT" />
+				<option key="EXCISE" description="Excise" />
+				<option key="EXCISE&amp;VAT" description="Excise &amp; VAT" />
+			</drop-down>
+		</field>
+		<field name="update" title="Update" widget-style="btn btn-success">
+			<submit/>
+		</field>
+		<field name="delLink" title="${uiLabelMap.FormFieldTitle_actionEnumId}" widget-style="btn btn-mini btn-danger" separate-column="false">
+			<hyperlink target="deleteOrderAdjustmentType?orderAdjustmentTypeId=${orderAdjustmentTypeId}" description="${uiLabelMap.CommonDelete}">
+			</hyperlink>
+		</field>
+
+	</form>
+
+	<form name="createVoucher" type="single" target="createVoucherList" title="">
+
+		<field name="voucherParentId" title="Voucher Type">
+			<drop-down>
+				<option key="Purchase" description="Purchase" />
+				<option key="Sales" description="Sales" />
+				<option key="Purchase Return" description="Purchase Return" />
+				<option key="Sales Return" description="Sales Return" />
+			</drop-down>
+		</field>
+
+		<field name="voucherName">
+			<text />
+		</field>
+
+		<field name="submitButton" title="Create" widget-style="btn btn-success">
+			<submit button-type="button"></submit>
+		</field>
+	</form>
+
+	<form name="voucherList" type="list" list-name="voucherList" odd-row-style="alternate-row" header-row-style="header-row-2" default-table-style="basic-table hover-bar">
+
+		<field name="voucherId">
+			<display></display>
+		</field>
+		<field name="voucherParentId" title="Voucher Type">
+			<display></display>
+		</field>
+		<field name="voucherName">
+			<display></display>
+		</field>
+		<field name="deleteLink" title="${uiLabelMap.CommonEmptyHeader}" widget-style="btn btn-mini btn-danger">
+			<hyperlink target="deleteVoucherList" description="${uiLabelMap.CommonDelete}" also-hidden="false">
+				<parameter param-name="voucherId" />
+			</hyperlink>
+		</field>
+
+	</form>
+</forms>

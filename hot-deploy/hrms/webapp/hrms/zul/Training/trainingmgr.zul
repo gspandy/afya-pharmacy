@@ -1,0 +1,119 @@
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<?page title="new page title" contentType="text/html;charset=UTF-8"?>
+<zk xmlns:n="http://www.zkoss.org/2005/zk/native">
+	<zscript>
+	import com.hrms.training.composer.*;
+	import org.ofbiz.entity.GenericDelegator;
+	TrainingApprovalComposer composer = new TrainingApprovalComposer();
+	GenericDelegator delegator = (GenericDelegator) Executions.getCurrent()
+			.getAttributes().get("delegator");
+	List trainingClassTypes = null;
+	try {
+		trainingClassTypes = delegator.findList("TrainingClassType",null,null,null,null,false);
+	} catch (org.ofbiz.entity.GenericEntityException g) {
+	}
+</zscript>
+
+	<window apply="${composer}" width="100%" title="${c:l('HRMS_TEAMS_TRAINING_REQUEST') }" style="margin-top:1px">
+		<separator></separator>
+		
+		<n:table width="100%" style="border:0px" cellspacing="0px" cellpadding="0px">
+			<n:tr>
+				<n:td width="80%">
+					<toolbarbutton id="statusUpdateButton" label="${c:l('btnSave') }" />
+				</n:td>
+			</n:tr>
+		</n:table>
+		<listbox id="approvalListbox" model="@{composer.model}"
+			checkmark="true"  onSelect='showDetails()'
+			selectedItem="@{composer.selectedRequest}" style="border:1px solid black" 
+			itemRenderer="${composer.listitemRenderer}" mold="paging" pageSize="10">
+			<listhead>
+				<listheader label="${c:l('HRMS_TRAINING_ID_TRAINING_NAME') }"></listheader>
+				<listheader label="${c:l('Hrms_EmployeeId') }"></listheader>
+				<listheader label="${c:l('HumanResLeaveSummaryFromDate') }"></listheader>
+				<listheader label="${c:l('HumanResLeaveSummaryThruDate') }"></listheader>
+				<listheader label="${c:l('HumanResPerfReviewStatus') }"></listheader>
+			</listhead>
+		</listbox>
+
+		<zscript>
+	void showDetails() {
+		mgrdetails.setVisible(true);
+	}
+</zscript>
+
+		<separator height="10px"></separator>
+		<panel id="mgrdetails" visible="false">
+			<caption label="${c:l('HRMS_TRAINING_DETAILS') }"></caption>
+			<panelchildren>
+				<separator></separator>
+				<hbox>
+					<vbox>
+						<hbox>
+							<div width="150px" align="right">
+								<label value="${c:l('FormFieldTitle_trainingName') }"
+									style="font-weight:bold">
+								</label>
+							</div>
+							<label
+								value="@{composer.selectedRequest.trainingName}" />
+						</hbox>
+						<hbox>
+							<div width="150px" align="right"
+								style="margin-right:4px">
+								<label value="${c:l('FormFieldTitle_trainingType') }"
+									style="font-weight:bold">
+								</label>
+							</div>
+							<label
+								value="@{composer.selectedRequest.trainingClassTypeId,converter='com.ndz.zkoss.util.RunTimeFormatter'}" self="@{entity(TrainingClassType)field(trainingClassTypeId)}" />
+						</hbox>
+						<hbox>
+							<div width="150px" align="right"
+								style="margin-right:4px">
+								<label value="${c:l('FormFieldTitle_description') }"
+									style="font-weight:bold">
+								</label>
+							</div>
+							<label
+								value="@{composer.selectedRequest.description}">
+							</label>
+						</hbox>
+						<hbox>
+							<div width="150px" align="right"
+								style="margin-right:4px">
+								<label value="${c:l('HRMS_MAX_TRAINEES') }"
+									style="font-weight:bold">
+								</label>
+							</div>
+							<label
+								value="@{composer.selectedRequest.maxTrainees}">
+							</label>
+						</hbox>
+					</vbox>
+					<vbox>
+						<hbox>
+							<div width="150px" align="right"
+								style="margin-right:4px">
+								<label value="${c:l('HRMS_STARTDATE') }"
+									style="font-weight:bold">
+								</label>
+							</div>
+							<label
+								value="@{composer.selectedRequest.estimatedStartDate,converter='com.ndz.zkoss.util.DateTimeFormater'}" self="@{format(dd-MM-yyyy)}"/>
+							<div width="150px" align="right">
+								<label value="${c:l('HRMS_ENDDATE') }"
+									style="font-weight:bold">
+								</label>
+							</div>
+							<label
+								value="@{composer.selectedRequest.estimatedCompletionDate,converter='com.ndz.zkoss.util.DateTimeFormater'}" self="@{format(dd-MM-yyyy)}"/>
+						</hbox>
+					</vbox>
+				</hbox>
+			</panelchildren>
+		</panel>
+		
+	</window>
+</zk>

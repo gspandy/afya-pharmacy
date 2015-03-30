@@ -1,0 +1,14 @@
+ 
+ import java.util.List;
+import org.ofbiz.entity.condition.EntityCondition;
+ facilityList = [];
+EntityCondition condition = EntityCondition.makeCondition("facilityId", facilityId);
+facilityList = delegator.findList("ProductStoreFacility", condition, null, null, null, false);
+  
+  ProductStoreList = delegator.findByPrimaryKey("ProductStore",  [productStoreId:facilityList.get(0).productStoreId]);
+  
+  
+  print "\n\n\n\n\n\n\n\nProductStoreList   " + 
+  ProductStoreList.reserveInventory + "\n\n\n\n\n\n\n\n\n"
+  
+  context.reserveInventory = ProductStoreList.reserveInventory ;

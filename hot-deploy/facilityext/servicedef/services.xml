@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<services xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://ofbiz.apache.org/dtds/services.xsd">
+	<description>facilityext Services</description>
+	<vendor></vendor>
+	<version>1.0</version>
+	<service name="mergeInventory" engine="simple" location="component://facilityext/script/com/ndz/facilityext/FacilityExtServices.xml" invoke="mergeInventory">
+		<attribute name="fromInventoryItemId" mode="IN" type="String"></attribute>
+		<attribute name="toInventoryItemId" mode="IN" type="String"></attribute>
+		<attribute name="locationSeqIdTo" mode="IN" type="String"></attribute>
+	</service>
+	<service name="reserveForInventoryItemInline" engine="simple" location="component://product/script/org/ofbiz/product/inventory/InventoryReserveServices.xml"
+		invoke="reserveForInventoryItemInline" auth="true">
+
+		<attribute name="inventoryItemId" type="String" mode="IN" optional="false" />
+		<attribute name="productId" type="String" mode="IN" optional="true" />
+		<attribute name="orderId" type="String" mode="IN" optional="false" />
+		<attribute name="orderItemSeqId" type="String" mode="IN" optional="true" />
+		<attribute name="quantityNotReserved" mode="IN" type="BigDecimal"></attribute>
+		<attribute name="deductAmount" mode="IN" type="BigDecimal"></attribute>
+		<attribute name="shipGroupSeqId" mode="IN" type="String"></attribute>
+		<attribute name="stockReserveId" mode="IN" type="String" optional="true"></attribute>
+
+	</service>
+
+	<service name="reserveOrderForInventoryItemInline" engine="simple" location="component://facilityext/script/com/ndz/facilityext/FacilityExtServices.xml"
+		invoke="reserveOrderForInventoryItemInline" auth="true">
+
+		<attribute name="inventoryItemId" type="String" mode="IN" optional="false" />
+		<attribute name="productId" type="String" mode="IN" optional="true" />
+		<attribute name="orderId" type="String" mode="IN" optional="false" />
+		<attribute name="orderItemSeqId" type="String" mode="IN" optional="true" />
+		<attribute name="quantityNotReserved" mode="IN" type="BigDecimal"></attribute>
+		<attribute name="deductAmount" mode="IN" type="BigDecimal"></attribute>
+		<attribute name="shipGroupSeqId" mode="IN" type="String"></attribute>
+		<attribute name="stockReserveId" mode="IN" type="String" optional="true"></attribute>
+	</service>
+	<!--<service name="createResvOrderHeader" engine="simple" location="component://facilityext/script/com/ndz/facilityext/FacilityExtServices.xml" invoke="createReserveOrderHeader"> 
+		<auto-attributes mode="IN" entity-name="ReserveOrderHeader" include="nonpk" optional="true"></auto-attributes> <attribute name="orderId" mode="OUT" type="String"></attribute> 
+		</service> -->
+	<service name="getReserveOrderItemDetails" engine="simple" location="component://facilityext/script/com/ndz/facilityext/FacilityExtServices.xml"
+		invoke="getReserveOrderItemDetails">
+		<attribute name="productId" mode="IN" type="String"></attribute>
+		<attribute name="reserveOrderId" mode="IN" type="String"></attribute>
+		<attribute name="reserveOrderItemSeqId" mode="OUT" type="String"></attribute>
+		<attribute name="atp" mode="OUT" type="BigDecimal"></attribute>
+	</service>
+
+	<service name="getReserveOrderItemBalQty" engine="simple" location="component://facilityext/script/com/ndz/facilityext/FacilityExtServices.xml" invoke="getReserveOrderItemBalQty">
+		<attribute name="orderId" mode="IN" type="String"></attribute>
+		<attribute name="orderItemSeqId" mode="IN" type="String"></attribute>
+		<attribute name="quantityToReserve" mode="OUT" type="BigDecimal"></attribute>
+	</service>
+	<service name="createResvOrderHeader" engine="simple" location="component://facilityext/script/com/ndz/facilityext/FacilityExtServices.xml" invoke="createReserveOrderHeader">
+		<auto-attributes mode="IN" entity-name="ReserveOrderHeader" include="nonpk" optional="true"></auto-attributes>
+		<attribute name="orderId" mode="OUT" type="String"></attribute>
+	</service>
+	<service name="createReserveOrderItem" engine="simple" location="component://facilityext/script/com/ndz/facilityext/FacilityExtServices.xml" invoke="createReserveOrderItem">
+		<auto-attributes mode="IN" entity-name="ReserveOrderItem" include="nonpk" optional="true"></auto-attributes>
+		<attribute name="orderId" mode="INOUT" type="String"></attribute>
+	</service>
+	<service name="cancelReserveOrderReservation" engine="simple" location="component://facilityext/script/com/ndz/facilityext/FacilityExtServices.xml"
+		invoke="cancelReserveOrderReservation">
+		<attribute name="reserveOrderId" mode="IN" type="String"></attribute>
+		<attribute name="reserveOrderItemSeqId" mode="IN" type="String"></attribute>
+	</service>
+	<service name="reserveOrder" engine="java" auth="true" location="com.ndz.transformation.InventoryService" invoke="reserveOrder">
+		<attribute name="orderId" mode="IN" type="String" optional="true"></attribute>
+		<attribute name="orderItemSeqId" mode="IN" type="String" optional="true"></attribute>
+		<attribute name="shipGroupSeqId" mode="IN" type="String" optional="true"></attribute>
+		<attribute name="productId" mode="IN" type="String" optional="false"></attribute>
+		<attribute name="stockReserveId" mode="IN" type="String" optional="false"></attribute>
+		<attribute name="quantity" mode="IN" type="BigDecimal" optional="true"></attribute>
+		<attribute name="safetyDays" mode="IN" type="Integer" optional="true"></attribute>
+		<attribute name="quantityNotReserved" mode="OUT" type="BigDecimal" optional="false"></attribute>
+		<attribute name="inventoriesReserved" mode="OUT" type="List" optional="true"></attribute>
+		<attribute name="reserveOrderId" mode="IN" type="String" optional="true"></attribute>
+		<attribute name="reserveOrderItemSeqId" mode="IN" type="String" optional="true"></attribute>
+	</service>
+	<service name="reserveReserveOrderItemInventory" engine="simple" location="component://facilityext/script/com/ndz/facilityext/FacilityExtServices.xml"
+		invoke="reserveReserveOrderItemInventory" auth="true">
+		<description>Create OrderItemShipGrpInvRes or increment existing reserved quantity.</description>
+		<attribute name="reserveOrderId" mode="IN" type="String" optional="false"></attribute>
+		<attribute name="reserveOrderItemSeqId" mode="IN" type="String" optional="false"></attribute>
+		<attribute name="inventoryItemId" mode="IN" type="String" optional="false"></attribute>
+		<attribute name="quantity" mode="IN" type="BigDecimal" optional="true"></attribute>
+	</service>
+	<service name="releaseInventories" engine="simple" location="component://facilityext/script/com/ndz/facilityext/FacilityExtServices.xml" invoke="releaseInventories">
+		<auto-attributes mode="IN" entity-name="ReserveOrderDetails" include="all">
+			<exclude field-name="orderId" />
+		</auto-attributes>
+		<attribute name="orderId" mode="INOUT" type="String"></attribute>
+	</service>
+	<service name="reserveProductInventoryForRO" engine="simple" location="component://facilityext/script/com/ndz/facilityext/FacilityExtServices.xml"
+		invoke="reserveProductInventoryForRO" auth="true">
+		<description>Reserve Inventory for a Product.
+            If requireInventory is Y the quantity not reserved is returned, if N then a negative
+            availableToPromise will be used to track quantity ordered beyond what is in stock.
+        </description>
+		<attribute name="productId" type="String" mode="IN" optional="false" />
+		<attribute name="orderId" type="String" mode="IN" optional="false" />
+		<attribute name="orderItemSeqId" type="String" mode="IN" optional="false" />
+		<attribute name="quantity" type="BigDecimal" mode="IN" optional="false" />
+		<attribute name="reservedDatetime" type="Timestamp" mode="IN" optional="true" />
+		<attribute name="reserveOrderEnumId" type="String" mode="IN" optional="false" />
+		<attribute name="sequenceId" type="Long" mode="IN" optional="true" />
+		<attribute name="quantityNotReserved" type="BigDecimal" mode="OUT" optional="false" />
+	</service>
+	<service name="reserveOrderItemInventoryForRO" engine="simple" location="component://facilityext/script/com/ndz/facilityext/FacilityExtServices.xml"
+		invoke="reserveOrderItemInventoryForRO" auth="true">
+		<description>Create OrderItemShipGrpInvRes or increment existing reserved quantity.</description>
+		<auto-attributes mode="IN" entity-name="ReserveOrderItemInvRes" include="pk" optional="false" />
+		<auto-attributes mode="IN" entity-name="ReserveOrderItemInvRes" include="nonpk" optional="true">
+			<exclude field-name="createdDatetime" />
+		</auto-attributes>
+		<attribute name="priority" type="String" mode="IN" optional="true" />
+		<override name="quantity" optional="false" />
+	</service>
+	<service name="updateReserveOrderItem" engine="simple" location="component://facilityext/script/com/ndz/facilityext/FacilityExtServices.xml" invoke="updateReserveOrderItem">
+		<auto-attributes mode="IN" entity-name="ReserveOrderItem" include="nonpk" optional="true"></auto-attributes>
+		<auto-attributes mode="IN" entity-name="ReserveOrderItem" include="pk" optional="true"></auto-attributes>
+		<attribute name="orderId" mode="INOUT" type="String"></attribute>
+	</service>
+
+	<service name="removeReserveOrderItem" engine="simple" location="component://facilityext/script/com/ndz/facilityext/FacilityExtServices.xml" invoke="removeReserveOrderItem">
+		<auto-attributes mode="IN" entity-name="ReserveOrderItem" include="pk" optional="true"></auto-attributes>
+		<attribute name="orderId" mode="INOUT" type="String"></attribute>
+	</service>
+	<service name="LoadInventoryItemFactForReports" engine="simple" location="component://facilityext/script/com/ndz/facilityext/FacilityExtServices.xml"
+		invoke="LoadInventoryItemFactForReports">
+		<description>Groovy Script Service To Load InventoryItemFact Table For Reports Purpose</description>
+		<attribute name="InventoryItem" type="org.ofbiz.entity.GenericValue" mode="IN" optional="true" />
+		<attribute name="inventoryItemId" type="String" mode="IN" optional="true" />
+	</service>
+	<service name="loadPurchaseOrderFact" auth="true" engine="simple" location="component://facilityext/script/com/ndz/facilityext/FacilityExtServices.xml"
+		invoke="loadPurchaseOrderFact">
+		<description>Calls the loadSalesOrderItemFact service for all the order items.</description>
+		<attribute name="orderId" type="String" mode="IN" optional="false" />
+		<attribute name="OrderHeader" type="org.ofbiz.entity.GenericValue" mode="IN" optional="true" />
+	</service>
+	<service name="loadPurchaseOrderItemFact" auth="true" engine="simple" location="component://facilityext/script/com/ndz/facilityext/FacilityExtServices.xml"
+		invoke="loadPurchaseOrderItemFact">
+		<description>
+            Pulls information from the OrderItem* entities and stores them in the PurchaseOrderItem entity (olap entity).
+            One of orderId/orderItemSeqId or order/orderItem must be passed or an error is returned.
+        </description>
+		<attribute name="orderId" type="String" mode="IN" optional="true" />
+		<attribute name="orderItemSeqId" type="String" mode="IN" optional="true" />
+		<attribute name="orderHeader" type="org.ofbiz.entity.GenericValue" mode="IN" optional="true" />
+		<attribute name="orderItem" type="org.ofbiz.entity.GenericValue" mode="IN" optional="true" />
+	</service>
+
+</services>

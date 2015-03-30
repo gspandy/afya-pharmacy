@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<site-conf xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="http://ofbiz.apache.org/dtds/site-conf.xsd">
+
+
+	<request-map uri="teamsMain">
+        <security https="true" auth="true"/>
+        <response name="success" type="view" value="teamsMain"/>
+    </request-map>
+    <request-map uri="viewTeam">
+        <security https="true" auth="true"/>
+        <response name="success" type="view" value="viewTeam"/>
+    </request-map>
+    <request-map uri="createTeamForm">
+        <security https="true" auth="true"/>
+        <response name="success" type="view" value="createTeamForm"/>
+    </request-map>
+    <request-map uri="createTeam">
+        <security https="true" auth="true"/>
+        <event type="service" invoke="crmsfa.createTeam"/>
+        <response name="success" type="request-redirect" value="viewTeam"/>
+        <response name="error" type="view" value="createTeamForm"/>
+    </request-map>
+    <request-map uri="updateTeamForm">
+        <security https="true" auth="true"/>
+        <response name="success" type="view" value="updateTeamForm"/>
+    </request-map>
+    <request-map uri="updateTeam">
+        <security https="true" auth="true"/>
+        <event type="service" invoke="crmsfa.updateTeam"/>
+        <response name="success" type="request-redirect" value="viewTeam"/>
+        <response name="error" type="view" value="updateTeamForm"/>
+    </request-map>
+    <request-map uri="findTeams">
+        <security https="true" auth="true"/>
+        <response name="success" type="view" value="findTeams"/>
+    </request-map>
+    <request-map uri="deactivateTeam">
+        <security https="true" auth="true"/>
+        <event type="service" invoke="sfaext.deactivateTeam"/>
+        <response name="success" type="view" value="viewTeam"/>
+        <response name="error" type="view" value="viewTeam"/>
+    </request-map>
+    <request-map uri="addTeamMemberInviewTeam">
+        <security https="true" auth="true"/>
+        <event type="service" invoke="crmsfa.addTeamMember"/>
+        <response name="success" type="request-redirect" value="viewTeam"/>
+        <response name="error" type="request-redirect" value="viewTeam"/>
+    </request-map>
+    <request-map uri="addTeamMemberInviewAccount">
+        <security https="true" auth="true"/>
+        <event type="service" invoke="crmsfa.addTeamMember"/>
+        <response name="success" type="request-redirect" value="viewAccount"/>
+        <response name="error" type="request-redirect" value="viewAccount"/>
+    </request-map>
+    <request-map uri="removeTeamMemberInviewTeam">
+        <security https="true" auth="true"/>
+        <event type="service" invoke="crmsfa.removeTeamMember"/>
+        <response name="success" type="request-redirect" value="viewTeam"/>
+        <response name="error" type="request-redirect" value="viewTeam"/>
+    </request-map>
+    <request-map uri="removeTeamMemberInviewAccount">
+        <security https="true" auth="true"/>
+        <event type="service" invoke="crmsfa.removeTeamMember"/>
+        <response name="success" type="request-redirect" value="viewAccount"/>
+        <response name="error" type="request-redirect" value="viewAccount"/>
+    </request-map>
+    <request-map uri="setTeamMemberSecurityGroupInviewTeam">
+        <security https="true" auth="true"/>
+        <event type="service" invoke="crmsfa.setTeamMemberSecurityGroup"/>
+        <response name="success" type="request-redirect" value="viewTeam"/>
+        <response name="error" type="view" value="viewTeam"/>
+    </request-map>
+    <request-map uri="setTeamMemberSecurityGroupInviewAccount">
+        <security https="true" auth="true"/>
+        <event type="service" invoke="crmsfa.setTeamMemberSecurityGroup"/>
+        <response name="success" type="request-redirect" value="viewAccount"/>
+        <response name="error" type="view" value="viewAccount"/>
+    </request-map>
+    <request-map uri="assignTeamToAccount">
+        <security https="true" auth="true"/>
+        <event type="service" invoke="crmsfa.assignTeamToAccount"/>
+        <response name="success" type="request-redirect" value="viewAccount"/>
+        <response name="error" type="view" value="viewAccount"/>
+    </request-map>
+
+    <request-map uri="LookupTeamMembers">
+        <security https="true" auth="true"/>
+        <response name="success" type="view" value="LookupTeamMembers"/>
+    </request-map>
+
+
+	 <view-map name="teamsMain" type="screen" page="component://sfaext/widget/TeamScreens.xml#findTeams"/>
+	<!-- teams screens -->
+    <view-map name="viewTeam" type="screen" page="component://sfaext/widget/TeamScreens.xml#viewTeam"/>
+    <view-map name="createTeamForm" type="screen" page="component://sfaext/widget/TeamScreens.xml#createTeamForm"/>
+    <view-map name="updateTeamForm" type="screen" page="component://sfaext/widget/TeamScreens.xml#updateTeamForm"/>
+    <view-map name="findTeams" type="screen" page="component://sfaext/widget/TeamScreens.xml#findTeams"/>
+    
+	<view-map name="LookupTeamMembers" type="screen" page="component://sfaext/widget/TeamScreens.xml#LookupTeamMembers"/>
+
+</site-conf>

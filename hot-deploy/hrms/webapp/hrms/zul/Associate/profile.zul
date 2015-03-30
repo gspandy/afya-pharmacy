@@ -1,0 +1,400 @@
+<?init class="org.zkoss.zk.ui.util.Composition"
+arg0="/WEB-INF/layout/template.zul"?>
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<?component name="profileField" macroURI="../macros/profileField.zul" id="profileMacro"?>
+<zk>
+	<zscript>
+	import org.ofbiz.entity.*;
+<![CDATA[
+	String partyId = (String) Executions.getCurrent().getParameter("partyId");
+	org.ofbiz.entity.GenericDelegator delegator = (org.ofbiz.entity.GenericDelegator) requestScope
+			.get("delegator");
+	GenericValue userLogin = (GenericValue) Executions.getCurrent()
+			.getDesktop().getSession().getAttribute("userLogin");
+	org.ofbiz.entity.GenericValue person = null;
+	person = delegator.findByPrimaryKey("Person", org.ofbiz.base.util.UtilMisc
+			.toMap("partyId", partyId));
+	org.ofbiz.security.Security security = requestScope.get("security");
+	boolean isAdmin = security.hasPermission("HUMANRES_ADMIN", userLogin);
+	boolean isManager = security.hasPermission("HUMANRES_MGR", userLogin);
+	boolean bothAccess = false;
+	boolean sameUser = false;
+	boolean anyOne = false;
+	if (isAdmin || isManager) {
+		bothAccess = true;
+	}
+	String employeeId = userLogin.getString("partyId");
+	if (employeeId.equals(partyId)) {
+		sameUser = true;
+	}
+	if (sameUser || bothAccess) {
+		anyOne = true;
+	}
+]]>
+</zscript>
+	<window self="@{define(content)}" id="profileWindow"
+		style="text-align:middle">
+		<label value="${partyId}" visible="false"></label>
+		<menubar>
+			<menu label="${c:l('FormFieldTitle_ContactInformation') }">
+				<menupopup>
+					<menuitem label="${c:l('HRMS_POSTALADDRESS') }"
+						id="postalAddressMenuId">
+						<attribute name="onClick">
+	Div div = (Div) profileWindow.getFellow("appendGroupbox");
+	Component firstChild = div.getFirstChild();
+	if (firstChild != null) {
+		div.removeChild(firstChild);
+	}
+	Map party = new HashMap();
+	party.put("partyId", partyId);
+	party.put("sameUser", sameUser);
+	Window win = (Window) Executions.createComponents(
+			"/zul/Associate/employeePostalAddress.zul", null, party);
+	div.appendChild(win);
+</attribute>
+					</menuitem>
+					<menuitem label="${c:l('HRMS_EMAILADDRESS') }">
+						<attribute name="onClick">
+	Div div = (Div) profileWindow.getFellow("appendGroupbox");
+	Component firstChild = div.getFirstChild();
+	if (firstChild != null) {
+		div.removeChild(firstChild);
+	}
+	Map party = new HashMap();
+	party.put("partyId", partyId);
+	party.put("sameUser", sameUser);
+	Window win = (Window) Executions.createComponents(
+			"/zul/employeeProfile/employeeEmailAddress.zul", null, party);
+	div.appendChild(win);
+</attribute>
+					</menuitem>
+					<menuitem label="${c:l('HRMS_PHONENUMBER') }"
+						id="phoneNumberMenuId">
+						<attribute name="onClick">
+	Div div = (Div) profileWindow.getFellow("appendGroupbox");
+	Component firstChild = div.getFirstChild();
+	if (firstChild != null) {
+		div.removeChild(firstChild);
+	}
+	Map party = new HashMap();
+	party.put("partyId", partyId);
+	party.put("sameUser", sameUser);
+	Window win = (Window) Executions.createComponents(
+			"/zul/employeeProfile/employeePhoneNumber.zul", null, party);
+	div.appendChild(win);
+</attribute>
+					</menuitem>
+				</menupopup>
+			</menu>
+			<menu label="${c:l('HumanResEmployeeSkill') }">
+				<menupopup>
+					<menuitem label="${c:l('HumanResSkill') }" id="skillMenuId">
+						<attribute name="onClick">
+	Div div = (Div) profileWindow.getFellow("appendGroupbox");
+	Component firstChild = div.getFirstChild();
+	if (firstChild != null) {
+		div.removeChild(firstChild);
+	}
+	Map party = new HashMap();
+	party.put("partyId", partyId);
+	party.put("sameUser", sameUser);
+	Window win = (Window) Executions.createComponents(
+			"/zul/employeeProfile/employeeSkill.zul", null, party);
+	div.appendChild(win);
+</attribute>
+					</menuitem>
+				</menupopup>
+			</menu>
+			<menu label="${c:l('HumanResEmployeeRole') }">
+				<menupopup>
+					<menuitem label="${c:l('HumanResRoles') }" id="roleMenuId">
+						<attribute name="onClick" >
+	Div div = (Div) profileWindow.getFellow("appendGroupbox");
+	Component firstChild = div.getFirstChild();
+	if (firstChild != null) {
+		div.removeChild(firstChild);
+	}
+	Map party = new HashMap();
+	party.put("partyId", partyId);
+	party.put("sameUser", sameUser);
+	Window win = (Window) Executions.createComponents(
+			"/zul/employeeProfile/employeeRole.zul", null, party);
+	div.appendChild(win);
+</attribute>
+					</menuitem>
+				</menupopup>
+			</menu>
+			<menu label="${c:l('HumanResEmployeeTraining') }">
+				<menupopup>
+					<menuitem label="${c:l('HumanResTraining') }" id="trainingMenuId">
+						<attribute name="onClick" >
+	Div div = (Div) profileWindow.getFellow("appendGroupbox");
+	Component firstChild = div.getFirstChild();
+	if (firstChild != null) {
+		div.removeChild(firstChild);
+	}
+	Map party = new HashMap();
+	party.put("partyId", partyId);
+	party.put("sameUser", sameUser);
+	Window win = (Window) Executions.createComponents(
+			"/zul/employeeProfile/employeeTraining.zul", null, party);
+	div.appendChild(win);
+</attribute>
+
+					</menuitem>
+				</menupopup>
+			</menu>
+			<menu label="${c:l('FormFieldTitle_EmployeeAssociatePassword') }">
+				<menupopup>
+					<menuitem label="${c:l('FormFieldTitle_EmployeeAssociateEditPassword') }"
+						id="passwordMenuId">
+						<attribute name="onClick">
+	Div div = (Div) profileWindow.getFellow("appendGroupbox");
+	Component firstChild = div.getFirstChild();
+	if (firstChild != null) {
+		div.removeChild(firstChild);
+	}
+	Map party = new HashMap();
+	party.put("partyId", partyId);
+	party.put("sameUser", sameUser);
+	Window win = (Window) Executions.createComponents(
+			"/zul/Associate/userPasswordChange.zul", null, party);
+	div.appendChild(win);
+</attribute>
+					</menuitem>
+				</menupopup>
+			</menu>
+			<menu label="${c:l('HumanResSecurityGroup') }">
+				<menupopup>
+					<menuitem label="${c:l('HumanResViewSecurityGroup') }"
+						id="securityMenuId">
+						<attribute name="onClick">
+	Div div = (Div) profileWindow.getFellow("appendGroupbox");
+	Component firstChild = div.getFirstChild();
+	if (firstChild != null) {
+		div.removeChild(firstChild);
+	}
+	Map party = new HashMap();
+	party.put("partyId", partyId);
+	party.put("sameUser", sameUser);
+	Window win = (Window) Executions.createComponents(
+			"/zul/employeeProfile/viewSecurityGroup.zul", null, party);
+	div.appendChild(win);
+</attribute>
+					</menuitem>
+				</menupopup>
+			</menu>
+			<menu label="${c:l('HumanResEmployeeResponsibility') }">
+				<menupopup>
+					<menuitem label="${c:l('HumanResResponsibility') }"
+						id="responsibilityMenuId">
+						<attribute name="onClick">
+	Div div = (Div) profileWindow.getFellow("appendGroupbox");
+	Component firstChild = div.getFirstChild();
+	if (firstChild != null) {
+		div.removeChild(firstChild);
+	}
+	Map party = new HashMap();
+	party.put("partyId", partyId);
+	party.put("sameUser", sameUser);
+	Window win = (Window) Executions.createComponents(
+			"/zul/employeeProfile/employeeResponsibility.zul", null, party);
+	div.appendChild(win);
+</attribute>
+					</menuitem>
+				</menupopup>
+			</menu>
+		</menubar>
+		<groupbox style="background:#f3f3ec;" mold="3d"
+			closable="false">
+			<caption label="${c:l('HRMS_PersonalInformation')}"
+				style="font-weight:bold">
+				<toolbarbutton label="Edit"
+					image="/images/icon/update.png" style="font-weight:bold;color:#FFFFFF"
+					onClick='@{sessionScope.put("action","edit")}'
+					href="/control/editProfile?partyId=${partyId}" if="${anyOne}">
+				</toolbarbutton>
+			</caption>
+			<hbox style="border-bottom:1px solid grey;" width="100%"
+				height="20px" align="center">
+				<div align="right" width="200px">
+					<profileField id="employeeId"
+						fieldName="${c:l('HRMS_EmployeeId')}:"
+						fieldValue="${person.partyId}">
+
+					</profileField>
+				</div>
+			</hbox>
+			<hbox style="border-bottom:1px solid grey;" width="100%"
+				height="20px" align="center">
+				<profileField id="salutation"
+					fieldName="${c:l('HRMS_Salutation')}:"
+					fieldValue="${person.salutation}" />
+			</hbox>
+			<hbox style="border-bottom:1px solid grey;" width="100%"
+				height="20px" align="center">
+				<div align="left" width="150px">
+					<profileField id="firstName"
+						fieldName="${c:l('HRMS_FirstName')}:"
+						fieldValue="${person.firstName}">
+					</profileField>
+				</div>
+
+				<div align="right" width="400px">
+					<profileField id="middleName"
+						fieldName="${c:l('HRMS_MiddleName')}:"
+						fieldValue="${person.middleName}" />
+				</div>
+
+				<div align="right" width="400px">
+					<profileField id="lastName"
+						fieldName="${c:l('HRMS_LastName')}:"
+						fieldValue="${person.lastName}" />
+				</div>
+			</hbox>
+			<hbox style="border-bottom:1px solid grey;" width="100%"
+				height="20px" align="center">
+				<div align="left" width="150px">
+					<profileField id="title"
+						fieldName="${c:l('HRMS_PersonTitle')}:"
+						fieldValue="${person.personalTitle}" />
+				</div>
+				<div align="right" width="400px">
+					<profileField id="suffix"
+						fieldName="${c:l('HRMS_Suffix')}:" fieldValue="${person.suffix}" />
+				</div>
+				<div align="right" width="400px">
+					<profileField id="nickName"
+						fieldName="${c:l('HRMS_NickName')}:"
+						fieldValue="${person.nickname}" />
+				</div>
+			</hbox>
+			<hbox style="border-bottom:1px solid grey;" width="100%"
+				height="20px" align="center">
+				<div align="left" width="150px">
+					<profileField id="memberId"
+						fieldName="${c:l('HRMS_MemberId')}:"
+						fieldValue="${person.memberId}" />
+				</div>
+				<div align="right" width="400px">
+					<profileField id="birthDate"
+						fieldName="${c:l('HRMS_BirthDate')}:"
+						fieldValue="${person.birthDate}" />
+				</div>
+				<div align="right" width="400px">
+					<profileField id="countryCode"
+						fieldName="${c:l('HRMS_CountryCode')}:"
+						fieldValue="${person.countryCode}" />
+				</div>
+			</hbox>
+			<hbox style="border-bottom:1px solid grey;" width="100%"
+				height="20px" align="center">
+				<div align="left" width="150px">
+					<profileField id="gender"
+						fieldName="${c:l('HRMS_Gender')}:" fieldValue="${person.gender}" />
+				</div>
+				<div align="right" width="400px">
+					<profileField id="height"
+						fieldName="${c:l('HRMS_Height')}:" fieldValue="${person.height}" />
+				</div>
+				<div align="right" width="400px">
+					<profileField id="weight"
+						fieldName="${c:l('HRMS_Weight')}:" fieldValue="${person.weight}" />
+				</div>
+			</hbox>
+			<hbox style="border-bottom:1px solid grey;" width="100%"
+				height="20px" align="center">
+				<div align="left" width="150px">
+					<profileField id="emergencyContact"
+						fieldName="${c:l('HRMS_EmergencyContactNumber')}:"
+						fieldValue="${person.emergencyContactNo}" />
+				</div>
+				<div align="right" width="400px">
+					<profileField id="passportNumber"
+						fieldName="${c:l('HRMS_PassportNumber')}:"
+						fieldValue="${person.passportNumber}" />
+				</div>
+				<div align="right" width="400px">
+					<profileField id="passportExpireDate"
+						fieldName="${c:l('HRMS_PassportExpireDate')}:"
+						fieldValue="${person.passportExpireDate}" />
+				</div>
+			</hbox>
+			<hbox style="border-bottom:1px solid grey;" width="100%"
+				height="20px" align="center">
+				<div align="left" width="150px">
+					<profileField id="maritalStatus"
+						fieldName="${c:l('HRMS_MaritalStatus')}:"
+						fieldValue="${person.maritalStatus}" />
+				</div>
+				<div align="right" width="400px">
+					<profileField id="bloodGroup"
+						fieldName="${c:l('HRMS_BloodGroup')}:"
+						fieldValue="${person.bloodGroup}" />
+				</div>
+				<div align="right" width="400px">
+					<profileField id="nationality"
+						fieldName="${c:l('HRMS_Nationality')}:"
+						fieldValue="${person.nationality}" />
+				</div>
+			</hbox>
+			<hbox style="border-bottom:1px solid grey;" width="100%"
+				height="20px" align="center">
+				<div align="left" width="150px">
+					<profileField id="yrsOfExprience"
+						fieldName="${c:l('HRMS_YrsOfExprience')}:"
+						fieldValue="${person.totalYearsWorkExperience}" />
+				</div>
+				<div align="right" width="400px">
+					<profileField id="comments"
+						fieldName="${c:l('HRMS_Comments')}:"
+						fieldValue="${person.comments}" />
+				</div>
+				<div align="right" width="400px">
+					<profileField id="occupation"
+						fieldName="${c:l('HRMS_Occupation')}:"
+						fieldValue="${person.occupation}" />
+				</div>
+			</hbox>
+			<hbox style="border-bottom:1px solid grey;" width="100%"
+				height="20px" align="center">
+				<div align="left" width="150px">
+					<profileField id="nomineeName"
+						fieldName="${c:l('HRMS_NomineeName')}:"
+						fieldValue="${person.nomineeName}" />
+				</div>
+				<div align="right" width="400px">
+					<profileField id="fatherName"
+						fieldName="${c:l('HRMS_FatherName')}:"
+						fieldValue="${person.fatherName}" />
+				</div>
+				<div align="right" width="400px">
+					<profileField id="spouceName"
+						fieldName="${c:l('HRMS_SpouceName')}:"
+						fieldValue="${person.spouseName}" />
+				</div>
+			</hbox>
+			<hbox>
+				<div align="left" width="150px">
+					<profileField id="identificationMark"
+						fieldName="${c:l('HRMS_IdentificationMark')}:"
+						fieldValue="${person.identificationMark}" />
+				</div>
+				<div align="right" width="400px">
+					<profileField id="residenceStatusEnumId"
+						fieldName="${c:l('HRMS_ResidenceStatusEnumId')}:"
+						fieldValue="${person.residenceStatusEnumId}" />
+				</div>
+				<div align="right" width="400px">
+					<profileField id="employmentStatusEnumId"
+						fieldName="${c:l('HRMS_EmploymentStatusEnumId')}:"
+						fieldValue="${person.employmentStatusEnumId}" />
+				</div>
+			</hbox>
+		</groupbox>
+		<div id="appendGroupbox">
+
+		</div>
+	</window>
+</zk>

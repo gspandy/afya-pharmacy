@@ -1,0 +1,438 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Licensed to the Apache Software Foundation (ASF) under one
+    or more contributor license agreements.  See the NOTICE file
+    distributed with this work for additional information
+    regarding copyright ownership.  The ASF licenses this file
+    to you under the Apache License, Version 2.0 (the
+    "License"); you may not use this file except in compliance
+    with the License.  You may obtain a copy of the License at
+    
+    http://www.apache.org/licenses/LICENSE-2.0
+    
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied.  See the License for the
+    specific language governing permissions and limitations
+    under the License.
+-->
+
+<screens xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+        xsi:noNamespaceSchemaLocation="http://ofbiz.apache.org/dtds/widget-screen.xsd">
+    <screen name="LookupBudget">
+        <section>
+            <actions>
+                <property-map resource="HumanResExtUiLabels" map-name="uiLabelMap" global="true"/>
+                <set field="title" value="${uiLabelMap.HumanResLookupBudgetByName}"/>
+            </actions>
+            <widgets>
+                <decorator-screen name="LookupDecorator" location="component://common/widget/CommonScreens.xml">
+                    <decorator-section name="search-options">
+                        <include-form name="LookupBudget" location="component://humanresext/widget/forms/LookupForms.xml"/>
+                    </decorator-section>
+                    <decorator-section name="search-results">
+                        <include-form name="ListBudgets" location="component://humanresext/widget/forms/LookupForms.xml"/>
+                    </decorator-section>
+                </decorator-screen>
+            </widgets>
+        </section>
+    </screen>
+    <screen name="LookupBudgetItem">
+        <section>
+            <actions>
+                <property-map resource="HumanResExtUiLabels" map-name="uiLabelMap" global="true"/>
+                <set field="title" value="${uiLabelMap.HumanResLookupBudgetItemByName}"/>
+            </actions>
+            <widgets>
+                <decorator-screen name="LookupDecorator" location="component://common/widget/CommonScreens.xml">
+                    <decorator-section name="search-options">
+                        <include-form name="LookupBudgetItem" location="component://humanresext/widget/forms/LookupForms.xml"/>
+                    </decorator-section>
+                    <decorator-section name="search-results">
+                        <include-form name="ListBudgetItems" location="component://humanresext/widget/forms/LookupForms.xml"/>
+                    </decorator-section>
+                </decorator-screen>
+            </widgets>
+        </section>
+    </screen>
+    <screen name="LookupEmplPosition">
+        <section>
+            <actions>
+                <property-map resource="HumanResExtUiLabels" map-name="uiLabelMap" global="true"/>
+                <set field="title" value="${uiLabelMap.HumanResLookupEmplPositionByName}"/>
+            </actions>
+            <widgets>
+                <decorator-screen name="LookupDecorator" location="component://common/widget/CommonScreens.xml">
+                    <decorator-section name="search-options">
+                        <include-form name="LookupEmplPosition" location="component://humanresext/widget/forms/LookupForms.xml"/>
+                    </decorator-section>
+                    <decorator-section name="search-results">
+                        <include-form name="ListEmplPositions" location="component://humanresext/widget/forms/LookupForms.xml"/>
+                    </decorator-section>
+                </decorator-screen>
+            </widgets>
+        </section>
+    </screen>
+    <screen name="LookupTerminationReason">
+        <section>
+            <actions>
+                <property-map resource="HumanResExtUiLabels" map-name="uiLabelMap" global="true"/>
+                <set field="title" value="${uiLabelMap.HumanResLookupTerminationReason}"/>
+            </actions>
+            <widgets>
+                <decorator-screen name="LookupDecorator" location="component://common/widget/CommonScreens.xml">
+                    <decorator-section name="search-options">
+                        <include-form name="LookupTerminationReason" location="component://humanresext/widget/forms/LookupForms.xml"/>
+                    </decorator-section>
+                    <decorator-section name="search-results">
+                        <include-form name="ListTerminationReasons" location="component://humanresext/widget/forms/LookupForms.xml"/>
+                    </decorator-section>
+                </decorator-screen>
+            </widgets>
+        </section>
+    </screen>
+    <screen name="LookupSalaryStep">
+        <section>
+            <actions>
+                <property-map resource="HumanResExtUiLabels" map-name="uiLabelMap" global="true"/>
+                <set field="title" value="${uiLabelMap.HumanResLookupSalaryStepSeqId}"/>
+            </actions>
+            <widgets>
+                <decorator-screen name="LookupDecorator" location="component://common/widget/CommonScreens.xml">
+                    <decorator-section name="search-options">
+                        <include-form name="LookupSalaryStep" location="component://humanresext/widget/forms/LookupForms.xml"/>
+                    </decorator-section>
+                    <decorator-section name="search-results">
+                        <include-form name="ListSalarySteps" location="component://humanresext/widget/forms/LookupForms.xml"/>
+                    </decorator-section>
+                </decorator-screen>
+            </widgets>
+        </section>
+    </screen>
+    <screen name="LookupPayGrade">
+        <section>
+            <actions>
+                <property-map resource="HumanResExtUiLabels" map-name="uiLabelMap" global="true"/>
+                <set field="title" value="${uiLabelMap.HumanResLookupPayGrade}"/>
+            </actions>
+            <widgets>
+                <decorator-screen name="LookupDecorator" location="component://common/widget/CommonScreens.xml">
+                    <decorator-section name="search-options">
+                        <include-form name="LookupPayGrade" location="component://humanresext/widget/forms/LookupForms.xml"/>
+                    </decorator-section>
+                    <decorator-section name="search-results">
+                        <include-form name="ListPayGrades" location="component://humanresext/widget/forms/LookupForms.xml"/>
+                    </decorator-section>
+                </decorator-screen>
+            </widgets>
+        </section>
+    </screen>
+    <screen name="LookupPayRollPreference">
+        <section>
+            <actions>
+                <property-map resource="HumanResExtUiLabels" map-name="uiLabelMap" global="true"/>
+                <set field="title" value="${uiLabelMap.HumanResLookupPayRollPreference}"/>
+            </actions>
+            <widgets>
+                <decorator-screen name="LookupDecorator" location="component://common/widget/CommonScreens.xml">
+                    <decorator-section name="search-options">
+                        <include-form name="LookupPayRollPreference" location="component://humanresext/widget/forms/LookupForms.xml"/>
+                    </decorator-section>
+                    <decorator-section name="search-results">
+                        <include-form name="ListPayRollPreferences" location="component://humanresext/widget/forms/LookupForms.xml"/>
+                    </decorator-section>
+                </decorator-screen>
+            </widgets>
+        </section>
+    </screen>
+    <screen name="LookupUnemploymentClaim">
+        <section>
+            <actions>
+                <property-map resource="HumanResExtUiLabels" map-name="uiLabelMap" global="true"/>
+                <set field="title" value="${uiLabelMap.HumanResLookupUnemploymentClaim}"/>
+            </actions>
+            <widgets>
+                <decorator-screen name="LookupDecorator" location="component://common/widget/CommonScreens.xml">
+                    <decorator-section name="search-options">
+                        <include-form name="LookupUnemploymentClaim" location="component://humanresext/widget/forms/LookupForms.xml"/>
+                    </decorator-section>
+                    <decorator-section name="search-results">
+                        <include-form name="ListUnemploymentClaims" location="component://humanresext/widget/forms/LookupForms.xml"/>
+                    </decorator-section>
+                </decorator-screen>
+            </widgets>
+        </section>
+    </screen>
+    
+    <!-- TO BE REMOVED
+    <screen name="LookupAgreement">
+        <section>
+            <actions>
+                <property-map resource="HumanResUiLabels" map-name="uiLabelMap" global="true"/>
+                <set field="title" value="${uiLabelMap.HumanResLookupAgreement}"/>
+            </actions>
+            <widgets>
+                <decorator-screen name="LookupDecorator" location="component://common/widget/CommonScreens.xml">
+                    <decorator-section name="search-options">
+                        <include-form name="LookupAgreement" location="component://humanresext/widget/forms/LookupForms.xml"/>
+                    </decorator-section>
+                    <decorator-section name="search-results">
+                        <include-form name="ListAgreements" location="component://humanresext/widget/forms/LookupForms.xml"/>
+                    </decorator-section>
+                </decorator-screen>
+            </widgets>
+        </section>
+    </screen>
+    -->
+    
+    <screen name="LookupAgreementEmploymentAppl">
+        <section>
+            <actions>
+                <property-map resource="HumanResExtUiLabels" map-name="uiLabelMap" global="true"/>
+                <set field="title" value="${uiLabelMap.HumanResLookupAgreementEmploymentAppl}"/>
+            </actions>
+            <widgets>
+                <decorator-screen name="LookupDecorator" location="component://common/widget/CommonScreens.xml">
+                    <decorator-section name="search-options">
+                        <include-form name="LookupAgreementEmploymentAppl" location="component://humanresext/widget/forms/LookupForms.xml"/>
+                    </decorator-section>
+                    <decorator-section name="search-results">
+                        <include-form name="ListAgreementEmploymentAppls" location="component://humanresext/widget/forms/LookupForms.xml"/>
+                    </decorator-section>
+                </decorator-screen>
+            </widgets>
+        </section>
+    </screen>
+    <screen name="LookupPerfReview">
+        <section>
+            <actions>
+                <property-map resource="HumanResExtUiLabels" map-name="uiLabelMap" global="true"/>
+                <set field="title" value="${uiLabelMap.HumanResLookupPerfReview}"/>
+            </actions>
+            <widgets>
+                <decorator-screen name="LookupDecorator" location="component://common/widget/CommonScreens.xml">
+                    <decorator-section name="search-options">
+                        <include-form name="LookupPerfReview" location="component://humanresext/widget/forms/LookupForms.xml"/>
+                    </decorator-section>
+                    <decorator-section name="search-results">
+                        <include-form name="ListPerfReviews" location="component://humanresext/widget/forms/LookupForms.xml"/>
+                    </decorator-section>
+                </decorator-screen>
+            </widgets>
+        </section>
+    </screen>
+    <screen name="LookupPartyResume">
+        <section>
+            <actions>
+                <property-map resource="HumanResExtUiLabels" map-name="uiLabelMap" global="true"/>
+                <set field="title" value="${uiLabelMap.HumanResLookupPartyResume}"/>
+            </actions>
+            <widgets>
+                <decorator-screen name="LookupDecorator" location="component://common/widget/CommonScreens.xml">
+                    <decorator-section name="search-options">
+                        <include-form name="LookupPartyResume" location="component://humanresext/widget/forms/LookupForms.xml"/>
+                    </decorator-section>
+                    <decorator-section name="search-results">
+                        <include-form name="ListPartyResumes" location="component://humanresext/widget/forms/LookupForms.xml"/>
+                    </decorator-section>
+                </decorator-screen>
+            </widgets>
+        </section>
+    </screen>
+    <screen name="LookupEmploymentApp">
+        <section>
+            <actions>
+                <property-map resource="HumanResExtUiLabels" map-name="uiLabelMap" global="true"/>
+                <set field="title" value="${uiLabelMap.HumanResLookupEmploymentApp}"/>
+            </actions>
+            <widgets>
+                <decorator-screen name="LookupDecorator" location="component://common/widget/CommonScreens.xml">
+                    <decorator-section name="search-options">
+                        <include-form name="LookupEmploymentApp" location="component://humanresext/widget/forms/LookupForms.xml"/>
+                    </decorator-section>
+                    <decorator-section name="search-results">
+                        <include-form name="ListEmploymentApps" location="component://humanresext/widget/forms/LookupForms.xml"/>
+                    </decorator-section>
+                </decorator-screen>
+            </widgets>
+        </section>
+    </screen>
+    
+    <screen name="LookupTraining">
+        <section>
+	        <actions>
+                <property-map resource="HumanResExtUiLabels" map-name="uiLabelMap" global="true"/>
+	            <set field="title" value="${uiLabelMap.HumanResLookupTraining}"/>
+	        </actions>
+            <widgets>
+                <decorator-screen name="LookupDecorator" location="component://common/widget/CommonScreens.xml">
+                    <decorator-section name="search-options">
+                        <include-form name="LookupTraining" location="component://humanresext/widget/forms/LookupForms.xml"/>
+                    </decorator-section>
+                    <decorator-section name="search-results">
+                        <include-form name="ListTrainings" location="component://humanresext/widget/forms/LookupForms.xml"/>
+                    </decorator-section>
+                </decorator-screen>
+            </widgets>
+        </section>
+    </screen>
+
+    <screen name="LookupPayrollCondition">
+        <section>
+	        <actions>
+	            <set field="title" value="${uiLabelMap.HumanResPayrollConditions}"/>
+	        </actions>
+            <widgets>
+                <decorator-screen name="LookupDecorator" location="component://common/widget/CommonScreens.xml">
+                    <decorator-section name="search-options">
+                        <include-form name="LookupPayrollCondition" location="component://humanresext/widget/forms/LookupForms.xml"/>
+                    </decorator-section>
+                    <decorator-section name="search-results">
+                        <include-form name="ListPayrollConditions" location="component://humanresext/widget/forms/LookupForms.xml"/>
+                    </decorator-section>
+                </decorator-screen>
+            </widgets>
+        </section>
+    </screen>
+
+    <screen name="LookupPayrollAction">
+        <section>
+	        <actions>
+	            <set field="title" value="${uiLabelMap.HumanResPayrollActions}"/>
+	        </actions>
+            <widgets>
+                <decorator-screen name="LookupDecorator" location="component://common/widget/CommonScreens.xml">
+                    <decorator-section name="search-options">
+                        <include-form name="LookupPayrollAction" location="component://humanresext/widget/forms/LookupForms.xml"/>
+                    </decorator-section>
+                    <decorator-section name="search-results">
+                        <include-form name="ListPayrollActions" location="component://humanresext/widget/forms/LookupForms.xml"/>
+                    </decorator-section>
+                </decorator-screen>
+            </widgets>
+        </section>
+    </screen>
+    
+     <screen name="LookupTaxCategory">
+        <section>
+	        <actions>
+                <property-map resource="HumanResExtUiLabels" map-name="uiLabelMap" global="true"/>
+	            <set field="title" value="${uiLabelMap.TaxCategoryLookup}"/>
+	        </actions>
+            <widgets>
+                <decorator-screen name="LookupDecorator" location="component://common/widget/CommonScreens.xml">
+                    <decorator-section name="search-options">
+                        <include-form name="LookupTaxCategory" location="component://humanresext/widget/forms/LookupForms.xml"/>
+                    </decorator-section>
+                    <decorator-section name="search-results">
+                        <include-form name="ListTaxCategories" location="component://humanresext/widget/forms/LookupForms.xml"/>
+                    </decorator-section>
+                </decorator-screen>
+            </widgets>
+        </section>
+    </screen>
+
+    <screen name="LookupPayrollRule">
+        <section>
+	        <actions>
+	            <set field="title" value="${uiLabelMap.HumanResPayrollRules}"/>
+	        </actions>
+            <widgets>
+                <decorator-screen name="LookupDecorator" location="component://common/widget/CommonScreens.xml">
+                    <decorator-section name="search-options">
+                        <include-form name="LookupPayrollRule" location="component://humanresext/widget/forms/LookupForms.xml"/>
+                    </decorator-section>
+                    <decorator-section name="search-results">
+                        <include-form name="ListPayrollRules" location="component://humanresext/widget/forms/LookupForms.xml"/>
+                    </decorator-section>
+                </decorator-screen>
+            </widgets>
+        </section>
+    </screen>
+
+    <screen name="LookupSalaryHead">
+        <section>
+	        <actions>
+	            <set field="title" value="${uiLabelMap.HumanResSalaryHead}"/>
+	        </actions>
+            <widgets>
+                <decorator-screen name="LookupDecorator" location="component://common/widget/CommonScreens.xml">
+                    <decorator-section name="search-options">
+                        <include-form name="LookupSalaryHead" location="component://humanresext/widget/forms/LookupForms.xml"/>
+                    </decorator-section>
+                    <decorator-section name="search-results">
+                        <include-form name="ListSalaryHeads" location="component://humanresext/widget/forms/LookupForms.xml"/>
+                    </decorator-section>
+                </decorator-screen>
+            </widgets>
+        </section>
+    </screen>
+    
+    <screen name="LookupTaxItem">
+        <section>
+	        <actions>
+	            <set field="title" value="${uiLabelMap.HumanResTaxItem}"/>
+	        </actions>
+            <widgets>
+                <decorator-screen name="LookupDecorator" location="component://common/widget/CommonScreens.xml">
+                    <decorator-section name="search-options">
+                        <include-form name="LookupTaxItem" location="component://humanresext/widget/forms/LookupForms.xml"/>
+                    </decorator-section>
+                    <decorator-section name="search-results">
+                        <include-form name="ListTaxItem" location="component://humanresext/widget/forms/LookupForms.xml"/>
+                    </decorator-section>
+                </decorator-screen>
+            </widgets>
+        </section>
+    </screen>
+    
+    <screen name="LookupControl">
+    	<section>
+    	 	<actions>
+	            <set field="title" value="${uiLabelMap.HumanResSalaryHead}"/>
+	      	</actions>
+            <widgets>
+                <decorator-screen name="LookupDecorator" location="component://common/widget/CommonScreens.xml">
+                    <decorator-section name="search-options">
+                        <include-form name="LookupControl" location="component://humanresext/widget/forms/LookupForms.xml"/>
+                    </decorator-section>
+                </decorator-screen>
+            </widgets>
+        </section>
+    </screen>
+    
+    <screen name="LookupEmplAttr">
+    	<section>
+    	 	<actions>
+	            <set field="title" value="${uiLabelMap.HumanResEmplAttr}"/>
+	      	</actions>
+            <widgets>
+                <decorator-screen name="LookupDecorator" location="component://common/widget/CommonScreens.xml">
+                    <decorator-section name="search-options">
+                        <include-form name="ListEmplAttr" location="component://humanresext/widget/forms/LookupForms.xml"/>
+                    </decorator-section>
+                </decorator-screen>
+            </widgets>
+        </section>
+    </screen>
+    
+    <screen name="LookupOfferScreen">
+    	<section>
+    	 	<actions>
+	            <set field="title" value="${uiLabelMap.HumanResOffer}"/>
+	      	</actions>
+            <widgets>
+                <decorator-screen name="LookupDecorator" location="component://common/widget/CommonScreens.xml">
+                    <decorator-section name="search-options">
+                        <include-form name="LookupOffer" location="component://humanresext/widget/forms/LookupForms.xml"/>
+                    </decorator-section>
+                    <decorator-section name="search-results">
+                        <include-form name="ListOffers" location="component://humanresext/widget/forms/LookupForms.xml"/>
+                    </decorator-section>
+                </decorator-screen>
+            </widgets>
+        </section>
+    </screen>
+    
+</screens>

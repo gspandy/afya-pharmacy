@@ -1,0 +1,56 @@
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<zk>
+	<window id="addBudgetItemTypeWindow" closable="true" width="40%"
+		height="40%" border="normal" >
+		<caption label="${c:l('FormFieldTitle_addBudgetItemType')}" />
+		<separator height="20px" />
+		<hbox>
+			<div align="right" width="150px">
+				<label value="${c:l('FormFieldTitle_budgetItemTypeId')}"  /><label value="*" style="color:red" />
+			</div>
+			<div align="right">
+				<textbox id="budgetItemTypeId"
+					constraint="no empty:Budget Item Type Id Required" maxlength="18" />
+			</div>
+		</hbox>
+		<separator />
+	
+		<separator />
+		<hbox>
+			<div align="right" width="150px" >
+				<label value="${c:l('FormFieldTitle_description')}"/>
+				<label value="*" style="color:red" />
+			</div>
+			<div align="right">
+				<textbox id="description" rows="3" cols="30" maxlength="200"
+					constraint="no empty:Description Required" />
+			</div>
+		</hbox>
+		<separator />
+		<zscript>
+		void valid(){
+		org.ofbiz.entity.GenericDelegator delegator = com.ndz.zkoss.util.HrmsInfrastructure.getDelegator();//org.ofbiz.entity.GenericDelegator.getGenericDelegator("default");
+		 	org.ofbiz.entity.GenericValue bType = delegator.findOne("BudgetItemType",org.ofbiz.base.util.UtilMisc.toMap("budgetItemTypeId",budgetItemTypeId.getValue()),false);
+		 	if(org.ofbiz.base.util.UtilValidate.isNotEmpty(bType)){
+		 			throw new WrongValueException(budgetItemTypeId,"Budget Item Type Id Already Exists");
+		 	}
+		budgetItemTypeId.getValue();
+		description.getValue();
+		}
+		
+		
+		</zscript>
+		<hbox>
+			<div align="right" width="270px">
+				<button id="add" label="${c:l('HRMS_AddButton')}"
+					onClick='valid();com.ndz.controller.BudgetManagementController.createBudgetItemType(event);
+					Component comp = Path.getComponent("/searchPanel//searchButton");
+					if(comp != null){
+					Events.postEvent("onClick", comp, null);
+					}addBudgetItemTypeWindow.detach();' />
+				<button id="cancel" label="${c:l('ButtonCancel')}"
+					onClick="addBudgetItemTypeWindow.detach();" />
+			</div>
+		</hbox>
+	</window>
+</zk>

@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<ofbiz-component name="issuetracking"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="http://ofbiz.apache.org/dtds/ofbiz-component.xsd">
+        
+        <resource-loader name="main" type="component"/>
+
+        <classpath type="jar" location="build/lib/*"/>
+		<classpath type="jar" location="lib/*"/>
+        <classpath type="dir" location="script"/>
+        <classpath type="dir" location="config"/>
+	    <classpath type="jar" location="../smebiz-common/build/lib/*"/>
+		<classpath type="jar" location="../../applications/content/build/lib/*"/>
+		<classpath type="jar" location="../../framework/webapp/build/lib/ofbiz-webapp.jar"/>
+
+	    <entity-resource type="model" reader-name="main" loader="main" location="entitydef/entitymodel.xml"/>
+		<entity-resource type="model" reader-name="main" loader="main" location="entitydef/entitymodel_view.xml"/>
+
+		<entity-resource type="data" reader-name="seed" loader="main" location="data/IssueMasterData.xml"/>
+	    <entity-resource type="eca" reader-name="main" loader="main" location="entitydef/eecas.xml"/>
+	    
+        <service-resource type="model" loader="main" location="servicedef/services.xml"/>
+    
+    <webapp name="issuetracking"
+		app-bar-display="true"
+		title="Issue Tracking"
+        server="default-server"
+        location="webapp/issuetracking"
+        base-permission="ISSUEMGR"
+        mount-point="/issuetracking"/>
+		
+		
+		
+	
+		
+</ofbiz-component>

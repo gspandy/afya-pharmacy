@@ -1,0 +1,267 @@
+<?component name="profileField" macroURI="../macros/profileField.zul" id="profileMacro"?>
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<zk>
+	<zscript>
+	import org.ofbiz.entity.condition.EntityOperator;
+	import com.ndz.component.party.CurrencyRenderer;
+	import org.ofbiz.base.util.UtilValidate;
+	String partyId = (String) Executions.getCurrent().getArg().get("partyId");
+	org.ofbiz.entity.GenericDelegator delegator = (org.ofbiz.entity.GenericDelegator) requestScope.get("delegator");
+	org.ofbiz.entity.GenericValue person = null;
+	person = delegator.findByPrimaryKey("PartyGroup", org.ofbiz.base.util.UtilMisc.toMap("partyId", "Company"));
+	String groupId = person.getString("partyId");
+	com.ndz.controller.CompanyInformation controller1 = new com.ndz.controller.CompanyInformation();
+		org.ofbiz.entity.condition.EntityCondition currencyCondition = org.ofbiz.entity.condition.EntityCondition.makeCondition("uomTypeId", EntityOperator.EQUALS, "CURRENCY_MEASURE");
+		Set currencyTypeToDisplay = new HashSet();
+		currencyTypeToDisplay.add("uomId");
+		currencyTypeToDisplay.add("description");
+		
+		List currency = delegator.findList("Uom", currencyCondition, currencyTypeToDisplay, null, null, false);
+		
+		currency.add(0, null); 
+
+</zscript>
+	<window title="${c:l('HRMS_COMPANYPREFEDIT') }" id="companyProfileEdit" apply="${controller1}">
+		<zscript>
+			 com.ndz.component.party.CurrencyRenderer renderer=new  com.ndz.component.party.CurrencyRenderer(controller1.getSelectedCurrency());
+			BindingListModel currencyList = new BindingListModelList(currency,false);
+		</zscript>
+		<caption>
+			<div align="right">
+				<toolbarbutton label="${c:l('HRMS_UPDATE') }" image="/images/icon/update.png" style="color:#FFFFFF"
+					onClick='validate();com.ndz.controller.CompanyInformation.setCustomSequence(event);controller1.companyInformationEdit(event,groupId);Executions.getCurrent().sendRedirect("CompanyMain")'>
+				</toolbarbutton>
+				<toolbarbutton label="${c:l('HRMS_CANCEL') }" id="cancel" image="/images/icon/update.png" style="color:#FFFFFF">
+					<attribute name="onClick" >
+						{
+							Component comp = companyProfileEdit.getParent().getParent().getParent().getFellow("northMain").getFellow("companyLogo");
+							Component parentComp = companyProfileEdit.getParent().getParent().getParent();
+							Component companyInformation = parentComp.getFellow("companyMain").getFellow("companyInformation");
+							Events.postEvent("onClick", companyInformation, null);
+						}
+					</attribute>
+				</toolbarbutton>
+			</div>
+		</caption>
+		<hbox style="border-bottom:1px solid grey;" width="100%" height="20px" align="center">
+			<div visible="false" style="margin-right:4px" width="200px" align="right">
+				<label value="${c:l('FormFieldTitle_companyId') }:" />
+			</div>
+			<div>
+				<textbox id="partyId" value="${person.partyId}" readonly="true" visible="false" />
+			</div>
+		</hbox>
+		<hbox style="border-bottom:1px solid grey;" width="100%" height="20px" align="center">
+			<div style="margin-right:4px" width="200px" align="right">
+				<label value="${c:l('FormFieldTitle_groupName') }:" />
+				<label value="*" style="color:red" />
+			</div>
+			<div>
+				<textbox id="groupName" value="${person.groupName}" width="400px" constraint="no empty:Group Name Required" maxlength="100" />
+			</div>
+		</hbox>
+		<!-- <hbox style="border-bottom:1px solid grey;" width="100%" height="20px" align="center">
+			<div style="margin-right:4px" width="200px" align="right">
+				<label value="Employer Id:" />
+				<label value="*" style="color:red" />
+			</div>
+			<div>
+				<textbox id="employerId" value="${person.employerId}" width="400px" constraint="no empty:Employer Id Required" maxlength="100" />
+			</div>
+		</hbox>
+		<hbox style="border-bottom:1px solid grey;" width="100%" height="20px" align="center">
+			<div style="margin-right:4px" width="200px" align="right">
+				<label value="Agent Id:" />
+				<label value="*" style="color:red" />
+			</div>
+			<div>
+				<textbox id="agentId" value="${person.agentId}" width="400px" constraint="no empty: Angent Id Required" maxlength="100" />
+			</div>
+		</hbox>
+		<hbox style="border-bottom:1px solid grey;" width="100%" height="20px" align="center">
+			<div style="margin-right:4px" width="200px" align="right">
+				<label value="Bank Code:" />
+				<label value="*" style="color:red" />
+			</div>
+			<div>
+				<textbox id="bankCode" value="${person.bankCode}" width="400px" constraint="no empty: Bank Code Required" maxlength="100" />
+			</div>
+		</hbox> -->
+		<hbox style="border-bottom:1px solid grey;" width="100%" height="20px" align="center">
+			<div style="margin-right:4px" width="200px" align="right">
+				<label value="${c:l('FormFieldTitle_website') }:" />
+				<label value="*" style="color:red" />
+			</div>
+			<div>
+				<textbox id="officeSiteName" value="${person.officeSiteName}" width="250px" constraint="no empty:Website Required"
+					maxlength="100" />
+			</div>
+
+			<div visible="false" style="margin-right:4px" width="200px" align="right">
+				<label value="${c:l('FormFieldTitle_annualRevenue') }:" />
+			</div>
+			<div visible="false">
+				<textbox id="annualRevenue" value="${person.annualRevenue}" />
+			</div>
+		</hbox>
+		<hbox style="border-bottom:1px solid grey;" width="100%" height="20px" align="center">
+
+			<div style="margin-right:4px" width="200px" align="right">
+				<label value="${c:l('FormFieldTitle_numberOfEmployees') }:" />
+				<label value="*" style="color:red" />
+			</div>
+			<div>
+				<intbox id="numEmployees" value="${person.numEmployees}" constraint="no negative" maxlength="10" />
+			</div>
+			<div visible="false" style="margin-right:4px" width="200px" align="right">
+				<label value="${c:l('FormFieldTitle_imageURL') }:" />
+			</div>
+			<div visible="false">
+				<textbox id="logoImageUrl" value="${person.logoImageUrl}" width="400px" />
+			</div>
+		</hbox>
+		<hbox style="border-bottom:1px solid grey;" width="100%" height="20px" align="center">
+			<div style="margin-right:4px" width="200px" align="right">
+				<label value="${c:l('Hrms_Currency') }" width="100px" />
+				<label value="*" style="color:red" />
+			</div>
+			<div align="left">
+				<listbox id="allocateCurrencyType" mold="select" itemRenderer="${renderer}"  model="${currencyList}"
+					onSelect="Clients.closeErrorBox(self)">
+				</listbox>
+			</div>
+		</hbox>
+		<hbox style="border-bottom:1px solid grey;" width="100%" height="20px" align="center">
+
+			<div style="margin-right:4px" width="200px" align="right">
+				<label value="${c:l('FormFieldTitle_image') }:" />
+			</div>
+			<fileupload id="imageUpload" label="${c:l('FormFieldTitle_browse') }" onUpload="controller1.setUploadedFile((UploadEvent)event);"/>
+		</hbox>
+		<zscript>
+	void validate() {
+		
+		if(com.ndz.zkoss.HrmsUtil.checkSpaceValidation(groupName.getValue())){
+				throw new WrongValueException(groupName,"Group Name Required");
+		}
+		
+		if (!(org.ofbiz.base.util.UtilValidate.isUrl(officeSiteName.getValue()))) {
+			throw new WrongValueException(officeSiteName, "Please Provide Valid Website" + " " + "example=http://example.com");
+		}		
+				
+		
+		
+		
+		
+						
+		numEmployees.setConstraint(" no empty: Number Of Employees Required ");
+		numEmployees.getValue();
+			if(com.ndz.zkoss.HrmsUtil.listboxValidation(allocateCurrencyType)== true){
+			throw new WrongValueException(allocateCurrencyType,"Currency Required");
+		}
+		mgrViewSubOrdinatePayroll.getValue();
+	}
+</zscript>
+				<groupbox>
+					<caption>${c:l('HRMS_PAYROLL') }</caption>
+					<hbox>
+					<div style="margin-right:4px" width="200px" align="right">
+							<label value="${c:l('FormFieldTitle_salaryFrequency') }:"></label>
+					</div>
+					<div style="margin-left:4px;">
+						<combobox id="salaryFrequencyCombobox" onSelect="com.ndz.controller.CompanyInformation.addPartyAttribute(event,self.selectedItem,groupId)" readonly="true">
+							<comboitem id="monthly" label="${c:l('ListBox_Monthly') }" value="MONTHLY" description="Pay periods every calendar month">
+							</comboitem>
+							<comboitem id="biweekly" label="${c:l('ListBox_Bi-Weekly') }" value="BIWEEKLY" description="Pay periods every two weeks">
+							</comboitem>
+						</combobox>
+					</div>
+						<zscript>
+						org.ofbiz.entity.GenericDelegator delegator = com.ndz.zkoss.util.HrmsInfrastructure.getDelegator();//org.ofbiz.entity.GenericDelegator.getGenericDelegator("default");
+						List partyAttribute = delegator.findByAnd("PartyAttribute",org.ofbiz.base.util.UtilMisc.toMap("partyId","Company","attrName","SALARY_FREQUENCY"));
+						org.ofbiz.entity.GenericValue partyAttributeGV = org.ofbiz.entity.util.EntityUtil.getFirst(partyAttribute);
+						if(org.ofbiz.base.util.UtilValidate.isNotEmpty(partyAttributeGV)){
+							String attrValue = partyAttributeGV.getString("attrValue");
+							if(attrValue.equals("BIWEEKLY")){
+								salaryFrequencyCombobox.setSelectedItem(biweekly);
+							}else{
+								salaryFrequencyCombobox.setSelectedItem(monthly);
+							}
+						}
+						</zscript>
+					</hbox>
+					<hbox>
+					<div style="margin-right:4px" width="200px" align="right">
+							<label value="${c:l('FormFieldTitle_subordinatesPayrollVisibleToManager') }:"></label>
+					</div>
+					<div style="margin-left:4px;">
+						<combobox id="mgrViewSubOrdinatePayroll" readonly="true" constraint="no empty:Manager can view Subordinates Payroll cannot be empty.">
+							<comboitem value="${c:l('ListBox_Yes') }" label="Yes"/>
+							<comboitem value="${c:l('ListBox_No') }" label="No"/>
+						</combobox>
+					</div>
+					<zscript>
+							boolean partyAttMgr = com.ndz.zkoss.HrmsUtil.isManagerViewSubOrdinatePayroll();
+							if(partyAttMgr){
+								mgrViewSubOrdinatePayroll.setValue("Yes");
+							}else{
+								mgrViewSubOrdinatePayroll.setValue("No");
+							}
+						</zscript>
+					</hbox>
+				</groupbox>
+				<groupbox>
+					<caption>Custom Sequence</caption>
+					<hbox>
+						<div align="right" width="150px">
+							<label value="${c:l('FormFieldTitle_prefix') }"></label>
+						</div>
+						<div align="right" width="150px">
+							<label value="${c:l('FormFieldTitle_suffix') }"></label>
+						</div>
+						<div align="right" width="170px">
+							<label value="${c:l('FormFieldTitle_startValue') }"></label>
+						</div>
+					</hbox>
+					<separator />
+					<zscript>
+						org.ofbiz.entity.GenericValue prospectGv = delegator.findByPrimaryKey("SequenceValueItem",org.ofbiz.base.util.UtilMisc.toMap("seqName","PROSPECT"));
+						org.ofbiz.entity.GenericValue employeeGv = delegator.findByPrimaryKey("SequenceValueItem",org.ofbiz.base.util.UtilMisc.toMap("seqName","EMPLOYEE"));
+					</zscript>
+					<hbox>
+						<label value="${c:l('FormFieldTitle_prospect') }"></label>
+						<div align="right" width="155px">
+							<textbox id="prospectPrefix" value="${prospectGv.seqPrefix}" onBlur="Clients.closeErrorBox(self);"/>
+						</div>
+						<div align="right" width="150px">
+							<textbox id="prospectSuffix" value="${prospectGv.suffix}" onBlur="Clients.closeErrorBox(self);"/>
+						</div>
+						<div align="right" width="120px">
+							<textbox id="prospectStartValue" value="${prospectGv.seqId}" onBlur="Clients.closeErrorBox(self);"/>
+						</div>
+					</hbox>
+					<separator />
+					<hbox>
+						<label value="${c:l('FormFieldTitle_employee') }"></label>
+						<!--<div align="right" width="150px" visible="false">
+							<textbox id="employeePrefix" value="${employeeGv.seqPrefix}" onBlur="Clients.closeErrorBox(self);"/>
+						</div>
+						<div align="right" width="150px" visible="false">
+							<textbox id="employeeSuffix" value="${employeeGv.suffix}" onBlur="Clients.closeErrorBox(self);"/>
+						</div>-->
+						<div align="right" width="120px">
+							<textbox id="employeeStartValue" value="${employeeGv.seqId}" onBlur="Clients.closeErrorBox(self);"/>
+						</div>
+					</hbox>
+					<zscript>
+					<![CDATA[
+						void validateForm() {
+							com.ndz.zkoss.HrmsUtil.checkPrefixSuffix(prospectPrefix,prospectSuffix,prospectStartValue);
+							com.ndz.zkoss.HrmsUtil.checkPrefixSuffix(employeePrefix,employeeSuffix,employeeStartValue);
+						}
+					]]>
+					</zscript>
+				</groupbox>
+				<separator></separator>
+	</window>
+</zk>

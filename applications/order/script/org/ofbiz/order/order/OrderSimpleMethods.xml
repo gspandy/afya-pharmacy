@@ -1,0 +1,299 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Licensed to the Apache Software Foundation (ASF) under one or more contributor license agreements. See the NOTICE file distributed with this work for additional 
+	information regarding copyright ownership. The ASF licenses this file to you under the Apache License, Version 2.0 (the "License"); you may not use this file except 
+	in compliance with the License. You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0 Unless required by applicable law or agreed to 
+	in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See 
+	the License for the specific language governing permissions and limitations under the License. -->
+<simple-methods xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://ofbiz.apache.org/dtds/simple-methods-v2.xsd">
+
+    <simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_" event-event-message-name="_event_message_" event-request-object-name="request" event-response-code-name="_response_code_" event-response-object-name="response" login-required="true" method-name="createOrderAdjustment" service-error-message-list-name="errorMessageList" service-error-message-map-name="errorMessageMap" service-error-message-name="errorMessage" service-response-message-name="responseMessage" service-success-message-list-name="successMessageList" service-success-message-name="successMessage" short-description="Create an OrderAdjustment" use-transaction="true">
+        <check-permission action="_CREATE" error-list-name="error_list" permission="ORDERMGR">
+            <alt-permission action="_CREATE" permission="ORDERMGR_ROLE"/>
+            <fail-property property="OrderSecurityErrorToRunCreateOrderAdjustement" resource="OrderErrorUiLabels"/>
+        </check-permission>
+        <check-errors error-code="error" error-list-name="error_list"/>
+        <entity-one auto-field-map="true" entity-name="OrderAdjustmentType" use-cache="false" value-field="orderAdjustmentType">
+            <field-map field-name="orderAdjustmentTypeId" from-field="parameters.orderAdjustmentTypeId"/>
+        </entity-one>
+        <make-value entity-name="OrderAdjustment" value-field="newEntity"/>
+        <set-nonpk-fields map="parameters" set-if-null="true" value-field="newEntity"/>
+        <set field="newEntity.overrideGlAccountId" from="orderAdjustmentType.glAccountId" set-if-empty="true" set-if-null="false"/>
+        <sequenced-id field="newEntity.orderAdjustmentId" get-long-only="false" sequence-name="OrderAdjustment"/>
+        <field-to-result field="newEntity.orderAdjustmentId" result-name="orderAdjustmentId"/>
+        <set field="newEntity.comments" from="orderAdjustmentType.description" set-if-empty="true" set-if-null="false"/>
+        <now-timestamp field="newEntity.createdDate"/>
+        <set field="newEntity.createdByUserLogin" from="userLogin.userLoginId" set-if-empty="true" set-if-null="false"/>
+        <create-value do-cache-clear="true" or-store="false" value-field="newEntity"/>
+        <set field="serviceCtx.orderId" from="newEntity.orderId" set-if-empty="true" set-if-null="false"/>
+        <call-service break-on-error="true" error-code="error" in-map-name="serviceCtx" include-user-login="true" require-new-transaction="false" service-name="applyMethodOfApportion" success-code="success"/>
+    </simple-method>
+
+    <simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_" event-event-message-name="_event_message_" event-request-object-name="request" event-response-code-name="_response_code_" event-response-object-name="response" login-required="true" method-name="updateOrderAdjustment" service-error-message-list-name="errorMessageList" service-error-message-map-name="errorMessageMap" service-error-message-name="errorMessage" service-response-message-name="responseMessage" service-success-message-list-name="successMessageList" service-success-message-name="successMessage" short-description="Update an OrderAdjustment" use-transaction="true">
+        <check-permission action="_UPDATE" error-list-name="error_list" permission="ORDERMGR">
+            <fail-property property="OrderSecurityErrorToRunUpdateOrderAdjustement" resource="OrderErrorUiLabels"/>
+        </check-permission>
+        <check-errors error-code="error" error-list-name="error_list"/>
+        <entity-one auto-field-map="true" entity-name="OrderAdjustment" use-cache="false" value-field="lookedUpValue"/>
+        <set-nonpk-fields map="parameters" set-if-null="true" value-field="lookedUpValue"/>
+        <set field="lookedUpValue.comments" from="lookedUpValue.description" set-if-empty="true" set-if-null="false"/>
+        <store-value do-cache-clear="true" value-field="lookedUpValue"/>
+        <set field="serviceCtx.orderId" from="lookedUpValue.orderId" set-if-empty="true" set-if-null="false"/>
+        <call-service break-on-error="true" error-code="error" in-map-name="serviceCtx" include-user-login="true" require-new-transaction="false" service-name="applyMethodOfApportion" success-code="success"/>
+    </simple-method>
+
+    <simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_" event-event-message-name="_event_message_" event-request-object-name="request" event-response-code-name="_response_code_" event-response-object-name="response" login-required="true" method-name="deleteOrderAdjustment" service-error-message-list-name="errorMessageList" service-error-message-map-name="errorMessageMap" service-error-message-name="errorMessage" service-response-message-name="responseMessage" service-success-message-list-name="successMessageList" service-success-message-name="successMessage" short-description="Delete an OrderAdjustment" use-transaction="true">
+        <check-permission action="_DELETE" error-list-name="error_list" permission="ORDERMGR">
+            <fail-property property="OrderSecurityErrorToRunDeleteOrderAdjustement" resource="OrderErrorUiLabels"/>
+        </check-permission>
+        <check-errors error-code="error" error-list-name="error_list"/>
+        <entity-one auto-field-map="true" entity-name="OrderAdjustment" use-cache="false" value-field="lookedUpValue"/>
+        <set field="serviceCtx.orderId" from="lookedUpValue.orderId" set-if-empty="true" set-if-null="false"/>
+        <remove-value do-cache-clear="true" value-field="lookedUpValue"/>
+
+        <log level="always" message="${parameters.orderId}"/>
+        <entity-and entity-name="OrderItemAdjustment" list="orderItemAdjustment" use-cache="false">
+            <field-map field-name="orderId" from-field="parameters.orderId"/>
+        </entity-and>
+        <if-not-empty field="orderItemAdjustment">
+            <iterate entry="orderItemAdjustment" list="orderItemAdjustment">
+                <if-not-empty field="orderItemAdjustment">
+                    <remove-value do-cache-clear="true" value-field="orderItemAdjustment"/>
+                </if-not-empty>
+            </iterate>
+        </if-not-empty>
+
+        <if-not-empty field="parameters.productPromoCodeId">
+            <entity-one auto-field-map="true" entity-name="OrderProductPromoCode" use-cache="false" value-field="lookedUpValue"/>
+            <if-not-empty field="lookedUpValue">
+                <remove-value do-cache-clear="true" value-field="lookedUpValue"/>
+            </if-not-empty>
+        </if-not-empty>
+
+        <call-service break-on-error="true" error-code="error" in-map-name="serviceCtx" include-user-login="true" require-new-transaction="false" service-name="applyMethodOfApportion" success-code="success"/>
+    </simple-method>
+
+    <simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_" event-event-message-name="_event_message_" event-request-object-name="request" event-response-code-name="_response_code_" event-response-object-name="response" login-required="true" method-name="createOrderAdjustmentBilling" service-error-message-list-name="errorMessageList" service-error-message-map-name="errorMessageMap" service-error-message-name="errorMessage" service-response-message-name="responseMessage" service-success-message-list-name="successMessageList" service-success-message-name="successMessage" short-description="Create an OrderAdjustmentBilling" use-transaction="true">
+        <make-value entity-name="OrderAdjustmentBilling" value-field="newEntity"/>
+        <set-nonpk-fields map="parameters" set-if-null="true" value-field="newEntity"/>
+        <set-pk-fields map="parameters" set-if-null="true" value-field="newEntity"/>
+        <create-value do-cache-clear="true" or-store="false" value-field="newEntity"/>
+    </simple-method>
+
+    <simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_" event-event-message-name="_event_message_" event-request-object-name="request" event-response-code-name="_response_code_" event-response-object-name="response" login-required="true" method-name="createOrderItemBilling" service-error-message-list-name="errorMessageList" service-error-message-map-name="errorMessageMap" service-error-message-name="errorMessage" service-response-message-name="responseMessage" service-success-message-list-name="successMessageList" service-success-message-name="successMessage" short-description="Create an OrderItemBilling" use-transaction="true">
+        <make-value entity-name="OrderItemBilling" value-field="newEntity"/>
+        <set-nonpk-fields map="parameters" set-if-null="true" value-field="newEntity"/>
+        <set-pk-fields map="parameters" set-if-null="true" value-field="newEntity"/>
+        <create-value do-cache-clear="true" or-store="false" value-field="newEntity"/>
+    </simple-method>
+
+    <simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_" event-event-message-name="_event_message_" event-request-object-name="request" event-response-code-name="_response_code_" event-response-object-name="response" login-required="false" method-name="createNotificationLog" service-error-message-list-name="errorMessageList" service-error-message-map-name="errorMessageMap" service-error-message-name="errorMessage" service-response-message-name="responseMessage" service-success-message-list-name="successMessageList" service-success-message-name="successMessage" short-description="Log an order notification" use-transaction="true">
+        <make-value entity-name="OrderNotification" value-field="orderNotification"/>
+        <sequenced-id field="orderNotification.orderNotificationId" get-long-only="false" sequence-name="OrderNotification"/>
+        <set field="orderNotification.orderId" from="parameters.orderId" set-if-empty="true" set-if-null="false"/>
+        <set field="orderNotification.emailType" from="parameters.emailType" set-if-empty="true" set-if-null="false"/>
+        <set field="orderNotification.comments" from="parameters.comments" set-if-empty="true" set-if-null="false"/>
+        <now-timestamp field="orderNotification.notificationDate"/>
+        <create-value do-cache-clear="true" or-store="false" value-field="orderNotification"/>
+    </simple-method>
+
+    <simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_" event-event-message-name="_event_message_" event-request-object-name="request" event-response-code-name="_response_code_" event-response-object-name="response" login-required="true"
+                   method-name="updateOrderStatusFromReceipt" service-error-message-list-name="errorMessageList" service-error-message-map-name="errorMessageMap" service-error-message-name="errorMessage" service-response-message-name="responseMessage" service-success-message-list-name="successMessageList" service-success-message-name="successMessage" short-description="Update Order Status From ShipmentReceipt" use-transaction="true">
+        <check-permission action="_UPDATE" error-list-name="error_list" permission="ORDERMGR">
+            <fail-property property="OrderSecurityErrorToRunUpdateOrderStatusFromReceipt" resource="OrderErrorUiLabels"/>
+        </check-permission>
+        <check-errors error-code="error" error-list-name="error_list"/>
+        <entity-one auto-field-map="true" entity-name="OrderHeader" use-cache="false" value-field="orderHeader"/>
+        <entity-and entity-name="ShipmentReceipt" filter-by-date="false" list="shipmentReceipts" use-cache="false">
+            <field-map field-name="orderId" from-field="parameters.orderId"/>
+        </entity-and>
+        <log level="info" message=" shipmentReceipts ${shipmentReceipts}"/>
+        <set field="totalsMap" type="Map"/>
+        <iterate entry="receipt" list="shipmentReceipts">
+            <if-empty field="totalsMap[receipt.orderItemSeqId]">
+                <set field="totalsMap[receipt.orderItemSeqId]" type="BigDecimal" value="0"/>
+            </if-empty>
+            <set field="receivedQuantity" type="BigDecimal"/>
+            <call-bsh><![CDATA[
+                         import java.math.BigDecimal;
+                receivedQuantity = receipt.getBigDecimal("quantityAccepted").add(receipt.getBigDecimal("quantityVariance")).add(receipt.getBigDecimal("quantityRejected"));
+                BigDecimal earlierQuantity = (BigDecimal)totalsMap.get(receipt.get("orderItemSeqId"));
+                earlierQuantity=earlierQuantity==null?BigDecimal.ZERO:earlierQuantity;
+                totalsMap.put(receipt.get("orderItemSeqId"),earlierQuantity.add(receivedQuantity.setScale(2)));
+            ]]>
+            </call-bsh>
+            <log level="info" message="*********totalsMap******* ${totalsMap}"/>
+            <set field="newLookupMap.orderId" from="receipt.orderId" set-if-empty="true" set-if-null="false"/>
+            <set field="newLookupMap.orderItemSeqId" from="receipt.orderItemSeqId" set-if-empty="true" set-if-null="false"/>
+            <find-by-primary-key entity-name="OrderItem" map="newLookupMap" use-cache="false" value-field="orderItem"/>
+            <call-bsh><![CDATA[
+             import java.math.BigDecimal;
+                quantityMatched = ((BigDecimal)totalsMap.get(receipt.get("orderItemSeqId"))).compareTo(orderItem.getBigDecimal("quantity"))==0?true:false;
+                parameters.put("quantityMatched",quantityMatched);
+            ]]>
+            </call-bsh>
+
+        <log level="info" message="**sam**quantityMatched ${parameters}"/>
+        <if-compare field="orderItem.statusId" operator="not-equals" type="String" value="ITEM_COMPLETED">
+                <if-compare field="parameters.quantityMatched" operator="equals" value="true" type="Boolean">
+                    <!-- update the status for the item -->
+                    <log level="info" message="**sam**Inside change order status"/>
+                    <set field="orderItem.statusId" set-if-empty="true" set-if-null="false" value="ITEM_COMPLETED"/>
+                    <store-value do-cache-clear="true" value-field="orderItem"/>
+                    <!-- create status change history -->
+                    <make-value entity-name="OrderStatus" value-field="newValue"/>
+                    <sequenced-id field="newValue.orderStatusId" get-long-only="false" sequence-name="OrderStatus"/>
+                    <set field="newValue.orderItemSeqId" from="orderItem.orderItemSeqId" set-if-empty="true" set-if-null="false"/>
+                    <set field="newValue.orderId" from="orderItem.orderId" set-if-empty="true" set-if-null="false"/>
+                    <set field="newValue.statusId" from="orderItem.statusId" set-if-empty="true" set-if-null="false"/>
+                    <set field="newValue.statusUserLogin" from="parameters.userLogin.userLoginId" set-if-empty="true" set-if-null="false"/>
+                    <now-timestamp field="newValue.statusDatetime"/>
+                    <create-value do-cache-clear="true" or-store="false" value-field="newValue"/>
+                </if-compare>
+            </if-compare>
+        </iterate>
+        <!-- check to see if all items have been completed -->
+        <entity-condition distinct="false" entity-name="OrderItem" filter-by-date="false" list="allOrderItems" use-cache="false">
+            <condition-list combine="and">
+                <condition-expr field-name="statusId" ignore="false" ignore-case="false" ignore-if-empty="false" ignore-if-null="false" operator="not-equals" value="ITEM_CANCELLED"/>
+                <condition-expr field-name="orderId" from-field="parameters.orderId" ignore="false" ignore-case="false" ignore-if-empty="false" ignore-if-null="false" operator="equals"/>
+            </condition-list>
+        </entity-condition>
+        <set field="allCompleted" set-if-empty="true" set-if-null="false" value="true"/>
+        <iterate entry="item" list="allOrderItems">
+            <if-compare field="item.statusId" operator="not-equals" type="String" value="ITEM_COMPLETED">
+                <set field="allCompleted" set-if-empty="true" set-if-null="false" value="false"/>
+            </if-compare>
+        </iterate>
+        <if-compare field="allCompleted" operator="equals" type="String" value="true">
+            <!-- update the order header -->
+            <set field="orderHeader.statusId" set-if-empty="true" set-if-null="false" value="ORDER_COMPLETED"/>
+            <store-value do-cache-clear="true" value-field="orderHeader"/>
+            <!-- create the status history -->
+            <make-value entity-name="OrderStatus" value-field="newValue"/>
+            <sequenced-id field="newValue.orderStatusId" get-long-only="false" sequence-name="OrderStatus"/>
+            <set field="newValue.orderId" from="orderHeader.orderId" set-if-empty="true" set-if-null="false"/>
+            <set field="newValue.statusId" from="orderHeader.statusId" set-if-empty="true" set-if-null="false"/>
+            <set field="newValue.statusUserLogin" from="parameters.userLogin.userLoginId" set-if-empty="true" set-if-null="false"/>
+            <now-timestamp field="newValue.statusDatetime"/>
+            <create-value do-cache-clear="true" or-store="false" value-field="newValue"/>
+        </if-compare>
+        <!-- return the current return header status -->
+        <field-to-result field="orderHeader.statusId" result-name="currentStatusId"/>
+    </simple-method>
+
+    <simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_" event-event-message-name="_event_message_" event-request-object-name="request" event-response-code-name="_response_code_" event-response-object-name="response" login-required="true" method-name="addOrderAdjustmentGlAccount" service-error-message-list-name="errorMessageList" service-error-message-map-name="errorMessageMap" service-error-message-name="errorMessage" service-response-message-name="responseMessage" service-success-message-list-name="successMessageList" service-success-message-name="successMessage" short-description="Update an OrderAdjustment" use-transaction="true">
+        <entity-one auto-field-map="true" entity-name="OrderAdjustmentType" use-cache="false" value-field="lookedUpValue"/>
+        <set-nonpk-fields map="parameters" set-if-null="true" value-field="lookedUpValue"/>
+        <store-value do-cache-clear="true" value-field="lookedUpValue"/>
+    </simple-method>
+
+    <simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_" event-event-message-name="_event_message_" event-request-object-name="request" event-response-code-name="_response_code_" event-response-object-name="response" login-required="true" method-name="createHeaderOrderContent" service-error-message-list-name="errorMessageList" service-error-message-map-name="errorMessageMap" service-error-message-name="errorMessage" service-response-message-name="responseMessage" service-success-message-list-name="successMessageList" service-success-message-name="successMessage" short-description="Create Order Content Entity" use-transaction="true">
+        <make-value entity-name="OrderHeaderContent" value-field="orderContent"/>
+        <set-pk-fields map="parameters" set-if-null="true" value-field="orderContent"/>
+        <set-nonpk-fields map="parameters" set-if-null="true" value-field="orderContent"/>
+        <if-empty field="orderContent.fromDate">
+            <now-timestamp field="nowTimestamp"/>
+            <set field="orderContent.fromDate" from="nowTimestamp" set-if-empty="true" set-if-null="false"/>
+        </if-empty>
+        <create-value do-cache-clear="true" or-store="false" value-field="orderContent"/>
+    </simple-method>
+
+    <simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_" event-event-message-name="_event_message_" event-request-object-name="request" event-response-code-name="_response_code_" event-response-object-name="response" login-required="true" method-name="createReturnAdjustmentType" service-error-message-list-name="errorMessageList" service-error-message-map-name="errorMessageMap" service-error-message-name="errorMessage" service-response-message-name="responseMessage" service-success-message-list-name="successMessageList" service-success-message-name="successMessage" short-description="Create Return Adjustment Type Entity " use-transaction="true">
+        <!--  <string-append field="returnAdjustmentTypeId" prefix="RET_" string="${parameters.orderAdjustmentTypeId}"/> -->
+        <log level="info" message="${returnAdjustmentTypeId}"/>
+        <entity-one auto-field-map="true" entity-name="ReturnAdjustmentType" use-cache="false" value-field="lookedUpValue">
+            <field-map field-name="returnAdjustmentTypeId" from-field="returnAdjustmentTypeId"/>
+        </entity-one>
+        <if-empty field="lookedUpValue">
+            <make-value entity-name="ReturnAdjustmentType" value-field="newEntity"/>
+            <set field="newEntity.returnAdjustmentTypeId" value="RET_${parameters.orderAdjustmentTypeId}" set-if-empty="true" set-if-null="false"/>
+            <set field="newEntity.returnAdjustmentTypeId" from="returnAdjustmentTypeId" set-if-empty="true" set-if-null="false"/>
+            <set field="newEntity.description" from="parameters.description" set-if-empty="true" set-if-null="false"/>
+            <create-value do-cache-clear="true" or-store="false" value-field="newEntity"/>
+        </if-empty>
+        <entity-condition distinct="false" entity-name="ReturnItemTypeMap" filter-by-date="false" list="lookedUpValue1" use-cache="false">
+            <condition-list combine="and">
+                <condition-expr field-name="returnItemMapKey" from-field="parameters.orderAdjustmentTypeId" ignore="false" ignore-case="false" ignore-if-empty="false" ignore-if-null="false" operator="equals"/>
+                <condition-expr field-name="returnHeaderTypeId" ignore="false" ignore-case="false" ignore-if-empty="false" ignore-if-null="false" operator="equals" value="CUSTOMER_RETURN"/>
+            </condition-list>
+        </entity-condition>
+        <if-empty field="lookedUpValue1">
+            <make-value entity-name="ReturnItemTypeMap" value-field="newEntityMap"/>
+            <set field="newEntityMap.returnItemMapKey" from="parameters.orderAdjustmentTypeId" set-if-empty="true" set-if-null="false"/>
+            <set field="newEntityMap.returnHeaderTypeId" set-if-empty="true" set-if-null="false" value="CUSTOMER_RETURN"/>
+            <set field="newEntityMap.returnItemTypeId" value="RET_${parameters.orderAdjustmentTypeId}" set-if-empty="true" set-if-null="false"/>
+            <create-value do-cache-clear="true" or-store="false" value-field="newEntityMap"/>
+        </if-empty>
+        <entity-condition distinct="false" entity-name="ReturnItemTypeMap" filter-by-date="false" list="lookedUpValue2" use-cache="false">
+            <condition-list combine="and">
+                <condition-expr field-name="returnItemMapKey" from-field="parameters.orderAdjustmentTypeId" ignore="false" ignore-case="false" ignore-if-empty="false" ignore-if-null="false" operator="equals"/>
+                <condition-expr field-name="returnHeaderTypeId" ignore="false" ignore-case="false" ignore-if-empty="false" ignore-if-null="false" operator="equals" value="VENDOR_RETURN"/>
+            </condition-list>
+        </entity-condition>
+        <if-empty field="lookedUpValue2">
+            <make-value entity-name="ReturnItemTypeMap" value-field="newEntityMap1"/>
+            <set field="newEntityMap1.returnItemMapKey" from="parameters.orderAdjustmentTypeId" set-if-empty="true" set-if-null="false"/>
+            <set field="newEntityMap1.returnHeaderTypeId" set-if-empty="true" set-if-null="false" value="VENDOR_RETURN"/>
+            <set field="newEntityMap1.returnItemTypeId" value="RET_${parameters.orderAdjustmentTypeId}" set-if-empty="true" set-if-null="false"/>
+            <create-value do-cache-clear="true" or-store="false" value-field="newEntityMap1"/>
+        </if-empty>
+    </simple-method>
+    <simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_" event-event-message-name="_event_message_" event-request-object-name="request" event-response-code-name="_response_code_" event-response-object-name="response" login-required="true" method-name="createInvoiceItemType" service-error-message-list-name="errorMessageList" service-error-message-map-name="errorMessageMap" service-error-message-name="errorMessage" service-response-message-name="responseMessage" service-success-message-list-name="successMessageList" service-success-message-name="successMessage" short-description="Create Invoice Item Type Entity " use-transaction="true">
+        <entity-one auto-field-map="true" entity-name="InvoiceItemType" use-cache="false" value-field="lookedUpValue">
+            <field-map field-name="invoiceItemTypeId" from-field="invoiceItemTypeId"/>
+        </entity-one>
+
+        <if-empty field="lookedUpValue">
+            <make-value entity-name="InvoiceItemType" value-field="newEntity"/>
+            <set field="newEntity.invoiceItemTypeId" value="CRT_${parameters.orderAdjustmentTypeId}" set-if-empty="true" set-if-null="false"/>
+            <set field="newEntity.invoiceItemTypeId" from="invoiceItemTypeId" set-if-empty="true" set-if-null="false"/>
+            <set field="newEntity.parentTypeId" value="CRETURN_ADJ" set-if-empty="true" set-if-null="false"/>
+            <set field="newEntity.description" from="parameters.description" set-if-empty="true" set-if-null="false"/>
+            <create-value do-cache-clear="true" or-store="false" value-field="newEntity"/>
+        </if-empty>
+
+        <entity-one auto-field-map="true" entity-name="InvoiceItemType" use-cache="false" value-field="lookedUpValues">
+            <field-map field-name="invoiceItemTypeId" from-field="invoiceItemTypeId"/>
+        </entity-one>
+
+        <if-empty field="lookedUpValues">
+            <make-value entity-name="InvoiceItemType" value-field="newEntitys"/>
+            <set field="newEntitys.invoiceItemTypeId" value="SRT_${parameters.orderAdjustmentTypeId}" set-if-empty="true" set-if-null="false"/>
+            <set field="newEntitys.invoiceItemTypeId" from="invoiceItemTypeId" set-if-empty="true" set-if-null="false"/>
+            <set field="newEntitys.parentTypeId" value="SRETURN_ADJ" set-if-empty="true" set-if-null="false"/>
+            <set field="newEntitys.description" from="parameters.description" set-if-empty="true" set-if-null="false"/>
+            <create-value do-cache-clear="true" or-store="false" value-field="newEntitys"/>
+        </if-empty>
+
+        <entity-condition distinct="false" entity-name="InvoiceItemTypeMap" filter-by-date="false" list="lookedUpValue1" use-cache="false">
+            <condition-list combine="and">
+                <condition-expr field-name="invoiceItemMapKey" from-field="parameters.orderAdjustmentTypeId" ignore="false" ignore-case="false" ignore-if-empty="false" ignore-if-null="false" operator="equals"/>
+                <condition-expr field-name="invoiceTypeId" ignore="false" ignore-case="false" ignore-if-empty="false" ignore-if-null="false" operator="equals" value="CUST_RTN_INVOICE"/>
+            </condition-list>
+        </entity-condition>
+
+        <if-empty field="lookedUpValue1">
+            <make-value entity-name="InvoiceItemTypeMap" value-field="newEntityMap"/>
+            <set field="newEntityMap.invoiceItemMapKey" value="RET_${parameters.orderAdjustmentTypeId}" set-if-empty="true" set-if-null="false"/>
+            <set field="newEntityMap.invoiceTypeId" set-if-empty="true" set-if-null="false" value="CUST_RTN_INVOICE"/>
+            <set field="newEntityMap.invoiceItemTypeId" value="CRT_${parameters.orderAdjustmentTypeId}" set-if-empty="true" set-if-null="false"/>
+            <create-value do-cache-clear="true" or-store="false" value-field="newEntityMap"/>
+        </if-empty>
+
+        <entity-condition distinct="false" entity-name="InvoiceItemTypeMap" filter-by-date="false" list="lookedUpValue2" use-cache="false">
+            <condition-list combine="and">
+                <condition-expr field-name="invoiceItemMapKey" from-field="parameters.orderAdjustmentTypeId" ignore="false" ignore-case="false" ignore-if-empty="false" ignore-if-null="false" operator="equals"/>
+                <condition-expr field-name="invoiceTypeId" ignore="false" ignore-case="false" ignore-if-empty="false" ignore-if-null="false" operator="equals" value="PURC_RTN_INVOICE"/>
+            </condition-list>
+        </entity-condition>
+
+        <if-empty field="lookedUpValue2">
+            <make-value entity-name="InvoiceItemTypeMap" value-field="newEntityMap1"/>
+            <set field="newEntityMap1.invoiceItemMapKey" value="RET_${parameters.orderAdjustmentTypeId}" set-if-empty="true" set-if-null="false"/>
+            <set field="newEntityMap1.invoiceTypeId" set-if-empty="true" set-if-null="false" value="PURC_RTN_INVOICE"/>
+            <set field="newEntityMap1.invoiceItemTypeId" value="SRT_${parameters.orderAdjustmentTypeId}" set-if-empty="true" set-if-null="false"/>
+            <create-value do-cache-clear="true" or-store="false" value-field="newEntityMap1"/>
+        </if-empty>
+
+    </simple-method>
+</simple-methods>

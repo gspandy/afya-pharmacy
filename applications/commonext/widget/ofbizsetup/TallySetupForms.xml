@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+	<!--
+		Licensed to the Apache Software Foundation (ASF) under one or more contributor license agreements. See the NOTICE file
+		distributed with this work for additional information regarding copyright ownership. The ASF licenses this file to you
+		under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the
+		License. You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0 Unless required by
+		applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS,
+		WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language
+		governing permissions and limitations under the License.
+	-->
+
+<forms xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://ofbiz.apache.org/dtds/widget-form.xsd">
+
+	<form name="CreateTallyConfig" type="single" target="updateTallyConfig" title="" header-row-style="header-row"
+		default-table-style="basic-table" default-map-name="tallyConfig">
+		<actions>
+			<entity-one entity-name="TallyConfiguration" value-field="tallyConfig">
+				<field-map field-name="tallyId" value="10005" />
+			</entity-one>
+		</actions>
+		<alt-target use-when="tallyConfig==null" target="createTallyConfig" />
+		<field name="tallyId" field-name="tallyId">
+			<hidden value="10005" />
+		</field>
+		<field name="tallyName" field-name="tallyName">
+			<text></text>
+		</field>
+		<field name="partyId">
+			<hidden value="${partyId}" />
+		</field>
+		<field name="connectionString" field-name="connectionString" title="Connection" tooltip="Tally Server URL (Required)"
+			widget-style="required">
+			<text size="30" maxlength="60" />
+		</field>
+		<field name="submitButton" title="${uiLabelMap.CommonUpdate}" widget-style="btn btn-success">
+			<submit button-type="button" />
+		</field>
+	</form>
+
+	<form name="ListOfSuppliers" type="list" list-name="supplierList" odd-row-style="alternate-row" default-table-style="basic-table hover-bar"
+	paginate="LedgerInfo?partyId=${parameters.partyId}&amp;tab=${parameters.tab}">
+		<actions>
+			<entity-condition entity-name="PartyRoleAndContactMechDetail" list="supplierList" distinct="true">
+				<condition-expr field-name="roleTypeId" value="SUPPLIER"/>
+				<order-by field-name="groupName" />
+			</entity-condition>
+		</actions>
+		<field name="partyId"> <display></display> </field>
+		<field name="groupName"> <display></display> </field>
+		<field name="vatTinNumber "> <display></display> </field>
+		<field name="incomeTaxNumber"> <display></display> </field>
+		<field name="paAddress1"> <display></display> </field>
+		<field name="paAddress2"> <display></display> </field>
+		<field name="paCity" title="City"> <display></display> </field>
+		<field name="paStateProvinceGeoId" title="State"><display-entity entity-name="Geo" description="${geoName}" key-field-name="geoId"></display-entity></field>
+		<field name="paCountryGeoId" title="Country"><display-entity entity-name="Geo" description="${geoName}" key-field-name="geoId"></display-entity> </field>
+		<field name="postalCode"> <display></display> </field>
+	</form>
+	<form name="ListOfCustomers" type="list" list-name="supplierList" odd-row-style="alternate-row" default-table-style="basic-table hover-bar">
+		<actions>
+			<entity-condition entity-name="PartyRoleAndContactMechDetail" list="customerList" distinct="true">
+				<condition-expr field-name="roleTypeId" value="CUSTOMER"/>
+				<order-by field-name="groupName" />
+			</entity-condition>
+		</actions>
+		<field name="partyId"> <display></display> </field>
+		<field name="groupName"> <display></display> </field>
+		<field name="vatTinNumber "> <display></display> </field>
+		<field name="incomeTaxNumber"> <display></display> </field>
+		<field name="paAddress1"> <display></display> </field>
+		<field name="paAddress2"> <display></display> </field>
+		<field name="address2"> <display></display> </field>
+		<field name="paCity" title="City"> <display></display> </field>
+		<field name="paStateProvinceGeoId" title="State"><display-entity entity-name="Geo" description="${geoName}" key-field-name="geoId"></display-entity></field>
+		<field name="paCountryGeoId" title="Country"><display-entity entity-name="Geo" description="${geoName}" key-field-name="geoId"></display-entity> </field>
+		<field name="postalCode"> <display></display> </field>
+	</form>
+	
+	<form name="ListOfUoms" type="list" list-name="uomList" odd-row-style="alternate-row" default-table-style="basic-table hover-bar">
+		<actions>
+			<entity-condition entity-name="Uom" list="uomList" distinct="true">
+				<condition-expr field-name="uomTypeId" value="OTHER_MEASURE"/>
+				<order-by field-name="uomId" />
+			</entity-condition>
+		</actions>
+		<auto-fields-entity entity-name="Uom" default-field-type="display"/>
+	</form>
+	
+	<form name="TallyStockList" type="list" list-name="productList" odd-row-style="alternate-row" default-table-style="basic-table hover-bar">
+		<actions>
+			<entity-condition entity-name="ProductAndPriceView" list="productList" distinct="true">
+				<condition-expr field-name="productPriceTypeId" value="DEFAULT_PRICE"/>
+				<order-by field-name="internalName" />
+			</entity-condition>
+		</actions>
+		<field name="productId"> <display></display> </field>
+		<field name="internalName"> <display></display> </field>
+		<field name="quantityUomId"> <display></display> </field>
+		<field name="price"> <display/></field>
+		<field name="currencyUomId"><display/> </field>
+	</form>
+	<form name="CategoryMemberList" type="list" list-name="productList" odd-row-style="alternate-row" default-table-style="basic-table hover-bar">
+		<actions>
+			<entity-condition entity-name="ProductAndCategoryMember" list="productList" distinct="true">
+				<order-by field-name="internalName" />
+			</entity-condition>
+		</actions>
+		<field name="productId"> <display></display> </field>
+		<field name="internalName"> <display></display> </field>
+		<field name="productCategoryId"> <display-entity cache="true" entity-name="ProductCategory" description="${categoryName}"/> </field>
+	</form>
+</forms>

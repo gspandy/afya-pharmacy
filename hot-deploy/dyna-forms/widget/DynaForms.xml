@@ -1,0 +1,206 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<forms xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="http://ofbiz.apache.org/dtds/widget-form.xsd">
+
+	<form name="NewCustomForm" target="createCustomForm" type="single">
+		<field name="formName" tooltip="Please enter a valid Name."
+			required-field="true" title="Form Name">
+			<text size="65"></text>
+		</field>
+		<field name="description" tooltip="To see output in new line use \n.">
+			<textarea cols="65" rows="6"/>
+		</field>
+		<field name="fromdate">
+			<date-time />
+		</field>
+		<field name="thrudate">
+			<date-time />
+		</field>
+		<field name="Create">
+			<submit />
+		</field>
+	</form>
+
+	<form name="EditCustomForm" target="UpdateCustomForm" type="single">
+		<actions>
+			<entity-one entity-name="CustomForms" auto-field-map="true"></entity-one>
+		</actions>
+		<field name="formId">
+			<hidden />
+		</field>
+		<field name="formName" tooltip="Please enter a valid Name."
+			required-field="true" title="Form Name">
+			<text></text>
+		</field>
+		<field name="description" tooltip="To see output in new line use \n.">
+			<textarea />
+		</field>
+		<field name="fromdate">
+			<date-time />
+		</field>
+		<field name="thrudate">
+			<date-time />
+		</field>
+		<field name="Update">
+			<submit />
+		</field>
+	</form>
+
+	<form name="FormSection" type="single" target="addComponent">
+		<field name="formId">
+			<hidden value="${parameters.formId}" />
+		</field>
+		<field name="compType">
+			<hidden value="1" />
+		</field>
+		<field name="sectionName">
+			<text size="65"/>
+		</field>
+		<field name="description">
+			<textarea cols="100" rows="10"/>
+		</field>
+		<field name="Submit">
+			<submit button-type="button" />
+		</field>
+	</form>
+
+	<form name="components" type="single" target="addComponent">
+		<field name="Select a Form Component">
+			<drop-down>
+				<option key="section" description="Section" />
+				<option key="row" description="Row" />
+				<option key="cell" description="Cell" />
+			</drop-down>
+		</field>
+		<field name="Add" position="2">
+			<submit />
+		</field>
+	</form>
+
+	<form name="FormRow" type="single" target="UpdateComponent">
+		<actions>
+			<entity-one entity-name="CustomFormComponents" value-field="entity">
+				<field-map field-name="compId" value="${parameters.compId}"/>
+			</entity-one>
+		</actions>
+		<field name="formId">
+			<hidden value="${parameters.formId}" />
+		</field>
+		<field name="trail">
+			<hidden value="${parameters.trail}" />
+		</field>
+		<field name="compType">
+			<hidden value="${parameters.compType}" />
+		</field>
+		<field name="compId">
+			<hidden value="${parameters.compId}" />
+		</field>
+		<field name="compName">
+			<text default-value="${entity.compName}" />
+		</field>
+		
+		<field name="dynamicRuleId" tooltip="Use this to select a dynamic tabular data.">
+			<lookup target-form-name="selectFormInput" default-value="${entity.dynamicRuleId}"></lookup>
+		</field>
+		
+		<field name="Update" position="1">
+			<submit />
+		</field>
+	</form>
+
+
+	<form name="EditCell" target="UpdateComponent" type="single">
+		<actions>
+			<entity-one entity-name="CustomFormComponents" value-field="entity">
+				<field-map field-name="compId" value="${parameters.compId}"/>
+			</entity-one>
+		</actions>
+		<field name="formId">
+			<hidden value="${parameters.formId}" />
+		</field>
+		<field name="compType">
+			<hidden value="${parameters.compType}" />
+		</field>
+		<field name="trail">
+			<hidden value="${parameters.trail}" />
+		</field>
+		<field name="compId">
+			<hidden value="${parameters.compId}" />
+		</field>
+		<field name="compName" tooltip="Pseudo Name (This is not visible in the Actual Form)">
+			<text default-value="${entity.compName}" size="65" />
+		</field>
+		<field name="description">
+			<textarea default-value="${entity.description}" cols="100" rows="10"/>
+		</field>
+		<field name="dynamicRuleId" id-name="dynamicRuleId" tooltip=" The value would be evaluated at runtime and substituted in the Form)">
+			<lookup target-form-name="selectFormInput" default-value="${entity.dynamicRuleId}"></lookup>
+		</field>
+		<field name="Update">
+			<submit />
+		</field>
+	</form>
+	
+	<form name="selectFormInput">
+		<field name="hrName"></field>
+	</form>
+	
+	<form name="EditSection" target="UpdateComponent" type="single">
+		<actions>
+			<entity-one entity-name="CustomFormComponents" value-field="entity">
+				<field-map field-name="compId" value="${parameters.compId}"/>
+			</entity-one>
+		</actions>
+		<field name="formId">
+			<hidden value="${parameters.formId}" />
+		</field>
+		<field name="compType">
+			<hidden value="${parameters.compType}" />
+		</field>
+		<field name="compId">
+			<hidden value="${parameters.compId}" />
+		</field>
+		<field name="compName">
+			<text default-value="${entity.compName}" size="65"/>
+		</field>
+		<field name="description">
+			<textarea default-value="${entity.description}" cols="100" rows="10"/>
+		</field>
+		<field name="Update">
+			<submit />
+		</field>
+	</form>
+
+	<form name="LookupCustomForm" target="FindCustomForm" type="single">
+		<field name="formName">
+			<text-find></text-find>
+		</field>
+		<field name="Find">
+			<submit />
+		</field>
+	</form>
+
+
+	<form name="ListLookupCustomForm" type="list" list-name="listIt"
+		paginate-target="LookupAccounts" odd-row-style="alternate-row"
+		default-table-style="basic-table hover-bar">
+		<actions>
+			<service service-name="performFind" result-map="result"
+				result-map-list="listIt">
+				<field-map field-name="inputFields" from-field="parameters" />
+				<field-map field-name="entityName" value="CustomForms" />
+			</service>
+		</actions>
+		<field name="formId">
+			<hyperlink target="EditCustomForm?formId=${formId}"
+				description="${formId}"></hyperlink>
+		</field>
+		<field name="formName">
+			<display></display>
+		</field>
+		<field name="description">
+			<display></display>
+		</field>
+	</form>
+
+</forms>

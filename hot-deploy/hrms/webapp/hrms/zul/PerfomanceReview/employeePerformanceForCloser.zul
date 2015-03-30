@@ -1,0 +1,245 @@
+<?init class="org.zkoss.zk.ui.util.Composition" arg0="/WEB-INF/layout/template.zul"?>
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<?page title="${c:l('HumanResPerfReview') }"?>
+<?link rel="icon" type="image/x-icon" href="/images/companyLogo.png"?>
+<zk xmlns:n="http://www.zkoss.org/2005/zk/native">
+	<window id="employeePerformanceForClosure" self="@{define(content)}"
+		apply="com.ndz.controller.PerformanceReview" width="100%"
+		border="normal">
+		<caption label="${c:l('HRMS_EMPLOYEE_PERFORMANCE_REVIEW') }">
+		</caption>
+		<zscript>
+		import org.ofbiz.entity.GenericDelegator;
+		import com.ndz.controller.PerfReviewUtil;
+	import org.ofbiz.entity.GenericValue;
+	import org.ofbiz.humanresext.util.HumanResUtil;
+	import org.ofbiz.entity.condition.EntityCondition;
+	import org.ofbiz.entity.condition.EntityExpr;
+	import org.ofbiz.entity.condition.EntityOperator;
+	import org.zkoss.zk.ui.Executions;
+	import org.ofbiz.base.util.UtilValidate;
+	String emplPerfReviewId1 = (String) Executions.getCurrent().getParameter(
+			"reviewIdForApproval");
+	String managerId = (String) Executions.getCurrent().getParameter(
+			"managerId");
+	org.ofbiz.entity.GenericValue userLogin = (org.ofbiz.entity.GenericValue) Executions.getCurrent().getDesktop().getSession().getAttribute("userLogin");
+	GenericDelegator delegator	= userLogin.getDelegator();
+	String emplPartyId = Executions.getCurrent().getParameter("emplPartyId");
+	org.ofbiz.security.Security security = requestScope.get("security");
+	boolean isAdmin = security.hasPermission("HUMANRES_ADMIN", userLogin);
+	GenericValue emplPerfReview = delegator.findByPrimaryKey("EmplPerfReview",org.ofbiz.base.util.UtilMisc.toMap("emplPerfReviewId",emplPerfReviewId1));
+	List allManagerId = PerfReviewUtil.getAllReportingStructure(emplPartyId,emplPerfReview.getString("perfReviewId")); //HumanResUtil.getAllReportingMangerForParty(emplPartyId, delegator);
+	if(UtilValidate.isEmpty(allManagerId)){
+			allManagerId=new ArrayList();
+			allManagerId.add(managerId);
+	}
+	Map map = com.ndz.controller.PerfReviewUtil.getAppraisalTimePeriod(emplPerfReviewId1);
+    String appTimePeriod = map.get("fromDate") + " " + "To" + " " + map.get("thruDate");
+</zscript>
+		<label id="labelIsAdmin" value="${isAdmin}" visible="false" />
+		<separator height="20px"></separator>
+		<hbox>
+			<vbox>
+				<groupbox mold="3d" width="300px">
+						<caption label="${c:l('HRMS_PERFORMANCE_REVIEW_TIME_PERIOD') }" />
+						<div align="left">
+							<label value="${appTimePeriod}"/>
+						</div>
+				</groupbox>
+				<groupbox mold="3d" width="300px"
+					id="performanceReviewSection">
+					<caption label="${c:l('HRMS_PERFORMANCE_REVIEW_SECTION') }"/>
+					<vbox id="vboxPerformanceReviewSection"></vbox>
+				</groupbox>
+				<groupbox mold="3d" width="300px">
+					<caption label="${c:l('HRMS_SUMMARY') }"
+						/>
+					<vbox>
+						<hbox style="margin-top:10px">
+							<div width="100px"
+								style="margin-right:4px">
+								<label value="${c:l('FormFieldTitle_status') }" />
+							</div>
+							<div>
+								<label id="status" />
+							</div>
+						</hbox>
+						<hbox>
+							<div width="100px"
+								style="margin-right:4px">
+								<label value="${c:l('HRMS_SELF_RATING') }"
+									 />
+							</div>
+							<div>
+								<label id="selfRating"
+									 />
+							</div>
+						</hbox>
+						<hbox>
+							<div width="100px"
+								style="margin-right:4px">
+								<label value="${c:l('HRMS_MANAGER_RATING') }"
+									 />
+							</div>
+							<div>
+								<label id="managerRating"
+									/>
+							</div>
+						</hbox>
+						<hbox id="HboxHrRating" visible="false">
+							<div width="100px"
+								style="margin-right:4px">
+								<label value="${c:l('HRMS_HR_RATING') }"
+									 />
+							</div>
+							<div>
+								<label id="hrRating"
+									 />
+							</div>
+						</hbox>
+					</vbox>
+				</groupbox>
+			</vbox>
+				<label value="${ emplPerfReviewId1}"
+					id="hiddenemplPerfReviewIdForApproval" visible="false" />
+				<label value="${ managerId}"
+					id="hiddenManagerId" visible="false" />
+					
+			<groupbox mold="3d" width="100%" id="dynamicContent" closable="false">
+				<caption id="dynamicContentCaption">
+				<hbox id="managerHbox">
+					<label value="${c:l('ListBox_Manager') }" />
+					<listbox mold="select" id="listBoxmanagerName"
+						onSelect="listBoxManager();">
+					</listbox>
+				</hbox>
+				</caption>
+				<zscript>
+					int	i	= 0;
+					String	getManagerIdFromUrl	= (String) Executions.getCurrent().getParameter("managerId");
+					for (Object managerId : allManagerId) {
+						EntityCondition condition = EntityCondition.makeCondition("partyId", EntityOperator.EQUALS, managerId);
+						List getName = delegator.findList("Person", condition, null, null, null, false);
+						GenericValue personName = (GenericValue) getName.get(0);
+						String firstName = personName.getString("firstName");
+						String lastName = personName.getString("lastName");
+						String fullName = firstName + " " + lastName;
+						listBoxmanagerName.appendItemApi(fullName, managerId.toString());
+						if (managerId.equals(getManagerIdFromUrl)) {
+							listBoxmanagerName.setSelectedIndex(i);
+						}
+						i++;
+					}	
+				</zscript>
+				<n:table width="100%">
+					<n:tr>
+						<n:td width="100%">
+							<div align="left" style="float:left">
+								<label id="labelSectionNameDescription" />
+							</div>
+							<div align="right" width="100%">
+								<button label="${c:l('HRMS_PRINT') }" id="printPDF">
+								<attribute name="onClick">
+								 Executions.sendRedirect("/control/printMyPerformancePlan?reviewId="+hiddenemplPerfReviewIdForApproval.getValue());
+								</attribute>
+								</button>
+							</div>
+
+						</n:td>
+					</n:tr>
+					<n:tr style="margin-top:5px">
+						<n:td>
+							<label value="${c:l('Hrms_Weightage') }"
+								 />
+							<label id="weightage"></label>
+						</n:td>
+					</n:tr>
+				</n:table>
+				<separator height="5px" />
+				<div id="divParents"></div>
+				<separator />
+				<hbox>
+					<groupbox width="700px">
+						<caption label="${c:l('HRMS_HR_SECTION') }" />
+						<n:table width="100%">
+						<zscript><![CDATA[
+									Integer hrMaxRating = PerfReviewUtil.getTotalRating(emplPerfReviewId1);						
+								]]></zscript>
+							<n:tr>
+								<n:td>
+									<label value="${c:l('FormFieldTitle_rating') }"
+										id="labelOverAllRating" />
+										<label value="*" style="color:red" if="${isAdmin }"/>
+								</n:td>
+								<n:td>
+									<intbox id="textboxOverallRating"  constraint="no empty: ${c:l('HRMS_RATING_REQUIRED') }" onChange="Clients.closeErrorBox(self)">
+									<attribute name="onBlur"><![CDATA[
+									 if(self.getValue().compareTo(hrMaxRating) > 0){
+									    String msg = org.zkoss.util.resource.Labels.getLabel("EPFC_RATING_MUST_BE_SMALLER_THAN_OR_EQUAL_TO");
+									 	throw new WrongValueException(self,msg+" "+hrMaxRating.toString());
+									 }
+									 if(self.getValue().compareTo(0) == -1)
+										 throw new WrongValueException(self,org.zkoss.util.resource.Labels.getLabel("EPFC_RATING_MUST_BE_GREATER_THAN_OR_EQUAL_TO_ZERO"));
+									 ]]></attribute>
+									</intbox>
+								</n:td>
+							</n:tr>
+							<n:tr>
+								<n:td>
+									<label value="${c:l('FormFieldTitle_comments') }" />
+								</n:td>
+								<n:td width="100%">
+									<textbox id="textboxComments"
+										width="100%" height="60px" multiline="true" />
+								</n:td>
+							</n:tr>
+							<n:tr>
+								<n:td>
+									<label value="${c:l('HRMS_FEEDBACK') }" />
+								</n:td>
+								<n:td width="100%">
+									<textbox id="textboxFeedBack"
+										width="100%" height="60px" multiline="true" />
+								</n:td>
+							</n:tr>
+							<n:tr>
+								<n:td colspan="2" align="center">
+									<toolbarbutton
+										label="${c:l('HRMS_CLICK_HERE_TO_VIEW_ANY_FEEDBACK_OR_TRAINING_RECOMMENDATION') }"
+										>
+										<attribute name="onClick">
+											{
+												HashMap map = new HashMap();
+												map.put(0, hiddenemplPerfReviewIdForApproval.getValue());
+												map.put(1, hiddenManagerId.getValue());
+												final Window win = (Window) Executions.createComponents(
+														"/zul/PerfomanceReview/feedback_trainingRecommendation.zul",
+														null, map);
+												win.doModal();
+											}
+										</attribute>
+									</toolbarbutton>
+								</n:td>
+							</n:tr>
+							<n:tr>
+								<n:td colspan="2" align="center">
+									<button label="${c:l('ButtonCancel') }"
+										id="buttonEmplPerfClosure" onClick="textboxOverallRating.getValue();" />
+								</n:td>
+							</n:tr>
+						</n:table>
+
+					</groupbox>
+
+				</hbox>
+			</groupbox>
+		</hbox>
+		<zscript><![CDATA[
+	void listBoxManager() {
+		String managerIdFromListbox = (String) listBoxmanagerName.getSelectedItem().getValue();
+		String perfReviewId = hiddenemplPerfReviewIdForApproval.getValue();
+		Executions.sendRedirect("/control/EmployeePerformanceForClosure?reviewIdForApproval=" + perfReviewId + "&managerId=" + managerIdFromListbox + "&emplPartyId=" + emplPartyId);
+	}
+]]></zscript>
+	</window>
+</zk>

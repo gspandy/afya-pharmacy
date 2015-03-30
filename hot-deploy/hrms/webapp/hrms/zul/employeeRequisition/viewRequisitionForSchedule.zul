@@ -1,0 +1,207 @@
+<?page  id="viewInterview"?>
+<?component name="positionTypebox" macroURI="../macros/textfindMacro.zul" id="macro2"?>
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<zk xmlns:n="http://www.zkoss.org/2005/zk/native">
+	<zscript>
+		import org.ofbiz.entity.*;
+		import org.ofbiz.entity.condition.*;
+		import org.ofbiz.entity.condition.EntityComparisonOperator;
+		import org.ofbiz.base.util.*;
+		String reqId = (String)Executions.getCurrent().getArg().get("requisitionId");
+		GenericValue userLogin = (GenericValue) Executions.getCurrent()
+				.getDesktop().getSession().getAttribute("userLogin");
+		GenericDelegator delegator = userLogin.getDelegator();
+		GenericValue requisitions = null;
+		requisitions = delegator.findByPrimaryKey("EmployeeRequisition", UtilMisc
+				.toMap("requisitionId", reqId));
+		String requisitionInitiator = requisitions.getString("partyId");
+		String requisitionDepartment = requisitions.getString("reqRaisedByDept");
+		String locId = requisitions.getString("locationId");
+		GenericValue p = null;
+		p = delegator.findByPrimaryKey("Person", UtilMisc.toMap("partyId",
+				requisitionInitiator));
+		String initatorName = p.getString("firstName") + " "
+				+ p.getString("lastName");
+		initatorName = org.apache.commons.lang.StringUtils.capitalize(initatorName);
+		GenericValue partyGroupGv = null;
+		partyGroupGv = delegator.findByPrimaryKey("PartyGroup", UtilMisc.toMap(
+				"partyId", requisitionDepartment));
+		String reqInitiatorDeptName = partyGroupGv.getString("groupName");
+		String noOfPosToCreate = requisitions.getString("numberOfPosition");
+		List openedPos = null;
+		Set fieldToSelect = new HashSet();
+		fieldToSelect.add("emplPositionId");
+		fieldToSelect.add("emplPositionTypeId");
+		EntityCondition condition = EntityCondition.makeCondition("requisitionId",
+				EntityComparisonOperator.EQUALS, reqId);
+		openedPos = delegator.findList("EmplPosition", condition, fieldToSelect,
+				null, null, false);
+		Object openedPosArray = openedPos
+				.toArray(new GenericValue[openedPos.size()]);
+		SimpleListModel model = new SimpleListModel(openedPos);
+		com.ndz.zkoss.GenericValueRenderer listItemRenderer13 = new com.ndz.zkoss.GenericValueRenderer(
+				new String[] { "emplPositionId", "emplPositionTypeId" });
+		List locList = null;
+		locList = delegator.findByAnd("Location", UtilMisc.toMap("locationId",
+				locId));
+		GenericValue locGv = null;
+		locGv = org.ofbiz.entity.util.EntityUtil.getFirst(locList);
+	</zscript>
+	<window width="70%" contentStyle="overflow:auto"
+		id="adminViewRequisitionWindow" closable="true" height="80%"
+		border="normal">
+		<caption label="${c:l('HRMS_APPLIED_REQUISITION_DETAILS') }"></caption>
+		<div id="appendWindow">
+			<div>
+				<box width="100%" height="30px">
+					<label value="${c:l('HRMS_REQUISITION_APPROVEREQUISITIONJOBDETAILS') }:"
+						style="font-weight:bold" />
+				</box>
+				<n:table>
+					<n:tr>
+						<n:td>
+							<div align="right" width="250px"
+								style="margin-right:5px">
+								<label value="${c:l('HRMS_REQUISITION_JOBTITLE') }"
+									style="font-weight:bold" />
+							</div>
+						</n:td>
+						<n:td>
+							<label id="jobTitle"
+								value="${requisitions.jobTitle}" style="font-weight:bold" />
+						</n:td>
+					</n:tr>
+					<n:tr>
+						<n:td>
+							<div align="right" width="250px"
+								style="margin-right:5px">
+								<label value="${c:l('HRMS_POSITIONTYPE') }"
+									style="font-weight:bold" />
+							</div>
+						</n:td>
+						<n:td>
+							<label id="positionType"
+								value="${requisitions.positionType}" style="font-weight:bold" />
+						</n:td>
+					</n:tr>
+					<n:tr>
+						<n:td>
+							<div align="right" width="250px"
+								style="margin-right:5px">
+								<label value="${c:l('HRMS_NO_OF_POSITION') }"
+									style="font-weight:bold" />
+							</div>
+						</n:td>
+						<n:td>
+							<label id="numberOfPosition"
+								value="${requisitions.numberOfPosition}"
+								style="font-weight:bold" />
+						</n:td>
+					</n:tr>
+					<n:tr>
+						<n:td>
+							<div align="right" width="250px"
+								style="margin-right:5px">
+								<label value="${c:l('HRMS_MIN_EXPERIENCE') }"
+									style="font-weight:bold" />
+							</div>
+						</n:td>
+						<n:td>
+							<label id="minExprience"
+								value="${requisitions.minExprience} Yrs"
+								style="font-weight:bold" />
+						</n:td>
+					</n:tr>
+					<n:tr>
+						<n:td>
+							<div align="right" width="250px"
+								style="margin-right:5px">
+								<label value="${c:l('HRMS_MAX_EXPERIENCE') }"
+									style="font-weight:bold" />
+							</div>
+						</n:td>
+						<n:td>
+							<label id="maxExprience"
+								value="${requisitions.maxExprience} Yrs"
+								style="font-weight:bold" />
+						</n:td>
+					</n:tr>
+					<n:tr>
+						<n:td>
+							<div align="right" width="250px"
+								style="margin-right:5px">
+								<label value="${c:l('HRMS_JOB_LOCATION') }"
+									style="font-weight:bold" />
+							</div>
+						</n:td>
+						<n:td>
+							<label id="locId"
+								value="${locGv.locationName}" style="font-weight:bold" />
+						</n:td>
+					</n:tr>
+					<n:tr>
+						<n:td>
+							<div align="right" width="250px"
+								style="margin-right:5px">
+								<label value="${c:l('HRMS_REQUISITION_JOBDESCRIPTION') }"
+									style="font-weight:bold" />
+							</div>
+						</n:td>
+						<n:td>
+							<html>${requisitions.jobDescription}</html>
+						</n:td>
+					</n:tr>
+					<n:tr>
+						<n:td>
+							<div align="right" width="250px"
+								style="margin-right:5px">
+								<label value="${c:l('HRMS_REQUISITION_ROLEDETAILS') }"
+									style="font-weight:bold" />
+							</div>
+						</n:td>
+						<n:td>
+							<html>${requisitions.roleDetails}</html>
+						</n:td>
+					</n:tr>
+					<n:tr>
+						<n:td>
+							<div align="right" width="250px"
+								style="margin-right:5px">
+								<label value="${c:l('HRMS_REQUISITION_QUALIFICATION') }"
+									style="font-weight:bold" />
+							</div>
+						</n:td>
+						<n:td>
+							<html>${requisitions.qualification}</html>
+						</n:td>
+					</n:tr>
+					<n:tr>
+						<n:td>
+							<div align="right" width="250px"
+								style="margin-right:5px">
+								<label value="${c:l('HRMS_REQUISITION_SOFTSKILL') }"
+									style="font-weight:bold" />
+							</div>
+						</n:td>
+						<n:td>
+							<html>${requisitions.softSkills}</html>
+						</n:td>
+					</n:tr>
+					<n:tr>
+						<n:td>
+							<div align="right" width="250px"
+								style="margin-right:5px">
+								<label value="${c:l('HRMS_REQUISITION_JUSTIFICATIONFORHIRING') }"
+									style="font-weight:bold" />
+							</div>
+						</n:td>
+						<n:td>
+							<html>${requisitions.justificationForHiring}</html>
+						</n:td>
+					</n:tr>
+				</n:table>
+			</div>
+		</div>
+	</window>
+
+</zk>

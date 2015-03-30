@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+Licensed to the Apache Software Foundation (ASF) under one
+or more contributor license agreements.  See the NOTICE file
+distributed with this work for additional information
+regarding copyright ownership.  The ASF licenses this file
+to you under the Apache License, Version 2.0 (the
+"License"); you may not use this file except in compliance
+with the License.  You may obtain a copy of the License at
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing,
+software distributed under the License is distributed on an
+"AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+KIND, either express or implied.  See the License for the
+specific language governing permissions and limitations
+under the License.
+-->
+
+<entity-engine-xml>
+
+    <Party partyId="Company" partyTypeId="PARTY_GROUP"/>
+    <PartyGroup partyId="Company" groupName=""/>
+    <PartyRole partyId="Company" roleTypeId="BILL_FROM_VENDOR"/>
+    <PartyRole partyId="Company" roleTypeId="BILL_TO_CUSTOMER"/>
+    <PartyRole partyId="Company" roleTypeId="INTERNAL_ORGANIZATIO"/>
+    <PartyRole partyId="Company" roleTypeId="_NA_"/>
+
+    <ContactMech contactMechId="9000" contactMechTypeId="POSTAL_ADDRESS"/>
+    <PartyContactMech partyId="Company" contactMechId="9000" fromDate="2000-01-01 00:00:00.000" allowSolicitation="Y"/>
+    <PostalAddress contactMechId="9000" toName="Company XYZ" address1="2003 Open Blvd" city="Open City" postalCode="999999" countryGeoId="USA" 
+                   stateProvinceGeoId="CA"
+                   />
+    <ContactMech contactMechId="Company" contactMechTypeId="EMAIL_ADDRESS" infoString="ofbiztest@example.com"/>
+    <PartyContactMech partyId="Company" contactMechId="Company" fromDate="2000-01-01 00:00:00.000" allowSolicitation="Y"/>
+    <PartyContactMechPurpose contactMechPurposeTypeId="PRIMARY_EMAIL" partyId="Company" contactMechId="Company" fromDate="2003-01-01 00:00:00.000"/>
+    <PartyContactMechPurpose partyId="Company" contactMechId="9000" contactMechPurposeTypeId="BILLING_LOCATION" fromDate="2000-01-01 00:00:00.000"/>
+    <PartyContactMechPurpose partyId="Company" contactMechId="9000" contactMechPurposeTypeId="GENERAL_LOCATION" fromDate="2000-01-01 00:00:00.000"/>
+    <PartyContactMechPurpose partyId="Company" contactMechId="9000" contactMechPurposeTypeId="PAYMENT_LOCATION" fromDate="2000-01-01 00:00:00.000"/>
+
+    <!-- GL journal for suspended transactions (failed post) -->
+    <GlJournal organizationPartyId="Company" glJournalId="ERROR_JOURNAL" glJournalName="Suspense transactions"/>
+
+    <PartyAcctgPreference partyId="Company" cogsMethodId="COGS_LIFO" baseCurrencyUomId="USD"
+                          invoiceSeqCustMethId="INV_HOOK_ENF_SEQ" invoiceIdPrefix="CI"
+                          quoteIdPrefix="CQ"
+                          orderIdPrefix="CO"
+                          errorGlJournalId="ERROR_JOURNAL"/>
+    <!-- Customer -->
+    <Party partyId="DemoCustomer" partyTypeId="PARTY_GROUP"/>
+    <PartyGroup partyId="DemoCustomer" groupName="Demo Customer"/>
+    <PartyRole partyId="DemoCustomer" roleTypeId="PLACING_CUSTOMER"/>
+    <PartyRole partyId="DemoCustomer" roleTypeId="BILL_TO_CUSTOMER"/>
+    <PartyRole partyId="DemoCustomer" roleTypeId="SHIP_TO_CUSTOMER"/>
+    <PartyRole partyId="DemoCustomer" roleTypeId="END_USER_CUSTOMER"/>
+    <PartyRole partyId="DemoCustomer" roleTypeId="CUSTOMER"/>
+    <PartyRole partyId="Company" roleTypeId="BILL_FROM_VENDOR"/>
+    <UserLogin userLoginId="DemoCustomer" currentPassword="{SHA}47ca69ebb4bdc9ae0adec130880165d2cc05db1a" partyId="DemoCustomer"/>
+
+    <ContactMech contactMechId="9001" contactMechTypeId="POSTAL_ADDRESS"/>
+    <PartyContactMech partyId="DemoCustomer" contactMechId="9001" fromDate="2001-05-13 00:00:00.000" allowSolicitation="Y"/>
+    <PostalAddress contactMechId="9001" toName="Demo Supplier Company" address1="2004 Factory Blvd" city="City of Industry" postalCode="90000"
+                   countryGeoId="USA"
+                   stateProvinceGeoId="CA"/>
+    <PartyContactMechPurpose partyId="DemoCustomer" contactMechId="9001" contactMechPurposeTypeId="BILLING_LOCATION" fromDate="2001-05-13 00:00:00.000"/>
+    <PartyContactMechPurpose partyId="DemoCustomer" contactMechId="9001" contactMechPurposeTypeId="GENERAL_LOCATION" fromDate="2001-05-13 00:00:00.000"/>
+    <PartyContactMechPurpose partyId="DemoCustomer" contactMechId="9001" contactMechPurposeTypeId="SHIPPING_LOCATION" fromDate="2001-05-13 00:00:00.000"/>
+
+    <Facility facilityId="WebStoreWarehouse" facilityTypeId="WAREHOUSE" facilityName="Web Store Warehouse" description="Warehouse exclusively for the Web Store "
+              ownerPartyId="Company"
+              defaultInventoryItemTypeId="NON_SERIAL_INV_ITEM" defaultWeightUomId="WT_lt" defaultDaysToShip="25"/>
+
+    <ContactMech contactMechId="9200" contactMechTypeId="POSTAL_ADDRESS"/>
+    <ContactMech contactMechId="9201" contactMechTypeId="TELECOM_NUMBER"/>
+    <ContactMech contactMechId="9202" contactMechTypeId="EMAIL_ADDRESS" infoString="ofbiztest@example.com"/>
+    <PostalAddress contactMechId="9200" toName="Company XYZ" attnName="ZJAA" address1="2003 Open Blvd" city="Orem" postalCode="84058" countryGeoId="USA" stateProvinceGeoId="UT"
+                   />
+    <TelecomNumber contactMechId="9201" areaCode="801" contactNumber="555-5555"/>
+    <FacilityContactMech facilityId="WebStoreWarehouse" contactMechId="9200" fromDate="2001-05-13 12:00:00.0"/>
+    <FacilityContactMech facilityId="WebStoreWarehouse" contactMechId="9201" fromDate="2001-05-13 12:00:00.0"/>
+    <FacilityContactMech facilityId="WebStoreWarehouse" contactMechId="9202" fromDate="2001-05-13 12:00:00.0"/>
+    <FacilityContactMechPurpose facilityId="WebStoreWarehouse" contactMechId="9200" contactMechPurposeTypeId="SHIPPING_LOCATION" fromDate="2001-05-13 12:00:00.0"/>
+    <FacilityContactMechPurpose facilityId="WebStoreWarehouse" contactMechId="9200" contactMechPurposeTypeId="SHIP_ORIG_LOCATION" fromDate="2001-05-13 12:00:00.0"/>
+    <FacilityContactMechPurpose facilityId="WebStoreWarehouse" contactMechId="9201" contactMechPurposeTypeId="PHONE_SHIPPING" fromDate="2001-05-13 12:00:00.0"/>
+    <FacilityContactMechPurpose facilityId="WebStoreWarehouse" contactMechId="9201" contactMechPurposeTypeId="PHONE_SHIP_ORIG" fromDate="2001-05-13 12:00:00.0"/>
+    <FacilityContactMechPurpose facilityId="WebStoreWarehouse" contactMechId="9202" contactMechPurposeTypeId="PRIMARY_EMAIL" fromDate="2001-05-13 12:00:00.0"/>
+    <FacilityLocation facilityId="WebStoreWarehouse" locationSeqId="TLTLTLLL01" locationTypeEnumId="FLT_PICKLOC" areaId="TL" aisleId="TL" sectionId="TL" levelId="LL"
+                      positionId="01"/>
+    <FacilityLocation facilityId="WebStoreWarehouse" locationSeqId="TLTLTLUL01" locationTypeEnumId="FLT_BULK" areaId="TL" aisleId="TL" sectionId="TL" levelId="UL" positionId="01"/>
+    <FacilityLocation facilityId="WebStoreWarehouse" locationSeqId="TLTLTLLL02" locationTypeEnumId="FLT_PICKLOC" areaId="TL" aisleId="TL" sectionId="TL" levelId="LL"
+                      positionId="02"/>
+    <FacilityLocation facilityId="WebStoreWarehouse" locationSeqId="TLTLTLUL02" locationTypeEnumId="FLT_BULK" areaId="TL" aisleId="TL" sectionId="TL" levelId="UL" positionId="02"/>
+    <FacilityLocation facilityId="WebStoreWarehouse" locationSeqId="TLTLTLLL03" locationTypeEnumId="FLT_PICKLOC" areaId="TL" aisleId="TL" sectionId="TL" levelId="LL"
+                      positionId="03"/>
+    <FacilityLocation facilityId="WebStoreWarehouse" locationSeqId="TLTLTLUL03" locationTypeEnumId="FLT_BULK" areaId="TL" aisleId="TL" sectionId="TL" levelId="UL" positionId="03"/>
+    <FacilityLocation facilityId="WebStoreWarehouse" locationSeqId="TLTLTLLL04" locationTypeEnumId="FLT_PICKLOC" areaId="TL" aisleId="TL" sectionId="TL" levelId="LL"
+                      positionId="04"/>
+    <FacilityLocation facilityId="WebStoreWarehouse" locationSeqId="TLTLTLUL04" locationTypeEnumId="FLT_BULK" areaId="TL" aisleId="TL" sectionId="TL" levelId="UL" positionId="04"/>
+
+    <Product productId="GZ-2644" smallImageUrl="/images/products/GZ-2644/small.png" largeImageUrl="/images/products/GZ-2644/large.png"/>
+
+    <!-- Product Store & Shipping Method -->
+    <ProductStore productStoreId="9000" storeName="SME E-Commerce Store" companyName="Open For Business" title="Open For Commerce"
+                  subtitle="Part of the Open For Business Family of Open Source Software" payToPartyId="Company" daysToCancelNonPay="30" prorateShipping="Y" prorateTaxes="Y"
+                  inventoryFacilityId="WebStoreWarehouse" oneInventoryFacility="Y" checkInventory="Y" reserveInventory="Y" balanceResOnOrderCreation="Y"
+                  reserveOrderEnumId="INVRO_FIFO_REC" requireInventory="N"
+                  defaultLocaleString="en_US" defaultCurrencyUomId="USD" defaultSalesChannelEnumId="WEB_SALES_CHANNEL" allowPassword="Y" explodeOrderItems="N" retryFailedAuths="Y"
+                  reqReturnInventoryReceive="N"
+                  headerApprovedStatus="ORDER_APPROVED" itemApprovedStatus="ITEM_APPROVED" digitalItemApprovedStatus="ITEM_APPROVED" headerDeclinedStatus="ORDER_REJECTED"
+                  itemDeclinedStatus="ITEM_REJECTED" headerCancelStatus="ORDER_CANCELLED" itemCancelStatus="ITEM_CANCELLED" orderNumberPrefix="WS"
+                  authDeclinedMessage="There has been a problem with your method of payment. Please try a different method or call customer service."
+                  authFraudMessage="Your order has been rejected and your account has been disabled due to fraud."
+                  authErrorMessage="Problem connecting to payment processor; we will continue to retry and notify you by email."
+                  storeCreditValidDays="90" storeCreditAccountEnumId="FIN_ACCOUNT" pricesIncludeTax="N"
+                  visualThemeId="EC_DEFAULT" prodSearchExcludeVariants="Y" autoApproveInvoice="Y" shipIfCaptureFails="Y" autoApproveOrder="Y" showOutOfStockProducts="Y"/>
+
+    <ShipmentMethodType shipmentMethodTypeId="NEXT_DAY"/>
+    <Party partyId="UPS"/>
+    <PartyRole partyId="UPS" roleTypeId="CARRIER"/>
+    <ContactMech contactMechId="9015"/>
+    <PostalAddress contactMechId="9015"/>
+    <CarrierShipmentMethod partyId="UPS" roleTypeId="CARRIER" shipmentMethodTypeId="NEXT_DAY" sequenceNumber="1" carrierServiceCode="01"/>
+    <PaymentMethod paymentMethodId="EXT_COD"/>
+    <ProductStorePaymentSetting productStoreId="9000" paymentMethodTypeId="EXT_COD" paymentServiceTypeEnumId="PRDS_PAY_EXTERNAL" paymentService=""
+                                paymentCustomMethodId=""/>
+
+    <!-- Demo product for rental shipping -->
+    <Product productId="RentalShip" productTypeId="ASSET_USAGE_OUT_IN"  productName="Rental Shipping" internalName="Rental Shipping" description="The Product For Test Rental of an asset which is shipped from and returned to inventory" reservMaxPersons="1" taxable="Y" chargeShipping="N" autoCreateKeywords="Y" isVirtual="N" isVariant="N" createdDate="2011-09-01 12:00:00.0" createdByUserLogin="admin"/>
+    <FixedAsset fixedAssetId="RentalShip" fixedAssetTypeId="PROPERTY" productionCapacity="10"/>
+    <FixedAssetProduct productId="RentalShip" fixedAssetId="RentalShip" fixedAssetProductTypeId="FAPT_USE" fromDate="2011-09-01 12:00:00.0"/>
+    <ProductPrice productId="RentalShip" productPricePurposeId="PURCHASE" productPriceTypeId="DEFAULT_PRICE" currencyUomId="USD" productStoreGroupId="_NA_"
+                  fromDate="2011-09-01 12:00:00.0" price="15.99" createdDate="2011-09-01 12:00:00.0" createdByUserLogin="admin" lastModifiedByUserLogin="admin"/>
+    <ProductPrice productId="RentalShip" productPricePurposeId="PURCHASE" productPriceTypeId="LIST_PRICE" currencyUomId="USD" productStoreGroupId="_NA_" fromDate="2011-09-01 12:00:00.0" price="15.0" createdDate="2011-09-01 12:00:00.0" createdByUserLogin="admin" lastModifiedByUserLogin="admin"/>
+    <ProductFacility productId="RentalShip" facilityId="WebStoreWarehouse" minimumStock="2" reorderQuantity="10" daysToShip="15"/>
+    <ProductFacilityLocation productId="RentalShip" facilityId="WebStoreWarehouse" locationSeqId="TLTLTLUL01" minimumStock="5" moveQuantity="20"/>
+    <InventoryItem facilityId="WebStoreWarehouse" inventoryItemId="InventoryRentalShip" inventoryItemTypeId="NON_SERIAL_INV_ITEM" datetimeReceived="2008-08-01 08:00:00.000" productId="RentalShip"
+                   ownerPartyId="Company" currencyUomId="USD" unitCost="2.4" fixedAssetId="RentalShip"/>
+    <InventoryItemDetail inventoryItemId="InventoryRentalShip" inventoryItemDetailSeqId="0001"
+                         effectiveDate="2011-09-01 12:00:00.0" availableToPromiseDiff="10" quantityOnHandDiff="10" accountingQuantityDiff="10"/>
+
+
+    <Party partyId="shipper"/>
+    <PartyRole partyId="shipper" roleTypeId="PACKER"/>
+    <UserLogin partyId="shipper" userLoginId="shipper"/>
+    <UserLoginSecurityGroup userLoginId="shipper" groupId="FULLADMIN" fromDate="2000-01-01 00:00:00.000"/>
+    <UserLoginSecurityGroup userLoginId="shipper" groupId="FACILITY_ADMIN" fromDate="2000-01-01 00:00:00.000"/>
+
+    <GlAccount glAccountId="RENTAL_INCOME_AC" accountName="Rental Income" accountCode="RENTAL_INCOME_AC" glAccountClassId="INCOME" glAccountTypeId="INCOME" glResourceTypeId="MONEY"  description="" postedBalance="0.0"/>
+    <GlAccountOrganization glAccountId="RENTAL_INCOME_AC" organizationPartyId="Company"/>
+    <ProductGlAccount glAccountTypeId="INCOME" glAccountId="RENTAL_INCOME_AC" productId="RentalShip"  organizationPartyId="Company"/>
+
+    <GlAccount glAccountId="120000" accountCode="120000"  glAccountClassId="CURRENT_ASSET" glAccountTypeId="ACCOUNTS_RECEIVABLE" glResourceTypeId="MONEY"
+               accountName="ACCOUNTS RECEIVABLE" description="" postedBalance="0.0"/>
+    <GlAccountOrganization glAccountId="120000" organizationPartyId="Company"/>
+
+    <GlAccountTypeDefault organizationPartyId="Company" glAccountTypeId="ACCOUNTS_RECEIVABLE" glAccountId="120000"/>
+
+</entity-engine-xml>

@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+Licensed to the Apache Software Foundation (ASF) under one
+or more contributor license agreements.  See the NOTICE file
+distributed with this work for additional information
+regarding copyright ownership.  The ASF licenses this file
+to you under the Apache License, Version 2.0 (the
+"License"); you may not use this file except in compliance
+with the License.  You may obtain a copy of the License at
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing,
+software distributed under the License is distributed on an
+"AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+KIND, either express or implied.  See the License for the
+specific language governing permissions and limitations
+under the License.
+-->
+<entity-engine-xml>
+    <!-- Search the Ofbiz Wiki for "Multitenancy support" to get instructions on how to setup multi-tenancy -->
+  <Tenant tenantId="TENANT1" tenantName="TENANT Tenant One"/>
+    <TenantDataSource tenantId="TENANT1" entityGroupName="org.ofbiz" 
+        jdbcUri="jdbc:mysql://127.0.0.1/hrmsTenant2?createDatabaseIfNotExist=true&amp;characterEncoding=UTF-8&amp;characterSetResults=UTF-8"
+        jdbcUsername="root" jdbcPassword="welcome"/>
+    <TenantDataSource tenantId="TENANT1" entityGroupName="org.ofbiz.olap" 
+        jdbcUri="jdbc:mysql://127.0.0.1/hrmsTenant2_olap?createDatabaseIfNotExist=true&amp;characterEncoding=UTF-8&amp;characterSetResults=UTF-8" jdbcUsername="root" jdbcPassword="welcome"/>
+
+   <!-- <Tenant tenantId="DEMO2" tenantName="TENANT Tenant Two"/>
+    <TenantDataSource tenantId="DEMO2" entityGroupName="org.ofbiz" 
+        jdbcUri="jdbc:mysql://127.0.0.1/acc_demo2?createDatabaseIfNotExist=true&amp;characterEncoding=UTF-8&amp;characterSetResults=UTF-8" jdbcUsername="smeqa" jdbcPassword="smeqa"/>
+    <TenantDataSource tenantId="DEMO2" entityGroupName="org.ofbiz.olap" 
+        jdbcUri="jdbc:mysql://127.0.0.1/acc_demo2_olap?createDatabaseIfNotExist=true&amp;characterEncoding=UTF-8&amp;characterSetResults=UTF-8" jdbcUsername="smeqa" jdbcPassword="smeqa"/> -->
+    <!-- See comments on entity def: <TenantUserLogin tenantId="TENANT2" userLoginId="admin" fromDate="2001-05-13 00:00:00.000" thruDate="" isManager="N"/> -->
+	
+	<!-- <Tenant tenantId="TENANT3" tenantName="TENANT Tenant"/>
+    <TenantDataSource tenantId="TENANT3" entityGroupName="org.ofbiz" 
+        jdbcUri="jdbc:mysql://127.0.0.1/tally_TENANT3?createDatabaseIfNotExist=true&amp;characterEncoding=UTF-8&amp;characterSetResults=UTF-8" jdbcUsername="root" jdbcPassword="welcome"/>
+    <TenantDataSource tenantId="TENANT3" entityGroupName="org.ofbiz.olap" 
+        jdbcUri="jdbc:mysql://127.0.0.1/tallyolap_TENANT3?createDatabaseIfNotExist=true&amp;characterEncoding=UTF-8&amp;characterSetResults=UTF-8" jdbcUsername="root" jdbcPassword="welcome"/>
+		 -->
+	<!--  <Tenant tenantId="TENANT4" tenantName="TENANT Tenant"/>
+    <TenantDataSource tenantId="TENANT4" entityGroupName="org.ofbiz" 
+        jdbcUri="jdbc:mysql://127.0.0.1/sme_TENANT4?createDatabaseIfNotExist=true&amp;characterEncoding=UTF-8&amp;characterSetResults=UTF-8" jdbcUsername="root" jdbcPassword="welcome"/>
+    <TenantDataSource tenantId="TENANT4" entityGroupName="org.ofbiz.olap" 
+        jdbcUri="jdbc:mysql://127.0.0.1/smeolap_TENANT4?createDatabaseIfNotExist=true&amp;characterEncoding=UTF-8&amp;characterSetResults=UTF-8" jdbcUsername="root" jdbcPassword="welcome"/>
+		
+	<Tenant tenantId="TENANT5" tenantName="TENANT Tenant"/>
+    <TenantDataSource tenantId="TENANT5" entityGroupName="org.ofbiz" 
+        jdbcUri="jdbc:mysql://127.0.0.1/sme_TENANT5?createDatabaseIfNotExist=true&amp;characterEncoding=UTF-8&amp;characterSetResults=UTF-8" jdbcUsername="root" jdbcPassword="welcome"/>
+    <TenantDataSource tenantId="TENANT5" entityGroupName="org.ofbiz.olap" 
+        jdbcUri="jdbc:mysql://127.0.0.1/smeolap_TENANT5?createDatabaseIfNotExist=true&amp;characterEncoding=UTF-8&amp;characterSetResults=UTF-8" jdbcUsername="root" jdbcPassword="welcome"/>
+		
+	<Tenant tenantId="TENANT6" tenantName="TENANT Tenant"/>
+    <TenantDataSource tenantId="TENANT6" entityGroupName="org.ofbiz" 
+        jdbcUri="jdbc:mysql://127.0.0.1/sme_TENANT6?createDatabaseIfNotExist=true&amp;characterEncoding=UTF-8&amp;characterSetResults=UTF-8" jdbcUsername="root" jdbcPassword="welcome"/>
+    <TenantDataSource tenantId="TENANT6" entityGroupName="org.ofbiz.olap" 
+        jdbcUri="jdbc:mysql://127.0.0.1/smeolap_TENANT6?createDatabaseIfNotExist=true&amp;characterEncoding=UTF-8&amp;characterSetResults=UTF-8" jdbcUsername="root" jdbcPassword="welcome"/>
+		
+	<Tenant tenantId="TENANT7" tenantName="TENANT Tenant"/>
+    <TenantDataSource tenantId="TENANT7" entityGroupName="org.ofbiz" 
+        jdbcUri="jdbc:mysql://127.0.0.1/sme_TENANT7?createDatabaseIfNotExist=true&amp;characterEncoding=UTF-8&amp;characterSetResults=UTF-8" jdbcUsername="root" jdbcPassword="welcome"/>
+    <TenantDataSource tenantId="TENANT7" entityGroupName="org.ofbiz.olap" 
+        jdbcUri="jdbc:mysql://127.0.0.1/smeolap_TENANT7?createDatabaseIfNotExist=true&amp;characterEncoding=UTF-8&amp;characterSetResults=UTF-8" jdbcUsername="root" jdbcPassword="welcome"/>
+		
+	<Tenant tenantId="TENANT8" tenantName="TENANT Tenant"/>
+    <TenantDataSource tenantId="TENANT8" entityGroupName="org.ofbiz" 
+        jdbcUri="jdbc:mysql://127.0.0.1/sme_TENANT8?createDatabaseIfNotExist=true&amp;characterEncoding=UTF-8&amp;characterSetResults=UTF-8" jdbcUsername="root" jdbcPassword="welcome"/>
+    <TenantDataSource tenantId="TENANT8" entityGroupName="org.ofbiz.olap" 
+        jdbcUri="jdbc:mysql://127.0.0.1/smeolap_TENANT8?createDatabaseIfNotExist=true&amp;characterEncoding=UTF-8&amp;characterSetResults=UTF-8" jdbcUsername="root" jdbcPassword="welcome"/>
+		
+	<Tenant tenantId="TENANT9" tenantName="TENANT Tenant"/>
+    <TenantDataSource tenantId="TENANT9" entityGroupName="org.ofbiz" 
+        jdbcUri="jdbc:mysql://127.0.0.1/sme_TENANT9?createDatabaseIfNotExist=true&amp;characterEncoding=UTF-8&amp;characterSetResults=UTF-8" jdbcUsername="root" jdbcPassword="welcome"/>
+    <TenantDataSource tenantId="TENANT9" entityGroupName="org.ofbiz.olap" 
+        jdbcUri="jdbc:mysql://127.0.0.1/smeolap_TENANT9?createDatabaseIfNotExist=true&amp;characterEncoding=UTF-8&amp;characterSetResults=UTF-8" jdbcUsername="root" jdbcPassword="welcome"/>
+		
+	<Tenant tenantId="TENANT10" tenantName="TENANT Tenant"/>
+    <TenantDataSource tenantId="TENANT10" entityGroupName="org.ofbiz" 
+        jdbcUri="jdbc:mysql://127.0.0.1/sme_TENANT10?createDatabaseIfNotExist=true&amp;characterEncoding=UTF-8&amp;characterSetResults=UTF-8" jdbcUsername="root" jdbcPassword="welcome"/>
+    <TenantDataSource tenantId="TENANT10" entityGroupName="org.ofbiz.olap" 
+        jdbcUri="jdbc:mysql://127.0.0.1/smeolap_TENANT10?createDatabaseIfNotExist=true&amp;characterEncoding=UTF-8&amp;characterSetResults=UTF-8" jdbcUsername="root" jdbcPassword="welcome"/>
+		
+	
+	<Tenant tenantId="TENANT11" tenantName="TENANT Tenant"/>
+    <TenantDataSource tenantId="TENANT11" entityGroupName="org.ofbiz" 
+        jdbcUri="jdbc:mysql://127.0.0.1/sme_TENANT11?createDatabaseIfNotExist=true&amp;characterEncoding=UTF-8&amp;characterSetResults=UTF-8" jdbcUsername="root" jdbcPassword="welcome"/>
+    <TenantDataSource tenantId="TENANT11" entityGroupName="org.ofbiz.olap" 
+        jdbcUri="jdbc:mysql://127.0.0.1/smeolap_TENANT11?createDatabaseIfNotExist=true&amp;characterEncoding=UTF-8&amp;characterSetResults=UTF-8" jdbcUsername="root" jdbcPassword="welcome"/>
+		
+	<Tenant tenantId="TENANT12" tenantName="TENANT Tenant"/>
+    <TenantDataSource tenantId="TENANT12" entityGroupName="org.ofbiz" 
+        jdbcUri="jdbc:mysql://127.0.0.1/sme_TENANT12?createDatabaseIfNotExist=true&amp;characterEncoding=UTF-8&amp;characterSetResults=UTF-8" jdbcUsername="root" jdbcPassword="welcome"/>
+    <TenantDataSource tenantId="TENANT12" entityGroupName="org.ofbiz.olap" 
+        jdbcUri="jdbc:mysql://127.0.0.1/smeolap_TENANT12?createDatabaseIfNotExist=true&amp;characterEncoding=UTF-8&amp;characterSetResults=UTF-8" jdbcUsername="root" jdbcPassword="welcome"/>
+		
+	<Tenant tenantId="TENANT13" tenantName="TENANT Tenant"/>
+    <TenantDataSource tenantId="TENANT13" entityGroupName="org.ofbiz" 
+        jdbcUri="jdbc:mysql://127.0.0.1/sme_TENANT13?createDatabaseIfNotExist=true&amp;characterEncoding=UTF-8&amp;characterSetResults=UTF-8" jdbcUsername="root" jdbcPassword="welcome"/>
+    <TenantDataSource tenantId="TENANT13" entityGroupName="org.ofbiz.olap" 
+        jdbcUri="jdbc:mysql://127.0.0.1/smeolap_TENANT13?createDatabaseIfNotExist=true&amp;characterEncoding=UTF-8&amp;characterSetResults=UTF-8" jdbcUsername="root" jdbcPassword="welcome"/>
+		
+	<Tenant tenantId="TENANT14" tenantName="TENANT Tenant"/>
+    <TenantDataSource tenantId="TENANT14" entityGroupName="org.ofbiz" 
+        jdbcUri="jdbc:mysql://127.0.0.1/sme_TENANT14?createDatabaseIfNotExist=true&amp;characterEncoding=UTF-8&amp;characterSetResults=UTF-8" jdbcUsername="root" jdbcPassword="welcome"/>
+    <TenantDataSource tenantId="TENANT14" entityGroupName="org.ofbiz.olap" 
+        jdbcUri="jdbc:mysql://127.0.0.1/smeolap_TENANT14?createDatabaseIfNotExist=true&amp;characterEncoding=UTF-8&amp;characterSetResults=UTF-8" jdbcUsername="root" jdbcPassword="welcome"/>
+		
+	<Tenant tenantId="TENANT15" tenantName="TENANT Tenant"/>
+    <TenantDataSource tenantId="TENANT15" entityGroupName="org.ofbiz" 
+        jdbcUri="jdbc:mysql://127.0.0.1/sme_TENANT15?createDatabaseIfNotExist=true&amp;characterEncoding=UTF-8&amp;characterSetResults=UTF-8" jdbcUsername="root" jdbcPassword="welcome"/>
+    <TenantDataSource tenantId="TENANT15" entityGroupName="org.ofbiz.olap" 
+        jdbcUri="jdbc:mysql://127.0.0.1/smeolap_TENANT15?createDatabaseIfNotExist=true&amp;characterEncoding=UTF-8&amp;characterSetResults=UTF-8" jdbcUsername="root" jdbcPassword="welcome"/>
+        
+    <Tenant tenantId="TENANT16" tenantName="TENANT Tenant"/>
+    <TenantDataSource tenantId="TENANT16" entityGroupName="org.ofbiz" 
+        jdbcUri="jdbc:mysql://127.0.0.1/sme_TENANT16?createDatabaseIfNotExist=true&amp;characterEncoding=UTF-8&amp;characterSetResults=UTF-8" jdbcUsername="root" jdbcPassword="welcome"/>
+    <TenantDataSource tenantId="TENANT16" entityGroupName="org.ofbiz.olap" 
+        jdbcUri="jdbc:mysql://127.0.0.1/smeolap_TENANT16?createDatabaseIfNotExist=true&amp;characterEncoding=UTF-8&amp;characterSetResults=UTF-8" jdbcUsername="root" jdbcPassword="welcome"/>
+
+	<Tenant tenantId="TENANT17" tenantName="TENANT Tenant"/>
+    <TenantDataSource tenantId="TENANT17" entityGroupName="org.ofbiz" 
+        jdbcUri="jdbc:mysql://127.0.0.1/sme_TENANT17?createDatabaseIfNotExist=true&amp;characterEncoding=UTF-8&amp;characterSetResults=UTF-8" jdbcUsername="root" jdbcPassword="welcome"/>
+    <TenantDataSource tenantId="TENANT17" entityGroupName="org.ofbiz.olap" 
+        jdbcUri="jdbc:mysql://127.0.0.1/smeolap_TENANT17?createDatabaseIfNotExist=true&amp;characterEncoding=UTF-8&amp;characterSetResults=UTF-8" jdbcUsername="root" jdbcPassword="welcome"/>
+		
+	<Tenant tenantId="TENANT18" tenantName="TENANT Tenant"/>
+    <TenantDataSource tenantId="TENANT18" entityGroupName="org.ofbiz" 
+        jdbcUri="jdbc:mysql://127.0.0.1/sme_TENANT18?createDatabaseIfNotExist=true&amp;characterEncoding=UTF-8&amp;characterSetResults=UTF-8" jdbcUsername="root" jdbcPassword="welcome"/>
+    <TenantDataSource tenantId="TENANT18" entityGroupName="org.ofbiz.olap" 
+        jdbcUri="jdbc:mysql://127.0.0.1/smeolap_TENANT18?createDatabaseIfNotExist=true&amp;characterEncoding=UTF-8&amp;characterSetResults=UTF-8" jdbcUsername="root" jdbcPassword="welcome"/>
+		
+	<Tenant tenantId="TENANT19" tenantName="TENANT Tenant"/>
+    <TenantDataSource tenantId="TENANT19" entityGroupName="org.ofbiz" 
+        jdbcUri="jdbc:mysql://127.0.0.1/sme_TENANT19?createDatabaseIfNotExist=true&amp;characterEncoding=UTF-8&amp;characterSetResults=UTF-8" jdbcUsername="root" jdbcPassword="welcome"/>
+    <TenantDataSource tenantId="TENANT19" entityGroupName="org.ofbiz.olap" 
+        jdbcUri="jdbc:mysql://127.0.0.1/smeolap_TENANT19?createDatabaseIfNotExist=true&amp;characterEncoding=UTF-8&amp;characterSetResults=UTF-8" jdbcUsername="root" jdbcPassword="welcome"/>
+		
+	<Tenant tenantId="TENANT20" tenantName="TENANT Tenant"/>
+    <TenantDataSource tenantId="TENANT20" entityGroupName="org.ofbiz" 
+        jdbcUri="jdbc:mysql://127.0.0.1/sme_TENANT20?createDatabaseIfNotExist=true&amp;characterEncoding=UTF-8&amp;characterSetResults=UTF-8" jdbcUsername="root" jdbcPassword="welcome"/>
+    <TenantDataSource tenantId="TENANT20" entityGroupName="org.ofbiz.olap" 
+        jdbcUri="jdbc:mysql://127.0.0.1/smeolap_TENANT20?createDatabaseIfNotExist=true&amp;characterEncoding=UTF-8&amp;characterSetResults=UTF-8" jdbcUsername="root" jdbcPassword="welcome"/>
+		
+	<Tenant tenantId="TENANT21" tenantName="TENANT Tenant"/>
+    <TenantDataSource tenantId="TENANT21" entityGroupName="org.ofbiz" 
+        jdbcUri="jdbc:mysql://127.0.0.1/sme_TENANT21?createDatabaseIfNotExist=true&amp;characterEncoding=UTF-8&amp;characterSetResults=UTF-8" jdbcUsername="root" jdbcPassword="welcome"/>
+    <TenantDataSource tenantId="TENANT21" entityGroupName="org.ofbiz.olap" 
+        jdbcUri="jdbc:mysql://127.0.0.1/smeolap_TENANT21?createDatabaseIfNotExist=true&amp;characterEncoding=UTF-8&amp;characterSetResults=UTF-8" jdbcUsername="root" jdbcPassword="welcome"/>
+		
+	<Tenant tenantId="TENANT22" tenantName="TENANT Tenant"/>
+    <TenantDataSource tenantId="TENANT22" entityGroupName="org.ofbiz" 
+        jdbcUri="jdbc:mysql://127.0.0.1/sme_TENANT22?createDatabaseIfNotExist=true&amp;characterEncoding=UTF-8&amp;characterSetResults=UTF-8" jdbcUsername="root" jdbcPassword="welcome"/>
+    <TenantDataSource tenantId="TENANT22" entityGroupName="org.ofbiz.olap" 
+        jdbcUri="jdbc:mysql://127.0.0.1/smeolap_TENANT22?createDatabaseIfNotExist=true&amp;characterEncoding=UTF-8&amp;characterSetResults=UTF-8" jdbcUsername="root" jdbcPassword="welcome"/>
+		
+	<Tenant tenantId="TENANT23" tenantName="TENANT Tenant"/>
+    <TenantDataSource tenantId="TENANT23" entityGroupName="org.ofbiz" 
+        jdbcUri="jdbc:mysql://127.0.0.1/sme_TENANT23?createDatabaseIfNotExist=true&amp;characterEncoding=UTF-8&amp;characterSetResults=UTF-8" jdbcUsername="root" jdbcPassword="welcome"/>
+    <TenantDataSource tenantId="TENANT23" entityGroupName="org.ofbiz.olap" 
+        jdbcUri="jdbc:mysql://127.0.0.1/smeolap_TENANT23?createDatabaseIfNotExist=true&amp;characterEncoding=UTF-8&amp;characterSetResults=UTF-8" jdbcUsername="root" jdbcPassword="welcome"/>
+		
+	<Tenant tenantId="TENANT23" tenantName="TENANT Tenant"/>
+    <TenantDataSource tenantId="TENANT23" entityGroupName="org.ofbiz" 
+        jdbcUri="jdbc:mysql://127.0.0.1/sme_TENANT23?createDatabaseIfNotExist=true&amp;characterEncoding=UTF-8&amp;characterSetResults=UTF-8" jdbcUsername="root" jdbcPassword="welcome"/>
+    <TenantDataSource tenantId="TENANT23" entityGroupName="org.ofbiz.olap" 
+        jdbcUri="jdbc:mysql://127.0.0.1/smeolap_TENANT23?createDatabaseIfNotExist=true&amp;characterEncoding=UTF-8&amp;characterSetResults=UTF-8" jdbcUsername="root" jdbcPassword="welcome"/>
+		
+	<Tenant tenantId="TENANT24" tenantName="TENANT Tenant"/>
+    <TenantDataSource tenantId="TENANT24" entityGroupName="org.ofbiz" 
+        jdbcUri="jdbc:mysql://127.0.0.1/sme_TENANT24?createDatabaseIfNotExist=true&amp;characterEncoding=UTF-8&amp;characterSetResults=UTF-8" jdbcUsername="root" jdbcPassword="welcome"/>
+    <TenantDataSource tenantId="TENANT24" entityGroupName="org.ofbiz.olap" 
+        jdbcUri="jdbc:mysql://127.0.0.1/smeolap_TENANT24?createDatabaseIfNotExist=true&amp;characterEncoding=UTF-8&amp;characterSetResults=UTF-8" jdbcUsername="root" jdbcPassword="welcome"/>
+		
+	<Tenant tenantId="TENANT25" tenantName="TENANT Tenant"/>
+    <TenantDataSource tenantId="TENANT25" entityGroupName="org.ofbiz" 
+        jdbcUri="jdbc:mysql://127.0.0.1/sme_TENANT25?createDatabaseIfNotExist=true&amp;characterEncoding=UTF-8&amp;characterSetResults=UTF-8" jdbcUsername="root" jdbcPassword="welcome"/>
+    <TenantDataSource tenantId="TENANT25" entityGroupName="org.ofbiz.olap" 
+        jdbcUri="jdbc:mysql://127.0.0.1/smeolap_TENANT25?createDatabaseIfNotExist=true&amp;characterEncoding=UTF-8&amp;characterSetResults=UTF-8" jdbcUsername="root" jdbcPassword="welcome"/>
+		-->
+</entity-engine-xml>

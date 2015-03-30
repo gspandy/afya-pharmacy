@@ -1,0 +1,912 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<site-conf xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="http://ofbiz.apache.org/dtds/site-conf.xsd">
+	<!-- The controller elements that are common to all OFBiz components can 
+		be found in the following xml file. A component can override the elements 
+		found in the common-controller.xml file. -->
+	<!-- <include location="component://common/webcommon/WEB-INF/common-controller.xml" 
+		/> -->
+	<include location="component://product/webapp/catalog/WEB-INF/controller.xml" />
+	<description>facilityext Component Site Configuration File
+	</description>
+	<owner></owner>
+	<handler name="service-multi" type="request"
+		class="org.ofbiz.webapp.event.ServiceMultiEventHandler" />
+	<handler name="bsf" type="request"
+		class="org.ofbiz.webapp.event.BsfEventHandler" />
+	<handler name="jasperreportspdf" type="view"
+		class="org.ofbiz.webapp.view.JasperReportsPdfViewHandler" />
+	<handler name="jasperreportsxls" type="view"
+		class="org.ofbiz.webapp.view.JasperReportsXmlViewHandler" />
+
+	<!-- Request Mappings -->
+	<request-map uri="authview">
+		<security https="true" auth="true" />
+		<response name="success" type="view" value="main" />
+	</request-map>
+	<request-map uri="SearchTransformation">
+		<security auth="true" https="true" />
+		<event type="groovy"
+			path="component://facilityext/webapp/facilityext/WEB-INF/actions/transormation/SetSession.groovy" />
+		<response name="success" type="view" value="SearchTransformation" >
+			<redirect-parameter name="facilityId" />
+		</response>
+	</request-map>
+
+	<request-map uri="SearchProductBundle">
+		<description> Request For Product Bundling Creation </description>
+		<security https="true" auth="true" />
+		<response name="success" type="view" value="SearchProductBundle" />
+	</request-map>
+
+	<request-map uri="mergeInv">
+		<security auth="true" https="true" />
+		<response name="success" type="view" value="MergeInvScreen"></response>
+	</request-map>
+	<request-map uri="dummy">
+		<security auth="true" https="true" />
+		<response name="success" type="view" value="dummy"></response>
+	</request-map>
+	<request-map uri="LoadQoh">
+		<event type="jsonjava"
+			path="com.ndz.transformation.ProductTransformationActions" invoke="loadQoh" />
+		<response name="success" type="none" />
+	</request-map>
+	<request-map uri="LoadConversionFactor">
+		<event type="jsonjava"
+			path="com.ndz.transformation.ProductTransformationActions" invoke="loadConversionFactor" />
+		<response name="success" type="none" />
+	</request-map>
+	<request-map uri="merge">
+		<security auth="true" https="true" />
+		<event type="service" invoke="mergeInventory" />
+		<response name="success" type="request-redirect" value="mergeInv"></response>
+	</request-map>
+	<request-map uri="NewTransformation">
+		<security auth="true" https="true" />
+		<response name="success" type="view" value="NewTransformation" />
+	</request-map>
+	<request-map uri="SaveTransformationRequest">
+		<security auth="true" https="true" />
+		<event type="java" invoke="saveTransformationRequest"
+			path="com.ndz.transformation.ProductTransformationActions" />
+		<response name="success" type="view" value="ViewTransformation" >
+			<redirect-parameter name="facilityId" />
+		</response>
+	</request-map>
+	<request-map uri="AddProductTransferLocation">
+		<security auth="true" https="true" />
+		<event type="java" invoke="addTransformationLocation"
+			path="com.ndz.transformation.ProductTransformationActions" />
+		<response name="success" type="request-redirect" value="ViewTransformation">
+			<redirect-parameter name="productTransferId" />
+			<redirect-parameter name="facilityId" />
+		</response>
+	</request-map>
+	<request-map uri="TransformationTxnStatusChange">
+		<security auth="true" https="true" />
+		<event type="java" invoke="TransformationTxnStatusChange"
+			path="com.ndz.transformation.ProductTransformationActions" />
+		<response name="success" type="request-redirect" value="ViewTransformation" >
+			<redirect-parameter name="productTransferId"/>
+			<redirect-parameter name="facilityId" />
+		</response>
+		<response name="error" type="view" value="ViewTransformation" >
+			<redirect-parameter name="facilityId" />
+		</response>
+	</request-map>
+	<request-map uri="SaveTransferTxn">
+		<security auth="true" https="true" />
+		<event type="java" invoke="saveTransformationTxn"
+			path="com.ndz.transformation.ProductTransformationActions"
+			global-transaction="false" />
+		<response name="success" type="request-redirect" value="ViewTransformation" >
+			<redirect-parameter name="productTransferId"/>
+			<redirect-parameter name="facilityId" />
+		</response>
+		<response name="error" type="view" value="ViewTransformation" >
+			<redirect-parameter name="facilityId" />
+		</response>
+	</request-map>
+	<request-map uri="ViewTransformation">
+		<security auth="true" https="true" />
+		<response name="success" type="view" value="ViewTransformation" >
+			<redirect-parameter name="productTransferId"/>
+			<redirect-parameter name="facilityId" />
+		</response>
+	</request-map>
+	<request-map uri="CreateProductBundle">
+		<description> Request For Product Bundling Creation </description>
+		<security https="true" auth="true" />
+		<response name="success" type="view" value="CreateProductBundle" />
+	</request-map>
+
+	<request-map uri="ProductBundle">
+		<description> Request For Product Bundling Creation </description>
+		<security https="true" auth="true" />
+		<event type="groovy" global-transaction="true"
+			path="component://facilityext/webapp/facilityext/WEB-INF/actions/transormation/CreateProductBundle.groovy" />
+		<response name="success" type="view" value="ProductBundle">
+			<redirect-parameter name="facilityId" />
+		</response>
+		<response name="error" type="view" value="CreateProductBundle">
+			<redirect-parameter name="facilityId" />
+		</response>
+	</request-map>
+	<request-map uri="CompleteBundling">
+		<description>Dedicated PDF Generation for Sales Orders
+		</description>
+		<security https="true" auth="true" />
+		<event type="groovy" global-transaction="true"
+			path="component://facilityext/webapp/facilityext/WEB-INF/actions/transormation/CompleteBundling.groovy" />
+		<response name="success" type="view" value="CompleteBundling">
+			<redirect-parameter name="facilityId" />
+		</response>
+		<response name="error" type="view" value="CompleteBundling">
+			<redirect-parameter name="facilityId" />
+		</response>
+	</request-map>
+	<!-- Stock Reservation Requests -->
+	<request-map uri="StockReservations">
+		<description>Stock Reservations implementation</description>
+		<security auth="true" https="true" />
+		<response name="success" type="view" value="StockReservationsScreen">
+			<redirect-parameter name="facilityId" />
+		</response>
+	</request-map>
+
+	<request-map uri="ViewInventoryReservation">
+		<security https="true" auth="true" />
+		<response name="success" type="view" value="ViewInventoryReservation" />
+	</request-map>
+
+	<request-map uri="UnReserveInventoryItem">
+		<security https="true" auth="true" />
+		<event type="groovy"
+			path="component://facilityext/webapp/facilityext/WEB-INF/actions/transormation/UnReserveInventory.groovy" />
+		<response name="success" type="request-redirect" value="ViewInventoryReservation">
+			<redirect-parameter name="inventoryItemId" />
+			<redirect-parameter name="facilityId" />
+		</response>
+	</request-map>
+	<request-map uri="stockReserve">
+		<security https="true" auth="true" />
+		<event type="groovy"
+			path="component://facilityext/webapp/facilityext/WEB-INF/actions/transormation/StockReserve.groovy" />
+		<response name="success" type="request-redirect" value="ViewInventoryReservation">
+			<redirect-parameter name="inventoryItemId" />
+			<redirect-parameter name="facilityId" />
+		</response>
+	</request-map>
+
+	<request-map uri="FindOrderToReserve">
+		<security https="true" auth="true" />
+		<response name="success" type="view" value="FindOrderToReserve" />
+	</request-map>
+	<request-map uri="ViewSalesOrderReservation">
+		<security https="true" auth="true" />
+		<response name="success" type="view" value="ViewSalesOrderReservation">
+			<redirect-parameter name="facilityId" />
+			<redirect-parameter name="orderId" />
+		</response>
+	</request-map>
+	<request-map uri="updateOrderItemInventory">
+		<security https="true" auth="true" />
+		<event type="groovy"
+			path="component://facilityext/webapp/facilityext/WEB-INF/actions/transormation/UnReserveInventoryItem.groovy" />
+		<response name="success" type="request-redirect" value="viewOrderReservation">
+			<redirect-parameter name="orderId" />
+			<redirect-parameter name="facilityId" />
+		</response>
+	</request-map>
+	<request-map uri="viewOrderReservation">
+		<security https="true" auth="true" />
+		<response name="success" type="view" value="viewOrderReservation">
+			<redirect-parameter name="facilityId" />
+			<redirect-parameter name="orderId" />
+		</response>
+	</request-map>
+	<request-map uri="findReserveOrders">
+		<security https="true" auth="true" />
+		<response name="success" type="view" value="FindReserveOrders" />
+	</request-map>
+	<request-map uri="reserveOrderEntry">
+		<security https="true" auth="true" />
+		<response name="success" type="view" value="ReserveOrderEntry" />
+	</request-map>
+	<request-map uri="createResvOrderHeader">
+		<security https="true" auth="true" />
+		<event type="service" invoke="createResvOrderHeader"></event>
+		<response name="success" type="request-redirect" value="orderItemEntry">
+			<redirect-parameter name="orderId"></redirect-parameter>
+			<redirect-parameter name="facilityId"></redirect-parameter>
+		</response>
+	</request-map>
+	<request-map uri="orderItemEntry">
+		<security https="true" auth="true" />
+		<event type="groovy"
+			path="component://facilityext/webapp/facilityext/WEB-INF/actions/transormation/SetSession.groovy" />
+		<response name="success" type="view" value="OrderItemEntry">
+			<redirect-parameter name="orderId"></redirect-parameter>
+			<redirect-parameter name="facilityId"></redirect-parameter>
+		</response>
+	</request-map>
+
+	<request-map uri="SearchSOForSwapTar">
+		<security https="true" auth="true" />
+		<response name="success" type="view" value="SearchSOForSwap">
+
+		</response>
+	</request-map>
+	<request-map uri="searchSOForSwap">
+		<security https="true" auth="true" />
+		<response name="success" type="view" value="SearchSOForSwap">
+			<redirect-parameter name="reserveOrderId" from="orderId" />
+			<redirect-parameter name="facilityId" />
+		</response>
+	</request-map>
+	<request-map uri="checkForRelease">
+		<security https="true" auth="true" />
+		<response name="success" type="view" value="CheckForRelease">
+			<redirect-parameter name="facilityId" />
+		</response>
+	</request-map>
+
+
+	<request-map uri="addOrderItem">
+		<security https="true" auth="true" />
+		<event type="service" invoke="createReserveOrderItem"></event>
+		<response name="success" type="request-redirect" value="orderItemEntry">
+			<redirect-parameter name="orderId" />
+			<redirect-parameter name="facilityId" />
+		</response>
+	</request-map>
+	<request-map uri="reserveInventoryForOrder">
+		<security https="true" auth="true" />
+		<event type="groovy"
+			path="component://facilityext/webapp/facilityext/WEB-INF/actions/transormation/RIForReserveOrder.groovy" />
+		<response name="success" type="request-redirect" value="inventoriesReserved">
+			<redirect-parameter name="orderId" from="orderId"></redirect-parameter>
+			<redirect-parameter name="facilityId" from="facilityId"></redirect-parameter>
+		</response>
+	</request-map>
+	<request-map uri="inventoriesReserved">
+		<security https="true" auth="true" />
+		<response name="success" type="view" value="InventoriesReserved" />
+	</request-map>
+	<request-map uri="releaseInventories">
+		<security https="true" auth="true" />
+		<event type="service-multi" invoke="releaseInventories" />
+		<response name="success" type="request-redirect" value="viewOrderReservationRO">
+			<redirect-parameter name="orderId" />
+			<redirect-parameter name="facilityId" />
+		</response>
+	</request-map>
+	<request-map uri="viewOrderReservationRO">
+		<security https="true" auth="true" />
+		<response name="success" type="view" value="ReleasedScreen">
+			<redirect-parameter name="orderId" />
+			<redirect-parameter name="facilityId" />
+		</response>
+	</request-map>
+	<request-map uri="updateOrderItem">
+		<security https="true" auth="true" />
+		<event type="service-multi" invoke="updateReserveOrderItem"></event>
+		<!-- <event type="groovy" -->
+		<!-- path="component://facilityext/webapp/facilityext/WEB-INF/actions/transormation/SetSession.groovy" 
+			/> -->
+		<response name="success" type="request-redirect" value="orderItemEntry">
+			<redirect-parameter name="facilityId"></redirect-parameter>
+			<redirect-parameter name="orderId"></redirect-parameter>
+		</response>
+	</request-map>
+
+	<request-map uri="removeOrderItem">
+		<security https="true" auth="true" />
+		<event type="service" invoke="removeReserveOrderItem"></event>
+		<!-- <event type="groovy" -->
+		<!-- path="component://facilityext/webapp/facilityext/WEB-INF/actions/transormation/SetSession.groovy" 
+			/> -->
+		<response name="success" type="request-redirect" value="orderItemEntry">
+			<redirect-parameter name="orderId"></redirect-parameter>
+		</response>
+	</request-map>
+	<request-map uri="NewBundlingTxn1">
+		<security https="true" auth="true" />
+		<event type="groovy"
+			path="component://facilityext/webapp/facilityext/WEB-INF/actions/transormation/SetSession.groovy" />
+		<response name="success" type="view" value="NewBundlingTxn1" />
+	</request-map>
+	<request-map uri="createProductBundleTxn">
+		<security https="true" auth="true" />
+		<event type="groovy"
+			invoke="component://facilityext/webapp/facilityext/WEB-INF/actions/transormation/NewBundlingTxn2.groovy" />
+
+		<response name="success" type="request-redirect" value="NewBundlingTxn2">
+			<redirect-parameter name="productBundleTxnId" />
+			<redirect-parameter name="facilityId" />
+		</response>
+		<response name="error" type="view" value="NewBundlingTxn1">
+			<redirect-parameter name="productBundleTxnId" />
+			<redirect-parameter name="facilityId" />
+		</response>
+	</request-map>
+	<request-map uri="NewBundlingTxn2">
+		<security https="true" auth="true" />
+		<event type="groovy"
+			path="component://facilityext/webapp/facilityext/WEB-INF/actions/transormation/SetSession.groovy" />
+		<response name="success" type="view" value="NewBundlingTxn2">
+			<redirect-parameter name="facilityId" />
+		</response>
+	</request-map>
+	<request-map uri="createProductBundleTxnDetail">
+		<security https="true" auth="true" />
+		<event type="groovy"
+			invoke="component://facilityext/webapp/facilityext/WEB-INF/actions/transormation/CreateProductBundleTxnDetail.groovy" />
+		<response name="success" type="request-redirect" value="NewBundlingTxn2">
+			<redirect-parameter name="productBundleTxnId" />
+			<redirect-parameter name="facilityId" />
+		</response>
+	</request-map>
+	<request-map uri="LookUpLocation">
+		<description> Lookup Screen for Party Locations </description>
+		<security auth="true" https="true" />
+		<response name="success" type="view" value="LookUpLocation" />
+	</request-map>
+	<request-map uri="SaveBundlingTxn">
+		<security auth="true" https="true" />
+		<event type="java" invoke="saveBundlingTxn"
+			path="com.ndz.transformation.ProductTransformationActions" />
+		<response name="success" type="view" value="NewBundlingTxn1">
+			<redirect-parameter name="facilityId" />
+		</response>
+		<response name="error" type="view" value="NewBundlingTxn1">
+			<redirect-parameter name="facilityId" />
+		</response>
+
+	</request-map>
+	<request-map uri="NewBundlingTxn3">
+		<security auth="true" https="true" />
+		<response name="success" type="view" value="NewBundlingTxn3" />
+	</request-map>
+	<request-map uri="LookupInventoryItems">
+		<security https="true" auth="true" />
+		<response name="success" type="view" value="LookupInventoryItems" />
+	</request-map>
+	<request-map uri="ReserveSalesOrder">
+		<security https="true" auth="true" />
+		<event type="groovy"
+			path="component://facilityext/webapp/facilityext/WEB-INF/actions/transormation/ReserveSalesOrder.groovy" />
+		<response name="success" type="request-redirect" value="ViewSalesOrderReservation">
+			<redirect-parameter name="orderId" />
+			<redirect-parameter name="facilityId" />
+		</response>
+		<response name="error" type="request-redirect" value="ViewSalesOrderReservation" />
+	</request-map>
+	<request-map uri="TransferInventoryItemNew">
+		<security https="true" auth="true" />
+		<response name="success" type="view" value="TransferInventoryItemNew" />
+	</request-map>
+	<request-map uri="InventoryXfer">
+		<description> Request For Product Bundling Creation </description>
+		<security https="true" auth="true" />
+		<event type="service" path="" invoke="createInventoryTransfer" />
+		<response name="success" type="request-redirect" value="TransferInventoryItemNew">
+			<redirect-parameter name="facilityId" />
+		</response>
+	</request-map>
+	<request-map uri="CreatePhysicalVariances">
+		<security auth="true" https="true" />
+		<event type="service-multi" path=""
+			invoke="createPhysicalInventoryAndVariance" />
+		<response name="success" type="view" value="FindPhysicalInvNew"/>
+		 <response name="error" type="view" value="FindPhysicalInvNew"/>
+	</request-map>
+	<request-map uri="FindPhysicalInvNew">
+		<security auth="true" https="true" />
+		<response name="success" type="view" value="FindPhysicalInvNew"/>
+	</request-map>
+	<!-- Stock Reservation Requests -->
+	<!-- Reports -->
+	<request-map uri="GenerateInvItemSummaryPDF">
+		<security https="true" auth="true" />
+		<event type="groovy" path="component://facilityext/webapp/facilityext/WEB-INF/actions/ShipmentReports/PhysicalInventorySummaryReport.groovy" />
+		<response name="success" type="view" value="GenerateInvItemSummaryPDF" />
+	</request-map>
+	<request-map uri="GenerateInvItemByExpDatePDF">
+		<security https="true" auth="true" />
+		<event type="bsf" path="/reports/" invoke="JasperReportPrepare.groovy" />
+		<response name="success" type="view" value="GenerateInvItemByExpDatePDF" />
+	</request-map>
+	<request-map uri="PurchaseInboundPDF" >
+		<security https="true" auth="true" />
+		<event type="groovy" path="component://facilityext/webapp/facilityext/WEB-INF/actions/ShipmentReports/PurchaseInBound.groovy"/>
+		<response name="success" type="view" value="PurchaseInboundPDF"/>
+	</request-map>
+	<request-map uri="SalesOutboundPDF">
+		<security https="true" auth="true" />
+		<event type="groovy" path="component://facilityext/webapp/facilityext/WEB-INF/actions/ShipmentReports/PurchaseInBound.groovy"/>
+		<response name="success" type="view" value="SalesOutboundPDF" />
+	</request-map>
+	<request-map uri="ShipmentArrivalsPDF">
+		<security https="true" auth="true" />
+		<event type="groovy" path="component://facilityext/webapp/facilityext/WEB-INF/actions/ShipmentReports/ShipmentArrivals.groovy"/>
+		<response name="success" type="view" value="ShipmentArrivalsPDF" />
+	</request-map>
+	<request-map uri="ShipmentReports">
+		<description>Shipment Reports implementation</description>
+		<security auth="true" https="true" />
+		<response name="success" type="view" value="ShipmentReports" />
+	</request-map>
+	<request-map uri="LookupProductName">
+		<description> Lookup Screen for Product Name </description>
+		<security auth="true" https="true" />
+		<event type="groovy"
+			path="component://facilityext/webapp/facilityext/WEB-INF/actions/transormation/ClearSession.groovy" />
+		<response name="success" type="view" value="LookupProductName" />
+	</request-map>
+	<request-map uri="LookupProductionRun">
+		<security auth="true" https="true"/>
+		<response name="success" type="view" value="LookupProductionRun"/>
+	</request-map>
+	<request-map uri="LookupRoutingTask">
+		<security https="true" auth="true"/>
+		<response name="success" type="view" value="LookupRoutingTask"/>
+	</request-map>
+	<request-map uri="LookupFixedAsset">
+		<security auth="true" https="true"/>
+		<response name="success" type="view" value="LookupFixedAsset"/>
+	</request-map>
+	<request-map uri="LookupProductByFacility">
+		<description> Lookup Screen for Product Name By Facility </description>
+		<security auth="true" https="true" />
+		<response name="success" type="view" value="LookupProductByFacility" />
+	</request-map>
+	
+	<request-map uri="LookupProductByFacilityFrom">
+		<description> Lookup Screen for Product Name By Facility </description>
+		<security auth="true" https="true" />
+		<response name="success" type="view" value="LookupProductByFacilityFrom" />
+	</request-map>
+	
+	<request-map uri="GeneratePDF1">
+		<description> Generate PDF Using Jasper Report </description>
+		<security auth="true" https="true" />
+		<response name="success" type="view" value="GeneratePDF" />
+	</request-map>
+	<!-- Inventory Reports -->
+	<request-map uri="InventorySummaryReport">
+		<description>Search screen for Product Inventory Summary  </description>
+		<security auth="true" https="true" />
+		<response name="success" type="view" value="InventorySummaryReport" />
+	</request-map>
+	<request-map uri="InventoryByExpireDateReport">
+		<description>Search screen for Inventory By Expire Date Report </description>
+		<security auth="true" https="true" />
+		<response name="success" type="view" value="InventoryByExpireDateReport" />
+	</request-map>
+	<request-map uri="PhysicalInventorySummaryReport.xls">
+		<description>Search screen for Physical Inventory Summary Report </description>
+		<security auth="true" https="true" />
+		<event type="java" path="com.nzion.redirect.UtilRedirect" invoke="checkExprotType" />
+		<response name="pdf" type="request" value="GenerateInvItemSummaryPDF" />
+		<response name="xls" type="view" value="PhysicalInventorySummaryExcel" />
+		<response name="screen" type="view" value="PhysicalInventorySummaryReport" />
+	</request-map>
+	<request-map uri="ShipmentArrivalsReport.xls">
+		<description>Search screen for Shipment Arrivals Report </description>
+		<security auth="true" https="true" />
+		<event type="java" path="com.nzion.redirect.UtilRedirect"
+			invoke="checkExprotType" />
+		<response name="pdf" type="request" value="ShipmentArrivalsPDF" />
+		<response name="xls" type="view" value="ShipmentArrivalsExcel" />
+		<response name="screen" type="view" value="ShipmentArrivalsReport"/>
+	</request-map>
+	<request-map uri="ProductInventoryPositionReports">
+	    <security https="true" auth="true"/>
+	    <response name="success" type="view" value="ProductInventoryPositionReports"/>
+    </request-map>
+    <request-map uri="ProductInventoryPositionReportDetails.xls">
+	    <security https="true" auth="true"/>
+	    <event type="java" path="com.nzion.redirect.UtilRedirect"
+			invoke="checkExprotType" />
+		<response name="pdf" type="request" value="ProductInventoryPositionReportPDF" />
+		<response name="xls" type="view" value="ProductInventoryPositionReportsExcelSummary" />
+		<response name="screen" type="view" value="ProductInventoryPositionReport"/>
+    </request-map>
+	<request-map uri="ProductInventoryPositionReportPDF">
+	    <security https="true" auth="true"/>
+	    <event type="groovy" path="component://order/webapp/ordermgr/reports/ProductInventoryPositionReport.groovy" />
+	    <response name="success" type="view" value="ProductInventoryPositionReportPDF"/>
+    </request-map>
+	
+	<request-map uri="Test">
+		<description>Search screen for Shipment Arrivals Report </description>
+		<security auth="true" https="true" />
+		<response name="success" type="view" value="Test" />
+	</request-map>
+
+	<request-map uri="testSave">
+		<security auth="true" https="true" />
+		<event type="groovy"
+			path="component://facilityext/webapp/facilityext/WEB-INF/actions/TestSave.groovy" />
+		<response name="success" type="view" value="Test" />
+	</request-map>
+	<request-map uri="orderview">
+		<security https="true" auth="true" />
+		<response name="success" type="view" value="orderview" />
+	</request-map>
+	<request-map uri="LookupCustomerName">
+		<security auth="true" https="true" />
+		<response name="success" type="view" value="LookupCustomerName" />
+	</request-map>
+	<request-map uri="LookupSupplierName">
+		<security auth="true" https="true" />
+		<response name="success" type="view" value="LookupSupplierName" />
+	</request-map>
+	<request-map uri="manufecIssuance">
+		<security auth="true" https="true" />
+		<response name="success" type="view" value="manufecIssuance" />
+		<response name="error" type="view" value="manufecIssuance" />
+	</request-map>
+	<request-map uri="issuanceReport">
+		<security auth="true" https="true" />
+		<response name="success" type="view" value="ManufecIssuanceReport" />
+		<response name="error" type="view" value="manufecIssuance" />
+	</request-map>
+	<request-map uri="lookupPurchaseOrderHeaderAndShipInfo">
+		<security https="true" auth="true" />
+		<response name="success" type="view"
+			value="LookupPurchaseOrderHeaderAndShipInfo" />
+	</request-map>
+	<request-map uri="lookupSalesOrderHeaderAndShipInfo">
+		<security https="true" auth="true" />
+		<response name="success" type="view"
+			value="LookupSalesOrderHeaderAndShipInfo" />
+	</request-map>
+	<request-map uri="PurchaseInboundReport.xls">
+		<security auth="true" https="true" />
+		<event type="java" path="com.nzion.redirect.UtilRedirect" invoke="checkExprotType" />
+		<response name="pdf" type="request" value="PurchaseInboundPDF" />
+		<response name="xls" type="view" value="PurchaseInboundExcel" />
+		<response name="screen" type="view" value="PurchaseInboundReport" />
+	</request-map>
+	
+	<request-map uri="SalesOutboundReport.xls">
+		<security auth="true" https="true" />
+		<event type="java" path="com.nzion.redirect.UtilRedirect"
+			invoke="checkExprotType" />
+		<response name="pdf" type="request" value="SalesOutboundPDF" />
+		<response name="xls" type="view" value="SalesOutboundExcel" />
+		<response name="screen" type="view" value="SalesOutboundReport"></response>
+	</request-map>
+	<request-map uri="PhysicalInventorySummary.xls">
+		<security auth="true" https="true" />
+		<event type="java" path="com.nzion.redirect.UtilRedirect"
+			invoke="checkExprotType" />
+		<response name="pdf" type="request" value="GenerateInvItemSummaryPDF" />
+		<response name="xls" type="view" value="PhysicalInventorySummaryExcel">
+		</response>
+	</request-map>
+	<request-map uri="ManufecIssuanceSummaryReport.xls">
+		<security auth="true" https="true" />
+		<event type="java" path="com.nzion.redirect.UtilRedirect"
+			invoke="checkExprotType" />
+		<response name="pdf" type="request" value="issuanceReport" />
+		<response name="xls" type="view" value="ManufecIssuanceExcelSummary">
+		</response>
+	</request-map>
+
+	<request-map uri="ABCAnalysis">
+		<security auth="true" https="true" />
+		<response name="success" type="view" value="ABCAnalysis" />
+		<response name="error" type="view" value="ABCAnalysis" />
+	</request-map>
+
+	<request-map uri="ABCAnalysisReport.xls">
+		<security auth="true" https="true" />
+		<event type="java" path="com.nzion.redirect.UtilRedirect"
+			invoke="checkExprotType" />
+		<response name="pdf" type="view" value="ABCAnalysisReport" />
+		<response name="xls" type="view" value="ABCAnalysisExcelSummary">
+		</response>
+	</request-map>
+	<request-map uri="LookupFinishGoodProductName">
+		<description> Lookup Screen for Product Name </description>
+		<security auth="true" https="true" />
+		<response name="success" type="view" value="LookupFinishGoodProductName" />
+	</request-map>
+	<request-map uri="LookupFacilityLocation">
+		<security auth="true" https="true"/>
+		<response name="success" type="view" value="LookupFacilityLocation"/>
+	</request-map>
+	<request-map uri="openRequest">
+		<security auth="true" https="true" />
+		<response name="success" type="view" value="openRequest" />
+		<response name="error" type="view" value="openRequest" />
+	</request-map>
+	<request-map uri="OpenRequest.pdf">
+		<security https="true" auth="true"/>
+		<response name="success" type="view" value="OpenRequest.pdf"/>
+	</request-map>
+	<request-map uri="StoreIssuanceNote">
+		<security auth="true" https="true" />
+		<response name="success" type="view" value="StoreIssuanceNote" />
+		<response name="error" type="view" value="StoreIssuanceNote" />
+	</request-map>
+	<request-map uri="StoresIssuanceReport.pdf">
+		<security auth="true" https="true" />
+		<event type="java" path="com.nzion.redirect.UtilRedirect"
+			invoke="checkExprotType" />
+		<response name="pdf" type="view" value="StoreIssuanceNoteReport" />
+	</request-map>
+	<request-map uri="StockVariance">
+		<security auth="true" https="true" />
+		<response name="success" type="view" value="StockVariance" />
+		<response name="error" type="view" value="StockVariance" />
+	</request-map>
+	<request-map uri="StockVarianceReport">
+		<security auth="true" https="true" />
+		<event type="java" path="com.nzion.redirect.UtilRedirect"
+			invoke="checkExprotType" />
+		<response name="pdf" type="view" value="StockVarianceReport" />
+	</request-map>
+	<request-map uri="Returnable">
+		<security auth="true" https="true" />
+		<response name="success" type="view" value="Returnable" />
+		<response name="error" type="view" value="Returnable" />
+	</request-map>
+	<request-map uri="ReturnableReport.pdf">
+		<security auth="true" https="true" />
+		<event type="java" path="com.nzion.redirect.UtilRedirect"
+			invoke="checkExprotType" />
+		<response name="pdf" type="view" value="ReturnableReport" />
+	</request-map>
+	<request-map uri="QualityMaterialsReceived">
+		<security auth="true" https="true" />
+		<response name="success" type="view" value="QualityMaterialsReceived" />
+		<response name="error" type="view" value="QualityMaterialsReceived" />
+	</request-map>
+	<request-map uri="QualityMaterialsReceivedReport.pdf">
+		<security auth="true" https="true" />
+		<event type="java" path="com.nzion.redirect.UtilRedirect"
+			invoke="checkExprotType" />
+		<response name="pdf" type="view" value="QualityMaterialsReceivedReport" />
+	</request-map>
+	<request-map uri="StoppageAnalysis">
+		<security auth="true" https="true" />
+		<response name="success" type="view" value="StoppageAnalysis" />
+		<response name="error" type="view" value="StoresMaterialRecStoppageAnalysiseived" />
+	</request-map>
+	<request-map uri="StoppageAnalysisReport">
+		<security auth="true" https="true" />
+		<event type="java" path="com.nzion.redirect.UtilRedirect"
+			invoke="checkExprotType" />
+		<response name="pdf" type="view" value="StoppageAnalysisReport" />
+	</request-map>
+	
+	<request-map uri="StoresMaterialReceived">
+		<security auth="true" https="true" />
+		<response name="success" type="view" value="StoresMaterialReceived" />
+		<response name="error" type="view" value="StoresMaterialReceived" />
+	</request-map>
+	<request-map uri="StoresMaterialReceivedReport">
+		<security auth="true" https="true" />
+		<event type="java" path="com.nzion.redirect.UtilRedirect"
+			invoke="checkExprotType" />
+		<response name="pdf" type="view" value="StoresMaterialReceivedReport" />
+	</request-map>
+
+	<!--End Of Inventory Reports -->
+	<request-map uri="LookupProduct">
+		<security auth="true" https="true" />
+		<response name="success" type="view" value="LookupProduct" />
+	</request-map>
+	<request-map uri="LookupProductCategory">
+		<security auth="true" https="true" />
+		<response name="success" type="view" value="LookupProductCategory" />
+	</request-map>
+	<request-map uri="LookupDepartmentName">
+		<security https="true" auth="true"/>
+		<response name="success" type="view" value="LookupDepartmentName"/>
+	</request-map>
+
+	<!-- Reports -->
+
+	<!-- View Mappings -->
+
+	<view-map name="orderview" type="screen"
+		page="component://order/widget/ordermgr/OrderViewScreens.xml#OrderHeaderView" />
+	<view-map name="SearchTransformation" type="screen"
+		page="component://facilityext/widget/FacilityExtScreens.xml#SearchTransformation" />
+	<view-map name="SearchProductBundle" type="screen"
+		page="component://facilityext/widget/FacilityExtScreens.xml#SearchProductBundle" />
+	<view-map name="MergeInvScreen" type="screen"
+		page="component://facilityext/widget/FacilityExtScreens.xml#MergeInvScreen" />
+	<view-map name="NewTransformation" type="screen"
+		page="component://facilityext/widget/FacilityExtScreens.xml#NewTransformation" />
+	<view-map name="ViewTransformation" type="screen"
+		page="component://facilityext/widget/FacilityExtScreens.xml#ViewTransformation" />
+	<view-map name="dummy" type="screen"
+		page="component://facilityext/widget/FacilityExtScreens.xml#ViewTransformation" />
+	<view-map name="CreateProductBundle" type="screen"
+		page="component://facilityext/widget/FacilityExtScreens.xml#CreateProductBundle" />
+	<view-map name="ProductBundle" type="screen"
+		page="component://facilityext/widget/FacilityExtScreens.xml#ProductBundle" />
+	<view-map name="CompleteBundling" type="screen"
+		page="component://facilityext/widget/FacilityExtScreens.xml#ProductBundle" />
+	<!-- Stock Reservation View Maps -->
+	<view-map name="StockReservationsScreen" type="screen"
+		page="component://facilityext/widget/FacilityExtScreens.xml#StockReservationsScreen" />
+	<view-map name="ViewInventoryReservation" type="screen"
+		page="component://facilityext/widget/FacilityExtScreens.xml#ViewInventoryReservation" />
+	<view-map name="FindOrderToReserve" type="screen"
+		page="component://facilityext/widget/FacilityExtScreens.xml#FindOrderToReserveScreen" />
+	<view-map name="ViewSalesOrderReservation" type="screen"
+		page="component://facilityext/widget/FacilityExtScreens.xml#ViewSalesOrderReservation" />
+	<view-map name="viewOrderReservation" type="screen"
+		page="component://facilityext/widget/FacilityExtScreens.xml#ViewOrderReservationScreen" />
+	<view-map name="FindReserveOrders" type="screen"
+		page="component://facilityext/widget/FacilityExtScreens.xml#FindReserveOrders" />
+	<view-map name="ReserveOrderEntry" type="screen"
+		page="component://facilityext/widget/FacilityExtScreens.xml#ReserveOrderEntryScreen">
+	</view-map>
+	<view-map name="OrderItemEntry" type="screen"
+		page="component://facilityext/widget/FacilityExtScreens.xml#OrderItemEntry" />
+	<view-map name="SearchSOForSwap" type="screen"
+		page="component://facilityext/widget/FacilityExtScreens.xml#SearchSOForSwap" />
+	<view-map name="CheckForRelease" type="screen"
+		page="component://facilityext/widget/FacilityExtScreens.xml#CheckForRelease" />
+	<view-map name="InventoriesReserved" type="screen"
+		page="component://facilityext/widget/FacilityExtScreens.xml#InventoriesReserved"></view-map>
+	<view-map name="ReleasedScreen" type="screen"
+		page="component://facilityext/widget/FacilityExtScreens.xml#ReleasedScreen"></view-map>
+	<view-map name="NewBundlingTxn1" type="screen"
+		page="component://facilityext/widget/FacilityExtScreens.xml#NewBundlingTxn1" />
+	<view-map name="NewBundlingTxn2" type="screen"
+		page="component://facilityext/widget/FacilityExtScreens.xml#NewBundlingTxn2" />
+	<view-map name="LookUpLocation" type="screen"
+		page="component://facilityext/widget/FacilityExtScreens.xml#LookupLocation"></view-map>
+	<view-map name="NewBundlingTxn3" type="screen"
+		page="component://facilityext/widget/FacilityExtScreens.xml#NewBundlingTxn3" />
+	<view-map name="LookupInventoryItems" type="screen"
+		page="component://facilityext/widget/FacilityExtScreens.xml#LookupInventoryItems"></view-map>
+	<view-map name="TransferInventoryItemNew" type="screen"
+		page="component://facilityext/widget/FacilityExtScreens.xml#TransferInventoryItem" />
+	<view-map name="FindPhysicalInvNew" type="screen"
+		page="component://facilityext/widget/FacilityExtScreens.xml#FindPhysicalInvNew" />
+	<view-map name="Test" type="screen"
+		page="component://facilityext/widget/FacilityExtScreens.xml#Test" />
+
+
+	<!-- Stock Reservation View Maps -->
+	<!-- Reports -->
+	<view-map name="GenerateInvItemSummaryPDF" type="jasperreportspdf"
+		page="/reports/GenerateInvItemSummaryPDF.xml" content-type="application/pdf"
+		encoding="none" />
+	<view-map name="GenerateInvItemByExpDatePDF" type="jasperreportspdf"
+		page="/reports/GenerateInvItemByExpDatePDF.xml" content-type="application/pdf"
+		encoding="none" />
+	<view-map name="PurchaseInboundPDF" type="jasperreportspdf"
+		page="/reports/GenerateOrderPDF.xml" content-type="application/pdf"
+		encoding="none" />
+	<view-map name="ProductInventoryPositionReportPDF" type="jasperreportspdf"
+		page="/reports/ProductInventoryPositionReport.xml" content-type="application/pdf"
+		encoding="none" />	
+	<view-map name="SalesOutboundPDF" type="jasperreportspdf"
+		page="/reports/SalesOutbound.xml" content-type="application/pdf"
+		encoding="none" />
+	<view-map name="ShipmentArrivalsPDF" type="jasperreportspdf"
+		page="/reports/ShipmentArrivals.xml" content-type="application/pdf"
+		encoding="none" />
+	<view-map name="ShipmentReports" type="screen"
+		page="component://facilityext/widget/FacilityExtScreens.xml#ShipmentReports" />
+	<view-map name="InventorySummaryReport" type="screen"
+		page="component://facilityext/widget/FacilityExtScreens.xml#InventorySummary" />
+	<view-map name="InventoryByExpireDateReport" type="screen"
+		page="component://facilityext/widget/FacilityExtScreens.xml#InventoryByExpireDateReport" />
+	<view-map name="PhysicalInventorySummaryReport" type="screen"
+		page="component://facilityext/widget/FacilityExtScreens.xml#PhysicalInventorySummaryReport" />
+	<view-map name="PurchaseInboundReport" type="screen"
+		page="component://facilityext/widget/FacilityExtScreens.xml#PurchaseInboundReport"  />
+	<view-map name="SalesOutboundReport" type="screen"
+		page="component://facilityext/widget/FacilityExtScreens.xml#SalesOutboundReport" />
+	<view-map name="ShipmentArrivalsReport" type="screen"
+		page="component://facilityext/widget/FacilityExtScreens.xml#ShipmentArrivalsReport" />
+	<!-- Reports -->
+	<view-map name="LookupDepartmentName" type="screen"
+		page="component://product/widget/facility/LookupScreens.xml#LookupDepartmentName"/>
+	<view-map name="LookupProduct" type="screen"
+		page="component://product/widget/catalog/LookupScreens.xml#LookupProduct" />
+	<view-map name="LookupRoutingTask"  type="screen"
+		page="component://manufacturing/widget/manufacturing/LookupScreens.xml#LookupRoutingTask" />
+	<view-map name="LookupFixedAsset" type="screen"
+		page="component://accounting/widget/LookupScreens.xml#LookupFixedAsset" />
+	<view-map name="LookupProductionRun" type="screen"
+		page="component://manufacturing/widget/manufacturing/LookupScreens.xml#LookupProductionRun" />
+	<view-map name="LookupProductCategory" type="screen"
+		page="component://product/widget/catalog/LookupScreens.xml#LookupProductCategory" />
+	<view-map name="LookupProductName" type="screen"
+		page="component://product/widget/catalog/LookupScreens.xml#LookupProduct"></view-map>
+	<view-map name="LookupProductByFacility" type="screen"
+		page="component://product/widget/catalog/LookupScreens.xml#LookupProductByFacility"></view-map>
+	<view-map name="LookupProductByFacilityFrom" type="screen"
+		page="component://product/widget/catalog/LookupScreens.xml#LookupProductByFacilityFrom"></view-map>
+	<view-map name="GeneratePDF" type="screen"
+		page="component://facilityext/widget/FacilityExtScreens.xml#GeneratePDF"></view-map>
+	<view-map name="LookupCustomerName" type="screen"
+		page="component://party/widget/partymgr/LookupScreens.xml#LookupCustomerName" />
+	<view-map name="LookupSupplierName" type="screen" 
+		page="component://party/widget/partymgr/LookupScreens.xml#LookupSupplierName" />
+	<view-map name="manufecIssuance" type="screen"
+		page="component://facilityext/widget/FacilityExtScreens.xml#ManufecIssuance" />
+	<view-map name="ABCAnalysis" type="screen"
+		page="component://facilityext/widget/FacilityExtScreens.xml#ABCAnalysis" />
+	<view-map name="ManufecIssuanceReport" type="screenfop"
+		page="component://facilityext/widget/FacilityExtScreens.xml#ManufecIssuanceReport"
+		content-type="application/pdf" encoding="none" />
+	<view-map name="ABCAnalysisReport" type="screenfop"
+		page="component://facilityext/widget/FacilityExtScreens.xml#ABCAnalysisReport"
+		content-type="application/pdf" encoding="none" />
+	<view-map name="OpenRequest.pdf" type="screenfop"
+		page="component://facilityext/widget/FacilityExtScreens.xml#OpenRequest.fo"
+		content-type="application/pdf" encoding="none"/>
+	<view-map name="StoreIssuanceNoteReport" type="screenfop"
+		page="component://facilityext/widget/FacilityExtScreens.xml#StoreIssuanceNoteReport"
+		content-type="application/pdf" encoding="none" />
+	<view-map name="StockVarianceReport" type="screenfop"
+		page="component://facilityext/widget/FacilityExtScreens.xml#StockVarianceReport"
+		content-type="application/pdf" encoding="none" />
+	<view-map name="ReturnableReport" type="screenfop"
+		page="component://facilityext/widget/FacilityExtScreens.xml#ReturnableReport"
+		content-type="application/pdf" encoding="none" />
+	<view-map name="QualityMaterialsReceivedReport" type="screenfop"
+		page="component://facilityext/widget/FacilityExtScreens.xml#QualityMaterialsReceivedReport"
+		content-type="application/pdf" encoding="none" />
+	<view-map name="StoresMaterialReceivedReport" type="screenfop"
+		page="component://facilityext/widget/FacilityExtScreens.xml#StoresMaterialReceivedReport"
+		content-type="application/pdf" encoding="none" />
+	<view-map name="StoppageAnalysisReport" type="screenfop"
+		page="component://facilityext/widget/FacilityExtScreens.xml#StoppageAnalysisReport"
+		content-type="application/pdf" encoding="none" />
+
+	<view-map name="ABCAnalysisExcelSummary" type="excel"
+		page="component://facilityext/widget/FacilityExtScreens.xml#ABCAnalysisXlReport"
+		content-type="application/ms-excel" encoding="none" />
+	<view-map name="LookupPurchaseOrderHeaderAndShipInfo" type="screen"
+		page="component://order/widget/ordermgr/LookupScreens.xml#LookupPurchaseOrderHeaderAndShipInfo" />
+	<view-map name="LookupSalesOrderHeaderAndShipInfo" type="screen"
+		page="component://order/widget/ordermgr/LookupScreens.xml#LookupSalesOrderHeaderAndShipInfo" />
+	<view-map name="PurchaseInboundExcel" type="excel"
+		page="component://facilityext/widget/FacilityExtScreens.xml#PurchaseInboundExcel"
+		content-type="application/ms-excel" encoding="none" />
+	<view-map name="ShipmentArrivalsExcel" type="excel"
+		page="component://facilityext/widget/FacilityExtScreens.xml#ShipmentArrivalsExcel"
+		content-type="application/ms-excel" encoding="none" />
+	<view-map name="SalesOutboundExcel" type="excel"
+		page="component://facilityext/widget/FacilityExtScreens.xml#SalesOutboundExcel"
+		content-type="application/ms-excel" encoding="none" />
+	<view-map name="PhysicalInventorySummaryExcel" type="excel"
+		page="component://facilityext/widget/FacilityExtScreens.xml#PhysicalInventorySummaryExcel"
+		content-type="application/ms-excel" encoding="none" />
+	<view-map name="ManufecIssuanceExcelSummary" type="excel"
+		page="component://facilityext/widget/FacilityExtScreens.xml#ManufecIssuanceExcel"
+		content-type="application/ms-excel" encoding="none" />
+	<view-map name="ProductInventoryPositionReportsExcelSummary" type="excel"
+		page="component://facilityext/widget/FacilityExtScreens.xml#ProductInventoryPositionReportsExcel"
+		content-type="application/ms-excel" encoding="none" />
+
+	<view-map name="ProductInventoryPositionReports" type="screen" page="component://facilityext/widget/FacilityExtScreens.xml#ProductInventoryPositionList" encoding="none" />	
+	<view-map name="ProductInventoryPositionReport" type="screen" page="component://facilityext/widget/FacilityExtScreens.xml#ProductInventoryPositionReport" encoding="none" />	
+	<view-map name="LookupFinishGoodProductName" type="screen" page="component://product/widget/facility/LookupScreens.xml#LookupFinishGoodProducts" />
+	<view-map name="LookupFacilityLocation" page="component://product/widget/facility/LookupScreens.xml#LookupFacilityLocation" type="screen" />
+	<view-map name="openRequest" type="screen" page="component://facilityext/widget/FacilityExtScreens.xml#openRequest" />
+	<view-map name="StoreIssuanceNote" type="screen" page="component://facilityext/widget/FacilityExtScreens.xml#StoreIssuanceNote" />
+	<view-map name="StockVariance" type="screen" page="component://facilityext/widget/FacilityExtScreens.xml#StockVariance" />
+	<view-map name="Returnable" type="screen" page="component://facilityext/widget/FacilityExtScreens.xml#Returnable" />
+	<view-map name="QualityMaterialsReceived" type="screen" page="component://facilityext/widget/FacilityExtScreens.xml#QualityMaterialsReceived" />
+	<view-map name="StoresMaterialReceived" type="screen" page="component://facilityext/widget/FacilityExtScreens.xml#StoresMaterialReceived" />
+	<view-map name="StoppageAnalysis" type="screen" page="component://facilityext/widget/FacilityExtScreens.xml#StoppageAnalysis" />
+
+	<!-- end of view mappings -->
+</site-conf>

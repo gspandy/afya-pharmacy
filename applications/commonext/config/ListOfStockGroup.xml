@@ -1,0 +1,39 @@
+<ENVELOPE>
+	<HEADER>
+		<VERSION>1</VERSION>
+		<TALLYREQUEST>Export</TALLYREQUEST>
+		<TYPE>Collection</TYPE>
+		<ID>Collection of Stock Groups</ID>
+	</HEADER>
+	<BODY>
+		<DESC>
+			<TDL>
+				<TDLMESSAGE>
+					<REPORT NAME="List of Stock Groups" ISMODIFY="No" ISFIXED="No" ISINITIALIZE="No" ISOPTION="No" ISINTERNAL="No">
+						<FORMS>List of Stock Groups</FORMS>
+					</REPORT>
+					<FORM NAME="List of Stock Groups" ISMODIFY="No" ISFIXED="No" ISINITIALIZE="No" ISOPTION="No" ISINTERNAL="No">
+						<TOPPARTS>List of Stock Groups</TOPPARTS>
+						<XMLTAG>"List of Stock Groups"</XMLTAG>
+					</FORM>
+					<PART NAME="List of Stock Groups" ISMODIFY="No" ISFIXED="No" ISINITIALIZE="No" ISOPTION="No" ISINTERNAL="No">
+						<TOPLINES>List of Stock Groups</TOPLINES>
+						<REPEAT>List of Stock Groups : Collection of Stock Groups</REPEAT>
+						<SCROLLED>Vertical</SCROLLED>
+					</PART>
+					<LINE NAME="List of Stock Groups" ISMODIFY="No" ISFIXED="No" ISINITIALIZE="No" ISOPTION="No" ISINTERNAL="No">
+						<LEFTFIELDS>FIELD1</LEFTFIELDS>
+					</LINE>
+					<FIELD NAME="FIELD1" ISMODIFY="No" ISFIXED="No" ISINITIALIZE="No" ISOPTION="No" ISINTERNAL="No">
+						<SET>$Name</SET>
+						<XMLTAG>"NAME"</XMLTAG>
+					</FIELD>
+					<COLLECTION NAME="Collection of Stock Groups" ISMODIFY="No" ISFIXED="No" ISINITIALIZE="No" ISOPTION="No"
+						ISINTERNAL="No">
+						<TYPE>Stock Group</TYPE>
+					</COLLECTION>
+				</TDLMESSAGE>
+			</TDL>
+		</DESC>
+	</BODY>
+</ENVELOPE>

@@ -1,0 +1,173 @@
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<zk>
+	<zscript>
+	<![CDATA[
+	import org.ofbiz.entity.*;
+	GenericValue gv = Executions.getCurrent().getArg().get("gv");
+	String budgetId = gv.getString("budgetId");
+	String budgetItemSeqId = gv.getString("budgetItemSeqId");
+	String budgetItemTypeId = gv.getString("budgetItemTypeId");
+	String justification = gv.getString("justification");
+	String amount = gv.getString("amount");
+	String purpose = gv.getString("purpose");
+	GenericDelegator delegator = com.ndz.zkoss.util.HrmsInfrastructure.getDelegator();//GenericDelegator.getGenericDelegator("default");
+	Set fieldToSelect = new HashSet();
+	fieldToSelect.add("budgetId");
+	Set budgetItemToSelect = new HashSet();
+	budgetItemToSelect.add("budgetItemTypeId");
+	budgetItemToSelect.add("description");
+	List budgetList = null;
+	budgetList = delegator.findList("Budget", null, fieldToSelect, null, null,
+			false);
+	budgetList.add(0, null);
+	budgetArray = budgetList.toArray(new GenericValue[budgetList.size()]);
+	SimpleListModel budgetModel = new SimpleListModel(budgetArray);
+	List budgetItemTypeList = null;
+	budgetItemTypeList = delegator.findList("BudgetItemType", null,
+			budgetItemToSelect, null, null, false);
+	budgetItemTypeList.add(0, null);
+	budgetItemTypeArray = budgetItemTypeList
+			.toArray(new GenericValue[budgetItemTypeList.size()]);
+	SimpleListModel budgetItemTypeModel = new SimpleListModel(
+			budgetItemTypeArray);
+	public class BudgetItemRenderer implements ListitemRenderer {
+
+		public BudgetItemRenderer() {
+		}
+
+		public void render(Listitem li, Object data) {
+			if (data instanceof GenericValue) {
+				GenericValue val = (GenericValue) data;
+				li.setLabel(val.getString("budgetId"));
+				li.setValue(val.getString("budgetId"));
+				if (budgetId.equals(val.getString("budgetId"))) {
+					li.setSelected(true);
+				}
+			}
+		}
+	}
+	ListitemRenderer budgetItemRenderer = new BudgetItemRenderer();
+	public class BudgetItemTypeRenderer implements ListitemRenderer {
+
+		public BudgetItemTypeRenderer() {
+		}
+
+		public void render(Listitem li, Object data) {
+			if (data instanceof GenericValue) {
+				GenericValue val = (GenericValue) data;
+				li.setLabel(val.getString("description"));
+				li.setValue(val.getString("budgetItemTypeId"));
+				if (budgetItemTypeId.equals(val.getString("budgetItemTypeId"))) {
+					li.setSelected(true);
+				}
+			}
+		}
+	}
+	ListitemRenderer budgetItemTypeRenderer = new BudgetItemTypeRenderer();
+]]>
+</zscript>
+	<window id="editBudgetItemWindow" closable="true" width="40%"
+		height="60%" border="normal" maximizable="true">
+		<caption label="${c:l('FormFieldTitle_editBudgetItem') }" />
+		<separator height="20px" />
+		<hbox>
+			<div align="right" width="170px">
+				<label value="${c:l('FormFieldTitle_budgetItemId') }"
+					style="font-weight:bold" />
+			</div>
+			<div align="right">
+				<textbox id="budgetItemSeqId" value="${budgetItemSeqId}"
+					visible="false" />
+				<label value="${budgetItemSeqId}" />
+			</div>
+		</hbox>
+		<separator />
+		<hbox>
+			<div align="right" width="170px">
+				<label value="${c:l('FormFieldTitle_budgetId') }" style="font-weight:bold" />
+			</div>
+			<div align="right">
+				<listbox id="budgetId" mold="select"
+					model="${budgetModel}" itemRenderer="${budgetItemRenderer}"
+					visible="false" />
+				<label value="${budgetId}" />
+			</div>
+		</hbox>
+		<separator />
+		<hbox>
+			<div align="right" width="170px">
+				<label value="${c:l('FormFieldTitle_budgetItemType') }"
+					style="font-weight:bold" />
+					<label value="*" style="color:red" />
+			</div>
+			<div align="right">
+				<listbox id="budgetItemTypeId"
+					model="${budgetItemTypeModel}" mold="select"
+					itemRenderer="${budgetItemTypeRenderer}" onSelect="Clients.clearWrongValue(self)"/>
+			</div>
+		</hbox>
+		<separator />
+		<hbox>
+			<div align="right" width="170px">
+				<label value="${c:l('FormFieldTitle_amount') }" style="font-weight:bold" />
+				<label value="*" style="color:red" />
+			</div>
+			<div align="right">
+				<textbox id="amount" value="${amount}" constraint="no empty:Amount is Required" onChange="Clients.clearWrongValue(self)"/>
+			</div>
+		</hbox>
+		<separator />
+		<hbox>
+			<div align="right" width="170px">
+				<label value="${c:l('FormFieldTitle_purpose') }" style="font-weight:bold" />
+				<label value="*" style="color:red" />
+			</div>
+			<div align="right">
+				<textbox id="purpose" rows="3" cols="30"
+					value="${purpose}" constraint="no empty:Purpose is Required" onChange="Clients.clearWrongValue(self)"/>
+			</div>
+		</hbox>
+		<separator />
+		<hbox>
+			<div align="right" width="170px">
+				<label value="${c:l('FormFieldTitle_justification') }" style="font-weight:bold" />
+			<label value="*" style="color:red" />
+			</div>
+			<div align="right">
+				<textbox id="justification" rows="3" cols="30"
+					value="${justification}" />
+			</div>
+		</hbox>
+		
+		<zscript>	<![CDATA[
+void validate(){
+		
+			if (com.ndz.zkoss.HrmsUtil.listboxValidation(budgetItemTypeId)) {
+			throw new WrongValueException(budgetItemTypeId, "Budget Item Type is Required");
+		}
+			if ( justification.getValue()==""||org.apache.commons.lang.StringUtils.isEmpty(justification.getValue()))
+	
+		        		 throw new WrongValueException(justification,"Justification Required");
+		
+		if(!org.ofbiz.base.util.UtilValidate.isNonnegativeDouble(amount.getValue().toString())){
+
+			throw new WrongValueException(amount, "Amount must be numeric");
+			}
+		amount.getValue();
+		purpose.getValue();
+		justification.getValue();
+		}
+		]]>
+		</zscript>
+		<separator />
+		<hbox>
+			<div align="right" width="280px">
+				<button id="update" label="${c:l('btnSave') }"
+					onClick='validate();com.ndz.controller.BudgetManagementController.updateBudgetItem(event);Events.postEvent("onClick", Path
+				.getComponent("/searchPanel//searchButton"), null);editBudgetItemWindow.detach();' />
+				<button id="cancel" label="${c:l('ButtonCancel') }"
+					onClick="editBudgetItemWindow.detach();" />
+			</div>
+		</hbox>
+	</window>
+</zk>

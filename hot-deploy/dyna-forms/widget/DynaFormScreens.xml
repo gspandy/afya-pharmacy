@@ -1,0 +1,402 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<screens xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="http://ofbiz.apache.org/dtds/widget-screen.xsd">
+
+	<screen name="main">
+		<section>
+			<condition>
+				<if-has-permission permission="HUMANRES_" action="ADMIN"/>
+			</condition>
+			<widgets>
+				<decorator-screen name="DynaFormLabelsCommonDecorator"
+					location="component://dyna-forms/widget/CommonScreens.xml">
+					<decorator-section name="body">
+						<container style="screenlet">
+							<container style="screenlet-title-bar">
+								<container style="h3">
+									<label text="Create Custom Form" />
+								</container>
+							</container>
+							<container style="screenlet-body">
+								<section>
+									<widgets>
+										<link target="NewCustomForm" text="New Custom Form"></link>
+										<include-form location="component://dyna-forms/widget/DynaForms.xml"
+											name="LookupCustomForm" />
+										<include-form location="component://dyna-forms/widget/DynaForms.xml"
+											name="ListLookupCustomForm" />
+									</widgets>
+								</section>
+							</container>
+						</container>
+					</decorator-section>
+				</decorator-screen>
+			</widgets>
+		</section>
+	</screen>
+
+	<screen name="postCreationView">
+		<section>
+			<widgets>
+				<decorator-screen name="DynaFormLabelsCommonDecorator"
+					location="component://dyna-forms/widget/CommonScreens.xml">
+					<decorator-section name="body">
+						<container style="screenlet">
+							<container style="screenlet-title-bar">
+								<container style="h3">
+									<label text="Add New Section" />
+								</container>
+							</container>
+							<container>
+								<include-form location="component://dyna-forms/widget/DynaForms.xml"
+									name="FormSection" />
+							</container>
+						</container>
+
+						<container style="screenlet">
+							<container style="screenlet-title-bar">
+								<container style="h3">
+									<label text="Form Tree Layout" />
+								</container>
+							</container>
+							<container>
+								<include-tree location="component://dyna-forms/widget/FormTrees.xml"
+									name="TreeFormComponents" />
+								<include-screen
+									location="component://dyna-forms/widget/DynaFormScreens.xml"
+									name="EditCell" />
+								<include-screen
+									location="component://dyna-forms/widget/DynaFormScreens.xml"
+									name="EditSection" />
+								<include-screen
+									location="component://dyna-forms/widget/DynaFormScreens.xml"
+									name="NewFormRow" />
+							</container>
+						</container>
+					</decorator-section>
+				</decorator-screen>
+			</widgets>
+		</section>
+	</screen>
+
+
+
+	<screen name="perfReviewPDF">
+		<section>
+			<actions>
+				<set field="title" value="Return" />
+				<set field="layoutSettings.documentTitle" value="Employee Peformance Review" />
+			</actions>
+			<widgets>
+				<decorator-screen name="GlobalFoDecorator"
+					location="component://common/widget/CommonScreens.xml">
+					<!--
+						at the top left of every page we put the logo and company
+						information
+					-->
+					<decorator-section name="body">
+						<section>
+							<actions>
+								<script location="component://dyna-forms/script/LoadDummyData.groovy" />
+							</actions>
+							<widgets>
+								<platform-specific>
+									<xsl-fo>
+										<html-template
+											location="component://dyna-forms/webapp/dyna-forms/ViewForm.fo.ftl" />
+									</xsl-fo>
+								</platform-specific>
+							</widgets>
+						</section>
+					</decorator-section>
+				</decorator-screen>
+			</widgets>
+		</section>
+	</screen>
+
+
+	<!--	<screen name="FormTreeLine">-->
+	<!--		<section>-->
+	<!--			<actions>-->
+	<!--
+		<set field="trail" from-field="requestParameters.trail"/>
+	-->
+	<!--			</actions>-->
+	<!--			<widgets>-->
+	<!--
+		<link text="${comp.formName}"
+		target="formLayout?formId=${parameters.formId}&amp;trail=${currentNodeTrailPiped}"/>
+	-->
+	<!--
+		<link target="NewSection?formId=${comp.formId}" text="Add New Section"
+	-->
+	<!--					style="buttontext" />-->
+	<!--			</widgets>-->
+	<!--		</section>-->
+	<!--	</screen>-->
+	<!--	-->
+
+	<screen name="NewFormRow">
+		<section>
+			<condition>
+				<if-compare operator="equals" value="2" field="parameters.compType"/>
+			</condition>
+			<widgets>
+				<container style="screenlet">
+					<container style="screenlet-title-bar">
+						<container style="h3">
+							<label text="Add A Form Row" />
+						</container>
+					</container>
+					<container>
+						<include-form location="component://dyna-forms/widget/DynaForms.xml"
+							name="FormRow" />
+					</container>
+				</container>
+			</widgets>
+		</section>
+	</screen>
+
+	<screen name="NewCustomForm">
+		<section>
+			<widgets>
+				<decorator-screen name="DynaFormLabelsCommonDecorator"
+					location="component://dyna-forms/widget/CommonScreens.xml">
+					<decorator-section name="body">
+						<container style="screenlet">
+							<container style="screenlet-title-bar">
+								<container style="h3">
+									<label text="New Custom Form" />
+								</container>
+							</container>
+							<container>
+								<include-form location="component://dyna-forms/widget/DynaForms.xml"
+									name="NewCustomForm" />
+							</container>
+						</container>
+					</decorator-section>
+				</decorator-screen>
+			</widgets>
+		</section>
+	</screen>
+
+	<screen name="FormTreeLine">
+		<section>
+			<condition>
+				<if-compare operator="equals" value="1" field="comp.compType" />
+			</condition>
+			<actions>
+				<set field="currentNodeTrailPiped" value="${parameters.trail}" />
+			</actions>
+			<widgets>
+				<link
+					target="formLayout?formId=${parameters.formId}&amp;compId=${compId}&amp;trail=${currentNodeTrailPiped}&amp;compType=1"
+					text="${compId} ${comp.name} (SECTION)" />
+				<link text="Add Row" style="button"
+					target="addComponent?formId=${comp.formId}&amp;parentCompId=${comp.compId}&amp;compType=2&amp;trail=${currentNodeTrailPiped}"></link>
+
+				<link text="Delete Section" style="button"
+					target="deleteComponent?formId=${comp.formId}&amp;compId=${comp.compId}&amp;compType=1&amp;trail=${currentNodeTrailPiped}"></link>
+
+				<link text="Delete Row" style="button"
+					target="deleteComponent?formId=${comp.formId}&amp;compId=${comp.compId}&amp;compType=2&amp;trail=${currentNodeTrailPiped}"></link>
+				<horizontal-separator></horizontal-separator>
+			</widgets>
+			<fail-widgets>
+				<section>
+					<condition>
+						<if-compare operator="equals" value="2" field="comp.compType" />
+					</condition>
+					<actions>
+						<set field="currentNodeTrailPiped" value="${parameters.trail}" />
+					</actions>
+					<widgets>
+						<link
+							target="formLayout?formId=${parameters.formId}&amp;compId=${compId}&amp;trail=${currentNodeTrailPiped}&amp;compType=2"
+							text="${compId} (ROW)" />
+						<link text="Add Row" style="button"
+							target="addComponent?formId=${comp.formId}&amp;parentCompId=${comp.compId}&amp;compType=2&amp;trail=${currentNodeTrailPiped}"></link>
+						<link text="Add Cell" style="button"
+							target="addComponent?formId=${comp.formId}&amp;parentCompId=${comp.compId}&amp;compType=3&amp;trail=${currentNodeTrailPiped}"></link>
+						<link text="Delete Row" style="button"
+							target="deleteComponent?formId=${comp.formId}&amp;compId=${comp.compId}&amp;compType=2&amp;trail=${currentNodeTrailPiped}"></link>
+						<link text="Delete Cell" style="button"
+							target="deleteComponent?formId=${comp.formId}&amp;compId=${comp.compId}&amp;compType=3&amp;trail=${currentNodeTrailPiped}"></link>
+
+						<horizontal-separator></horizontal-separator>
+					</widgets>
+					<fail-widgets>
+						<section>
+							<widgets>
+								<link url-mode="plain"
+									target="formLayout?formId=${comp.formId}&amp;compId=${comp.compId}&amp;compType=3&amp;trail=${currentNodeTrailPiped}"
+									text="${compId } ${comp.compName} CELL" />
+								<link text="Add Row" style="button"
+									target="addComponent?formId=${comp.formId}&amp;parentCompId=${comp.compId}&amp;compType=2&amp;trail=${currentNodeTrailPiped}"></link>
+								<link text="Add Cell" style="button"
+									target="addComponent?formId=${comp.formId}&amp;parentCompId=${comp.compId}&amp;compType=3&amp;trail=${currentNodeTrailPiped}"></link>
+								<link text="Delete Row" style="button"
+									target="deleteComponent?formId=${comp.formId}&amp;compId=${comp.compId}&amp;compType=2&amp;trail=${currentNodeTrailPiped}"></link>
+								<link text="Delete Cell" style="button"
+									target="deleteComponent?formId=${comp.formId}&amp;compId=${comp.compId}&amp;compType=3&amp;trail=${currentNodeTrailPiped}"></link>
+								<horizontal-separator></horizontal-separator>
+							</widgets>
+						</section>
+					</fail-widgets>
+				</section>
+			</fail-widgets>
+		</section>
+	</screen>
+
+
+	<screen name="EditCell">
+		<section>
+			<condition>
+				<if-compare operator="equals" value="3" field="parameters.compType" />
+			</condition>
+			<widgets>
+				<container style="screenlet">
+					<container style="screenlet-title-bar">
+						<container style="h3">
+							<label text="Edit Form Cell ID(${parameters.compId})" />
+						</container>
+					</container>
+					<container>
+						<include-form location="component://dyna-forms/widget/DynaForms.xml"
+							name="EditCell" />
+					</container>
+				</container>
+			</widgets>
+		</section>
+	</screen>
+
+
+	<screen name="EditSection">
+		<section>
+			<condition>
+				<if-compare operator="equals" value="1" field="parameters.compType" />
+			</condition>
+			<widgets>
+				<container style="screenlet">
+					<container style="screenlet-title-bar">
+						<container style="h3">
+							<label text="Edit Form Section (${parameters.compId})" />
+						</container>
+					</container>
+					<container>
+						<include-form location="component://dyna-forms/widget/DynaForms.xml"
+							name="EditSection" />
+					</container>
+				</container>
+			</widgets>
+		</section>
+	</screen>
+
+	<screen name="NewFormSection">
+		<section>
+			<widgets>
+				<decorator-screen name="DynaFormLabelsCommonDecorator"
+					location="component://dyna-forms/widget/CommonScreens.xml">
+					<decorator-section name="body">
+						<container style="screenlet">
+							<container style="screenlet-title-bar">
+								<container style="h3">
+									<label text="Add A Form Section" />
+								</container>
+							</container>
+							<container>
+								<include-form location="component://dyna-forms/widget/DynaForms.xml"
+									name="FormSection" />
+							</container>
+						</container>
+					</decorator-section>
+				</decorator-screen>
+			</widgets>
+		</section>
+	</screen>
+
+	<screen name="FindCustomForm">
+		<section>
+			<widgets>
+				<decorator-screen name="DynaFormLabelsCommonDecorator"
+					location="component://dyna-forms/widget/CommonScreens.xml">
+					<decorator-section name="body">
+						<container style="screenlet">
+							<container style="screenlet-title-bar">
+								<container style="h3">
+									<label text="Find Custom Form" />
+								</container>
+							</container>
+							<container>
+								<link target="NewCustomForm" text="New Custom Form"></link>
+								<include-form location="component://dyna-forms/widget/DynaForms.xml"
+									name="LookupCustomForm" />
+								<include-form location="component://dyna-forms/widget/DynaForms.xml"
+									name="ListLookupCustomForm" />
+							</container>
+						</container>
+					</decorator-section>
+				</decorator-screen>
+			</widgets>
+		</section>
+	</screen>
+
+	<screen name="EditCustomForm">
+		<section>
+			<actions>
+			</actions>
+			<widgets>
+				<decorator-screen name="DynaFormLabelsCommonDecorator"
+					location="component://dyna-forms/widget/CommonScreens.xml">
+					<decorator-section name="body">
+						<container style="screenlet">
+							<container style="screenlet-title-bar">
+								<container style="h3">
+									<label text="Edit Custom Form" />
+								</container>
+							</container>
+							<container style="screenlet-body">
+								<section>
+									<widgets>
+										<link target="formLayout?formId=${parameters.formId}"
+											text="Edit Form Layout"></link>
+										<include-form location="component://dyna-forms/widget/DynaForms.xml"
+											name="EditCustomForm" />
+									</widgets>
+								</section>
+							</container>
+						</container>
+					</decorator-section>
+				</decorator-screen>
+			</widgets>
+		</section>
+	</screen>
+
+	<screen name="selectFormInput">
+		<section>
+			<actions>
+				<set field="title" value="Select A Value" />
+				<set field="layoutSettings.javaScripts[]" value="/dyna-forms/jQuery.js"
+					global="true" />
+				<set field="layoutSettings.javaScripts[]" value="/dyna-forms/interface.js"
+					global="true" />
+			</actions>
+			<widgets>
+				<decorator-screen name="LookupDecorator"
+					location="component://common/widget/CommonScreens.xml">
+					<decorator-section name="body">
+						<platform-specific>
+							<html>
+								<html-template
+									location="component://dyna-forms/webapp/dyna-forms/selectFormInput.ftl" />
+							</html>
+						</platform-specific>
+					</decorator-section>
+				</decorator-screen>
+			</widgets>
+		</section>
+	</screen>
+</screens>
+
+
+

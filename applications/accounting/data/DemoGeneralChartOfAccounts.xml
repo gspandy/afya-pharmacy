@@ -1,0 +1,1072 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Licensed to the Apache Software Foundation (ASF) under one or more contributor license agreements. See the NOTICE file distributed with this work for additional 
+	information regarding copyright ownership. The ASF licenses this file to you under the Apache License, Version 2.0 (the "License"); you may not use this file except 
+	in compliance with the License. You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0 Unless required by applicable law or agreed to 
+	in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See 
+	the License for the specific language governing permissions and limitations under the License. -->
+<entity-engine-xml>
+    <!-- Global defaults (for all the organizations) -->
+
+    <!-- Income Accounts -->
+
+    <GlAccount glAccountId="10000000" glAccountClassId="INCOME"   parentGlAccountId=""  accountName="REVENUE - LOCAL SALES"/>
+    <GlAccount glAccountId="1000000"  glAccountClassId="INCOME"   parentGlAccountId="10000000"  accountName="REVENUE- LOCAL SALES"/>
+    <GlAccount glAccountId="1000100"  glAccountClassId="INCOME"   parentGlAccountId="1000000"  accountName="Bagged Cement Sales - Ndola"/>
+    <GlAccount glAccountId="1000450"  glAccountClassId="INCOME"   parentGlAccountId="1000000"  accountName="Drums"/>
+    <GlAccount glAccountId="1000101"  glAccountClassId="INCOME"   parentGlAccountId="1000000"  accountName="Bagged Cement Sales - Lusaka Depot"/>
+    <GlAccount glAccountId="1000110"  glAccountClassId="INCOME"   parentGlAccountId="1000000"  accountName="Bulk Cement Sales"/>
+    <GlAccount glAccountId="1000200"  glAccountClassId="INCOME"   parentGlAccountId="1000000"  accountName="Crushed Stone Sales"/>
+    <GlAccount glAccountId="1000210"  glAccountClassId="INCOME"   parentGlAccountId="1000000"  accountName="FLUX STONES SALES (GRADE B)"/>
+    <GlAccount glAccountId="1000220"  glAccountClassId="INCOME"   parentGlAccountId="1000000"  accountName="Laterite Sales"/>
+    <GlAccount glAccountId="1000230"  glAccountClassId="INCOME"   parentGlAccountId="1000000"  accountName="FLUX STONES SALES (GRADE A)"/>
+    <GlAccount glAccountId="1010300"  glAccountClassId="INCOME"   parentGlAccountId="1000000"  accountName="Clinker Sales"/>
+    <GlAccount glAccountId="1000400"  glAccountClassId="INCOME"   parentGlAccountId="1000000"  accountName="BLOCKS"/>
+    <GlAccount glAccountId="1000300"  glAccountClassId="INCOME"   parentGlAccountId="1000000"  accountName="Clinker sales"/>
+    <GlAccount glAccountId="1000240"  glAccountClassId="INCOME"   parentGlAccountId="1000000"  accountName="WASTE ROCK"/>
+    <GlAccount glAccountId="1000500"  glAccountClassId="INCOME"   parentGlAccountId="1000000"  accountName="LIMESTONE - GRADE 19 - 35"/>
+    <GlAccount glAccountId="1000770"  glAccountClassId="INCOME"   parentGlAccountId="1000000"  accountName="TIMANAGE - BULK"/>
+    <GlAccount glAccountId="1000600"  glAccountClassId="INCOME"   parentGlAccountId="1000000"  accountName="SCRAP"/>
+    <GlAccount glAccountId="1000650"  glAccountClassId="INCOME"   parentGlAccountId="1000000"  accountName="SAND"/>
+    <GlAccount glAccountId="1000750"  glAccountClassId="INCOME"   parentGlAccountId="1000000"  accountName="TIMANGE DISTRIBUTORS"/>
+    <GlAccount glAccountId="1000760"  glAccountClassId="INCOME"   parentGlAccountId="1000000"  accountName="TIMANGE - BAGGED"/>
+    <GlAccount glAccountId="1010400"  glAccountClassId="INCOME"   parentGlAccountId="1000000"  accountName="TIMANGE - EXPORT"/>
+    <GlAccount glAccountId="1010000"  glAccountClassId="INCOME"   parentGlAccountId="10000000"  accountName="REVENUE - EXPORT SALES"/>
+    <GlAccount glAccountId="1010100"  glAccountClassId="INCOME"   parentGlAccountId="1010000"  accountName="Bagged Cement Sales"/>
+    <GlAccount glAccountId="1010110"  glAccountClassId="INCOME"   parentGlAccountId="1010000"  accountName="Bulk Cement Sales"/>
+    <GlAccount glAccountId="1010200"  glAccountClassId="INCOME"   parentGlAccountId="1010000"  accountName="Crushed Stone Sales"/>
+    <GlAccount glAccountId="1010210"  glAccountClassId="INCOME"   parentGlAccountId="1010000"  accountName="Fluxtone Sales"/>
+    <!-- Other Income -->
+
+    <GlAccount glAccountId="1020000_1"  glAccountClassId="INCOME" parentGlAccountId="" accountName="OTHER INCOME"/>
+
+    <GlAccount glAccountId="1020000"  glAccountClassId="INCOME"   parentGlAccountId="1020000_1"  accountName="OTHER OPERATING INCOME"/>
+    <GlAccount glAccountId="1020100"  glAccountClassId="INCOME"   parentGlAccountId="1020000"  accountName="Tender Documents"/>
+    <GlAccount glAccountId="1020101"  glAccountClassId="INCOME"   parentGlAccountId="1020000"  accountName="Hiring out of Equipment"/>
+    <GlAccount glAccountId="1020102"  glAccountClassId="INCOME"   parentGlAccountId="1020000"  accountName="Hiring out of Trucks"/>
+    <GlAccount glAccountId="1020103"  glAccountClassId="INCOME"   parentGlAccountId="1020000"  accountName="Royalties received"/>
+    <GlAccount glAccountId="1020104"  glAccountClassId="INCOME"   parentGlAccountId="1020000"  accountName="Fuel &amp; Lubricants"/>
+    <GlAccount glAccountId="1020106"  glAccountClassId="INCOME"   parentGlAccountId="1020000"  accountName="Discount received"/>
+    <GlAccount glAccountId="1020107"  glAccountClassId="INCOME"   parentGlAccountId="1020000"  accountName="Interest received"/>
+    <GlAccount glAccountId="1020108"  glAccountClassId="INCOME"   parentGlAccountId="1020000"  accountName="Profit/Loss on Disposal of  Assets"/>
+    <GlAccount glAccountId="1020109"  glAccountClassId="INCOME"   parentGlAccountId="1020000"  accountName="Bad debts recovered"/>
+    <GlAccount glAccountId="1020110"  glAccountClassId="INCOME"   parentGlAccountId="1020000"  accountName="Other Sundry Income"/>
+    <GlAccount glAccountId="1020111"  glAccountClassId="INCOME"   parentGlAccountId="1020000"  accountName="Insurance Claim"/>
+    <GlAccount glAccountId="4240000"  glAccountClassId="INCOME"   parentGlAccountId="10000000"  accountName="FOREIGN EXCHANGE LOSSES &amp; GAINS"/>
+    <GlAccount glAccountId="4240100"  glAccountClassId="INCOME"   parentGlAccountId="4240000"  accountName="Foreign Exchange Gain"/>
+    <GlAccount glAccountId="4240101"  glAccountClassId="CONTRA_INCOME"   parentGlAccountId="4240000"  accountName="Foreign Exchange Loss"/>
+
+    <!-- End of Income Accounts -->
+
+    <!-- Expense Accounts -->
+    <!-- Cost of Sales / Direct Production Cost-->
+
+    <GlAccount glAccountId="20000000"  glAccountClassId="EXPENSE"   parentGlAccountId=""  accountName="Expense"/>
+
+    <GlAccount glAccountId="20000000_1"  glAccountClassId="EXPENSE" parentGlAccountId="20000000"  accountName="Cost of Sales"/>
+
+    <GlAccount glAccountId="2000000"  glAccountClassId="EXPENSE"   parentGlAccountId="20000000_1"  accountName="DIRECT PRODUCTION COSTS"/>
+    <GlAccount glAccountId="2000101"  glAccountClassId="EXPENSE"   parentGlAccountId="2000000"  accountName="Cement"/>
+    <GlAccount glAccountId="2000105"  glAccountClassId="EXPENSE"   parentGlAccountId="2000000"  accountName="Gypsum"/>
+    <GlAccount glAccountId="2000106"  glAccountClassId="EXPENSE"   parentGlAccountId="2000000"  accountName="Raw Meal in Blending Silo"/>
+    <GlAccount glAccountId="2000107"  glAccountClassId="EXPENSE"   parentGlAccountId="2000000"  accountName="Shale"/>
+    <GlAccount glAccountId="2000108"  glAccountClassId="EXPENSE"   parentGlAccountId="2000000"  accountName="Packaging"/>
+    <GlAccount glAccountId="2000109"  glAccountClassId="EXPENSE"   parentGlAccountId="2000000"  accountName="Limestone &amp; Quarry costs"/>
+    <GlAccount glAccountId="2000110"  glAccountClassId="EXPENSE"   parentGlAccountId="2000000"  accountName="Sand"/>
+    <GlAccount glAccountId="2000111"  glAccountClassId="EXPENSE"   parentGlAccountId="2000000"  accountName="Laterite"/>
+    <GlAccount glAccountId="2000400"  glAccountClassId="EXPENSE"   parentGlAccountId="2000000"  accountName="Blocks"/>
+    <GlAccount glAccountId="2000100"  glAccountClassId="EXPENSE"   parentGlAccountId="2000000"  accountName="Clinker"/>
+    <GlAccount glAccountId="2000102"  glAccountClassId="EXPENSE"   parentGlAccountId="2000000"  accountName="Flux Stone (GRADE B)"/>
+    <GlAccount glAccountId="2000103"  glAccountClassId="EXPENSE"   parentGlAccountId="2000000"  accountName="Crushed Stones"/>
+    <GlAccount glAccountId="2000112"  glAccountClassId="EXPENSE"   parentGlAccountId="2000000"  accountName="Flux Stone (GRADE A)"/>
+    <GlAccount glAccountId="2000113"  glAccountClassId="EXPENSE"   parentGlAccountId="2000000"  accountName="Waste rock"/>
+    <GlAccount glAccountId="2010111"  glAccountClassId="EXPENSE"   parentGlAccountId="2000000"  accountName="Cement Mill maintenance"/>
+    <GlAccount glAccountId="2010117"  glAccountClassId="EXPENSE"   parentGlAccountId="2000000"  accountName="Lubricants"/>
+    <GlAccount glAccountId="2010121"  glAccountClassId="EXPENSE"   parentGlAccountId="2000000"  accountName="Transportation of cement &amp; Storage"/>
+    <GlAccount glAccountId="2010127"  glAccountClassId="EXPENSE"   parentGlAccountId="2000000"  accountName="Hire of plant equipment"/>
+    <GlAccount glAccountId="2010134"  glAccountClassId="EXPENSE"   parentGlAccountId="2000000"  accountName="Laboratory materials"/>
+    <GlAccount glAccountId="2010135"  glAccountClassId="EXPENSE"   parentGlAccountId="2000000"  accountName="Refractory materials"/>
+    <GlAccount glAccountId="2020102"  glAccountClassId="EXPENSE"   parentGlAccountId="2000000"  accountName="Consumables"/>
+    <GlAccount glAccountId="2020105"  glAccountClassId="EXPENSE"   parentGlAccountId="2000000"  accountName="Lubricants"/>
+
+
+    <!-- Cost of Sales / In Direct Production Cost-->
+    <GlAccount glAccountId="2010000"  glAccountClassId="EXPENSE"   parentGlAccountId="20000000_1"  accountName="INDIRECT PRODUCTION COSTS"/>
+    <GlAccount glAccountId="2010101"  glAccountClassId="EXPENSE"   parentGlAccountId="2010000"  accountName="Electrical maintanance"/>
+    <GlAccount glAccountId="2010102"  glAccountClassId="EXPENSE"   parentGlAccountId="2010000"  accountName="Mechanical Maintenance"/>
+    <GlAccount glAccountId="2010103"  glAccountClassId="EXPENSE"   parentGlAccountId="2010000"  accountName="Instrumentation"/>
+    <GlAccount glAccountId="2010104"  glAccountClassId="EXPENSE"   parentGlAccountId="2010000"  accountName="Civil Works"/>
+    <GlAccount glAccountId="2010105"  glAccountClassId="EXPENSE"   parentGlAccountId="2010000"  accountName="Raw Mill Maintenance"/>
+    <GlAccount glAccountId="2010106"  glAccountClassId="EXPENSE"   parentGlAccountId="2010000"  accountName="Quality/Lab Dept"/>
+    <GlAccount glAccountId="2010107"  glAccountClassId="EXPENSE"   parentGlAccountId="2010000"  accountName="Kiln Maintenance"/>
+    <GlAccount glAccountId="2010109"  glAccountClassId="EXPENSE"   parentGlAccountId="2010000"  accountName="Crusher Maintenance"/>
+    <GlAccount glAccountId="2010110"  glAccountClassId="EXPENSE"   parentGlAccountId="2010000"  accountName="Packaging"/>
+    <GlAccount glAccountId="2010112"  glAccountClassId="EXPENSE"   parentGlAccountId="2010000"  accountName="Coal"/>
+    <GlAccount glAccountId="2010113"  glAccountClassId="EXPENSE"   parentGlAccountId="2010000"  accountName="Consumables"/>
+    <GlAccount glAccountId="2010125"  glAccountClassId="EXPENSE"   parentGlAccountId="2010000"  accountName="Electricity Bill Quarry"/>
+    <GlAccount glAccountId="2010126"  glAccountClassId="EXPENSE"   parentGlAccountId="2010000"  accountName="Electrical Bill Plant"/>
+    <GlAccount glAccountId="2010130"  glAccountClassId="EXPENSE"   parentGlAccountId="2010000"  accountName="Process costs"/>
+    <GlAccount glAccountId="2010132"  glAccountClassId="DEPRECIATION"   parentGlAccountId="2010000"  accountName="Depreciation on Production Equipment"/>
+    <GlAccount glAccountId="2010133"  glAccountClassId="EXPENSE"   parentGlAccountId="2010000"  accountName="Mobile Plant Maintenance"/>
+
+    <!-- Other Operating Cost -->
+    <GlAccount glAccountId="2020000"  glAccountClassId="EXPENSE"   parentGlAccountId="20000000_1"  accountName="OTHER OPERATING COSTS"/>
+    <GlAccount glAccountId="2020101"  glAccountClassId="EXPENSE"   parentGlAccountId="2020000"  accountName="Safety Health &amp; Environmental costs"/>
+    <GlAccount glAccountId="2020103"  glAccountClassId="EXPENSE"   parentGlAccountId="2020000"  accountName="Weighbridge Maintenance"/>
+    <GlAccount glAccountId="2020104"  glAccountClassId="EXPENSE"   parentGlAccountId="2020000"  accountName="Diesel and Lubricants"/>
+
+    <!-- Administrative Expense -->
+    <GlAccount glAccountId="3010000"  glAccountClassId="EXPENSE"   parentGlAccountId="20000000"  accountName="ADMINSTRATIVE EXPENSES"/>
+    <GlAccount glAccountId="3010001"  glAccountClassId="EXPENSE"   parentGlAccountId="3010000"  accountName="Environmental &amp; Building Management Expenses"/>
+
+    <GlAccount glAccountId="3010089"  glAccountClassId="EXPENSE"   parentGlAccountId="3010000"  accountName="Licenses permits &amp; subscriptions"/>
+    <GlAccount glAccountId="3010093"  glAccountClassId="EXPENSE"   parentGlAccountId="3010000"  accountName="Telephone &amp; Internet services"/>
+    <GlAccount glAccountId="3010094"  glAccountClassId="EXPENSE"   parentGlAccountId="3010000"  accountName="Postage &amp; Courier"/>
+    <GlAccount glAccountId="3010100"  glAccountClassId="EXPENSE"   parentGlAccountId="3010000"  accountName="Donations"/>
+    <GlAccount glAccountId="3010101"  glAccountClassId="EXPENSE"   parentGlAccountId="3010000"  accountName="Electricity &amp; Water"/>
+    <GlAccount glAccountId="3010102"  glAccountClassId="EXPENSE"   parentGlAccountId="3010000"  accountName="Meals &amp; Entertainment Expenses"/>
+    <GlAccount glAccountId="3010103"  glAccountClassId="EXPENSE"   parentGlAccountId="3010000"  accountName="Rates"/>
+    <GlAccount glAccountId="3010104"  glAccountClassId="EXPENSE"   parentGlAccountId="3010000"  accountName="Finance Lease Payments"/>
+    <GlAccount glAccountId="3010109"  glAccountClassId="EXPENSE"   parentGlAccountId="3010000"  accountName="Insurance Costs"/>
+    <GlAccount glAccountId="3010112"  glAccountClassId="EXPENSE"   parentGlAccountId="3010000"  accountName="Advertising"/>
+    <GlAccount glAccountId="3010113"  glAccountClassId="EXPENSE"   parentGlAccountId="3010000"  accountName="Computer/IT expenses"/>
+    <GlAccount glAccountId="3010116"  glAccountClassId="EXPENSE"   parentGlAccountId="3010000"  accountName="Motor vehicle expenses"/>
+    <GlAccount glAccountId="3010117"  glAccountClassId="EXPENSE"   parentGlAccountId="3010000"  accountName="Operating Lease Charges"/>
+    <GlAccount glAccountId="3010118"  glAccountClassId="EXPENSE"   parentGlAccountId="3010000"  accountName="Tools for the surrounding"/>
+    <GlAccount glAccountId="3010119"  glAccountClassId="EXPENSE"   parentGlAccountId="3010000"  accountName="Professional Service fees"/>
+    <GlAccount glAccountId="3010121"  glAccountClassId="EXPENSE"   parentGlAccountId="3010000"  accountName="General office consumables"/>
+    <GlAccount glAccountId="3010123"  glAccountClassId="EXPENSE"   parentGlAccountId="3010000"  accountName="Printing &amp; stationery"/>
+    <GlAccount glAccountId="3010124"  glAccountClassId="EXPENSE"   parentGlAccountId="3010000"  accountName="Police expenses"/>
+    <GlAccount glAccountId="3010125"  glAccountClassId="EXPENSE"   parentGlAccountId="3010000"  accountName="Security services"/>
+    <GlAccount glAccountId="3010127"  glAccountClassId="EXPENSE"   parentGlAccountId="3010000"  accountName="Travel &amp; Accommodation"/>
+    <GlAccount glAccountId="3010130"  glAccountClassId="EXPENSE"   parentGlAccountId="3010000"  accountName="Legal fees"/>
+    <GlAccount glAccountId="3010132"  glAccountClassId="EXPENSE"   parentGlAccountId="3010000"  accountName="Audit fees"/>
+    <GlAccount glAccountId="3010133"  glAccountClassId="EXPENSE"   parentGlAccountId="3010000"  accountName="Consultancy fees"/>
+    <GlAccount glAccountId="3010134"  glAccountClassId="EXPENSE"   parentGlAccountId="3010000"  accountName="Hire of transport"/>
+    <GlAccount glAccountId="3010144"  glAccountClassId="EXPENSE"   parentGlAccountId="3010000"  accountName="Bad Debts"/>
+    <GlAccount glAccountId="3010145"  glAccountClassId="EXPENSE"   parentGlAccountId="3010000"  accountName="Depreciation Charge-Other Assets"/>
+    <GlAccount glAccountId="3010147"  glAccountClassId="EXPENSE"   parentGlAccountId="3010000"  accountName="Discount Allowed"/>
+    <GlAccount glAccountId="3010148"  glAccountClassId="EXPENSE"   parentGlAccountId="3010000"  accountName="Recruitment Expenses"/>
+    <GlAccount glAccountId="3010149"  glAccountClassId="EXPENSE"   parentGlAccountId="3010000"  accountName="Chiwala Resettlement Project"/>
+    <GlAccount glAccountId="3011000"  glAccountClassId="EXPENSE"   parentGlAccountId="3010000"  accountName="OTHER EXPENSES"/>
+    <GlAccount glAccountId="3011101"  glAccountClassId="EXPENSE"   parentGlAccountId="3011000"  accountName="Sundry expenses"/>
+    <GlAccount glAccountId="3010095"  glAccountClassId="EXPENSE"   parentGlAccountId="3010000"  accountName="Paints"/>
+    <GlAccount glAccountId="3010120"  glAccountClassId="EXPENSE"   parentGlAccountId="3010000"  accountName="Office expenses"/>
+    <GlAccount glAccountId="3015103"  glAccountClassId="EXPENSE"   parentGlAccountId="3010000"  accountName="Mining license"/>
+    <GlAccount glAccountId="3015104"  glAccountClassId="EXPENSE"   parentGlAccountId="3010000"  accountName="Manufacturers"/>
+    <GlAccount glAccountId="3100101"  glAccountClassId="EXPENSE"   parentGlAccountId="3010000"  accountName="Medical levy"/>
+    <GlAccount glAccountId="3100106"  glAccountClassId="EXPENSE"   parentGlAccountId="3010000"  accountName="Interest and financial expenses on leases"/>
+    <GlAccount glAccountId="4300100"  glAccountClassId="EXPENSE"   parentGlAccountId="3010000"  accountName="Workers Compensation Fund contributions"/>
+    <GlAccount glAccountId="4300123"  glAccountClassId="EXPENSE"   parentGlAccountId="3010000"  accountName="Office consumables"/>
+    <GlAccount glAccountId="4500100"  glAccountClassId="EXPENSE"   parentGlAccountId="3010000"  accountName="Corporation tax"/>
+    <GlAccount glAccountId="4500103"  glAccountClassId="EXPENSE"   parentGlAccountId="3010000"  accountName="Deferred tax"/>
+    <GlAccount glAccountId="4700100"  glAccountClassId="EXPENSE"   parentGlAccountId="3010000"  accountName="Dividends"/>
+    <!-- Licensing Fees -->
+    <GlAccount glAccountId="3015000"  glAccountClassId="EXPENSE"   parentGlAccountId="20000000"  accountName="LICENCING FEES"/>
+    <GlAccount glAccountId="3015100"  glAccountClassId="EXPENSE"   parentGlAccountId="3015000"  accountName="Mines Safety Department"/>
+    <GlAccount glAccountId="3015101"  glAccountClassId="EXPENSE"   parentGlAccountId="3015000"  accountName="Communications Authority"/>
+    <GlAccount glAccountId="3015102"  glAccountClassId="EXPENSE"   parentGlAccountId="3015000"  accountName="Motor Vehicles-Road Tax &amp; Fittness Test"/>
+    <GlAccount glAccountId="3015105"  glAccountClassId="EXPENSE"   parentGlAccountId="3015000"  accountName="Wholesale License"/>
+    <GlAccount glAccountId="3015106"  glAccountClassId="EXPENSE"   parentGlAccountId="3015000"  accountName="Petroleum License"/>
+    <GlAccount glAccountId="3015107"  glAccountClassId="EXPENSE"   parentGlAccountId="3015000"  accountName="Fire Certificate"/>
+    <GlAccount glAccountId="3015108"  glAccountClassId="EXPENSE"   parentGlAccountId="3015000"  accountName="ZEMA Fees"/>
+    <GlAccount glAccountId="3015109"  glAccountClassId="EXPENSE"   parentGlAccountId="3015000"  accountName="Zambia Weights &amp; Measures Agency"/>
+    <GlAccount glAccountId="3015110"  glAccountClassId="EXPENSE"   parentGlAccountId="3015000"  accountName="Zambia Bureau of Standards"/>
+    <GlAccount glAccountId="3015111"  glAccountClassId="EXPENSE"   parentGlAccountId="3015000"  accountName="City Councils tonnage fees"/>
+    <GlAccount glAccountId="3015112"  glAccountClassId="EXPENSE"   parentGlAccountId="3015000"  accountName="Health professions council of Zambia"/>
+    <GlAccount glAccountId="3015113"  glAccountClassId="EXPENSE"   parentGlAccountId="3015000"  accountName="Billboards"/>
+    <GlAccount glAccountId="3015114"  glAccountClassId="EXPENSE"   parentGlAccountId="3015000"  accountName="PACRA"/>
+
+    <!-- Selling and Distribution -->
+    <GlAccount glAccountId="3020000"  glAccountClassId="EXPENSE"   parentGlAccountId="20000000" accountName="SELLING AND DISTRIBUTION"/>
+    <GlAccount glAccountId="3020100"  glAccountClassId="EXPENSE"   parentGlAccountId="3020000"  accountName="Advertising"/>
+    <GlAccount glAccountId="3020101"  glAccountClassId="EXPENSE"   parentGlAccountId="3020000"  accountName="Promotions"/>
+    <GlAccount glAccountId="3020103"  glAccountClassId="EXPENSE"   parentGlAccountId="3020000"  accountName="Travel and accommodation"/>
+    <GlAccount glAccountId="3020106"  glAccountClassId="EXPENSE"   parentGlAccountId="3020000"  accountName="Cement Transportation/Depot storage"/>
+    <GlAccount glAccountId="3020107"  glAccountClassId="EXPENSE"   parentGlAccountId="3020000"  accountName="Distribution expenses"/>
+
+    <!-- Finance Charges -->
+    <GlAccount glAccountId="3100000"  glAccountClassId="EXPENSE"   parentGlAccountId="20000000" accountName="FINANCE CHARGES"/>
+    <GlAccount glAccountId="3100100"  glAccountClassId="EXPENSE"   parentGlAccountId="3100000"  accountName="Bank charges"/>
+    <GlAccount glAccountId="3100105"  glAccountClassId="EXPENSE"   parentGlAccountId="3100000"  accountName="Interest on borrowings"/>
+    <GlAccount glAccountId="3100107"  glAccountClassId="EXPENSE"   parentGlAccountId="3100000"  accountName="Withholding Tax on Bank Interest"/>
+
+    <!-- Directors Expense -->
+    <GlAccount glAccountId="3200000"  glAccountClassId="EXPENSE"   parentGlAccountId="20000000" accountName="DIRECTORS EXPENSES"/>
+    <GlAccount glAccountId="3200100"  glAccountClassId="EXPENSE"   parentGlAccountId="3200000"  accountName="Directors&apos; fees"/>
+    <GlAccount glAccountId="3200101"  glAccountClassId="EXPENSE"   parentGlAccountId="3200000"  accountName="Directors&apos; remuneration"/>
+
+    <!-- Expatriates Expense -->
+    <GlAccount glAccountId="4200000"  glAccountClassId="EXPENSE"   parentGlAccountId="20000000" accountName="EXPATRIATES EXPENSES"/>
+    <GlAccount glAccountId="4200102"  glAccountClassId="EXPENSE"   parentGlAccountId="4200000"  accountName="Medical"/>
+    <GlAccount glAccountId="4200103"  glAccountClassId="EXPENSE"   parentGlAccountId="4200000"  accountName="Travel expense"/>
+    <GlAccount glAccountId="4200104"  glAccountClassId="EXPENSE"   parentGlAccountId="4200000"  accountName="Immigration permit fees"/>
+    <GlAccount glAccountId="4200105"  glAccountClassId="EXPENSE"   parentGlAccountId="4200000"  accountName="Work Permit expense"/>
+    <GlAccount glAccountId="4200106"  glAccountClassId="EXPENSE"   parentGlAccountId="4200000"  accountName="Expatriates hostel expenses"/>
+    <GlAccount glAccountId="4200107"  glAccountClassId="EXPENSE"   parentGlAccountId="4200000"  accountName="Children&apos;s school fees"/>
+
+    <!-- Staff Welfare Expense -->
+    <GlAccount glAccountId="4300000"  glAccountClassId="EXPENSE"   parentGlAccountId="20000000" accountName="STAFF WELFARE EXPENSES"/>
+    <GlAccount glAccountId="4300101"  glAccountClassId="EXPENSE"   parentGlAccountId="4300000"  accountName="Staff Medical"/>
+    <GlAccount glAccountId="4300102"  glAccountClassId="EXPENSE"   parentGlAccountId="4300000"  accountName="Personal Protective Clothing"/>
+    <GlAccount glAccountId="4300103"  glAccountClassId="EXPENSE"   parentGlAccountId="4300000"  accountName="Staff Canteen"/>
+    <GlAccount glAccountId="4300104"  glAccountClassId="EXPENSE"   parentGlAccountId="4300000"  accountName="Recreation &amp; Entertainment"/>
+    <GlAccount glAccountId="4300105"  glAccountClassId="EXPENSE"   parentGlAccountId="4300000"  accountName="Training/Seminer Expenses Local"/>
+    <GlAccount glAccountId="4300106"  glAccountClassId="EXPENSE"   parentGlAccountId="4300000"  accountName="Training Expenses Abroad"/>
+    <GlAccount glAccountId="4300107"  glAccountClassId="EXPENSE"   parentGlAccountId="4300000"  accountName="Funeral grant"/>
+    <GlAccount glAccountId="4300108"  glAccountClassId="EXPENSE"   parentGlAccountId="4300000"  accountName="Lunch Allowance and Meals"/>
+    <GlAccount glAccountId="4300109"  glAccountClassId="EXPENSE"   parentGlAccountId="4300000"  accountName="Staff transpotation"/>
+    <GlAccount glAccountId="4300110"  glAccountClassId="EXPENSE"   parentGlAccountId="4300000"  accountName="Professional Subscriptions"/>
+    <GlAccount glAccountId="4300111"  glAccountClassId="EXPENSE"   parentGlAccountId="4300000"  accountName="Airtime"/>
+    <GlAccount glAccountId="4300112"  glAccountClassId="EXPENSE"   parentGlAccountId="4300000"  accountName="Staff fuel"/>
+    <GlAccount glAccountId="4300113"  glAccountClassId="EXPENSE"   parentGlAccountId="4300000"  accountName="Residential utility bills"/>
+    <GlAccount glAccountId="4300120"  glAccountClassId="EXPENSE"   parentGlAccountId="4300000"  accountName="Drivers Ration Money"/>
+    <GlAccount glAccountId="4300125"  glAccountClassId="EXPENSE"   parentGlAccountId="4300000"  accountName="Union Collective Bargaining Expenses"/>
+    <GlAccount glAccountId="9020112"  glAccountClassId="EXPENSE"   parentGlAccountId="4300000"  accountName="Staff Canteen"/>
+    <GlAccount glAccountId="4310123"  glAccountClassId="EXPENSE"   parentGlAccountId="4300000"  accountName="Staff Canteen-Employer Contr"/>
+
+    <!-- Salary and Wages -->
+    <GlAccount glAccountId="4310000"  glAccountClassId="EXPENSE"   parentGlAccountId="20000000" accountName="SALARIES AND WAGES"/>
+    <GlAccount glAccountId="4310001"  glAccountClassId="EXPENSE"   parentGlAccountId="4310000"  accountName="Basic Salary"/>
+    <GlAccount glAccountId="4310100"  glAccountClassId="EXPENSE"   parentGlAccountId="4310000"  accountName="Housing Allowance"/>
+    <GlAccount glAccountId="4310101"  glAccountClassId="EXPENSE"   parentGlAccountId="4310000"  accountName="Production Bonus"/>
+    <GlAccount glAccountId="4310102"  glAccountClassId="EXPENSE"   parentGlAccountId="4310000"  accountName="Fuel Allowance"/>
+    <GlAccount glAccountId="4310103"  glAccountClassId="EXPENSE"   parentGlAccountId="4310000"  accountName="Car Allowance"/>
+    <GlAccount glAccountId="4310104"  glAccountClassId="EXPENSE"   parentGlAccountId="4310000"  accountName="Responsibility Allowance"/>
+    <GlAccount glAccountId="4310105"  glAccountClassId="EXPENSE"   parentGlAccountId="4310000"  accountName="Service Allowance"/>
+    <GlAccount glAccountId="4310106"  glAccountClassId="EXPENSE"   parentGlAccountId="4310000"  accountName="Heat Allowance"/>
+    <GlAccount glAccountId="4310107"  glAccountClassId="EXPENSE"   parentGlAccountId="4310000"  accountName="Dust Allowance"/>
+    <GlAccount glAccountId="4310108"  glAccountClassId="EXPENSE"   parentGlAccountId="4310000"  accountName="Special Allowance"/>
+    <GlAccount glAccountId="4310109"  glAccountClassId="EXPENSE"   parentGlAccountId="4310000"  accountName="Airtime Allowance"/>
+    <GlAccount glAccountId="4310110"  glAccountClassId="EXPENSE"   parentGlAccountId="4310000"  accountName="Internet Allowance"/>
+    <GlAccount glAccountId="4310111"  glAccountClassId="EXPENSE"   parentGlAccountId="4310000"  accountName="Acting Allowance"/>
+    <GlAccount glAccountId="4310112"  glAccountClassId="EXPENSE"   parentGlAccountId="4310000"  accountName="Transport Allowance"/>
+    <GlAccount glAccountId="4310113"  glAccountClassId="EXPENSE"   parentGlAccountId="4310000"  accountName="Servants Allowance"/>
+    <GlAccount glAccountId="4310114"  glAccountClassId="EXPENSE"   parentGlAccountId="4310000"  accountName="Utilities Allowance"/>
+    <GlAccount glAccountId="4310115"  glAccountClassId="EXPENSE"   parentGlAccountId="4310000"  accountName="Meals Allowance"/>
+    <GlAccount glAccountId="4310116"  glAccountClassId="EXPENSE"   parentGlAccountId="4310000"  accountName="Overtime Pay"/>
+    <GlAccount glAccountId="4310117"  glAccountClassId="EXPENSE"   parentGlAccountId="4310000"  accountName="Shift Differential"/>
+    <GlAccount glAccountId="4310118"  glAccountClassId="EXPENSE"   parentGlAccountId="4310000"  accountName="Employer NAPSA"/>
+    <GlAccount glAccountId="4310119"  glAccountClassId="EXPENSE"   parentGlAccountId="4310000"  accountName="Employer - Mukuba Pension Scheme"/>
+    <GlAccount glAccountId="4310120"  glAccountClassId="EXPENSE"   parentGlAccountId="4310000"  accountName="Gratuity"/>
+    <GlAccount glAccountId="4310121"  glAccountClassId="EXPENSE"   parentGlAccountId="4310000"  accountName="Leave Pay"/>
+    <GlAccount glAccountId="4310122"  glAccountClassId="EXPENSE"   parentGlAccountId="4310000"  accountName="Christmas Bonus"/>
+
+    <!-- Interim Management Expense -->
+    <GlAccount glAccountId="4350000"  glAccountClassId="EXPENSE"   parentGlAccountId="20000000" accountName="INTERIM MANAGEMENT EXPENSE"/>
+    <GlAccount glAccountId="4350101"  glAccountClassId="EXPENSE"   parentGlAccountId="4350000"  accountName="Airtime"/>
+    <GlAccount glAccountId="4350102"  glAccountClassId="EXPENSE"   parentGlAccountId="4350000"  accountName="Accommodation"/>
+    <GlAccount glAccountId="4350103"  glAccountClassId="EXPENSE"   parentGlAccountId="4350000"  accountName="Fuel"/>
+    <GlAccount glAccountId="4350104"  glAccountClassId="EXPENSE"   parentGlAccountId="4350000"  accountName="Meals &amp; Entertainment"/>
+    <GlAccount glAccountId="4350105"  glAccountClassId="EXPENSE"   parentGlAccountId="4350000"  accountName="Operations"/>
+    <GlAccount glAccountId="4350106"  glAccountClassId="EXPENSE"   parentGlAccountId="4350000"  accountName="Consultancy fees"/>
+    <GlAccount glAccountId="4350107"  glAccountClassId="EXPENSE"   parentGlAccountId="4350000"  accountName="Travel"/>
+
+    <!-- Imports -->
+    <GlAccount glAccountId="4600000"  glAccountClassId="EXPENSE"   parentGlAccountId="20000000" accountName="IMPORTS"/>
+    <GlAccount glAccountId="4600100"  glAccountClassId="EXPENSE"   parentGlAccountId="4600000"  accountName="Asycuda fees"/>
+    <GlAccount glAccountId="4600101"  glAccountClassId="EXPENSE"   parentGlAccountId="4600000"  accountName="Customs duty"/>
+    <GlAccount glAccountId="4600102"  glAccountClassId="EXPENSE"   parentGlAccountId="4600000"  accountName="Clearing &amp; Forwarding"/>
+    <GlAccount glAccountId="4600104"  glAccountClassId="EXPENSE"   parentGlAccountId="4600000"  accountName="Excise Duty"/>
+    <GlAccount glAccountId="4600105"  glAccountClassId="EXPENSE"   parentGlAccountId="4600000"  accountName="AIT"/>
+    <GlAccount glAccountId="4600106"  glAccountClassId="EXPENSE"   parentGlAccountId="4600000"  accountName="Import VAT"/>
+    <GlAccount glAccountId="4600107"  glAccountClassId="EXPENSE"   parentGlAccountId="4600000"  accountName="Freight Charges"/>
+    <GlAccount glAccountId="4700000"  glAccountClassId="EXPENSE"   parentGlAccountId="4600000"  accountName="Appropriations"/>
+
+    <!-- Tax -->
+
+    <GlAccount glAccountId="4500000_1" glAccountClassId="EXPENSE"  parentGlAccountId="20000000"  accountName="Tax"/>
+
+    <GlAccount glAccountId="4500000"  glAccountClassId="EXPENSE"   parentGlAccountId="4500000_1 " accountName="TAXES"/>
+    <GlAccount glAccountId="4500101"  glAccountClassId="EXPENSE"   parentGlAccountId="4500000"  accountName="Withholding tax"/>
+    <GlAccount glAccountId="4500102"  glAccountClassId="EXPENSE"   parentGlAccountId="4500000"  accountName="Mineral royalty tax"/>
+
+    <!-- End of Expense Accounts -->
+
+
+    <!-- Asset Accounts -->
+
+    <GlAccount glAccountId="40000000"  glAccountClassId="ASSET"   parentGlAccountId=""  accountName="Assets"/>
+
+    <!-- Fixed Asset -->
+
+    <GlAccount glAccountId="9990300"  glAccountClassId="ASSET"   parentGlAccountId="40000000" accountName="Fixed Assets"/>
+
+    <GlAccount glAccountId="6200000"  glAccountClassId="ASSET"   parentGlAccountId="9990300"  accountName="LEASED MOTOR VEHICLES"/>
+    <GlAccount glAccountId="6200001"  glAccountClassId="ASSET"   parentGlAccountId="6200000"  accountName="Leased Motor Vehicles @ Cost"/>
+    <GlAccount glAccountId="6200002"  glAccountClassId="ACCUM_DEPRECIATION"   parentGlAccountId="6200000"  accountName="Leased Motor Vehicles-Accumulated depreciation"/>
+    <GlAccount glAccountId="6202000"  glAccountClassId="ASSET"   parentGlAccountId="9990300"  accountName="COMMERCIAL MOTOR VEHICLES"/>
+    <GlAccount glAccountId="6202001"  glAccountClassId="ASSET"   parentGlAccountId="6202000"  accountName="Commercial Motor Vehicles @ Cost"/>
+    <GlAccount glAccountId="6202002"  glAccountClassId="ACCUM_DEPRECIATION"   parentGlAccountId="6202000"  accountName="Commercial Motor Vehicles-Accumulated Depreciation"/>
+    <GlAccount glAccountId="6120000"  glAccountClassId="ASSET"   parentGlAccountId="9990300"  accountName="FURNITURE &amp; FITTINGS"/>
+    <GlAccount glAccountId="6120010"  glAccountClassId="ASSET"   parentGlAccountId="6120000"  accountName="Furniture &amp; Fittings @ Cost"/>
+    <GlAccount glAccountId="6120020"  glAccountClassId="ACCUM_DEPRECIATION"   parentGlAccountId="6120000"  accountName="Furniture &amp; Fittings-Accumulated Depreciation"/>
+    <GlAccount glAccountId="6130000"  glAccountClassId="ASSET"   parentGlAccountId="9990300"  accountName="ELECTRONIC EQUIPMENT"/>
+    <GlAccount glAccountId="6130010"  glAccountClassId="LONGTERM_ASSET"   parentGlAccountId="6130000"  accountName="Electronic Equipment @ Cost"/>
+    <GlAccount glAccountId="6130020"  glAccountClassId="ACCUM_DEPRECIATION"   parentGlAccountId="6130000"  accountName="Electronic Equip-Accumulated Depreciation"/>
+    <GlAccount glAccountId="6400000"  glAccountClassId="ASSET"   parentGlAccountId="9990300"  accountName="TRUCKS &amp; TRAILERS"/>
+    <GlAccount glAccountId="6400001"  glAccountClassId="LONGTERM_ASSET"   parentGlAccountId="6400000"  accountName="Trucks &amp; Trailers @ Cost"/>
+    <GlAccount glAccountId="6400002"  glAccountClassId="ACCUM_DEPRECIATION"   parentGlAccountId="6400000"  accountName="Trucks &amp; Trailers-Accumulated Depreciation"/>
+    <GlAccount glAccountId="6600000"  glAccountClassId="ASSET"   parentGlAccountId="9990300"  accountName="TOOLS"/>
+    <GlAccount glAccountId="6600009"  glAccountClassId="ACCUM_DEPRECIATION"   parentGlAccountId="6600000"  accountName="Tools-Accumulated Depreciation"/>
+    <GlAccount glAccountId="6600010"  glAccountClassId="LONGTERM_ASSET"   parentGlAccountId="6600000"  accountName="Tools @ Cost"/>
+    <GlAccount glAccountId="6650000"  glAccountClassId="ASSET"   parentGlAccountId="9990300"  accountName="LAND &amp; BUILDINGS"/>
+    <GlAccount glAccountId="6650001"  glAccountClassId="LONGTERM_ASSET"   parentGlAccountId="6650000"  accountName="Land &amp; Buildings @ Cost"/>
+    <GlAccount glAccountId="6650002"  glAccountClassId="ACCUM_DEPRECIATION"   parentGlAccountId="6650000"  accountName="Land &amp; Buildings-Accumulated Depreciation"/>
+    <GlAccount glAccountId="6140000"  glAccountClassId="ASSET"   parentGlAccountId="9990300"  accountName="ELECTRICAL EQUIPMENT"/>
+    <GlAccount glAccountId="6140001"  glAccountClassId="LONGTERM_ASSET"   parentGlAccountId="6140000"  accountName="Electrical Equipment @ Cost"/>
+    <GlAccount glAccountId="6140002"  glAccountClassId="ACCUM_DEPRECIATION"   parentGlAccountId="6140000"  accountName="Electrical Equip-Accumulated Depreciation"/>
+    <GlAccount glAccountId="6150000"  glAccountClassId="ASSET"   parentGlAccountId="9990300"  accountName="PLANT &amp; MACHINERY"/>
+    <GlAccount glAccountId="6150010"  glAccountClassId="LONGTERM_ASSET"   parentGlAccountId="6150000"  accountName="Plant &amp; Machinery  @ Cost"/>
+    <GlAccount glAccountId="6150020"  glAccountClassId="ACCUM_DEPRECIATION"   parentGlAccountId="6150000"  accountName="Plant &amp; Machinery - Accumulated Depreciation"/>
+    <GlAccount glAccountId="6201000"  glAccountClassId="ASSET"   parentGlAccountId="9990300"  accountName="MOTOR VEHICLES-NON COMMERCIAL"/>
+    <GlAccount glAccountId="6201001"  glAccountClassId="LONGTERM_ASSET"   parentGlAccountId="6201000"  accountName="Non-Commercial Motor Vehicles @ Cost"/>
+    <GlAccount glAccountId="6201002"  glAccountClassId="ACCUM_DEPRECIATION"   parentGlAccountId="6201000"  accountName="Non-Commercial Motor Vehicles-Accumulated Depreciation"/>
+    <GlAccount glAccountId="6220000"  glAccountClassId="ASSET"   parentGlAccountId="9990300"  accountName="OFFICE EQUIPMENT"/>
+    <GlAccount glAccountId="6220010"  glAccountClassId="LONGTERM_ASSET"   parentGlAccountId="6220000"  accountName="Office Equipment @ Cost"/>
+    <GlAccount glAccountId="6220020"  glAccountClassId="ACCUM_DEPRECIATION"   parentGlAccountId="6220000"  accountName="Office Equipment - Accumulated Depreciation"/>
+    <GlAccount glAccountId="6300000"  glAccountClassId="ASSET"   parentGlAccountId="9990300"  accountName="EQUIPMENT"/>
+    <GlAccount glAccountId="6300001"  glAccountClassId="LONGTERM_ASSET"   parentGlAccountId="6300000"  accountName="Equipment @ Cost"/>
+    <GlAccount glAccountId="6300002"  glAccountClassId="ACCUM_DEPRECIATION"   parentGlAccountId="6300000"  accountName="Equipment-Accumulated Depreciation"/>
+    <GlAccount glAccountId="6640000"  glAccountClassId="ASSET"   parentGlAccountId="9990300"  accountName="Capital W.I.P"/>
+    <GlAccount glAccountId="6640001"  glAccountClassId="ASSET"   parentGlAccountId="9990300"  accountName="Capital W.I.P Cost"/>
+
+    <!-- Current Asset -->
+
+    <GlAccount glAccountId="40000000_1"  glAccountClassId="CURRENT_ASSET"   parentGlAccountId="40000000"  accountName="Current Assets"/>
+    <GlAccount glAccountId="8020000"  glAccountClassId="CURRENT_ASSET"   parentGlAccountId="40000000_1"  accountName="Provsion For Doubtful Debts"/>
+    <GlAccount glAccountId="8200102"  glAccountClassId="CURRENT_ASSET"   parentGlAccountId="40000000_1"  accountName="Fixed Term deposits-MFZ ZMW"/>
+    <GlAccount glAccountId="8401000"  glAccountClassId="CURRENT_ASSET"   parentGlAccountId="40000000_1"  accountName="CASH IN HAND FROM CASH SALES"/>
+    <GlAccount glAccountId="8402000"  glAccountClassId="CURRENT_ASSET"   parentGlAccountId="40000000_1"  accountName="CASH IN HAND FROM CASH SALES USD"/>
+    <GlAccount glAccountId="8523000"  glAccountClassId="CURRENT_ASSET"   parentGlAccountId="40000000_1"  accountName="Simeza Sangwa &amp; Associates"/>
+    <GlAccount glAccountId="8524000"  glAccountClassId="CURRENT_ASSET"   parentGlAccountId="40000000_1"  accountName="Directors' Loans-Dumasini Tembo"/>
+    <GlAccount glAccountId="8525000"  glAccountClassId="CURRENT_ASSET"   parentGlAccountId="40000000_1"  accountName="Directors Account-Finsbury Investmtent"/>
+    <!-- Inventory -->
+
+    <GlAccount glAccountId="40000000_2" glAccountClassId="INVENTORY_ASSET" parentGlAccountId="40000000_1"  accountName="Inventory"/>
+
+    <GlAccount glAccountId="7430000"  glAccountClassId="INVENTORY_ASSET"   parentGlAccountId="40000000_2"  accountName="Laboratory Materials"/>
+    <GlAccount glAccountId="7599000"  glAccountClassId="INVENTORY_ASSET"   parentGlAccountId="40000000_2"  accountName="Bags"/>
+    <GlAccount glAccountId="7600320"  glAccountClassId="INVENTORY_ASSET"   parentGlAccountId="40000000_2"  accountName="Stock-Uncrushed Limestone"/>
+    <GlAccount glAccountId="7440000"  glAccountClassId="INVENTORY_ASSET"   parentGlAccountId="40000000_2"  accountName="Refractory Materials"/>
+    <GlAccount glAccountId="7597000"  glAccountClassId="INVENTORY_ASSET"   parentGlAccountId="40000000_2"  accountName="Diesel"/>
+    <GlAccount glAccountId="7598000"  glAccountClassId="INVENTORY_ASSET"   parentGlAccountId="40000000_2"  accountName="Grinding Materials"/>
+    <GlAccount glAccountId="7500000"  glAccountClassId="INVENTORY_ASSET"   parentGlAccountId="40000000_2"  accountName="Personal Protective Clothing"/>
+    <GlAccount glAccountId="7510000"  glAccountClassId="INVENTORY_ASSET"   parentGlAccountId="40000000_2"  accountName="Mechanical Materials"/>
+    <GlAccount glAccountId="7520000"  glAccountClassId="INVENTORY_ASSET"   parentGlAccountId="40000000_2"  accountName="Electrical Materials"/>
+    <GlAccount glAccountId="7530000"  glAccountClassId="INVENTORY_ASSET"   parentGlAccountId="40000000_2"  accountName="General Consumables-Stock Yard"/>
+    <GlAccount glAccountId="7540000"  glAccountClassId="INVENTORY_ASSET"   parentGlAccountId="40000000_2"  accountName="Crushed Stones"/>
+    <GlAccount glAccountId="7410000"  glAccountClassId="INVENTORY_ASSET"   parentGlAccountId="40000000_2"  accountName="Blocks"/>
+    <GlAccount glAccountId="7550000"  glAccountClassId="INVENTORY_ASSET"   parentGlAccountId="40000000_2"  accountName="Laterite"/>
+    <GlAccount glAccountId="7420000"  glAccountClassId="INVENTORY_ASSET"   parentGlAccountId="40000000_2"  accountName="Scrap"/>
+    <GlAccount glAccountId="7560000"  glAccountClassId="INVENTORY_ASSET"   parentGlAccountId="40000000_2"  accountName="Shale"/>
+    <GlAccount glAccountId="7515000"  glAccountClassId="INVENTORY_ASSET"   parentGlAccountId="40000000_2"  accountName="Clinker"/>
+    <GlAccount glAccountId="7570000"  glAccountClassId="INVENTORY_ASSET"   parentGlAccountId="40000000_2"  accountName="Sand"/>
+    <GlAccount glAccountId="7580000"  glAccountClassId="INVENTORY_ASSET"   parentGlAccountId="40000000_2"  accountName="Coal Fines"/>
+    <GlAccount glAccountId="7590000"  glAccountClassId="INVENTORY_ASSET"   parentGlAccountId="40000000_2"  accountName="Coal Peas"/>
+    <GlAccount glAccountId="7591000"  glAccountClassId="INVENTORY_ASSET"   parentGlAccountId="40000000_2"  accountName="Gypsum"/>
+    <GlAccount glAccountId="7592000"  glAccountClassId="INVENTORY_ASSET"   parentGlAccountId="40000000_2"  accountName="Raw Meal in Blending Silo"/>
+    <GlAccount glAccountId="7593000"  glAccountClassId="INVENTORY_ASSET"   parentGlAccountId="40000000_2"  accountName="Cement"/>
+    <GlAccount glAccountId="7594000"  glAccountClassId="INVENTORY_ASSET"   parentGlAccountId="40000000_2"  accountName="Printing &amp; Stationery"/>
+    <GlAccount glAccountId="7595000"  glAccountClassId="INVENTORY_ASSET"   parentGlAccountId="40000000_2"  accountName="Paints"/>
+    <GlAccount glAccountId="7596000"  glAccountClassId="INVENTORY_ASSET"   parentGlAccountId="40000000_2"  accountName="Mobile Materials"/>
+    <GlAccount glAccountId="7600000"  glAccountClassId="INVENTORY_ASSET"   parentGlAccountId="40000000_2"  accountName="Work In Progress Inventory"/>
+    <GlAccount glAccountId="7600001"  glAccountClassId="INVENTORY_ASSET"   parentGlAccountId="40000000_2"  accountName="Work In Progress Child"/>
+    <GlAccount glAccountId="7411000"  glAccountClassId="INVENTORY_ASSET"   parentGlAccountId="40000000_2"  accountName="Medicine"/>
+    <GlAccount glAccountId="7581000"  glAccountClassId="INVENTORY_ASSET"   parentGlAccountId="40000000_2"  accountName="Bagged Cement Inventory account"/>
+
+    <GlAccount glAccountId="8000000"  glAccountClassId="CURRENT_ASSET"   parentGlAccountId="40000000_1"  accountName="Customer Control Account"/>
+    <GlAccount glAccountId="8030000"  glAccountClassId="CURRENT_ASSET"   parentGlAccountId="40000000_1"  accountName="STAFF DEBTORS"/>
+    <GlAccount glAccountId="8031000"  glAccountClassId="CURRENT_ASSET"   parentGlAccountId="40000000_1"  accountName="Loan Receivable"/>
+    <GlAccount glAccountId="8400000"  glAccountClassId="CURRENT_ASSET"   parentGlAccountId="40000000_1"  accountName="Finance Back NDOLA ZMW 0025493780012"/>
+    <GlAccount glAccountId="8410000"  glAccountClassId="CURRENT_ASSET"   parentGlAccountId="40000000_1"  accountName="FBZ USD"/>
+    <GlAccount glAccountId="8440000"  glAccountClassId="CURRENT_ASSET"   parentGlAccountId="40000000_1"  accountName="PETTY CASH"/>
+    <GlAccount glAccountId="8518000"  glAccountClassId="CURRENT_ASSET"   parentGlAccountId="40000000_1"  accountName="DEPOSITS TO SUPPLIERS"/>
+    <GlAccount glAccountId="8519000"  glAccountClassId="CURRENT_ASSET"   parentGlAccountId="40000000_1"  accountName="DEPOSITS ON CONTAINERS"/>
+    <GlAccount glAccountId="8520000"  glAccountClassId="CURRENT_ASSET"   parentGlAccountId="40000000_1"  accountName="WITH-HOLDING TAX ON BANK INTEREST"/>
+    <GlAccount glAccountId="8521000"  glAccountClassId="CURRENT_ASSET"   parentGlAccountId="40000000_1"  accountName="DIRECTORS ACCOUNT-VENTRIGLIAS"/>
+    <GlAccount glAccountId="8522000"  glAccountClassId="CURRENT_ASSET"   parentGlAccountId="40000000_1"  accountName="SECURITY DEPOSITS"/>
+    <!-- End Of Inventory Asset Account -->
+
+
+    <GlAccount glAccountId="8030101"  glAccountClassId="CURRENT_ASSET"   parentGlAccountId="40000000_1"  accountName="Car loans"/>
+    <GlAccount glAccountId="8030102"  glAccountClassId="CURRENT_ASSET"   parentGlAccountId="40000000_1"  accountName="Educational Loans"/>
+    <GlAccount glAccountId="8030103"  glAccountClassId="CURRENT_ASSET"   parentGlAccountId="40000000_1"  accountName="Materials Loans"/>
+    <GlAccount glAccountId="8030104"  glAccountClassId="CURRENT_ASSET"   parentGlAccountId="40000000_1"  accountName="Special Loans"/>
+    <GlAccount glAccountId="8030105"  glAccountClassId="CURRENT_ASSET"   parentGlAccountId="40000000_1"  accountName="House Loans"/>
+    <GlAccount glAccountId="8030106"  glAccountClassId="CURRENT_ASSET"   parentGlAccountId="40000000_1"  accountName="Mid-month Advances"/>
+    <GlAccount glAccountId="8030100"  glAccountClassId="CURRENT_ASSET"   parentGlAccountId="40000000_1"  accountName="Salary Advances"/>
+    <GlAccount glAccountId="8030107"  glAccountClassId="CURRENT_ASSET"   parentGlAccountId="40000000_1"  accountName="Other staff debtors"/>
+    <GlAccount glAccountId="8514000"  glAccountClassId="CURRENT_ASSET"   parentGlAccountId="40000000_1"  accountName="DEBTORS ZMW"/>
+
+    <!-- Investments -->
+
+    <GlAccount glAccountId="40000000_9"  glAccountClassId="LONGTERM_ASSET"   parentGlAccountId="40000000"  accountName="INVESTMENTS"/>
+    <GlAccount glAccountId="8200000"  glAccountClassId="LONGTERM_ASSET"   parentGlAccountId="40000000_9"  accountName="SHORT TERM INVESTMENTS"/>
+    <GlAccount glAccountId="8200100"  glAccountClassId="LONGTERM_ASSET"   parentGlAccountId="40000000_9"  accountName="Fixed Term Deposits-FBZ"/>
+    <GlAccount glAccountId="8200101"  glAccountClassId="LONGTERM_ASSET"   parentGlAccountId="40000000_9"  accountName="Fixed Term Deposits-MFZ"/>
+
+    <!-- End Of Asset Accounts -->
+
+
+    <!-- Liability Accounts -->
+
+    <GlAccount glAccountId="300000000"    glAccountClassId="LIABILITY"   parentGlAccountId=""  accountName="Equity and Liabilities"/>
+    <GlAccount glAccountId="300000000_1"  glAccountClassId="LIABILITY"   parentGlAccountId="300000000"  accountName="Capital and Reserves"/>
+
+    <!-- Share Capital -->
+    <GlAccount glAccountId="9600100" glAccountClassId="LIABILITY"   parentGlAccountId="300000000"  accountName="Ordinary Share Capital"/>
+    <GlAccount glAccountId="9600000"  glAccountClassId="LIABILITY"   parentGlAccountId="9600100"  accountName="SHARE CAPITAL &amp; RESERVES"/>
+    <GlAccount glAccountId="9600101"  glAccountClassId="LIABILITY"   parentGlAccountId="9600100"  accountName="Preference Share Capital"/>
+    <GlAccount glAccountId="9600102"  glAccountClassId="LIABILITY"   parentGlAccountId="9600100"  accountName="Additional paid in ord capital"/>
+    <GlAccount glAccountId="9600103"  glAccountClassId="LIABILITY"   parentGlAccountId="9600100"  accountName="Additional paid in pref share capital"/>
+
+    <!-- Retained Income -->
+
+    <GlAccount glAccountId="300000000_3"  glAccountClassId="LIABILITY"   parentGlAccountId="300000000"  accountName="Retained Income"/>
+    <GlAccount glAccountId="9610000"  glAccountClassId="LIABILITY"   parentGlAccountId="300000000_3"  accountName="RESERVES"/>
+    <GlAccount glAccountId="9610100"  glAccountClassId="LIABILITY"   parentGlAccountId="300000000_3"  accountName="Assets Revaluation Reserve"/>
+    <GlAccount glAccountId="9610101"  glAccountClassId="LIABILITY"   parentGlAccountId="300000000_3"  accountName="Non-distributable Reserves"/>
+    <GlAccount glAccountId="9610102"  glAccountClassId="LIABILITY"   parentGlAccountId="300000000_3"  accountName="General Reserves"/>
+    <!-- Long Term Borrowings -->
+
+    <GlAccount glAccountId="300000000_9"  glAccountClassId="LONGTERM_LIABILITY"   parentGlAccountId="300000000"  accountName="Long Term Borrowings"/>
+    <GlAccount glAccountId="9420114"  glAccountClassId="LONGTERM_LIABILITY"   parentGlAccountId="300000000_9"  accountName="PTA Bank Trade Facility"/>
+    <GlAccount glAccountId="9420115"  glAccountClassId="LONGTERM_LIABILITY"   parentGlAccountId="300000000_9"  accountName="Barclays Wealth"/>
+    <GlAccount glAccountId="9410000"  glAccountClassId="LONGTERM_LIABILITY"   parentGlAccountId="300000000_9"  accountName="LONG TERM LIABILITIES"/>
+    <GlAccount glAccountId="9420104"  glAccountClassId="LONGTERM_LIABILITY"   parentGlAccountId="300000000_9"  accountName="Shareholders Surbodinated Loans"/>
+
+
+    <!-- Other Long Term Liability -->
+    <GlAccount glAccountId="9420000"  glAccountClassId="LIABILITY"   parentGlAccountId="300000000"  accountName="OTHER LONG TERM LIABILITIES"/>
+    <GlAccount glAccountId="8420000"  glAccountClassId="LIABILITY"   parentGlAccountId="9420000"  accountName="FBZ LOAN ZMW 001437516003"/>
+    <GlAccount glAccountId="8430000"  glAccountClassId="LIABILITY"   parentGlAccountId="9420000"  accountName="FBZ LOAN USD 0014375160014"/>
+    <GlAccount glAccountId="8436000"  glAccountClassId="LIABILITY"   parentGlAccountId="9420000"  accountName="FBZ LOAN USD 0021046760012"/>
+    <GlAccount glAccountId="8439000"  glAccountClassId="LIABILITY"   parentGlAccountId="9420000"  accountName="FBZ LOAN ZMW 0010301754019"/>
+    <GlAccount glAccountId="8501000"  glAccountClassId="LIABILITY"   parentGlAccountId="9420000"  accountName="FBZ ITAL TERAZZO LOAN 00244379000005"/>
+    <GlAccount glAccountId="8502000"  glAccountClassId="LIABILITY"   parentGlAccountId="9420000"  accountName="FBZ LOAN-ITAL TERAZZO 1030188006"/>
+    <GlAccount glAccountId="8503000"  glAccountClassId="LIABILITY"   parentGlAccountId="9420000"  accountName="FBZ LOAN-CLADAVA 0024255450012"/>
+    <GlAccount glAccountId="8510000"  glAccountClassId="LIABILITY"   parentGlAccountId="9420000"  accountName="FBZ LOAN-CLADAVA 0014043330014"/>
+    <GlAccount glAccountId="8512000"  glAccountClassId="LIABILITY"   parentGlAccountId="9420000"  accountName="FBZ LOAN ITAL TERAZZO 0010301880014"/>
+    <GlAccount glAccountId="9400000"  glAccountClassId="LIABILITY"   parentGlAccountId="9420000"  accountName="LONG TERM CONTIGENCY PROVISIONS"/>
+    <GlAccount glAccountId="9400100"  glAccountClassId="LIABILITY"   parentGlAccountId="9420000"  accountName="Provision for site restoration"/>
+    <GlAccount glAccountId="9400101"  glAccountClassId="LIABILITY"   parentGlAccountId="9420000"  accountName="Provision for restructuring"/>
+    <GlAccount glAccountId="9400102"  glAccountClassId="LIABILITY"   parentGlAccountId="9420000"  accountName="Provision for pension commitments"/>
+
+    <!-- Current Liabilities -->
+
+    <GlAccount glAccountId="300000000_8"  glAccountClassId="CURRENT_LIABILITY"   parentGlAccountId="300000000"  accountName="Current Liabilities"/>
+    <GlAccount glAccountId="9310000"  glAccountClassId="CURRENT_LIABILITY"   parentGlAccountId="300000000_8"  accountName="SHORT TERM CONTIGENCY PROVISIONS"/>
+    <GlAccount glAccountId="9310100"  glAccountClassId="CURRENT_LIABILITY"   parentGlAccountId="300000000_8"  accountName="Prov- Litigation &amp; lawsuits"/>
+    <GlAccount glAccountId="9310101"  glAccountClassId="CURRENT_LIABILITY"   parentGlAccountId="300000000_8"  accountName="Prov- Guarantees"/>
+    <GlAccount glAccountId="9000000"  glAccountClassId="CURRENT_LIABILITY"   parentGlAccountId="300000000_8"  accountName="Supplier Control Account"/>
+    <GlAccount glAccountId="9020000"  glAccountClassId="CURRENT_LIABILITY"   parentGlAccountId="300000000_8"  accountName="PAYROLL CONTROL ACCOUNTS"/>
+    <GlAccount glAccountId="9020100"  glAccountClassId="CURRENT_LIABILITY"   parentGlAccountId="300000000_8"  accountName="PAYE"/>
+    <GlAccount glAccountId="9020101"  glAccountClassId="CURRENT_LIABILITY"   parentGlAccountId="300000000_8"  accountName="NAPSA"/>
+    <GlAccount glAccountId="9020102"  glAccountClassId="CURRENT_LIABILITY"   parentGlAccountId="300000000_8"  accountName="Union subscriptions"/>
+    <GlAccount glAccountId="9020103"  glAccountClassId="CURRENT_LIABILITY"   parentGlAccountId="300000000_8"  accountName="Mukuba Pension Scheme"/>
+    <GlAccount glAccountId="9020104"  glAccountClassId="CURRENT_LIABILITY"   parentGlAccountId="300000000_8"  accountName="Micro-Finance Loan Scheme"/>
+    <GlAccount glAccountId="9020105"  glAccountClassId="CURRENT_LIABILITY"   parentGlAccountId="300000000_8"  accountName="Zampost Loan Scheme"/>
+    <GlAccount glAccountId="9020106"  glAccountClassId="CURRENT_LIABILITY"   parentGlAccountId="300000000_8"  accountName="Professional Life Assuarance"/>
+    <GlAccount glAccountId="9020107"  glAccountClassId="CURRENT_LIABILITY"   parentGlAccountId="300000000_8"  accountName="Unions Business Ventures"/>
+    <GlAccount glAccountId="9020108"  glAccountClassId="CURRENT_LIABILITY"   parentGlAccountId="300000000_8"  accountName="Rising Sun"/>
+    <GlAccount glAccountId="9030119"  glAccountClassId="CURRENT_LIABILITY"   parentGlAccountId="300000000_8"  accountName="Barclays Wealth Arbitration Costs"/>
+    <GlAccount glAccountId="9020109"  glAccountClassId="CURRENT_LIABILITY"   parentGlAccountId="300000000_8"  accountName="Personal Levy"/>
+    <GlAccount glAccountId="9020110"  glAccountClassId="CURRENT_LIABILITY"   parentGlAccountId="300000000_8"  accountName="Net Pay"/>
+    <GlAccount glAccountId="9020111"  glAccountClassId="CURRENT_LIABILITY"   parentGlAccountId="300000000_8"  accountName="Other Payroll liabilities"/>
+    <GlAccount glAccountId="9021000"  glAccountClassId="CURRENT_LIABILITY"   parentGlAccountId="300000000_8"  accountName="OTHER SHORT TERM LIABILITIES"/>
+    <GlAccount glAccountId="9021101"  glAccountClassId="CURRENT_LIABILITY"   parentGlAccountId="300000000_8"  accountName="Customer Advance Payments"/>
+    <GlAccount glAccountId="9030000"  glAccountClassId="CURRENT_LIABILITY"   parentGlAccountId="300000000_8"  accountName="ACCRUALS"/>
+    <GlAccount glAccountId="9030113"  glAccountClassId="CURRENT_LIABILITY"   parentGlAccountId="300000000_8"  accountName="Prov-Leave Pay"/>
+    <GlAccount glAccountId="9030114"  glAccountClassId="CURRENT_LIABILITY"   parentGlAccountId="300000000_8"  accountName="Prov-Gratuities"/>
+    <GlAccount glAccountId="9300000"  glAccountClassId="CURRENT_LIABILITY"   parentGlAccountId="300000000_8"  accountName="Taxation Payable"/>
+    <GlAccount glAccountId="9300100"  glAccountClassId="CURRENT_LIABILITY"   parentGlAccountId="300000000_8"  accountName="Corporate Income Tax"/>
+    <GlAccount glAccountId="9300101"  glAccountClassId="CURRENT_LIABILITY"   parentGlAccountId="300000000_8"  accountName="Withholding Tax"/>
+    <GlAccount glAccountId="9300102"  glAccountClassId="CURRENT_LIABILITY"   parentGlAccountId="300000000_8"  accountName="Outstanding Debt to ZRA"/>
+    <GlAccount glAccountId="9300103"  glAccountClassId="CURRENT_LIABILITY"   parentGlAccountId="300000000_8"  accountName="VAT Liability"/>
+    <GlAccount glAccountId="9500000"  glAccountClassId="CURRENT_LIABILITY"   parentGlAccountId="300000000_8"  accountName="VAT Control Account"/>
+    <GlAccount glAccountId="9010104"  glAccountClassId="CURRENT_LIABILITY"   parentGlAccountId="300000000_8"  accountName="Prepayments"/>
+    <GlAccount glAccountId="9020112"  glAccountClassId="CURRENT_LIABILITY"   parentGlAccountId="300000000_8"  accountName="Staff Canteen"/>
+    <GlAccount glAccountId="9021102"  glAccountClassId="CURRENT_LIABILITY"   parentGlAccountId="300000000_8"  accountName="LEASING FINANCE COMPANY LTD"/>
+    <GlAccount glAccountId="9030115"  glAccountClassId="CURRENT_LIABILITY"   parentGlAccountId="300000000_8"  accountName="Prov- Bonus"/>
+    <GlAccount glAccountId="9030116"  glAccountClassId="CURRENT_LIABILITY"   parentGlAccountId="300000000_8"  accountName="Prov - Audit fees"/>
+    <GlAccount glAccountId="9030117"  glAccountClassId="CURRENT_LIABILITY"   parentGlAccountId="300000000_8"  accountName="Prov - Directors fees"/>
+    <!-- Shareholders Loan -->
+
+    <GlAccount glAccountId="300000000_4"  glAccountClassId="CURRENT_LIABILITY"   parentGlAccountId="300000000"    accountName="Shareholders Loan"/>
+    <GlAccount glAccountId="300000000_5"  glAccountClassId="LIABILITY"           parentGlAccountId="300000000"    accountName="Minority Interest"/>
+    <GlAccount glAccountId="300000000_6"  glAccountClassId="LIABILITY"           parentGlAccountId="300000000"    accountName="Non-current Liabilities"/>
+    <!-- End Of Liability Accounts -->
+
+    <!-- System Control Accounts -->
+    <GlAccount glAccountId="7700100" accountCode="9100000"  glAccountClassId="CURRENT_ASSET"   parentGlAccountId="40000000_1"  accountName="GRN Accrual Accounts"/>
+    <GlAccount glAccountId="9010001"  glAccountClassId="CURRENT_LIABILITY"   parentGlAccountId="300000000"  accountName="Unapplied Supplier Payments"/>
+    <GlAccount glAccountId="8010001"  glAccountClassId="CURRENT_ASSET"   parentGlAccountId="40000000"  accountName="Unapplied Customer Receipts"/>
+    <GlAccount glAccountId="9100000" accountCode="9100000"  glAccountClassId="CURRENT_LIABILITY"   parentGlAccountId="300000000"  accountName="GRN Accrual Accounts"/>
+
+    <GlAccount glAccountId="9620000"  glAccountClassId="ASSET"   parentGlAccountId=""  accountName="Retained Earnings"/>
+    <GlAccount glAccountId="7700100" glAccountClassId="INVENTORY_ASSET" accountName="Inventory Control - Finished Goods" parentGlAccountId="40000000_2"/>
+
+    <GlAccount glAccountId="2150000" accountName="Inventory Count Variance" glAccountTypeId="" glAccountClassId="EXPENSE" parentGlAccountId="20000000"/>
+    <!-- End of System Control Accounts -->
+
+    <!-- Gl Account Organization  -->
+    <GlAccountOrganization glAccountId="9100000" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="7600001" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="7581000" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="7411000" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="9030119" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="9020112" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="4310123" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="9420104" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="1010400" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="1000450" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="7420000" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="2000400" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="7410000" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="1000000" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="2000101" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="1020000_1" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="4700000" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="10000000" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="1000100" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="1000101" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="1000110" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="1000200" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="1000210" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="1000220" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="1000230" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="1010300" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="1000400" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="1000600" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="1000650" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="1000750" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="1000760" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="1010000" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="1010100" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="1010110" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="1010200" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="1010210" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="1020000" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="1020100" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="1020101" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="1020102" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="1020103" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="1020104" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="1020106" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="1020107" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="1020108" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="1020109" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="1020110" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="1020111" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="2000000" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="20000000" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="20000000_1" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="2000105" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="2000106" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="2000107" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="2000108" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="2000109" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="2000110" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="2000111" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="2010000" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="2010101" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="2010102" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="2010103" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="2010104" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="2010105" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="2010106" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="2010107" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="2010109" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="2010110" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="2010112" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="2010113" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="2010125" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="2010130" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="2010132" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="2010133" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="2020000" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="2020101" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="2020103" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="2020104" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="300000000" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="300000000_1" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="9600100" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="300000000_3" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="300000000_4" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="300000000_5" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="300000000_6" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="300000000_8" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="300000000_9" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="3010000" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="3010001" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="3010089" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="3010093" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="3010094" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="3010100" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="3010101" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="3010102" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="3010103" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="3010104" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="3010109" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="3010112" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="3010113" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="3010116" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="3010117" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="3010118" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="3010119" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="3010121" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="3010123" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="3010124" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="3010125" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="3010127" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="3010130" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="3010132" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="3010133" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="3010134" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="3010144" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="3010145" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="3010147" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="3010148" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="3010149" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="3011000" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="3011101" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="3015000" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="3015100" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="3015101" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="3015102" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="3015105" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="3015106" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="3015107" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="3015108" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="3015109" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="3015110" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="3015111" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="3015112" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="3015113" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="3015114" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="3020000" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="3020100" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="3020101" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="3020103" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="3020106" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="3020107" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="3100000" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="3100100" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="3100105" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="3100107" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="3200000" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="3200100" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="3200101" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="7700100" organizationPartyId="Company"/>
+    <!--<GlAccountOrganization glAccountId="3710000" organizationPartyId="Company"/>-->
+    <GlAccountOrganization glAccountId="40000000" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="40000000_1" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="40000000_2" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="40000000_9" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="7600000" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="4200000" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="4200102" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="4200103" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="4200104" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="4200105" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="4200106" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="4200107" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="4240100" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="4240101" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="4300000" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="4300101" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="4300102" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="4300103" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="4300104" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="4300105" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="4300106" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="4300107" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="4300108" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="4300109" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="4300110" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="4300111" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="4300112" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="4300113" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="4300120" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="4300125" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="4310000" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="4310001" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="4310100" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="4310101" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="4310102" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="4310103" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="4310104" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="4310105" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="4310106" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="4310107" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="4310108" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="4310109" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="4310110" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="4310111" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="4310112" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="4310113" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="4310114" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="4310115" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="4310116" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="4310117" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="4310118" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="4310119" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="4310120" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="4310121" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="4310122" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="4350000" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="4350101" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="4350102" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="4350103" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="4350104" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="4350105" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="4350106" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="4350107" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="4500000" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="4500000_1" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="4500101" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="4500102" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="4600000" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="4600100" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="4600101" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="4600102" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="4600104" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="4600105" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="4600106" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="4600107" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="8010001" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="6120000" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="6120010" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="6120020" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="6130000" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="6130010" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="6130020" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="6400000" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="6400001" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="6400002" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="6600000" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="6600009" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="6600010" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="6650000" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="6650001" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="6650002" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="7500000" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="7510000" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="7520000" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="7530000" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="7540000" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="7550000" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="7560000" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="7570000" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="7580000" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="7590000" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="7591000" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="7592000" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="7593000" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="7594000" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="7595000" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="8000000" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="8030000" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="8030101" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="8030102" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="8030103" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="8030104" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="8030105" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="8030106" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="8030107" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="8031000" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="8200000" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="8200100" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="8200101" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="8400000" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="8410000" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="8420000" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="8430000" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="8436000" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="8439000" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="8440000" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="8501000" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="8502000" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="8503000" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="8510000" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="8512000" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="8514000" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="8518000" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="8519000" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="8520000" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="8521000" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="8522000" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="9000000" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="9010001" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="9020000" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="9020100" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="9020101" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="9020102" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="9020103" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="9020104" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="9020105" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="9020106" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="9020107" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="9020108" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="9020109" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="9020110" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="9020111" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="9021000" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="9021101" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="9030000" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="9030113" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="9030114" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="9300000" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="9300100" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="9300101" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="9300102" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="9300103" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="9420000" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="9420114" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="9420115" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="9500000" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="9600000" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="9600101" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="9600102" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="9600103" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="9610000" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="9610100" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="9610101" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="9610102" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="9620000" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="9990300" organizationPartyId="Company"/>
+    <!--<GlAccountOrganization glAccountId="FASM_1000" organizationPartyId="Company"/>-->
+    <GlAccountOrganization glAccountId="6140000" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="6140001" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="6140002" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="6150000" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="6150010" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="6150020" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="6201000" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="6201001" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="6201002" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="6220000" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="6220010" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="6220020" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="6300000" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="6300001" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="6300002" organizationPartyId="Company"/>
+    <!--<GlAccountOrganization glAccountId="4910000" organizationPartyId="Company"/>-->
+    <GlAccountOrganization glAccountId="7700000" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="7596000" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="2150000" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="4240000" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="7515000" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="2010126" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="8030100" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="6200000"  organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="6200001"  organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="6200002"  organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="6202000"  organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="6202001"  organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="6202002"  organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="6640000"  organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="6640001"  organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="7430000"  organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="7440000"  organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="7597000"  organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="7598000"  organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="7599000"  organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="7600320"  organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="8020000"  organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="8200102"  organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="8401000"  organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="8402000"  organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="8523000"  organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="8524000"  organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="8525000"  organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="9010104"  organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="9020112"  organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="9021102"  organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="9030115"  organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="9030116"  organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="9030117"  organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="9310000"  organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="9310100"  organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="9310101"  organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="9400000"  organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="9400100"  organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="9400101"  organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="9400102"  organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="9410000"  organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="1000240"  organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="1000500"  organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="1000770"  organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="2000100"  organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="2000102"  organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="2000103"  organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="2000112"  organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="2000113"  organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="2010111"  organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="2010117"  organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="2010121"  organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="2010127"  organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="2010134"  organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="2010135"  organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="2020102"  organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="2020105"  organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="3010095"  organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="3010120"  organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="3015103"  organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="3015104"  organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="3100101"  organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="3100106"  organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="4300100"  organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="4300123"  organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="4500100"  organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="4500103"  organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="4700100"  organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="1000300"  organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="4300103"  organizationPartyId="Company"/>
+    <!-- End of Gl Account Organization  -->
+
+
+
+    <CostComponentCalc costComponentCalcId="GEN_COST_CALC" costGlAccountTypeId="OPERATING_EXPENSE"/>
+    <CostComponentCalc costComponentCalcId="TASK_COST_CALC" costGlAccountTypeId="OPERATING_EXPENSE"/>
+
+    <!-- General Ledger Setup for the "Company" organization for "Company" -->
+
+    <!-- GL journal for suspended transactions (failed post) -->
+    <GlJournal organizationPartyId="Company" glJournalId="ERROR_JOURNAL" glJournalName="Suspense transactions"/>
+
+
+    <!-- Demo Cost center -->
+    <GlAccountCategory glAccountCategoryId="9301" glAccountCategoryTypeId="COST_CENTER" description="Weigh Bridge 1"/>
+    <GlAccountCategory glAccountCategoryId="9302" glAccountCategoryTypeId="COST_CENTER" description="Weigh Bridge 2"/>
+    <GlAccountCategory glAccountCategoryId="9303" glAccountCategoryTypeId="COST_CENTER" description="Weigh Bridge 3"/>
+    <GlAccountCategory glAccountCategoryId="9304" glAccountCategoryTypeId="COST_CENTER" description="Security"/>
+    <GlAccountCategory glAccountCategoryId="9305" glAccountCategoryTypeId="COST_CENTER" description="Procurement"/>
+    <GlAccountCategory glAccountCategoryId="9306" glAccountCategoryTypeId="COST_CENTER" description="HR"/>
+    <GlAccountCategory glAccountCategoryId="9307" glAccountCategoryTypeId="COST_CENTER" description="Sales"/>
+    <GlAccountCategory glAccountCategoryId="9308" glAccountCategoryTypeId="COST_CENTER" description="Stores"/>
+    <GlAccountCategory glAccountCategoryId="9309" glAccountCategoryTypeId="COST_CENTER" description="Packing Plant"/>
+
+    <GlAccountCategory glAccountCategoryId="9310" glAccountCategoryTypeId="COST_CENTER" description="Mobile W/Shop"/>
+    <GlAccountCategory glAccountCategoryId="9311" glAccountCategoryTypeId="COST_CENTER" description="Coal Shed"/>
+    <GlAccountCategory glAccountCategoryId="9312" glAccountCategoryTypeId="COST_CENTER" description="Civil"/>
+    <GlAccountCategory glAccountCategoryId="9313" glAccountCategoryTypeId="COST_CENTER" description="Crusher"/>
+    <GlAccountCategory glAccountCategoryId="9314" glAccountCategoryTypeId="COST_CENTER" description="Process"/>
+    <GlAccountCategory glAccountCategoryId="9315" glAccountCategoryTypeId="COST_CENTER" description="Digital Tachometer"/>
+
+    <GlAccountCategory glAccountCategoryId="9316" glAccountCategoryTypeId="COST_CENTER" description="CCR"/>
+    <GlAccountCategory glAccountCategoryId="9317" glAccountCategoryTypeId="COST_CENTER" description="Wall Clock"/>
+    <GlAccountCategory glAccountCategoryId="9318" glAccountCategoryTypeId="COST_CENTER" description="Pyrometer"/>
+    <GlAccountCategory glAccountCategoryId="9319" glAccountCategoryTypeId="COST_CENTER" description="Laboratory"/>
+    <GlAccountCategory glAccountCategoryId="9320" glAccountCategoryTypeId="COST_CENTER" description="Blending Silo"/>
+
+    <GlAccountCategory glAccountCategoryId="9321" glAccountCategoryTypeId="COST_CENTER" description="INS W/Shop"/>
+    <GlAccountCategory glAccountCategoryId="9322" glAccountCategoryTypeId="COST_CENTER" description="Pre-Heater"/>
+    <GlAccountCategory glAccountCategoryId="9323" glAccountCategoryTypeId="COST_CENTER" description="Coal Plant"/>
+    <GlAccountCategory glAccountCategoryId="9324" glAccountCategoryTypeId="COST_CENTER" description="Raw Mill"/>
+    <GlAccountCategory glAccountCategoryId="9325" glAccountCategoryTypeId="COST_CENTER" description="Fabrication"/>
+
+    <GlAccountCategory glAccountCategoryId="9326" glAccountCategoryTypeId="COST_CENTER" description="Kiln Section"/>
+    <GlAccountCategory glAccountCategoryId="9327" glAccountCategoryTypeId="COST_CENTER" description="Mechanical"/>
+    <GlAccountCategory glAccountCategoryId="9328" glAccountCategoryTypeId="COST_CENTER" description="Coal Plant"/>
+    <GlAccountCategory glAccountCategoryId="9329" glAccountCategoryTypeId="COST_CENTER" description="Raw Mill Blower Room"/>
+
+    <!-- Mappings for payments -->
+    <PaymentGlAccountTypeMap organizationPartyId="Company" paymentTypeId="CUSTOMER_REFUND"  glAccountTypeId="CUSTOMER_CREDIT"/>
+    <!-- NOTE: do not change this -->
+    <PaymentGlAccountTypeMap organizationPartyId="Company" paymentTypeId="VENDOR_PAYMENT"  glAccountTypeId="ACCPAYABLE_UNAPPLIED"/>
+    <PaymentGlAccountTypeMap organizationPartyId="Company" paymentTypeId="VENDOR_PREPAY"   glAccountTypeId="PREPAID_EXPENSES"/>
+    <PaymentGlAccountTypeMap organizationPartyId="Company" paymentTypeId="PAY_CHECK"  glAccountTypeId="ACCPAYABLE_UNAPPLIED"/>
+    <PaymentGlAccountTypeMap organizationPartyId="Company" paymentTypeId="SALES_TAX_PAYMENT" glAccountTypeId="TAX_ACCOUNT"/>
+    <PaymentGlAccountTypeMap organizationPartyId="Company" paymentTypeId="PAYROL_PAYMENT"   glAccountTypeId="OPERATING_EXPENSE"/>
+    <PaymentGlAccountTypeMap organizationPartyId="Company" paymentTypeId="PAYROLL_TAX_PAYMENT"  glAccountTypeId="TAX_ACCOUNT"/>
+    <PaymentGlAccountTypeMap organizationPartyId="Company" paymentTypeId="INCOME_TAX_PAYMENT"  glAccountTypeId="TAX_ACCOUNT"/>
+    <!-- NOTE: do not change this -->
+    <PaymentGlAccountTypeMap organizationPartyId="Company" paymentTypeId="CUSTOMER_PAYMENT"  glAccountTypeId="ACCREC_UNAPPLIED"/>
+    <PaymentGlAccountTypeMap organizationPartyId="Company" paymentTypeId="CUSTOMER_DEPOSIT"  glAccountTypeId="CUSTOMER_DEPOSIT"/>
+    <PaymentGlAccountTypeMap organizationPartyId="Company" paymentTypeId="INTEREST_RECEIPT"  glAccountTypeId="INTRSTINC_RECEIVABLE"/>
+
+    <CustomTimePeriod organizationPartyId="Company" customTimePeriodId="6015" periodTypeId="FISCAL_YEAR" fromDate="2014-01-01" thruDate="2014-12-31" isClosed="N" periodNum="1" periodName="2014"/>
+
+    <!-- Default mapping between account types and account ids -->
+
+    <GlAccountTypeDefault organizationPartyId="Company" glAccountTypeId="ACCOUNTS_RECEIVABLE" glAccountId="8000000"/>
+    <GlAccountTypeDefault organizationPartyId="Company" glAccountTypeId="ACCOUNTS_PAYABLE" glAccountId="9000000"/>
+
+    <GlAccountTypeDefault organizationPartyId="Company" glAccountTypeId="ACCREC_UNAPPLIED" glAccountId="8010001"/>
+    <!--<GlAccountTypeDefault organizationPartyId="Company" glAccountTypeId="INVENTORY_XFER_IN" glAccountId="3710000"/>-->
+
+    <!--<GlAccountTypeDefault organizationPartyId="Company" glAccountTypeId="INVENTORY_XFER_OUT" glAccountId="4910000"/>-->
+    <GlAccountTypeDefault organizationPartyId="Company" glAccountTypeId="INVENTORY_ACCOUNT" glAccountId="7700100"/>
+
+    <GlAccountTypeDefault organizationPartyId="Company" glAccountTypeId="WIP_INVENTORY" glAccountId="7600001"/>
+    <GlAccountTypeDefault organizationPartyId="Company" glAccountTypeId="INV_ADJ_VAL" glAccountId="2150000"/>
+    <GlAccountTypeDefault organizationPartyId="Company" glAccountTypeId="OPERATING_EXPENSE" glAccountId="2020000"/>
+
+    <GlAccountTypeDefault organizationPartyId="Company" glAccountTypeId="CUSTOMER_CREDIT" glAccountId="9021101"/>
+    <GlAccountTypeDefault organizationPartyId="Company" glAccountTypeId="CUSTOMER_DEPOSIT" glAccountId="9021101"/>
+
+    <GlAccountTypeDefault organizationPartyId="Company" glAccountTypeId="UNINVOICED_SHIP_RCPT" glAccountId="7700100"/>
+    <GlAccountTypeDefault organizationPartyId="Company" glAccountTypeId="ACCPAYABLE_UNAPPLIED" glAccountId="9010001"/>
+    <GlAccountTypeDefault organizationPartyId="Company" glAccountTypeId="COGS_ACCOUNT" glAccountId="2000000"/>
+    <GlAccountTypeDefault organizationPartyId="Company" glAccountTypeId="PROFIT_LOSS_ACCOUNT" glAccountId="9620000"/>
+    <GlAccountTypeDefault organizationPartyId="Company" glAccountTypeId="FX_GAIN_ACCOUNT" glAccountId="4240100"/>
+    <GlAccountTypeDefault organizationPartyId="Company" glAccountTypeId="FX_LOSS_ACCOUNT" glAccountId="4240101"/>
+    <!--<GlAccountTypeDefault organizationPartyId="Company" glAccountTypeId="FIXED_ASSET_MAINT" glAccountId="FASM_1000"/>-->
+    <GlAccountTypeDefault organizationPartyId="Company" glAccountTypeId="PURCHASE_ACCOUNT" glAccountId="7700100"/>
+
+    <VarianceReasonGlAccount organizationPartyId="Company" varianceReasonId="VAR_LOST" glAccountId="2150000"/>
+    <VarianceReasonGlAccount organizationPartyId="Company" varianceReasonId="VAR_STOLEN" glAccountId="2150000"/>
+    <VarianceReasonGlAccount organizationPartyId="Company" varianceReasonId="VAR_FOUND" glAccountId="2150000"/>
+    <VarianceReasonGlAccount organizationPartyId="Company" varianceReasonId="VAR_DAMAGED" glAccountId="2150000"/>
+    <VarianceReasonGlAccount organizationPartyId="Company" varianceReasonId="VAR_INTEGR" glAccountId="2150000"/>
+    <VarianceReasonGlAccount organizationPartyId="Company" varianceReasonId="VAR_SAMPLE" glAccountId="2150000"/>
+
+
+    <!-- GL Account Type Default -->
+
+
+    <PaymentMethodType description="Cash" paymentMethodTypeId="CASH" defaultGlAccountId="8440000"/>
+    <PaymentMethodTypeGlAccount paymentMethodTypeId="CASH" organizationPartyId="Company" glAccountId="8440000"/>
+
+
+    <InvoiceItemType description="Invoice Product Item" hasTable="N" invoiceItemTypeId="PINV_PROD_ITEM" parentTypeId="" defaultGlAccountId="7700100"/>
+    <InvoiceItemType description="Invoice Finished Good Item" hasTable="N" invoiceItemTypeId="PINV_FPROD_ITEM"  parentTypeId="PINV_PROD_ITEM" defaultGlAccountId="7700100"/>
+    <InvoiceItemType description="Invoice Digital Good Item" hasTable="N" invoiceItemTypeId="PINV_DPROD_ITEM"   parentTypeId="PINV_PROD_ITEM" defaultGlAccountId="7700100"/>
+    <InvoiceItemType description="Invoice Finished/Digital Good Item" hasTable="N" invoiceItemTypeId="PINV_FDPROD_ITEM" parentTypeId="PINV_PROD_ITEM" defaultGlAccountId="7700100"/>
+    <InvoiceItemType description="Invoice Product-Feature Item" hasTable="N" invoiceItemTypeId="PINV_PROD_FEATR_ITEM" parentTypeId="PINV_PROD_ITEM" defaultGlAccountId="7700100"/>
+    <InvoiceItemType description="Invoice Service Product Item" hasTable="N" invoiceItemTypeId="PINV_SPROD_ITEM" parentTypeId="PINV_PROD_ITEM" defaultGlAccountId="7700100"/>
+
+
+    <FixedAsset fixedAssetId="_NA_"/>
+    <FixedAssetTypeGlAccount fixedAssetTypeId="FURNITURE_FITTING" fixedAssetId="_NA_" organizationPartyId="Company"
+                             assetGlAccountId="6120010" accDepGlAccountId="6120020" depGlAccountId="3010145" profitGlAccountId="1020108" lossGlAccountId="1020108"/>
+
+    <FixedAssetTypeGlAccount fixedAssetTypeId="GROUP_EQUIPMENT"  fixedAssetId="_NA_" organizationPartyId="Company"
+                             assetGlAccountId="6150010" accDepGlAccountId="6150020" depGlAccountId="2010132" profitGlAccountId="1020108" lossGlAccountId="1020108"/>
+
+    <FixedAssetTypeGlAccount fixedAssetTypeId="EQUIPMENT" fixedAssetId="_NA_" organizationPartyId="Company"
+                             assetGlAccountId="6300001" accDepGlAccountId="6300002" depGlAccountId="3010145" profitGlAccountId="1020108" lossGlAccountId="1020108"/>
+
+    <FixedAssetTypeGlAccount fixedAssetTypeId="ELECTRONIC_EQUIP" fixedAssetId="_NA_" organizationPartyId="Company"
+                             assetGlAccountId="6130010" accDepGlAccountId="6130020" depGlAccountId="3010145" profitGlAccountId="1020108" lossGlAccountId="1020108"/>
+
+    <FixedAssetTypeGlAccount fixedAssetTypeId="ELECTRICAL_EQUIP" fixedAssetId="_NA_" organizationPartyId="Company"
+                             assetGlAccountId="6140001" accDepGlAccountId="6140002" depGlAccountId="3010145" profitGlAccountId="1020108" lossGlAccountId="1020108"/>
+
+    <FixedAssetTypeGlAccount fixedAssetTypeId="MOTOR_VEH_NON_COMM" fixedAssetId="_NA_" organizationPartyId="Company"
+                             assetGlAccountId="6201001" accDepGlAccountId="6201002" depGlAccountId="3010145" profitGlAccountId="1020108" lossGlAccountId="1020108"/>
+
+    <FixedAssetTypeGlAccount fixedAssetTypeId="OFFICE_EQUIP" fixedAssetId="_NA_" organizationPartyId="Company"
+                             assetGlAccountId="6220010" accDepGlAccountId="6220020" depGlAccountId="3010145" profitGlAccountId="1020108" lossGlAccountId="1020108"/>
+
+    <FixedAssetTypeGlAccount fixedAssetTypeId="TRUCK_TRAILER" fixedAssetId="_NA_" organizationPartyId="Company"
+                             assetGlAccountId="6400001" accDepGlAccountId="6400002" depGlAccountId="3010145" profitGlAccountId="1020108" lossGlAccountId="1020108"/>
+
+    <FixedAssetTypeGlAccount fixedAssetTypeId="TOOLS" fixedAssetId="_NA_" organizationPartyId="Company"
+                             assetGlAccountId="6600010" accDepGlAccountId="3010145" depGlAccountId="6600009" profitGlAccountId="1020108" lossGlAccountId="1020108"/>
+
+    <FixedAssetTypeGlAccount fixedAssetTypeId="LAND_BUILDING" fixedAssetId="_NA_" organizationPartyId="Company"
+                             assetGlAccountId="6650001" accDepGlAccountId="3010145" depGlAccountId="6650002" profitGlAccountId="1020108" lossGlAccountId="1020108"/>
+
+</entity-engine-xml>

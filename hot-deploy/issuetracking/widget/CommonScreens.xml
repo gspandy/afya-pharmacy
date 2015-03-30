@@ -1,0 +1,348 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<screens xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="http://ofbiz.apache.org/dtds/widget-screen.xsd">
+
+	<screen name="main-decorator">
+		<section>
+			<actions>
+				<property-map resource="CommonUiLabels"	map-name="uiLabelMap" global="true" />
+				<property-map resource="PartyUiLabels" map-name="uiLabelMap" global="true" />
+                <property-map resource="IssueUiLabels" map-name="uiLabelMap" global="true"/>
+				<set field="layoutSettings.companyName"	value="SME Business Mantra" global="true" />
+				<set field="layoutSettings.companySubtitle"	value="SME Business Mantra" global="true" /> 
+				<set field="applicationMenuName" value="ApAppBar" global="true" />
+				<set field="applicationMenuLocation" value="component://issuetracking/widget/Menus.xml" global="true" />
+				<set field="layoutSettings.javaScripts[]" value="/issuetracking/images/issueTracking.js" global="true" />
+			</actions>
+			<widgets>
+				<include-screen name="GlobalDecorator" location="component://common/widget/CommonScreens.xml" />
+			</widgets>
+		</section>
+	</screen>
+
+	<screen name="main">
+		<section>
+			<actions>
+				<set field="titleProperty" value="Issue Tracking Dashboard" />
+				<set field="headerItem" value="Issue Dashboard" />
+				<set field="tabButtonItem" value="main" />
+				<script
+					location="component://issuetracking/webapp/issuetracking/WEB-INF/actions/Main.groovy" />
+			</actions>
+			<widgets>
+				<decorator-screen name="main-decorator"
+					location="${parameters.mainDecoratorLocation}">
+					<decorator-section name="body">
+						<include-screen name="main_normal" />
+						<include-screen name="main_technician" />
+						<include-screen name="main_owner" />
+					</decorator-section>
+				</decorator-screen>
+			</widgets>
+		</section>
+	</screen>
+
+	<screen name="main_normal">
+		<section>
+			<condition>
+				<if-has-permission permission="ISSUEMGR" action="_VIEW" />
+			</condition>
+			<widgets>
+				<screenlet title="My Issues"  collapsible="true" id="main_normal">
+					<platform-specific>
+						<html>
+							<html-template	location="component://issuetracking/webapp/issuetracking/issue/mainNormal.ftl" />
+						</html>
+					</platform-specific>
+				</screenlet>
+			</widgets>
+		</section>
+	</screen>
+
+	<screen name="main_technician">
+		<section>
+			<condition>
+				<if-has-permission permission="ISSUEMGR" action="_RESOLVER" />
+			</condition>
+			<widgets>
+				<screenlet title="Assigned Issues" collapsible="true" id="main_technician">
+					<platform-specific>
+						<html>
+							<html-template location="component://issuetracking/webapp/issuetracking/issue/mainTechnician.ftl" />
+						</html>
+					</platform-specific>
+				</screenlet>
+			</widgets>
+		</section>
+	</screen>
+
+	<screen name="main_owner">
+		<section>
+			<condition>
+				<if-has-permission permission="ISSUEMGR" action="_OWNER" />
+			</condition>
+			<widgets>
+				<screenlet title="Owned Issues" collapsible="true" id="main_owner">
+					<platform-specific>
+						<html>
+							<html-template	location="component://issuetracking/webapp/issuetracking/issue/mainOwner.ftl" />
+						</html>
+					</platform-specific>
+				</screenlet>
+			</widgets>
+		</section>
+	</screen>
+
+	<screen name="find">
+		<section>
+			<actions>
+				<set field="titleProperty"
+					value="Search" />
+					<set field="headerItem" value="Find" />
+				<set field="tabButtonItem" value="find" />
+			</actions>
+			<widgets>
+				<decorator-screen name="main-decorator"	location="${parameters.mainDecoratorLocation}">
+					<decorator-section name="body">
+						<screenlet title="Find Issues" collapsible="true" name="findScreen">
+							<!-- <link target="issueEntry" text="New Issue" style="buttontext" /> -->
+							<include-form name="issueSeach" location="component://issuetracking/webapp/issuetracking/IncidentForms.xml" />
+						</screenlet>
+						<screenlet title="Issues List">
+							<include-form name="listIssueSearchResults"	location="component://issuetracking/webapp/issuetracking/IncidentForms.xml" />
+						</screenlet>
+					</decorator-section>
+				</decorator-screen>
+			</widgets>
+		</section>
+	</screen>
+
+	<screen name="issueEntry">
+		<section>
+			<actions>
+				<set field="titleProperty"
+					value="New Issue" />
+				<set field="tabButtonItem" value="issueEntry" />
+				<set field="issueId" from-field="parameters.issueId" />
+				<set field="mode" from-field="parameters.mode" />
+				<script	location="component://issuetracking/webapp/issuetracking/WEB-INF/actions/PopulateConditionalFields.groovy" />
+				<script	location="component://issuetracking/webapp/issuetracking/WEB-INF/actions/PopulateComments.groovy" />
+				<entity-one entity-name="IssueDetailView" value-field="issueDetail" />
+			</actions>
+			<widgets>
+				<decorator-screen name="main-decorator"
+					location="${parameters.mainDecoratorLocation}">
+					<decorator-section name="body">
+						<section>
+						<condition>
+						<if-empty field="issueId"/>
+						</condition>
+							<widgets>
+								<include-screen name="editIssue" />
+							</widgets>
+							<fail-widgets>
+					           <include-screen name="editIssue"/>
+							   <include-screen name="issueResponses"/>
+						</fail-widgets>
+						</section>
+					</decorator-section>
+				</decorator-screen>
+			</widgets>
+		</section>
+	</screen>
+
+	<screen name="editIssue">
+		<section>
+			<condition>
+				<if-empty field="issueId"/>
+			</condition>
+			<widgets>
+				<screenlet title="Create">
+					<include-form name="issueEntry"
+						location="component://issuetracking/webapp/issuetracking/IncidentForms.xml" />
+				</screenlet>
+			</widgets>
+			<fail-widgets>
+				<screenlet title="Edit : ${parameters.issueId}" collapsible="false" id="editIssue">
+					<include-form name="issueEntry"
+						location="component://issuetracking/webapp/issuetracking/IncidentForms.xml" />
+				</screenlet>
+		
+			</fail-widgets>
+		</section>
+	</screen>
+
+	<screen name="issueResponses">
+		<section>
+			<widgets>
+				<screenlet title="Responses" collapsible="true" initially-collapsed="false" id="response">
+					<platform-specific>
+						<html>
+							<html-template
+								location="component://issuetracking/webapp/issuetracking/issue/showResponseText.ftl" />
+						</html>
+					</platform-specific>
+				</screenlet>
+			</widgets>
+		</section>
+	</screen>
+
+	<screen name="statusWiseIssueDetail">
+		<section>
+			<actions>
+				<set field="headerItem" value="main" />
+				<set field="tabButtonItem" value="main" />
+				<script
+					location="component://issuetracking/webapp/issuetracking/WEB-INF/actions/PopulateStatusWiseIssues.groovy" />
+			</actions>
+			<widgets>
+				<decorator-screen name="main-decorator"
+					location="${parameters.mainDecoratorLocation}">
+					<decorator-section name="body">
+						 <screenlet title="Issues By Status">
+								<platform-specific>
+									<html>
+										<html-template
+											location="component://issuetracking/webapp/issuetracking/issue/statusWiseIssueDetail.ftl" />
+									</html>
+								</platform-specific>
+						</screenlet>
+					</decorator-section>
+				</decorator-screen>
+			</widgets>
+		</section>
+	</screen>
+
+	<screen name="inProgress">
+		<section>
+			<actions>
+				<set field="titleProperty"
+					value="issuetrackingReportNewIssue" />
+				<set field="tabButtonItem" value="issueReports" />
+				<set field="issueId" from-field="parameters.issueId" />
+				<set field="mode" from-field="parameters.mode" />
+				<script
+					location="component://issuetracking/webapp/issuetracking/WEB-INF/actions/PopulateConditionalFields.groovy" />
+				<entity-one entity-name="IssueDetailView"
+					value-field="issueDetail" />
+			</actions>
+			<widgets>
+				<decorator-screen name="main-decorator"
+					location="${parameters.mainDecoratorLocation}">
+					<decorator-section name="body">
+						<container style="screenlet">
+							<container style="screenlet-title-bar">
+								<container style="h3" >
+									<label text="In Progress"/>
+								</container>
+							</container>
+							<container style="screenlet-body">
+								<platform-specific>
+									<html>
+										<html-template location="component://issuetracking/webapp/issuetracking/issue/inprogress.ftl" />
+									</html>
+								</platform-specific>
+							</container>
+						</container>
+					</decorator-section>
+				</decorator-screen>
+			</widgets>
+		</section>
+	</screen>
+
+	<screen name="viewIssueUpdated">
+		<section>
+			<actions>
+				<set field="titleProperty" value="Issue Details" />
+				<set field="tabButtonItem" value="issueEntry" />
+				<set field="issueId" from-field="parameters.issueId" />
+				<script	location="component://issuetracking/webapp/issuetracking/WEB-INF/actions/ViewIssueDetail.groovy" />
+				<script	location="component://issuetracking/webapp/issuetracking/WEB-INF/actions/PopulateComments.groovy" />
+			</actions>
+			<widgets>
+				<decorator-screen name="main-decorator"
+					location="${parameters.mainDecoratorLocation}">
+					<decorator-section name="body">
+						<container style="screenlet">
+							<container style="screenlet-title-bar">
+								<container style="h3">
+									<label
+										text="Issue Id : ${parameters.issueId}" />
+								</container>
+							</container>
+							<container style="screenlet-body">
+								<platform-specific>
+									<html>
+										<html-template
+											location="component://issuetracking/webapp/issuetracking/issue/viewIssueDetail.ftl" />
+									</html>
+								</platform-specific>
+							</container>
+						</container>
+					</decorator-section>
+				</decorator-screen>
+			</widgets>
+		</section>
+	</screen>
+
+	<screen name="viewIssueDetail">
+		<section>
+			<actions>
+				<set field="titleProperty" value="Issue Details" />
+				<set field="tabButtonItem" value="main" />
+				<set field="issueId" from-field="parameters.issueId" />
+				<script	location="component://issuetracking/webapp/issuetracking/WEB-INF/actions/ViewIssueDetail.groovy" />
+				<script	location="component://issuetracking/webapp/issuetracking/WEB-INF/actions/PopulateComments.groovy" />
+			</actions>
+			<widgets>
+				<decorator-screen name="main-decorator"
+					location="${parameters.mainDecoratorLocation}">
+					<decorator-section name="body">
+						<container style="screenlet">
+							<container style="screenlet-title-bar">
+								<container style="h3">
+									<label
+										text="Issue Id : ${parameters.issueId}" />
+								</container>
+							</container>
+							<container style="screenlet-body">
+								<platform-specific>
+									<html>
+										<html-template
+											location="component://issuetracking/webapp/issuetracking/issue/viewIssueDetail.ftl" />
+									</html>
+								</platform-specific>
+							</container>
+						</container>
+					</decorator-section>
+				</decorator-screen>
+			</widgets>
+		</section>
+	</screen>
+
+	<screen name="issueAdmin">
+		<section>
+			<actions>
+					<set field="titleProperty" value="Admin" />
+					<set field="headerItem" value="Admin" />
+				<set field="tabButtonItem" value="issueAdmin" />
+			</actions>
+			<widgets>
+				<decorator-screen name="main-decorator"	location="${parameters.mainDecoratorLocation}">
+					<decorator-section name="body">
+						<screenlet id="Category" title="Category" collapsible="true">
+							<include-form name="categoryForm" location="component://issuetracking/webapp/issuetracking/IncidentForms.xml" />
+							<include-form name="listCategory" location="component://issuetracking/webapp/issuetracking/IncidentForms.xml" />
+						</screenlet>
+						<screenlet id="Sub-Category" title="Sub-Category" collapsible="true">
+							<include-form name="subCategoryForm" location="component://issuetracking/webapp/issuetracking/IncidentForms.xml" />
+							<include-form name="listSubCategory" location="component://issuetracking/webapp/issuetracking/IncidentForms.xml" />
+						</screenlet>
+					</decorator-section>
+				</decorator-screen>
+			</widgets>
+		</section>
+	</screen>
+	
+</screens>

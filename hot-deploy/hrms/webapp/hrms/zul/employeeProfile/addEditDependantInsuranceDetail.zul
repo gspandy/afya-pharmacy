@@ -1,0 +1,130 @@
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<?init class="org.zkoss.zkplus.databind.AnnotateDataBinderInit" root="./createDependantMedicalInsuranceWindow"?>
+<?component name="profileField" macroURI="../macros/profileField.zul" id="profileMacro"?>
+<zk xmlns="http://www.zkoss.org/2005/zul"
+    xmlns:h="http://www.w3.org/1999/xhtml"
+    xmlns:w="http://www.zkoss.org/2005/zk/client"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:n="http://www.zkoss.org/2005/zk/native"
+    xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
+    <zscript>
+        <![CDATA[
+			com.ndz.controller.EmployeeDependantPolicyComposer dependantInsuranceDetailComposer = new com.ndz.controller.EmployeeDependantPolicyComposer();
+			Toolbarbutton createMedicalInsuranceButton = (Toolbarbutton)Executions.getCurrent().getArg().get("createMedicalInsuranceButton");
+		 ]]>
+    </zscript>
+    <window id="createDependantMedicalInsuranceWindow" apply="${dependantInsuranceDetailComposer}" border="normal"
+            maximizable="true" title="@{dependantInsuranceDetailComposer.windowTitle}"
+            style="background-color:#B2A4F2; border:1px solid #8E83C1;"
+            height="45%" width="80%" closable="true"
+            contentStyle="overflow:auto">
+        <h:table width="100%" CELLSPACING="20">
+            <h:tr>
+                <h:td style="text-align:right">
+                    <label value="${c:l('HRMS_RELATONSHIP') } :" style="font-weight:bold"/>
+                    <label value="*" style="color:red" visible="@{dependantInsuranceDetailComposer.newRecord}"/>
+                </h:td>
+                <h:td style="text-align:left">
+                    <combobox id="relatonshipCombobox" model="@{dependantInsuranceDetailComposer.employeeDependants}"
+                              visible="@{dependantInsuranceDetailComposer.newRecord}" readonly="true"
+                              onSelect="dependantInsuranceDetailComposer.populateMemberDetail(self.getSelectedItem().getValue())">
+                        <comboitem self="@{each='familyDependantGv'}" value="@{familyDependantGv.dependantId}"
+                                   label="@{familyDependantGv.partyRelationshipName}"
+                                   description="@{familyDependantGv.dependantName}"/>
+                    </combobox>
+                    <label value="@{dependantInsuranceDetailComposer.insuranceDetail.relationship}"
+                           visible="${!dependantInsuranceDetailComposer.newRecord}"/>
+                </h:td>
+                <h:td style="text-align:right">
+                    <label value="${c:l('HRMS_MEMBER_NAME') } :"/>
+                </h:td>
+                <h:td>
+                    <label value="@{dependantInsuranceDetailComposer.insuranceDetail.memberName,load-after=relatonshipCombobox.onSelect}"/>
+                </h:td>
+                <h:td style="text-align:right">
+                    <label value="${c:l('HRMS_AGE') } :" style="font-weight:bold"/>
+                </h:td>
+                <h:td style="text-align:left">
+                    <label value="@{dependantInsuranceDetailComposer.insuranceDetail.age,load-after=relatonshipCombobox.onSelect}"/>
+                </h:td>
+            </h:tr>
+            <h:tr>
+                <h:td style="text-align:right">
+                    <label value="${c:l('HRMS_Gender') } :" style="font-weight:bold"/>
+                </h:td>
+                <h:td style="text-align:left">
+                    <label value="@{dependantInsuranceDetailComposer.insuranceDetail.gender,load-after=relatonshipCombobox.onSelect}"/>
+                </h:td>
+                <h:td style="text-align:right">
+                    <label value="${c:l('HRMS_PRIMARY_BENIFICIARY') } :" style="font-weight:bold"/>
+                </h:td>
+                <h:td style="text-align:left">
+                    <label id="primaryBenificiary"
+                           value="@{dependantInsuranceDetailComposer.insuranceDetail.primaryBenificiary}"/>
+                </h:td>
+                <h:td style="text-align:right">
+                    <label value="${c:l('HRMS_POLICY_HOLDER') } :" style="font-weight:bold"/>
+                </h:td>
+                <h:td style="text-align:left">
+                    <label id="policyHolder" value="@{dependantInsuranceDetailComposer.insuranceDetail.policyHolder}"/>
+                </h:td>
+            </h:tr>
+            <h:tr>
+                <h:td style="text-align:right">
+                    <label value="${c:l('HRMS_MemberId') } : " style="font-weight:bold"/>
+                    <label value="*" style="color:red"/>
+                </h:td>
+                <h:td>
+                    <textbox maxlength="20" id="memberId"
+                             value="@{dependantInsuranceDetailComposer.insuranceDetail.memberId,save-when=createMedicalInsurance.onClick}"
+                             style="font-weight:regular" constraint="no empty:${c:l('HRMS_REQUIRED_MEMBER_ID') }"/>
+                </h:td>
+                <h:td style="text-align:right">
+                    <label value="${c:l('HRMS_INSURANCE_ID') } :"/>
+                </h:td>
+                <h:td>
+                    <textbox id="insuranceId"
+                             value="@{dependantInsuranceDetailComposer.insuranceDetail.insuranceId,save-when=createMedicalInsurance.onClick}"/>
+                </h:td>
+                <h:td style="text-align:right">
+                    <label value="${c:l('HRMS_INSURANCE_COMPANY') } :"/>
+                </h:td>
+                <h:td>
+                    <label value="@{dependantInsuranceDetailComposer.insuranceDetail.insuranceCompany,save-when=createMedicalInsurance.onClick}"/>
+                </h:td>
+
+            </h:tr>
+            <h:tr>
+                <h:td style="text-align:right">
+                    <label value="${c:l('HRMS_POLICY_NUMBER') } :" style="font-weight:bold"/>
+                </h:td>
+                <h:td style="text-align:left">
+                    <label id="policyNumber"
+                           value="@{dependantInsuranceDetailComposer.insuranceDetail.policyNumber}"/>
+                </h:td>
+                <h:td style="text-align:right">
+                    <label value="${c:l('HRMS_VALID_FROM') } :" style="font-weight:bold"/>
+                    <label value="*" style="color:red"/>
+                </h:td>
+                <h:td>
+                    <datebox id="validFrom"
+                             value="@{dependantInsuranceDetailComposer.insuranceDetail.validFrom,save-when=createMedicalInsurance.onClick}"
+                             constraint="no empty:${c:l('HRMS_REQUIRED_VALID_FROM_DATE') }"/>
+                </h:td>
+                <h:td style="text-align:right">
+                    <label value="${c:l('HRMS_VALID_THRU') } :" style="font-weight:bold"/>
+                </h:td>
+                <h:td>
+                    <label value="@{dependantInsuranceDetailComposer.insuranceDetail.validThruInString,save-when=createMedicalInsurance.onClick}"/>
+                </h:td>
+            </h:tr>
+        </h:table>
+        <hbox>
+            <div align="right" width="608px">
+                <button label="${c:l('btnSave') }" id="createMedicalInsurance"
+                        onClick="dependantInsuranceDetailComposer.saveOrUpdateDependantInsurance(createMedicalInsuranceButton,createDependantMedicalInsuranceWindow)"/>
+                <button label="${c:l('ButtonCancel') }" onClick="createDependantMedicalInsuranceWindow.detach()"/>
+            </div>
+        </hbox>
+    </window>
+</zk>

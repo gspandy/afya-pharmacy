@@ -1,0 +1,578 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<entitymodel xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="http://ofbiz.apache.org/dtds/entitymodel.xsd">
+	<!-- ========================================================= -->
+	<!-- ======================== Defaults ======================= -->
+	<!-- ========================================================= -->
+	<title>Entity of facilityext Component</title>
+	<description>None</description>
+	<copyright></copyright>
+	<author>None</author>
+	<version></version>
+
+	<entity entity-name="ProductTransfer" package-name="org.ofbiz.facilityext.transformation">
+
+		<field name="productTransferId" type="id-ne" />
+		<field name="fromProductId" type="id-ne" />
+		<field name="toProductId" type="id-ne" />
+		<field name="quantityRequired" type="fixed-point" />
+		<field name="scheduledOn" type="date-time" />
+		<field name="estimatedCompletion" type="date-time" />
+		<field name="actualCompletion" type="date-time" />
+		<field name="status" type="id-ne" />
+		<field name="pendingQuantity" type="fixed-point" />
+
+		<prim-key field="productTransferId" />
+
+		<relation rel-entity-name="Product" type="one" title="FromProduct">
+			<key-map field-name="fromProductId" rel-field-name="productId" />
+		</relation>
+
+		<relation rel-entity-name="Product" type="one" title="ToProduct">
+			<key-map field-name="toProductId" rel-field-name="productId" />
+		</relation>
+	</entity>
+
+	<entity entity-name="ProductTransferTxn" package-name="org.ofbiz.facilityext.transformation">
+		<field name="txnId" type="id-ne" />
+		<field name="productTransferId" type="id-ne" />
+		<field name="fromInventoryItemId" type="id" />
+		<field name="fromLocationId" type="id" />
+		<field name="shipmentId" type="id-ne" />
+		<field name="toInventoryItemId" type="id" />
+		<field name="toLocationId" type="id" />
+		<field name="quantityDone" type="fixed-point" not-null="true" />
+		<field name="txnStatus" type="id-ne" />
+		<field name="palletize" type="indicator" />
+
+		<prim-key field="txnId" />
+
+		<relation rel-entity-name="ProductTransfer" type="one"
+			title="ProductTrasfer" fk-name="PRODUCT_TRANSFER_TXN_PRODUCT_TRANSFER">
+			<key-map field-name="productTransferId" />
+		</relation>
+	</entity>
+
+	<entity entity-name="ProductTransferLocation" package-name="org.ofbiz.facilityext.transformation">
+		<field name="id" type="id"></field>
+		<field name="productTransferId" type="id-ne" />
+		<field name="inventoryItemId" type="id" />
+		<field name="locationId" type="id-ne" />
+		<field name="type" type="id-ne" />
+		<field name="facilityId" type="id-ne" />
+
+		<prim-key field="id" />
+
+		<relation rel-entity-name="ProductTransfer" type="one"
+			title="ProductTrasfer">
+			<key-map field-name="productTransferId" rel-field-name="productTransferId" />
+		</relation>
+
+		<relation rel-entity-name="InventoryItem" type="one"
+			title="InventoryItem">
+			<key-map field-name="inventoryItemId" rel-field-name="inventoryItemId" />
+		</relation>
+
+	<!--	<relation rel-entity-name="FacilityLocation" type="one"
+			title="FacilityLocation" fk-name="PRODUCT_TRANSFER_LOCATION_FACILITY_LOCATION">
+			<key-map field-name="locationId" rel-field-name="locationSeqId" />
+			<key-map field-name="facilityId" />
+		</relation>-->
+	</entity>
+
+	<entity entity-name="ProductBundle" package-name="org.ofbiz.facilityext.transformation">
+
+		<field name="productBundleId" type="id-ne" />
+		<field name="quantityRequired" type="id-ne" />
+		<field name="tagCode" type="id-ne" />
+		<field name="makeSku" type="id-ne" />
+		<field name="actualCompletion" type="date-time" />
+		<field name="statusId" type="id-ne" />
+		<field name="pendingQuantity" type="fixed-point" />
+
+		<prim-key field="productBundleId" />
+
+		<relation rel-entity-name="Product" type="one" title="MakeSku">
+			<key-map field-name="makeSku" rel-field-name="productId" />
+		</relation>
+
+	</entity>
+
+	<view-entity entity-name="ProductBundleSku"
+		package-name="org.ofbiz.facilityext.transformation">
+		<member-entity entity-alias="PB" entity-name="ProductBundle" />
+		<member-entity entity-alias="P" entity-name="Product" />
+
+		<alias-all entity-alias="PB" />
+
+		<alias name="productName" entity-alias="P" />
+		<alias name="internalName" entity-alias="P" />
+		<alias name="productId" entity-alias="P" />
+
+		<view-link rel-entity-alias="P" entity-alias="PB">
+			<key-map field-name="makeSku" rel-field-name="productId" />
+		</view-link>
+	</view-entity>
+
+	<view-entity entity-name="ProductBundleItemDetail"
+		package-name="org.ofbiz.facilityext.transformation">
+		<member-entity entity-alias="PA" entity-name="ProductAssoc" />
+		<member-entity entity-alias="P" entity-name="Product" />
+		<member-entity entity-alias="II" entity-name="InventoryItem" />
+
+		<alias name="makeSku" entity-alias="PA" field="productId" />
+		<alias name="baseSku" entity-alias="PA" group-by="true" field="productIdTo" />
+		<alias name="scrapFactor" entity-alias="PA" />
+
+		<alias name="productName" entity-alias="P" />
+		<alias name="internalName" entity-alias="P" />
+
+		<alias name="quantityOnHandTotal" entity-alias="II" function="sum" />
+		<alias name="availableToPromiseTotal" entity-alias="II"
+			function="sum" />
+
+		<view-link rel-entity-alias="P" entity-alias="PA">
+			<key-map field-name="productIdTo" rel-field-name="productId" />
+		</view-link>
+
+		<view-link rel-entity-alias="II" entity-alias="PA">
+			<key-map field-name="productIdTo" rel-field-name="productId" />
+		</view-link>
+
+	</view-entity>
+
+
+	<entity entity-name="ProductBundleTxn" package-name="org.ofbiz.facilityext.transformation">
+		<field name="productBundleTxnId" type="id-ne" />
+		<field name="productBundleId" type="id-ne" />
+		<field name="toLocationId" type="id-ne" />
+		<field name="facilityId" type="id-ne" />
+		<field name="quantityToBundle" type="fixed-point" />
+		<field name="shipmentId" type="id-ne" />
+		<field name="palletize" type="indicator" />
+		<field name="statusId" type="id-ne" />
+
+
+		<prim-key field="productBundleTxnId" />
+
+		<relation rel-entity-name="ProductBundle" type="one">
+			<key-map field-name="productBundleId" rel-field-name="productBundleId" />
+		</relation>
+
+		<!--<relation rel-entity-name="FacilityLocation" type="one"
+			title="FacilityLocation">
+			<key-map field-name="toLocationId" rel-field-name="locationSeqId" />
+			<key-map field-name="facilityId" />
+		</relation>-->
+
+	</entity>
+
+	<entity entity-name="ProductBundleTxnDetail" package-name="org.ofbiz.facilityext.transformation">
+		<field name="productBundleTxnId" type="id-ne" />
+		<field name="baseSkuId" type="id-ne" />
+		<field name="inventoryItemId" type="id-ne" />
+		<field name="quantityToUse" type="fixed-point" />
+
+		<prim-key field="productBundleTxnId" />
+		<prim-key field="baseSkuId" />
+
+		<relation rel-entity-name="ProductBundleTxn" type="one">
+			<key-map field-name="productBundleTxnId" rel-field-name="productBundleTxnId" />
+		</relation>
+
+<!--		<relation rel-entity-name="Product" type="one" title="MakeSku">
+			<key-map field-name="baseSkuId" rel-field-name="productId" />
+		</relation>-->
+
+		<relation rel-entity-name="InventoryItem" type="one"
+			title="MakeSkuInventoryItem">
+			<key-map field-name="baseSkuId" rel-field-name="productId" />
+		</relation>
+	</entity>
+	<entity entity-name="ReserveOrderHeader" package-name="org.ofbiz.facilityext.reservations">
+		<field name="orderId" type="id-ne"></field>
+		<field name="orderTypeId" type="id"></field>
+		<field name="orderName" type="name"></field>
+		<field name="buildingIdFrom" type="id-ne"></field>
+		<field name="locationSeqIdFrom" type="id-ne"></field>
+		<field name="buildingIdTo" type="id-ne"></field>
+		<field name="locationSeqIdTo" type="id-ne"></field>
+		<field name="orderDate" type="date-time"></field>
+		<field name="entryDate" type="date-time"></field>
+		<field name="statusId" type="id"></field>
+		<field name="createdBy" type="id-vlong"></field>
+		<prim-key field="orderId" />
+		<relation type="one" fk-name="ORDER_HDR_TYPER"
+			rel-entity-name="OrderType">
+			<key-map field-name="orderTypeId" />
+		</relation>
+		<relation type="one" fk-name="ORDER_HDR_STTSS"
+			rel-entity-name="StatusItem">
+			<key-map field-name="statusId" />
+		</relation>
+	</entity>
+
+	<entity entity-name="ReserveOrderItem" package-name="org.ofbiz.facilityext.reservations"
+		never-cache="true" title="Order Item Entity">
+		<field name="orderId" type="id-ne"></field>
+		<field name="orderItemSeqId" type="id-ne"></field>
+		<field name="productId" type="id"></field>
+		<field name="productCategoryId" type="id"></field>
+		<field name="quantity" type="fixed-point" enable-audit-log="true"></field>
+		<field name="quantityReleased" type="fixed-point"></field>
+		<field name="itemDescription" type="description"></field>
+		<field name="comments" type="comment"></field>
+		<field name="statusId" type="id"></field>
+		<prim-key field="orderId" />
+		<prim-key field="orderItemSeqId" />
+		<relation type="one" fk-name="RO_ITEM_HDR" rel-entity-name="ReserveOrderHeader">
+			<key-map field-name="orderId" />
+		</relation>
+		<relation type="one" fk-name="RO_ITEM_PRODUCT"
+			rel-entity-name="Product">
+			<key-map field-name="productId" />
+		</relation>
+		<relation type="one" fk-name="RO_ITEM_STTS" rel-entity-name="StatusItem">
+			<key-map field-name="statusId" />
+		</relation>
+	</entity>
+	<entity entity-name="ReserveOrderItemInvRes" package-name="org.ofbiz.facilityext.reservations">
+		<field name="reserveOrderId" type="id-ne"></field>
+		<field name="reserveOrderItemSeqId" type="id-ne"></field>
+		<field name="inventoryItemId" type="id-ne"></field>
+		<field name="quantity" type="fixed-point"></field>
+		<field name="statusId" type="id"></field>
+		<field name="stockReserveId" type="id-ne"></field>
+
+		<prim-key field="reserveOrderId" />
+		<prim-key field="reserveOrderItemSeqId" />
+		<prim-key field="inventoryItemId" />
+
+		<relation rel-entity-name="ReserveOrderHeader" type="one"
+			fk-name="RES_ORDER">
+			<key-map field-name="reserveOrderId" rel-field-name="orderId" />
+		</relation>
+		<relation rel-entity-name="ReserveOrderItem" type="one"
+			fk-name="RES_ORDER_ITM">
+			<key-map field-name="reserveOrderId" rel-field-name="orderId" />
+			<key-map field-name="reserveOrderItemSeqId" rel-field-name="orderItemSeqId" />
+		</relation>
+		<relation type="one" fk-name="RES_ORDER_ITEM_STTS"
+			rel-entity-name="StatusItem">
+			<key-map field-name="statusId" />
+		</relation>
+	</entity>
+	
+	<extend-entity entity-name="OrderItemShipGrpInvRes">
+		<field name="stockReserveId" type="id-ne"></field>
+	</extend-entity>
+	
+	<entity entity-name="ReserveOrderDetails" package-name="org.ofbiz.facilityext.reservations">
+		<field name="reserveOrderId" type="id-ne"></field>
+		<field name="reserveOrderItemSeqId" type="id-ne"></field>
+		<field name="orderId" type="id-ne"></field>
+		<field name="orderItemSeqId" type="id-ne"></field>
+		<field name="productId" type="id-ne"></field>
+		<field name="quantity" type="fixed-point"></field>
+
+		<prim-key field="reserveOrderId" />
+		<prim-key field="reserveOrderItemSeqId" />
+		<prim-key field="orderId" />
+		<prim-key field="orderItemSeqId" />
+
+		<relation type="one" fk-name="ROD_PROD" rel-entity-name="Product">
+			<key-map field-name="productId" />
+		</relation>
+
+	</entity>
+
+	<view-entity entity-name="ReserveOrderItemInventory"
+		package-name="org.ofbiz.facilityext.reservations">
+		<member-entity entity-alias="INV" entity-name="InventoryItem"></member-entity>
+		<member-entity entity-alias="ROIIR" entity-name="ReserveOrderItemInvRes"></member-entity>
+		<alias-all entity-alias="ROIIR" />
+		<alias name="expireDate" entity-alias="INV"></alias>
+		<view-link rel-entity-alias="ROIIR" entity-alias="INV">
+			<key-map field-name="inventoryItemId" />
+		</view-link>
+	</view-entity>
+	<entity entity-name="ProductUom" package-name="org.ofbiz.facilityext.reservations">
+		<description>This is the mapping of Product to various supported
+			UOMs</description>
+
+		<field name="productUomId" type="id-ne"></field>
+		<field name="productId" type="id-ne"></field>
+		<field name="uomId" type="id-ne"></field>
+		<field name="uomTypeId" type="id-ne"></field>
+		<field name="defaultUom" type="indicator"></field>
+		<field name="conversionFactor" type="fixed-point"></field>
+		<field name="packFactor" type="fixed-point"></field>
+		<prim-key field="productUomId" />
+
+		<relation type="one" fk-name="PRODUOM_PROD" rel-entity-name="Product">
+			<key-map field-name="productId" />
+		</relation>
+		<relation type="one" fk-name="PROD_UOM" rel-entity-name="Uom">
+			<key-map field-name="uomId" rel-field-name="uomId" />
+		</relation>
+		<relation type="one" fk-name="PROD_UOM_Type" rel-entity-name="UomType">
+			<key-map field-name="uomTypeId" rel-field-name="uomTypeId" />
+		</relation>
+	</entity>
+
+	<entity entity-name="ShipmentRoute" package-name="org.ofbiz.facilityext.reservations">
+		<field name="routeId" type="id-ne"></field>
+		<field name="routeName" type="short-varchar"></field>
+		<field name="origin" type="short-varchar"></field>
+		<field name="destination" type="short-varchar"></field>
+		<prim-key field="routeId" />
+	</entity>
+
+	<entity entity-name="PartyShipmentRouteAssoc" package-name="org.ofbiz.facilityext.reservations">
+		<field name="partyId" type="id-ne"></field>
+		<field name="routeId" type="id-ne"></field>
+		<field name="sequenceId" type="id-ne"></field>
+		<field name="fromDate" type="date"></field>
+		<field name="thruDate" type="date"></field>
+		<prim-key field="partyId" />
+		<prim-key field="routeId" />
+		<relation rel-entity-name="Party" type="one" fk-name="PARTY_SAR">
+			<key-map field-name="partyId" />
+		</relation>
+		<relation rel-entity-name="ShipmentRoute" type="one" fk-name="PARTY_SR">
+			<key-map field-name="routeId" />
+		</relation>
+
+	</entity>
+	<view-entity entity-name="PartyShipmentRouteAssocView"
+		package-name="org.ofbiz.facilityext.reservations">
+
+		<member-entity entity-alias="PSRA" entity-name="PartyShipmentRouteAssoc" />
+		<member-entity entity-alias="PARL" entity-name="PartyRole" />
+
+		<alias-all entity-alias="PSRA" />
+		<alias-all entity-alias="PARL" />
+
+		<view-link rel-entity-alias="PSRA" entity-alias="PARL">
+			<key-map field-name="partyId" />
+		</view-link>
+
+		<entity-condition distinct="true">
+			<condition-list>
+				<condition-expr field-name="roleTypeId" value="END_USER_CUSTOMER" />
+			</condition-list>
+		</entity-condition>
+	</view-entity>
+	<extend-entity entity-name="SalesOrderItemFact">
+		<!--
+			Extended for Shipment Reports purpose.It directly contains all the
+			required fields ready so that no need of joins at the time of report
+			generation
+		-->
+		<field name="groupName" type="name"></field>
+		<field name="partyId" type="id-ne"></field>
+		<field name="productId" type="id-ne"></field>
+		<field name="inventoryItemId" type="id-ne"></field>
+		<field name="productCategoryId" type="id-ne"></field>
+		<field name="description" type="comment"></field>
+		<field name="quantityUomId" type="id-ne"></field>
+		<field name="qtyOrdered" type="fixed-point"></field>
+		<field name="qtyShipped" type="fixed-point"></field>
+		<field name="orderDate" type="date-time"></field>
+	</extend-entity>
+	<extend-entity entity-name="InventoryItemFact">
+		<!--
+			Extended for Shipment Reports purpose.It directly contains all the
+			required fields ready so that no need of joins at the time of report
+			generation
+		-->
+		<field name="productId" type="id"></field>
+		<field name="partyId" type="id"></field>
+		<field name="ownerPartyId" type="id">
+			<description>The owner of the inventory item.</description>
+		</field>
+		<field name="statusId" type="id"></field>
+		<field name="datetimeReceived" type="date-time"></field>
+		<field name="datetimeManufactured" type="date-time"></field>
+		<field name="expireDate" type="date-time"></field>
+		<field name="containerId" type="id"></field>
+		<field name="lotId" type="id"></field>
+		<field name="uomId" type="id"></field>
+		<field name="binNumber" type="id"></field>
+		<field name="locationSeqId" type="id"></field>
+		<field name="comments" type="comment"></field>
+		<field name="accountingQuantityTotal" type="fixed-point"></field>
+		<field name="oldQuantityOnHand" col-name="QUANTITY_ON_HAND"
+			type="fixed-point"></field>
+		<field name="oldAvailableToPromise" col-name="AVAILABLE_TO_PROMISE"
+			type="fixed-point"></field>
+		<field name="serialNumber" type="value"></field>
+		<field name="softIdentifier" type="value"></field>
+		<field name="activationNumber" type="value"></field>
+		<field name="activationValidThru" type="date-time"></field>
+		<field name="currencyUomId" type="id">
+			<description>The currency Uom of the unit cost.</description>
+		</field>
+		<field name="physicalInventoryId" type="id"></field>
+
+	</extend-entity>
+
+	<entity entity-name="LocationDimension" package-name="org.ofbiz.bi.dimension"
+		title="Location Dimension">
+		<description>Location dimension. The natural key is [locationSeqId]</description>
+		<field name="dimensionId" type="id-ne">
+			<description>Unique identifier of the Location dimension record</description>
+		</field>
+		<field name="locationSeqId" type="id-ne">
+			<description>The currency id (natural key).</description>
+		</field>
+		<field name="description" type="description">
+			<description>Full Location description</description>
+		</field>
+		<prim-key field="dimensionId" />
+	</entity>
+
+	<entity entity-name="FacilityDimension" package-name="org.ofbiz.bi.dimension"
+		title="Facility Dimension">
+		<description>Location dimension. The natural key is [facilityId]</description>
+		<field name="dimensionId" type="id-ne">
+			<description>Unique identifier of the Facility dimension record</description>
+		</field>
+		<field name="facilityId" type="id-ne">
+			<description>The facility Id (natural key).</description>
+		</field>
+		<field name="description" type="description">
+			<description>Full Facility description</description>
+		</field>
+		<prim-key field="dimensionId" />
+	</entity>
+	<extend-entity entity-name="InventoryItemFact">
+		<relation type="one" fk-name="IIF_INVLOC" rel-entity-name="LocationDimension">
+			<key-map field-name="locationSeqId" rel-field-name="locationSeqId" />
+		</relation>
+		<relation type="one" fk-name="IIF_INVFAC" rel-entity-name="FacilityDimension">
+			<key-map field-name="facilityId" rel-field-name="facilityId" />
+		</relation>
+	</extend-entity>
+
+	<entity entity-name="PurchaseOrderItemFact" package-name="org.ofbiz.bi.fact.order"
+		title="Purchase Order Item Fact">
+		<description>A transaction fact entity with order item grain.</description>
+		<field name="orderId" type="id-ne"></field> <!-- degenerate dimension -->
+		<field name="orderItemSeqId" type="id-ne"></field> <!-- degenerate dimension -->
+		<field name="orderDateDimId" type="id-ne"></field>
+		<field name="productDimId" type="id-ne"></field>
+		<field name="origCurrencyDimId" type="id-ne"></field>
+		<field name="billToCustomerDimId" type="id-ne"></field> <!-- TODO: implement the dimension -->
+        <field name="orderDate" type="date-time"></field>
+        
+		<field name="productStoreId" type="id-ne"></field>
+		<field name="salesChannelEnumId" type="id-ne"></field>
+		<field name="saleChannel" type="description"></field>
+		<field name="orderStatus" type="description"></field>
+		<field name="visitId" type="id-ne"></field>
+		<field name="initialReferrer" type="url"></field>
+		<field name="productPromoCode" type="id"></field>
+		<field name="categoryName" type="very-long"></field>
+
+		<field name="quantity" type="fixed-point">
+			<description>Quantity order. From OrderItem.quantity</description>
+		</field>
+
+		<field name="extGrossAmount" type="currency-precise">
+			<description>Extended gross amount: quantity item multiplied by the unit price.</description>
+		</field>
+		<field name="extGrossCost" type="currency-precise">
+			<description>Extended gross cost: quantity item multiplied by the last price.</description>
+		</field>
+		<field name="extDiscountAmount" type="currency-precise">
+			<description>Extended discount amount.</description>
+		</field>
+		<field name="extNetAmount" type="currency-precise">
+			<description>Extended net amount: gross amount less discounts.</description>
+		</field>
+		<field name="extShippingAmount" type="currency-precise">
+			<description>Extended shipping amount.</description>
+		</field>
+		<field name="extTaxAmount" type="currency-precise">
+			<description>Extended tax amount.</description>
+		</field>
+
+		<field name="GrossSales" type="currency-precise">
+			<description>Gross Sales: extGrossAmount less extShippingAmount.</description>
+		</field>
+		<field name="GrossMerchandizeSales" type="currency-precise">
+			<description>Gross Merchandize Sales: extGrossAmount.</description>
+		</field>
+		<field name="GrossMerchandizeProfit" type="currency-precise">
+			<description>Gross Merchandize Profit: GrossMerchandizeSales less default price.</description>
+		</field>
+		<field name="GrossShippingProfit" type="currency-precise">
+			<description>Gross Shipping Profit</description>
+		</field>
+		<field name="GrossProfit" type="currency-precise">
+			<description>Gross Profit: GrossMerchandizeProfit less GrossShippingProfit.</description>
+		</field>
+
+		<field name="eBay" type="currency-precise">
+			<description>eBay Fee: current ebay fee is captured manually by employee and updated into sharepoint list.</description>
+		</field>
+		<field name="RRC" type="currency-precise">
+			<description>RRC: the total amount of our RRC (refund, replace and cancellation).</description>
+		</field>
+		<field name="OtherFree" type="currency-precise">
+			<description>Others: other fee which calculation is just a percentage of GrossSales.</description>
+		</field>
+
+		<field name="NBO" type="currency-precise">
+			<description>NBO: NBO which calculation is GrossProfit minus all the fees (eBay,RRC and Others).</description>
+		</field>
+
+		<field name="CountDate" type="currency-precise">
+			<description>CountDate: Count of date.</description>
+		</field>
+		<field name="groupName" type="name"></field>
+		<field name="partyId" type="id-ne"></field>
+		<field name="productId" type="id-ne"></field>
+		<field name="inventoryItemId" type="id-ne"></field>
+		<field name="productCategoryId" type="id-ne"></field>
+		<field name="description" type="comment"></field>
+		<field name="quantityUomId" type="id-ne"></field>
+		<field name="qtyOrdered" type="fixed-point"></field>
+		<field name="qtyShipped" type="fixed-point"></field>
+		<prim-key field="orderId" />
+		<prim-key field="orderItemSeqId" />
+
+		<relation type="one" fk-name="POIF_ORDERDATE"
+			rel-entity-name="DateDimension">
+			<key-map field-name="orderDateDimId" rel-field-name="dimensionId" />
+		</relation>
+		<relation type="one" fk-name="POIF_CURRENCY" rel-entity-name="CurrencyDimension">
+			<key-map field-name="origCurrencyDimId" rel-field-name="dimensionId" />
+		</relation>
+		<relation type="one" fk-name="POIF_PRODUCT" rel-entity-name="ProductDimension">
+			<key-map field-name="productDimId" rel-field-name="dimensionId" />
+		</relation>
+
+	</entity>
+	
+	<view-entity entity-name="ReserveOrderItemFacility"
+		package-name="org.ofbiz.facilityext.reservations">
+
+		<member-entity entity-alias="RO" entity-name="ReserveOrderItem" />
+		<member-entity entity-alias="FT" entity-name="Facility" />
+
+		<alias-all entity-alias="RO" />
+		<alias-all entity-alias="FT" />
+	</view-entity>
+	
+	<entity entity-name="Employee" package-name="org.ofbiz.bi.dimension"
+		title="Facility Dimension">
+		<field name="empId" type="id-ne">
+		</field>
+		<field name="description" type="id-ne">
+		</field>
+		<prim-key field="empId" />
+	</entity>
+
+</entitymodel>

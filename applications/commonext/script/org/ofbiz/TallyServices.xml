@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<services xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="http://ofbiz.apache.org/dtds/services.xsd">
+
+    <version>1.0</version>
+    <service name="createTallyConfig" engine="simple" default-entity-name="TallyConfiguration" 
+    		 location="component://commonext/script/org/ofbiz/TallyServices.xml" invoke="createTallyConfig">
+        <description>Create Tally Configuration</description>        
+        <auto-attributes mode="IN" optional="true"/>
+        <attribute name="tallyName" type="String" mode="IN"/>
+        <attribute name="connectionString" type="String" mode="IN"/>
+    </service>
+    
+</services>

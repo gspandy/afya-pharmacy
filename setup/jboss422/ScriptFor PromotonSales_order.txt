@@ -1,0 +1,11 @@
+truncate order_adjustment_billing;
+truncate order_adjustment;
+truncate product_store_promo_appl;
+truncate product_promo_action;
+truncate product_promo_cond;
+truncate product_promo_rule;
+truncate product_promo_product;
+truncate order_product_promo_code;
+truncate product_promo_code;
+truncate product_promo_category;
+truncate product_promo;

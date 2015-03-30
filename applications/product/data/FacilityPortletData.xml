@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<entity-engine-xml>
+
+	<PortalPage portalPageId="FacilityPortalPage" sequenceNum="0" portalPageName="Facility Portal Page"
+		description="Facility main page using flexible Portal technology" ownerUserLoginId="_NA_" />
+	<PortalPageColumn portalPageId="FacilityPortalPage" columnSeqId="00001" columnWidthPercentage="50" columnWidthPixels="50"/>
+	<PortalPageColumn portalPageId="FacilityPortalPage" columnSeqId="00002" columnWidthPercentage="50" columnWidthPixels="50"/>
+	
+	<PortletCategory portletCategoryId="FACILITYMGR" description="List of ShipmentArrivals/Departures" />
+	
+	<PortalPortlet portalPortletId="SADueToday" portletName="Shipments Arrivals Over Due" screenName="ShipmentsArrivalsOverDue"
+		screenLocation="component://product/widget/facility/ShipmentScreens.xml" description="Shipments Arrivals Over Due" />
+	<PortletPortletCategory portalPortletId="SADueToday" portletCategoryId="FACILITYMGR" />
+
+	<PortalPortlet portalPortletId="SAToday" portletName="Shipments Arrivals Today" screenName="ShipmentsArrivalsToday"
+		screenLocation="component://product/widget/facility/ShipmentScreens.xml" description="Shipments Arrivals Today" />
+	<PortletPortletCategory portalPortletId="SAToday" portletCategoryId="FACILITYMGR" />
+
+	<PortalPortlet portalPortletId="SDDueToday" portletName="Shipments Departure Over Due" screenName="ShipmentsDepartureOverDue"
+		screenLocation="component://product/widget/facility/ShipmentScreens.xml" description="Shipments Departure Over Due" />
+	<PortletPortletCategory portalPortletId="SDDueToday" portletCategoryId="FACILITYMGR" />
+	
+	<PortalPortlet portalPortletId="SDToday" portletName="Shipments Departure Today" screenName="ShipmentsDepartureToday"
+		screenLocation="component://product/widget/facility/ShipmentScreens.xml" description="Shipments Departure Today" />
+	<PortletPortletCategory portalPortletId="SDToday" portletCategoryId="FACILITYMGR" />
+	
+	<PortalPortlet portalPortletId="InvRejectsToday" portletName="Inventory Rejection Today" screenName="InventoryRejectionToday"
+		screenLocation="component://product/widget/facility/ShipmentScreens.xml" description="Inventory Rejectionss Today" />
+	<PortletPortletCategory portalPortletId="InvRejectsToday" portletCategoryId="FACILITYMGR" />
+
+	<PortalPortlet portalPortletId="PhysicalAdjustToday" portletName="Physical Adjustments Today" screenName="PhysicalAdjustmentsToday"
+		screenLocation="component://product/widget/facility/ShipmentScreens.xml" description="Physical Adjustments Today" />
+	<PortletPortletCategory portalPortletId="PhysicalAdjustToday" portletCategoryId="FACILITYMGR" />
+
+	<!-- <PortalPortlet portalPortletId="ApprovedRequestInventory" portletName="Approved Request Inventory" screenName="ApprovedRequestInventory"
+		screenLocation="component://product/widget/facility/ShipmentScreens.xml" description="Approved Request Inventory" />
+	<PortletPortletCategory portalPortletId="ApprovedRequestInventory" portletCategoryId="FACILITYMGR" /> -->
+	
+	<PortalPortlet portalPortletId="RequestInventoryForTransfer" portletName="Request Inventory For Transfer" screenName="RequestInventoryForTransfer"
+		screenLocation="component://product/widget/facility/ShipmentScreens.xml" description="Request Inventory For Transfer" />
+	<PortletPortletCategory portalPortletId="RequestInventoryForTransfer" portletCategoryId="FACILITYMGR" />
+	
+	<!-- <PortalPortlet portalPortletId="ReturnInventoryForTransfer" portletName="Return Inventory For Transfer" screenName="ReturnInventoryForTransfer"
+		screenLocation="component://product/widget/facility/ShipmentScreens.xml" description="Return Inventory For Transfer" />
+	<PortletPortletCategory portalPortletId="ReturnInventoryForTransfer" portletCategoryId="FACILITYMGR" /> -->
+	
+	<!-- <PortalPortlet portalPortletId="RejectedInventoryForTransfer" portletName="Rejected Inventory For Transfer" screenName="RejectedInventoryForTransfer"
+		screenLocation="component://product/widget/facility/ShipmentScreens.xml" description="Rejected Inventory For Transfer" />
+	<PortletPortletCategory portalPortletId="RejectedInventoryForTransfer" portletCategoryId="FACILITYMGR" /> -->
+	
+	<PortalPortlet portalPortletId="InventoryRequisition" portletName="Request Inventory For Transfer" screenName="InventoryRequisition"
+		screenLocation="component://product/widget/facility/ShipmentScreens.xml" description="Request Inventory For Transfer" />
+	<PortletPortletCategory portalPortletId="InventoryRequisition" portletCategoryId="FACILITYMGR" />
+	
+	<PortalPortlet portalPortletId="StockMovesToday" portletName="Stock Moves Today" screenName="StockMovesToday"
+		screenLocation="component://product/widget/facility/ShipmentScreens.xml" description="SStock Moves Today" />
+	<PortletPortletCategory portalPortletId="StockMovesToday" portletCategoryId="FACILITYMGR" />
+	
+	<PortalPortlet portalPortletId="InventoryXferToday" portletName="Inventory Xfer Today" screenName="InventoryXferToday"
+		screenLocation="component://product/widget/facility/ShipmentScreens.xml" description="Inventory Xfer Today" />
+	<PortletPortletCategory portalPortletId="InventoryXferToday" portletCategoryId="FACILITYMGR" />
+	
+	<PortalPortlet portalPortletId="CustomerRetunsToday" portletName="Customer Returns Today" screenName="CustomerRetunsToday"
+		screenLocation="component://product/widget/facility/ShipmentScreens.xml" description="Customer Returns Today" />
+	<PortletPortletCategory portalPortletId="CustomerRetunsToday" portletCategoryId="FACILITYMGR" />
+	
+	<PortalPagePortlet portalPageId="FacilityPortalPage" portalPortletId="SADueToday" portletSeqId="00001"
+		columnSeqId="00001" sequenceNum="2" />
+	
+	<PortalPagePortlet portalPageId="FacilityPortalPage" portalPortletId="SAToday" portletSeqId="00001"
+		columnSeqId="00001" sequenceNum="2" />
+		
+	<PortalPagePortlet portalPageId="FacilityPortalPage" portalPortletId="SDDueToday" portletSeqId="00001"
+		columnSeqId="00001" sequenceNum="1" />
+		
+	<PortalPagePortlet portalPageId="FacilityPortalPage" portalPortletId="SDToday" portletSeqId="00001"
+		columnSeqId="00001" sequenceNum="1" />	
+		
+	<PortalPagePortlet portalPageId="FacilityPortalPage" portalPortletId="InvRejectsToday" portletSeqId="00001"
+		columnSeqId="00002" sequenceNum="2" />
+	
+	<PortalPagePortlet portalPageId="FacilityPortalPage" portalPortletId="PhysicalAdjustToday" portletSeqId="00001"
+		columnSeqId="00002" sequenceNum="2" />
+		
+	<PortalPagePortlet portalPageId="FacilityPortalPage" portalPortletId="StockMovesToday" portletSeqId="00001"
+		columnSeqId="00002" sequenceNum="1" />	
+		
+	<!-- <PortalPagePortlet portalPageId="FacilityPortalPage" portalPortletId="ApprovedRequestInventory" portletSeqId="00001"
+		columnSeqId="00001" sequenceNum="2" /> -->	
+		
+	<PortalPagePortlet portalPageId="FacilityPortalPage" portalPortletId="RequestInventoryForTransfer" portletSeqId="00001"
+		columnSeqId="00002" sequenceNum="3" />
+	
+	<!-- <PortalPagePortlet portalPageId="FacilityPortalPage" portalPortletId="RejectedInventoryForTransfer" portletSeqId="00001"
+		columnSeqId="00002" sequenceNum="4" /> -->
+		
+	<PortalPagePortlet portalPageId="FacilityPortalPage" portalPortletId="InventoryRequisition" portletSeqId="00001"
+		columnSeqId="00001" sequenceNum="4" />
+		
+	<!-- <PortalPagePortlet portalPageId="FacilityPortalPage" portalPortletId="ReturnInventoryForTransfer" portletSeqId="00001"
+		columnSeqId="00001" sequenceNum="3" /> -->
+		
+	<PortalPagePortlet portalPageId="FacilityPortalPage" portalPortletId="InventoryXferToday" portletSeqId="00001"
+		columnSeqId="00002" sequenceNum="1" />
+		
+	<PortalPagePortlet portalPageId="FacilityPortalPage" portalPortletId="CustomerRetunsToday" portletSeqId="00001"
+		columnSeqId="00002" sequenceNum="3" />
+		
+</entity-engine-xml>

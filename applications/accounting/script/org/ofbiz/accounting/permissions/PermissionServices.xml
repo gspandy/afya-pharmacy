@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Licensed to the Apache Software Foundation (ASF) under one or more contributor license agreements. See the NOTICE file distributed with this work for additional 
+	information regarding copyright ownership. The ASF licenses this file to you under the Apache License, Version 2.0 (the "License"); you may not use this file except 
+	in compliance with the License. You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0 Unless required by applicable law or agreed to 
+	in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See 
+	the License for the specific language governing permissions and limitations under the License. -->
+<simple-methods xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://ofbiz.apache.org/dtds/simple-methods-v2.xsd">
+	<!-- ============== Basic Permission Checking ============= -->
+	<!-- Returns hasPermission=true if user has one of the base ACCOUNTING CRUD+ADMIN permissions -->
+
+	<simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_" event-event-message-name="_event_message_"
+		event-request-object-name="request" event-response-code-name="_response_code_" event-response-object-name="response" login-required="true" method-name="basePermissionCheck"
+		service-error-message-list-name="errorMessageList" service-error-message-map-name="errorMessageMap" service-error-message-name="errorMessage"
+		service-response-message-name="responseMessage" service-success-message-list-name="successMessageList" service-success-message-name="successMessage"
+		short-description="Accounting component base permission logic" use-transaction="true">
+		<set field="primaryPermission" set-if-empty="true" set-if-null="false" value="ACCOUNTING" />
+		<call-simple-method method-name="genericBasePermissionCheck" xml-resource="component://common/script/org/ofbiz/common/permission/CommonPermissionServices.xml" />
+	</simple-method>
+	<!-- Returns hasPermission=true if user has one of the base ACCOUNTING CRUD+ADMIN permissions OR if user has one of the base ACCOUNTING_ROLE CRUD+ADMIN permissions -->
+
+	<simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_" event-event-message-name="_event_message_"
+		event-request-object-name="request" event-response-code-name="_response_code_" event-response-object-name="response" login-required="true"
+		method-name="basePlusRolePermissionCheck" service-error-message-list-name="errorMessageList" service-error-message-map-name="errorMessageMap"
+		service-error-message-name="errorMessage" service-response-message-name="responseMessage" service-success-message-list-name="successMessageList"
+		service-success-message-name="successMessage" short-description="Accounting component base permission logic" use-transaction="true">
+		<set field="primaryPermission" set-if-empty="true" set-if-null="false" value="ACCOUNTING" />
+		<set field="altPermission" set-if-empty="true" set-if-null="false" value="ACCOUNTING_ROLE" />
+		<call-simple-method method-name="genericBasePermissionCheck" xml-resource="component://common/script/org/ofbiz/common/permission/CommonPermissionServices.xml" />
+	</simple-method>
+	<!-- ============== Task-specific Permission Checking ============= -->
+	<!-- Returns hasPermission=true if user has one of the ACCTG_PREF CRUD+ADMIN permissions -->
+
+	<simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_" event-event-message-name="_event_message_"
+		event-request-object-name="request" event-response-code-name="_response_code_" event-response-object-name="response" login-required="true"
+		method-name="preferencePermissionCheck" service-error-message-list-name="errorMessageList" service-error-message-map-name="errorMessageMap"
+		service-error-message-name="errorMessage" service-response-message-name="responseMessage" service-success-message-list-name="successMessageList"
+		service-success-message-name="successMessage" short-description="Accounting preferences permission logic" use-transaction="true">
+		<set field="primaryPermission" set-if-empty="true" set-if-null="false" value="ACCTG_PREF" />
+		<call-simple-method method-name="genericBasePermissionCheck" xml-resource="component://common/script/org/ofbiz/common/permission/CommonPermissionServices.xml" />
+	</simple-method>
+	<!-- Returns hasPermission=true if user has one of the ACCTG_FX CRUD+ADMIN permissions -->
+
+	<simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_" event-event-message-name="_event_message_"
+		event-request-object-name="request" event-response-code-name="_response_code_" event-response-object-name="response" login-required="true" method-name="acctgFxPermissionCheck"
+		service-error-message-list-name="errorMessageList" service-error-message-map-name="errorMessageMap" service-error-message-name="errorMessage"
+		service-response-message-name="responseMessage" service-success-message-list-name="successMessageList" service-success-message-name="successMessage"
+		short-description="Foreign exchange permission logic" use-transaction="true">
+		<set field="primaryPermission" set-if-empty="true" set-if-null="false" value="ACCTG_FX" />
+		<call-simple-method method-name="genericBasePermissionCheck" xml-resource="component://common/script/org/ofbiz/common/permission/CommonPermissionServices.xml" />
+		<if-compare field="hasPermission" operator="not-equals" type="String" value="true">
+			<!-- Check for deprecated permission -->
+			<if-has-permission permission="ACCTG_FX_ENTRY">
+				<set field="hasPermission" set-if-empty="true" set-if-null="false" type="Boolean" value="true" />
+				<field-to-result field="hasPermission" />
+				<log level="warning" message="Deprecated permission ACCTG_FX_ENTRY in use" />
+				<else>
+					<property-to-field field="failMessage" no-locale="false" property="CommonGenericPermissionError" resource="CommonUiLabels" />
+					<set field="hasPermission" set-if-empty="true" set-if-null="false" type="Boolean" value="false" />
+					<field-to-result field="hasPermission" />
+					<field-to-result field="failMessage" />
+				</else>
+			</if-has-permission>
+		</if-compare>
+	</simple-method>
+	<!-- Returns hasPermission=true if user has one of the base ACCOUNTING CRUD+ADMIN permissions OR if user has one of the base ACCOUNTING_ROLE CRUD+ADMIN permissions -->
+	<!-- TODO: Make this more user-role-specific. Users working with suppliers should only access supplier agreements, users working with customers should only access 
+		customer agreements, etc. -->
+
+	<simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_" event-event-message-name="_event_message_"
+		event-request-object-name="request" event-response-code-name="_response_code_" event-response-object-name="response" login-required="true"
+		method-name="acctgAgreementPermissionCheck" service-error-message-list-name="errorMessageList" service-error-message-map-name="errorMessageMap"
+		service-error-message-name="errorMessage" service-response-message-name="responseMessage" service-success-message-list-name="successMessageList"
+		service-success-message-name="successMessage" short-description="Accounting agreement permission logic" use-transaction="true">
+		<call-simple-method method-name="basePlusRolePermissionCheck" />
+	</simple-method>
+	<!-- Returns hasPermission=true if user has one of the ACCOUNTING_COMM CRUD+ADMIN permissions -->
+
+	<simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_" event-event-message-name="_event_message_"
+		event-request-object-name="request" event-response-code-name="_response_code_" event-response-object-name="response" login-required="true"
+		method-name="commissionPermissionCheck" service-error-message-list-name="errorMessageList" service-error-message-map-name="errorMessageMap"
+		service-error-message-name="errorMessage" service-response-message-name="responseMessage" service-success-message-list-name="successMessageList"
+		service-success-message-name="successMessage" short-description="Accounting commissions permission logic" use-transaction="true">
+		<set field="primaryPermission" set-if-empty="true" set-if-null="false" value="ACCOUNTING_COMM" />
+		<call-simple-method method-name="genericBasePermissionCheck" xml-resource="component://common/script/org/ofbiz/common/permission/CommonPermissionServices.xml" />
+	</simple-method>
+	<!-- Returns hasPermission=true if user has one of the base ACCOUNTING CRUD+ADMIN permissions -->
+
+	<simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_" event-event-message-name="_event_message_"
+		event-request-object-name="request" event-response-code-name="_response_code_" event-response-object-name="response" login-required="true" method-name="acctgCostPermissionCheck"
+		service-error-message-list-name="errorMessageList" service-error-message-map-name="errorMessageMap" service-error-message-name="errorMessage"
+		service-response-message-name="responseMessage" service-success-message-list-name="successMessageList" service-success-message-name="successMessage"
+		short-description="Accounting cost permission logic" use-transaction="true">
+		<call-simple-method method-name="basePermissionCheck" />
+	</simple-method>
+	<!-- Returns hasPermission=true if user has one of the base ACCOUNTING CRUD+ADMIN permissions -->
+
+	<simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_" event-event-message-name="_event_message_"
+		event-request-object-name="request" event-response-code-name="_response_code_" event-response-object-name="response" login-required="true"
+		method-name="acctgFinAcctPermissionCheck" service-error-message-list-name="errorMessageList" service-error-message-map-name="errorMessageMap"
+		service-error-message-name="errorMessage" service-response-message-name="responseMessage" service-success-message-list-name="successMessageList"
+		service-success-message-name="successMessage" short-description="Accounting financial account permission logic" use-transaction="true">
+		<call-simple-method method-name="basePermissionCheck" />
+	</simple-method>
+	<!-- Returns hasPermission=true if user has one of the base ACCOUNTING CRUD+ADMIN permissions OR if user has one of the base ACCOUNTING_ROLE CRUD+ADMIN permissions -->
+	<!-- TODO: Make this more user-role-specific. Users working with suppliers should only access purchase invoices, users working with customers should only access 
+		sales-related invoices, etc. -->
+
+	<simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_" event-event-message-name="_event_message_"
+		event-request-object-name="request" event-response-code-name="_response_code_" event-response-object-name="response" login-required="true"
+		method-name="acctgInvoicePermissionCheck" service-error-message-list-name="errorMessageList" service-error-message-map-name="errorMessageMap"
+		service-error-message-name="errorMessage" service-response-message-name="responseMessage" service-success-message-list-name="successMessageList"
+		service-success-message-name="successMessage" short-description="Accounting invoice permission logic" use-transaction="true">
+		<call-simple-method method-name="basePlusRolePermissionCheck" />
+	</simple-method>
+	<!-- Returns hasPermission=true if user has one of the ACCTG_ATX CRUD+ADMIN permissions -->
+
+	<simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_" event-event-message-name="_event_message_"
+		event-request-object-name="request" event-response-code-name="_response_code_" event-response-object-name="response" login-required="true"
+		method-name="acctgTransactionPermissionCheck" service-error-message-list-name="errorMessageList" service-error-message-map-name="errorMessageMap"
+		service-error-message-name="errorMessage" service-response-message-name="responseMessage" service-success-message-list-name="successMessageList"
+		service-success-message-name="successMessage" short-description="Accounting transaction permission logic" use-transaction="true">
+		<set field="primaryPermission" set-if-empty="true" set-if-null="false" value="ACCTG_ATX" />
+		<call-simple-method method-name="genericBasePermissionCheck" xml-resource="component://common/script/org/ofbiz/common/permission/CommonPermissionServices.xml" />
+	</simple-method>
+
+	<!-- Returns hasPermission=true if user has one of the base ACCOUNTING CRUD+ADMIN permissions -->
+	<simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_" event-event-message-name="_event_message_"
+		event-request-object-name="request" event-response-code-name="_response_code_" event-response-object-name="response" login-required="true" method-name="acctgBillingAcctCheck"
+		service-error-message-list-name="errorMessageList" service-error-message-map-name="errorMessageMap" service-error-message-name="errorMessage"
+		service-response-message-name="responseMessage" service-success-message-list-name="successMessageList" service-success-message-name="successMessage"
+		short-description="Accounting billing account permission logic" use-transaction="true">
+		<call-simple-method method-name="basePermissionCheck" />
+	</simple-method>
+	
+</simple-methods>

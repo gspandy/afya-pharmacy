@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<site-conf xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="http://ofbiz.apache.org/dtds/site-conf.xsd">
+	<!--
+		The controller elements that are common to all OFBiz components can be
+		found in the following xml file. A component can override the elements
+		found in the common-controller.xml file.
+-->
+	<include location="component://common/webcommon/WEB-INF/common-controller.xml" />
+
+	<description>DynaFormLabels Component Site Configuration File</description>
+	<owner></owner>
+
+
+	<!-- Events to run on every request before security (chains exempt) -->
+	<!--
+    <preprocessor>
+    </preprocessor>
+    -->
+	<!--
+		Events to run on every request after all other processing (chains
+		exempt)
+-->
+	<!--
+		<postprocessor> <event type="java"
+		path="org.ofbiz.webapp.event.TestEvent" invoke="test"/>
+		</postprocessor>
+	-->
+
+	<!-- Request Mappings -->
+	<request-map uri="main">
+		<security https="true" auth="true" />
+		<response name="success" type="view" value="main" />
+	</request-map>
+	<request-map uri="authview">
+		<security https="true" auth="true" />
+		<response name="success" type="view" value="main" />
+	</request-map>
+
+	<request-map uri="FindCustomForm">
+		<security https="true" auth="true" />
+		<response name="success" type="view" value="FindCustomForm" />
+	</request-map>
+
+	<request-map uri="NewCustomForm">
+		<security https="true" auth="true" />
+		<response name="success" type="view" value="NewCustomForm" />
+	</request-map>
+
+	<request-map uri="EditCustomForm">
+		<security https="true" auth="true" />
+		<response name="success" type="view" value="EditCustomForm" />
+	</request-map>
+
+	<request-map uri="UpdateCustomForm">
+		<security https="true" auth="true" />
+		<event type="service" invoke="dynaform.UpdateCustomForm" />
+		<response name="success" type="request-redirect" value="EditCustomForm">
+			<redirect-parameter name="formId" />
+		</response>
+	</request-map>
+
+	<request-map uri="createCustomForm">
+		<security https="true" auth="true" />
+		<event type="service" invoke="dynaform.createCustomForm" />
+		<response name="success" type="request-redirect" value="formLayout">
+			<redirect-parameter name="formId" />
+		</response>
+	</request-map>
+
+	<request-map uri="NewSection">
+		<security https="false" auth="true" />
+		<response name="success" type="view" value="NewSection"></response>
+	</request-map>
+
+	<request-map uri="NewFormRow">
+		<security https="false" auth="true" />
+		<response name="success" type="view" value="NewFormRow"></response>
+	</request-map>
+
+
+	<request-map uri="addComponent">
+		<security https="true" auth="true" />
+		<event type="service" invoke="dynaform.addComponent" />
+		<response name="success" type="request-redirect" value="formLayout">
+			<redirect-parameter name="formId" />
+			<redirect-parameter name="trail" />
+		</response>
+	</request-map>
+
+	<request-map uri="UpdateComponent">
+		<security https="true" auth="true" />
+		<event type="service" invoke="dynaform.updateComponent" />
+		<response name="success" type="request-redirect" value="formLayout">
+			<redirect-parameter name="formId" />
+			<redirect-parameter name="trail" />
+		</response>
+	</request-map>
+
+
+
+	<request-map uri="deleteComponent">
+		<security https="true" auth="true" />
+		<event type="service" invoke="dynaform.deleteComponent" />
+		<response name="success" type="request-redirect" value="formLayout">
+			<redirect-parameter name="formId" />
+			<redirect-parameter name="trail" />
+		</response>
+	</request-map>
+
+	<request-map uri="formLayout">
+		<security auth="true" https="true" />
+		<event type="java" invoke="loadFormLayout"
+			path="com.smebiz.dynamicform.controller.FormLayoutController" />
+
+		<response name="success" type="view" value="formLayout" />
+	</request-map>
+
+	<request-map uri="selectFormInput">
+		<security auth="true" https="true" />
+<!--		<event type="java" invoke="doProcess"-->
+<!--	path="com.smebiz.dynforms.FormLayoutController" />-->
+		<response name="success" type="view" value="selectFormInput" />
+		<response name="next" type="view" value="configureInput" />
+	</request-map>
+
+	<request-map uri="ViewForm.pdf">
+		<security auth="true" https="true" />
+		<response name="success" type="view" value="viewForm" />
+	</request-map>
+
+	<!-- View Mappings -->
+	<view-map name="main" type="screen"
+		page="component://dyna-forms/widget/DynaFormScreens.xml#main" />
+	<view-map name="NewCustomForm" type="screen"
+		page="component://dyna-forms/widget/DynaFormScreens.xml#NewCustomForm" />
+	<view-map name="FindCustomForm" type="screen"
+		page="component://dyna-forms/widget/DynaFormScreens.xml#FindCustomForm" />
+	<view-map name="EditCustomForm" type="screen"
+		page="component://dyna-forms/widget/DynaFormScreens.xml#EditCustomForm" />
+	<view-map name="NewSection" type="screen"
+		page="component://dyna-forms/widget/DynaFormScreens.xml#NewFormSection" />
+	<view-map name="formLayout" type="screen"
+		page="component://dyna-forms/widget/DynaFormScreens.xml#postCreationView" />
+	<view-map name="NewFormRow" type="screen"
+		page="component://dyna-forms/widget/DynaFormScreens.xml#NewFormRow"></view-map>
+	<view-map name="selectFormInput" type="ftl"
+		page="component://dyna-forms/webapp/dyna-forms/selectFormInput.ftl" />
+
+	<view-map name="viewForm" type="screenfop"
+		page="component://dyna-forms/widget/DynaFormScreens.xml#viewForm"
+		content-type="application/pdf" encoding="none" />
+
+</site-conf>

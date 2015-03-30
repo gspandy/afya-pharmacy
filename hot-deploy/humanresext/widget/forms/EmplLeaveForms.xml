@@ -1,0 +1,411 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--l
+    Licensed to the Apache Software Foundation (ASF) under one
+    or more contributor license agreements.  See the NOTICE file
+    distributed with this work for additional information
+    regarding copyright ownership.  The ASF licenses this file
+    to you under the Apache License, Version 2.0 (the
+    "License"); you may not use this file except in compliance
+    with the License.  You may obtain a copy of the License at
+    
+    http://www.apache.org/licenses/LICENSE-2.0
+    
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied.  See the License for the
+    specific language governing permissions and limitations
+    under the License.
+-->
+
+<forms xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="http://ofbiz.apache.org/dtds/widget-form.xsd">
+   
+    <form name="FindEmplLeaves" type="single" target="FindEmplLeaves"
+        odd-row-style="header-row" default-table-style="basic-table">
+        <auto-fields-entity entity-name="EmplLeave" default-field-type="find"/>
+        <field name="partyId" title="${uiLabelMap.PartyPartyId}"><lookup target-form-name="LookupPartyName"/></field>
+        <field name="leaveTypeId">
+            <drop-down allow-empty="true">
+                <entity-options description="${description}" key-field-name="leaveTypeId" entity-name="EmplLeaveType"/>
+            </drop-down>
+        </field>
+        <field name="noConditionFind"><hidden value="Y"/></field>    
+        <field name="searchButton" widget-style="smallSubmit"><submit button-type="button"/></field>
+    </form>
+    
+    <form name="ListEmplLeaves" type="multi" use-row-submit="true" separate-columns="true" target="updateEmplLeaveExt?partyId=${partyId}" list-name="listIt" paginate-target="FindEmplLeaves"
+        odd-row-style="alternate-row" header-row-style="header-row-2" default-table-style="basic-table hover-bar">
+        <actions>
+            <service service-name="performFind" result-map="result" result-map-list="listIt">
+                <field-map field-name="inputFields" from-field="parameters"/>
+                <field-map field-name="entityName" value="EmplLeave"/>
+                <field-map field-name="orderBy" value="fromDate"/>
+            </service>
+            <set field="insideEmployee" from-field="parameters.insideEmployee"/>
+        </actions>
+        <alt-target use-when="insideEmployee==null" target="updateEmplLeave"/>
+        <auto-fields-service service-name="updateEmplLeave"/>
+        <field name="partyId"><display/></field>
+        <field name="leaveTypeId">
+            <drop-down allow-empty="true">
+                <entity-options description="${description}" key-field-name="leaveTypeId" entity-name="EmplLeaveType"/>
+            </drop-down>
+        </field>
+        <field name="fromDate"><display/></field>
+        <field name="_rowSubmit" title="${uiLabelMap.CommonSelect}"><hidden value="Y"/></field>
+        <field name="submitButton" title="${uiLabelMap.CommonSubmit}" widget-style="smallSubmit"><submit/></field>  
+    </form>
+    
+    <form name="AddEmplLeave" type="single" target="createEmplLeave"
+        header-row-style="header-row" default-table-style="basic-table">
+        <actions>
+            <set field="insideEmployee" from-field="parameters.insideEmployee"/>
+        </actions>
+        <alt-target use-when="insideEmployee != null" target="createEmplLeaveExt"/>
+        <auto-fields-service service-name="createEmplLeave"/>
+        <field name="partyId" use-when="emplLeaveCtx!=null"><hidden/></field>
+        <field name="partyId" title="${uiLabelMap.PartyPartyId}" use-when="emplLeaveCtx==null"><lookup target-form-name="LookupPartyName"/></field>
+        <field name="leaveTypeId">
+            <drop-down allow-empty="true">
+                <entity-options description="${description}" key-field-name="leaveTypeId" entity-name="EmplLeaveType">
+                	<entity-constraint name="enumTypeId" value="LEAVE_TYPE"/>
+                	<entity-order-by field-name="description"/>
+                </entity-options>
+            </drop-down>
+        </field>
+        <field name="submitButton" title="${uiLabelMap.CommonCreate}" widget-style="smallSubmit"><submit button-type="button"/></field>
+    </form>
+   
+    <form name="NewLeaveType" type="single" target="newLeaveType" default-map-name="leaveType"
+        header-row-style="header-row" default-table-style="basic-table">
+        <auto-fields-service service-name="newLeaveTypeService" default-field-type="hidden"/>
+        <field name="enumId" title="Leave Id" required-field="true"><text/></field>
+        <field name="enumTypeId" title="Leave Type Id" required-field="true"><hidden value="LEAVE_TYPE"/> </field>
+        <field name="enumCode" title="Leave Code" required-field="true"><text/></field>
+        <field name="sequenceId" title="Sequence Id" required-field="true"><text/> </field>
+        <field name="description" title="${uiLabelMap.CommonDescription}" tooltip="${uiLabelMap.CommonRequired}" widget-style="required"><text/></field>
+        <field name="submitButton" title="${uiLabelMap.CommonCreate}" widget-style="buttontext"><submit button-type="text-link"/></field>
+    </form>
+    
+     <form name="ListLeaveTypes" type="list" use-row-submit="true" list-name="listIt"
+        odd-row-style="alternate-row" header-row-style="header-row-2" default-table-style="basic-table hover-bar" separate-columns="true">
+        <actions>
+        	<entity-condition entity-name="Enumeration">
+        		<condition-expr field-name="enumTypeId" value="LEAVE_TYPE"/>
+        		<order-by field-name="sequenceId"/>
+        	</entity-condition>
+        </actions>
+        <field name="enumId" title="Leave Id" required-field="true"><display/></field>
+        <field name="description" title="${uiLabelMap.CommonDescription}"><display/></field>
+        <field name="enumCode" title="Leave Code" required-field="true"><display/></field>
+        <field name="sequenceId" title="Sequence Id" required-field="true"><display/></field>
+        
+    <!--    <field name="deleteLink" title="${uiLabelMap.CommonDelete}" widget-style="buttontext">
+            <hyperlink target="deleteLeaveType?leaveTypeId=${leaveTypeId}" description="${uiLabelMap.CommonDelete}" also-hidden="false"/>
+        </field>  
+        <field name="_rowSubmit" title="${uiLabelMap.CommonSelect}"><hidden value="Y"/></field>
+        <field name="submitButton" title="${uiLabelMap.CommonSubmit}" widget-style="smallSubmit"><submit/></field> --> 
+    </form>
+    
+    <form name="AddEmplLeaveType" type="single" target="createLeaveType" default-map-name="emplLeaveType"
+        header-row-style="header-row" default-table-style="basic-table">
+        <auto-fields-service service-name="createEmplLeaveType" default-field-type="hidden"/>
+        <field name="leaveTypeId" title="LeaveType" required-field="true">
+      		<drop-down allow-empty="false">
+      			<entity-options description="${description}" entity-name="Enumeration" key-field-name="enumId">
+      				<entity-constraint name="enumTypeId" value="LEAVE_TYPE"/>
+                	<entity-order-by field-name="description"/>
+      			</entity-options>
+      		</drop-down>
+      	</field>
+        <field name="description" title="${uiLabelMap.CommonDescription}" tooltip="${uiLabelMap.CommonRequired}" widget-style="required"><text/></field>
+        <field name="limit" title="Entitlement" widget-style="required"><text/></field>
+        <field name="submitButton" title="${uiLabelMap.CommonCreate}" widget-style="buttontext"><submit button-type="text-link"/></field>
+    </form>
+    
+     <form name="ListEmplLeaveTypes" type="multi" title="" target="updateLeaveType" use-row-submit="true"
+        odd-row-style="alternate-row" header-row-style="header-row-2" default-table-style="basic-table hover-bar" separate-columns="true">
+        <actions>
+            <service service-name="performFind" result-map="result" result-map-list="listIt">
+                <field-map field-name="inputFields" from-field="parameters"/>
+                <field-map field-name="entityName" value="EmplLeaveType"/>
+                <field-map field-name="orderBy" value="leaveTypeId"/>
+                <field-map field-name="noConditionFind" value="Y"/>
+            </service>
+        </actions>
+        <field name="leaveTypeId"><display/></field>
+        <field name="description" title="${uiLabelMap.CommonDescription}"><text/></field>
+        <field name="limit" title="Entitlement" separate-column="true" tooltip="Leaves Entitled for whole Financial Year"><text/></field>
+        <field name="deleteLink" title="${uiLabelMap.CommonDelete}" widget-style="buttontext">
+            <hyperlink target="deleteLeaveType?leaveTypeId=${leaveTypeId}" description="${uiLabelMap.CommonDelete}" also-hidden="false"/>
+        </field>
+        <field name="_rowSubmit" title="${uiLabelMap.CommonSelect}"><hidden value="Y"/></field>
+        <field name="submitButton" title="${uiLabelMap.CommonSubmit}" widget-style="smallSubmit"><submit/></field>
+    </form>
+    
+    <form name="PublicHolidays" type="single" target="addPublicHoliday" header-row-style="header-row" default-table-style="basic-table">
+        <field name="description" title="Holiday Name" required-field="true"><text/></field>
+        <field name="onDate" title="Date " required-field="true"><date-time type="date"/></field>
+        <field name="submitButton" title="${uiLabelMap.CommonCreate}" widget-style="buttontext"><submit button-type="text-link"/></field>
+    </form>
+    
+     <form name="NonWorkingdays" type="single" target="createWeekOff" header-row-style="header-row" default-table-style="basic-table">
+		<field parameter-name="hr_Weekday" name="Sunday" title="Sunday" required-field="true" position="1"><check all-checked="true"><option key="Sunday" description=" "/></check></field>
+  		<field parameter-name="hr_Weekday" name="Monday" title="Monday" required-field="true" position="2"><check all-checked="true"><option key="Monday" description=" "/></check></field>
+		<field parameter-name="hr_Weekday" name="Tuesday" title="Tuesday" required-field="true" position="3"><check all-checked="true"><option key="Tuesday" description=" "/></check></field>
+        <field parameter-name="hr_Weekday" name="Wednesday" title="Wednesday" required-field="true" position="4"> <check all-checked="true"><option key="Wednesday" description=" "/></check></field>
+        <field parameter-name="hr_Weekday" name="Thursday" title="Thursday" required-field="true" position="5"> <check all-checked="true"><option key="Thursday" description=" "/></check></field>
+        <field parameter-name="hr_Weekday" name="Friday" title="Friday" required-field="true" position="6"> <check all-checked="true"><option key="Friday" description=" "/></check></field>
+        <field parameter-name="hr_Weekday" name="Saturday" title="Saturday" required-field="true" position="7"> <check all-checked="true"><option key="Saturday" description=" "/></check></field>
+    	<field name="submitButton" title="Save" widget-style="buttontext"><submit button-type="text-link"/></field>
+    </form>
+    
+    <form name="ListMyLeaves" type="list" separate-columns="true" 
+				 list-name="listIt"  paginate-target="SearchLeave" paginate="true"
+				 odd-row-style="alternate-row" header-row-style="header-row-2" 
+				 default-table-style="basic-table hover-bar">
+        <actions>
+            <script location="component://humanresext/webapp/humanresext/WEB-INF/actions/getMyLeaves.groovy"/>
+        </actions>
+        <field name="leaveId" widget-style="linktext" >
+            <hyperlink also-hidden="false" description="${leaveId}" target="leaveGeneralView?leaveId=${leaveId}"/>
+		</field>
+	<!--  	<field name="partyId" title="Applied By" widget-style="linktext" use-when="!&quot;${leaveStatusId}&quot;.equals(&quot;LT_ADM_APPROVED&quot;)">
+            <hyperlink also-hidden="false" description="${partyId}" target="ApplyLeave?partyId=${partyId}&amp;fromDate=${fromDate}"/>
+		</field> use-when="&quot;${leaveStatusId}&quot;.equals(&quot;LT_SAVED&quot;)"-->		
+		<field name="leaveTypeId" title="Leave Type">
+			<display-entity entity-name="Enumeration" description="${description}"  key-field-name="enumId"/>
+		</field>           		
+		<field name="leaveStatusId" title="Leave Status">
+			<display-entity entity-name="StatusItem" description="${description}"  key-field-name="statusId"/>
+		</field>   		
+		<field name="fromDate" title="From Date"><display description="${fromDate}"/> </field>   		
+		<field name="thruDate" title="Leave Type"><display description="${thruDate}"/> </field> 
+		<field name="submitLeave" use-when="&quot;${leaveStatusId}&quot;.equals(&quot;LT_SAVED&quot;)" widget-style="smallSubmit"> 
+			<hyperlink target="submitLeave?leaveId=${leaveId}" description="Submit Leave"/>
+	 	</field> 		
+    </form>
+    
+    <form name="ApplyLeave" type="single" target="addNewEmplLeave" header-row-style="header-row" default-table-style="basic-table">
+		<actions>
+			<set field="partyId" value="${userLogin.partyId}"></set>
+			<set field="fromDate" value="${parameters.fromDate}"></set>
+			<set field="leaveId" value="${parameters.leaveId}"></set>
+			<entity-one entity-name="EmplLeave" value-field="leaveMap">
+				<field-map field-name="leaveId" from-field="leaveId"/>
+			</entity-one>
+		</actions>
+		<field name="partyId" title="Employee ID" > <hidden/> </field>
+      	<field name="leaveId" use-when="leaveId!=null"><hidden/></field>
+		<field name="leaveTypeId" title="LeaveType" required-field="true">
+      		<drop-down allow-empty="true">
+      			<entity-options description="${description}" entity-name="Enumeration" key-field-name="enumId">
+      				<entity-constraint name="enumTypeId" value="LEAVE_TYPE"/>
+                	<entity-order-by field-name="description"/>
+      			</entity-options>
+      		</drop-down>
+      	</field>
+		<field name="fromDate" title="From Date"><date-time/>	</field>
+		<field name="thruDate" title="To Date">	<date-time/></field>
+		<field name="description"><textarea rows="2"/></field>
+       <!--   <field name="saveButton" title="${uiLabelMap.CommonCreate}" widget-style="buttontext">
+        	<submit button-type="text-link"/>
+        </field> -->
+        <field name="saveButton" title="Save"><submit button-type="button"/></field>
+    </form>
+    
+     <form name="ListBalanceLeaves" type="multi" use-row-submit="true" separate-columns="true" list-name="listIt" 
+        odd-row-style="alternate-row" header-row-style="header-row-2" default-table-style="basic-table hover-bar">
+        <actions>
+            <script location="component://humanresext/webapp/humanresext/WEB-INF/actions/filterLeaves.groovy"/>
+        </actions>
+    	<field name="leaveTypeId" title="Leave Type">
+			<display-entity entity-name="Enumeration" description="${description}"  key-field-name="enumId" />
+		</field>
+		<field name="partyId" ><hidden/></field>
+		<field name="availed" title="Leaves Availed"><display/></field>
+		<field name="numDays" title="Total Leaves"><display/></field>
+		<field name="balanceLeaves" > <display description="${numDays - availed}" /></field>
+		<field name="beginYear"><display type="date"/></field>
+		<field name="endYear"><display type="date"/></field>
+    </form>
+    
+    <form name="SearchLeave" type="single" target="SearchLeave" >
+        <field name="partyId" title="Applied By"> 
+			<lookup target-form-name="LookupPartyName"/>
+        </field>
+        <field name="leaveStatusId" title="Status " >
+            <drop-down allow-empty="true">
+            	<entity-options description="${description}" entity-name="StatusItem" key-field-name="statusId">
+                	<entity-constraint name="statusTypeId" value="LEAVE_STATUS"/>
+                	<entity-order-by field-name="description"/>
+                </entity-options>
+            </drop-down>
+        </field>
+        <field name="mgrPositionId"><hidden /></field>
+        <field name="leaveTypeId" title="LeaveType">
+      		<drop-down allow-empty="true">
+      			<entity-options description="${description}" entity-name="Enumeration" key-field-name="enumId">
+      				<entity-constraint name="enumTypeId" value="LEAVE_TYPE"/>
+                	<entity-order-by field-name="description"/>
+      			</entity-options>
+      		</drop-down>
+      	</field>
+		<field name="fromDate" title="From"><date-find/></field>
+		<field name="thruDate" title="To"><date-find/></field>
+        <field name="mgrComment" title="Manager's Commnet" ><text-find/></field>
+        <field name="noConditionFind"><hidden value="Y"/></field>        
+        <field name="searchButton" title="Search All Leaves"  widget-style="smallSubmit" use-when="${bsh:security.hasEntityPermission(&quot;HUMANRES&quot;, &quot;_ADMIN&quot;, session);}"  event="onClick" 
+        				action="javascript: document.SearchLeave.mgrPositionId.value='';document.SearchLeave.partyId.value=''">
+        	<submit button-type="button"/>
+        </field>
+        
+        <field name="searchSubOrdinateButton" title="Search My Team Leaves" use-when="${bsh:security.hasEntityPermission(&quot;HUMANRES&quot;, &quot;_MGR&quot;, session);}" event="onClick" 
+        				action="javascript: document.SearchLeave.mgrPositionId.value='${positionId}';document.SearchLeave.partyId.value=''">
+        	<submit button-type="button"/>
+        </field>
+    </form>
+    
+    <form name="ListLeaveSearchResults" type="list" separate-columns="true" 
+				 list-name="listIt"  paginate-target="SearchLeave" paginate="true"
+				 odd-row-style="alternate-row" header-row-style="header-row-2" 
+				 default-table-style="basic-table hover-bar">
+        <actions>
+            <service service-name="performFind" result-map="result" result-map-list="listIt">
+                <field-map field-name="inputFields" from-field="parameters"/>
+                <field-map field-name="entityName" value="EmplLeave"/>
+                <field-map field-name="orderBy" value="leaveId"/>
+            </service>
+        </actions>
+        <field name="leaveId" widget-style="linktext">
+            <hyperlink also-hidden="false" description="${leaveId}" target="leaveGeneralView?leaveId=${leaveId}"/>
+		</field>
+		<field name="partyId" title="Applied By"><display></display></field>		
+		<field name="leaveTypeId" title="Leave Type">
+			<display-entity entity-name="Enumeration" description="${description}"  key-field-name="enumId"/>
+		</field>           		
+		<field name="leaveStatusId" title="Leave Status">
+			<display-entity entity-name="StatusItem" also-hidden="true" key-field-name="statusId"></display-entity>
+		</field>   		
+		<field name="fromDate" title="From Date "><display description="${fromDate}"/> </field>   		
+		<field name="thruDate" title="To Date"><display description="${thruDate}"/> </field> 
+		<field name="ProcessLeave" widget-style="smallSubmit" use-when="!&quot;${leaveStatusId}&quot;.equals(&quot;LT_SAVED&quot;)">
+			<hyperlink target="AdminProcessLeave?leaveId=${leaveId}" description="Process Leave"/>
+	 	</field>  		
+    </form>
+    
+    <!-- Admin form for processing leaves by Admin and Manager -->
+ 	<form name="AdminProcessLeaveForm" type="single" target="processLeave" default-map-name="leaveMap">
+		<actions>
+			<set field="leaveId" from-field="parameters.leaveId"/>
+		<!--  	<set field="fromDate" from-field="parameters.fromDate"/>
+			<set field="leaveStatusId" from-field="parameters.leaveStatusId"/>-->
+			<entity-one entity-name="EmplLeave" value-field="leaveMap">
+				<field-map field-name="leaveId" from-field="leaveId"/>
+				<!--  <field-map field-name="fromDate" from-field="fromDate"/>-->
+			</entity-one>
+			<script location="component://humanresext/webapp/humanresext/WEB-INF/actions/claims/processClaimStatus.groovy"/>
+			<set field="approver" from-field="approver"/>
+			<!-- Fetch Leave Limit corresponding to this leave type and party -->
+			<script location="component://humanresext/webapp/humanresext/WEB-INF/actions/getBalanceLeaves.groovy"/>
+			<set field="leaveLimit" from-field="leaveLimit"/>
+			<set field="availed" from-field="availed"/>
+		</actions>
+		<field name="leaveId"><display/></field>
+      	<field name="partyId" title="Employee ID" ><display></display></field>
+      	<field name="partyName" title="Employee Name"><display description="${partyName}"></display></field>
+      	<field name="leaveTypeId"> 
+      		<display-entity entity-name="Enumeration" description="${description}"  key-field-name="enumId"/>
+      	</field>
+      	<field name="fromDate"><display type="date"/></field>
+      	<field name="thruDate"><display type="date"/></field>
+        <field name="leaveStatusId" title="Leave Status"  map-name="leaveMap" tooltip="Present status of Leave">
+			<display-entity entity-name="StatusItem" also-hidden="true" description="${description}"  key-field-name="statusId" />
+		</field>
+        <field name="paidDays"><text/></field>
+        <field name="leaveLimit" title="Entitled Leave Limit"><display description="${leaveLimit}"/></field>
+      	<field name="unpaidDays"><text default-value="0" /></field>
+      	<field name="availed" tooltip="In present financial year the leaves already availed"><display description="${availed}"></display></field>
+      	<field name="mgrComment"><textarea rows="2"/></field>
+      	<field name="approveButton" title="Approve" widget-style="smallSubmit" event="onClick" action="javascript:submitForm(this.form,'${approver}_APPROVED');">
+      		<submit button-type="button"/>
+      	</field>
+      	<field name="rejectButton" title="Reject" widget-style="smallSubmit" event="onClick" action="javascript:submitForm(this.form,'${approver}_REJECTED');">
+      		<submit button-type="button"/>
+      	</field>
+    </form>
+    
+    <!-- Forms to create and update yearly employee leaves -->
+    <form name="AssignLeaveLimit" type="single" target="createLeaveLimit"
+        odd-row-style="header-row" default-table-style="basic-table" default-map-name="leaveMap">
+        <actions>
+        	<set field="partyLeaveId" from-field="parameters.partyLeaveId"/>
+			<entity-one entity-name="EmplLeaveLimit" value-field="leaveMap">
+				<field-map field-name="partyLeaveId" from-field="partyLeaveId"/>
+			</entity-one>
+       </actions>
+        <alt-target use-when="partyLeaveId!=null" target="updateLeaveLimit"/>
+        <!--  <alt-target use-when="partyId=null" target="getLeaveLimits"/>-->
+        <field name="partyLeaveId" use-when="partyLeaveId!=null"><display ></display></field>
+        <field name="partyId" title="${uiLabelMap.PartyPartyId}" required-field="true"><lookup target-form-name="LookupPartyName"/></field>
+        <field name="leaveTypeId" title="LeaveType" required-field="true">
+      		<drop-down allow-empty="false">
+      			<entity-options description="${description}" entity-name="Enumeration" key-field-name="enumId">
+      				<entity-constraint name="enumTypeId" value="LEAVE_TYPE"/>
+                	<entity-order-by field-name="description"/>
+      			</entity-options>
+      		</drop-down>
+      	</field> 
+      	<field name="beginYear" tooltip="Start of Leave Period e.g. Financial Year Start" required-field="true"><date-time type="date"/></field>
+      	<field name="endYear" tooltip="End of Financial Year" required-field="true"><date-time type="date"/></field>
+      	<field name="numDays" title="Leave Days" required-field="true"><text/></field>
+      	<field name="description" title="Comment"><textarea rows="2"/></field>
+      	<field name="mgrPositionId"><lookup target-form-name="LookupEmplPosition"/></field>
+        <field name="assignButton" widget-style="smallSubmit"><submit button-type="button"/></field>
+    </form>
+    
+    <form name="ListAssignedLeaves" type="multi" use-row-submit="true" separate-columns="true" target="createLeaveLimit" list-name="listIt" paginate-target="FindEmplLeaves"
+        odd-row-style="alternate-row" header-row-style="header-row-2" default-table-style="basic-table hover-bar">
+        <actions>
+            <service service-name="performFind" result-map="result" result-map-list="listIt">
+                <field-map field-name="inputFields" from-field="parameters"/>
+                <field-map field-name="entityName" value="EmplLeaveLimit"/>
+                <field-map field-name="orderBy" value="leaveTypeId"/>
+                <field-map field-name="noConditionFind" value="Y"/>
+            </service>
+        </actions>
+        <auto-fields-entity entity-name="EmplLeaveLimit" default-field-type="display"/>
+    	<field name="leaveTypeId" title="Leave Type">
+			<display-entity entity-name="Enumeration" description="${description}"  key-field-name="enumId" />
+		</field>
+    </form>
+    
+    <form name="SearchLeaveLimit" type="single" target="SearchLeaveLimit"
+        odd-row-style="header-row" default-table-style="basic-table" default-map-name="leaveMap">
+        <field name="partyId" title="${uiLabelMap.PartyPartyId}" required-field="true"><lookup target-form-name="LookupPartyName"/></field>
+        <field name="leaveTypeId" title="LeaveType" required-field="true">
+      		<drop-down allow-empty="true">
+      			<entity-options description="${description}" entity-name="Enumeration" key-field-name="enumId">
+      				<entity-constraint name="enumTypeId" value="LEAVE_TYPE"/>
+                	<entity-order-by field-name="description"/>
+      			</entity-options>
+      		</drop-down>
+      	</field> 
+      	<field name="beginYear" tooltip="Start of Leave Period e.g. Financial Year Start" required-field="true"><date-time type="date"/></field>
+      	<field name="endYear" tooltip="End of Financial Year" required-field="true"><date-time type="date"/></field>
+      	<field name="numDays" title="Leave Days" required-field="true"><text/></field>
+      	<field name="description" title="Comment"><textarea rows="2"/></field>
+      	<field name="mgrPositionId"><text/></field>
+        <field name="searchButton" widget-style="smallSubmit"><submit button-type="button"/></field>
+    </form>
+    
+<!--   <form name="characters" type="single" target="insertData"-->
+<!--	default-entity-name="CharacterTest">-->
+<!--	-->
+<!--	<auto-fields-entity entity-name="CharacterTest" default-field-type="edit"/>-->
+<!--	-->
+<!--	<field name="submit"> <submit/> </field>-->
+<!--	</form>-->
+        
+</forms>

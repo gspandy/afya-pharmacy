@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<services xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.ofbiz.org/dtds/services.xsd">
+    <description>CRM SFA Content Services</description>
+    <vendor>Open Source Strategies, Inc.</vendor>
+    <version>1.0</version>
+
+    <!-- note that our services are prefixed with "sfaext." to easily distinguish them from other services; perhaps a namespace system would be useful here -->
+
+    <service name="sfaext.removeContent" engine="java" location="com.smebiz.sfa.content.ContentServices" invoke="removeContent" auth="true">
+        <attribute name="contentId" type="String" mode="IN" optional="false"/>
+        <attribute name="partyId" type="String" mode="IN" optional="true"/>
+        <attribute name="workEffortId" type="String" mode="IN" optional="true"/>
+        <attribute name="custRequestId" type="String" mode="IN" optional="true"/>
+        <attribute name="salesOpportunityId" type="String" mode="IN" optional="true"/>
+    </service>
+
+    <service name="sfaext.createContentInterface" engine="interface" location="" invoke="">
+        <attribute name="contentName" type="String" mode="IN" optional="true"/> <!-- this should really be false for urls -->
+        <attribute name="description" type="String" mode="IN" optional="true"/>
+        <attribute name="contentTypeId" type="String" mode="IN" optional="false"/> <!-- the type of content.  in sfaext, we have general FILE and HYPERLINK types, which can be made more specific.  the ideal is to create a tree of CRMSFA_CONTENT which would be the supported types. -->
+        <attribute name="contentPurposeEnumId" type="String" mode="IN" optional="true"/> <!-- defaults to CRMSFA_GENERAL, which is defined as the main association.  other purposes could be defined for specific implementations, such as a separate section for formal legal documents, and so on -->
+        <attribute name="url" type="String" mode="IN" optional="true"/>
+        <!-- Because we could either be uploading or creating a simple text content, these file metadata fields are optional. -->
+        <attribute name="uploadedFile" type="java.nio.ByteBuffer" mode="IN" optional="true"/>
+        <attribute name="_uploadedFile_fileName" type="String" mode="IN" optional="true"/>
+    	<attribute name="_uploadedFile_contentType" type="String" mode="IN" optional="true"/>
+		<attribute name="fromDate" mode="IN" type="java.sql.Timestamp" optional="false"></attribute>
+		<attribute name="partyContentTypeId" mode="IN" type="String" optional="false"></attribute>
+		
+    </service>
+
+    <service name="sfaext.createContentForParty" engine="java" location="com.smebiz.sfa.content.ContentServices" invoke="createContentForParty" auth="true">
+        <description>
+            Creates content for a CRMSFA party in a given role.  Content are uploadable or plain text info such as a URL Bookmark, 
+            PDF file, image file, text document, and so on.  This service will upload binary data into the system if provided, 
+            so that it can later be served.
+        </description>
+        <implements service="sfaext.createContentInterface"/>
+        <attribute name="partyId" type="String" mode="INOUT" optional="false"/> <!-- Using OUT here allows the donePageRequestHelper to work correctly because multipart forms don't pass their fields down the chain. -->
+        <attribute name="roleTypeId" type="String" mode="IN" optional="true"/>
+    </service>
+
+    <service name="sfaext.createContentForCase" engine="java" location="com.smebiz.sfa.content.ContentServices" 
+        invoke="createContentForCase" auth="true">
+        <description>Creates uploadable or simple content for Cases.</description>
+        <implements service="sfaext.createContentInterface"/>
+        <attribute name="custRequestId" type="String" mode="INOUT" optional="false"/>
+    </service>
+
+    <service name="sfaext.createContentForOpportunity" engine="java" location="com.smebiz.sfa.content.ContentServices" 
+        invoke="createContentForOpportunity" auth="true">
+        <description>Creates uploadable or simple content for Opportunities.</description>
+        <implements service="sfaext.createContentInterface"/>
+        <attribute name="salesOpportunityId" type="String" mode="INOUT" optional="false"/>
+    </service>
+
+    <service name="sfaext.createContentForActivity" engine="java" location="com.smebiz.sfa.content.ContentServices" 
+        invoke="createContentForActivity" auth="true">
+        <description>Creates uploadable or simple content for Activities.</description>
+        <implements service="sfaext.createContentInterface"/>
+        <attribute name="workEffortId" type="String" mode="INOUT" optional="false"/>
+    </service>
+
+    <service name="sfaext.createPartyContent" engine="java" location="com.smebiz.sfa.content.ContentServices" 
+        invoke="createPartyContent" default-entity-name="PartyContent" auth="true">
+        <description>Creates a PartyContent entry and required roles</description>
+        <auto-attributes include="pk" mode="IN" optional="false"/>
+        <auto-attributes include="nonpk" mode="IN" optional="true"/>
+        <attribute name="roleTypeId" type="String" mode="IN" optional="false"/>
+    </service>
+
+    <service name="sfaext.createCustRequestContent" engine="java" location="com.smebiz.sfa.content.ContentServices" 
+        invoke="createCustRequestContent" default-entity-name="CustRequestContent" auth="true">
+        <description>Creates a CustRequestContent entry</description>
+        <auto-attributes include="pk" mode="IN" optional="false"/>
+        <auto-attributes include="nonpk" mode="IN" optional="true"/>
+        <override name="fromDate" optional="true"/>
+    </service>
+
+    <service name="sfaext.createSalesOpportunityContent" engine="java" location="com.smebiz.sfa.content.ContentServices" 
+        invoke="createSalesOpportunityContent" default-entity-name="SalesOpportunityContent" auth="true">
+        <description>Creates a SalesOpportunityContent entry</description>
+        <auto-attributes include="pk" mode="IN" optional="false"/>
+        <auto-attributes include="nonpk" mode="IN" optional="true"/>
+        <override name="fromDate" optional="true"/>
+    </service>
+
+    <service name="sfaext.removeEmailAttachment" engine="group" transaction-timeout="300">
+        <description>Remove an email attachment by removing CommEventContentAssoc, Content and DataResource</description>
+        <group>
+            <invoke name="removeCommEventContentAssoc" result-to-context="true"/>
+            <invoke name="removeContent" result-to-context="true"/>
+            <invoke name="removeDataResource"/>
+        </group>
+    </service>
+
+    <service name="sfaext.updateContentInterface" engine="interface" location="" invoke="">
+        <attribute name="contentId" type="String" mode="IN" optional="false"/>
+        <attribute name="contentName" type="String" mode="IN" optional="true"/> <!-- this should really be false for urls -->
+        <attribute name="description" type="String" mode="IN" optional="true"/>
+        <attribute name="url" type="String" mode="IN" optional="true"/>
+    </service>
+
+    <service name="sfaext.updateContentForParty" engine="java" location="com.smebiz.sfa.content.ContentServices" invoke="updateContentForParty" auth="true">
+        <description>Updates a party content.</description>
+        <implements service="sfaext.updateContentInterface"/>
+        <attribute name="partyId" type="String" mode="INOUT" optional="false"/> <!-- Using OUT here allows the donePageRequestHelper to work correctly because multipart forms don't pass their fields down the chain. -->
+        <attribute name="roleTypeId" type="String" mode="IN" optional="true"/>
+    </service>
+
+    <service name="sfaext.updateContentForCase" engine="java" location="com.smebiz.sfa.content.ContentServices" 
+        invoke="updateContentForCase" auth="true">
+        <description>Updates uploadable or simple content for Cases.</description>
+        <implements service="sfaext.updateContentInterface"/>
+        <attribute name="custRequestId" type="String" mode="INOUT" optional="false"/>
+    </service>
+
+    <service name="sfaext.updateContentForOpportunity" engine="java" location="com.smebiz.sfa.content.ContentServices" 
+        invoke="updateContentForOpportunity" auth="true">
+        <description>Updates uploadable or simple content for Opportunities.</description>
+        <implements service="sfaext.updateContentInterface"/>
+        <attribute name="salesOpportunityId" type="String" mode="INOUT" optional="false"/>
+    </service>
+
+    <service name="sfaext.updateContentForActivity" engine="java" location="com.smebiz.sfa.content.ContentServices" 
+        invoke="updateContentForActivity" auth="true">
+        <description>Updates uploadable or simple content for Activities.</description>
+        <implements service="sfaext.updateContentInterface"/>
+        <attribute name="workEffortId" type="String" mode="INOUT" optional="false"/>
+    </service>
+
+</services>

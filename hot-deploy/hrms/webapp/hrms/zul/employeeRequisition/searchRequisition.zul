@@ -1,0 +1,146 @@
+<?init class="org.zkoss.zkplus.databind.AnnotateDataBinderInit" root="./searchRequisitionWindow"?>
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<zk xmlns:h="http://www.zkoss.org/2005/zk/native">
+	<zscript>
+		<![CDATA[
+		import com.ndz.zkoss.HrmsUtil;
+		boolean isAdmin = HrmsUtil.isSystemAdmin();
+			com.hrms.composer.SearchRequisitionComposer searchController = new com.hrms.composer.SearchRequisitionComposer();
+			com.ndz.zkoss.GenericValueRenderer genericValueRenderer = new com.ndz.zkoss.GenericValueRenderer(new String[]{"description"});
+			List reqGvs = null;
+			Toolbarbutton searchReqButton = (Toolbarbutton)Executions.getCurrent().getArg().get("searchReqButton");
+		]]>
+	</zscript>
+	<window id="searchRequisitionWindow" apply="${searchController}">
+		<separator height="10px" />
+		<h:table width="100%">
+			<h:tr>
+				<h:td width="50%">
+					<hbox style="margin:5px 5px 5px 5px">
+						<div width="150px" align="right" style="margin-right:4px">
+							<label value="${c:l('HRMS_REQUISITION_REQUISITIONID') }" />
+						</div>
+						<listbox mold="select" selectedItem="@{searchController.operator}">
+							<listitem label="${c:l('HRMS_EQUALS') }" value="equals"></listitem>
+							<listitem label="${c:l('HRMS_BEGINS_WITH') }" value="Begins With" selected="true"></listitem>
+							<listitem label="${c:l('HRMS_CONTAINS') }" value="contains"></listitem>
+							<listitem label="${c:l('HRMS_IS_EMPTY') }" value="empty"></listitem>
+							<listitem label="${c:l('HRMS_NOT_EQUAL') }" value="notEqual"></listitem>
+						</listbox>
+						<textbox value="@{searchController.requisitionId}" cols="40"/>
+					</hbox>
+				</h:td>
+				<h:td width="50%">
+					<hbox style="margin:5px 5px 5px 5px">
+					<div align="right" width="150px" style="float:right;margin-right:4px">
+						<label style="margin:15px 5px 5px 5px;font-weight:bold"
+							value="${c:l('HRMS_POSITIONTYPE') }">
+						</label>
+					</div>
+					<combobox  model="@{searchController.employeePositionTypes}" itemRenderer="${genericValueRenderer}" selectedItem="@{searchController.positionTypeGv}"/>
+					</hbox>
+				</h:td>
+			</h:tr>
+		</h:table>
+		<box width="100%" height="30px" align="center">
+			<hbox>
+				<button label="${c:l('HRMS_SearchButton') }" mold="os"	id="searchPerCompany">
+					<attribute name="onClick">
+						reqGvs = searchController.searchRequisition();
+						results.setVisible(true);
+						results.setFocus(true);
+						Events.postEvent("onReloadRequest",dataGrid,null);
+					</attribute>
+					<attribute name="onCreate">
+						Events.postEvent("onClick",self,null);
+					</attribute>
+				</button>
+				<button label="${c:l('HRMS_ResetButton') }"
+					onClick='results.setVisible(false);Events.postEvent("onClick",searchReqButton,null)' />
+			</hbox>
+		</box>
+		<separator height="15px" />
+		<div id="results" visible="false" width="100%">
+			<h:table style="border:0px" cellspacing="0px"
+				cellpadding="0px">
+				<h:tr>
+					<h:td width="90%">
+						<label value="${c:l('HRMS_SEARCHRESULTS') }"></label>
+					</h:td>
+					<h:td width="10%" style="text-align:right">
+						<paging id="paging" pageSize="10"/>
+					</h:td>
+				</h:tr>
+			</h:table>
+			<grid id="dataGrid" mold="paging" model="@{reqGvs,load-after='self.onReloadRequest'}" pageSize="10" rowRenderer="${searchController.rowRenderer}" paginal="${paging}">
+				<attribute name="onClick">
+					reqIdColumn.setSortAscending(new com.ndz.zkoss.ColumnComparator("requisitionId"));
+					reqIdColumn.setSortDescending(new com.ndz.zkoss.ColumnComparator("requisitionId"));
+				</attribute>
+				<columns menupopup="auto" sizable="true">
+					<column label="${c:l('HRMS_REQUISITION_GRIDCOLUMNREQUISITIONID') }"
+						onDrop="move(event.dragged)" draggable="col" droppable="col"
+						id="reqIdColumn" />
+					<column label="${c:l('HRMS_REQUISITION_GRIDCOLUMNAPPROVERPOSITIONID')}"
+						onDrop="move(event.dragged)" draggable="col" droppable="col"
+						id="approverPosIdColumn"/>
+					<column label="${c:l('HRMS_INITIATOR') }"
+						onDrop="move(event.dragged)" draggable="col" droppable="col" />
+					<column label="${c:l('HRMS_DEPARTMENT_NAME') }"
+						onDrop="move(event.dragged)" draggable="col" droppable="col" />
+					<column label="${c:l('HRMS_JOB_LOCATION') }"
+						onDrop="move(event.dragged)" draggable="col" droppable="col" />	
+					<column label="${c:l('HRMS_STATUS') }" onDrop="move(event.dragged)"
+						draggable="col" droppable="col" id="statusIdColumn" />
+					<column label="${c:l('HRMS_POSITIONTYPE') }"
+						onDrop="move(event.dragged)" draggable="col" droppable="col" />
+					<column label="${c:l('HRMS_F/O/T') }" onDrop="move(event.dragged)"
+						draggable="col" align="center" droppable="col"
+						tooltiptext="${c:l('HRMS_FULFILLED/OPEN/TOTAL') }" />
+					<column label="${c:l('HRMS_REQUISITION_JOBDESCRIPTION')}" visible="false"
+						onDrop="move(event.dragged)" draggable="col" droppable="col" />
+					<column label="${c:l('HRMS_REQUISITION_ROLEDETAILS') }" visible="false"
+						onDrop="move(event.dragged)" draggable="col" droppable="col" />
+					<column label="${c:l('HRMS_REQUISITION_SOFTSKILL') }" visible="false"
+						onDrop="move(event.dragged)" draggable="col" droppable="col" />
+					<column label="${c:l('HRMS_REQUISITION_QUALIFICATION')}" visible="false"
+						onDrop="move(event.dragged)" draggable="col" droppable="col" />
+					<column label="${c:l('HRMS_REQUISITION_MINIMUMEXPERIENCE') }"
+						visible="false" onDrop="move(event.dragged)" draggable="col"
+						droppable="col" />
+					<column label="${c:l('HRMS_REQUISITION_MAXIMUMEXPERIENCE')}"
+						visible="false" onDrop="move(event.dragged)" draggable="col"
+						droppable="col"/>
+					<column label="${c:l('HRMS_REQUISITION_JUSTIFICATIONFORHIRING') }"
+						visible="false" onDrop="move(event.dragged)" draggable="col"
+						droppable="col" />
+					<column label="${c:l('HRMS_REQUISITION_MINIMUMCTC') }" visible="false"
+						onDrop="move(event.dragged)" draggable="col" droppable="col" />
+					<column label="${c:l('HRMS_REQUISITION_MAXIMUMCTC')}" visible="false"
+						onDrop="move(event.dragged)" draggable="col" droppable="col" />
+
+					<column label="${c:l('HRMS_OPEN_SINCE') }" visible="true"
+						onDrop="move(event.dragged)" draggable="col" droppable="col" />
+                    <column label="Manpower Requisition Form" visible="true" if="${isAdmin}"
+                            onDrop="move(event.dragged)" draggable="col" droppable="col" />
+				</columns>
+			</grid>
+		</div>
+		<zscript><![CDATA[
+			void move(Component dragged) {
+				if (dragged.getClass().getName().endsWith("Column")) {
+					int maxRows = dragged.getGrid().getRows().getChildren().size();
+					int i = dragged.getParent().getChildren().indexOf(dragged);
+					int j = self.getParent().getChildren().indexOf(self);
+		
+					//move celles for each row
+					for (int k = 0; k < maxRows; k++)
+						self.getGrid().getCell(k, j).parent.insertBefore(self.getGrid()
+								.getCell(k, i), self.getGrid().getCell(k, j));
+				}
+		
+				self.parent.insertBefore(dragged, self);
+			}
+		]]></zscript>
+	</window>
+</zk>

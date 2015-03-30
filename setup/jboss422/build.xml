@@ -1,0 +1,885 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one
+  or more contributor license agreements.  See the NOTICE file
+  distributed with this work for additional information
+  regarding copyright ownership.  The ASF licenses this file
+  to you under the Apache License, Version 2.0 (the
+  "License"); you may not use this file except in compliance
+  with the License.  You may obtain a copy of the License at
+
+  http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing,
+  software distributed under the License is distributed on an
+  "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+  KIND, either express or implied.  See the License for the
+  specific language governing permissions and limitations
+  under the License.
+  -->
+
+<!-- ======================================================================
+     OFBiz -> JBoss 4.2.2 Installer
+     ====================================================================== -->
+
+<project name="OfBiz JBoss" default="generate">
+    <description>
+        Create the ear file to run OfBiz in Jboss
+    </description>
+
+    <property name="DERBY_VERSION" value="10.4.2.0"/>
+    <property name="ofbizHome" location="D:/SMEV2Latest/"/>
+
+
+    <!-- =================================
+    target: generate
+    ================================= -->
+    <target name="generate" depends="installDerby" description="--> Create the ear file to run OfBiz in Jboss"/>
+
+    <!-- - - - - - - - - - - - - - - - - -
+    target: clean
+    - - - - - - - - - - - - - - - - - -->
+    <target name="clean">
+        <delete failonerror="false">
+            <fileset dir="./META-INF/">
+                <include name="**/**"/>
+            </fileset>
+        </delete>
+        <delete failonerror="false">
+            <fileset dir=".">
+                <include name="lib/** *.war"/>
+            </fileset>
+        </delete>
+
+    </target>
+
+    <!-- - - - - - - - - - - - - - - - - -
+    target: installDerby
+    - - - - - - - - - - - - - - - - - -->
+    <target name="installDerby" depends="clean">
+        <!-- install derby 
+        <copy file="${ofbizHome}/framework/entity/lib/jdbc/derby-${DERBY_VERSION}.jar" todir="../../lib/"/>
+		-->
+        <!-- install derby plugin 
+        <copy file="../../../../docs/examples/varia/derby-plugin.jar" todir="../../lib/"/>
+		-->
+
+        <!-- install derby datasource 
+        <copy todir=".">
+            <fileset dir="${ofbizHome}/framework/appserver/templates/jboss422/patches/">
+                <include name="derby*.xml"/>
+            </fileset>
+        </copy>
+-->
+        <!-- move entityengine.xml, log4j.xml and jndi.properties -->
+        <move file="${ofbizHome}/framework/entity/config/entityengine.xml" tofile="${ofbizHome}/framework/entity/config/entityengine.xml.jbak"/>
+        <move file="${ofbizHome}/framework/entity/config/entityengine-jboss422.xml" tofile="${ofbizHome}/framework/entity/config/entityengine.xml"/>
+        <move file="${ofbizHome}/framework/base/config/log4j.xml" tofile="${ofbizHome}/framework/base/config/_log4j.xml.bak"/>
+        <move file="${ofbizHome}/framework/base/config/jndi.properties" tofile="${ofbizHome}/framework/base/config/_jndi.properties.bak"/>
+
+        <!-- copy all lib files -->
+        <mkdir dir="lib"/>
+        <copy todir="./lib" flatten="true">
+            <fileset dir="${ofbizHome}">
+                  <include name="ofbiz.jar"/>
+                  <include name="framework/base/lib/ant/ant-apache-bsf-1.7.1.jar"/>
+                  <include name="framework/base/lib/ant/ant-nodeps-1.7.1.jar"/>
+                  <include name="framework/base/lib/ant-1.7.1.jar"/>
+                  <include name="framework/base/lib/ant-junit-1.7.1.jar"/>
+                  <include name="framework/base/lib/ant-launcher-1.7.1.jar"/>
+                  <include name="framework/base/lib/ant-trax-1.7.1.jar"/>
+                  <include name="framework/base/lib/antisamy-bin.1.2.jar"/>
+                  <include name="framework/base/lib/avalon-framework-4.2.0.jar"/>
+                  <include name="framework/base/lib/avalon-util-exception-1.0.0.jar"/>
+                  <include name="framework/base/lib/barcode4j-fop-ext-complete-2.0.jar"/>
+                  <include name="framework/base/lib/batik-all-1.7.jar"/>
+                  <include name="framework/base/lib/clhm-20100316.jar"/>
+                  <include name="framework/base/lib/commons/commons-beanutils-1.7.0.jar"/>
+                  <include name="framework/base/lib/commons/commons-cli-1.0.jar"/>
+                  <include name="framework/base/lib/commons/commons-codec-1.4.jar"/>
+                  <include name="framework/base/lib/commons/commons-collections-3.2.jar"/>
+                  <include name="framework/base/lib/commons/commons-digester-1.8.jar"/>
+                  <include name="framework/base/lib/commons/commons-discovery-0.4.jar"/>
+                  <include name="framework/base/lib/commons/commons-el-1.0.jar"/>
+                  <include name="framework/base/lib/commons/commons-fileupload-1.2.jar"/>
+                  <include name="framework/base/lib/commons/commons-io-1.3.1.jar"/>
+                  <include name="framework/base/lib/commons/commons-lang-2.4.jar"/>
+                  <include name="framework/base/lib/commons/commons-logging-1.1.jar"/>
+                  <include name="framework/base/lib/commons/commons-modeler-2.0.jar"/>
+                  <include name="framework/base/lib/commons/commons-net-1.4.1.jar"/>
+                  <include name="framework/base/lib/commons/commons-pool-1.3.jar"/>
+                  <include name="framework/base/lib/commons/commons-primitives-1.0.jar"/>
+                  <include name="framework/base/lib/commons/commons-validator-1.3.1.jar"/>
+                  <include name="framework/base/lib/commons/commons-vfs-20070730.jar"/>
+                  <include name="framework/base/lib/fop-0.95.jar"/>
+                  <include name="framework/base/lib/freemarker-2.3.15.jar"/>
+                  <include name="framework/base/lib/hamcrest-all-1.2.jar"/>
+                  <include name="framework/base/lib/httpclient-4.0.jar"/>
+                  <include name="framework/base/lib/httpcore-4.0.1.jar"/>
+                  <include name="framework/base/lib/httpunit.jar"/>
+                  <include name="framework/base/lib/ical4j-1.0-rc2.jar"/>
+                  <include name="framework/base/lib/icu4j-4_4.jar"/>
+                  <include name="framework/base/lib/j2eespecs/geronimo-activation_1.0.2_spec-1.0.jar"/>
+                  <include name="framework/base/lib/j2eespecs/geronimo-j2ee-connector_1.5_spec-1.0.jar"/>
+                  <include name="framework/base/lib/j2eespecs/geronimo-jaxrpc_1.1_spec-1.0.jar"/>
+                  <include name="framework/base/lib/j2eespecs/geronimo-jaxr_1.0_spec-1.0.jar"/>
+                  <include name="framework/base/lib/j2eespecs/geronimo-jms_1.1_spec-1.0.jar"/>
+                  <include name="framework/base/lib/j2eespecs/geronimo-jta_1.1_spec-1.1.1.jar"/>
+                  <include name="framework/base/lib/j2eespecs/geronimo-qname_1.1_spec-1.0.jar"/>
+                  <include name="framework/base/lib/j2eespecs/geronimo-saaj_1.1_spec-1.0.jar"/>
+                  <include name="framework/base/lib/j2eespecs/tomcat-6.0.26-annotations-api.jar"/>
+                  <include name="framework/base/lib/j2eespecs/tomcat-6.0.26-el-api.jar"/>
+                  <include name="framework/base/lib/j2eespecs/tomcat-6.0.26-jsp-api.jar"/>
+                  <include name="framework/base/lib/j2eespecs/tomcat-6.0.26-servlet-api.jar"/>
+                  <include name="framework/base/lib/jakarta-regexp-1.5.jar"/>
+                  <include name="framework/base/lib/javolution-5.4.3.jar"/>
+                  <include name="framework/base/lib/jcip-annotations-1.0.jar"/>
+                  <include name="framework/base/lib/jdbm-1.0-SNAPSHOT.jar"/>
+                  <include name="framework/base/lib/jdom-1.1.jar"/>
+                  <include name="framework/base/lib/jpim-0.1.jar"/>
+                  <include name="framework/base/lib/juel-2.2.1.jar"/>
+                  <include name="framework/base/lib/junit.jar"/>
+                  <include name="framework/base/lib/junitperf.jar"/>
+                  <include name="framework/base/lib/log4j-1.2.15.jar"/>
+                  <include name="framework/base/lib/mail.jar"/>
+                  <include name="framework/base/lib/mx4j-3.0.1.jar"/>
+                  <include name="framework/base/lib/mx4j-remote-3.0.1.jar"/>
+                  <include name="framework/base/lib/nekohtml.jar"/>
+                  <include name="framework/base/lib/owasp-esapi-full-java-1.4.jar"/>
+                  <include name="framework/base/lib/resolver-2.9.1.jar"/>
+                  <include name="framework/base/lib/scripting/antlr-2.7.6.jar"/>
+                  <include name="framework/base/lib/scripting/asm-3.2.jar"/>
+                  <include name="framework/base/lib/scripting/asm-analysis-3.2.jar"/>
+                  <include name="framework/base/lib/scripting/asm-tree-3.2.jar"/>
+                  <include name="framework/base/lib/scripting/asm-util-3.2.jar"/>
+                  <include name="framework/base/lib/scripting/bsf-2.4.0.jar"/>
+                  <include name="framework/base/lib/scripting/bsh-2.0b4.jar"/>
+                  <include name="framework/base/lib/scripting/groovy-1.7-rc-2.jar"/>
+                  <include name="framework/base/lib/scripting/jakarta-oro-2.0.8.jar"/>
+                  <include name="framework/base/lib/scripting/janino-2.5.15.jar"/>
+                  <include name="framework/base/lib/scripting/jython-nooro.jar"/>
+                  <include name="framework/base/lib/serializer-2.9.1.jar"/>
+                  <include name="framework/base/lib/spring/spring-beans-2.5.6.jar"/>
+                  <include name="framework/base/lib/spring/spring-context-2.5.6.jar"/>
+                  <include name="framework/base/lib/spring/spring-core-2.5.6.jar"/>
+                  <include name="framework/base/lib/spring/spring-support-2.0.8.jar"/>
+                  <include name="framework/base/lib/spring/spring-web-2.5.6.jar"/>
+                  <include name="framework/base/lib/spring-beans-2.5.6.jar"/>
+                  <include name="framework/base/lib/spring-context-2.5.6.jar"/>
+                  <include name="framework/base/lib/spring-core-2.5.6.jar"/>
+                  <include name="framework/base/lib/spring-web-2.5.6.jar"/>
+                  <include name="framework/base/lib/Tidy.jar"/>
+                  <include name="framework/base/lib/webslinger-base-invoker-20091211-3897-7ab22baea4b6.jar"/>
+                  <include name="framework/base/lib/xalan-2.7.1.jar"/>
+                  <include name="framework/base/lib/xercesImpl-2.9.1.jar"/>
+                  <include name="framework/base/lib/xml-apis-2.9.1.jar"/>
+                  <include name="framework/base/lib/xml-apis-ext-1.3.04.jar"/>
+                  <include name="framework/base/lib/xmlgraphics-commons-1.3.1.jar"/>
+                  <include name="framework/base/lib/xpp3_min-1.1.4c.jar"/>
+                  <include name="framework/base/lib/xstream-1.3.1.jar"/>
+                  <include name="framework/base/build/lib/sme-base.jar"/>
+                  <include name="framework/geronimo/lib/geronimo-connector-2.1.1.jar"/>
+                  <include name="framework/geronimo/lib/geronimo-transaction-2.1.1.jar"/>
+                  <include name="framework/geronimo/build/lib/sme-geronimo.jar"/>
+                  <include name="framework/sql/build/lib/sme-sql-test.jar"/>
+                  <include name="framework/sql/build/lib/sme-sql.jar"/>
+                  <include name="framework/entity/lib/commons-dbcp-1.3-20091113-r835956.jar"/>
+                  <include name="framework/entity/lib/sme-minerva.jar"/>
+                  <include name="framework/entity/lib/jdbc/derby-10.5.3.0.jar"/>
+                  <include name="framework/entity/build/lib/sme-entity-test.jar"/>
+                  <include name="framework/entity/build/lib/sme-entity.jar"/>
+                  <include name="framework/catalina/lib/tomcat-6.0.26-catalina-ha.jar"/>
+                  <include name="framework/catalina/lib/tomcat-6.0.26-catalina-tribes.jar"/>
+                  <include name="framework/catalina/lib/tomcat-6.0.26-catalina.jar"/>
+                  <include name="framework/catalina/lib/tomcat-6.0.26-jasper-el.jar"/>
+                  <include name="framework/catalina/lib/tomcat-6.0.26-jasper-jdt.jar"/>
+                  <include name="framework/catalina/lib/tomcat-6.0.26-jasper.jar"/>
+                  <include name="framework/catalina/lib/tomcat-6.0.26-tomcat-coyote.jar"/>
+                  <include name="framework/catalina/lib/tomcat-6.0.26-tomcat-dbcp.jar"/>
+                  <include name="framework/catalina/lib/tomcat-6.0.26-tomcat-juli-adapters.jar"/>
+                  <include name="framework/catalina/lib/tomcat-6.0.26-tomcat-juli.jar"/>
+                  <include name="framework/catalina/build/lib/sme-catalina.jar"/>
+                  <include name="framework/security/build/lib/sme-security.jar"/>
+                  <include name="framework/datafile/build/lib/sme-datafile.jar"/>
+                  <include name="framework/minilang/build/lib/sme-minilang.jar"/>
+                  <include name="framework/common/build/lib/sme-common.jar"/>
+                  <include name="framework/service/lib/axiom-api-1.2.8.jar"/>
+                  <include name="framework/service/lib/axiom-impl-1.2.8.jar"/>
+                  <include name="framework/service/lib/axis-ant.jar"/>
+                  <include name="framework/service/lib/axis.jar"/>
+                  <include name="framework/service/lib/axis2-kernel-1.5.1.jar"/>
+                  <include name="framework/service/lib/axis2-transport-http-1.5.1.jar"/>
+                  <include name="framework/service/lib/axis2-transport-local-1.5.1.jar"/>
+                  <include name="framework/service/lib/commons-httpclient-3.1.jar"/>
+                  <include name="framework/service/lib/neethi-2.0.4.jar"/>
+                  <include name="framework/service/lib/wsdl4j.jar"/>
+                  <include name="framework/service/lib/XmlSchema-1.4.3.jar"/>
+                  <include name="framework/service/build/lib/sme-service-test.jar"/>
+                  <include name="framework/service/build/lib/sme-service.jar"/>
+                  <include name="framework/start/build/lib/sme.jar"/>
+                  <include name="framework/entityext/build/lib/sme-entityext.jar"/>
+                  <include name="framework/bi/build/lib/sme-bi.jar"/>
+                  <include name="framework/birt/lib/chartengineapi.jar"/>
+                  <include name="framework/birt/lib/chartitemapi.jar"/>
+                  <include name="framework/birt/lib/coreapi.jar"/>
+                  <include name="framework/birt/lib/crosstabcoreapi.jar"/>
+                  <include name="framework/birt/lib/dataadapterapi.jar"/>
+                  <include name="framework/birt/lib/dataaggregationapi.jar"/>
+                  <include name="framework/birt/lib/dataextraction.jar"/>
+                  <include name="framework/birt/lib/dteapi.jar"/>
+                  <include name="framework/birt/lib/emitterconfig.jar"/>
+                  <include name="framework/birt/lib/engineapi.jar"/>
+                  <include name="framework/birt/lib/jaxrpc.jar"/>
+                  <include name="framework/birt/lib/modelapi.jar"/>
+                  <include name="framework/birt/lib/modelodaapi.jar"/>
+                  <include name="framework/birt/lib/odadesignapi.jar"/>
+                  <include name="framework/birt/lib/saaj.jar"/>
+                  <include name="framework/birt/lib/scriptapi.jar"/>
+                  <include name="framework/birt/lib/viewservlets.jar"/>
+                  <include name="framework/birt/lib/platform/plugins/org.eclipse.emf.common_2.5.0.v200906151043.jar"/>
+                  <include name="framework/birt/lib/platform/plugins/org.eclipse.emf.ecore_2.5.0.v200906151043.jar"/>
+                  <include name="framework/birt/lib/platform/plugins/org.eclipse.emf.ecore.xmi_2.5.0.v200906151043.jar"/>
+                  <include name="framework/birt/lib/platform/plugins/org.w3c.css.sac_1.3.0.v200805290154.jar"/>
+                  <include name="framework/birt/lib/platform/plugins/org.mozilla.rhino_1.7.1.v20090521/lib/js.jar"/>
+                  <include name="framework/birt/lib/platform/plugins/org.w3c.sac_1.3.0.v20070710/lib/flute.jar"/>
+                  <include name="framework/birt/build/lib/sme-birt.jar"/>
+                  <include name="framework/webapp/lib/DataVision-1.0.0.jar"/>
+                  <include name="framework/webapp/lib/ezmorph-0.9.1.jar"/>
+                  <include name="framework/webapp/lib/itext-2.1.7.jar"/>
+                  <include name="framework/webapp/lib/jasperreports-3.5.1.jar"/>
+                  <include name="framework/webapp/lib/json-lib-2.2.3-jdk15.jar"/>
+                  <include name="framework/webapp/lib/poi-3.0.1.jar"/>
+                  <include name="framework/webapp/lib/rome-0.9.jar"/>
+                  <include name="framework/webapp/lib/velocity-1.6.1.jar"/>
+                  <include name="framework/webapp/lib/ws-commons-java5-1.0.1.jar"/>
+                  <include name="framework/webapp/lib/ws-commons-util-1.0.1.jar"/>
+                  <include name="framework/webapp/lib/xmlrpc-client-3.0.jar"/>
+                  <include name="framework/webapp/lib/xmlrpc-common-3.0.jar"/>
+                  <include name="framework/webapp/lib/xmlrpc-server-3.0.jar"/>
+                  <include name="framework/webapp/build/lib/sme-webapp-test.jar"/>
+                  <include name="framework/webapp/build/lib/sme-webapp.jar"/>
+                  <include name="framework/guiapp/lib/XuiCoreSwing-v3.2rc2b.jar"/>
+                  <include name="framework/guiapp/lib/XuiOptional-v3.2rc2b.jar"/>
+                  <include name="framework/guiapp/build/lib/sme-guiapp.jar"/>
+                  <include name="framework/widget/build/lib/sme-widget.jar"/>
+                  <include name="framework/appserver/build/lib/sme-appsvrs.jar"/>
+                  <include name="framework/testtools/lib/selenium-java-client-driver.jar"/>
+                  <include name="framework/testtools/build/lib/sme-testtools.jar"/>
+                  <include name="framework/webtools/build/lib/sme-webtools.jar"/>
+                  <include name="framework/webslinger/lib/webslinger-20091211-3897-7ab22baea4b6.jar"/>
+                  <include name="framework/webslinger/lib/webslinger-base-cache-20091211-3897-7ab22baea4b6.jar"/>
+                  <include name="framework/webslinger/lib/webslinger-base-collections-20091211-3897-7ab22baea4b6.jar"/>
+                  <include name="framework/webslinger/lib/webslinger-base-collections-arrays-20091211-3897-7ab22baea4b6.jar"/>
+                  <include name="framework/webslinger/lib/webslinger-base-concurrent-20091211-3897-7ab22baea4b6.jar"/>
+                  <include name="framework/webslinger/lib/webslinger-base-html-20091211-3897-7ab22baea4b6.jar"/>
+                  <include name="framework/webslinger/lib/webslinger-base-io-20091211-3897-7ab22baea4b6.jar"/>
+                  <include name="framework/webslinger/lib/webslinger-base-javacc-20091211-3897-7ab22baea4b6.jar"/>
+                  <include name="framework/webslinger/lib/webslinger-base-junit-20091211-3897-7ab22baea4b6.jar"/>
+                  <include name="framework/webslinger/lib/webslinger-base-lang-20091211-3897-7ab22baea4b6.jar"/>
+                  <include name="framework/webslinger/lib/webslinger-base-logging-20091211-3897-7ab22baea4b6.jar"/>
+                  <include name="framework/webslinger/lib/webslinger-base-resolver-20091211-3897-7ab22baea4b6.jar"/>
+                  <include name="framework/webslinger/lib/webslinger-base-util-20091211-3897-7ab22baea4b6.jar"/>
+                  <include name="framework/webslinger/lib/webslinger-base-xml-20091211-3897-7ab22baea4b6.jar"/>
+                  <include name="framework/webslinger/lib/webslinger-catalina-20091211-3897-7ab22baea4b6.jar"/>
+                  <include name="framework/webslinger/lib/webslinger-cgi-20091211-3897-7ab22baea4b6.jar"/>
+                  <include name="framework/webslinger/lib/webslinger-embryo-20091211-3897-7ab22baea4b6.jar"/>
+                  <include name="framework/webslinger/lib/webslinger-extension-beanshell-20091211-3897-7ab22baea4b6.jar"/>
+                  <include name="framework/webslinger/lib/webslinger-extension-bsf-20091211-3897-7ab22baea4b6.jar"/>
+                  <include name="framework/webslinger/lib/webslinger-extension-code-20091211-3897-7ab22baea4b6.jar"/>
+                  <include name="framework/webslinger/lib/webslinger-extension-commonsvfs-object-20091211-3897-7ab22baea4b6.jar"/>
+                  <include name="framework/webslinger/lib/webslinger-extension-directory-20091211-3897-7ab22baea4b6.jar"/>
+                  <include name="framework/webslinger/lib/webslinger-extension-freemarker-20091211-3897-7ab22baea4b6.jar"/>
+                  <include name="framework/webslinger/lib/webslinger-extension-groovy-20091211-3897-7ab22baea4b6.jar"/>
+                  <include name="framework/webslinger/lib/webslinger-extension-image-20091211-3897-7ab22baea4b6.jar"/>
+                  <include name="framework/webslinger/lib/webslinger-extension-janino-20091211-3897-7ab22baea4b6.jar"/>
+                  <include name="framework/webslinger/lib/webslinger-extension-jruby-20091211-3897-7ab22baea4b6.jar"/>
+                  <include name="framework/webslinger/lib/webslinger-extension-jython-20091211-3897-7ab22baea4b6.jar"/>
+                  <include name="framework/webslinger/lib/webslinger-extension-nutch-20091211-3897-7ab22baea4b6.jar"/>
+                  <include name="framework/webslinger/lib/webslinger-extension-plan9-20091211-3897-7ab22baea4b6.jar"/>
+                  <include name="framework/webslinger/lib/webslinger-extension-quercus-20091211-3897-7ab22baea4b6.jar"/>
+                  <include name="framework/webslinger/lib/webslinger-extension-rhino-20091211-3897-7ab22baea4b6.jar"/>
+                  <include name="framework/webslinger/lib/webslinger-extension-servlet-20091211-3897-7ab22baea4b6.jar"/>
+                  <include name="framework/webslinger/lib/webslinger-extension-template-20091211-3897-7ab22baea4b6.jar"/>
+                  <include name="framework/webslinger/lib/webslinger-extension-velocity-20091211-3897-7ab22baea4b6.jar"/>
+                  <include name="framework/webslinger/lib/webslinger-extension-wiki-20091211-3897-7ab22baea4b6.jar"/>
+                  <include name="framework/webslinger/lib/webslinger-launcher-20091211-3897-7ab22baea4b6.jar"/>
+                  <include name="framework/webslinger/build/lib/sme-webslinger.jar"/>
+                  <include name="framework/example/build/lib/sme-example.jar"/>
+                  <include name="applications/party/build/lib/sme-party.jar"/>
+                  <include name="applications/securityext/build/lib/sme-securityext-test.jar"/>
+                  <include name="applications/securityext/build/lib/sme-securityext.jar"/>
+                  <include name="applications/content/lib/jasperreports-1.0.0.jar"/>
+                  <include name="applications/content/lib/lucene-core-2.4.1.jar"/>
+                  <include name="applications/content/lib/poi-3.2-FINAL-20081019.jar"/>
+                  <include name="applications/content/lib/poi.jar"/>
+                  <include name="applications/content/build/lib/sme-content.jar"/>
+                  <include name="applications/workeffort/build/lib/sme-workeffort.jar"/>
+                  <include name="applications/product/build/lib/sme-product-test.jar"/>
+                  <include name="applications/product/build/lib/sme-product.jar"/>
+                  <include name="applications/manufacturing/build/lib/sme-manufacturing.jar"/>
+                  <include name="applications/accounting/build/lib/sme-accounting-test.jar"/>
+                  <include name="applications/accounting/build/lib/sme-accounting.jar"/>
+                  <include name="applications/humanres/build/lib/sme-humanres.jar"/>
+                  <include name="applications/order/build/lib/sme-order-test.jar"/>
+                  <include name="applications/order/build/lib/sme-order.jar"/>
+                  <include name="applications/marketing/build/lib/sme-marketing.jar"/>
+                  <include name="specialpurpose/ecommerce/build/lib/sme-ecommerce.jar"/>
+                  <include name="specialpurpose/pos/lib/jcl.jar"/>
+                  <include name="specialpurpose/pos/lib/jpos18-controls.jar"/>
+                  <include name="specialpurpose/pos/lib/looks-2.0.2.jar"/>
+                  <include name="specialpurpose/pos/build/lib/sme-pos.jar"/>
+                  <include name="specialpurpose/hhfacility/build/lib/sme-hhfacility.jar"/>
+                  <include name="specialpurpose/assetmaint/build/lib/sme-assetmaint.jar"/>
+                  <include name="specialpurpose/projectmgr/build/lib/sme-projectmgr.jar"/>
+                  <include name="specialpurpose/oagis/build/lib/sme-oagis.jar"/>
+                  <include name="specialpurpose/googlebase/build/lib/sme-googlebase.jar"/>
+                  <include name="specialpurpose/googlecheckout/lib/checkout-sdk-0.8.8.jar"/>
+                  <include name="specialpurpose/googlecheckout/build/lib/sme-googlecheckout.jar"/>
+                  <include name="specialpurpose/ebay/build/lib/sme-ebay.jar"/>
+                  <include name="specialpurpose/ebaystore/lib/attributes.jar"/>
+                  <include name="specialpurpose/ebaystore/lib/ebaycalls.jar"/>
+                  <include name="specialpurpose/ebaystore/lib/ebaysdkcore.jar"/>
+                  <include name="specialpurpose/ebaystore/lib/helper.jar"/>
+                  <include name="specialpurpose/ebaystore/build/lib/sme-ebaystore.jar"/>
+                  <include name="specialpurpose/webpos/build/lib/sme-webpos.jar"/>
+                  <include name="specialpurpose/crowd/build/lib/sme-crowd.jar"/>
+                  <include name="hot-deploy/facilityext/build/lib/sme-facilityext.jar"/>
+                  <include name="hot-deploy/issuetracking/build/lib/sme-issuetracking.jar"/>
+                  <include name="hot-deploy/smebiz-common/build/lib/smebiz-common.jar"/>
+                  <include name="hot-deploy/sfaext/build/lib/sme-sfaext.jar"/>
+                  <include name="hot-deploy/sfaext/lib/displaytag-1.1.1.jar"/>
+                <exclude name="**/*j2eespec*.jar"/>
+                <exclude name="**/*geronimo*.jar"/>
+                <exclude name="**/*catalina*.jar"/>
+                <exclude name="**/*tomcat*.jar"/>
+                <exclude name="**/*mx4j*.jar"/>
+                <exclude name="**/*derby-*.jar"/>
+                <exclude name="**/*commons-logging*.jar"/>
+                <exclude name="**/*commons-collections*.jar "/>
+                <exclude name="**/*commons-el*.jar"/>
+                <exclude name="**/*avalon-framework*.jar"/>
+                <exclude name="**/*bsh*.jar"/>
+                <exclude name="**/*bsf*.jar"/>
+                <exclude name="**/*antlr*.jar"/>
+                <exclude name="**/*mail.jar"/>
+                <exclude name="**/*xerces*.jar"/>
+                <exclude name="**/*xalan*.jar"/>
+            </fileset>
+        </copy>
+
+                <jar destfile="./lib/framework.base.dtd.jar">
+                    <fileset dir="D:/SMEV2Latest/framework/base/dtd">
+                        <include name="**/**"/>
+                    </fileset>
+                </jar>
+                <jar destfile="./lib/framework.base.config.jar">
+                    <fileset dir="D:/SMEV2Latest/framework/base/config">
+                        <include name="**/**"/>
+                    </fileset>
+                </jar>
+                <jar destfile="./lib/framework.entity.dtd.jar">
+                    <fileset dir="D:/SMEV2Latest/framework/entity/dtd">
+                        <include name="**/**"/>
+                    </fileset>
+                </jar>
+                <jar destfile="./lib/framework.entity.config.jar">
+                    <fileset dir="D:/SMEV2Latest/framework/entity/config">
+                        <include name="**/**"/>
+                    </fileset>
+                </jar>
+                <jar destfile="./lib/framework.catalina.config.jar">
+                    <fileset dir="D:/SMEV2Latest/framework/catalina/config">
+                        <include name="**/**"/>
+                    </fileset>
+                </jar>
+                <jar destfile="./lib/framework.security.config.jar">
+                    <fileset dir="D:/SMEV2Latest/framework/security/config">
+                        <include name="**/**"/>
+                    </fileset>
+                </jar>
+                <jar destfile="./lib/framework.security.dtd.jar">
+                    <fileset dir="D:/SMEV2Latest/framework/security/dtd">
+                        <include name="**/**"/>
+                    </fileset>
+                </jar>
+                <jar destfile="./lib/framework.datafile.dtd.jar">
+                    <fileset dir="D:/SMEV2Latest/framework/datafile/dtd">
+                        <include name="**/**"/>
+                    </fileset>
+                </jar>
+                <jar destfile="./lib/framework.minilang.config.jar">
+                    <fileset dir="D:/SMEV2Latest/framework/minilang/config">
+                        <include name="**/**"/>
+                    </fileset>
+                </jar>
+                <jar destfile="./lib/framework.minilang.dtd.jar">
+                    <fileset dir="D:/SMEV2Latest/framework/minilang/dtd">
+                        <include name="**/**"/>
+                    </fileset>
+                </jar>
+                <jar destfile="./lib/framework.common.config.jar">
+                    <fileset dir="D:/SMEV2Latest/framework/common/config">
+                        <include name="**/**"/>
+                    </fileset>
+                </jar>
+                <jar destfile="./lib/framework.service.config.jar">
+                    <fileset dir="D:/SMEV2Latest/framework/service/config">
+                        <include name="**/**"/>
+                    </fileset>
+                </jar>
+                <jar destfile="./lib/framework.service.dtd.jar">
+                    <fileset dir="D:/SMEV2Latest/framework/service/dtd">
+                        <include name="**/**"/>
+                    </fileset>
+                </jar>
+                <jar destfile="./lib/framework.bi.config.jar">
+                    <fileset dir="D:/SMEV2Latest/framework/bi/config">
+                        <include name="**/**"/>
+                    </fileset>
+                </jar>
+                <jar destfile="./lib/framework.birt.config.jar">
+                    <fileset dir="D:/SMEV2Latest/framework/birt/config">
+                        <include name="**/**"/>
+                    </fileset>
+                </jar>
+                <jar destfile="./lib/framework.webapp.config.jar">
+                    <fileset dir="D:/SMEV2Latest/framework/webapp/config">
+                        <include name="**/**"/>
+                    </fileset>
+                </jar>
+                <jar destfile="./lib/framework.webapp.dtd.jar">
+                    <fileset dir="D:/SMEV2Latest/framework/webapp/dtd">
+                        <include name="**/**"/>
+                    </fileset>
+                </jar>
+                <jar destfile="./lib/framework.guiapp.config.jar">
+                    <fileset dir="D:/SMEV2Latest/framework/guiapp/config">
+                        <include name="**/**"/>
+                    </fileset>
+                </jar>
+                <jar destfile="./lib/framework.widget.config.jar">
+                    <fileset dir="D:/SMEV2Latest/framework/widget/config">
+                        <include name="**/**"/>
+                    </fileset>
+                </jar>
+                <jar destfile="./lib/framework.widget.dtd.jar">
+                    <fileset dir="D:/SMEV2Latest/framework/widget/dtd">
+                        <include name="**/**"/>
+                    </fileset>
+                </jar>
+                <jar destfile="./lib/framework.appserver.config.jar">
+                    <fileset dir="D:/SMEV2Latest/framework/appserver/config">
+                        <include name="**/**"/>
+                    </fileset>
+                </jar>
+                <jar destfile="./lib/framework.testtools.config.jar">
+                    <fileset dir="D:/SMEV2Latest/framework/testtools/config">
+                        <include name="**/**"/>
+                    </fileset>
+                </jar>
+                <jar destfile="./lib/framework.testtools.dtd.jar">
+                    <fileset dir="D:/SMEV2Latest/framework/testtools/dtd">
+                        <include name="**/**"/>
+                    </fileset>
+                </jar>
+                <jar destfile="./lib/framework.webtools.config.jar">
+                    <fileset dir="D:/SMEV2Latest/framework/webtools/config">
+                        <include name="**/**"/>
+                    </fileset>
+                </jar>
+                <jar destfile="./lib/framework.webslinger.config.jar">
+                    <fileset dir="D:/SMEV2Latest/framework/webslinger/config">
+                        <include name="**/**"/>
+                    </fileset>
+                </jar>
+                <jar destfile="./lib/framework.example.config.jar">
+                    <fileset dir="D:/SMEV2Latest/framework/example/config">
+                        <include name="**/**"/>
+                    </fileset>
+                </jar>
+                <jar destfile="./lib/framework.example.dtd.jar">
+                    <fileset dir="D:/SMEV2Latest/framework/example/dtd">
+                        <include name="**/**"/>
+                    </fileset>
+                </jar>
+                <jar destfile="./lib/applications.party.config.jar">
+                    <fileset dir="D:/SMEV2Latest/applications/party/config">
+                        <include name="**/**"/>
+                    </fileset>
+                </jar>
+                <jar destfile="./lib/applications.securityext.config.jar">
+                    <fileset dir="D:/SMEV2Latest/applications/securityext/config">
+                        <include name="**/**"/>
+                    </fileset>
+                </jar>
+                <jar destfile="./lib/applications.content.config.jar">
+                    <fileset dir="D:/SMEV2Latest/applications/content/config">
+                        <include name="**/**"/>
+                    </fileset>
+                </jar>
+                <jar destfile="./lib/applications.content.dtd.jar">
+                    <fileset dir="D:/SMEV2Latest/applications/content/dtd">
+                        <include name="**/**"/>
+                    </fileset>
+                </jar>
+                <jar destfile="./lib/applications.workeffort.config.jar">
+                    <fileset dir="D:/SMEV2Latest/applications/workeffort/config">
+                        <include name="**/**"/>
+                    </fileset>
+                </jar>
+                <jar destfile="./lib/applications.product.config.jar">
+                    <fileset dir="D:/SMEV2Latest/applications/product/config">
+                        <include name="**/**"/>
+                    </fileset>
+                </jar>
+                <jar destfile="./lib/applications.manufacturing.config.jar">
+                    <fileset dir="D:/SMEV2Latest/applications/manufacturing/config">
+                        <include name="**/**"/>
+                    </fileset>
+                </jar>
+                <jar destfile="./lib/applications.accounting.config.jar">
+                    <fileset dir="D:/SMEV2Latest/applications/accounting/config">
+                        <include name="**/**"/>
+                    </fileset>
+                </jar>
+                <jar destfile="./lib/applications.humanres.config.jar">
+                    <fileset dir="D:/SMEV2Latest/applications/humanres/config">
+                        <include name="**/**"/>
+                    </fileset>
+                </jar>
+                <jar destfile="./lib/applications.order.config.jar">
+                    <fileset dir="D:/SMEV2Latest/applications/order/config">
+                        <include name="**/**"/>
+                    </fileset>
+                </jar>
+				
+                <jar destfile="./lib/applications.order.email.jar">
+                    <fileset dir="D:/SMEV2Latest/applications/order/email">
+                        <include name="**/**"/>
+                    </fileset>
+                </jar>
+                <jar destfile="./lib/applications.marketing.config.jar">
+                    <fileset dir="D:/SMEV2Latest/applications/marketing/config">
+                        <include name="**/**"/>
+                    </fileset>
+                </jar>
+                <jar destfile="./lib/applications.commonext.config.jar">
+                    <fileset dir="D:/SMEV2Latest/applications/commonext/config">
+                        <include name="**/**"/>
+                    </fileset>
+                </jar>
+                <jar destfile="./lib/specialpurpose.ecommerce.config.jar">
+                    <fileset dir="D:/SMEV2Latest/specialpurpose/ecommerce/config">
+                        <include name="**/**"/>
+                    </fileset>
+                </jar>
+                <jar destfile="./lib/specialpurpose.pos.config.jar">
+                    <fileset dir="D:/SMEV2Latest/specialpurpose/pos/config">
+                        <include name="**/**"/>
+                    </fileset>
+                </jar>
+                <jar destfile="./lib/specialpurpose.pos.styles.jar">
+                    <fileset dir="D:/SMEV2Latest/specialpurpose/pos/styles">
+                        <include name="**/**"/>
+                    </fileset>
+                </jar>
+                <jar destfile="./lib/specialpurpose.pos.screens.jar">
+                    <fileset dir="D:/SMEV2Latest/specialpurpose/pos/screens">
+                        <include name="**/**"/>
+                    </fileset>
+                </jar>
+                <jar destfile="./lib/specialpurpose.assetmaint.config.jar">
+                    <fileset dir="D:/SMEV2Latest/specialpurpose/assetmaint/config">
+                        <include name="**/**"/>
+                    </fileset>
+                </jar>
+                <jar destfile="./lib/specialpurpose.ofbizwebsite.config.jar">
+                    <fileset dir="D:/SMEV2Latest/specialpurpose/ofbizwebsite/config">
+                        <include name="**/**"/>
+                    </fileset>
+                </jar>
+                <jar destfile="./lib/specialpurpose.projectmgr.config.jar">
+                    <fileset dir="D:/SMEV2Latest/specialpurpose/projectmgr/config">
+                        <include name="**/**"/>
+                    </fileset>
+                </jar>
+                <jar destfile="./lib/specialpurpose.oagis.config.jar">
+                    <fileset dir="D:/SMEV2Latest/specialpurpose/oagis/config">
+                        <include name="**/**"/>
+                    </fileset>
+                </jar>
+                <jar destfile="./lib/specialpurpose.googlebase.config.jar">
+                    <fileset dir="D:/SMEV2Latest/specialpurpose/googlebase/config">
+                        <include name="**/**"/>
+                    </fileset>
+                </jar>
+                <jar destfile="./lib/specialpurpose.googlecheckout.config.jar">
+                    <fileset dir="D:/SMEV2Latest/specialpurpose/googlecheckout/config">
+                        <include name="**/**"/>
+                    </fileset>
+                </jar>
+                <jar destfile="./lib/specialpurpose.ebay.config.jar">
+                    <fileset dir="D:/SMEV2Latest/specialpurpose/ebay/config">
+                        <include name="**/**"/>
+                    </fileset>
+                </jar>
+                <jar destfile="./lib/specialpurpose.ebaystore.config.jar">
+                    <fileset dir="D:/SMEV2Latest/specialpurpose/ebaystore/config">
+                        <include name="**/**"/>
+                    </fileset>
+                </jar>
+                <jar destfile="./lib/specialpurpose.webpos.config.jar">
+                    <fileset dir="D:/SMEV2Latest/specialpurpose/webpos/config">
+                        <include name="**/**"/>
+                    </fileset>
+                </jar>
+                <jar destfile="./lib/specialpurpose.crowd.config.jar">
+                    <fileset dir="D:/SMEV2Latest/specialpurpose/crowd/config">
+                        <include name="**/**"/>
+                    </fileset>
+                </jar>
+                <jar destfile="./lib/hot-deploy.facilityext.config.jar">
+                    <fileset dir="D:/SMEV2Latest/hot-deploy/facilityext/config">
+                        <include name="**/**"/>
+                    </fileset>
+                </jar>
+                <jar destfile="./lib/hot-deploy.facilityext.dtd.jar">
+                    <fileset dir="D:/SMEV2Latest/hot-deploy/facilityext/dtd">
+                        <include name="**/**"/>
+                    </fileset>
+                </jar>
+                
+                <jar destfile="./lib/hot-deploy.issuetracking.config.jar">
+                    <fileset dir="D:/SMEV2Latest/hot-deploy/issuetracking/config">
+                        <include name="**/**"/>
+                    </fileset>
+                </jar>
+                <jar destfile="./lib/hot-deploy.sfaext.config.jar">
+                    <fileset dir="D:/SMEV2Latest/hot-deploy/sfaext/config">
+                        <include name="**/**"/>
+                    </fileset>
+                </jar>
+                <jar destfile="./lib/hot-deploy.sfaext.dtd.jar">
+                    <fileset dir="D:/SMEV2Latest/hot-deploy/sfaext/dtd">
+                        <include name="**/**"/>
+                    </fileset>
+                </jar>
+               
+
+        <!-- link the web applications -->
+            <copy todir="./bi.war">
+                <fileset dir="D:/SMEV2Latest/framework/bi/webapp/bi"/>
+            </copy>
+            <copy todir="./webtools.war">
+                <fileset dir="D:/SMEV2Latest/framework/webtools/webapp/webtools"/>
+            </copy>
+            <copy todir="./webslinger.war">
+                <fileset dir="D:/SMEV2Latest/framework/webslinger/webapp/webslinger"/>
+            </copy>
+            <copy todir="./images.war">
+                <fileset dir="D:/SMEV2Latest/framework/images/webapp/images"/>
+            </copy>
+            <copy todir="./tempfiles.war">
+                <fileset dir="D:/SMEV2Latest/framework/images/../../runtime/tempfiles"/>
+            </copy>
+            <copy todir="./example.war">
+                <fileset dir="D:/SMEV2Latest/framework/example/webapp/example"/>
+            </copy>
+            <copy todir="./birt.war">
+                <fileset dir="D:/SMEV2Latest/framework/example/webapp/birt"/>
+            </copy>
+            <copy todir="./exampleext.war">
+                <fileset dir="D:/SMEV2Latest/framework/exampleext/webapp/exampleext"/>
+            </copy>
+            <copy todir="./bizznesstime.war">
+                <fileset dir="D:/SMEV2Latest/themes/bizznesstime/webapp/bizznesstime"/>
+            </copy>
+            <copy todir="./bluelight.war">
+                <fileset dir="D:/SMEV2Latest/themes/bluelight/webapp/bluelight"/>
+            </copy>
+            <copy todir="./droppingcrumbs.war">
+                <fileset dir="D:/SMEV2Latest/themes/droppingcrumbs/webapp/droppingcrumbs"/>
+            </copy>
+            <copy todir="./flatgrey.war">
+                <fileset dir="D:/SMEV2Latest/themes/flatgrey/webapp/flatgrey"/>
+            </copy>
+            <copy todir="./multiflex.war">
+                <fileset dir="D:/SMEV2Latest/themes/multiflex/webapp/multiflex"/>
+            </copy>
+            <copy todir="./ndztheme.war">
+                <fileset dir="D:/SMEV2Latest/themes/ndztheme/webapp/ndztheme"/>
+            </copy>
+            <copy todir="./tomahawk.war">
+                <fileset dir="D:/SMEV2Latest/themes/tomahawk/webapp/tomahawk"/>
+            </copy>        
+			<copy todir="./nthDimenzionClassic.war">
+                <fileset dir="D:/SMEV2Latest/themes/nthDimenzionClassic/webapp/nthDimenzionClassic"/>
+            </copy>
+            <copy todir="./partymgr.war">
+                <fileset dir="D:/SMEV2Latest/applications/party/webapp/partymgr"/>
+            </copy>
+            <copy todir="./content.war">
+                <fileset dir="D:/SMEV2Latest/applications/content/webapp/content"/>
+            </copy>
+            <copy todir="./workeffort.war">
+                <fileset dir="D:/SMEV2Latest/applications/workeffort/webapp/workeffort"/>
+            </copy>
+            <copy todir="./iCalendar.war">
+                <fileset dir="D:/SMEV2Latest/applications/workeffort/webapp/ical"/>
+            </copy>
+            <copy todir="./catalog.war">
+                <fileset dir="D:/SMEV2Latest/applications/product/webapp/catalog"/>
+            </copy>
+            <copy todir="./facility.war">
+                <fileset dir="D:/SMEV2Latest/applications/product/webapp/facility"/>
+            </copy>
+            <copy todir="./manufacturing.war">
+                <fileset dir="D:/SMEV2Latest/applications/manufacturing/webapp/manufacturing"/>
+            </copy>
+            <copy todir="./accounting.war">
+                <fileset dir="D:/SMEV2Latest/applications/accounting/webapp/accounting"/>
+            </copy>
+            <copy todir="./ar.war">
+                <fileset dir="D:/SMEV2Latest/applications/accounting/webapp/ar"/>
+            </copy>
+            <copy todir="./ap.war">
+                <fileset dir="D:/SMEV2Latest/applications/accounting/webapp/ap"/>
+            </copy>
+            <copy todir="./humanres.war">
+                <fileset dir="D:/SMEV2Latest/applications/humanres/webapp/humanres"/>
+            </copy>
+            <copy todir="./ordermgr.war">
+                <fileset dir="D:/SMEV2Latest/applications/order/webapp/ordermgr"/>
+            </copy>
+            <copy todir="./marketing.war">
+                <fileset dir="D:/SMEV2Latest/applications/marketing/webapp/marketing"/>
+            </copy>
+            <copy todir="./sfa.war">
+                <fileset dir="D:/SMEV2Latest/applications/marketing/webapp/sfa"/>
+            </copy>
+            <copy todir="./ofbizsetup.war">
+                <fileset dir="D:/SMEV2Latest/applications/commonext/webapp/ofbizsetup"/>
+            </copy>
+            <copy todir="./ecommerce.war">
+                <fileset dir="D:/SMEV2Latest/specialpurpose/ecommerce/webapp/ecommerce"/>
+            </copy>
+            <copy todir="./ecomclone.war">
+                <fileset dir="D:/SMEV2Latest/specialpurpose/ecommerce/webapp/ecomclone"/>
+            </copy>
+            <copy todir="./hhfacility.war">
+                <fileset dir="D:/SMEV2Latest/specialpurpose/hhfacility/webapp/hhfacility"/>
+            </copy>
+            <copy todir="./assetmaint.war">
+                <fileset dir="D:/SMEV2Latest/specialpurpose/assetmaint/webapp/assetmaint"/>
+            </copy>
+            <copy todir="./ismgr.war">
+                <fileset dir="D:/SMEV2Latest/specialpurpose/assetmaint/webapp/ismgr"/>
+            </copy>
+            <copy todir="./cmssite.war">
+                <fileset dir="D:/SMEV2Latest/specialpurpose/cmssite/webapp/cmssite"/>
+            </copy>
+            <copy todir="./ofbiz.war">
+                <fileset dir="D:/SMEV2Latest/specialpurpose/ofbizwebsite/webapp/ofbiz"/>
+            </copy>
+            <copy todir="./projectmgr.war">
+                <fileset dir="D:/SMEV2Latest/specialpurpose/projectmgr/webapp/projectmgr"/>
+            </copy>
+            <copy todir="./oagis.war">
+                <fileset dir="D:/SMEV2Latest/specialpurpose/oagis/webapp/oagis"/>
+            </copy>
+            <copy todir="./googlebase.war">
+                <fileset dir="D:/SMEV2Latest/specialpurpose/googlebase/webapp/googlebase"/>
+            </copy>
+            <copy todir="./googlecheckout.war">
+                <fileset dir="D:/SMEV2Latest/specialpurpose/googlecheckout/webapp/googlecheckout"/>
+            </copy>
+            <copy todir="./ebay.war">
+                <fileset dir="D:/SMEV2Latest/specialpurpose/ebay/webapp/ebay"/>
+            </copy>
+            <copy todir="./ebaystore.war">
+                <fileset dir="D:/SMEV2Latest/specialpurpose/ebaystore/webapp/ebaystore"/>
+            </copy>
+            <copy todir="./webpos.war">
+                <fileset dir="D:/SMEV2Latest/specialpurpose/webpos/webapp/webpos"/>
+            </copy>
+            <copy todir="./facilityext.war">
+                <fileset dir="D:/SMEV2Latest/hot-deploy/facilityext/webapp/facilityext"/>
+            </copy>
+            <copy todir="./issuetracking.war">
+                <fileset dir="D:/SMEV2Latest/hot-deploy/issuetracking/webapp/issuetracking"/>
+            </copy>
+            <copy todir="./sfaext.war">
+                <fileset dir="D:/SMEV2Latest/hot-deploy/sfaext/webapp/sfaext"/>
+            </copy>
+
+		<jar destfile="./lib/sme-core.jar">
+			<fileset dir="${ofbizHome}">
+				<exclude name="**/servicedef/*.xml" />
+				<exclude name="**/entitydef/*.xml" />
+				<include name="**/component-load.xml" />
+				<include name="**/ofbiz-component.xml" />
+				<exclude name="**/*Services*.xml" />
+				<exclude name="**/script/*.xml" />
+				<exclude name="setup/**" />
+			</fileset>
+			<fileset dir="${ofbizHome}/framework/entity/fieldtype">
+				<include name="*.xml" />
+			</fileset>
+			<fileset dir="${ofbizHome}">
+				<include name="**/WEB-INF/*controller*.xml" />
+			</fileset>
+		</jar>
+		
+		
+		<jar destfile="./lib/sme-customization.jar">
+			<fileset dir="${ofbizHome}">
+				<include name="**/servicedef/*.xml" />
+				<include name="**/entitydef/*.xml" />
+				<include name="**/*Services*.xml" />
+				<include name="**/script/**/*.xml" />
+			</fileset>
+			<fileset dir="${ofbizHome}">
+				<include name="**/*Screens*.xml" />
+				<exclude name="setup/**" />
+			</fileset>
+			<fileset dir="${ofbizHome}">
+				<include name="**/*screens*.xml" />
+				<exclude name="setup/**" />
+			</fileset>
+			<fileset dir="${ofbizHome}">
+				<include name="**/**.ftl" />
+				<exclude name="setup/**" />
+			</fileset>			
+			<fileset dir="${ofbizHome}">
+				<include name="**/*Menus*.xml" />
+				<exclude name="setup/**" />
+			</fileset>
+			<fileset dir="${ofbizHome}">
+				<include name="**/*Forms*.xml" />
+				<exclude name="setup/**" />
+			</fileset>
+			<fileset dir="${ofbizHome}">
+				<include name="**/*.groovy" />
+				<exclude name="setup/**" />
+			</fileset>
+			
+		</jar>
+		
+        <!--  create the application meta data -->
+        <mkdir dir="META-INF"/>
+        <copy file="D:/SMEV2Latest/setup/jboss422//application.xml" todir="./META-INF"></copy>
+
+        <copy file="${ofbizHome}/framework/base/lib/scripting/bsh-2.0b4.jar" tofile="../../lib/bsh.jar"/>
+
+        <!-- revert entityengine.xml log4j.xml and jndi.properties -->
+        <move file="${ofbizHome}/framework/entity/config/entityengine.xml" tofile="${ofbizHome}/framework/entity/config/entityengine-jboss422.xml"/>
+        <move file="${ofbizHome}/framework/entity/config/entityengine.xml.jbak" tofile="${ofbizHome}/framework/entity/config/entityengine.xml"/>
+
+        <move file="${ofbizHome}/framework/base/config/_log4j.xml.bak" tofile="${ofbizHome}/framework/base/config/log4j.xml"/>
+        <move file="${ofbizHome}/framework/base/config/_jndi.properties.bak" tofile="${ofbizHome}/framework/base/config/jndi.properties"/>
+
+        <!-- setup the OFBIZ_HOME by updating run.conf -->
+        <move file="../../../../bin/run.conf" tofile="../../../../bin/run.conf.obak"/>
+        <copy file="${ofbizHome}/setup/jboss422/run.conf" tofile="../../../../bin/run.conf"/>
+    </target>
+</project>

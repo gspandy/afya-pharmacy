@@ -1,0 +1,11 @@
+<zk>
+	<hbox style="margin:5px 5px 5px 5px" >
+		<div align="right" width="150px" style="margin-right:4px">
+			<label	style="float:right;text-align:right;display: block;font-weight:bold;margin-right:4px"
+				value="${arg.fieldLabel}">
+			</label>
+		</div>
+		<datebox id="${arg.name}_fld0_value"  cols="18" height="20px"></datebox>
+		<textbox id="${arg.name}_fld0_op" value="greaterThanEqualTo" visible="false"/>
+	</hbox>
+</zk>

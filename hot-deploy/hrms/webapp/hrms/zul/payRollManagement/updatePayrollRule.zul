@@ -1,0 +1,334 @@
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<zk>
+	<zscript>
+	import org.ofbiz.*;
+	import org.ofbiz.entity.*;
+	import javax.servlet.http.*;
+	import javax.servlet.http.HttpServletRequest;
+	import javax.servlet.http.HttpServletResponse;
+	import org.ofbiz.base.util.*;
+	HttpServletRequest request = (HttpServletRequest) Executions.getCurrent()
+			.getNativeRequest();
+	String ruleId = (String) Executions.getCurrent().getArg().get("ruleId");
+	System.out.println("\n\n\n\n\n\n  ruleId" + ruleId);
+	GenericDelegator delegator = com.ndz.zkoss.util.HrmsInfrastructure.getDelegator();//GenericDelegator.getGenericDelegator("default");
+	List conditionList = null;
+	conditionList = delegator.findList("PayrollCondition", null, null, null,
+			null, false);
+	Object openedPosArray = conditionList
+			.toArray(new GenericValue[conditionList.size()]);
+	SimpleListModel conditionmodel = new SimpleListModel(conditionList);
+	com.ndz.zkoss.GenericValueRenderer listItemRenderer = new com.ndz.zkoss.GenericValueRenderer(
+			new String[] { "conditionId", "conditionName" });
+	List actionList = null;
+	actionList = delegator.findList("PayrollAction", null, null, null, null,
+			false);
+	Object openedPosArray2 = actionList.toArray(new GenericValue[actionList
+			.size()]);
+	SimpleListModel model2 = new SimpleListModel(actionList);
+	com.ndz.zkoss.GenericValueRenderer listItemRenderer2 = new com.ndz.zkoss.GenericValueRenderer(
+			new String[] { "actionId", "actionName" });
+	List ruleActionCondition = null;
+	ruleActionCondition = delegator.findByAnd("RuleDetail", UtilMisc.toMap(
+			"ruleId", ruleId));
+	Object openedPosArray3 = ruleActionCondition
+			.toArray(new GenericValue[ruleActionCondition.size()]);
+	SimpleListModel model3 = new SimpleListModel(ruleActionCondition);
+	com.ndz.zkoss.GenericValueRenderer listItemRenderer3 = new com.ndz.zkoss.GenericValueRenderer(
+			new String[] { "ruleId", "ruleName", "conditionId",
+					"conditionName", "actionId", "actionName" });
+</zscript>
+	<window id="UpdatePayrollRuleWindow" width="80%" position="center"
+		closable="true" border="normal" height="90%" maximizable="true"
+		contentStyle="overflow:auto">
+		<separator height="30px" />
+		<hbox>
+			<div align="right" width="150px"
+				style="margin-right:10px">
+				<label value="${c:l('HRMS_PAYROLL_RULE_ID') }" />
+			</div>
+			<div width="200px" align="left"
+				>
+				<label id="payrollRule"
+					style="font-weight:bold" width="200px" />
+			</div>
+			<div width="297px" align="left">
+				<textbox id="ruleId" name="ruleId" width="200px"
+					visible="false" />
+			</div>
+		</hbox>
+		<separator height="10px" />
+		<hbox>
+			<div align="right" width="150px" style="margin-right:5px">
+				<label value="${c:l('HRMS_NAME') }" />
+			</div>
+			<div width="297px" align="left">
+				<textbox id="ruleName" name="ruleName" width="200px" />
+			</div>
+		</hbox>
+
+		<separator height="10px" />
+		<hbox>
+			<div align="right" width="150px" style="margin-right:5px">
+				<label value="${c:l('FormFieldTitle_description') }" />
+			</div>
+			<div width="297px" align="left">
+				<textbox id="ruleDescription" name="Description"
+					width="200px" />
+			</div>
+		</hbox>
+
+		<separator height="10px" />
+		<hbox>
+			<div align="right" width="150px" style="margin-right:5px">
+				<label value="${c:l('HRMS_DEFAULT_VALUE') }" />
+			</div>
+			<div width="297px" align="left">
+				<textbox id="defaultValue" name="operandTwo"
+					width="200px" />
+			</div>
+		</hbox>
+
+		<separator height="10px" />
+		<hbox>
+			<div align="right" width="150px" style="margin-right:5px">
+				<label value="${c:l('HumanResLeaveSummaryFromDate') }" />
+			</div>
+			<div width="297px" align="left">
+				<datebox id="fromDate" name="fromDate"
+					buttonVisible="true" width="200px" />
+			</div>
+		</hbox>
+
+		<separator height="10px" />
+		<hbox>
+			<div align="right" width="150px" style="margin-right:5px">
+				<label value="${c:l('HumanResLeaveSummaryThruDate') }" />
+			</div>
+			<div width="297px" align="left">
+				<datebox id="thruDate" name="thruDate"
+					buttonVisible="true" width="200px" />
+			</div>
+		</hbox>
+
+		<separator height="10px" />
+		<hbox>
+			<div align="right" width="150px" style="margin-right:5px">
+				<label value="${c:l('HRMS_AGGREGATE_FUNC') }" />
+			</div>
+			<listbox id="aggregateFunc" mold="select" width="100px">
+				<listitem label="${c:l('HRMS_MIN') }" value="MIN" />
+				<listitem label="${c:l('HRMS_MAX') }" value="MAX" />
+				<listitem label="${c:l('HRMS_SUM') }" value="SUM" />
+			</listbox>
+		</hbox>
+
+		<separator height="10px" />
+		<hbox>
+			<div align="right" width="150px" style="margin-right:5px">
+				<label value="Ignore Zero" />
+			</div>
+			<div width="297px" align="left">
+				<listbox id="ignoreZero" mold="select" width="100px">
+					<listitem label="${c:l('ListBox_Yes') }" value="Y" />
+					<listitem label="${c:l('ListBox_No') }" value="N" />
+				</listbox>
+			</div>
+		</hbox>
+
+
+		<separator />
+
+		<separator height="10px" />
+		<hbox>
+			<div align="right" width="260px">
+				<button id="updatePayrollRule" label="${c:l('btnSave') }"
+					 mold="os">
+					<zscript>
+						<![CDATA[
+	import org.ofbiz.base.util.*;
+	import org.zkoss.zk.ui.event.EventListener;
+	import com.ndz.controller.PayrollRuleManagementController;
+	PayrollRuleManagementController PayrollRuleController = new PayrollRuleManagementController();
+	EventListener MyEventListener = new EventListener() {
+		public void onEvent(Event event) throws Exception {
+			PayrollRuleController.EditPayrollRule(event);
+			UpdatePayrollRuleWindow.detach();
+		}
+	};
+	updatePayrollRule.addEventListener("onClick", MyEventListener);
+]]>
+</zscript>
+				</button>
+				<button id="cancelPayrollRule" label="${c:l('ButtonCancel') }"
+					 mold="os"
+					onClick="UpdatePayrollRuleWindow.detach()" />
+			</div>
+		</hbox>
+<separator height="20px"></separator>
+		<box style="" width="100%" height="20px">
+			<label value="  ${c:l('HRMS_ATTACH_CONDITIONS_AND_ACTIONS_TO_RULE') }"
+				style="font-weight:bold" />
+		</box>
+		<separator></separator>
+		<hbox>
+			<label value="${c:l('HRMS_CONDITION') }" />
+
+			<div style="margin-left:40px">
+				<bandbox id="conditionListBox">
+					<bandpopup>
+						<paging id="conditionListPaging"></paging>
+						<listbox id="conditionList"
+							itemRenderer="${listItemRenderer}" visible="true"
+							paginal="${conditionListPaging}" mold="paging" pageSize="5"
+							onSelect="conditionListBox.value=self.selectedItem.label; conditionListBox.close();"
+							width="230px">
+							<listhead>
+								<listheader label="${c:l('HRMS_CONDITION_ID') }" />
+								<listheader label="${c:l('HRMS_CONDITION_NAME') }" />
+							</listhead>
+						</listbox>
+					</bandpopup>
+				</bandbox>
+				<label value="Action" />
+			</div>
+
+			<bandbox id="actionListBox">
+				<bandpopup>
+					<paging id="actionListPaging"></paging>
+					<listbox id="actionList"
+						itemRenderer="${listItemRenderer2}" visible="true"
+						paginal="${actionListPaging}" mold="paging" pageSize="5"
+						onSelect="actionListBox.value=self.selectedItem.label; actionListBox.close();"
+						width="425px">
+						<listhead>
+							<listheader label="${c:l('HRMS_ACTION_ID') }" />
+							<listheader label="${c:l('HRMS_ACTION_NAME') }" />
+						</listhead>
+					</listbox>
+				</bandpopup>
+			</bandbox>
+
+
+			<hbox>
+				<div align="left" width="470px">
+					<button id="Add" label="${c:l('HRMS_AddButton') }"  mold="os"
+						apply="com.ndz.controller.PayrollRuleManagementController" >
+						<zscript>
+						<![CDATA[
+	import org.ofbiz.base.util.*;
+	import org.zkoss.zk.ui.event.EventListener;
+	import com.ndz.controller.PayrollRuleManagementController;
+	PayrollRuleManagementController PayrollRuleController1 = new PayrollRuleManagementController();
+	EventListener MyEventListener1 = new EventListener() {
+		public void onEvent(Event event) throws Exception {
+			PayrollRuleController1.addCondition(event);
+			showlist();
+		}
+	};
+	Add.addEventListener("onClick", MyEventListener1);
+]]>
+</zscript>
+					</button>
+
+				</div>
+				<button label="${c:l('HRMS_TEST') }" onClick="showlist()" visible="false"></button>
+			</hbox>
+
+		</hbox>
+		<zscript>
+	import org.zkoss.zul.*;
+	Listbox lbox = (Listbox) UpdatePayrollRuleWindow.getFellow("conditionList");
+	lbox.setModel(conditionmodel);
+	Listbox lbox2 = (Listbox) UpdatePayrollRuleWindow.getFellow("actionList");
+	lbox2.setModel(model2);
+</zscript>
+
+		<zscript>
+	import org.ofbiz.base.util.*;
+	import org.zkoss.util.resource.Labels;
+	class MyRowRenderer implements RowRenderer {
+
+		MyRowRenderer() {
+		}
+
+		public void render(Row row, Object data) {
+			org.ofbiz.entity.GenericValue gv = ((org.ofbiz.entity.GenericValue) data);
+
+			new Label(gv.getString("ruleId")).setParent(row);
+			new Label(gv.getString("ruleName")).setParent(row);
+			new Label(gv.getString("conditionId")).setParent(row);
+			new Label(gv.getString("conditionName")).setParent(row);
+			new Label(gv.getString("actionId")).setParent(row);
+			new Label(gv.getString("actionName")).setParent(row);
+			row.setTooltiptext(Labels.getLabel("ToolTipText_DoubleClickToEdit"));
+			
+			Button btn = new com.ndz.zkoss.HrmsButton();
+			btn.setParent(row);
+			btn.setMold("os");
+			btn.setLabel(Labels.getLabel("ButtonDelete"));
+			btn.setSclass("btnDelete");
+			btn.addEventListener("onClick",
+					new org.zkoss.zk.ui.event.EventListener() {
+						public void onEvent(Event event) throws Exception {
+						Messagebox.show("Do You Want To Delete this Record?", "Warning", Messagebox.YES|Messagebox.NO,Messagebox.QUESTION,
+								     new org.zkoss.zk.ui.event.EventListener() {
+								         public void onEvent(Event evt) {
+								                 if ("onYes".equals(evt.getName())) {
+							PayrollRuleManagementController.delete(event, gv
+									.getString("ruleId"),gv.getString("conditionId"),gv.getString("actionId"));
+								showlist();	
+								 }}});
+						}
+					});
+		}
+	}
+	RowRenderer tableRenderer = new MyRowRenderer();
+</zscript>
+
+
+		<grid mold="paging" pageSize="5" width="100%" id="ruleActionCondition"
+			rowRenderer="${tableRenderer}">
+			<columns menupopup="auto">
+				<column label="${c:l('HRMS_RULE_ID') }" />
+				<column label="${c:l('HRMS_RULE_NAME') }" />
+				<column label="${c:l('HRMS_CONDITION_ID') }" />
+				<column label="${c:l('HRMS_CONDITION_NAME') }" />
+				<column label="${c:l('HRMS_ACTION_ID') }" />
+				<column label="${c:l('HRMS_ACTION_NAME') }" />
+
+				<column label="${c:l('Hrms_Action') }" width="100px">
+				</column>
+			</columns>
+		</grid>
+
+		
+
+		<zscript>
+	import org.zkoss.zul.*;
+	Grid lbox3 = (Grid) UpdatePayrollRuleWindow
+			.getFellow("ruleActionCondition");
+	lbox3.setModel(model3);
+	
+	
+	void showlist(){
+	System.out.println("\n\n\n\n\n-------------------------------------" + ruleId.getValue());
+	List ruleActionCondition = null;
+	ruleActionCondition = delegator.findByAnd("RuleDetail", UtilMisc.toMap(
+			"ruleId", ruleId.getValue()));
+	Object openedPosArray3 = ruleActionCondition
+			.toArray(new GenericValue[ruleActionCondition.size()]);
+	SimpleListModel model3 = new SimpleListModel(ruleActionCondition);
+	com.ndz.zkoss.GenericValueRenderer listItemRenderer3 = new com.ndz.zkoss.GenericValueRenderer(
+			new String[] { "ruleId", "ruleName", "conditionId",
+					"conditionName", "actionId", "actionName" });
+	
+	Grid lbox3 = (Grid) UpdatePayrollRuleWindow
+			.getFellow("ruleActionCondition");
+	lbox3.setModel(model3);
+	
+	}
+</zscript>
+
+	</window>
+</zk>

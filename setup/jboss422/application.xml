@@ -1,0 +1,345 @@
+<application xmlns="http://java.sun.com/xml/ns/javaee"
+               xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+               xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/application_5.xsd"
+               version="5">
+
+    <description>Open For Business - Deployment</description>
+    <display-name>OFBiz</display-name>
+
+    
+    <module>
+        <web>
+            <web-uri>/bi.war</web-uri>
+            <context-root>/bi</context-root>
+        </web>
+    </module>
+
+    <module>
+        <web>
+            <web-uri>/webtools.war</web-uri>
+            <context-root>/webtools</context-root>
+        </web>
+    </module>
+
+    <module>
+        <web>
+            <web-uri>/webslinger.war</web-uri>
+            <context-root>/webslinger</context-root>
+        </web>
+    </module>
+
+    <module>
+        <web>
+            <web-uri>/images.war</web-uri>
+            <context-root>/images</context-root>
+        </web>
+    </module>
+
+    <module>
+        <web>
+            <web-uri>/tempfiles.war</web-uri>
+            <context-root>/tempfiles</context-root>
+        </web>
+    </module>
+
+    <module>
+        <web>
+            <web-uri>/example.war</web-uri>
+            <context-root>/example</context-root>
+        </web>
+    </module>
+
+    <module>
+        <web>
+            <web-uri>/birt.war</web-uri>
+            <context-root>/birt</context-root>
+        </web>
+    </module>
+
+    <module>
+        <web>
+            <web-uri>/exampleext.war</web-uri>
+            <context-root>/exampleext</context-root>
+        </web>
+    </module>
+
+    <module>
+        <web>
+            <web-uri>/bizznesstime.war</web-uri>
+            <context-root>/bizznesstime</context-root>
+        </web>
+    </module>
+
+    <module>
+        <web>
+            <web-uri>/bluelight.war</web-uri>
+            <context-root>/bluelight</context-root>
+        </web>
+    </module>
+
+    <module>
+        <web>
+            <web-uri>/droppingcrumbs.war</web-uri>
+            <context-root>/droppingcrumbs</context-root>
+        </web>
+    </module>
+
+    <module>
+        <web>
+            <web-uri>/flatgrey.war</web-uri>
+            <context-root>/flatgrey</context-root>
+        </web>
+    </module>
+
+    <module>
+        <web>
+            <web-uri>/multiflex.war</web-uri>
+            <context-root>/multiflex</context-root>
+        </web>
+    </module>
+
+    <module>
+        <web>
+            <web-uri>/ndztheme.war</web-uri>
+            <context-root>/ndztheme</context-root>
+        </web>
+    </module>
+	
+	 <module>
+        <web>
+            <web-uri>/nthDimenzionClassic.war</web-uri>
+            <context-root>/nthDimenzionClassic</context-root>
+        </web>
+    </module>
+
+    <module>
+        <web>
+            <web-uri>/tomahawk.war</web-uri>
+            <context-root>/tomahawk</context-root>
+        </web>
+    </module>
+
+    <module>
+        <web>
+            <web-uri>/partymgr.war</web-uri>
+            <context-root>/partymgr</context-root>
+        </web>
+    </module>
+
+    <module>
+        <web>
+            <web-uri>/content.war</web-uri>
+            <context-root>/content</context-root>
+        </web>
+    </module>
+
+    <module>
+        <web>
+            <web-uri>/workeffort.war</web-uri>
+            <context-root>/workeffort</context-root>
+        </web>
+    </module>
+
+    <module>
+        <web>
+            <web-uri>/iCalendar.war</web-uri>
+            <context-root>/iCalendar</context-root>
+        </web>
+    </module>
+
+    <module>
+        <web>
+            <web-uri>/catalog.war</web-uri>
+            <context-root>/catalog</context-root>
+        </web>
+    </module>
+
+    <module>
+        <web>
+            <web-uri>/facility.war</web-uri>
+            <context-root>/facility</context-root>
+        </web>
+    </module>
+
+    <module>
+        <web>
+            <web-uri>/manufacturing.war</web-uri>
+            <context-root>/manufacturing</context-root>
+        </web>
+    </module>
+
+    <module>
+        <web>
+            <web-uri>/accounting.war</web-uri>
+            <context-root>/accounting</context-root>
+        </web>
+    </module>
+
+    <module>
+        <web>
+            <web-uri>/ar.war</web-uri>
+            <context-root>/ar</context-root>
+        </web>
+    </module>
+
+    <module>
+        <web>
+            <web-uri>/ap.war</web-uri>
+            <context-root>/ap</context-root>
+        </web>
+    </module>
+
+    <module>
+        <web>
+            <web-uri>/humanres.war</web-uri>
+            <context-root>/humanres</context-root>
+        </web>
+    </module>
+
+    <module>
+        <web>
+            <web-uri>/ordermgr.war</web-uri>
+            <context-root>/ordermgr</context-root>
+        </web>
+    </module>
+
+    <module>
+        <web>
+            <web-uri>/marketing.war</web-uri>
+            <context-root>/marketing</context-root>
+        </web>
+    </module>
+
+    <module>
+        <web>
+            <web-uri>/sfa.war</web-uri>
+            <context-root>/sfa</context-root>
+        </web>
+    </module>
+
+    <module>
+        <web>
+            <web-uri>/ofbizsetup.war</web-uri>
+            <context-root>/ofbizsetup</context-root>
+        </web>
+    </module>
+
+    <module>
+        <web>
+            <web-uri>/ecommerce.war</web-uri>
+            <context-root>/ecommerce</context-root>
+        </web>
+    </module>
+
+    <module>
+        <web>
+            <web-uri>/ecomclone.war</web-uri>
+            <context-root>/ecomclone</context-root>
+        </web>
+    </module>
+
+    <module>
+        <web>
+            <web-uri>/hhfacility.war</web-uri>
+            <context-root>/hhfacility</context-root>
+        </web>
+    </module>
+
+    <module>
+        <web>
+            <web-uri>/assetmaint.war</web-uri>
+            <context-root>/assetmaint</context-root>
+        </web>
+    </module>
+
+    <module>
+        <web>
+            <web-uri>/ismgr.war</web-uri>
+            <context-root>/ismgr</context-root>
+        </web>
+    </module>
+
+    <module>
+        <web>
+            <web-uri>/cmssite.war</web-uri>
+            <context-root>/cmssite</context-root>
+        </web>
+    </module>
+
+    <module>
+        <web>
+            <web-uri>/ofbiz.war</web-uri>
+            <context-root>/ofbiz</context-root>
+        </web>
+    </module>
+
+    <module>
+        <web>
+            <web-uri>/projectmgr.war</web-uri>
+            <context-root>/projectmgr</context-root>
+        </web>
+    </module>
+
+    <module>
+        <web>
+            <web-uri>/oagis.war</web-uri>
+            <context-root>/oagis</context-root>
+        </web>
+    </module>
+
+    <module>
+        <web>
+            <web-uri>/googlebase.war</web-uri>
+            <context-root>/googlebase</context-root>
+        </web>
+    </module>
+
+    <module>
+        <web>
+            <web-uri>/googlecheckout.war</web-uri>
+            <context-root>/googlecheckout</context-root>
+        </web>
+    </module>
+
+    <module>
+        <web>
+            <web-uri>/ebay.war</web-uri>
+            <context-root>/ebay</context-root>
+        </web>
+    </module>
+
+    <module>
+        <web>
+            <web-uri>/ebaystore.war</web-uri>
+            <context-root>/ebaystore</context-root>
+        </web>
+    </module>
+
+    <module>
+        <web>
+            <web-uri>/webpos.war</web-uri>
+            <context-root>/webpos</context-root>
+        </web>
+    </module>
+
+    <module>
+        <web>
+            <web-uri>/facilityext.war</web-uri>
+            <context-root>/facilityext</context-root>
+        </web>
+    </module>
+
+    <module>
+        <web>
+            <web-uri>/issuetracking.war</web-uri>
+            <context-root>/issuetracking</context-root>
+        </web>
+    </module>
+
+    <module>
+        <web>
+            <web-uri>/sfaext.war</web-uri>
+            <context-root>/sfaext</context-root>
+        </web>
+    </module>
+</application>

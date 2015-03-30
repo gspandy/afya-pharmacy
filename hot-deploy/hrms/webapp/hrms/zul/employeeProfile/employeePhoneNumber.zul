@@ -1,0 +1,94 @@
+<?xel-method prefix="cmpt" name="getContactMechPurPoseType"
+class="com.ndz.controller.UpdateEmployeeProfileController"
+signature="String getContactMechPurPoseType(java.lang.String)"?>
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<zk>
+	<zscript>
+		<![CDATA[
+			import org.ofbiz.entity.*;
+			import org.zkoss.zk.ui.event.EventListener;
+			import org.ofbiz.entity.util.*;
+			import java.util.*;
+			import org.ofbiz.base.util.*;
+			String partyId = (String) Executions.getCurrent().getArg().get("partyId");
+			GenericValue userLogin = (GenericValue) Executions.getCurrent().getDesktop().getSession().getAttribute("userLogin");
+			org.ofbiz.entity.GenericDelegator delegator = userLogin.getDelegator();
+			List telecomNumberDetails = org.ofbiz.party.contact.ContactMechWorker.getPartyContactMechValueMaps(delegator, partyId, false,
+					"TELECOM_NUMBER");
+			boolean sameUser = Executions.getCurrent().getArg().get("sameUser");
+			org.ofbiz.security.Security security = requestScope.get("security");
+			boolean isAdmin = security.hasPermission("HUMANRES_ADMIN", userLogin);
+			boolean isManager = security.hasPermission("HUMANRES_MGR", userLogin);
+			boolean anyOne = false;
+			boolean isVisible = true;
+			boolean flag=com.ndz.zkoss.HrmsUtil.checkAccess(userLogin,security);
+			String managerpositionid=null;
+			String emplpositionid=null;
+			if (isAdmin || isManager || sameUser) {
+				anyOne = true;
+			}
+			String employeeId = Executions.getCurrent().getParameter("partyId"); 
+			String manageremployeeId=userLogin.getString("partyId");
+		    List manager=delegator.findByAnd("EmplPositionFulfillment",UtilMisc.toMap("partyId",manageremployeeId));
+		    if(manager.size()>0)
+		    {
+		    	 managerpositionid=(String)EntityUtil.getFirst(manager).getString("emplPositionId");		
+		    }
+		    List employee=delegator.findByAnd("EmplPositionFulfillment",UtilMisc.toMap("partyId",employeeId));
+		    if(employee.size()>0)
+		    {
+		     emplpositionid=(String)EntityUtil.getFirst(employee).getString("emplPositionId"); 	
+		    }
+		    if(isManager)
+			{
+				if(manageremployeeId.equals(partyId))
+				{
+					isVisible = true;
+					
+				}
+				else
+				{
+					List result=delegator.findByAnd("EmplPositionReportingStruct",UtilMisc.toMap("emplPositionIdReportingTo",managerpositionid,"emplPositionIdManagedBy",emplpositionid));
+					if(result.size()==0)
+					{
+						isVisible = false;
+					}
+				}
+			}
+		]]>
+	</zscript>
+	<window id="phoneNumberWindow">
+		<groupbox>
+			<div align="right">
+				<toolbarbutton label="${c:l('HRMS_NEW') }" image="/images/icon/update.png" if="${flag}">
+					<attribute name="onClick">
+						Map arg = new HashMap();
+						arg.put("partyId", partyId);
+						Window win = (Window) Executions.createComponents("/zul/employeeProfile/addPhoneNumber.zul", null, arg);
+						win.doModal();
+					</attribute>
+				</toolbarbutton>
+			</div>
+			<groupbox closable="false" forEach="${telecomNumberDetails}">
+				<caption label="${cmpt:getContactMechPurPoseType(each.telecomNumber.contactMechId)}"
+					style="font-family:Verdana, Tahoma, Arial, Helvetica, sans-serif;font-weight:bold;font-size:10px;">
+				</caption>
+				<vbox>
+					<hbox>
+						<label value="" style="font-weight:bold;font-size:18px;" />
+						<toolbarbutton label="${c:l('HRMS_EDIT') }" id="${each.telecomNumber.contactMechId}" image="/images/icon/update.png"
+							onClick="com.ndz.controller.UpdateEmployeeProfileController.showUpdateTelecomNumberWindow(self.id,partyId)" if="${flag}">
+						</toolbarbutton>
+					</hbox>
+					<hbox>
+						<label value="${each.telecomNumber.countryCode}" style="font-weight:regular" />
+						<label value=" "></label>
+						<label value="${each.telecomNumber.areaCode}" style="font-weight:regular" />
+						<label value=" "></label>
+						<label value="${each.telecomNumber.contactNumber}" style="font-weight:regular" />
+					</hbox>
+				</vbox>
+			</groupbox>
+		</groupbox>
+	</window>
+</zk>

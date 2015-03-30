@@ -1,0 +1,375 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+Licensed to the Apache Software Foundation (ASF) under one
+or more contributor license agreements.  See the NOTICE file
+distributed with this work for additional information
+regarding copyright ownership.  The ASF licenses this file
+to you under the Apache License, Version 2.0 (the
+"License"); you may not use this file except in compliance
+with the License.  You may obtain a copy of the License at
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing,
+software distributed under the License is distributed on an
+"AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+KIND, either express or implied.  See the License for the
+specific language governing permissions and limitations
+under the License.
+-->
+<simple-methods xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://ofbiz.apache.org/dtds/simple-methods-v2.xsd">
+
+    <simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_" event-event-message-name="_event_message_" event-request-object-name="request" event-response-code-name="_response_code_" event-response-object-name="response" login-required="true" method-name="createShoppingList" service-error-message-list-name="errorMessageList" service-error-message-map-name="errorMessageMap" service-error-message-name="errorMessage" service-response-message-name="responseMessage" service-success-message-list-name="successMessageList" service-success-message-name="successMessage" short-description="Create a ShoppingList" use-transaction="true">
+        <if>
+            <condition>
+                <and>
+                    <not>
+                        <if-empty field="parameters.partyId"/>
+                    </not>
+                    <not>
+                        <if-compare-field field="parameters.partyId" operator="equals" to-field="userLogin.partyId" type="String"/>
+                    </not>
+                    <not>
+                        <if-has-permission action="_CREATE" permission="PARTYMGR"/>
+                    </not>
+                </and>
+            </condition>
+            <then>
+                <add-error error-list-name="error_list">
+                    <fail-property property="OrderSecurityErrorToRunCreateShoppingListForAnotherParty" resource="OrderErrorUiLabels"/>
+                </add-error>
+            </then>
+        </if>
+        <check-errors error-code="error" error-list-name="error_list"/>
+        <make-value entity-name="ShoppingList" value-field="newEntity"/>
+        <set-nonpk-fields map="parameters" set-if-null="true" value-field="newEntity"/>
+        <if-empty field="newEntity.partyId">
+            <set field="newEntity.partyId" from="userLogin.partyId" set-if-empty="true" set-if-null="false"/>
+        </if-empty>
+        <if-empty field="newEntity.shoppingListTypeId">
+            <set field="newEntity.shoppingListTypeId" set-if-empty="true" set-if-null="false" value="SLT_WISH_LIST"/>
+        </if-empty>
+        <if-empty field="newEntity.listName">
+            <property-to-field default="New Shopping List" field="newEntity.listName" no-locale="false" property="OrderNewShoppingList" resource="OrderUiLabels"/>
+        </if-empty>
+        <if-empty field="newEntity.isPublic">
+            <set field="newEntity.isPublic" set-if-empty="true" set-if-null="false" value="N"/>
+        </if-empty>
+        <if-empty field="newEntity.isActive">
+            <if-compare field="newEntity.shoppingListTypeId" operator="equals" type="String" value="SLT_AUTO_REODR">
+                <set field="newEntity.isActive" set-if-empty="true" set-if-null="false" value="N"/>
+                <else>
+                    <set field="newEntity.isActive" set-if-empty="true" set-if-null="false" value="Y"/>
+                </else>
+            </if-compare>
+        </if-empty>
+        <sequenced-id field="newEntity.shoppingListId" get-long-only="false" sequence-name="ShoppingList"/>
+        <field-to-result field="newEntity.shoppingListId" result-name="shoppingListId"/>
+        <create-value do-cache-clear="true" or-store="false" value-field="newEntity"/>
+    </simple-method>
+
+    <simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_" event-event-message-name="_event_message_" event-request-object-name="request" event-response-code-name="_response_code_" event-response-object-name="response" login-required="true" method-name="updateShoppingList" service-error-message-list-name="errorMessageList" service-error-message-map-name="errorMessageMap" service-error-message-name="errorMessage" service-response-message-name="responseMessage" service-success-message-list-name="successMessageList" service-success-message-name="successMessage" short-description="Update a ShoppingList" use-transaction="true">
+        <entity-one auto-field-map="true" entity-name="ShoppingList" use-cache="false" value-field="shoppingList"/>
+        <set field="parentMethodName" set-if-empty="true" set-if-null="false" value="updateShoppingList"/>
+        <set field="permissionAction" set-if-empty="true" set-if-null="false" value="UPDATE"/>
+        <call-simple-method method-name="checkShoppingListSecurity"/>
+        <check-errors error-code="error" error-list-name="error_list"/>
+        <set-nonpk-fields map="parameters" set-if-null="true" value-field="shoppingList"/>
+        <!-- don't let auto-reorders be active unless there is some recurrence info -->
+        <if>
+            <condition>
+                <and>
+                    <if-compare field="shoppingList.shoppingListTypeId" operator="equals" type="String" value="SLT_AUTO_REODR"/>
+                    <or>
+                        <if-empty field="shoppingList.recurrenceInfoId"/>
+                        <if-empty field="shoppingList.paymentMethodId"/>
+                        <if-empty field="shoppingList.contactMechId"/>
+                        <if-empty field="shoppingList.shipmentMethodTypeId"/>
+                    </or>
+                </and>
+            </condition>
+            <then>
+                <set field="shoppingList.isActive" set-if-empty="true" set-if-null="false" value="N"/>
+            </then>
+        </if>
+        <store-value do-cache-clear="true" value-field="shoppingList"/>
+    </simple-method>
+
+    <simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_" event-event-message-name="_event_message_" event-request-object-name="request" event-response-code-name="_response_code_" event-response-object-name="response" login-required="true" method-name="removeShoppingList" service-error-message-list-name="errorMessageList" service-error-message-map-name="errorMessageMap" service-error-message-name="errorMessage" service-response-message-name="responseMessage" service-success-message-list-name="successMessageList" service-success-message-name="successMessage" short-description="Remove a ShoppingList" use-transaction="true">
+        <entity-one auto-field-map="true" entity-name="ShoppingList" use-cache="false" value-field="shoppingList"/>
+        <set field="parentMethodName" set-if-empty="true" set-if-null="false" value="removeShoppingList"/>
+        <set field="permissionAction" set-if-empty="true" set-if-null="false" value="DELETE"/>
+        <call-simple-method method-name="checkShoppingListSecurity"/>
+        <check-errors error-code="error" error-list-name="error_list"/>
+        <remove-value do-cache-clear="true" value-field="shoppingList"/>
+    </simple-method>
+
+    <simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_" event-event-message-name="_event_message_" event-request-object-name="request" event-response-code-name="_response_code_" event-response-object-name="response" login-required="true" method-name="createShoppingListItem" service-error-message-list-name="errorMessageList" service-error-message-map-name="errorMessageMap" service-error-message-name="errorMessage" service-response-message-name="responseMessage" service-success-message-list-name="successMessageList" service-success-message-name="successMessage" short-description="Create a ShoppingList Item" use-transaction="true">
+        <entity-and entity-name="ShoppingListItem" filter-by-date="false" list="shoppingListItems" use-cache="false">
+            <field-map field-name="productId" from-field="parameters.productId"/>
+            <field-map field-name="shoppingListId" from-field="parameters.shoppingListId"/>
+        </entity-and>
+        <if-empty field="shoppingListItems">
+            <set field="parentMethodName" set-if-empty="true" set-if-null="false" value="createShoppingListItem"/>
+            <set field="permissionAction" set-if-empty="true" set-if-null="false" value="CREATE"/>
+            <call-simple-method method-name="checkShoppingListItemSecurity"/>
+            <check-errors error-code="error" error-list-name="error_list"/>
+            <entity-one auto-field-map="true" entity-name="ShoppingList" use-cache="false" value-field="shoppingList"/>
+            <entity-one auto-field-map="true" entity-name="Product" use-cache="false" value-field="product"/>
+            <if-empty field="product">
+                <add-error error-list-name="error_list">
+                    <fail-property property="ProductErrorProductNotFound" resource="ProductUiLabels"/>
+                </add-error>
+                <check-errors error-code="error" error-list-name="error_list"/>
+            </if-empty>
+            <make-value entity-name="ShoppingListItem" value-field="newEntity"/>
+            <set field="newEntity.shoppingListId" from="parameters.shoppingListId" set-if-empty="true" set-if-null="false"/>
+            <make-next-seq-id increment-by="1" numeric-padding="5" seq-field-name="shoppingListItemSeqId" value-field="newEntity"/>
+            <set-nonpk-fields map="parameters" set-if-null="true" value-field="newEntity"/>
+            <field-to-result field="newEntity.shoppingListItemSeqId" result-name="shoppingListItemSeqId"/>
+            <create-value do-cache-clear="true" or-store="false" value-field="newEntity"/>
+            <if-compare-field field="shoppingList.partyId" operator="not-equals" to-field="userLogin.partyId" type="String">
+                <now-timestamp field="shoppingList.lastAdminModified"/>
+                <store-value do-cache-clear="true" value-field="shoppingList"/>
+            </if-compare-field>
+            <else>
+                <first-from-list entry="shoppingListItem" list="shoppingListItems"/>
+                <calculate decimal-scale="2" field="totalquantity" rounding-mode="HalfEven" type="BigDecimal">
+                    <calcop field="shoppingListItem.quantity" operator="add">
+                        <calcop field="parameters.quantity" operator="get"/>
+                    </calcop>
+                </calculate>
+                <field-to-result field="shoppingListItem.shoppingListItemSeqId" result-name="shoppingListItemSeqId"/>
+                <set-service-fields map="shoppingListItem" service-name="updateShoppingListItem" to-map="shoppingListItemParameters"/>
+                <set field="shoppingListItemParameters.quantity" from="totalquantity" set-if-empty="true" set-if-null="false"/>
+                <call-service break-on-error="true" error-code="error" in-map-name="shoppingListItemParameters" include-user-login="true" require-new-transaction="false" service-name="updateShoppingListItem" success-code="success"/>
+            </else>
+        </if-empty>
+    </simple-method>
+
+    <simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_" event-event-message-name="_event_message_" event-request-object-name="request" event-response-code-name="_response_code_" event-response-object-name="response" login-required="true" method-name="updateShoppingListItem" service-error-message-list-name="errorMessageList" service-error-message-map-name="errorMessageMap" service-error-message-name="errorMessage" service-response-message-name="responseMessage" service-success-message-list-name="successMessageList" service-success-message-name="successMessage" short-description="Update a ShoppingListItem" use-transaction="true">
+        <set field="parentMethodName" set-if-empty="true" set-if-null="false" value="updateShoppingListItem"/>
+        <set field="permissionAction" set-if-empty="true" set-if-null="false" value="UPDATE"/>
+        <call-simple-method method-name="checkShoppingListItemSecurity"/>
+        <check-errors error-code="error" error-list-name="error_list"/>
+        <entity-one auto-field-map="true" entity-name="ShoppingList" use-cache="false" value-field="shoppingList"/>
+        <entity-one auto-field-map="true" entity-name="ShoppingListItem" use-cache="false" value-field="shoppingListItem"/>
+        <set-nonpk-fields map="parameters" set-if-null="true" value-field="shoppingListItem"/>
+        <store-value do-cache-clear="true" value-field="shoppingListItem"/>
+        <if-compare-field field="shoppingList.partyId" operator="not-equals" to-field="userLogin.partyId" type="String">
+            <now-timestamp field="shoppingList.lastAdminModified"/>
+            <store-value do-cache-clear="true" value-field="shoppingList"/>
+        </if-compare-field>
+    </simple-method>
+
+    <simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_" event-event-message-name="_event_message_" event-request-object-name="request" event-response-code-name="_response_code_" event-response-object-name="response" login-required="true" method-name="removeShoppingListItem" service-error-message-list-name="errorMessageList" service-error-message-map-name="errorMessageMap" service-error-message-name="errorMessage" service-response-message-name="responseMessage" service-success-message-list-name="successMessageList" service-success-message-name="successMessage" short-description="Remove a ShoppingListItem" use-transaction="true">
+        <set field="parentMethodName" set-if-empty="true" set-if-null="false" value="removeShoppingListItem"/>
+        <set field="permissionAction" set-if-empty="true" set-if-null="false" value="DELETE"/>
+        <call-simple-method method-name="checkShoppingListItemSecurity"/>
+        <check-errors error-code="error" error-list-name="error_list"/>
+        <entity-one auto-field-map="true" entity-name="ShoppingList" use-cache="false" value-field="shoppingList"/>
+        <entity-one auto-field-map="true" entity-name="ShoppingListItem" use-cache="false" value-field="shoppingListItem"/>
+        <remove-value do-cache-clear="true" value-field="shoppingListItem"/>
+        <if-compare-field field="shoppingList.partyId" operator="not-equals" to-field="userLogin.partyId" type="String">
+            <now-timestamp field="shoppingList.lastAdminModified"/>
+            <store-value do-cache-clear="true" value-field="shoppingList"/>
+        </if-compare-field>
+    </simple-method>
+
+    <simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_" event-event-message-name="_event_message_" event-request-object-name="request" event-response-code-name="_response_code_" event-response-object-name="response" login-required="true" method-name="addDistinctShoppingListItem" service-error-message-list-name="errorMessageList" service-error-message-map-name="errorMessageMap" service-error-message-name="errorMessage" service-response-message-name="responseMessage" service-success-message-list-name="successMessageList" service-success-message-name="successMessage" short-description="Adds a shopping list item if one with the same productId does not exist" use-transaction="true">
+        <entity-condition distinct="false" entity-name="ShoppingListItem" filter-by-date="false" list="shoppingListItemList" use-cache="false">
+            <condition-expr field-name="shoppingListId" from-field="parameters.shoppingListId" ignore="false" ignore-case="false" ignore-if-empty="false" ignore-if-null="false" operator="equals"/>
+        </entity-condition>
+        <iterate entry="shoppingListItem" list="shoppingListItemList">
+            <if-compare-field field="parameters.productId" operator="equals" to-field="shoppingListItem.productId" type="String">
+                <field-to-result field="shoppingListItem.shoppingListItemSeqId" result-name="shoppingListItemSeqId"/>
+                <return response-code="success"/>
+            </if-compare-field>
+        </iterate>
+        <call-service break-on-error="true" error-code="error" in-map-name="parameters" include-user-login="true" require-new-transaction="false" service-name="createShoppingListItem" success-code="success">
+            <result-to-result result-name="shoppingListItemSeqId"/>
+        </call-service>
+    </simple-method>
+
+    <simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_" event-event-message-name="_event_message_" event-request-object-name="request" event-response-code-name="_response_code_" event-response-object-name="response" login-required="true" method-name="calculateShoppingListDeepTotalPrice" service-error-message-list-name="errorMessageList" service-error-message-map-name="errorMessageMap" service-error-message-name="errorMessage" service-response-message-name="responseMessage" service-success-message-list-name="successMessageList" service-success-message-name="successMessage" short-description="Calculate Deep Total Price for a ShoppingList" use-transaction="true">
+        <set field="parentMethodName" set-if-empty="true" set-if-null="false" value="calculateShoppingListDeepTotalPrice"/>
+        <set field="permissionAction" set-if-empty="true" set-if-null="false" value="VIEW"/>
+        <call-simple-method method-name="checkShoppingListItemSecurity"/>
+        <check-errors error-code="error" error-list-name="error_list"/>
+        <set field="calcPriceInBaseMap.prodCatalogId" from="parameters.prodCatalogId" set-if-empty="true" set-if-null="false"/>
+        <set field="calcPriceInBaseMap.webSiteId" from="parameters.webSiteId" set-if-empty="true" set-if-null="false"/>
+        <set field="calcPriceInBaseMap.partyId" from="parameters.partyId" set-if-empty="true" set-if-null="false"/>
+        <set field="calcPriceInBaseMap.productStoreId" from="parameters.productStoreId" set-if-empty="true" set-if-null="false"/>
+        <set field="calcPriceInBaseMap.productStoreGroupId" from="parameters.productStoreGroupId" set-if-empty="true" set-if-null="false"/>
+        <set field="calcPriceInBaseMap.currencyUomId" from="parameters.currencyUomId" set-if-empty="true" set-if-null="false"/>
+        <set field="calcPriceInBaseMap.autoUserLogin" from="parameters.autoUserLogin" set-if-empty="true" set-if-null="false"/>
+        <entity-and entity-name="ShoppingListItem" filter-by-date="false" list="shoppingListItems" use-cache="true">
+            <field-map field-name="shoppingListId" from-field="parameters.shoppingListId"/>
+        </entity-and>
+        <set field="totalPrice" set-if-empty="true" set-if-null="false" type="BigDecimal" value="0.0"/>
+        <iterate entry="shoppingListItem" list="shoppingListItems">
+            <entity-one auto-field-map="false" entity-name="Product" use-cache="true" value-field="product">
+                <field-map field-name="productId" from-field="shoppingListItem.productId"/>
+            </entity-one>
+            <map-to-map map="calcPriceInBaseMap" to-map="calcPriceInMap"/>
+            <set field="calcPriceInMap.product" from="product" set-if-empty="true" set-if-null="false"/>
+            <set field="calcPriceInMap.quantity" from="shoppingListItem.quantity" set-if-empty="true" set-if-null="false"/>
+            <call-service break-on-error="true" error-code="error" in-map-name="calcPriceInMap" include-user-login="true" require-new-transaction="false" service-name="calculateProductPrice" success-code="success">
+                <result-to-field field="calcPriceOutMap.price" result-name="price"/>
+            </call-service>
+            <calculate decimal-scale="2" field="totalPrice" rounding-mode="HalfEven" type="BigDecimal">
+                <calcop field="totalPrice" operator="add"/>
+                <calcop operator="multiply">
+                    <calcop field="calcPriceOutMap.price" operator="get"/>
+                    <calcop field="shoppingListItem.quantity" operator="get"/>
+                </calcop>
+            </calculate>
+            <clear-field field="calcPriceInMap"/>
+        </iterate>
+        <entity-and entity-name="ShoppingList" filter-by-date="false" list="childshoppingLists" use-cache="true">
+            <field-map field-name="parentShoppingListId" from-field="parameters.shoppingListId"/>
+            <field-map field-name="partyId" from-field="userLogin.partyId"/>
+        </entity-and>
+        <iterate entry="childshoppingList" list="childshoppingLists">
+            <map-to-map map="calcPriceInBaseMap" to-map="calcChildPriceInMap"/>
+            <set field="calcChildPriceInMap.shoppingListId" from="childshoppingList.shoppingListId" set-if-empty="true" set-if-null="false"/>
+            <call-service break-on-error="true" error-code="error" in-map-name="calcChildPriceInMap" include-user-login="true" require-new-transaction="false" service-name="calculateShoppingListDeepTotalPrice" success-code="success">
+                <result-to-field field="calcPriceOutMap.totalPrice" result-name="totalPrice"/>
+            </call-service>
+            <calculate decimal-scale="2" field="totalPrice" rounding-mode="HalfEven" type="BigDecimal">
+                <calcop field="totalPrice" operator="get"/>
+                <calcop field="calcPriceOutMap.totalPrice" operator="get"/>
+            </calculate>
+            <clear-field field="calcChildPriceInMap"/>
+        </iterate>
+        <field-to-result field="totalPrice" result-name="totalPrice"/>
+    </simple-method>
+
+    <simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_" event-event-message-name="_event_message_" event-request-object-name="request" event-response-code-name="_response_code_" event-response-object-name="response" login-required="true" method-name="checkShoppingListSecurity" service-error-message-list-name="errorMessageList" service-error-message-map-name="errorMessageMap" service-error-message-name="errorMessage" service-response-message-name="responseMessage" service-success-message-list-name="successMessageList" service-success-message-name="successMessage" short-description="Checks security on a ShoppingList" use-transaction="true">
+        <if>
+            <condition>
+                <and>
+                    <not>
+                        <if-compare-field field="userLogin.partyId" operator="equals" to-field="shoppingList.partyId" type="String"/>
+                    </not>
+                    <not>
+                        <if-has-permission action="_${permissionAction}" permission="PARTYMGR"/>
+                    </not>
+                </and>
+            </condition>
+            <then>
+                <add-error error-list-name="error_list">
+                    <fail-property property="OrderSecurityErrorToRunForAnotherParty" resource="OrderErrorUiLabels"/>
+                </add-error>
+            </then>
+        </if>
+    </simple-method>
+
+    <simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_" event-event-message-name="_event_message_" event-request-object-name="request" event-response-code-name="_response_code_" event-response-object-name="response" login-required="true" method-name="checkShoppingListItemSecurity" service-error-message-list-name="errorMessageList" service-error-message-map-name="errorMessageMap" service-error-message-name="errorMessage" service-response-message-name="responseMessage" service-success-message-list-name="successMessageList" service-success-message-name="successMessage" short-description="Checks security on a ShoppingListItem" use-transaction="true">
+        <entity-one auto-field-map="true" entity-name="ShoppingList" use-cache="false" value-field="shoppingList"/>
+        <if>
+            <condition>
+                <and>
+                    <not>
+                        <if-compare-field field="userLogin.partyId" operator="equals" to-field="shoppingList.partyId" type="String"/>
+                    </not>
+                    <not>
+                        <if-has-permission action="_${permissionAction}" permission="PARTYMGR"/>
+                    </not>
+                </and>
+            </condition>
+            <then>
+                <add-error error-list-name="error_list">
+                    <fail-property property="OrderSecurityErrorToRunForAnotherParty" resource="OrderErrorUiLabels"/>
+                </add-error>
+            </then>
+        </if>
+    </simple-method>
+
+    <simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_" event-event-message-name="_event_message_" event-request-object-name="request" event-response-code-name="_response_code_" event-response-object-name="response" login-required="true" method-name="addSuggestionsToShoppingList" service-error-message-list-name="errorMessageList" service-error-message-map-name="errorMessageMap" service-error-message-name="errorMessage" service-response-message-name="responseMessage" service-success-message-list-name="successMessageList" service-success-message-name="successMessage" short-description="Add suggestions to a shopping list" use-transaction="true">
+        <!-- first check the ProductStore.enableAutoSuggestionList indicator -->
+        <entity-one auto-field-map="true" entity-name="OrderHeader" use-cache="false" value-field="orderHeader"/>
+        <if-empty field="orderHeader.productStoreId">
+            <return response-code="success"/>
+        </if-empty>
+        <entity-one auto-field-map="false" entity-name="ProductStore" use-cache="false" value-field="productStore">
+            <field-map field-name="productStoreId" from-field="orderHeader.productStoreId"/>
+        </entity-one>
+        <if-compare field="productStore.enableAutoSuggestionList" operator="not-equals" type="String" value="Y">
+            <return response-code="success"/>
+        </if-compare>
+        <entity-condition distinct="false" entity-name="OrderRole" filter-by-date="false" list="orderRoleList" use-cache="false">
+            <condition-list combine="and">
+                <condition-expr field-name="orderId" from-field="parameters.orderId" ignore="false" ignore-case="false" ignore-if-empty="false" ignore-if-null="false" operator="equals"/>
+                <condition-expr field-name="roleTypeId" ignore="false" ignore-case="false" ignore-if-empty="false" ignore-if-null="false" operator="equals" value="PLACING_CUSTOMER"/>
+            </condition-list>
+        </entity-condition>
+        <first-from-list entry="orderRole" list="orderRoleList"/>
+        <entity-condition distinct="false" entity-name="ShoppingList" filter-by-date="false" list="shoppingListList" use-cache="false">
+            <condition-list combine="and">
+                <condition-expr field-name="partyId" from-field="orderRole.partyId" ignore="false" ignore-case="false" ignore-if-empty="false" ignore-if-null="false" operator="equals"/>
+                <condition-expr field-name="listName" ignore="false" ignore-case="false" ignore-if-empty="false" ignore-if-null="false" operator="equals" value="Auto Suggestions"/>
+            </condition-list>
+        </entity-condition>
+        <first-from-list entry="shoppingList" list="shoppingListList"/>
+        <if-empty field="shoppingList">
+            <set field="createShoppingListInMap.partyId" from="orderRole.partyId" set-if-empty="true" set-if-null="false"/>
+            <set field="createShoppingListInMap.listName" set-if-empty="true" set-if-null="false" value="Auto Suggestions"/>
+            <set field="createShoppingListInMap.shoppingListTypeId" set-if-empty="true" set-if-null="false" value="SLT_WISH_LIST"/>
+            <call-service break-on-error="true" error-code="error" in-map-name="createShoppingListInMap" include-user-login="true" require-new-transaction="false" service-name="createShoppingList" success-code="success">
+                <result-to-field result-name="shoppingListId"/>
+            </call-service>
+            <else>
+                <set field="shoppingListId" from="shoppingList.shoppingListId" set-if-empty="true" set-if-null="false"/>
+            </else>
+        </if-empty>
+        <entity-condition distinct="false" entity-name="OrderItem" filter-by-date="false" list="orderItemList" use-cache="false">
+            <condition-expr field-name="orderId" from-field="parameters.orderId" ignore="false" ignore-case="false" ignore-if-empty="false" ignore-if-null="false" operator="equals"/>
+            <order-by field-name="orderItemSeqId"/>
+        </entity-condition>
+        <iterate entry="orderItem" list="orderItemList">
+            <if-not-empty field="orderItem.productId">
+                <entity-condition distinct="false" entity-name="ProductAssoc" filter-by-date="true" list="compProductAssocList" use-cache="false">
+                    <condition-list combine="and">
+                        <condition-expr field-name="productId" from-field="orderItem.productId" ignore="false" ignore-case="false" ignore-if-empty="false" ignore-if-null="false" operator="equals"/>
+                        <condition-expr field-name="productAssocTypeId" ignore="false" ignore-case="false" ignore-if-empty="false" ignore-if-null="false" operator="equals" value="PRODUCT_COMPLEMENT"/>
+                    </condition-list>
+                </entity-condition>
+                <iterate entry="compProductAssoc" list="compProductAssocList">
+                    <clear-field field="shoppingListParameters"/>
+                    <set field="shoppingListParameters.productId" from="compProductAssoc.productIdTo" set-if-empty="true" set-if-null="false"/>
+                    <set field="shoppingListParameters.shoppingListId" from="shoppingListId" set-if-empty="true" set-if-null="false"/>
+                    <set field="shoppingListParameters.quantity" set-if-empty="true" set-if-null="false" type="BigDecimal" value="1"/>
+                    <call-service break-on-error="true" error-code="error" in-map-name="shoppingListParameters" include-user-login="true" require-new-transaction="false" service-name="addDistinctShoppingListItem" success-code="success"/>
+                </iterate>
+                <entity-one auto-field-map="false" entity-name="Product" use-cache="false" value-field="product">
+                    <field-map field-name="productId" from-field="orderItem.productId"/>
+                </entity-one>
+                <if-compare field="product.isVariant" operator="equals" type="String" value="Y">
+                    <entity-condition distinct="false" entity-name="ProductAssoc" filter-by-date="true" list="virtualProductAssocList" use-cache="false">
+                        <condition-list combine="and">
+                            <condition-expr field-name="productIdTo" from-field="orderItem.productId" ignore="false" ignore-case="false" ignore-if-empty="false" ignore-if-null="false" operator="equals"/>
+                            <condition-expr field-name="productAssocTypeId" ignore="false" ignore-case="false" ignore-if-empty="false" ignore-if-null="false" operator="equals" value="PRODUCT_VARIANT"/>
+                        </condition-list>
+                    </entity-condition>
+                    <first-from-list entry="virtualProductAssoc" list="virtualProductAssocList"/>
+                    <if-not-empty field="virtualProductAssoc">
+                        <entity-condition distinct="false" entity-name="ProductAssoc" filter-by-date="true" list="compProductAssocList" use-cache="false">
+                            <condition-list combine="and">
+                                <condition-expr field-name="productId" from-field="virtualProductAssoc.productId" ignore="false" ignore-case="false" ignore-if-empty="false" ignore-if-null="false" operator="equals"/>
+                                <condition-expr field-name="productAssocTypeId" ignore="false" ignore-case="false" ignore-if-empty="false" ignore-if-null="false" operator="equals" value="PRODUCT_COMPLEMENT"/>
+                            </condition-list>
+                        </entity-condition>
+                        <iterate entry="compProductAssoc" list="compProductAssocList">
+                            <clear-field field="shoppingListParameters"/>
+                            <set field="shoppingListParameters.productId" from="compProductAssoc.productIdTo" set-if-empty="true" set-if-null="false"/>
+                            <set field="shoppingListParameters.shoppingListId" from="shoppingListId" set-if-empty="true" set-if-null="false"/>
+                            <set field="shoppingListParameters.quantity" set-if-empty="true" set-if-null="false" type="BigDecimal" value="1"/>
+                            <call-service break-on-error="true" error-code="error" in-map-name="shoppingListParameters" include-user-login="true" require-new-transaction="false" service-name="addDistinctShoppingListItem" success-code="success"/>
+                        </iterate>
+                    </if-not-empty>
+                </if-compare>
+            </if-not-empty>
+        </iterate>
+    </simple-method>
+</simple-methods>

@@ -1,0 +1,194 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<entity-engine-xml>
+
+  <CustomForms formId="10030" formName="Form - 5 " fromdate="2009-08-03 10:40:55.0" thrudate="2014-08-21 10:41:00.0" lastUpdatedStamp="2009-08-12 10:41:07.0" lastUpdatedTxStamp="2009-08-12 10:41:07.0" createdStamp="2009-08-12 10:41:07.0" createdTxStamp="2009-08-12 10:41:07.0">
+        <description><![CDATA[The Employee's Provident Fund Scheme, 1952
+           Paragraph 36(2) (a) and (b)
+
+Employee's Pension Scheme, 1995
+           Paragraph 20  (4)
+  ]]></description>
+    </CustomForms>
+
+	 <CustomForms formId="10000" formName="Cetificate And Attestation" description="Cetificate And Attestation" fromdate="2008-08-05 10:44:20.0" thrudate="2015-08-19 10:44:25.0" lastUpdatedStamp="2009-08-24 22:14:08.0" lastUpdatedTxStamp="2009-08-24 22:14:07.0" createdStamp="2009-08-24 22:14:08.0" createdTxStamp="2009-08-24 22:14:07.0"/>
+
+
+    <CustomFormComponents formId="10030" compId="10220" compType="1" compName="Return of Employee" description="Return of Employee&apos;s qualifying for membership of the Employee&apos;s Provident Fund, Employees&apos; Pension Scheme  &amp; Employee&apos;s Deposit Linked Insurance Fund for time during the month of __________________________________" lastUpdatedStamp="2009-08-12 10:51:25.0" lastUpdatedTxStamp="2009-08-12 10:51:25.0" createdStamp="2009-08-12 10:48:25.0" createdTxStamp="2009-08-12 10:48:25.0"/>
+    <CustomFormComponents formId="10030" compId="10221" compType="1" compName="Commissioner with Form 2" lastUpdatedStamp="2009-08-12 11:49:05.0" lastUpdatedTxStamp="2009-08-12 11:49:05.0" createdStamp="2009-08-12 10:51:37.0" createdTxStamp="2009-08-12 10:51:37.0">
+        <description><![CDATA[To be sent to the Commissioner with Form 2
+
+]]></description>
+    </CustomFormComponents>
+    <CustomFormComponents formId="10030" compId="10224" parentCompId="10223" compType="3" compName="Address of Factory" description=" &amp; Address of the Factory/Establishment:" lastUpdatedStamp="2009-08-12 11:47:33.0" lastUpdatedTxStamp="2009-08-12 11:47:33.0" createdStamp="2009-08-12 11:44:54.0" createdTxStamp="2009-08-12 11:44:53.0"/>
+    <CustomFormComponents formId="10030" compId="10226" parentCompId="10221" compType="2" lastUpdatedStamp="2009-08-12 11:53:32.0" lastUpdatedTxStamp="2009-08-12 11:53:31.0" createdStamp="2009-08-12 11:53:32.0" createdTxStamp="2009-08-12 11:53:31.0"/>
+    <CustomFormComponents formId="10030" compId="10227" parentCompId="10226" compType="3" compName=" &amp; Address" description=" &amp; Address of the Factory /Establishment" lastUpdatedStamp="2009-08-12 12:07:17.0" lastUpdatedTxStamp="2009-08-12 12:07:17.0" createdStamp="2009-08-12 11:53:39.0" createdTxStamp="2009-08-12 11:53:39.0"/>
+    <CustomFormComponents formId="10030" compId="10228" parentCompId="10226" compType="3" compName="Company address" description="Company address" dynamicRuleId="company_address" lastUpdatedStamp="2009-08-13 16:42:23.0" lastUpdatedTxStamp="2009-08-13 16:42:23.0" createdStamp="2009-08-12 11:53:42.0" createdTxStamp="2009-08-12 11:53:42.0"/>
+    <CustomFormComponents formId="10030" compId="10229" parentCompId="10221" compType="2" lastUpdatedStamp="2009-08-12 11:53:48.0" lastUpdatedTxStamp="2009-08-12 11:53:48.0" createdStamp="2009-08-12 11:53:48.0" createdTxStamp="2009-08-12 11:53:48.0"/>
+    <CustomFormComponents formId="10030" compId="10230" parentCompId="10229" compType="3" compName="Factory Code" description="Code No.of Factory/Establishment" lastUpdatedStamp="2009-08-12 12:19:52.0" lastUpdatedTxStamp="2009-08-12 12:19:52.0" createdStamp="2009-08-12 11:53:52.0" createdTxStamp="2009-08-12 11:53:52.0"/>
+    <CustomFormComponents formId="10030" compId="10231" parentCompId="10229" compType="3" compName="Factory Code Value" description="32432432DSFSDSSS" lastUpdatedStamp="2009-08-12 12:20:20.0" lastUpdatedTxStamp="2009-08-12 12:20:20.0" createdStamp="2009-08-12 11:53:55.0" createdTxStamp="2009-08-12 11:53:55.0"/>
+    <CustomFormComponents formId="10030" compId="10235" parentCompId="10234" compType="3" compName="Footer" lastUpdatedStamp="2009-08-12 12:28:51.0" lastUpdatedTxStamp="2009-08-12 12:28:51.0" createdStamp="2009-08-12 12:27:59.0" createdTxStamp="2009-08-12 12:27:59.0">
+        <description><![CDATA[
+----------------------------------------------------------------------------------------------
+Signature of the Employer or other authorised officer and stamp of the Factory/Establishment 
+
+Note: Please furnish details of the membership in remarks column if the employee was a member of the Employee's Provident Fund and Employee's Family Pension scheme before joining yourself/factory. i.e. Account No. and/ or the name and particulars of the last employer.
+]]></description>
+    </CustomFormComponents>
+    <CustomFormComponents formId="10030" compId="10237" compType="1" compName="Details" description="Details" lastUpdatedStamp="2009-08-12 13:08:48.0" lastUpdatedTxStamp="2009-08-12 13:08:48.0" createdStamp="2009-08-12 12:32:18.0" createdTxStamp="2009-08-12 12:32:18.0"/>
+    <CustomFormComponents formId="10030" compId="10238" compType="1" compName="Footer" description="Footer" lastUpdatedStamp="2009-08-12 12:33:46.0" lastUpdatedTxStamp="2009-08-12 12:33:46.0" createdStamp="2009-08-12 12:33:34.0" createdTxStamp="2009-08-12 12:33:33.0"/>
+    <CustomFormComponents formId="10030" compId="10239" parentCompId="10238" compType="2" lastUpdatedStamp="2009-08-12 12:33:50.0" lastUpdatedTxStamp="2009-08-12 12:33:50.0" createdStamp="2009-08-12 12:33:50.0" createdTxStamp="2009-08-12 12:33:50.0"/>
+    <CustomFormComponents formId="10030" compId="10240" parentCompId="10239" compType="3" compName="Signature Panel" lastUpdatedStamp="2009-08-12 12:34:35.0" lastUpdatedTxStamp="2009-08-12 12:34:34.0" createdStamp="2009-08-12 12:33:57.0" createdTxStamp="2009-08-12 12:33:56.0">
+        <description><![CDATA[
+__________________________________________________________________________________
+Signature of the Employer or other authorised officer and stamp of the Factory/Establishment 
+
+Note: Please furnish details of the membership in remarks column if the employee was a member of the Employee's Provident Fund and Employee's Family Pension scheme before joining yourself/factory. i.e. Account No. and/ or the name and particulars of the last employer. 
+]]></description>
+    </CustomFormComponents>
+    <CustomFormComponents formId="10030" compId="10250" parentCompId="10237" compType="2" compName="Employee PF" dynamicRuleId="PF (Quaterly)" lastUpdatedStamp="2009-08-13 16:42:04.0" lastUpdatedTxStamp="2009-08-13 16:42:04.0" createdStamp="2009-08-13 12:10:16.0" createdTxStamp="2009-08-13 12:10:16.0"/>
+
+
+
+    <CustomFormComponents formId="10000" compId="10000" compType="1" description="header" lastUpdatedStamp="2009-08-24 22:14:15.0" lastUpdatedTxStamp="2009-08-24 22:14:15.0" createdStamp="2009-08-24 22:14:15.0" createdTxStamp="2009-08-24 22:14:15.0"/>
+    <CustomFormComponents formId="10000" compId="10001" parentCompId="10000" compType="2" lastUpdatedStamp="2009-08-24 22:14:23.0" lastUpdatedTxStamp="2009-08-24 22:14:23.0" createdStamp="2009-08-24 22:14:23.0" createdTxStamp="2009-08-24 22:14:23.0"/>
+    <CustomFormComponents formId="10000" compId="10002" parentCompId="10001" compType="3" compName="Sl No." description="Sl No." lastUpdatedStamp="2009-08-24 22:15:00.0" lastUpdatedTxStamp="2009-08-24 22:15:00.0" createdStamp="2009-08-24 22:14:31.0" createdTxStamp="2009-08-24 22:14:31.0"/>
+    <CustomFormComponents formId="10000" compId="10003" parentCompId="10001" compType="3" compName="Subject" description="Subject" lastUpdatedStamp="2009-08-24 22:15:09.0" lastUpdatedTxStamp="2009-08-24 22:15:09.0" createdStamp="2009-08-24 22:14:32.0" createdTxStamp="2009-08-24 22:14:32.0"/>
+    <CustomFormComponents formId="10000" compId="10004" parentCompId="10001" compType="3" compName="Certificate" description="Certificate" lastUpdatedStamp="2009-08-24 22:15:29.0" lastUpdatedTxStamp="2009-08-24 22:15:29.0" createdStamp="2009-08-24 22:14:34.0" createdTxStamp="2009-08-24 22:14:34.0"/>
+    <CustomFormComponents formId="10000" compId="10006" parentCompId="10001" compType="3" compName="Signature" lastUpdatedStamp="2009-08-24 22:16:05.0" lastUpdatedTxStamp="2009-08-24 22:16:05.0" createdStamp="2009-08-24 22:14:47.0" createdTxStamp="2009-08-24 22:14:47.0">
+        <description><![CDATA[Signature & Designation of the certifying officer.
+]]></description>
+    </CustomFormComponents>
+
+    <CustomFormComponents formId="10000" compId="10007" parentCompId="10000" compType="2" lastUpdatedStamp="2009-08-24 22:17:41.0" lastUpdatedTxStamp="2009-08-24 22:17:41.0" createdStamp="2009-08-24 22:17:41.0" createdTxStamp="2009-08-24 22:17:41.0"/>
+    <CustomFormComponents formId="10000" compId="10008" parentCompId="10007" compType="3" compName="1" description="1" lastUpdatedStamp="2009-08-24 22:18:15.0" lastUpdatedTxStamp="2009-08-24 22:18:15.0" createdStamp="2009-08-24 22:17:44.0" createdTxStamp="2009-08-24 22:17:44.0"/>
+    <CustomFormComponents formId="10000" compId="10009" parentCompId="10007" compType="3" compName="Medical" description="Medical Examination" lastUpdatedStamp="2009-08-24 22:18:27.0" lastUpdatedTxStamp="2009-08-24 22:18:27.0" createdStamp="2009-08-24 22:17:45.0" createdTxStamp="2009-08-24 22:17:45.0"/>
+    <CustomFormComponents formId="10000" compId="10010" parentCompId="10007" compType="3" compName="Certificate" description="The employee was medically examined by _______________________ on ______________________ and found fit. The medical certificate has been kept in safe custody vide S.No _____________ of Volume II of the service book." lastUpdatedStamp="2009-08-24 22:20:31.0" lastUpdatedTxStamp="2009-08-24 22:20:31.0" createdStamp="2009-08-24 22:17:47.0" createdTxStamp="2009-08-24 22:17:47.0"/>
+    <CustomFormComponents formId="10000" compId="10011" parentCompId="10007" compType="3" lastUpdatedStamp="2009-08-24 22:17:47.0" lastUpdatedTxStamp="2009-08-24 22:17:47.0" createdStamp="2009-08-24 22:17:47.0" createdTxStamp="2009-08-24 22:17:47.0"/>
+    <CustomFormComponents formId="10000" compId="10012" parentCompId="10000" compType="2" lastUpdatedStamp="2009-08-24 22:28:14.0" lastUpdatedTxStamp="2009-08-24 22:28:14.0" createdStamp="2009-08-24 22:28:14.0" createdTxStamp="2009-08-24 22:28:14.0"/>
+    <CustomFormComponents formId="10000" compId="10013" parentCompId="10012" compType="3" compName="S.No" description="2." lastUpdatedStamp="2009-08-24 22:30:00.0" lastUpdatedTxStamp="2009-08-24 22:30:00.0" createdStamp="2009-08-24 22:28:29.0" createdTxStamp="2009-08-24 22:28:29.0"/>
+    <CustomFormComponents formId="10000" compId="10015" parentCompId="10012" compType="3" compName="Character" lastUpdatedStamp="2009-08-24 22:32:23.0" lastUpdatedTxStamp="2009-08-24 22:32:22.0" createdStamp="2009-08-24 22:28:32.0" createdTxStamp="2009-08-24 22:28:32.0">
+        <description><![CDATA[Character and antecedent
+]]></description>
+
+    </CustomFormComponents>
+    <CustomFormComponents formId="10000" compId="10016" parentCompId="10012" compType="3" compName="Certificate" description="His/Her character and antecedent have been verified and the verification report kept in safe custody vide S.No: __________ of volume II of Service Book." lastUpdatedStamp="2009-08-24 22:33:52.0" lastUpdatedTxStamp="2009-08-24 22:33:51.0" createdStamp="2009-08-24 22:28:34.0" createdTxStamp="2009-08-24 22:28:34.0"/>
+    <CustomFormComponents formId="10000" compId="10018" parentCompId="10012" compType="3" lastUpdatedStamp="2009-08-24 22:29:22.0" lastUpdatedTxStamp="2009-08-24 22:29:22.0" createdStamp="2009-08-24 22:29:22.0" createdTxStamp="2009-08-24 22:29:22.0"/>
+    <CustomFormComponents formId="10000" compId="10019" parentCompId="10000" compType="2" lastUpdatedStamp="2009-08-24 22:35:24.0" lastUpdatedTxStamp="2009-08-24 22:35:24.0" createdStamp="2009-08-24 22:35:24.0" createdTxStamp="2009-08-24 22:35:24.0"/>
+    <CustomFormComponents formId="10000" compId="10020" parentCompId="10019" compType="3" compName="S.No" description="3." lastUpdatedStamp="2009-08-24 22:36:11.0" lastUpdatedTxStamp="2009-08-24 22:36:11.0" createdStamp="2009-08-24 22:35:32.0" createdTxStamp="2009-08-24 22:35:32.0"/>
+    <CustomFormComponents formId="10000" compId="10021" parentCompId="10019" compType="3" compName="Allegiance" description="Allegiance Constitution" lastUpdatedStamp="2009-08-24 22:36:39.0" lastUpdatedTxStamp="2009-08-24 22:36:39.0" createdStamp="2009-08-24 22:35:43.0" createdTxStamp="2009-08-24 22:35:43.0"/>
+    <CustomFormComponents formId="10000" compId="10022" parentCompId="10019" compType="3" compName="Certificate" description="He/She has taken the oath of Allegiance/affirmation to the constitution vide S.No.________ of volume II of Service book." lastUpdatedStamp="2009-08-24 22:40:06.0" lastUpdatedTxStamp="2009-08-24 22:40:06.0" createdStamp="2009-08-24 22:35:47.0" createdTxStamp="2009-08-24 22:35:47.0"/>
+    <CustomFormComponents formId="10000" compId="10023" parentCompId="10019" compType="3" lastUpdatedStamp="2009-08-24 22:35:49.0" lastUpdatedTxStamp="2009-08-24 22:35:49.0" createdStamp="2009-08-24 22:35:49.0" createdTxStamp="2009-08-24 22:35:49.0"/>
+    <CustomFormComponents formId="10000" compId="10024" parentCompId="10000" compType="2" lastUpdatedStamp="2009-08-24 22:40:41.0" lastUpdatedTxStamp="2009-08-24 22:40:41.0" createdStamp="2009-08-24 22:40:41.0" createdTxStamp="2009-08-24 22:40:41.0"/>
+
+    <CustomFormComponents formId="10000" compId="10025" parentCompId="10024" compType="3" compName="S.No" description="4." lastUpdatedStamp="2009-08-24 22:54:03.0" lastUpdatedTxStamp="2009-08-24 22:54:03.0" createdStamp="2009-08-24 22:40:47.0" createdTxStamp="2009-08-24 22:40:47.0"/>
+    <CustomFormComponents formId="10000" compId="10026" parentCompId="10024" compType="3" compName="Oath of Secrecy" description="Oath of Secrecy" lastUpdatedStamp="2009-08-24 22:54:32.0" lastUpdatedTxStamp="2009-08-24 22:54:32.0" createdStamp="2009-08-24 22:40:50.0" createdTxStamp="2009-08-24 22:40:50.0"/>
+    <CustomFormComponents formId="10000" compId="10027" parentCompId="10024" compType="3" compName="Certificate" description="He / She has read Official Secrets Act, Karnataka Civil Services (Conduct) Rules and has also taken the oath of secrecy vide S.No. __________________ of volume II of the Service Book." lastUpdatedStamp="2009-08-24 22:55:52.0" lastUpdatedTxStamp="2009-08-24 22:55:52.0" createdStamp="2009-08-24 22:40:52.0" createdTxStamp="2009-08-24 22:40:52.0"/>
+    <CustomFormComponents formId="10000" compId="10028" parentCompId="10024" compType="3" lastUpdatedStamp="2009-08-24 22:40:54.0" lastUpdatedTxStamp="2009-08-24 22:40:54.0" createdStamp="2009-08-24 22:40:54.0" createdTxStamp="2009-08-24 22:40:54.0"/>
+    <CustomFormComponents formId="10000" compId="10029" parentCompId="10000" compType="2" lastUpdatedStamp="2009-08-24 22:56:40.0" lastUpdatedTxStamp="2009-08-24 22:56:40.0" createdStamp="2009-08-24 22:56:40.0" createdTxStamp="2009-08-24 22:56:40.0"/>
+    <CustomFormComponents formId="10000" compId="10030" parentCompId="10029" compType="3" compName="S.No" description="5." lastUpdatedStamp="2009-08-24 22:57:14.0" lastUpdatedTxStamp="2009-08-24 22:57:14.0" createdStamp="2009-08-24 22:56:44.0" createdTxStamp="2009-08-24 22:56:44.0"/>
+    <CustomFormComponents formId="10000" compId="10031" parentCompId="10029" compType="3" compName="Marital" description="Marital Status" lastUpdatedStamp="2009-08-24 22:57:36.0" lastUpdatedTxStamp="2009-08-24 22:57:36.0" createdStamp="2009-08-24 22:56:46.0" createdTxStamp="2009-08-24 22:56:46.0"/>
+    <CustomFormComponents formId="10000" compId="10032" parentCompId="10029" compType="3" compName="Certificate" description="He / She has furnished declaration regarding his/her not having contracted bigamous marriage. The relevant declaration has been filed at S.No. ________________ of volume II of the Service Book." lastUpdatedStamp="2009-08-24 22:59:40.0" lastUpdatedTxStamp="2009-08-24 22:59:40.0" createdStamp="2009-08-24 22:56:49.0" createdTxStamp="2009-08-24 22:56:49.0"/>
+    <CustomFormComponents formId="10000" compId="10033" parentCompId="10029" compType="3" lastUpdatedStamp="2009-08-24 22:56:51.0" lastUpdatedTxStamp="2009-08-24 22:56:51.0" createdStamp="2009-08-24 22:56:51.0" createdTxStamp="2009-08-24 22:56:51.0"/>
+
+    <CustomFormComponents formId="10000" compId="10034" parentCompId="10000" compType="2" lastUpdatedStamp="2009-08-24 23:00:16.0" lastUpdatedTxStamp="2009-08-24 23:00:16.0" createdStamp="2009-08-24 23:00:16.0" createdTxStamp="2009-08-24 23:00:16.0"/>
+    <CustomFormComponents formId="10000" compId="10035" parentCompId="10034" compType="3" compName="S.No" description="6." lastUpdatedStamp="2009-08-24 23:00:45.0" lastUpdatedTxStamp="2009-08-24 23:00:45.0" createdStamp="2009-08-24 23:00:20.0" createdTxStamp="2009-08-24 23:00:20.0"/>
+    <CustomFormComponents formId="10000" compId="10036" parentCompId="10034" compType="3" compName="Declaration" description="Declaration of home towm" lastUpdatedStamp="2009-08-24 23:01:09.0" lastUpdatedTxStamp="2009-08-24 23:01:09.0" createdStamp="2009-08-24 23:00:23.0" createdTxStamp="2009-08-24 23:00:23.0"/>
+    <CustomFormComponents formId="10000" compId="10037" parentCompId="10034" compType="3" compName="Certificate" description="He/She has furnished the declaration of home town which has been accepted and filed at  S.No._______________ of volume II of the Service Book." lastUpdatedStamp="2009-08-24 23:02:24.0" lastUpdatedTxStamp="2009-08-24 23:02:24.0" createdStamp="2009-08-24 23:00:25.0" createdTxStamp="2009-08-24 23:00:25.0"/>
+    <CustomFormComponents formId="10000" compId="10038" parentCompId="10034" compType="3" lastUpdatedStamp="2009-08-24 23:00:27.0" lastUpdatedTxStamp="2009-08-24 23:00:27.0" createdStamp="2009-08-24 23:00:27.0" createdTxStamp="2009-08-24 23:00:27.0"/>
+    <CustomFormComponents formId="10000" compId="10039" parentCompId="10000" compType="2" lastUpdatedStamp="2009-08-24 23:03:10.0" lastUpdatedTxStamp="2009-08-24 23:03:10.0" createdStamp="2009-08-24 23:03:10.0" createdTxStamp="2009-08-24 23:03:10.0"/>
+    <CustomFormComponents formId="10000" compId="10040" parentCompId="10039" compType="3" compName="S.No" description="7." lastUpdatedStamp="2009-08-24 23:03:36.0" lastUpdatedTxStamp="2009-08-24 23:03:36.0" createdStamp="2009-08-24 23:03:13.0" createdTxStamp="2009-08-24 23:03:13.0"/>
+    <CustomFormComponents formId="10000" compId="10041" parentCompId="10039" compType="3" compName="Verification" description="Verification of entries in Part-I" lastUpdatedStamp="2009-08-24 23:04:24.0" lastUpdatedTxStamp="2009-08-24 23:04:24.0" createdStamp="2009-08-24 23:03:16.0" createdTxStamp="2009-08-24 23:03:16.0"/>
+    <CustomFormComponents formId="10000" compId="10042" parentCompId="10039" compType="3" compName="Certificate" description="The correctness of the entries against S.Nos. 5-8 of Part-I &quot;Bio-data&quot; has been verified from original certificates considered as valid documentary evidence for the respective purposes. Attested copies of these certificates have been filed at S.No. ________________ of volume II of the Service Book." lastUpdatedStamp="2009-08-24 23:06:23.0" lastUpdatedTxStamp="2009-08-24 23:06:23.0" createdStamp="2009-08-24 23:03:18.0" createdTxStamp="2009-08-24 23:03:18.0"/>
+
+    <CustomFormComponents formId="10000" compId="10043" parentCompId="10039" compType="3" lastUpdatedStamp="2009-08-24 23:03:20.0" lastUpdatedTxStamp="2009-08-24 23:03:20.0" createdStamp="2009-08-24 23:03:20.0" createdTxStamp="2009-08-24 23:03:20.0"/>
+    <CustomFormComponents formId="10000" compId="10044" parentCompId="10000" compType="2" lastUpdatedStamp="2009-08-24 23:07:15.0" lastUpdatedTxStamp="2009-08-24 23:07:15.0" createdStamp="2009-08-24 23:07:15.0" createdTxStamp="2009-08-24 23:07:15.0"/>
+    <CustomFormComponents formId="10000" compId="10045" parentCompId="10044" compType="3" compName="S.No" description="8." lastUpdatedStamp="2009-08-24 23:07:39.0" lastUpdatedTxStamp="2009-08-24 23:07:39.0" createdStamp="2009-08-24 23:07:19.0" createdTxStamp="2009-08-24 23:07:19.0"/>
+    <CustomFormComponents formId="10000" compId="10046" parentCompId="10044" compType="3" compName="GPF" lastUpdatedStamp="2009-08-24 23:08:40.0" lastUpdatedTxStamp="2009-08-24 23:08:39.0" createdStamp="2009-08-24 23:07:21.0" createdTxStamp="2009-08-24 23:07:21.0">
+        <description><![CDATA[(a) G.P.F. No. 
+
+
+(b) Nomination for G.P.F. No.]]></description>
+    </CustomFormComponents>
+    <CustomFormComponents formId="10000" compId="10047" parentCompId="10044" compType="3" compName="Certificate" lastUpdatedStamp="2009-08-24 23:11:07.0" lastUpdatedTxStamp="2009-08-24 23:11:07.0" createdStamp="2009-08-24 23:07:23.0" createdTxStamp="2009-08-24 23:07:23.0">
+        <description><![CDATA[He/She has filed nomination for G.P.F and the following related notices which have been forwarded to the Accounts Officer on dates shown against them, have been filed in volume-II of Service Book.
+
+1.
+
+2.
+
+3.
+
+]]></description>
+    </CustomFormComponents>
+
+    <CustomFormComponents formId="10000" compId="10048" parentCompId="10044" compType="3" lastUpdatedStamp="2009-08-24 23:07:25.0" lastUpdatedTxStamp="2009-08-24 23:07:25.0" createdStamp="2009-08-24 23:07:25.0" createdTxStamp="2009-08-24 23:07:25.0"/>
+    <CustomFormComponents formId="10000" compId="10049" parentCompId="10000" compType="2" lastUpdatedStamp="2009-08-24 23:11:45.0" lastUpdatedTxStamp="2009-08-24 23:11:45.0" createdStamp="2009-08-24 23:11:45.0" createdTxStamp="2009-08-24 23:11:45.0"/>
+    <CustomFormComponents formId="10000" compId="10050" parentCompId="10049" compType="3" compName="S.No" description="9." lastUpdatedStamp="2009-08-24 23:12:13.0" lastUpdatedTxStamp="2009-08-24 23:12:13.0" createdStamp="2009-08-24 23:11:49.0" createdTxStamp="2009-08-24 23:11:49.0"/>
+    <CustomFormComponents formId="10000" compId="10051" parentCompId="10049" compType="3" compName="Particulars" description="Particulars of Insurance under the Karnataka Government Servants (Compulsary Life Insurance) Rules 1958" lastUpdatedStamp="2009-08-24 23:13:36.0" lastUpdatedTxStamp="2009-08-24 23:13:36.0" createdStamp="2009-08-24 23:11:51.0" createdTxStamp="2009-08-24 23:11:51.0"/>
+    <CustomFormComponents formId="10000" compId="10052" parentCompId="10049" compType="3" compName="Certificate" lastUpdatedStamp="2009-08-24 23:15:37.0" lastUpdatedTxStamp="2009-08-24 23:15:37.0" createdStamp="2009-08-24 23:11:52.0" createdTxStamp="2009-08-24 23:11:52.0">
+        <description><![CDATA[1. Policy Number:
+
+2.  Amount
+
+3.  Nomination
+
+4.  Subsequent Policy No.
+
+5. Amount
+
+6. Nomination
+
+7. Change of Nomination if any (a copy of the order accepted by the Insurance Authority for change should be filed in Volume-II of Service Book)]]></description>
+    </CustomFormComponents>
+    <CustomFormComponents formId="10000" compId="10053" parentCompId="10049" compType="3" lastUpdatedStamp="2009-08-24 23:11:55.0" lastUpdatedTxStamp="2009-08-24 23:11:55.0" createdStamp="2009-08-24 23:11:55.0" createdTxStamp="2009-08-24 23:11:55.0"/>
+    <CustomFormComponents formId="10000" compId="10054" parentCompId="10000" compType="2" lastUpdatedStamp="2009-08-24 23:16:21.0" lastUpdatedTxStamp="2009-08-24 23:16:21.0" createdStamp="2009-08-24 23:16:21.0" createdTxStamp="2009-08-24 23:16:21.0"/>
+
+    <CustomFormComponents formId="10000" compId="10055" parentCompId="10054" compType="3" compName="S.No" description="10." lastUpdatedStamp="2009-08-24 23:16:48.0" lastUpdatedTxStamp="2009-08-24 23:16:48.0" createdStamp="2009-08-24 23:16:25.0" createdTxStamp="2009-08-24 23:16:25.0"/>
+    <CustomFormComponents formId="10000" compId="10056" parentCompId="10054" compType="3" compName="Family Particulars" description="Family Particulars" lastUpdatedStamp="2009-08-24 23:17:08.0" lastUpdatedTxStamp="2009-08-24 23:17:08.0" createdStamp="2009-08-24 23:16:27.0" createdTxStamp="2009-08-24 23:16:27.0"/>
+    <CustomFormComponents formId="10000" compId="10057" parentCompId="10054" compType="3" compName="Certificate" description="He/She has furnished details of the family members which has been filed at S.No. ________________ of volume II of the Service Book.  Joint photo with the spouse should be furnished." lastUpdatedStamp="2009-08-24 23:18:19.0" lastUpdatedTxStamp="2009-08-24 23:18:19.0" createdStamp="2009-08-24 23:16:29.0" createdTxStamp="2009-08-24 23:16:29.0"/>
+    <CustomFormComponents formId="10000" compId="10058" parentCompId="10054" compType="3" lastUpdatedStamp="2009-08-24 23:16:31.0" lastUpdatedTxStamp="2009-08-24 23:16:31.0" createdStamp="2009-08-24 23:16:31.0" createdTxStamp="2009-08-24 23:16:31.0"/>
+    <CustomFormComponents formId="10000" compId="10059" parentCompId="10000" compType="2" lastUpdatedStamp="2009-08-24 23:18:53.0" lastUpdatedTxStamp="2009-08-24 23:18:53.0" createdStamp="2009-08-24 23:18:53.0" createdTxStamp="2009-08-24 23:18:53.0"/>
+    <CustomFormComponents formId="10000" compId="10060" parentCompId="10059" compType="3" compName="S.No" description="11." lastUpdatedStamp="2009-08-24 23:19:16.0" lastUpdatedTxStamp="2009-08-24 23:19:16.0" createdStamp="2009-08-24 23:18:56.0" createdTxStamp="2009-08-24 23:18:56.0"/>
+    <CustomFormComponents formId="10000" compId="10061" parentCompId="10059" compType="3" compName="DCRG" description="D.C.R.G." lastUpdatedStamp="2009-08-24 23:19:44.0" lastUpdatedTxStamp="2009-08-24 23:19:44.0" createdStamp="2009-08-24 23:18:58.0" createdTxStamp="2009-08-24 23:18:58.0"/>
+    <CustomFormComponents formId="10000" compId="10062" parentCompId="10059" compType="3" compName="Certificate" description="He/She has filed nomination for D.C.R.G and the following related notices which have been filed in Volume II of the Service Book, vide Sl.No. ________________________ shown against them." lastUpdatedStamp="2009-08-24 23:22:38.0" lastUpdatedTxStamp="2009-08-24 23:22:38.0" createdStamp="2009-08-24 23:19:00.0" createdTxStamp="2009-08-24 23:19:00.0"/>
+    <CustomFormComponents formId="10000" compId="10063" parentCompId="10059" compType="3" lastUpdatedStamp="2009-08-24 23:19:02.0" lastUpdatedTxStamp="2009-08-24 23:19:02.0" createdStamp="2009-08-24 23:19:02.0" createdTxStamp="2009-08-24 23:19:02.0"/>
+
+    <CustomFormComponents formId="10030" compId="10220" compType="1" compName="Return of Employee" description="Return of Employee&apos;s qualifying for membership of the Employee&apos;s Provident Fund, Employees&apos; Pension Scheme  &amp; Employee&apos;s Deposit Linked Insurance Fund for time during the month of __________________________________" lastUpdatedStamp="2009-08-23 05:07:24.0" lastUpdatedTxStamp="2009-08-23 05:07:24.0" createdStamp="2009-08-12 10:48:25.0" createdTxStamp="2009-08-12 10:48:25.0"/>
+    <CustomFormComponents formId="10030" compId="10221" compType="1" compName="Commissioner with Form 2" lastUpdatedStamp="2009-08-23 05:07:24.0" lastUpdatedTxStamp="2009-08-23 05:07:24.0" createdStamp="2009-08-12 10:51:37.0" createdTxStamp="2009-08-12 10:51:37.0">
+        <description><![CDATA[To be sent to the Commissioner with Form 2
+
+]]></description>
+    </CustomFormComponents>
+    <CustomFormComponents formId="10030" compId="10224" parentCompId="10223" compType="3" compName="Address of Factory" description=" &amp; Address of the Factory/Establishment:" lastUpdatedStamp="2009-08-23 05:07:24.0" lastUpdatedTxStamp="2009-08-23 05:07:24.0" createdStamp="2009-08-12 11:44:54.0" createdTxStamp="2009-08-12 11:44:53.0"/>
+    <CustomFormComponents formId="10030" compId="10226" parentCompId="10221" compType="2" lastUpdatedStamp="2009-08-23 05:07:24.0" lastUpdatedTxStamp="2009-08-23 05:07:24.0" createdStamp="2009-08-12 11:53:32.0" createdTxStamp="2009-08-12 11:53:31.0"/>
+    <CustomFormComponents formId="10030" compId="10227" parentCompId="10226" compType="3" compName=" &amp; Address" description=" &amp; Address of the Factory /Establishment" lastUpdatedStamp="2009-08-23 05:07:24.0" lastUpdatedTxStamp="2009-08-23 05:07:24.0" createdStamp="2009-08-12 11:53:39.0" createdTxStamp="2009-08-12 11:53:39.0"/>
+    <CustomFormComponents formId="10030" compId="10228" parentCompId="10226" compType="3" compName="Company address" description="Company address" dynamicRuleId="company_address" lastUpdatedStamp="2009-08-23 05:07:24.0" lastUpdatedTxStamp="2009-08-23 05:07:24.0" createdStamp="2009-08-12 11:53:42.0" createdTxStamp="2009-08-12 11:53:42.0"/>
+    <CustomFormComponents formId="10030" compId="10229" parentCompId="10221" compType="2" lastUpdatedStamp="2009-08-23 05:07:24.0" lastUpdatedTxStamp="2009-08-23 05:07:24.0" createdStamp="2009-08-12 11:53:48.0" createdTxStamp="2009-08-12 11:53:48.0"/>
+
+    <CustomFormComponents formId="10030" compId="10230" parentCompId="10229" compType="3" compName="Factory Code" description="Code No.of Factory/Establishment" lastUpdatedStamp="2009-08-23 05:07:24.0" lastUpdatedTxStamp="2009-08-23 05:07:24.0" createdStamp="2009-08-12 11:53:52.0" createdTxStamp="2009-08-12 11:53:52.0"/>
+    <CustomFormComponents formId="10030" compId="10231" parentCompId="10229" compType="3" compName="Factory Code Value" description="32432432DSFSDSSS" lastUpdatedStamp="2009-08-23 05:07:24.0" lastUpdatedTxStamp="2009-08-23 05:07:24.0" createdStamp="2009-08-12 11:53:55.0" createdTxStamp="2009-08-12 11:53:55.0"/>
+    <CustomFormComponents formId="10030" compId="10235" parentCompId="10234" compType="3" compName="Footer" lastUpdatedStamp="2009-08-23 05:07:24.0" lastUpdatedTxStamp="2009-08-23 05:07:24.0" createdStamp="2009-08-12 12:27:59.0" createdTxStamp="2009-08-12 12:27:59.0">
+        <description><![CDATA[
+----------------------------------------------------------------------------------------------
+Signature of the Employer or other authorised officer and stamp of the Factory/Establishment 
+
+Note: Please furnish details of the membership in remarks column if the employee was a member of the Employee's Provident Fund and Employee's Family Pension scheme before joining yourself/factory. i.e. Account No. and/ or the name and particulars of the last employer.
+]]></description>
+    </CustomFormComponents>
+    <CustomFormComponents formId="10030" compId="10237" compType="1" compName="Details" description="Details" lastUpdatedStamp="2009-08-23 05:07:24.0" lastUpdatedTxStamp="2009-08-23 05:07:24.0" createdStamp="2009-08-12 12:32:18.0" createdTxStamp="2009-08-12 12:32:18.0"/>
+    <CustomFormComponents formId="10030" compId="10238" compType="1" compName="Footer" description="Footer" lastUpdatedStamp="2009-08-23 05:07:24.0" lastUpdatedTxStamp="2009-08-23 05:07:24.0" createdStamp="2009-08-12 12:33:34.0" createdTxStamp="2009-08-12 12:33:33.0"/>
+    <CustomFormComponents formId="10030" compId="10239" parentCompId="10238" compType="2" lastUpdatedStamp="2009-08-23 05:07:24.0" lastUpdatedTxStamp="2009-08-23 05:07:24.0" createdStamp="2009-08-12 12:33:50.0" createdTxStamp="2009-08-12 12:33:50.0"/>
+    <CustomFormComponents formId="10030" compId="10240" parentCompId="10239" compType="3" compName="Signature Panel" lastUpdatedStamp="2009-08-23 05:07:24.0" lastUpdatedTxStamp="2009-08-23 05:07:24.0" createdStamp="2009-08-12 12:33:57.0" createdTxStamp="2009-08-12 12:33:56.0">
+
+        <description><![CDATA[
+__________________________________________________________________________________
+Signature of the Employer or other authorised officer and stamp of the Factory/Establishment 
+
+Note: Please furnish details of the membership in remarks column if the employee was a member of the Employee's Provident Fund and Employee's Family Pension scheme before joining yourself/factory. i.e. Account No. and/ or the name and particulars of the last employer. 
+]]></description>
+    </CustomFormComponents>
+  
+
+
+
+</entity-engine-xml>

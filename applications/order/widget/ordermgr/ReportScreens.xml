@@ -1,0 +1,1234 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+Licensed to the Apache Software Foundation (ASF) under one
+or more contributor license agreements.  See the NOTICE file
+distributed with this work for additional information
+regarding copyright ownership.  The ASF licenses this file
+to you under the Apache License, Version 2.0 (the
+"License"); you may not use this file except in compliance
+with the License.  You may obtain a copy of the License at
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing,
+software distributed under the License is distributed on an
+"AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+KIND, either express or implied.  See the License for the
+specific language governing permissions and limitations
+under the License.
+-->
+
+<screens xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="http://ofbiz.apache.org/dtds/widget-screen.xsd">
+
+    <screen name="CommonOrderReportsDecorator">
+        <section>
+            <actions>
+                <set field="headerItem" value="reports"/>
+            </actions>
+            <widgets>
+                <decorator-screen name="main-decorator" location="${parameters.mainDecoratorLocation}">
+                    <decorator-section name="body">
+                        <section>
+                            <widgets>
+                                <container>
+                                    <decorator-section-include name="body" />
+                                </container>
+                            </widgets>
+                        </section>
+                    </decorator-section>
+                </decorator-screen>
+            </widgets>
+        </section>
+    </screen>
+
+    <screen name="OrderPurchaseReportOptions">
+        <section>
+            <actions>
+
+                <set field="titleProperty" value="OrderReports"/>
+                <set field="headerItem" value="reports"/>
+                <set field="parameters.portalPageId" value="OrderReportPage"/>
+            </actions>
+            <widgets>
+                <decorator-screen name="main-decorator" location="${parameters.mainDecoratorLocation}">
+                    <decorator-section name="body">
+                        <section>
+                            <condition>
+                                <if-compare operator="not-equals" value="false" field="${parameters.show}"/>
+                            </condition>
+                            <widgets>
+                                <include-screen name="PortalPageScreen" location="component://common/widget/CommonScreens.xml"/>
+                            </widgets>
+                        </section>
+                    </decorator-section>
+                </decorator-screen>
+            </widgets>
+        </section>
+    </screen>
+
+    <screen name="OrderReportSalesByStore">
+        <section>
+            <widgets>
+                <screenlet title="${uiLabelMap.OrderReportSalesByStore}">
+                    <include-form name="SalesByStoreReport" location="component://order/widget/ordermgr/ReportForms.xml"/>
+                </screenlet>
+            </widgets>
+        </section>
+    </screen>
+
+    <screen name="OrderReportOpenOrderItems">
+        <section>
+            <widgets>
+                <screenlet title="${uiLabelMap.OrderReportOpenOrderItems}">
+                    <include-form name="OpenOrderItemsReport" location="component://order/widget/ordermgr/ReportForms.xml" />
+                </screenlet>
+            </widgets>
+        </section>
+    </screen>
+
+    <screen name="OpenOrderItemsReports">
+        <section>
+            <widgets>
+                <decorator-screen name="CommonOrderReportsDecorator" location="component://order/widget/ordermgr/ReportScreens.xml">
+                    <decorator-section name="body">
+                        <screenlet title="Open Order Items">
+                            <include-form name="OpenOrderItemsReport" location="component://order/widget/ordermgr/ReportForms.xml" />
+                        </screenlet>
+                    </decorator-section>
+                </decorator-screen>
+            </widgets>
+        </section>
+    </screen>
+
+    <screen name="OrderReportPurchasesByOrganization">
+        <section>
+            <widgets>
+                <screenlet title="Purchases by Supplier">
+                    <include-form name="PurchasesByOrganizationReport" location="component://order/widget/ordermgr/ReportForms.xml"/>
+                </screenlet>
+            </widgets>
+        </section>
+    </screen>
+
+    <screen name="PurchasesByOrganizationReports">
+        <section>
+            <widgets>
+                <decorator-screen name="CommonOrderReportsDecorator" location="component://order/widget/ordermgr/ReportScreens.xml">
+                    <decorator-section name="body">
+                        <screenlet title="Purchases by Supplier">
+                            <include-form name="PurchasesByOrganizationReport" location="component://order/widget/ordermgr/ReportForms.xml"/>
+                        </screenlet>
+                    </decorator-section>
+                </decorator-screen>
+            </widgets>
+        </section>
+    </screen>
+
+    <screen name="OrderReportPurchasesByProduct">
+        <section>
+            <widgets>
+                <screenlet title="${uiLabelMap.OrderReportPurchasesByProduct}">
+                    <include-form name="OrderPurchaseProductOptions" location="component://order/widget/ordermgr/ReportForms.xml"/>
+                </screenlet>
+            </widgets>
+        </section>
+    </screen>
+
+    <screen name="PurchasesByProductReport">
+        <section>
+            <widgets>
+                <decorator-screen name="CommonOrderReportsDecorator" location="component://order/widget/ordermgr/ReportScreens.xml">
+                    <decorator-section name="body">
+                        <screenlet title="${uiLabelMap.OrderReportPurchasesByProduct}">
+                            <include-form name="OrderPurchaseProductOptions" location="component://order/widget/ordermgr/ReportForms.xml"/>
+                        </screenlet>
+                    </decorator-section>
+                </decorator-screen>
+            </widgets>
+        </section>
+    </screen>
+
+    <screen name="OrderReportPurchasesByPaymentMethod">
+        <section>
+            <widgets>
+                <screenlet title="${uiLabelMap.OrderReportPurchasesByPaymentMethod}">
+                    <include-form name="OrderPurchasePaymentOptions" location="component://order/widget/ordermgr/ReportForms.xml"/>
+                </screenlet>
+            </widgets>
+        </section>
+    </screen>
+    
+    <!--New Screen-->
+    <screen name="SalesReport">
+        <section>
+            <widgets>
+                <screenlet title="Sales">
+                    <include-form name="SalesReport" location="component://order/widget/ordermgr/ReportForms.xml"/>
+                </screenlet>
+            </widgets>
+        </section>
+    </screen>
+
+    <screen name="ComparativeOrderItemReport">
+        <section>
+        <actions>
+        <!-- <script location="component://order/widget/ordermgr/ComparativeOrderItemReports.groovy"/> -->
+        </actions>
+            <widgets>
+                <decorator-screen name="CommonOrderReportsDecorator" location="component://order/widget/ordermgr/ReportScreens.xml">
+                    <decorator-section name="body">
+                        <screenlet title="Comparative Order Item">
+                            <include-form name="ComparativeOrderItemReports" location="component://order/widget/ordermgr/ReportForms.xml" />
+                        </screenlet>
+                    </decorator-section>
+                </decorator-screen>
+            </widgets>
+        </section>
+    </screen>
+
+    <screen name="ComparativeOrderItemReports">
+        <section>
+        <actions>
+        <!-- <script location="component://order/widget/ordermgr/ComparativeOrderItemReports.groovy"/> -->
+        </actions>
+            <widgets>
+                <screenlet title="Comparative Order Item">
+                    <include-form name="ComparativeOrderItemReports" location="component://order/widget/ordermgr/ReportForms.xml" />
+                </screenlet>
+            </widgets>
+        </section>
+    </screen>
+
+    <screen name="NetBeforeOverheadReport">
+        <section>
+            <widgets>
+                <screenlet title="Net Before Overhead Report">
+                    <include-form name="NetBeforeOverheadReport" location="component://order/widget/ordermgr/ReportForms.xml"/>
+                </screenlet>
+            </widgets>
+        </section>
+    </screen>
+
+    <screen name="ProductDemandReport">
+        <section>
+            <widgets>
+                <screenlet title="Product Demand Report">
+                    <include-form name="ProductDemandReport" location="component://order/widget/ordermgr/ReportForms.xml"/>
+                </screenlet>
+            </widgets>
+        </section>
+    </screen> 
+
+    <screen name="OrderPurchaseReportPayment">
+        <section>
+            <actions>
+                <set field="titleProperty" value="OrderReportPurchasesByPaymentMethod"/>
+                <property-map resource="OrderUiLabels" map-name="uiLabelMap" global="true"/>
+                <property-map resource="AccountingUiLabels" map-name="uiLabelMap" global="true"/>
+                <property-map resource="ProductUiLabels" map-name="uiLabelMap" global="true"/>
+                <property-map resource="PartyUiLabels" map-name="uiLabelMap" global="true"/>
+                <property-map resource="CommonUiLabels" map-name="uiLabelMap" global="true"/>
+                <entity-condition entity-name="OrderPurchasePaymentSummary" list="orderPurchasePaymentSummaryList">
+                    <condition-list combine="and">
+                        <condition-expr field-name="productStoreId" operator="equals" from-field="parameters.productStoreId" ignore-if-empty="true"/>
+                        <condition-expr field-name="originFacilityId" operator="equals" from-field="parameters.originFacilityId" ignore-if-empty="true"/>
+                        <condition-expr field-name="terminalId" operator="equals" from-field="parameters.terminalId" ignore-if-empty="true"/>
+                        <condition-expr field-name="statusId" operator="equals" from-field="parameters.statusId" ignore-if-empty="true"/>
+                        <condition-expr field-name="orderDate" operator="greater-equals" from-field="parameters.fromOrderDate" ignore-if-null="true"/>
+                        <condition-expr field-name="orderDate" operator="less-equals" from-field="parameters.thruOrderDate" ignore-if-null="true"/>
+                    </condition-list>
+                    <select-field field-name="productStoreId"/>
+                    <select-field field-name="originFacilityId"/>
+                    <select-field field-name="terminalId"/>
+                    <select-field field-name="statusId"/>
+                    <select-field field-name="paymentMethodTypeId"/>
+                    <select-field field-name="description"/>
+                    <select-field field-name="maxAmount"/>
+                    <order-by field-name="productStoreId"/>
+                    <order-by field-name="originFacilityId"/>
+                    <order-by field-name="terminalId"/>
+                    <order-by field-name="paymentMethodTypeId"/>
+                </entity-condition>
+            </actions>
+            <widgets>
+                <platform-specific>
+                    <xsl-fo><html-template location="component://order/webapp/ordermgr/reports/OrderPurchaseReportPayment.fo.ftl"/></xsl-fo>
+                </platform-specific>
+            </widgets>
+        </section>
+    </screen>
+    <screen name="OrderPurchaseReportProduct">
+        <section>
+            <actions>
+                <set field="titleProperty" value="OrderReportPurchasesByProduct"/>
+                <set field="footerLabel" value="Purchases by Product"/>
+                <property-map resource="OrderUiLabels" map-name="uiLabelMap" global="true"/>
+                <property-map resource="ProductUiLabels" map-name="uiLabelMap" global="true"/>
+                <property-map resource="PartyUiLabels" map-name="uiLabelMap" global="true"/>
+                <property-map resource="CommonUiLabels" map-name="uiLabelMap" global="true"/>
+                <entity-condition entity-name="OrderPurchaseProductSummary" list="orderPurchaseProductSummaryList">
+                    <condition-list combine="and">
+                        <condition-expr field-name="productStoreId" operator="equals" from-field="parameters.productStoreId" ignore-if-empty="true"/>
+                        <condition-expr field-name="productId" operator="equals" from-field="parameters.productId" ignore-if-empty="true"/>
+                        <condition-expr field-name="orderTypeId" operator="equals" from-field="parameters.orderTypeId" ignore-if-empty="true"/>
+                        <condition-expr field-name="originFacilityId" operator="equals" from-field="parameters.originFacilityId" ignore-if-empty="true"/>
+                        <condition-expr field-name="terminalId" operator="equals" from-field="parameters.terminalId" ignore-if-empty="true"/>
+                        <condition-expr field-name="statusId" operator="equals" from-field="parameters.statusId" ignore-if-empty="true"/>
+                        <condition-expr field-name="orderDate" operator="greater-equals" from-field="parameters.fromOrderDate" ignore-if-null="true"/>
+                        <condition-expr field-name="orderDate" operator="less-equals" from-field="parameters.thruOrderDate" ignore-if-null="true"/>
+                    </condition-list>
+                    <select-field field-name="productStoreId"/>
+                    <select-field field-name="originFacilityId"/>
+                    <select-field field-name="terminalId"/>
+                    <select-field field-name="statusId"/>
+                    <select-field field-name="productId"/>
+                    <select-field field-name="internalName"/>
+                    <select-field field-name="quantity"/>
+                    <select-field field-name="cancelQuantity"/>
+                    <order-by field-name="productStoreId"/>
+                    <order-by field-name="originFacilityId"/>
+                    <order-by field-name="terminalId"/>
+                    <order-by field-name="productId"/>
+                </entity-condition>
+            </actions>
+            <widgets>
+                <decorator-screen name="FoReportDecorator" location="component://common/widget/CommonScreens.xml">
+                    <!-- at the top of every page we put the logo and company information -->
+                    <decorator-section name="header">
+                        <section>
+                            <widgets>
+                                <include-screen name="ZPCHeader" location="component://order/widget/ordermgr/ReportScreens.xml"/>
+                            </widgets>
+                        </section>
+                    </decorator-section>
+                    <decorator-section name="body">
+                        <section>
+                            <widgets>
+                                <platform-specific>
+                                    <xsl-fo><html-template location="component://order/webapp/ordermgr/reports/OrderPurchaseReportProduct.fo.ftl"/></xsl-fo>
+                                </platform-specific>
+                            </widgets>
+                        </section>
+                    </decorator-section>
+                </decorator-screen>
+            </widgets>
+        </section>
+    </screen>
+
+    <!-- generates the pdf for report of sales by store and customer, grouped by product -->
+    <screen name="SalesByStoreReport">
+        <section>
+            <actions>
+                <set field="titleProperty" value="OrderReportSalesByStore"/>
+                <set field="toPartyId" from-field="parameters.toPartyId"/>
+                <property-map resource="OrderUiLabels" map-name="uiLabelMap" global="true"/>
+                <property-map resource="ProductUiLabels" map-name="uiLabelMap" global="true"/>
+                <property-map resource="PartyUiLabels" map-name="uiLabelMap" global="true"/>
+                <property-map resource="CommonUiLabels" map-name="uiLabelMap" global="true"/>
+                <entity-condition entity-name="OrderReportSalesGroupByProduct" list="productReportList">
+                    <condition-list combine="and">
+                        <!-- this can use the other view, so long as the filter is by SALES_ORDER and fromPartyId = ProductStore.payToPartyId if provided -->
+                        <condition-expr field-name="productStoreId" operator="equals" from-field="parameters.productStoreId" ignore-if-empty="true"/>
+                        <condition-expr field-name="partyId" operator="equals" from-field="parameters.toPartyId" ignore-if-empty="true"/>
+                        <condition-expr field-name="roleTypeId" operator="equals" value="BILL_TO_CUSTOMER"/>
+                        <condition-expr field-name="orderTypeId" operator="equals" value="SALES_ORDER"/>
+                        <!-- possible bug: using from-field="parameters.orderStatusId" did not work for the following line -->
+                        <condition-expr field-name="orderStatusId" operator="equals" value="${parameters.orderStatusId}" ignore-if-empty="true"/>
+                        <condition-expr field-name="orderDate" operator="greater-equals" from-field="parameters.fromOrderDate" ignore-if-null="true"/>
+                        <condition-expr field-name="orderDate" operator="less-equals" from-field="parameters.thruOrderDate" ignore-if-null="true"/>
+                    </condition-list>
+                    <!-- note that we need to explicitly identify the fields to select, otherwise the query will include fields that can't logically be grouped -->
+                    <select-field field-name="productStoreId"/>
+                    <select-field field-name="storeName"/>
+                    <select-field field-name="productId"/>
+                    <select-field field-name="internalName"/>
+                    <select-field field-name="quantity"/>
+                    <select-field field-name="unitPrice"/>
+                    <order-by field-name="storeName"/>
+                    <order-by field-name="internalName"/>
+                </entity-condition>
+            </actions>
+            <widgets>
+                <platform-specific>
+                    <xsl-fo><html-template location="component://order/webapp/ordermgr/reports/SalesByStoreReport.fo.ftl"/></xsl-fo>
+                </platform-specific>
+            </widgets>
+        </section>
+    </screen>
+
+    <!-- generates report of open order items -->
+    <!-- <screen name="OpenOrderItemsReport">
+        <section>
+            <actions>
+                <set field="titleProperty" value="OrderReportOpenOrderItems"/>
+                <set field="headerItem" value="reports"/>
+                <set field="viewSize" value="${parameters.VIEW_SIZE}" default-value="20" type="Integer"/>
+                <set field="viewIndex" value="${parameters.VIEW_INDEX}" default-value="0" type="Integer"/>
+                <set field="fromOrderDate" from-field="parameters.fromOrderDate" type="Timestamp"/>
+                <set field="thruOrderDate" from-field="parameters.thruOrderDate" type="Timestamp"/>
+                <script location="component://order/webapp/ordermgr/WEB-INF/actions/reports/OpenOrderItemsReport.groovy"/>
+            </actions>
+            <widgets>
+                <decorator-screen name="main-decorator" location="${parameters.mainDecoratorLocation}">
+                    <decorator-section name="body">
+                        <screenlet title="${uiLabelMap.OrderReportOpenOrderItems} - ${productStore.storeName}">
+                            <include-form name="OpenOrderItemsList" location="component://order/widget/ordermgr/ReportForms.xml"/>
+                        </screenlet>
+                        <screenlet title="${uiLabelMap.OrderReportOpenOrderItems}">
+                            <include-form name="OpenOrderItemsTotal" location="component://order/widget/ordermgr/ReportForms.xml"/>
+                        </screenlet>
+                    </decorator-section>
+                </decorator-screen>
+            </widgets>
+        </section>
+    </screen> -->
+
+    <!-- generates the pdf for report of purchases by organization, grouped by product -->
+    <screen name="PurchasesByOrganizationReport">
+        <section>
+            <actions>
+                <set field="titleProperty" value="OrderReportPurchasesByOrganization"/>
+                <set field="footerLabel" value="Purchases by Supplier"/>
+                <set field="toPartyId" from-field="parameters.toPartyId"/>
+                <set field="fromPartyId" from-field="parameters.fromPartyId"/>
+                <property-map resource="OrderUiLabels" map-name="uiLabelMap" global="true"/>
+                <property-map resource="ProductUiLabels" map-name="uiLabelMap" global="true"/>
+                <property-map resource="PartyUiLabels" map-name="uiLabelMap" global="true"/>
+                <property-map resource="CommonUiLabels" map-name="uiLabelMap" global="true"/>
+                <entity-condition entity-name="OrderReportPurchasesGroupByProduct" list="productReportList">
+                    <condition-list combine="and">
+                        <condition-expr field-name="toPartyId" operator="equals" value="Company" ignore-if-empty="true"/>
+                        <condition-expr field-name="toRoleTypeId" operator="equals" value="BILL_TO_CUSTOMER"/>
+                        <condition-expr field-name="fromPartyId" operator="equals" from-field="parameters.fromPartyId" ignore-if-empty="true"/>
+                        <condition-expr field-name="fromRoleTypeId" operator="equals" value="BILL_FROM_VENDOR"/>
+                        <condition-expr field-name="orderTypeId" operator="equals" value="PURCHASE_ORDER"/>
+                        <condition-expr field-name="orderStatusId" operator="equals" value="${parameters.orderStatusId}" ignore-if-empty="true"/>
+                        <condition-expr field-name="orderDate" operator="greater-equals" from-field="parameters.fromOrderDate" ignore-if-null="true"/>
+                        <condition-expr field-name="orderDate" operator="less-equals" from-field="parameters.thruOrderDate" ignore-if-null="true"/>
+                    </condition-list>
+                    <!-- note that we need to explicitly identify the fields to select, otherwise the query will include fields that can't logically be grouped -->
+                    <select-field field-name="productId"/>
+                    <select-field field-name="internalName"/>
+                    <select-field field-name="quantity"/>
+                    <select-field field-name="unitPrice"/>
+                    <order-by field-name="internalName"/>
+                </entity-condition>
+            </actions>
+            <widgets>
+                <decorator-screen name="FoReportDecorator" location="component://common/widget/CommonScreens.xml">
+                    <!-- at the top of every page we put the logo and company information -->
+                    <decorator-section name="header">
+                        <section>
+                            <widgets>
+                                <include-screen name="ZPCHeader" location="component://order/widget/ordermgr/ReportScreens.xml"/>
+                            </widgets>
+                        </section>
+                    </decorator-section>
+                    <decorator-section name="body">
+                        <section>
+                            <widgets>
+                                <platform-specific>
+                                    <xsl-fo><html-template location="component://order/webapp/ordermgr/reports/PurchasesByOrganizationReport.fo.ftl"/></xsl-fo>
+                                </platform-specific>
+                            </widgets>
+                        </section>
+                    </decorator-section>
+                </decorator-screen>
+            </widgets>
+        </section>
+    </screen>
+    
+    <screen name="ComparativeOrderItemReportExcel">
+        <section>
+            <actions>
+               <script location="component://order/webapp/ordermgr/reports/ComparativeOrderItemReportsExcel.groovy"/>
+            </actions>
+            <widgets>
+                    <include-form name="ComparativeOrderItemReportExcel" location="component://order/widget/ordermgr/ReportForms.xml"/>
+            </widgets>
+        </section>
+    </screen>
+    
+    <screen name="SalesOrderReport">
+        <section>
+            <actions>
+                <entity-condition entity-name="SalesOrderItemStarSchema" list="SalesReportList">
+                    <condition-list combine="and">
+                        <condition-expr field-name="orderDate" operator="greater-equals" from-field="parameters.fromOrderDate" ignore-if-null="true"/>
+                        <condition-expr field-name="orderDate" operator="less" from-field="parameters.thruOrderDate" ignore-if-null="true"/>
+                    </condition-list>
+                </entity-condition>
+            </actions>
+            <widgets>
+                <platform-specific>
+                    <xml><html-template location="component://order/webapp/ordermgr/reports/SalesReport.rptdesign"/></xml>
+                </platform-specific>
+            </widgets>
+        </section>
+    </screen>
+
+    <screen name="NetBeforeOverheadOrderReport">
+        <section>
+            <widgets>
+                <platform-specific>
+                    <xml><html-template location="component://order/webapp/ordermgr/reports/NetBeforeOverheadReport.rptdesign"/></xml>
+                </platform-specific>
+            </widgets>
+        </section>
+    </screen>
+    
+    <screen name="ProductDemandOrderReport ">
+        <section>
+            <widgets>
+                <platform-specific>
+                    <xml><html-template location="component://order/webapp/ordermgr/reports/ProductDemandReport.rptdesign"/></xml>
+                </platform-specific>
+            </widgets>
+        </section>
+    </screen>
+    
+    <!-- Sale Order By Referrer -->
+    <screen name="SaleOrdersByReferrerReport">
+        <section>
+            <widgets>
+                <screenlet title="Sale Orders by Referrer Report">
+                    <include-form name="OrderByReferrer" location="component://order/widget/ordermgr/ReportForms.xml"/>
+                </screenlet>
+            </widgets>
+        </section>
+    </screen>
+    <!-- Sale Order By Channel -->
+    <screen name="SaleOrdersByChannelReport">
+        <section>
+            <widgets>
+                <screenlet title="Sale Orders By Channel Report">
+                    <include-form name="SaleOrdersByChannel" location="component://order/widget/ordermgr/ReportForms.xml"/>
+                </screenlet>
+            </widgets>
+        </section>
+    </screen>
+    <!-- Sale Order with Discount Code -->
+    <screen name="SaleOrderDiscountCodeReport">
+        <section>
+            <widgets>
+                <screenlet title="Sale Orders Discount Code Report">
+                    <include-form name="SaleOrderDiscountCode" location="component://order/widget/ordermgr/ReportForms.xml"/>
+                </screenlet>
+            </widgets>
+        </section>
+    </screen>
+    <!-- Last Three Months Sales Report -->
+    <screen name="Last3MonthsSalesReport">
+        <section>
+            <widgets>
+                <screenlet title="Last Three Months Sales Report">
+                    <include-form name="Last3MonthsSalesReport" location="component://order/widget/ordermgr/ReportForms.xml"/>
+                </screenlet>
+            </widgets>
+        </section>
+    </screen>
+    <!-- Coupon Sales Report -->
+    <screen name="CouponSalesReport">
+        <section>
+            <widgets>
+                <screenlet title="Coupon Sales Report">
+                    <include-form name="CouponSalesReport" location="component://order/widget/ordermgr/ReportForms.xml"/>
+                </screenlet>
+            </widgets>
+        </section>
+    </screen>
+    
+    <screen name="OpenOrderItemsReport">
+        <section>
+            <actions>
+                <set field="titleProperty" value="OrderReportOpenOrderItems"/>
+                <set field="headerItem" value="reports"/>
+                <set field="footerLabel" value="Open Order Items"/>
+                <set field="viewSize" value="${parameters.VIEW_SIZE}" default-value="20" type="Integer"/>
+                <set field="viewIndex" value="${parameters.VIEW_INDEX}" default-value="0" type="Integer"/>
+                <set field="fromOrderDate" from-field="parameters.fromOrderDate" type="Timestamp"/>
+                <set field="thruOrderDate" from-field="parameters.thruOrderDate" type="Timestamp"/>
+                <script location="component://order/webapp/ordermgr/WEB-INF/actions/reports/OpenOrderItemsReport.groovy"/>
+            </actions>
+            <widgets>
+                <platform-specific>
+                    <xsl-fo><html-template location="component://order/webapp/ordermgr/reports/OpenOrderItemsReport.fo.ftl"/></xsl-fo>
+                </platform-specific>
+            </widgets>
+        </section>
+    </screen>
+     <!-- generates the excelsheet for report of sales by store and customer, grouped by product (by swetalina)-->
+     <screen name="SalesByStoreExcel">
+	<section>
+		<actions>
+			<set field="productId" from-field="parameters.productId"/>
+			<set field="productStoreId" from-field="parameters.productStoreId"/>
+			<entity-and list="salesByStore" entity-name="OrderReportSalesGroupByProduct">
+				<!-- <select-field field-name="productId"/> -->
+<!-- 				<select-field field-name="storeName"/> -->
+<!--                 <select-field field-name="internalName"/> -->
+<!--                 <select-field field-name="quantity"/> -->
+<!--                 <select-field field-name="unitPrice"/> -->
+			</entity-and>
+		</actions>
+	<widgets>
+		<include-form name="ListSalesByStoreExcel" location="component://order/widget/ordermgr/ReportForms.xml"/>
+	</widgets>
+	</section>
+	</screen>
+	 <screen name="OrderPurchaseReportExcel">
+	<section>
+		<actions>
+                <set field="titleProperty" value="OrderReportPurchasesByProduct"/>
+                <property-map resource="OrderUiLabels" map-name="uiLabelMap" global="true"/>
+                <property-map resource="ProductUiLabels" map-name="uiLabelMap" global="true"/>
+                <property-map resource="PartyUiLabels" map-name="uiLabelMap" global="true"/>
+                <property-map resource="CommonUiLabels" map-name="uiLabelMap" global="true"/>
+                <entity-condition entity-name="OrderPurchaseProductSummary" list="orderPurchaseProductSummaryList">
+                    <condition-list combine="and">
+                        <condition-expr field-name="productStoreId" operator="equals" from-field="parameters.productStoreId" ignore-if-empty="true"/>
+                        <condition-expr field-name="orderTypeId" operator="equals" from-field="parameters.orderTypeId" ignore-if-empty="true"/>
+                        <condition-expr field-name="originFacilityId" operator="equals" from-field="parameters.originFacilityId" ignore-if-empty="true"/>
+                        <condition-expr field-name="terminalId" operator="equals" from-field="parameters.terminalId" ignore-if-empty="true"/>
+                        <condition-expr field-name="statusId" operator="equals" from-field="parameters.statusId" ignore-if-empty="true"/>
+                        <condition-expr field-name="orderDate" operator="greater-equals" from-field="parameters.fromOrderDate" ignore-if-null="true"/>
+                        <condition-expr field-name="orderDate" operator="less-equals" from-field="parameters.thruOrderDate" ignore-if-null="true"/>
+                    </condition-list>
+                    <select-field field-name="productStoreId"/>
+                    <select-field field-name="originFacilityId"/>
+                    <select-field field-name="terminalId"/>
+                    <select-field field-name="statusId"/>
+                    <select-field field-name="productId"/>
+                    <select-field field-name="internalName"/>
+                    <select-field field-name="quantity"/>
+                    <select-field field-name="cancelQuantity"/>
+                    <order-by field-name="productStoreId"/>
+                    <order-by field-name="originFacilityId"/>
+                    <order-by field-name="terminalId"/>
+                    <order-by field-name="productId"/>
+                </entity-condition>
+            </actions>
+	<widgets>
+		<include-form name="ListOrderPurchaseReportExcel" location="component://order/widget/ordermgr/ReportForms.xml"/>
+	</widgets>
+	</section>
+	</screen>
+    <screen name="PurchasesByOrganizationReportExcel">
+	<section>
+		<actions>
+			<set field="fromPartyId" from-field="parameters.fromPartyId"/>
+			<set field="toPartyId" from-field="parameters.toPartyId"/>
+			<set field="orderStatusId" from-field="parameters.orderStatusId"/>
+			 <entity-condition entity-name="OrderReportPurchasesGroupByProduct" list="purchasesByOrganizationReportList">
+                    <condition-list combine="and">
+                       <condition-expr field-name="orderStatusId" operator="equals" from-field="parameters.orderStatusId" ignore-if-empty="true"/>  
+                    	<condition-expr field-name="toPartyId" operator="equals" value="Company" ignore-if-empty="true"/>
+                        <condition-expr field-name="toRoleTypeId" operator="equals" value="BILL_TO_CUSTOMER"/>
+                        <condition-expr field-name="fromPartyId" operator="equals" from-field="parameters.fromPartyId" ignore-if-empty="true"/>
+                        <condition-expr field-name="fromRoleTypeId" operator="equals" value="BILL_FROM_VENDOR"/>
+                        <condition-expr field-name="orderTypeId" operator="equals" value="PURCHASE_ORDER"/>
+                        <condition-expr field-name="orderDate" operator="greater-equals" from-field="parameters.fromOrderDate" ignore-if-null="true"/>
+                        <condition-expr field-name="orderDate" operator="less-equals" from-field="parameters.thruOrderDate" ignore-if-null="true"/> 
+                    </condition-list>
+                <!-- <select-field field-name="productStoreId"/> -->
+				<select-field field-name="productId"/>
+                <select-field field-name="internalName"/>
+                 <select-field field-name="orderStatusId"/>
+                <select-field field-name="quantity"/>
+                <select-field field-name="unitPrice"/> 
+                <select-field field-name="orderDate"/> 
+                    </entity-condition>
+		</actions>
+	<widgets>
+		<include-form name="ListPurchasesByOrganizationReportExcel" location="component://order/widget/ordermgr/ReportForms.xml"/>
+	</widgets>
+	</section>
+	</screen>
+	 <screen name="OpenOrderItemsReportExcel">
+	<section>
+		<actions>
+		         <set field="titleProperty" value="OrderReportOpenOrderItems"/>
+                <set field="headerItem" value="reports"/>
+                <set field="viewIndex" value="${parameters.VIEW_INDEX}" default-value="0" type="Integer"/>
+		        <set field="fromOrderDate" from-field="parameters.fromOrderDate" type="Timestamp"/>
+                <set field="thruOrderDate" from-field="parameters.thruOrderDate" type="Timestamp"/> 
+			   <set field="orderStatusId" from-field="parameters.orderStatusId"/>
+			   <set field="orderTypeId" from-field="parameters.orderTypeId"/>
+			   <set field="productStoreId" from-field="parameters.productStoreId"/>
+		  <script location="component://order/webapp/ordermgr/WEB-INF/actions/reports/OpenOrderItemsReport.groovy"/> 
+		</actions>
+	<widgets>
+		<include-form name="ListOpenOrderItemsReportExcel" location="component://order/widget/ordermgr/ReportForms.xml"/>
+	</widgets>
+    </section>
+
+    </screen>
+
+    <screen name="PurchasesByProductReport">
+        <section>
+            <widgets>
+                <decorator-screen name="CommonOrderReportsDecorator" location="component://order/widget/ordermgr/ReportScreens.xml">
+                    <decorator-section name="body">
+                        <screenlet title="Purchases by Product">
+                            <include-form name="OrderPurchaseProductOptions" location="component://order/widget/ordermgr/ReportForms.xml"/>
+                        </screenlet>
+                    </decorator-section>
+                </decorator-screen>
+            </widgets>
+        </section>
+    </screen>
+    <screen name="SalesByDeliveryDateReports">
+        <section>
+            <actions>
+                <set field="fromOrderDate" from-field="parameters.fromOrderDate" type="Timestamp"/>
+                <set field="thruOrderDate" from-field="parameters.thruOrderDate" type="Timestamp"/> 
+                <set field="productId" from-field="parameters.productId" />
+                <set field="partyId" from-field="parameters.partyId" />
+            </actions>
+            <widgets>
+                <decorator-screen name="CommonOrderReportsDecorator" location="component://order/widget/ordermgr/ReportScreens.xml">
+                    <decorator-section name="body">
+                        <screenlet title="Sales by Delivery Date">
+                            <include-form name="SalesByDeliveryDateReport" location="component://order/widget/ordermgr/ReportForms.xml"/>
+                        </screenlet>
+                    </decorator-section>
+                </decorator-screen>
+            </widgets>
+        </section>
+    </screen>
+    <screen name="SalesByDeliveryDateReport">
+        <section>
+            <actions>
+                <set field="fromOrderDate" from-field="parameters.fromOrderDate" type="Timestamp"/>
+                <set field="thruOrderDate" from-field="parameters.thruOrderDate" type="Timestamp"/> 
+                <set field="productId" from-field="parameters.productId" />
+                <set field="partyId" from-field="parameters.partyId" />
+            </actions>
+            <widgets>
+                <screenlet title="Sales by Delivery Date">
+                    <include-form name="SalesByDeliveryDateReport" location="component://order/widget/ordermgr/ReportForms.xml"/>
+               </screenlet>
+            </widgets>
+        </section>
+    </screen> 
+    <screen name="SalesByDeliveryDateReportPDF">
+        <section>
+            <actions>
+                <set field="fromOrderDate" from-field="parameters.fromOrderDate" type="Timestamp"/>
+                <set field="thruOrderDate" from-field="parameters.thruOrderDate" type="Timestamp"/> 
+                <set field="productId" from-field="parameters.productId" />
+                <set field="partyId" from-field="parameters.partyId" />
+                <set field="footerLabel" value="Sales by Delivery Date" />
+            <script location="component://order/webapp/ordermgr/WEB-INF/actions/reports/SalesByDeliveryDateReport.groovy"/> 
+            </actions>
+            <widgets>
+                <decorator-screen name="FoReportDecorator" location="component://common/widget/CommonScreens.xml">
+                    <!-- at the top of every page we put the logo and company information -->
+                    <decorator-section name="header">
+                        <section>
+                            <widgets>
+                                <include-screen name="ZPCHeader" location="component://order/widget/ordermgr/ReportScreens.xml"/>
+                            </widgets>
+                        </section>
+                    </decorator-section>
+                    <decorator-section name="body">
+                        <section>
+                            <widgets>
+                                <platform-specific>
+                                    <xsl-fo><html-template location="component://order/webapp/ordermgr/reports/SalesByDeliveryDateReport.fo.ftl"/></xsl-fo>
+                                </platform-specific>
+                            </widgets>
+                        </section>
+                    </decorator-section>
+                </decorator-screen>
+            </widgets>
+        </section>
+    </screen> 
+     <screen name="SalesByDeliveryDateReportExcel">
+        <section>
+            <actions>
+                <set field="fromOrderDate" from-field="parameters.fromOrderDate" type="Timestamp"/>
+                <set field="thruOrderDate" from-field="parameters.thruOrderDate" type="Timestamp"/> 
+                <set field="productId" from-field="parameters.productId" />
+                <script location="component://order/webapp/ordermgr/WEB-INF/actions/reports/SalesByDeliveryDateReport.groovy" />
+        </actions>
+    <widgets>
+        <include-form name="ListSalesByDeliveryDateReportExcel" location="component://order/widget/ordermgr/ReportForms.xml"/>
+    </widgets>
+        </section>
+    </screen>
+
+    <screen name="CustomerBalanceReport">
+        <section>
+            <actions>
+                <set field="titleProperty" value="OrderReportCustomerBalances"/>
+            </actions>
+            <widgets>
+                <decorator-screen name="CommonOrderReportsDecorator" location="component://order/widget/ordermgr/ReportScreens.xml">
+                    <decorator-section name="body">
+                        <screenlet title="Customer Balances">
+                            <include-form name="CustomerBalanceReport" location="component://order/widget/ordermgr/ReportForms.xml" />
+                        </screenlet>
+                    </decorator-section>
+                </decorator-screen>
+            </widgets>
+        </section>
+    </screen>
+
+    <screen name="CustomerBalanceReportPDF">
+        <section>
+            <actions>
+                <set field="titleProperty" value="OrderReportCustomerBalances"/>
+                <set field="headerItem" value="reports"/>
+                <set field="footerLabel" value="Customer Balances"/>
+                <set field="viewSize" value="${parameters.VIEW_SIZE}" default-value="20" type="Integer"/>
+                <set field="viewIndex" value="${parameters.VIEW_INDEX}" default-value="0" type="Integer"/>
+                <set field="fromDate" from-field="parameters.fromDate" type="Timestamp"/>
+                <set field="thruDate" from-field="parameters.thruDate" type="Timestamp"/>
+                <script location="component://order/webapp/ordermgr/WEB-INF/actions/reports/CustomerBalanceReport.groovy"/>
+            </actions>
+            <widgets>
+                <decorator-screen name="FoReportDecorator" location="component://common/widget/CommonScreens.xml">
+                    <!-- at the top of every page we put the logo and company information -->
+                    <decorator-section name="header">
+                        <section>
+                            <widgets>
+                                <include-screen name="ZPCHeader" location="component://order/widget/ordermgr/ReportScreens.xml"/>
+                            </widgets>
+                        </section>
+                    </decorator-section>
+                    <decorator-section name="body">
+                        <section>
+                            <widgets>
+                                <platform-specific>
+                                    <xsl-fo><html-template location="component://order/webapp/ordermgr/reports/CustomerBalanceReport.fo.ftl"/></xsl-fo>
+                                </platform-specific>
+                            </widgets>
+                        </section>
+                    </decorator-section>
+                </decorator-screen>
+            </widgets>
+        </section>
+    </screen>
+
+    <screen name="DebitBalanceReport">
+        <section>
+            <widgets>
+                <decorator-screen name="CommonOrderReportsDecorator" location="component://order/widget/ordermgr/ReportScreens.xml">
+                    <decorator-section name="body">
+                        <screenlet title="Debit Balance">
+                            <include-form name="DebitBalanceReport" location="component://order/widget/ordermgr/ReportForms.xml" />
+                        </screenlet>
+                    </decorator-section>
+                </decorator-screen>
+            </widgets>
+        </section>
+    </screen>
+
+    <screen name="DebitBalanceReportPDF">
+        <section>
+            <actions>
+                <set field="titleProperty" value="OrderReportDebitBalance"/>
+                <set field="headerItem" value="reports"/>
+                <set field="footerLabel" value="Debit Balance"/>
+                <set field="viewSize" value="${parameters.VIEW_SIZE}" default-value="20" type="Integer"/>
+                <set field="viewIndex" value="${parameters.VIEW_INDEX}" default-value="0" type="Integer"/>
+                <set field="invoicePaymentInfoList" from-field="parameters.invoicePaymentInfoList" type="List" />
+            </actions>
+            <widgets>
+                <decorator-screen name="FoReportDecorator" location="component://common/widget/CommonScreens.xml">
+                    <!-- at the top of every page we put the logo and company information -->
+                    <decorator-section name="header">
+                        <section>
+                            <widgets>
+                                <include-screen name="ZPCHeader" location="component://order/widget/ordermgr/ReportScreens.xml"/>
+                            </widgets>
+                        </section>
+                    </decorator-section>
+                    <decorator-section name="body">
+                        <section>
+                            <widgets>
+                                <platform-specific>
+                                    <xsl-fo><html-template location="component://order/webapp/ordermgr/reports/DebitBalanceReport.fo.ftl"/></xsl-fo>
+                                </platform-specific>
+                            </widgets>
+                        </section>
+                    </decorator-section>
+                </decorator-screen>
+            </widgets>
+        </section>
+    </screen>
+
+    <screen name="SalesByProductReport">
+        <section>
+            <actions>
+                <set field="titleProperty" value="OrderReportSales"/>
+            </actions>
+            <widgets>
+                <decorator-screen name="CommonOrderReportsDecorator" location="component://order/widget/ordermgr/ReportScreens.xml">
+                    <decorator-section name="body">
+                        <screenlet title="Sales">
+                            <include-form name="SalesByProductReport" location="component://order/widget/ordermgr/ReportForms.xml" />
+                        </screenlet>
+                    </decorator-section>
+                </decorator-screen>
+            </widgets>
+        </section>
+    </screen>
+
+    <screen name="SalesByProductReportPDF">
+        <section>
+            <actions>
+                <set field="titleProperty" value="OrderReportSales"/>
+                <set field="headerItem" value="reports"/>
+                <set field="footerLabel" value="Sales"/>
+                <set field="viewSize" value="${parameters.VIEW_SIZE}" default-value="20" type="Integer"/>
+                <set field="viewIndex" value="${parameters.VIEW_INDEX}" default-value="0" type="Integer"/>
+                <set field="productId" from-field="parameters.productId" />
+                <set field="partyId" from-field="parameters.partyId" />
+                <set field="orderStatusId" from-field="parameters.orderStatusId" />
+                <set field="orderTypeId" from-field="parameters.orderTypeId" />
+                <set field="fromDate" from-field="parameters.fromDate" type="Timestamp"/>
+                <set field="thruDate" from-field="parameters.thruDate" type="Timestamp"/>
+                <script location="component://order/webapp/ordermgr/WEB-INF/actions/reports/SalesByProductReport.groovy"/>
+            </actions>
+            <widgets>
+                <decorator-screen name="FoReportDecorator" location="component://common/widget/CommonScreens.xml">
+                    <!-- at the top of every page we put the logo and company information -->
+                    <decorator-section name="header">
+                        <section>
+                            <widgets>
+                                <include-screen name="ZPCHeader" location="component://order/widget/ordermgr/ReportScreens.xml"/>
+                            </widgets>
+                        </section>
+                    </decorator-section>
+                    <decorator-section name="body">
+                        <section>
+                            <widgets>
+                                <platform-specific>
+                                    <xsl-fo><html-template location="component://order/webapp/ordermgr/reports/SalesByProductReport.fo.ftl"/></xsl-fo>
+                                </platform-specific>
+                            </widgets>
+                        </section>
+                    </decorator-section>
+                </decorator-screen>
+            </widgets>
+        </section>
+    </screen>
+
+    <screen name="PendingLoadingSlipsReport">
+        <section>
+            <actions>
+                <set field="titleProperty" value="Pending Shipments"/>
+            </actions>
+            <widgets>
+                <decorator-screen name="CommonOrderReportsDecorator" location="component://order/widget/ordermgr/ReportScreens.xml">
+                    <decorator-section name="body">
+                        <screenlet title="Pending Shipments">
+                            <include-form name="PendingLoadingSlipsReport" location="component://order/widget/ordermgr/ReportForms.xml"/>
+                        </screenlet>
+                    </decorator-section>
+                </decorator-screen>
+            </widgets>
+        </section>
+    </screen>
+
+    <screen name="PendingLoadingSlipsReportPdf">
+        <section>
+            <actions>
+                <script location="component://order/webapp/ordermgr/reports/GetPendingLoadingSlips.groovy"/>
+                <set field="footerLabel" value="Pending Shipments"/>
+            </actions>
+            <widgets>
+                <decorator-screen name="FoReportDecorator" location="component://common/widget/CommonScreens.xml">
+                    <decorator-section name="header">
+                        <section>
+                            <widgets>
+                                <include-screen name="ZPCHeader"
+                                                location="component://product/widget/facility/ShipmentScreens.xml"/>
+                            </widgets>
+                        </section>
+                    </decorator-section>
+                    <decorator-section name="body">
+                        <section>
+                            <widgets>
+                                <platform-specific>
+                                    <xsl-fo>
+                                        <html-template
+                                                location="component://order/webapp/ordermgr/reports/PendingLoadingSlips.fo.ftl" />
+                                    </xsl-fo>
+                                </platform-specific>
+                            </widgets>
+                        </section>
+                    </decorator-section>
+                </decorator-screen>
+            </widgets>
+        </section>
+    </screen>
+    
+    <screen name="customerPaymentSummary">
+        <section>
+            <actions>
+                <set field="fromDate" from-field="parameters.fromDate" type="Timestamp"/>
+                <set field="partyId" from-field="parameters.partyId" />
+            	<script location="component://order/webapp/ordermgr/WEB-INF/actions/reports/customerPaymentSummarypdf.groovy"/>
+            	<set field="title" value="Customer Payment Summary"/>
+            </actions>
+            <widgets>
+                <decorator-screen name="main-decorator" location="${parameters.mainDecoratorLocation}">
+                 <decorator-section name="body">
+                    <decorator-screen name="FindScreenDecorator" location="component://common/widget/CommonScreens.xml">
+                        <decorator-section name="search-options">
+								<include-form name="customerPaymentSummary" location="component://order/widget/ordermgr/ReportForms.xml"/>
+						</decorator-section>
+						<decorator-section name="search-results">
+							<platform-specific>
+								<html>
+									<html-template location="component://order/webapp/ordermgr/reports/customerPaymentSummaryList.ftl" />
+								</html>
+							</platform-specific>
+						</decorator-section>
+					</decorator-screen>
+                  </decorator-section>
+                </decorator-screen>
+            </widgets>
+        </section>
+    </screen>
+    
+    <screen name="customerPaymentSummarypdf">
+        <section>
+            <actions>
+                <set field="fromDate" from-field="parameters.fromDate" type="Timestamp"/>
+                <set field="partyId" from-field="parameters.partyId" />
+                <set field="footerLabel" value="Customer Payment Summary" />
+            <script location="component://order/webapp/ordermgr/WEB-INF/actions/reports/customerPaymentSummarypdf.groovy"/> 
+            </actions>
+            <widgets>
+                <decorator-screen name="FoReportDecorator" location="component://common/widget/CommonScreens.xml">
+                    <!-- at the top of every page we put the logo and company information -->
+                    <decorator-section name="header">
+                        <section>
+                            <widgets>
+                                <include-screen name="ZPCHeader" location="component://order/widget/ordermgr/ReportScreens.xml"/>
+                            </widgets>
+                        </section>
+                    </decorator-section>
+                    <decorator-section name="body">
+                        <section>
+                            <widgets>
+                                <platform-specific>
+                                    <xsl-fo><html-template location="component://order/webapp/ordermgr/reports/customerPaymentSummarypdf.fo.ftl"/></xsl-fo>
+                                </platform-specific>
+                            </widgets>
+                        </section>
+                    </decorator-section>
+                </decorator-screen>
+            </widgets>
+        </section>
+    </screen>
+    
+    
+    <screen name="supplierPaymentSummary">
+        <section>
+            <actions>
+                <set field="fromDate" from-field="parameters.fromDate" type="Timestamp"/>
+                <set field="partyId" from-field="parameters.partyId" />
+            	<script location="component://order/webapp/ordermgr/WEB-INF/actions/reports/supplerPaymentSummarypdf.groovy"/>
+            	<set field="title" value="Supplier Payment Summary"/>
+            </actions>
+            <widgets>
+                
+                <decorator-screen name="main-decorator" location="${parameters.mainDecoratorLocation}">
+                 <decorator-section name="body">
+                    <decorator-screen name="FindScreenDecorator" location="component://common/widget/CommonScreens.xml">
+                        <decorator-section name="search-options">
+								<include-form name="supplierPaymentSummary" location="component://order/widget/ordermgr/ReportForms.xml"/>
+						</decorator-section>
+						<decorator-section name="search-results">
+							<platform-specific>
+								<html>
+									<html-template location="component://order/webapp/ordermgr/reports/supplierPaymentSummaryList.ftl" />
+								</html>
+							</platform-specific>
+						</decorator-section>
+					</decorator-screen>
+                  </decorator-section>
+                </decorator-screen>
+                
+            </widgets>
+        </section>
+    </screen>
+    
+    <screen name="supplierPaymentSummarypdf">
+        <section>
+            <actions>
+                <set field="fromDate" from-field="parameters.fromDate" type="Timestamp"/>
+                <set field="partyId" from-field="parameters.partyId" />
+                <set field="footerLabel" value="Customer Payment Summary" />
+            <script location="component://order/webapp/ordermgr/WEB-INF/actions/reports/supplerPaymentSummarypdf.groovy"/> 
+            </actions>
+            <widgets>
+                <decorator-screen name="FoReportDecorator" location="component://common/widget/CommonScreens.xml">
+                    <!-- at the top of every page we put the logo and company information -->
+                    <decorator-section name="header">
+                        <section>
+                            <widgets>
+                                <include-screen name="ZPCHeader" location="component://order/widget/ordermgr/ReportScreens.xml"/>
+                            </widgets>
+                        </section>
+                    </decorator-section>
+                    <decorator-section name="body">
+                        <section>
+                            <widgets>
+                                <platform-specific>
+                                    <xsl-fo><html-template location="component://order/webapp/ordermgr/reports/supplierPaymentSummarypdf.fo.ftl"/></xsl-fo>
+                                </platform-specific>
+                            </widgets>
+                        </section>
+                    </decorator-section>
+                </decorator-screen>
+            </widgets>
+        </section>
+    </screen>
+    
+    
+    <screen name="customerPaymentDetail">
+        <section>
+            <actions>
+               	<set field="fromDate" from-field="parameters.fromDate" type="Timestamp"/>
+                <set field="partyId" from-field="parameters.partyId" />
+            	<script location="component://order/webapp/ordermgr/WEB-INF/actions/reports/customerPaymentDetailpdf.groovy"/>
+            	<set field="title" value="Customer Payment Detail"/>
+            </actions>
+            <widgets>
+            	<decorator-screen name="main-decorator" location="${parameters.mainDecoratorLocation}">
+                 <decorator-section name="body">
+                    <decorator-screen name="FindScreenDecorator" location="component://common/widget/CommonScreens.xml">
+                        <decorator-section name="search-options">
+								<include-form name="customerPaymentDetail" location="component://order/widget/ordermgr/ReportForms.xml"/>
+						</decorator-section>
+						<decorator-section name="search-results">
+							<platform-specific>
+								<html>
+									<html-template location="component://order/webapp/ordermgr/reports/customerPaymentDetailList.ftl" />
+								</html>
+							</platform-specific>
+						</decorator-section>
+					</decorator-screen>
+                  </decorator-section>
+                </decorator-screen>
+            </widgets>
+        </section>
+    </screen>
+    
+    <screen name="customerPaymentDetailpdf">
+        <section>
+            <actions>
+                <set field="fromDate" from-field="parameters.fromDate" type="Timestamp"/>
+                <set field="partyId" from-field="parameters.partyId" />
+                <set field="footerLabel" value="Customer Payment Summary" />
+            	<script location="component://order/webapp/ordermgr/WEB-INF/actions/reports/customerPaymentDetailpdf.groovy"/> 
+            </actions>
+            <widgets>
+                <decorator-screen name="FoReportDecorator" location="component://common/widget/CommonScreens.xml">
+                    <!-- at the top of every page we put the logo and company information -->
+                    <decorator-section name="header">
+                        <section>
+                            <widgets>
+                                <include-screen name="ZPCHeader" location="component://order/widget/ordermgr/ReportScreens.xml"/>
+                            </widgets>
+                        </section>
+                    </decorator-section>
+                    <decorator-section name="body">
+                        <section>
+                            <widgets>
+                                <platform-specific>
+                                    <xsl-fo><html-template location="component://order/webapp/ordermgr/reports/customerPaymentDetailpdf.fo.ftl"/></xsl-fo>
+                                </platform-specific>
+                            </widgets>
+                        </section>
+                    </decorator-section>
+                </decorator-screen>
+            </widgets>
+        </section>
+    </screen>
+    
+    
+    <screen name="supplierPaymentDetail">
+        <section>
+            <actions>
+                <set field="fromDate" from-field="parameters.fromDate" type="Timestamp"/>
+                <set field="thruDate" from-field="parameters.thruDate" type="Timestamp"/> 
+                <set field="partyId" from-field="parameters.partyId" />
+            	<script location="component://order/webapp/ordermgr/WEB-INF/actions/reports/supplierPaymentDetailpdf.groovy"/> 
+            	<set field="title" value="Supplier Payment Detail"/>
+            </actions>
+            <widgets>
+                <decorator-screen name="main-decorator" location="${parameters.mainDecoratorLocation}">
+                 <decorator-section name="body">
+                    <decorator-screen name="FindScreenDecorator" location="component://common/widget/CommonScreens.xml">
+                        <decorator-section name="search-options">
+								<include-form name="supplierPaymentDetail" location="component://order/widget/ordermgr/ReportForms.xml"/>
+						</decorator-section>
+						<decorator-section name="search-results">
+							<platform-specific>
+								<html>
+									<html-template location="component://order/webapp/ordermgr/reports/supplierPaymentDetailList.ftl" />
+								</html>
+							</platform-specific>
+						</decorator-section>
+					</decorator-screen>
+                  </decorator-section>
+                </decorator-screen>
+                
+            </widgets>
+        </section>
+    </screen>
+    
+    <screen name="supplierPaymentDetailpdf">
+        <section>
+            <actions>
+                <set field="fromDate" from-field="parameters.fromDate" type="Timestamp"/>
+                <set field="thruDate" from-field="parameters.thruDate" type="Timestamp"/> 
+                <set field="partyId" from-field="parameters.partyId" />
+                <set field="footerLabel" value="Supplier Payment Summary" />
+            <script location="component://order/webapp/ordermgr/WEB-INF/actions/reports/supplierPaymentDetailpdf.groovy"/> 
+            </actions>
+            <widgets>
+                <decorator-screen name="FoReportDecorator" location="component://common/widget/CommonScreens.xml">
+                    <!-- at the top of every page we put the logo and company information -->
+                    <decorator-section name="header">
+                        <section>
+                            <widgets>
+                                <include-screen name="ZPCHeader" location="component://order/widget/ordermgr/ReportScreens.xml"/>
+                            </widgets>
+                        </section>
+                    </decorator-section>
+                    <decorator-section name="body">
+                        <section>
+                            <widgets>
+                                <platform-specific>
+                                    <xsl-fo><html-template location="component://order/webapp/ordermgr/reports/supplierPaymentDetailpdf.fo.ftl"/></xsl-fo>
+                                </platform-specific>
+                            </widgets>
+                        </section>
+                    </decorator-section>
+                </decorator-screen>
+            </widgets>
+        </section>
+    </screen>
+    
+    
+
+    <screen name="ZPCHeader">
+        <section>
+            <actions>
+                <script location="component://order/webapp/ordermgr/WEB-INF/actions/order/CompanyHeader.groovy"/>
+            </actions>
+            <widgets>
+                <platform-specific><xsl-fo><html-template location="component://order/webapp/ordermgr/order/companyHeaderInfo.fo.ftl"/></xsl-fo></platform-specific>
+            </widgets>
+        </section>
+    </screen>
+</screens>

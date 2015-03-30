@@ -1,0 +1,55 @@
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<zk>
+	<window id="performanceRatingEdit" width="500px" title="${c:l('FormFieldTitle_EditPerformanceRating') }" border="normal"
+		position="center" apply="com.ndz.controller.GlobalHrSettingPerformanceRating" height="250px" maximizable="true" closable="true">
+		<textbox id="txtRatingId" visible="false"></textbox>
+		<hbox style="margin-top:8px">
+			<div width="100px" align="right">
+				<label value="${c:l('FormFieldTitle_rating') }" /><label value="*" style="color:red"/>
+			</div>
+			<div width="100px" align="left">
+				<textbox id="oldTxtRating" visible="false"></textbox>
+				<textbox id="txtRating" width="50px" constraint="no empty:Rating Required"></textbox>
+			</div>
+		</hbox>
+		<hbox style="margin-top:8px">
+			<div width="100px" align="right">
+				<label value="${c:l('HumanResAllocateEmployeeDescription') }" /><label value="*" style="color:red"/>
+			</div>
+			<div width="100px" align="left">
+				<textbox id="txtBoxDescription" width="300px" height="60px" multiline="true" constraint="no empty:Description Required"></textbox>
+				<textbox id="oldTxtBoxDescription" visible="false"/>
+			</div>
+		</hbox>
+		<zscript><![CDATA[
+		void validate(){
+		org.ofbiz.entity.GenericDelegator delegator = com.ndz.zkoss.util.HrmsInfrastructure.getDelegator();//org.ofbiz.entity.GenericDelegator.getGenericDelegator("default");
+		List rateList = delegator.findByAnd("PerfRating", org.ofbiz.base.util.UtilMisc.toMap("rating",txtRating.getValue() ));
+		if (rateList.size()>1){
+			throw new WrongValueException(txtRating, "Rating Already Exists");
+		}
+		if(rateList.size() == 1 && !(oldTxtRating.getValue().equals(txtRating.getValue()))){
+			throw new WrongValueException(txtRating, "Rating Already Exists");
+		}
+		List descriptionList = delegator.findByAnd("PerfRating", org.ofbiz.base.util.UtilMisc.toMap("description",txtBoxDescription.getValue().trim() ));
+		if(descriptionList.size()>1){
+			throw new WrongValueException(txtBoxDescription, "Description Already Exists");
+		}
+		if(descriptionList.size() == 1 && !(oldTxtBoxDescription.getValue().equals(txtBoxDescription.getValue()))){
+			throw new WrongValueException(txtBoxDescription, "Description Already Exists");
+		}
+		if(!(org.ofbiz.base.util.UtilValidate.isInteger(txtRating.getValue()))){
+		throw new WrongValueException(txtRating,"Rating Must Be Numeric");
+		}
+		}
+		]]></zscript>
+		<hbox style="margin-top:8px">
+			<div align="right" width="155px">
+				<button id="btnEdit" label="${c:l('btnSave') }" onClick="validate();"  />
+			</div>
+			<div>
+				<button id="btnCancelLeaveType" label="${c:l('ButtonCancel') }"  onClick="performanceRatingEdit.detach()" />
+			</div>
+		</hbox>
+	</window>
+</zk>

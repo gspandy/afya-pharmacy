@@ -1,0 +1,97 @@
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<zk>
+	<zscript>
+		<![CDATA[
+			import org.ofbiz.entity.*;
+			Map map = Executions.getCurrent().getArg();
+			
+			String requisitionId = (String) Executions.getCurrent().getArg().get(
+			"requisitionId");
+			
+			String partyId = (String) map.get("partyId");
+			System.out.println("-------------partyId--------------" + partyId);
+			GenericValue userLogin = (GenericValue) Executions.getCurrent().getDesktop().getSession().getAttribute("userLogin");
+			org.ofbiz.entity.GenericDelegator delegator = userLogin.getDelegator();
+			
+			
+			List emailAddressDetails = org.ofbiz.party.contact.ContactMechWorker.getPartyContactMechValueMaps(delegator, partyId, false,
+					"EMAIL_ADDRESS");
+			List telecomNumberDetails = org.ofbiz.party.contact.ContactMechWorker.getPartyContactMechValueMaps(delegator, partyId, false,
+					"TELECOM_NUMBER");
+			org.ofbiz.entity.condition.EntityCondition condition = org.ofbiz.entity.condition.EntityCondition.makeCondition("partyId",
+					org.ofbiz.entity.condition.EntityOperator.EQUALS, partyId);
+			List personList = null;
+			try {
+				personList = delegator.findList("Person", condition, null, null, null, false);
+			} catch (Exception e) {
+			
+			}
+			GenericValue personGV = (GenericValue) personList.get(0);
+			Object telecomNumberMap = null;
+			GenericValue contactNumberGv = null;
+			String contactNumber = null;
+			String phoneNumber = "";
+			String phoneContactMechId = "";
+			if (telecomNumberDetails.size() > 0) {
+				telecomNumberMap = telecomNumberDetails.get(0);
+				contactNumberGv = (GenericValue) telecomNumberMap.get("telecomNumber");
+				contactNumber = (String) contactNumberGv.getString("contactNumber");
+				phoneNumber = contactNumber;
+				phoneContactMechId = contactNumberGv.getString("contactMechId");
+			}
+			String emailAddress = null;
+			Object emailAddressMap = null;
+			GenericValue emailAddressGv = null;
+			String emailContactMechId = "";
+			if (emailAddressDetails.size() > 0) {
+				emailAddressMap = emailAddressDetails.get(0);
+				emailAddressGv = (GenericValue) emailAddressMap.get("contactMech");
+				emailAddress = (String) emailAddressGv.get("infoString");
+				emailContactMechId = emailAddressGv.getString("contactMechId");
+			}
+		]]>
+	</zscript>
+	<window width="35%" height="30%" id="addPerformanceWindow" title="${c:l('HRMS_INTERVIEWER_DETAIL') }" border="normal" closable="true"
+		contentStyle="overflow:auto">
+		<separator height="10px" />
+		<hbox>
+			<div width="120px" align="right">
+				<label value="${c:l('HRMS_FirstName') }:" />
+			</div>
+			<div align="left">
+				<label id="firstName" value="${personGV.firstName}" style="font-weight:regular" />
+			</div>
+		</hbox>
+		<separator />
+		<hbox>
+			<div width="120px" align="right">
+				<label value="${c:l('HRMS_LastName') }:" />
+			</div>
+			<div align="left">
+				<label id="lastName" value="${personGV.lastName}" style="font-weight:regular" />
+			</div>
+		</hbox>
+		<separator />
+		<hbox>
+			<div width="120px" align="right">
+				<label value="${c:l('HRMS_EMAILADDRESS') }:" />
+			</div>
+			<div align="left">
+				<label value="${emailAddress}" style="font-weight:regular" />
+			</div>
+		</hbox>
+		<separator />
+		<hbox>
+			<div width="120px" align="right">
+				<label value="${c:l('HRMS_PHONENUMBER') }:" />
+			</div>
+			<div>
+				<label value="${phoneNumber}" style="font-weight:regular" />
+			</div>
+		</hbox>
+		<box align="center" width="100%">
+
+			<button label="${c:l('ButtonCancel') }" onClick="addPerformanceWindow.detach();" />
+		</box>
+	</window>
+</zk>

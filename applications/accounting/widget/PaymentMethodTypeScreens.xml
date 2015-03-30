@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Licensed to the Apache Software Foundation (ASF) under one or more contributor license agreements. See the NOTICE file distributed with this work for additional 
+	information regarding copyright ownership. The ASF licenses this file to you under the Apache License, Version 2.0 (the "License"); you may not use this file except 
+	in compliance with the License. You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0 Unless required by applicable law or agreed to 
+	in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See 
+	the License for the specific language governing permissions and limitations under the License. -->
+
+<screens xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://ofbiz.apache.org/dtds/widget-screen.xsd">
+
+	<screen name="EditPaymentMethodType">
+		<section>
+			<actions>
+				<set field="tabButtonItem" value="PaymentMethodTypes" />
+				<set field="titleProperty" value="CommonPaymentMethodType" />
+				<set field="viewIndex" from-field="parameters.VIEW_INDEX" type="Integer" default-value="0" />
+				<set field="viewSize" from-field="parameters.VIEW_SIZE" type="Integer" default-value="10" />
+				<entity-condition entity-name="PaymentMethodType" list="paymentMethodTypes">
+					<order-by field-name="paymentMethodTypeId" />
+				</entity-condition>
+			</actions>
+			<widgets>
+				<decorator-screen name="GlobalGLSettingsDecorator" location="${parameters.mainDecoratorLocation}">
+					<decorator-section name="body">
+						<screenlet title="${uiLabelMap.AccountingListPaymentMethodType}">
+							<include-form name="ListPaymentMethodType" location="component://accounting/widget/PaymentMethodTypeForms.xml" />
+						</screenlet>
+					</decorator-section>
+				</decorator-screen>
+			</widgets>
+		</section>
+	</screen>
+
+	<screen name="createDutiesTaxes">
+		<section>
+			<actions>
+				<set field="tabButtonItem" value="DutiesTaxes" />
+				<set field="titleProperty" value="Duties and Taxes" />
+				
+				<!-- <entity-condition entity-name="GlAccount" list="dutiesTaxess">
+					<condition-expr field-name="parentGlAccountId" value="3100000" />
+					<order-by field-name="glAccountId" />
+				</entity-condition>  -->
+				<script location="component://accounting/webapp/accounting/WEB-INF/actions/chartofaccounts/dutiesAndTaxes.groovy" />
+			</actions>
+			<widgets>
+				<decorator-screen name="GlobalGLSettingsDecorator" location="${parameters.mainDecoratorLocation}">
+					<decorator-section name="body">
+						<screenlet title="Duties &amp; Taxes">
+							<include-form name="createDutiesTaxes" location="component://accounting/widget/PaymentMethodTypeForms.xml" />
+						</screenlet>
+						<include-form name="listDutiesTaxes" location="component://accounting/widget/PaymentMethodTypeForms.xml" />
+					</decorator-section>
+				</decorator-screen>
+			</widgets>
+		</section>
+	</screen>
+
+	<screen name="createSalesAccount">
+		<section>
+			<actions>
+				<set field="tabButtonItem" value="SalesAccount" />
+				<set field="titleProperty" value="Sales Account" />
+				<entity-condition list="customerList" entity-name="GlAccount">
+					<condition-list combine="and">
+						<condition-expr field-name="parentGlAccountId" operator="equals" value="1300000" />
+					</condition-list>
+				</entity-condition>
+			</actions>
+			<widgets>
+				<decorator-screen name="GlobalGLSettingsDecorator" location="${parameters.mainDecoratorLocation}">
+					<decorator-section name="body">
+						<screenlet title="New Sales Account">
+							<include-form name="createSalesAccount" location="component://accounting/widget/PaymentMethodTypeForms.xml" />
+						</screenlet>
+						<screenlet title="List of Sales Accounts">
+							<include-form name="listSalesAccount" location="component://accounting/widget/PaymentMethodTypeForms.xml" />
+						</screenlet>
+					</decorator-section>
+				</decorator-screen>
+			</widgets>
+		</section>
+	</screen>
+	<screen name="createPurchaseAccount">
+		<section>
+			<actions>
+				<set field="tabButtonItem" value="PurchaseAccount" />
+				<set field="titleProperty" value="Purchase Account" />
+				<entity-condition list="supplierList" entity-name="GlAccount">
+					<condition-list combine="and">
+						<condition-expr field-name="parentGlAccountId" operator="equals" value="2300000" />
+					</condition-list>
+				</entity-condition>
+			</actions>
+			<widgets>
+				<decorator-screen name="GlobalGLSettingsDecorator" location="${parameters.mainDecoratorLocation}">
+					<decorator-section name="body">
+						<screenlet title="Purchase Account">
+							<include-form name="createPurchaseAccount" location="component://accounting/widget/PaymentMethodTypeForms.xml" />
+						</screenlet>
+						<include-form name="listPurchaseAccount" location="component://accounting/widget/PaymentMethodTypeForms.xml" />
+					</decorator-section>
+				</decorator-screen>
+			</widgets>
+		</section>
+	</screen>
+	<screen name="editPurchaseAccount">
+		<section>
+			<actions>
+				<set field="tabButtonItem" value="PurchaseAccount" />
+				<set field="titleProperty" value="Purchase Account" />
+			</actions>
+			<widgets>
+				<decorator-screen name="GlobalGLSettingsDecorator" location="${parameters.mainDecoratorLocation}">
+					<decorator-section name="body">
+						<screenlet title="Purchase Account">
+							<include-form name="editPurchaseAccount" location="component://accounting/widget/PaymentMethodTypeForms.xml" />
+						</screenlet>
+					</decorator-section>
+				</decorator-screen>
+			</widgets>
+		</section>
+	</screen>
+	<screen name="editSalesAccount">
+		<section>
+			<actions>
+				<set field="tabButtonItem" value="SalesAccount" />
+			</actions>
+			<widgets>
+				<decorator-screen name="GlobalGLSettingsDecorator" location="${parameters.mainDecoratorLocation}">
+					<decorator-section name="body">
+						<screenlet title="Sales Account">
+							<include-form name="editSalesAccount" location="component://accounting/widget/PaymentMethodTypeForms.xml" />
+						</screenlet>
+					</decorator-section>
+				</decorator-screen>
+			</widgets>
+		</section>
+	</screen>
+	<screen name="editDutiesTaxes">
+		<section>
+			<actions>
+				<set field="tabButtonItem" value="DutiesTaxes" />
+			</actions>
+			<widgets>
+				<decorator-screen name="GlobalGLSettingsDecorator" location="${parameters.mainDecoratorLocation}">
+					<decorator-section name="body">
+						<screenlet title="Edit Duties &amp; Taxes">
+							<include-form name="editDutiesTaxes" location="component://accounting/widget/PaymentMethodTypeForms.xml" />
+						</screenlet>
+					</decorator-section>
+				</decorator-screen>
+			</widgets>
+		</section>
+	</screen>
+</screens>
+

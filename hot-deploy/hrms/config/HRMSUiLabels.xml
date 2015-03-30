@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<resource xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <property key="HRMSApplication">
+        <value xml:lang="en">HRMS Application</value>
+    </property>
+    <property key="HRMSCompanyName">
+        <value xml:lang="en">OFBiz: HRMS</value>
+    </property>
+    <property key="HRMSCompanySubtitle">
+        <value xml:lang="en">Part of the Open For Business Family of Open Source Software</value>
+    </property>
+    <property key="HRMSViewPermissionError">
+        <value xml:lang="en">You are not allowed to view this page.</value>
+    </property>
+    <property key="HRMSViewPermissionError">
+        <value xml:lang="en_US">You are not allowed to view this page.</value>
+    </property>
+</resource>

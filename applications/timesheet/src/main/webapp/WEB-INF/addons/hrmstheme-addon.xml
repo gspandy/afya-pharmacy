@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<language-addon>
+	<addon-name>hrmstheme</addon-name>
+
+	<language-name>xul/html</language-name>
+	<component>
+		<extends>button</extends>
+		<component-name>button</component-name>
+		<property>
+			<property-name>sclass</property-name>
+			<property-value>btnStyle</property-value>
+		</property>
+	</component>
+	
+	<component>
+		<extends>label</extends>
+		<component-name>label</component-name>
+		<property>
+			<property-name>sclass</property-name>
+			<property-value>label</property-value>
+		</property>
+	</component>
+	
+	<component>
+		<extends>box</extends>
+		<component-name>box</component-name>
+		<property>
+			<property-name>Sclass</property-name>
+			<property-value>box</property-value>
+		</property>
+	</component>
+	
+</language-addon>

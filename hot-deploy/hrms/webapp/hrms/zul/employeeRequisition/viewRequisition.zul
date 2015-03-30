@@ -1,0 +1,432 @@
+<?init class="org.zkoss.zk.ui.util.Composition" arg0="/WEB-INF/layout/template.zul"?>
+<?page title="HRMS-View Requisition" id="viewRequisition"?>
+<?link rel="icon" type="image/x-icon" href="/images/companyLogo.png"?>
+<?init class="org.zkoss.zkplus.databind.AnnotateDataBinderInit" root="./processRequisitionWindow"?>
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<zk xmlns:n="http://www.zkoss.org/2005/zk/native">
+	<zscript>
+		import com.ndz.zkoss.HrmsUtil;
+		import org.ofbiz.entity.GenericValue;
+		com.hrms.composer.RecruitmentComposer recruitmentComposer = new com.hrms.composer.RecruitmentComposer();
+		boolean isEmployee = HrmsUtil.isUser();
+		boolean isReqAdmin = HrmsUtil.isRequisitionAdmin();
+		org.ofbiz.entity.GenericDelegator delegator = com.ndz.zkoss.util.HrmsInfrastructure.getDelegator();//org.ofbiz.entity.GenericDelegator.getGenericDelegator("default");
+	</zscript>
+	<window width="100%" contentStyle="overflow:auto" id="processRequisitionWindow" self="@{define(content)}" border="normal" title="${c:l('HRMS_VIEW_REQUISITION') }"
+		apply="${recruitmentComposer}">
+		<zscript>
+			List positions = recruitmentComposer.getEmplPositionsFor(recruitmentComposer.getRequisitionId());
+			GenericValue reqPosGv = HrmsUtil.getEmplPositionGvFor(recruitmentComposer.getRequisitionId());
+			boolean displayGrid = com.ndz.zkoss.util.HrmsConstants.REQUISITION_PROCESSING_STATUS.equalsIgnoreCase(recruitmentComposer.getRequisitionVo().getStatusId()) || com.ndz.zkoss.util.HrmsConstants.REQUISITION_CLOSE_STATUS.equalsIgnoreCase(recruitmentComposer.getRequisitionVo().getStatusId());
+			boolean visibility = com.ndz.zkoss.util.HrmsConstants.REQUISITION_PROCESSING_STATUS.equalsIgnoreCase(recruitmentComposer.getRequisitionVo().getStatusId());
+		</zscript>
+		<div align="left" visible="${isReqAdmin &amp;&amp; visibility}" id="showMenu">
+			<menubar width="100%" focus="true" visible="false">
+				<menu label="${c:l('HRMS_ASSIGN_TO_RECRUITMENT_AGENCY') }" if="${!isClosed}">
+					<menupopup>
+						<menuitem label="${c:l('Hrms_Assign') }"
+							onClick='Executions.createComponents("/zul/employeeRequisition/assignToAgency.zul", null, org.ofbiz.base.util.UtilMisc.toMap("requisitionId",recruitmentComposer.getRequisitionId()))' />
+					</menupopup>
+				</menu>
+			</menubar>
+		</div>
+		<n:table>
+			<box width="100%" height="30px">
+				<label value="${c:l('HRMS_REQUISITION_APPROVEREQUISITIONREQUISITIONDETAILS')}" style="font-weight:bold" />
+			</box>
+		</n:table>
+		<n:table width="100%">
+			<n:tr>
+				<n:td>
+					<div align="right" width="100%" style="margin-right:5px">
+						<label value="${c:l('HRMS_REQUISITION_REQUISITIONID')}" style="font-weight:bold" />
+					</div>
+				</n:td>
+				<n:td>
+					<label id="requisitionId" style="font-weight:bold;color:#666666"
+						value="@{recruitmentComposer.requisitionId}" />
+				</n:td>
+			</n:tr>
+			<n:tr>
+				<n:td>
+					<div align="right" width="100%" style="margin-right:5px">
+						<label value="${c:l('HRMS_REQUIREMENT_TYPE') }" style="font-weight:bold" />
+					</div>
+				</n:td>
+				<n:td>
+					<label id="requirementType" style="font-weight:bold;color:#666666"
+						value="@{recruitmentComposer.requisitionVo.requirementType}" />
+				</n:td>
+			</n:tr>
+			<n:tr>
+				<n:td width="50%">
+					<div align="right" width="100%" style="margin-right:5px">
+						<label value="${c:l('HRMS_REQUISITION_GRIDCOLUMNREQUISITIONINITIATOR')}" style="font-weight:bold" />
+					</div>
+				</n:td>
+				<n:td>
+					<label id="employeeName" style="font-weight:bold;color:#666666"
+						onCreate="self.setValue(com.ndz.zkoss.HrmsUtil.getFullName(recruitmentComposer.getDelegator(),recruitmentComposer.getRequisitionVo().getRequisitionRaisedBy()))" />
+				</n:td>
+			</n:tr>
+			<n:tr>
+				<n:td>
+					<div align="right" width="100%" style="margin-right:5px">
+						<label value="${c:l('HRMS_REQUISITION_GRIDCOLUMNREQUISITIONINITIATORDEPARTMENT')}"
+							style="font-weight:bold" />
+					</div>
+				</n:td>
+				<n:td>
+					<label id="deptId" style="font-weight:bold;color:#666666"
+						onCreate="self.setValue(com.ndz.zkoss.HrmsUtil.getDepartmentName(recruitmentComposer.getRequisitionVo().getInitiatorDepartmentId()))" />
+				</n:td>
+			</n:tr>
+			<n:tr>
+				<n:td>
+					<div align="right" width="100%">
+						<label value="${c:l('HRMS_REQUISITION_GRIDCOLUMNREQUISITIONOPENEDDATE') }" style="font-weight:bold" />
+					</div>
+				</n:td>
+				<n:td>
+					<label id="fromDate"
+						value="@{recruitmentComposer.requisitionVo.startDate,converter='com.ndz.component.DateConverter'}" />
+				</n:td>
+			</n:tr>
+			<n:tr>
+				<n:td>
+					<div align="right" width="100%" style="margin-right:5px">
+						<label value="${c:l('HRMS_REQUISITION_END_DATE') }" style="font-weight:bold" />
+					</div>
+				</n:td>
+				<n:td>
+					<label id="endDate"
+						value="@{recruitmentComposer.requisitionVo.endDate,converter='com.ndz.component.DateConverter'}" />
+				</n:td>
+			</n:tr>
+			<n:tr>
+				<n:td>
+					<div align="right" width="100%" style="margin-right:5px">
+						<label value="${c:l('HRMS_REQUISITION_GRIDCOLUMNREQUISITIONSTATUS')}" style="font-weight:bold" />
+					</div>
+				</n:td>
+				<n:td>
+					<label id="requisitionStatus" style="font-weight:bold;color:#666666"
+						onCreate="self.setValue(com.ndz.zkoss.HrmsUtil.getRequisitionStatusDescription(recruitmentComposer.getRequisitionVo().getStatusId()))" />
+				</n:td>
+			</n:tr>
+			<div>
+				<n:tr>
+					<n:td>
+						<div align="right" width="100%" style="margin-right:5px">
+							<label value="${c:l('HRMS_HOD_COMMENTS') }" style="font-weight:bold" />
+						</div>
+					</n:td>
+					<n:td>
+						<label style="font-weight:bold;color:#666666"
+							value="@{recruitmentComposer.requisitionVo.hodComment}" />
+					</n:td>
+				</n:tr>
+				<n:tr>
+					<n:td>
+						<div align="right" width="100%" style="margin-right:5px">
+							<label value="${c:l('HRMS_REQUISITION_ADMIN_COMMENTS') }" style="font-weight:bold" />
+						</div>
+					</n:td>
+					<n:td>
+						<label id="adminComment" style="font-weight:bold;color:#666666"
+							value="@{recruitmentComposer.requisitionVo.adminComment}" />
+					</n:td>
+				</n:tr>
+			</div>
+			<div if="${!isEmployee}">
+			<n:tr>
+					<n:td>
+						<div align="right" width="100%" style="margin-right:5px" visible="false">
+							<label value="${c:l('HumanResBudgetID') }" style="font-weight:bold" />
+						</div>
+					</n:td>
+					<n:td>
+						<toolbarbutton label="@{recruitmentComposer.requisitionVo.budgetId}"
+							style="font-weight:bold;color:blue"
+							onClick='Executions.createComponents("/zul/Budget/requisitionAdminBudgetView.zul",null,org.ofbiz.base.util.UtilMisc.toMap("budgetId",self.getLabel()))'
+							visible="false">
+						</toolbarbutton>
+					</n:td>
+				</n:tr>
+				<n:tr>
+					<n:td>
+						<div align="right" width="100%" style="margin-right:5px">
+							<label value="${c:l('HumanResBudgetItemSeqId') }" style="font-weight:bold" visible="false"/>
+						</div>
+					</n:td>
+					<n:td>
+						<toolbarbutton label="@{recruitmentComposer.requisitionVo.budgetItemSequenceId}"
+							style="font-weight:bold;color:blue"
+							onClick='Executions.createComponents("/zul/Budget/requisitionAdminBudgetItemView.zul",null,org.ofbiz.base.util.UtilMisc.toMap("budgetItemSeqId",self.getLabel()))'
+							visible="false">
+						</toolbarbutton>
+					</n:td>
+				</n:tr>
+			</div>
+		</n:table>
+		<box width="100%" height="30px">
+			<label value="${c:l('HRMS_REQUISITION_APPROVEREQUISITIONJOBDETAILS') }" style="font-weight:bold" />
+		</box>
+		<n:table>
+			<n:tr>
+				<n:td>
+					<div align="right" width="250px" style="margin-right:5px">
+						<label value="${c:l('HRMS_REQUISITION_JOBTITLE') }" style="font-weight:bold" />
+					</div>
+				</n:td>
+				<n:td>
+					<label id="jobTitle" style="font-weight:bold" value="@{recruitmentComposer.requisitionVo.jobTitle}" />
+				</n:td>
+			</n:tr>
+			<n:tr>
+				<n:td>
+					<div align="right" width="250px" style="margin-right:5px">
+						<label value="${c:l('HRMS_JOB_LOCATION') }" style="font-weight:bold" />
+					</div>
+				</n:td>
+				<n:td>
+					<label style="font-weight:bold"
+						onCreate='self.setValue(com.ndz.zkoss.HrmsUtil.getLocationName(recruitmentComposer.getRequisitionVo().getLocationGv().getString("locationId")))' />
+				</n:td>
+			</n:tr>
+			<n:tr>
+				<n:td>
+					<div align="right" width="250px" style="margin-right:5px">
+						<label value="${c:l('HRMS_POSITIONTYPE') }" style="font-weight:bold" />
+					</div>
+				</n:td>
+				<n:td>
+					<label id="positionType" style="font-weight:bold"
+						onCreate='self.setValue(com.ndz.zkoss.HrmsUtil.getPositionTypeDescription(recruitmentComposer.getRequisitionVo().getPositionTypeGv().getString("emplPositionTypeId")))' />
+				</n:td>
+			</n:tr>
+			<n:tr>
+				<n:td>
+					<div align="right" width="250px" style="margin-right:5px">
+						<label value="${c:l('HRMS_REQUISITION_MINIMUMEXPERIENCE') }" style="font-weight:bold" />
+					</div>
+				</n:td>
+				<n:td>
+					<label id="minExprience" value="@{recruitmentComposer.requisitionVo.minimumExprience}"
+						style="font-weight:bold" />
+					<label value="${c:l('HRMS_YEARS') }" />
+				</n:td>
+			</n:tr>
+			<n:tr>
+				<n:td>
+					<div align="right" width="250px" style="margin-right:5px">
+						<label value="${c:l('HRMS_REQUISITION_MAXIMUMEXPERIENCE') }" style="font-weight:bold" />
+					</div>
+				</n:td>
+				<n:td>
+					<label id="maxExprience" value="@{recruitmentComposer.requisitionVo.maximumExprience}"
+						style="font-weight:bold" />
+					<label value="${c:l('HRMS_YEARS') }" />
+				</n:td>
+			</n:tr>
+			<n:tr>
+				<n:td>
+					<div align="right" width="250px" style="margin-right:5px">
+						<label value="${c:l('HRMS_REQUISITION_MINIMUMCTC') }" style="font-weight:bold" />
+					</div>
+				</n:td>
+				<n:td>
+					<label id="minSalary" style="font-weight:bold"
+						value="@{recruitmentComposer.requisitionVo.minimumSalary}" />
+					<label
+						onCreate='self.setValue(com.ndz.zkoss.HrmsUtil.getEnumDescription(recruitmentComposer.getRequisitionVo().getCurrencyBaseLineGv().getString("enumId")))' />
+					<label value="${c:l('HRMS_PER_ANNUM_IN') }" />
+					<label
+						onCreate='self.setValue(com.ndz.zkoss.HrmsUtil.getUomDescription(recruitmentComposer.getRequisitionVo().getCurrencyTypeGv().getString("uomId")))'
+						style="font-weight:bold" />
+				</n:td>
+			</n:tr>
+			<n:tr>
+				<n:td>
+					<div align="right" width="250px" style="margin-right:5px">
+						<label value="${c:l('HRMS_REQUISITION_MAXIMUMCTC') }" style="font-weight:bold" />
+					</div>
+				</n:td>
+				<n:td>
+					<label id="maxSalary" value="@{recruitmentComposer.requisitionVo.maximumSalary}"
+						style="font-weight:bold" />
+					<label
+						onCreate='self.setValue(com.ndz.zkoss.HrmsUtil.getEnumDescription(recruitmentComposer.getRequisitionVo().getCurrencyBaseLineGv().getString("enumId")))' />
+					<label value="${c:l('HRMS_PER_ANNUM_IN') }" />
+					<label
+						onCreate='self.setValue(com.ndz.zkoss.HrmsUtil.getUomDescription(recruitmentComposer.getRequisitionVo().getCurrencyTypeGv().getString("uomId")))'
+						style="font-weight:bold" />
+				</n:td>
+			</n:tr>
+			<n:tr>
+				<n:td>
+					<div align="right" width="250px" style="margin-right:5px">
+						<label value="${c:l('HRMS_REQUISITION_NOOFPOSITION') }" style="font-weight:bold" />
+					</div>
+				</n:td>
+				<n:td>
+					<label id="noOfPosition" style="font-weight:bold"
+						value="@{recruitmentComposer.requisitionVo.noOfPosition}" />
+				</n:td>
+			</n:tr>
+			<n:tr>
+				<n:td>
+					<div align="right" width="250px" style="margin-right:5px">
+						<label value="${c:l('HRMS_REQUISITION_JOBDESCRIPTION') }" style="font-weight:bold" />
+					</div>
+				</n:td>
+				<n:td>
+					<html>${recruitmentComposer.requisitionVo.jobDescription}</html>
+				</n:td>
+			</n:tr>
+			<n:tr>
+				<n:td>
+					<div align="right" width="250px" style="margin-right:5px">
+						<label value="${c:l('HRMS_REQUISITION_ROLEDETAILS') }" style="font-weight:bold" />
+					</div>
+				</n:td>
+				<n:td>
+					<html>${recruitmentComposer.requisitionVo.roleDetails}</html>
+				</n:td>
+			</n:tr>
+			<n:tr>
+				<n:td>
+					<div align="right" width="250px" style="margin-right:5px">
+						<label value="${c:l('HRMS_REQUISITION_QUALIFICATION') }" style="font-weight:bold" />
+					</div>
+				</n:td>
+				<n:td>
+					<html>${recruitmentComposer.requisitionVo.qualifications}</html>
+				</n:td>
+			</n:tr>
+			<n:tr>
+				<n:td>
+					<div align="right" width="250px" style="margin-right:5px">
+						<label value="${c:l('HRMS_REQUISITION_SOFTSKILL') }" style="font-weight:bold" />
+					</div>
+				</n:td>
+				<n:td>
+					<html>${recruitmentComposer.requisitionVo.softSkills}</html>
+				</n:td>
+			</n:tr>
+			<n:tr>
+				<n:td>
+					<div align="right" width="250px" style="margin-right:5px">
+						<label value="${c:l('HRMS_REQUISITION_JUSTIFICATIONFORHIRING') }" style="font-weight:bold" />
+					</div>
+				</n:td>
+				<n:td>
+					<html>${recruitmentComposer.requisitionVo.justificationForHiring}</html>
+				</n:td>
+			</n:tr>
+			<n:tr>
+				<n:td style="text-align:right;width:250px;margin-right:5px"><label value="${c:l('HRMS_MANAGER_ID') }"/></n:td>
+				<n:td><label value="@{recruitmentComposer.requisitionVo.managerId}"/></n:td>
+			</n:tr>
+			<n:tr>
+				<n:td style="text-align:right;width:250px;margin-right:5px"><label value="${c:l('HRMS_MANAGER_NAME') }"/></n:td>
+				<n:td><label onCreate="self.setValue(HrmsUtil.getFullName(delegator,recruitmentComposer.getRequisitionVo().getManagerId()))"/></n:td>
+			</n:tr>
+			<n:tr>
+				<n:td style="text-align:right;width:250px;margin-right:5px"><label value="${c:l('HRMS_ESTIMATED_FROM_DATE') }"/></n:td>
+				<n:td><label value="@{reqPosGv.estimatedFromDate,converter='com.ndz.component.DateConverter'}"/></n:td>
+			</n:tr>
+		</n:table>
+		<div align="center">
+			<button label="${c:l('HRMS_BACK') }" onClick='Executions.getCurrent().sendRedirect("/control/requisitionManagement");' />
+		</div>
+		<zscript>
+			<![CDATA[
+				import org.ofbiz.base.util.*;
+				import org.zkoss.util.resource.Labels;
+				import org.zkoss.zk.ui.event.EventListener;
+				import java.util.Date;
+				import org.ofbiz.humanresext.util.*;
+				class MyRowRenderer implements RowRenderer {
+
+				MyRowRenderer() {
+				}
+
+				public void render(Row row, Object data) {
+					String positionResponsibility = null;
+					String additionalResponsibility = null;
+					org.ofbiz.entity.GenericDelegator delegator = com.ndz.zkoss.util.HrmsInfrastructure.getDelegator();
+					org.ofbiz.entity.GenericValue gv1 = ((org.ofbiz.entity.GenericValue) data);
+					Toolbarbutton tlBarBtn = new Toolbarbutton();
+					tlBarBtn.setLabel(gv1.getString("emplPositionId"));
+					tlBarBtn.setTooltiptext(Labels.getLabel("HRMS_CLICK_TO_VIEW_POSITION_RESPONSIBILITY_IN_DETAILS"));
+					tlBarBtn.setParent(row);
+					Map positionIdMap = new HashMap();
+					positionIdMap.put("gv", gv1.getString("emplPositionId"));
+					tlBarBtn.addEventListener("onClick", new EventListener() {
+						public void onEvent(Event event) throws Exception {
+						Window win = (Window) Executions.createComponents(
+								"/zul/employeeRequisition/viewPositionResponsibility.zul", null, positionIdMap);
+						win.doModal();
+						}
+					});
+					new Label(HrmsUtil.getPositionTypeDescription(gv1.getString("emplPositionTypeId"))).setParent(row);
+					String emplPositionId = null;
+					emplPositionId = gv1.getString("emplPositionId");
+					if (emplPositionId != null) {
+						positionResponsibility = HumanResUtil.getResponsibilityForPositionId(emplPositionId, delegator);
+						GenericValue positionGv = HrmsUtil.getEmployeePositionGv(emplPositionId);
+						additionalResponsibility = positionGv.getString("additionalResponsibility");
+					}
+					if (positionResponsibility != null) {
+						new Label(positionResponsibility).setParent(row);
+					} else {
+						new Label("").setParent(row);
+					}
+					if (additionalResponsibility != null) {
+						new Label(additionalResponsibility).setParent(row);
+					} else {
+						new Label("").setParent(row);
+					}
+					List posFulfillmentList = null;
+					posFulfillmentList = delegator.findByAnd("EmplPositionFulfillment", UtilMisc.toMap("emplPositionId", gv1.getString("emplPositionId")));
+					if (posFulfillmentList.size() > 0) {
+						new Label(Labels.getLabel("HRMS_FULFILLED")).setParent(row);
+					} else {
+						new Label("").setParent(row);
+					}
+					Button btn = new com.ndz.zkoss.HrmsButton();
+					btn.setDisabled(!isReqAdmin);
+					btn.setLabel(Labels.getLabel("HRMS_ADD_RESPONSIBILITIES"));
+					btn.setParent(row);
+					Map arg = new HashMap();
+					arg.put("gv", gv1);
+					arg.put("positionGrid",positionGrid);
+					btn.setTooltiptext(Labels.getLabel("HRMS_CLICK_TO_ADD"));
+					btn.addEventListener("onClick", new EventListener() {
+						public void onEvent(Event event) throws Exception {
+						Window win = (Window) Executions.createComponents("/zul/employeeRequisition/addPositionResponsibility.zul",
+								null, arg);
+						win.doModal();
+						}
+					});
+					}
+				}
+				RowRenderer tableRenderer = new MyRowRenderer();
+			]]>
+		</zscript>
+		<separator height="10px"/>
+		<div>
+			<grid id="positionGrid" model="@{positions,load-after='self.onReloadRequest'}" rowRenderer="${tableRenderer}" visible="${displayGrid}">
+					<columns>
+						<column label="${c:l('HumanResEmplPositionId') }" />
+						<column label="${c:l('HRMS_EMPLOYEE_POSITION_TYPE') }" />
+						<column label="${c:l('HumanResResponsibility') }"></column>
+						<column label="${c:l('HRMS_ADDITIONAL_RESPONSIBILITY') }"></column>
+						<column label="${c:l('HRMS_POSITION_FULFILLMENT') }"></column>
+						<column label="${c:l('HRMS_ACTION') }"></column>
+					</columns>
+			</grid>
+		</div>
+	</window>
+</zk>

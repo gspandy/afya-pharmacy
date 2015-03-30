@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<screens xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://ofbiz.apache.org/dtds/widget-screen.xsd">
+
+	<screen name="CommonTallyDecorator">
+		<section>
+			<actions>
+				<set field="headerItem" value="tally" />
+				<set field="partyId" from-field="parameters.partyId" />
+			</actions>
+			<widgets>
+				<decorator-screen name="main-decorator" location="${parameters.mainDecoratorLocation}">
+					<decorator-section name="body">
+						<section>
+							<widgets>
+								<include-menu name="TallyTabBar" location="component://commonext/widget/ofbizsetup/Menus.xml" />
+							</widgets>
+						</section>
+						<decorator-section-include name="body" />
+					</decorator-section>
+				</decorator-screen>
+			</widgets>
+		</section>
+	</screen>
+
+
+	<screen name="EditTallyConfig">
+		<section>
+			<actions>
+				<set field="titleProperty" value="Tally Setup" />
+				<set field="tabButtonItem" value="connection" />
+				<set field="labelTitleProperty" value="TallySetup" />
+				<set field="partyId" from-field="parameters.partyId" />
+				<set field="showErrorMsg" value="N" />
+			</actions>
+			<widgets>
+				<decorator-screen name="CommonTallyDecorator">
+					<decorator-section name="body">
+						<section>
+							<condition>
+								<if-compare field="showErrorMsg" operator="equals" value="N" />
+							</condition>
+							<widgets>
+								<container>
+									<label style="h1">${uiLabelMap[labelTitleProperty]}</label>
+								</container>
+								<screenlet name="SaveTallyConn" title="Update Tally Connection Properties">
+									<include-form name="CreateTallyConfig" location="component://commonext/widget/ofbizsetup/TallySetupForms.xml" />
+								</screenlet>
+							</widgets>
+							<fail-widgets>
+								<label style="h2">${uiLabelMap.SetupPageError}</label>
+							</fail-widgets>
+						</section>
+					</decorator-section>
+				</decorator-screen>
+			</widgets>
+		</section>
+	</screen>
+
+	<screen name="EditTallyGroup">
+		<section>
+			<actions>
+				<set field="tabButtonItemTop" value="ledgers" />
+				<set field="headerItem" value="init" />
+				<set field="labelTitleProperty" value="TallySetup" />
+				<set field="partyId" from-field="parameters.partyId" />
+				<set field="tab" from-field="parameters.tab" />
+				<entity-condition list="ledgerList" entity-name="GlAccount">
+					<condition-expr field-name="parentGlAccountId" value="2300" />
+				</entity-condition>
+				<set field="dutyLedgers" from-field="ledgerList" />
+			</actions>
+			<widgets>
+				<decorator-screen name="CommonSetupDecorator" location="${parameters.mainDecoratorLocation}">
+					<decorator-section name="body">
+						<section>
+							<widgets>
+								<screenlet padded="true" name="Ledgers" navigation-menu-name="LedgerMenu">
+									<include-menu name="LedgerMenu" location="component://commonext/widget/ofbizsetup/Menus.xml" />
+									<include-screen name="LedgerInnerScreen" />
+								</screenlet>
+							</widgets>
+						</section>
+					</decorator-section>
+				</decorator-screen>
+			</widgets>
+		</section>
+	</screen>
+
+	<screen name="LedgerInnerScreen">
+		<section>
+			<condition>
+				<if-compare field="tab" operator="equals" value="1" />
+			</condition>
+			<widgets>
+				<screenlet title="TaxAuthorities">
+					<include-form name="FindTaxAuthority" location="component://accounting/widget/TaxAuthorityForms.xml" />
+				</screenlet>
+			</widgets>
+			<fail-widgets>
+				<section>
+					<condition>
+						<if-compare field="tab" operator="equals" value="2" />
+					</condition>
+					<widgets>
+						<screenlet title="Suppliers">
+							<include-form name="ListOfSuppliers" location="component://commonext/widget/ofbizsetup/TallySetupForms.xml" />
+						</screenlet>
+					</widgets>
+					<fail-widgets>
+						<section>
+							<condition>
+								<if-compare field="tab" operator="equals" value="3" />
+							</condition>
+							<widgets>
+								<screenlet title="Customers">
+									<include-form name="ListOfCustomers" location="component://commonext/widget/ofbizsetup/TallySetupForms.xml" />
+								</screenlet>
+							</widgets>
+						</section>
+					</fail-widgets>
+				</section>
+			</fail-widgets>
+		</section>
+	</screen>
+
+	<screen name="UnitOfMeasure">
+		<section>
+			<actions>
+				<set field="tabButtonItemTop" value="unitOfMeasure" />
+				<set field="headerItem" value="init" />
+				<set field="labelTitleProperty" value="TallySetup" />
+				<set field="partyId" from-field="parameters.partyId" />
+				<set field="tab" from-field="parameters.tab" />
+			</actions>
+			<widgets>
+				<decorator-screen name="CommonSetupDecorator" location="${parameters.mainDecoratorLocation}">
+					<decorator-section name="body">
+						<section>
+							<widgets>
+								<screenlet title="List of Product UOM" navigation-menu-name="UOM">
+									<include-menu name="UOM" location="component://commonext/widget/ofbizsetup/Menus.xml" />
+									<include-form name="ListOfUoms" location="component://commonext/widget/ofbizsetup/TallySetupForms.xml" />
+								</screenlet>
+							</widgets>
+						</section>
+					</decorator-section>
+				</decorator-screen>
+			</widgets>
+		</section>
+	</screen>
+	
+	<screen name="TallyStockList">
+		<section>
+			<actions>
+				<set field="tabButtonItemTop" value="stockItem" />
+				<set field="headerItem" value="init" />
+				<set field="labelTitleProperty" value="TallySetup" />
+				<set field="partyId" from-field="parameters.partyId" />
+				<set field="tab" from-field="parameters.tab" />
+				<entity-condition list="productList" entity-name="Product"/>
+			</actions>
+			<widgets>
+				<decorator-screen name="CommonSetupDecorator" location="${parameters.mainDecoratorLocation}">
+					<decorator-section name="body">
+						<section>
+							<widgets>
+								<screenlet title="List of Products" navigation-menu-name="ProductMenu">
+									<include-menu name="ProductMenu" location="component://commonext/widget/ofbizsetup/Menus.xml" />
+									<include-form name="TallyStockList" location="component://commonext/widget/ofbizsetup/TallySetupForms.xml" />
+								</screenlet>
+								<screenlet title="Product Category">
+									<include-form name="CategoryMemberList" location="component://commonext/widget/ofbizsetup/TallySetupForms.xml" />
+								</screenlet>
+							</widgets>
+						</section>
+					</decorator-section>
+				</decorator-screen>
+			</widgets>
+		</section>
+	</screen>
+
+</screens>    

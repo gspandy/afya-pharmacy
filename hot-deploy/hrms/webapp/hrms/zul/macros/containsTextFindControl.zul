@@ -1,0 +1,24 @@
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<zk xmlns:n="http://www.zkoss.org/2005/zk/native">
+	<hbox style="margin:5px 5px 5px 5px">
+		<div width="150px" align="right" style="margin-right:4px">
+			<label  value="${arg.fieldLabel}">
+			</label>
+		</div>
+		<listbox mold="select" id="${arg.name}_op" visible="false">
+			<listitem label="${c:l('HRMS_CONTAINS') }" value="contains" selected="true"></listitem>
+		</listbox>
+		<textbox id="${arg.name}" cols="${arg.cols}" focus="true" width="300px" height="30px" multiline="true"></textbox>
+		<textbox visible="false" value="N" id="${arg.name}_ic"></textbox>
+		<div width="100px" visible="false">
+		<checkbox checked="true" id="${arg.name}_ck" label="${c:l('HRMS_IGNORE_CASE') }" style="font-size:10px">
+			<attribute name="onCheck">
+				<![CDATA[
+	String textFldId = self.getId().replace("_ck", "_ic");
+	((Textbox)self.getFellowIfAny(textFldId,true)).setValue("Y");
+]]>
+			</attribute>
+		</checkbox>
+		</div>
+	</hbox>
+</zk>

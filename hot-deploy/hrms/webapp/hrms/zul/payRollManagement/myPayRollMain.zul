@@ -1,0 +1,237 @@
+<?page title="HRMS-Payroll"?>
+<?link rel="icon" type="image/x-icon" href="/images/companyLogo.png"?>
+<?init class="org.zkoss.zk.ui.util.Composition" arg0="/WEB-INF/layout/templateWestCollapsible.zul"?>
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<zk xmlns:n="http://www.zkoss.org/2005/zk/native">
+	<zscript>
+	<![CDATA[
+import org.ofbiz.base.util.*;
+	org.ofbiz.entity.GenericValue userLogin = (org.ofbiz.entity.GenericValue) Executions.getCurrent().getDesktop().getSession().getAttribute("userLogin");
+	boolean isAdmin = security.hasPermission("HUMANRES_ADMIN", userLogin);
+
+	]]>
+		
+	void paySlips() {
+		Div div = (Div) appendDiv;
+		Component firstChild = div.getFirstChild();
+		if (firstChild != null) {
+			div.removeChild(firstChild);
+		}
+		Window win1 = (Window) Executions
+				.createComponents(
+						"/zul/payRollManagement/employeePayslips.zul",
+						null, null);
+		div.appendChild(win1);
+	}
+</zscript>
+
+	<groupbox mold="3d" self="@{define(westContent) }" id="groupBoxMain">
+		<caption label="${c:l('FormFieldTitle_payroll') }" />
+		<vbox>
+		<toolbarbutton label="${c:l('HRMS_PAYSLIPS') }" id="paySlips">
+		
+			<attribute name="onClick">
+	id = null;
+	sessionScope.put("id", "paySlips");
+	Div div = (Div) appendDiv;
+	Component firstChild = div.getFirstChild();
+	if (firstChild != null) {
+		div.removeChild(firstChild);
+	}
+	Window win2 = (Window) Executions.createComponents("/zul/payRollManagement/employeePayslips.zul", null, UtilMisc.toMap("paySlips",paySlips));
+	div.appendChild(win2);
+	unselectedToolbarbuttonColor(self);
+	selectedToolbarbuttonColor(self);
+</attribute>
+		</toolbarbutton>
+		<toolbarbutton label="${c:l('HRMS_SALARY') }" id="teamSalary">
+			<attribute name="onClick">
+			id=null;
+			sessionScope.put("id","teamSalary");
+			Div div = (Div) appendDiv;
+		Component firstChild = div.getFirstChild();
+		if (firstChild != null) {
+			div.removeChild(firstChild);
+		}
+		
+		Window win3 = (Window) Executions
+				.createComponents(
+						"/zul/payRollManagement/teamEmployeeSalaryStructure.zul",
+						null, null);
+		div.appendChild(win3);
+		unselectedToolbarbuttonColor(self);
+		selectedToolbarbuttonColor(self);
+		</attribute>
+		</toolbarbutton>
+		
+		<toolbarbutton label="${c:l('HRMS_UPDATE_CTC') }" visible="false" id="updateCTC">
+			<attribute name="onClick" >
+			id=null;
+			sessionScope.put("id","updateCTC");
+			Div div = (Div) appendDiv;
+		Component firstChild = div.getFirstChild();
+		if (firstChild != null) {
+			div.removeChild(firstChild);
+		}
+		Window win4 = (Window) Executions
+				.createComponents(
+						"/zul/payRollManagement/employeeCTC.zul",
+						null, null);
+		div.appendChild(win4);
+		unselectedToolbarbuttonColor(self);
+	selectedToolbarbuttonColor(self);
+		</attribute>
+		</toolbarbutton>
+		
+		<toolbarbutton label="${c:l('HRMS_PREFERENCES') }" id="preferences">
+			<attribute name="onClick">
+			id=null;
+			sessionScope.put("id","preferences");
+			Div div = (Div) appendDiv;
+		Component firstChild = div.getFirstChild();
+		if (firstChild != null) {
+			div.removeChild(firstChild);
+		}
+		Window win5 = (Window) Executions
+				.createComponents(
+						"/zul/payRollManagement/employeePreferences.zul",
+						null, null);
+		div.appendChild(win5);
+		unselectedToolbarbuttonColor(self);
+	selectedToolbarbuttonColor(self);
+		</attribute>
+		</toolbarbutton>
+		
+		<toolbarbutton label="${c:l('HRMS_GET_PREFERENCES') }" visible="false" id="getPreferences">
+			<attribute name="onClick">
+			id=null;
+			sessionScope.put("id","getPreferences");
+			Div div = (Div) appendDiv;
+		Window win5 = (Window) Executions
+				.createComponents(
+						"/zul/payRollManagement/getPreferences.zul",
+						null, null);
+						div.appendChild(win5);
+		Component firstChild = div.getFirstChild();
+		if (firstChild != null) {
+			div.removeChild(firstChild);
+		}
+		unselectedToolbarbuttonColor(self);
+	selectedToolbarbuttonColor(self);
+		</attribute>
+		</toolbarbutton>
+		
+		<toolbarbutton label="${c:l('HRMS_VIEW_TDS') }" id="viewTDS" visible="false">
+			<attribute name="onClick">
+			id=null;
+			sessionScope.put("id","viewTDS");
+			Div div = (Div) appendDiv;
+		Component firstChild = div.getFirstChild();
+		if (firstChild != null) {
+			div.removeChild(firstChild);
+		}
+		Window win6 = (Window) Executions
+				.createComponents(
+						"/zul/payRollManagement/employeeTDS.zul",
+						null, null);
+		div.appendChild(win6);
+		unselectedToolbarbuttonColor(self);
+	selectedToolbarbuttonColor(self);
+		</attribute>
+		</toolbarbutton>
+		
+		<toolbarbutton label="${c:l('HRMS_TDS_REPORT') }" id="tdsReport" visible="false">
+			<attribute name="onClick">
+			id=null;
+			sessionScope.put("id","tdsReport");
+	Div	div	= (Div) appendDiv;
+	Component	firstChild	= div.getFirstChild();
+	if (firstChild != null) {
+		div.removeChild(firstChild);
+	}
+	Window	win7	= (Window) Executions.createComponents("/zul/payRollManagement/employeeTotalTDS.zul", null, null);
+	div.appendChild(win7);
+	unselectedToolbarbuttonColor(self);
+	selectedToolbarbuttonColor(self);
+</attribute>
+		</toolbarbutton>
+		
+		<toolbarbutton label="${c:l('HRMS_PF_REPORT') }" id="pfReport" visible="false">
+			<attribute name="onClick">
+			Div div = (Div) appendDiv;
+		Component firstChild = div.getFirstChild();
+		if (firstChild != null) {
+			div.removeChild(firstChild);
+		}
+		Window win8 = (Window) Executions
+				.createComponents(
+						"/zul/payRollManagement/employeeTotalPF.zul",
+						null, null);
+		div.appendChild(win8);
+		unselectedToolbarbuttonColor(self);
+	selectedToolbarbuttonColor(self);
+		</attribute>
+		</toolbarbutton>
+		
+		
+		<toolbarbutton label="${c:l('HRMS_TAX') }" id="tax" >
+			<attribute name="onClick">
+			id=null;
+			sessionScope.put("id","tax");
+			Div div = (Div) appendDiv;
+		Component firstChild = div.getFirstChild();
+		if (firstChild != null) {
+			div.removeChild(firstChild);
+		}
+		Div win9 = (Div) Executions
+				.createComponents(
+						"/zul/payRollManagement/employeeTaxMain.zul",
+						null, null);
+		div.appendChild(win9);
+		unselectedToolbarbuttonColor(self);
+	selectedToolbarbuttonColor(self);
+		</attribute>
+		</toolbarbutton>
+
+		<toolbarbutton label="${c:l('HRMS_INITIATE_PAYROLL') }" id="initiatePayroll" if="${isAdmin}">
+			<attribute name="onClick">
+			id=null;
+			sessionScope.put("id","initiatePayroll");
+			Div div = (Div) appendDiv;
+		Component firstChild = div.getFirstChild();
+		if (firstChild != null) {
+			div.removeChild(firstChild);
+		}
+		Window win10 = (Window) Executions
+				.createComponents(
+						"/zul/payRollManagement/hrmsInitiatePayroll.zul",
+						null, UtilMisc.toMap("toolbarBtn",initiatePayroll));
+		div.appendChild(win10);
+		unselectedToolbarbuttonColor(self);
+	    selectedToolbarbuttonColor(self);
+		</attribute>
+		</toolbarbutton>
+		
+		</vbox>	
+		
+		<zscript>
+	String	id	= sessionScope.get("id");
+	if (org.ofbiz.base.util.UtilValidate.isNotEmpty(id)) {
+	Component comp = groupBoxMain.getFellowIfAny(id);
+	if(comp != null){
+		Events.postEvent("onClick", comp, null);
+		} else {
+		Events.postEvent("onClick", groupBoxMain.getFellow("paySlips"), null);
+	}
+	} else {
+		Events.postEvent("onClick", groupBoxMain.getFellow("paySlips"), null);
+	}
+	sessionScope.remove("id");
+</zscript>
+	</groupbox>
+
+
+	<div id="appendDiv" self="@{define(content)}">
+
+	</div>
+</zk>

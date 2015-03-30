@@ -1,0 +1,893 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+Licensed to the Apache Software Foundation (ASF) under one
+or more contributor license agreements.  See the NOTICE file
+distributed with this work for additional information
+regarding copyright ownership.  The ASF licenses this file
+to you under the Apache License, Version 2.0 (the
+"License"); you may not use this file except in compliance
+with the License.  You may obtain a copy of the License at
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing,
+software distributed under the License is distributed on an
+"AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+KIND, either express or implied.  See the License for the
+specific language governing permissions and limitations
+under the License.
+-->
+<simple-methods xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                xsi:noNamespaceSchemaLocation="http://ofbiz.apache.org/dtds/simple-methods-v2.xsd">
+    <!-- ========= AcctgTrans methods ========= -->
+
+    <simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_"
+                   event-event-message-name="_event_message_" event-request-object-name="request"
+                   event-response-code-name="_response_code_" event-response-object-name="response"
+                   login-required="false" method-name="createAcctgTrans"
+                   service-error-message-list-name="errorMessageList" service-error-message-map-name="errorMessageMap"
+                   service-error-message-name="errorMessage" service-response-message-name="responseMessage"
+                   service-success-message-list-name="successMessageList" service-success-message-name="successMessage"
+                   short-description="Create an AcctgTrans" use-transaction="true">
+        <make-value entity-name="AcctgTrans" value-field="newEntity"/>
+        <set-nonpk-fields map="parameters" set-if-null="true" value-field="newEntity"/>
+        <set field="newEntity.isPosted" set-if-empty="true" set-if-null="false" value="N"/>
+        <!-- AcctgTrans uses a sequenced id, so get the next one now and set it... -->
+        <sequenced-id field="newEntity.acctgTransId" get-long-only="false" sequence-name="AcctgTrans"/>
+        <field-to-result field="newEntity.acctgTransId" result-name="acctgTransId"/>
+        <set field="newEntity.lastModifiedByUserLogin" from="userLogin.userLoginId" set-if-empty="true"
+             set-if-null="false"/>
+        <set field="newEntity.createdByUserLogin" from="userLogin.userLoginId" set-if-empty="true" set-if-null="false"/>
+        <create-value do-cache-clear="true" or-store="false" value-field="newEntity"/>
+    </simple-method>
+
+    <simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_"
+                   event-event-message-name="_event_message_" event-request-object-name="request"
+                   event-response-code-name="_response_code_" event-response-object-name="response"
+                   login-required="true" method-name="updateAcctgTrans"
+                   service-error-message-list-name="errorMessageList" service-error-message-map-name="errorMessageMap"
+                   service-error-message-name="errorMessage" service-response-message-name="responseMessage"
+                   service-success-message-list-name="successMessageList" service-success-message-name="successMessage"
+                   short-description="Update an AcctgTrans" use-transaction="true">
+        <entity-one auto-field-map="true" entity-name="AcctgTrans" use-cache="false" value-field="lookedUpValue"/>
+        <if-compare field="lookedUpValue.isPosted" operator="equals" type="String" value="Y">
+            <add-error error-list-name="error_list">
+                <fail-property property="AccountingTransactionHasBeenAlreadyPosted" resource="AccountingUiLabels"/>
+            </add-error>
+            <check-errors error-code="error" error-list-name="error_list"/>
+        </if-compare>
+        <set-nonpk-fields map="parameters" set-if-null="true" value-field="lookedUpValue"/>
+        <set field="lookedUpValue.lastModifiedByUserLogin" from="userLogin.userLoginId" set-if-empty="true"
+             set-if-null="false"/>
+        <store-value do-cache-clear="true" value-field="lookedUpValue"/>
+    </simple-method>
+
+    <simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_"
+                   event-event-message-name="_event_message_" event-request-object-name="request"
+                   event-response-code-name="_response_code_" event-response-object-name="response"
+                   login-required="true" method-name="deleteAcctgTrans"
+                   service-error-message-list-name="errorMessageList" service-error-message-map-name="errorMessageMap"
+                   service-error-message-name="errorMessage" service-response-message-name="responseMessage"
+                   service-success-message-list-name="successMessageList" service-success-message-name="successMessage"
+                   short-description="Delete an AcctgTrans" use-transaction="true">
+        <entity-one auto-field-map="true" entity-name="AcctgTrans" use-cache="false" value-field="lookedUpValue"/>
+        <if-compare field="lookedUpValue.isPosted" operator="equals" type="String" value="Y">
+            <add-error error-list-name="error_list">
+                <fail-property property="AccountingTransactionHasBeenAlreadyPosted" resource="AccountingUiLabels"/>
+            </add-error>
+            <check-errors error-code="error" error-list-name="error_list"/>
+        </if-compare>
+        <remove-value do-cache-clear="true" value-field="lookedUpValue"/>
+    </simple-method>
+
+    <simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_"
+                   event-event-message-name="_event_message_" event-request-object-name="request"
+                   event-response-code-name="_response_code_" event-response-object-name="response"
+                   login-required="true" method-name="updateAcctgTransLastModified"
+                   service-error-message-list-name="errorMessageList" service-error-message-map-name="errorMessageMap"
+                   service-error-message-name="errorMessage" service-response-message-name="responseMessage"
+                   service-success-message-list-name="successMessageList" service-success-message-name="successMessage"
+                   short-description="Update AcctgTrans LastModified Info" use-transaction="true">
+        <!-- this is just a little method that is meant to be called as an inline call-simple-method target with the context already setup -->
+        <entity-one auto-field-map="true" entity-name="AcctgTrans" use-cache="false" value-field="lookedUpACTX"/>
+        <set field="lookedUpACTX.lastModifiedByUserLogin" from="userLogin.userLoginId" set-if-empty="true"
+             set-if-null="false"/>
+        <store-value do-cache-clear="true" value-field="lookedUpACTX"/>
+    </simple-method>
+    <!-- ========= AcctgTransEntry methods ========= -->
+
+    <simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_"
+                   event-event-message-name="_event_message_" event-request-object-name="request"
+                   event-response-code-name="_response_code_" event-response-object-name="response"
+                   login-required="true" method-name="createAcctgTransEntry"
+                   service-error-message-list-name="errorMessageList" service-error-message-map-name="errorMessageMap"
+                   service-error-message-name="errorMessage" service-response-message-name="responseMessage"
+                   service-success-message-list-name="successMessageList" service-success-message-name="successMessage"
+                   short-description="Add Entry To AcctgTrans" use-transaction="true">
+        <make-value entity-name="AcctgTransEntry" value-field="newEntity"/>
+        <set-nonpk-fields map="parameters" set-if-null="true" value-field="newEntity"/>
+        <set-pk-fields map="parameters" set-if-null="true" value-field="newEntity"/>
+        <entity-one auto-field-map="true" entity-name="AcctgTrans" use-cache="false" value-field="acctgTrans"/>
+        <if-compare field="acctgTrans.isPosted" operator="equals" type="String" value="Y">
+            <add-error error-list-name="error_list">
+                <fail-property property="AccountingTransactionHasBeenAlreadyPosted" resource="AccountingUiLabels"/>
+            </add-error>
+            <check-errors error-code="error" error-list-name="error_list"/>
+        </if-compare>
+        <make-next-seq-id increment-by="1" numeric-padding="5" seq-field-name="acctgTransEntrySeqId"
+                          value-field="newEntity"/>
+        <field-to-result field="newEntity.acctgTransEntrySeqId" result-name="acctgTransEntrySeqId"/>
+        <!-- if not explicitly provided in the parameters, set the currency of the entry from PartyAcctgPreference -->
+        <set field="partyAccountingPreferencesCallMap.organizationPartyId" from="parameters.organizationPartyId"
+             set-if-empty="true" set-if-null="false"/>
+        <call-service break-on-error="true" error-code="error" in-map-name="partyAccountingPreferencesCallMap"
+                      include-user-login="true" require-new-transaction="false"
+                      service-name="getPartyAccountingPreferences" success-code="success">
+            <result-to-field field="partyAcctgPreference" result-name="partyAccountingPreference"/>
+        </call-service>
+        <if-empty field="parameters.currencyUomId">
+            <set field="newEntity.currencyUomId" from="partyAcctgPreference.baseCurrencyUomId" set-if-empty="true"
+                 set-if-null="false"/>
+        </if-empty>
+        <!-- if the amount field is empty, then determine it from the origAmount and origCurrencyUomId fields:
+             if origCurrencyUomId is different from the base currency of the organization, then the amount value will be converted -->
+        <if-empty field="newEntity.amount">
+            <if-not-empty field="newEntity.origAmount">
+                <if-empty field="newEntity.origCurrencyUomId">
+                    <set field="newEntity.origCurrencyUomId" from="partyAcctgPreference.baseCurrencyUomId"
+                         set-if-empty="true" set-if-null="false"/>
+                </if-empty>
+                <if-compare-field field="newEntity.origCurrencyUomId" operator="not-equals"
+                                  to-field="newEntity.currencyUomId" type="String">
+                    <clear-field field="convertUomInMap"/>
+                    <set field="convertUomInMap.originalValue" from="newEntity.origAmount" set-if-empty="true"
+                         set-if-null="false" type="BigDecimal"/>
+                    <set field="convertUomInMap.uomId" from="newEntity.origCurrencyUomId" set-if-empty="true"
+                         set-if-null="false"/>
+                    <set field="convertUomInMap.uomIdTo" from="newEntity.currencyUomId" set-if-empty="true"
+                         set-if-null="false"/>
+                    <set field="convertUomInMap.purposeEnumId" from="parameters.purposeEnumId" set-if-empty="true"
+                         set-if-null="false"/>
+                    <!-- TODO: set the optional asOfDate input parameter -->
+                    <call-service break-on-error="true" error-code="error" in-map-name="convertUomInMap"
+                                  include-user-login="true" require-new-transaction="false" service-name="convertUom"
+                                  success-code="success">
+                        <result-to-field field="newEntity.amount" result-name="convertedValue"/>
+                    </call-service>
+                    <else>
+                        <set field="newEntity.amount" from="newEntity.origAmount" set-if-empty="true"
+                             set-if-null="false"/>
+                    </else>
+                </if-compare-field>
+            </if-not-empty>
+        </if-empty>
+        <if-empty field="newEntity.acctgTransEntryTypeId">
+            <set field="newEntity.acctgTransEntryTypeId" set-if-empty="true" set-if-null="false" value="_NA_"/>
+        </if-empty>
+        <!-- by default, set the reconciled status of this new entry to not reconciled -->
+        <set field="newEntity.reconcileStatusId" set-if-empty="true" set-if-null="false" value="AES_NOT_RECONCILED"/>
+        <create-value do-cache-clear="true" or-store="false" value-field="newEntity"/>
+        <!-- when changing entries, also update the last modified info for the AcctgTrans -->
+        <!-- call-simple-method method-name="updateAcctgTransLastModified"/ -->
+    </simple-method>
+
+    <simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_"
+                   event-event-message-name="_event_message_" event-request-object-name="request"
+                   event-response-code-name="_response_code_" event-response-object-name="response"
+                   login-required="true" method-name="updateAcctgTransEntry"
+                   service-error-message-list-name="errorMessageList" service-error-message-map-name="errorMessageMap"
+                   service-error-message-name="errorMessage" service-response-message-name="responseMessage"
+                   service-success-message-list-name="successMessageList" service-success-message-name="successMessage"
+                   short-description="Update Entry To AcctgTrans" use-transaction="true">
+        <entity-one auto-field-map="true" entity-name="AcctgTransEntry" use-cache="false" value-field="lookedUpValue"/>
+        <!-- Only status change will be allowed in case of posted entry -->
+        <make-value entity-name="AcctgTransEntry" value-field="acctgTransEntry"/>
+        <set field="acctgTransEntry" from="lookedUpValue" set-if-empty="true" set-if-null="false"/>
+        <set-nonpk-fields map="parameters" set-if-null="true" value-field="acctgTransEntry"/>
+        <set field="lookedUpValue.reconcileStatusId" from="acctgTransEntry.reconcileStatusId" set-if-empty="true"
+             set-if-null="false"/>
+        <if-compare-field field="acctgTransEntry" operator="not-equals" to-field="lookedUpValue" type="String">
+            <entity-one auto-field-map="true" entity-name="AcctgTrans" use-cache="false" value-field="acctgTrans"/>
+            <if-compare field="acctgTrans.isPosted" operator="equals" type="String" value="Y">
+                <add-error error-list-name="error_list">
+                    <fail-property property="AccountingTransactionHasBeenAlreadyPosted" resource="AccountingUiLabels"/>
+                </add-error>
+                <check-errors error-code="error" error-list-name="error_list"/>
+            </if-compare>
+        </if-compare-field>
+        <set-nonpk-fields map="parameters" set-if-null="true" value-field="lookedUpValue"/>
+        <store-value do-cache-clear="true" value-field="lookedUpValue"/>
+        <!-- when changing entries, also update the last modified info for the AcctgTrans -->
+        <call-simple-method method-name="updateAcctgTransLastModified"/>
+    </simple-method>
+
+    <simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_"
+                   event-event-message-name="_event_message_" event-request-object-name="request"
+                   event-response-code-name="_response_code_" event-response-object-name="response"
+                   login-required="true" method-name="deleteAcctgTransEntry"
+                   service-error-message-list-name="errorMessageList" service-error-message-map-name="errorMessageMap"
+                   service-error-message-name="errorMessage" service-response-message-name="responseMessage"
+                   service-success-message-list-name="successMessageList" service-success-message-name="successMessage"
+                   short-description="Remove Entry From AcctgTrans" use-transaction="true">
+        <entity-one auto-field-map="true" entity-name="AcctgTrans" use-cache="false" value-field="acctgTrans"/>
+        <if-compare field="acctgTrans.isPosted" operator="equals" type="String" value="Y">
+            <add-error error-list-name="error_list">
+                <fail-property property="AccountingTransactionHasBeenAlreadyPosted" resource="AccountingUiLabels"/>
+            </add-error>
+            <check-errors error-code="error" error-list-name="error_list"/>
+        </if-compare>
+        <entity-one auto-field-map="true" entity-name="AcctgTransEntry" use-cache="false" value-field="lookedUpValue"/>
+        <remove-value do-cache-clear="true" value-field="lookedUpValue"/>
+        <!-- when changing entries, also update the last modified info for the AcctgTrans -->
+        <call-simple-method method-name="updateAcctgTransLastModified"/>
+    </simple-method>
+    <!-- AcctgTrans Trial Balance and Post routines -->
+
+    <simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_"
+                   event-event-message-name="_event_message_" event-request-object-name="request"
+                   event-response-code-name="_response_code_" event-response-object-name="response"
+                   login-required="true" method-name="calculateAcctgTransTrialBalance"
+                   service-error-message-list-name="errorMessageList" service-error-message-map-name="errorMessageMap"
+                   service-error-message-name="errorMessage" service-response-message-name="responseMessage"
+                   service-success-message-list-name="successMessageList" service-success-message-name="successMessage"
+                   short-description="Calculate Trial Balance for a AcctgTrans" use-transaction="true">
+        <call-simple-method method-name="getGlArithmeticSettingsInline"
+                            xml-resource="component://accounting/script/org/ofbiz/accounting/ledger/GeneralLedgerServices.xml"/>
+        <!-- get all AcctgTransEntry for this trans, for each if debit add to debits total if credit add to credits total -->
+        <entity-condition distinct="false" entity-name="AcctgTransEntry" filter-by-date="false"
+                          list="acctgTransEntryList" use-cache="false">
+            <condition-expr field-name="acctgTransId" from-field="parameters.acctgTransId" ignore="false"
+                            ignore-case="false" ignore-if-empty="false" ignore-if-null="false" operator="equals"/>
+            <order-by field-name="acctgTransEntrySeqId"/>
+        </entity-condition>
+        <calculate decimal-scale="2" field="debitTotal" rounding-mode="HalfEven" type="BigDecimal">
+            <number value="0"/>
+        </calculate>
+        <calculate decimal-scale="2" field="creditTotal" rounding-mode="HalfEven" type="BigDecimal">
+            <number value="0"/>
+        </calculate>
+        <set field="arg.notAllowedGlAccount" value="N"/>
+        <iterate entry="acctgTransEntry" list="acctgTransEntryList">
+            <call-bsh><![CDATA[
+            String glAccountId=  (String)acctgTransEntry.get("glAccountId");
+            if(glAccountId!=null && glAccountId.contains("_")){
+               arg.put("notAllowedGlAccount","Y");
+             }
+            ]]></call-bsh>
+
+            <if-compare field="arg.notAllowedGlAccount" operator="equals" type="String" value="Y">
+                <add-error error-list-name="error_list">
+                    <fail-message message="Transaction cannot be posted for GlAccount :${acctgTransEntry.glAccountId}"/>
+                </add-error>
+            </if-compare>
+            <set field="arg.notAllowedGlAccount" value="N"/>
+            <if-compare field="acctgTransEntry.debitCreditFlag" operator="equals" type="String" value="D">
+                <calculate decimal-scale="${ledgerDecimals}" field="debitTotal" rounding-mode="${roundingMode}"
+                           type="BigDecimal">
+                    <calcop operator="add">
+                        <calcop field="debitTotal" operator="get"/>
+                        <calcop field="acctgTransEntry.amount" operator="get"/>
+                    </calcop>
+                </calculate>
+                <else>
+                    <if-compare field="acctgTransEntry.debitCreditFlag" operator="equals" type="String" value="C">
+                        <calculate decimal-scale="${ledgerDecimals}" field="creditTotal" rounding-mode="${roundingMode}"
+                                   type="BigDecimal">
+                            <calcop operator="add">
+                                <calcop field="creditTotal" operator="get"/>
+                                <calcop field="acctgTransEntry.amount" operator="get"/>
+                            </calcop>
+                        </calculate>
+                        <else>
+                            <!-- uh-oh, bad debitCreditFlag... -->
+                            <add-error error-list-name="error_list">
+                                <fail-message
+                                        message="Bad debitCreditFlag [${acctgTransEntry.debitCreditFlag}] (was not D or C) in Accounting Transaction Entry with acctgTransId=[${acctgTransEntry.acctgTransId}] and acctgTransEntrySeqId=[${acctgTransEntry.acctgTransEntrySeqId}]"/>
+                            </add-error>
+                        </else>
+                    </if-compare>
+                </else>
+            </if-compare>
+        </iterate>
+
+        <!-- check-errors just in case we had some bad debitCreditFlags -->
+        <check-errors error-code="error" error-list-name="error_list"/>
+        <!-- should now have the debitTotal and creditTotal, calculate the debitCreditDifference -->
+        <calculate decimal-scale="${ledgerDecimals}" field="debitCreditDifference" rounding-mode="${roundingMode}"
+                   type="BigDecimal">
+            <calcop operator="add">
+                <calcop field="debitTotal" operator="get"/>
+                <calcop field="creditTotal" operator="negative"/>
+            </calcop>
+        </calculate>
+        <field-to-result field="debitTotal"/>
+        <field-to-result field="creditTotal"/>
+        <field-to-result field="debitCreditDifference"/>
+    </simple-method>
+
+    <simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_"
+                   event-event-message-name="_event_message_"
+                   event-request-object-name="request" event-response-code-name="_response_code_"
+                   event-response-object-name="response" login-required="true" method-name="postAcctgTrans"
+                   service-error-message-list-name="errorMessageList" service-error-message-map-name="errorMessageMap"
+                   service-error-message-name="errorMessage" service-response-message-name="responseMessage"
+                   service-success-message-list-name="successMessageList" service-success-message-name="successMessage"
+                   short-description="Post a AcctgTrans" use-transaction="true">
+        <!-- make sure the AcctgTrans has not already been posted -->
+        <entity-one auto-field-map="true" entity-name="AcctgTrans" use-cache="false" value-field="acctgTrans"/>
+        <if-compare field="acctgTrans.isPosted" operator="equals" type="String" value="Y">
+            <add-error error-list-name="error_list">
+                <fail-message
+                        message="AcctgTrans [${parameters.acctgTransId}] has already been posted. Not posting again"/>
+            </add-error>
+        </if-compare>
+        <check-errors error-code="error" error-list-name="error_list"/>
+        <!-- check trial balance -->
+        <set field="trialBalanceCallMap.acctgTransId" from="parameters.acctgTransId" set-if-empty="true"
+             set-if-null="false"/>
+        <call-service break-on-error="true" error-code="error" in-map-name="trialBalanceCallMap"
+                      include-user-login="true" require-new-transaction="false"
+                      service-name="calculateAcctgTransTrialBalance" success-code="success">
+            <results-to-map map-name="trialBalanceResultMap"/>
+        </call-service>
+        <if-compare field="trialBalanceResultMap.debitCreditDifference" operator="greater-equals" type="BigDecimal"
+                    value="0.01">
+            <add-error error-list-name="error_list">
+                <fail-message
+                        message="Not posting GL Accounting Transaction with ID [${parameters.acctgTransId}] because the trial balance failed: Debit Total=${trialBalanceResultMap.debitTotal} Credit Total=${trialBalanceResultMap.creditTotal} Debit/Credit Difference=${trialBalanceResultMap.debitCreditDifference}"/>
+            </add-error>
+        </if-compare>
+        <if-compare field="trialBalanceResultMap.debitCreditDifference" operator="less-equals" type="BigDecimal"
+                    value="-0.01">
+            <add-error error-list-name="error_list">
+                <fail-message
+                        message="Not posting GL Accounting Transaction with ID [${parameters.acctgTransId}] because the trial balance failed: Debit Total=${trialBalanceResultMap.debitTotal} Credit Total=${trialBalanceResultMap.creditTotal} Debit/Credit Difference=${trialBalanceResultMap.debitCreditDifference}"/>
+            </add-error>
+        </if-compare>
+        <if-compare field="trialBalanceResultMap.debitTotal" operator="equals" type="BigDecimal" value="0.00">
+            <add-error error-list-name="error_list">
+                <fail-message
+                        message="Not posting GL Accounting Transaction with ID [${parameters.acctgTransId}] because debit total is zero: Debit Total=${trialBalanceResultMap.debitTotal} Credit Total=${trialBalanceResultMap.creditTotal} Debit/Credit Difference=${trialBalanceResultMap.debitCreditDifference}"/>
+            </add-error>
+        </if-compare>
+        <if-compare field="trialBalanceResultMap.creditTotal" operator="equals" type="BigDecimal" value="0.00">
+            <add-error error-list-name="error_list">
+                <fail-message
+                        message="Not posting GL Accounting Transaction with ID [${parameters.acctgTransId}] because credit total is zero: Debit Total=${trialBalanceResultMap.debitTotal} Credit Total=${trialBalanceResultMap.creditTotal} Debit/Credit Difference=${trialBalanceResultMap.debitCreditDifference}"/>
+            </add-error>
+        </if-compare>
+        <entity-condition distinct="false" entity-name="AcctgTransEntry" filter-by-date="false"
+                          list="acctgTransEntryList" use-cache="false">
+            <condition-expr field-name="acctgTransId" from-field="parameters.acctgTransId" ignore="false"
+                            ignore-case="false" ignore-if-empty="false" ignore-if-null="false" operator="equals"/>
+            <order-by field-name="acctgTransEntrySeqId"/>
+        </entity-condition>
+        <!-- check the scheduled posting date, but only if it's set -->
+        <if-not-empty field="acctgTrans.scheduledPostingDate">
+            <set field="scheduledPostingDate" from="acctgTrans.scheduledPostingDate" set-if-empty="true"
+                 set-if-null="false"/>
+            <set field="beforeScheduled"
+                 from="groovy: org.ofbiz.base.util.UtilDateTime.nowTimestamp().before(scheduledPostingDate)"
+                 set-if-empty="true" set-if-null="false"/>
+            <if-compare field="beforeScheduled" operator="equals" type="Boolean" value="true">
+                <add-error error-list-name="error_list">
+                    <fail-message
+                            message="Not posting GL Accounting Transaction with ID [${parameters.acctgTransId}] because it's not scheduled to be posted yet.  The scheduled posting date is [${acctgTrans.scheduledPostingDate}]"/>
+                </add-error>
+            </if-compare>
+        </if-not-empty>
+        <!-- setup periodTypeIdList to use for CustomTimePeriod support -->
+        <set field="onlyIncludePeriodTypeIdList[]" set-if-empty="true" set-if-null="false" value="FISCAL_YEAR"/>
+        <set field="onlyIncludePeriodTypeIdList[]" set-if-empty="true" set-if-null="false" value="FISCAL_QUARTER"/>
+        <set field="onlyIncludePeriodTypeIdList[]" set-if-empty="true" set-if-null="false" value="FISCAL_MONTH"/>
+        <set field="onlyIncludePeriodTypeIdList[]" set-if-empty="true" set-if-null="false" value="FISCAL_WEEK"/>
+        <set field="onlyIncludePeriodTypeIdList[]" set-if-empty="true" set-if-null="false" value="FISCAL_BIWEEK"/>
+        <!-- get current period(s) and check if closed -->
+        <!-- also check if the glAccountId, amount, currencyUomId fields are all set -->
+        <iterate entry="acctgTransEntry" list="acctgTransEntryList">
+            <!-- we want to do this for each organizationPartyId, so only do this if we haven't already found the list for the current org -->
+            <if-empty field="customTimePeriodListByOrganizationPartyIdMap[acctgTransEntry.organizationPartyId]">
+                <clear-field field="findCustomTimePeriodCallMap"/>
+                <clear-field field="customTimePeriodList"/>
+                <set field="findCustomTimePeriodCallMap.findDate" from="acctgTrans.transactionDate" set-if-empty="true"
+                     set-if-null="false"/>
+                <set field="findCustomTimePeriodCallMap.organizationPartyId" from="acctgTransEntry.organizationPartyId"
+                     set-if-empty="true" set-if-null="false"/>
+                <set field="findCustomTimePeriodCallMap.onlyIncludePeriodTypeIdList" from="onlyIncludePeriodTypeIdList"
+                     set-if-empty="true" set-if-null="false"/>
+                <!-- should we excludeNoOrganizationPeriods? for now, YES, which means to find a CustomTimePeriod one must be setup at least for the top level Organization Party -->
+                <set field="findCustomTimePeriodCallMap.excludeNoOrganizationPeriods" set-if-empty="true"
+                     set-if-null="false" value="Y"/>
+                <call-service break-on-error="true" error-code="error" in-map-name="findCustomTimePeriodCallMap"
+                              include-user-login="true" require-new-transaction="false"
+                              service-name="findCustomTimePeriods" success-code="success">
+                    <result-to-field result-name="customTimePeriodList"/>
+                </call-service>
+                <if-empty field="customTimePeriodList">
+                    <add-error error-list-name="error_list">
+                        <fail-message
+                                message="Could not find a CustomTimePeriod (fiscal period) for the Transaction Date [${acctgTrans.transactionDate}] (is for Organization Party with ID [${acctgTransEntry.organizationPartyId}])"/>
+                    </add-error>
+                </if-empty>
+                <!-- now do the actual isClose check -->
+                <iterate entry="customTimePeriod" list="customTimePeriodList">
+                    <if-compare field="customTimePeriod.isClosed" operator="equals" type="String" value="Y">
+                        <add-error error-list-name="error_list">
+                            <fail-message
+                                    message="CustomTimePeriod (fiscal period) [${customTimePeriod.customTimePeriodId}] is CLOSED, cannot post to it (is for the Transaction Date [${acctgTrans.transactionDate}] and Organization Party with ID [${acctgTransEntry.organizationPartyId}])"/>
+                        </add-error>
+                    </if-compare>
+                </iterate>
+                <!-- save this customTimePeriodList for the current entry for later use -->
+                <set field="customTimePeriodListByOrganizationPartyIdMap[acctgTransEntry.organizationPartyId]"
+                     from="customTimePeriodList" set-if-empty="true" set-if-null="false"/>
+            </if-empty>
+            <if-empty field="acctgTransEntry.glAccountId">
+                <add-error error-list-name="error_list">
+                    <fail-message
+                            message="Gl account id is not set for [${acctgTransEntry.acctgTransEntrySeqId}] or mapping not found for account type ${acctgTransEntry.glAccountTypeId}"/>
+                </add-error>
+            </if-empty>
+            <if-empty field="acctgTransEntry.amount">
+                <add-error error-list-name="error_list">
+                    <fail-message
+                            message="Amount not set for [${acctgTransEntry.acctgTransEntrySeqId}] or failed to convert the original amount ${acctgTransEntry.origAmount} with currency ${acctgTransEntry.origCurrencyUomId}"/>
+                </add-error>
+            </if-empty>
+            <!--
+            <if-empty field="acctgTransEntry.currencyUomId">
+                <add-error><fail-message message="Currency is not set for [${acctgTransEntry.acctgTransEntrySeqId}]"/></add-error>
+            </if-empty>
+            -->
+        </iterate>
+        <!-- DONE with initial tests/checks, see if we are good to go or not... -->
+        <if-compare field="parameters.verifyOnly" operator="equals" type="String" value="Y">
+            <if-not-empty field="error_list">
+                <field-to-result field="error_list" result-name="successMessageList"/>
+            </if-not-empty>
+            <return response-code="success"/>
+            <else>
+                <!-- if there are errors and we have an error journal assign to the journal and return -->
+                <if-not-empty field="error_list">
+                    <iterate entry="acctgTransEntry" list="acctgTransEntryList">
+                        <set field="partyAccountingPreferencesCallMap.organizationPartyId"
+                             from="acctgTransEntry.organizationPartyId" set-if-empty="true" set-if-null="false"/>
+                        <call-service break-on-error="true" error-code="error"
+                                      in-map-name="partyAccountingPreferencesCallMap" include-user-login="true"
+                                      require-new-transaction="false" service-name="getPartyAccountingPreferences"
+                                      success-code="success">
+                            <result-to-field field="partyAcctgPreference" result-name="partyAccountingPreference"/>
+                        </call-service>
+                        <if-empty field="partyAcctgPreference.errorGlJournalId">
+                            <!-- if no error journal is set, then return the error messages -->
+                            <check-errors error-code="error" error-list-name="error_list"/>
+                            <else>
+                                <!-- assign the transaction to the error journal -->
+                                <set field="acctgTrans.glJournalId" from="partyAcctgPreference.errorGlJournalId"
+                                     set-if-empty="true" set-if-null="false"/>
+                                <store-value do-cache-clear="true" value-field="acctgTrans"/>
+                                <set field="warningMessage[]" set-if-empty="true" set-if-null="false"
+                                     value="The accounting transaction [${acctgTrans.acctgTransId}] has been posted to the Error Journal [${partyAcctgPreference.errorGlJournalId}]."/>
+                                <field-to-result field="warningMessage" result-name="successMessageList"/>
+                                <return response-code="success"/>
+                            </else>
+                        </if-empty>
+                    </iterate>
+                </if-not-empty>
+                <!-- TODO: for each entry: lookup GlAccount, update posted balance -->
+                <iterate entry="acctgTransEntry" list="acctgTransEntryList">
+                    <!-- Get all data to operate on: GlAccount, GlAccountOrganization, GlAccountHistory -->
+                    <clear-field field="glAccount"/>
+                    <clear-field field="glAccountOrganization"/>
+                    <clear-field field="glAccountHistoryList"/>
+                    <entity-one auto-field-map="true" entity-name="GlAccount" use-cache="false" value-field="glAccount">
+                        <field-map field-name="glAccountId" from-field="acctgTransEntry.glAccountId"/>
+                    </entity-one>
+                    <entity-one auto-field-map="true" entity-name="GlAccountOrganization" use-cache="false"
+                                value-field="glAccountOrganization">
+                        <field-map field-name="glAccountId" from-field="acctgTransEntry.glAccountId"/>
+                        <field-map field-name="organizationPartyId" from-field="acctgTransEntry.organizationPartyId"/>
+                    </entity-one>
+                    <!-- update the GlAccount's posted balance.  This depends on whether the GlAccount is a debit or credit account and the
+                    debitCreditFlag of the acctgTransEntry.  Debits add to debit accounts and subtract from credit accounts.  Credits add to
+                    credit accounts and subtract from debit accounts -->
+                    <!-- we do this by first calculating a postingAmount (positive or negative) then adding to the postingBalance -->
+                    <clear-field field="postingAmount"/>
+                    <!-- test if the account is a DEBIT account -->
+                    <set field="isDebit" from="bsh:org.ofbiz.accounting.util.UtilAccounting.isDebitAccount(glAccount)"
+                         set-if-empty="true" set-if-null="false"/>
+                    <if-compare field="isDebit" operator="equals" type="String" value="true">
+                        <if-compare field="acctgTransEntry.debitCreditFlag" operator="equals" type="String" value="D">
+                            <set field="postingAmount" from="acctgTransEntry.amount" set-if-empty="true"
+                                 set-if-null="false"/>
+                            <else>
+                                <if-compare field="acctgTransEntry.debitCreditFlag" operator="equals" type="String"
+                                            value="C">
+                                    <calculate decimal-scale="2" field="postingAmount" rounding-mode="HalfEven"
+                                               type="BigDecimal">
+                                        <calcop field="acctgTransEntry.amount" operator="negative"/>
+                                    </calculate>
+                                </if-compare>
+                            </else>
+                        </if-compare>
+                        <else>
+                            <!-- otherwise, test if the account is credit -->
+                            <set field="isCredit"
+                                 from="bsh:org.ofbiz.accounting.util.UtilAccounting.isCreditAccount(glAccount)"
+                                 set-if-empty="true" set-if-null="false"/>
+                            <if-compare field="isCredit" operator="equals" type="String" value="true">
+                                <if-compare field="acctgTransEntry.debitCreditFlag" operator="equals" type="String"
+                                            value="C">
+                                    <set field="postingAmount" from="acctgTransEntry.amount" set-if-empty="true"
+                                         set-if-null="false"/>
+                                    <else>
+                                        <if-compare field="acctgTransEntry.debitCreditFlag" operator="equals"
+                                                    type="String" value="D">
+                                            <calculate decimal-scale="2" field="postingAmount" rounding-mode="HalfEven"
+                                                       type="BigDecimal">
+                                                <calcop field="acctgTransEntry.amount" operator="negative"/>
+                                            </calculate>
+                                        </if-compare>
+                                    </else>
+                                </if-compare>
+                                <else>
+                                    <log level="warning"
+                                         message="GL account ${glAccount.glAccountId} is of class ${glAccount.glAccountClassId} which is neither debit nor credit - cannot update posted balance"/>
+                                </else>
+                            </if-compare>
+                        </else>
+                    </if-compare>
+                    <log level="verbose"
+                         message="GL account: [${acctgTransEntry.glAccountId}] initial balance: [${glAccountOrganization.postedBalance}] ${acctgTransEntry.debitCreditFlag} [${acctgTransEntry.amount}]"/>
+                    <!-- calculate the new posted balance for this gl account -->
+                    <calculate decimal-scale="2" field="postedBalance" rounding-mode="HalfEven" type="BigDecimal">
+                        <calcop field="glAccountOrganization.postedBalance" operator="get"/>
+                        <calcop field="postingAmount" operator="get"/>
+                    </calculate>
+                    <log level="verbose"
+                         message="GL account: [${acctgTransEntry.glAccountId}] final balance: [${postedBalance}]"/>
+                    <!-- update the gl account's posted balance for this organization -->
+                    <set field="updateGlAccountParams.glAccountId" from="glAccount.glAccountId" set-if-empty="true"
+                         set-if-null="false"/>
+                    <set field="updateGlAccountParams.postedBalance" from="postedBalance" set-if-empty="true"
+                         set-if-null="false" type="BigDecimal"/>
+                    <set field="updateGlAccountParams.organizationPartyId" from="acctgTransEntry.organizationPartyId"
+                         set-if-empty="true" set-if-null="false"/>
+                    <call-service break-on-error="true" error-code="error" in-map-name="updateGlAccountParams"
+                                  include-user-login="true" require-new-transaction="false"
+                                  service-name="updateGlAccountOrganization" success-code="success"/>
+                    <!-- assemble the glAccountHistoryList, we will update all of these -->
+                    <set field="customTimePeriodList"
+                         from="customTimePeriodListByOrganizationPartyIdMap[acctgTransEntry.organizationPartyId]"
+                         set-if-empty="true" set-if-null="false"/>
+                    <iterate entry="customTimePeriod" list="customTimePeriodList">
+                        <entity-one auto-field-map="true" entity-name="GlAccountHistory" use-cache="false"
+                                    value-field="glAccountHistory">
+                            <field-map field-name="glAccountId" from-field="acctgTransEntry.glAccountId"/>
+                            <field-map field-name="organizationPartyId"
+                                       from-field="acctgTransEntry.organizationPartyId"/>
+                            <field-map field-name="customTimePeriodId"
+                                       from-field="customTimePeriod.customTimePeriodId"/>
+                        </entity-one>
+                        <!-- if no glAccountHistory create a new empty one -->
+                        <if-empty field="glAccountHistory">
+                            <make-value entity-name="GlAccountHistory" value-field="glAccountHistory"/>
+                            <set field="glAccountHistory.glAccountId" from="acctgTransEntry.glAccountId"
+                                 set-if-empty="true" set-if-null="false"/>
+                            <set field="glAccountHistory.organizationPartyId" from="acctgTransEntry.organizationPartyId"
+                                 set-if-empty="true" set-if-null="false"/>
+                            <set field="glAccountHistory.customTimePeriodId" from="customTimePeriod.customTimePeriodId"
+                                 set-if-empty="true" set-if-null="false"/>
+                            <set field="glAccountHistory.postedDebits" set-if-empty="true" set-if-null="false"
+                                 type="BigDecimal" value="0.0"/>
+                            <set field="glAccountHistory.postedCredits" set-if-empty="true" set-if-null="false"
+                                 type="BigDecimal" value="0.0"/>
+                            <create-value do-cache-clear="true" or-store="false" value-field="glAccountHistory"/>
+                        </if-empty>
+                        <!-- update GlAccountHistory's debit and credit totals -->
+                        <if-compare field="acctgTransEntry.debitCreditFlag" operator="equals" type="String" value="D">
+                            <calculate decimal-scale="2" field="glAccountHistory.postedDebits" rounding-mode="HalfEven"
+                                       type="BigDecimal">
+                                <calcop operator="add">
+                                    <calcop field="acctgTransEntry.amount" operator="get"/>
+                                    <calcop field="glAccountHistory.postedDebits" operator="get"/>
+                                </calcop>
+                            </calculate>
+                            <else>
+                                <if-compare field="acctgTransEntry.debitCreditFlag" operator="equals" type="String"
+                                            value="C">
+                                    <calculate decimal-scale="2" field="glAccountHistory.postedCredits"
+                                               rounding-mode="HalfEven" type="BigDecimal">
+                                        <calcop operator="add">
+                                            <calcop field="acctgTransEntry.amount" operator="get"/>
+                                            <calcop field="glAccountHistory.postedCredits" operator="get"/>
+                                        </calcop>
+                                    </calculate>
+                                    <else>
+                                        <add-error error-list-name="error_list">
+                                            <fail-message
+                                                    message="Bad debitCreditFlag [${acctgTransEntry.debitCreditFlag}] (was not D or C) in Accounting Transaction Entry with acctgTransId=[${acctgTransEntry.acctgTransId}] and acctgTransEntrySeqId=[${acctgTransEntry.acctgTransEntrySeqId}]"/>
+                                        </add-error>
+                                    </else>
+                                </if-compare>
+                            </else>
+                        </if-compare>
+                        <store-value do-cache-clear="true" value-field="glAccountHistory"/>
+                    </iterate>
+                </iterate>
+                <!-- check-errors just in case we had some bad debitCreditFlags -->
+                <check-errors error-code="error" error-list-name="error_list"/>
+                <!-- for AcctgTrans: set isPosted to Y, postedDate to now -->
+                <set field="updateAcctgTransParams.acctgTransId" from="acctgTrans.acctgTransId" set-if-empty="true"
+                     set-if-null="false"/>
+                <now-timestamp field="updateAcctgTransParams.postedDate"/>
+                <set field="updateAcctgTransParams.isPosted" set-if-empty="true" set-if-null="false" value="Y"/>
+                <call-service break-on-error="true" error-code="error" in-map-name="updateAcctgTransParams"
+                              include-user-login="true" require-new-transaction="false" service-name="updateAcctgTrans"
+                              success-code="success"/>
+            </else>
+        </if-compare>
+    </simple-method>
+
+    <simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_"
+                   event-event-message-name="_event_message_" event-request-object-name="request"
+                   event-response-code-name="_response_code_" event-response-object-name="response"
+                   login-required="true" method-name="getAcctgTransEntriesAndTransTotal"
+                   service-error-message-list-name="errorMessageList" service-error-message-map-name="errorMessageMap"
+                   service-error-message-name="errorMessage" service-response-message-name="responseMessage"
+                   service-success-message-list-name="successMessageList" service-success-message-name="successMessage"
+                   short-description="Calculate total of credit and debit and difference between both for passed party and group rollup parties"
+                   use-transaction="true">
+        <call-simple-method method-name="getGlArithmeticSettingsInline"
+                            xml-resource="component://accounting/script/org/ofbiz/accounting/ledger/GeneralLedgerServices.xml"/>
+        <set field="organizationPartyId" from="parameters.organizationPartyId" set-if-empty="true" set-if-null="false"/>
+        <set field="partyIds"
+             from="groovy:org.ofbiz.party.party.PartyWorker.getAssociatedPartyIdsByRelationshipType(delegator, organizationPartyId, 'GROUP_ROLLUP')"
+             set-if-empty="true" set-if-null="false" type="List"/>
+        <set field="partyIds[]" from="organizationPartyId" set-if-empty="true" set-if-null="false"/>
+        <entity-condition distinct="true" entity-name="AcctgTransAndEntries" filter-by-date="false"
+                          list="acctgTransAndEntries" use-cache="false">
+            <condition-list combine="and">
+                <condition-expr field-name="organizationPartyId" from-field="partyIds" ignore="false"
+                                ignore-case="false" ignore-if-empty="false" ignore-if-null="false" operator="in"/>
+                <condition-expr field-name="glAccountId" from-field="parameters.glAccountId" ignore="false"
+                                ignore-case="false" ignore-if-empty="false" ignore-if-null="false" operator="equals"/>
+                <condition-expr field-name="isPosted" from-field="parameters.isPosted" ignore="false"
+                                ignore-case="false" ignore-if-empty="true" ignore-if-null="false" operator="equals"/>
+                <condition-expr field-name="transactionDate" from-field="parameters.customTimePeriodStartDate"
+                                ignore="false" ignore-case="false" ignore-if-empty="false" ignore-if-null="false"
+                                operator="greater-equals"/>
+                <condition-expr field-name="transactionDate" from-field="parameters.customTimePeriodEndDate"
+                                ignore="false" ignore-case="false" ignore-if-empty="false" ignore-if-null="false"
+                                operator="less"/>
+            </condition-list>
+        </entity-condition>
+        <set field="debitTotal" set-if-empty="true" set-if-null="false" type="BigDecimal" value="0"/>
+        <set field="creditTotal" set-if-empty="true" set-if-null="false" type="BigDecimal" value="0"/>
+        <set field="debitCreditDifference" set-if-empty="true" set-if-null="false" type="BigDecimal" value="0"/>
+        <iterate entry="acctgTransEntry" list="acctgTransAndEntries">
+            <if-compare field="acctgTransEntry.debitCreditFlag" operator="equals" type="String" value="D">
+                <set field="debitTotal" from="debitTotal + acctgTransEntry.amount" set-if-empty="true"
+                     set-if-null="false" type="BigDecimal"/>
+                <else>
+                    <if-compare field="acctgTransEntry.debitCreditFlag" operator="equals" type="String" value="C">
+                        <set field="creditTotal" from="creditTotal + acctgTransEntry.amount" set-if-empty="true"
+                             set-if-null="false" type="BigDecimal"/>
+                    </if-compare>
+                </else>
+            </if-compare>
+        </iterate>
+        <calculate decimal-scale="${ledgerDecimals}" field="debitTotal" rounding-mode="${roundingMode}"
+                   type="BigDecimal">
+            <calcop field="debitTotal" operator="get"/>
+        </calculate>
+        <calculate decimal-scale="${ledgerDecimals}" field="creditTotal" rounding-mode="${roundingMode}"
+                   type="BigDecimal">
+            <calcop field="creditTotal" operator="get"/>
+        </calculate>
+        <set field="debitCreditDifference" from="debitTotal - creditTotal" set-if-empty="true" set-if-null="false"
+             type="BigDecimal"/>
+        <field-to-result field="acctgTransAndEntries"/>
+        <field-to-result field="debitTotal"/>
+        <field-to-result field="creditTotal"/>
+        <field-to-result field="debitCreditDifference"/>
+    </simple-method>
+    <!-- GlAccount Trial Balance based on isPosted flag -->
+
+    <simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_"
+                   event-event-message-name="_event_message_" event-request-object-name="request"
+                   event-response-code-name="_response_code_" event-response-object-name="response"
+                   login-required="true" method-name="calculateGlAccountTrialBalance"
+                   service-error-message-list-name="errorMessageList" service-error-message-map-name="errorMessageMap"
+                   service-error-message-name="errorMessage" service-response-message-name="responseMessage"
+                   service-success-message-list-name="successMessageList" service-success-message-name="successMessage"
+                   short-description="Calculate Trial Balance for a GlAccount" use-transaction="true">
+        <call-simple-method method-name="getGlArithmeticSettingsInline"
+                            xml-resource="component://accounting/script/org/ofbiz/accounting/ledger/GeneralLedgerServices.xml"/>
+        <set field="openingBalanceDebit" set-if-empty="true" set-if-null="false" type="BigDecimal" value="0"/>
+        <set field="openingBalanceCredit" set-if-empty="true" set-if-null="false" type="BigDecimal" value="0"/>
+        <set field="debitCreditDifference" set-if-empty="true" set-if-null="false" type="BigDecimal" value="0"/>
+        <!-- iterate through all GlAccOrgAndAcctgTransAndEntry in this account and that are filter based on posted and unposted, and get totals of all debits and of all credits -->
+        <entity-condition distinct="false" entity-name="GlAccOrgAndAcctgTransAndEntry" filter-by-date="false"
+                          list="glAccOrgAndAcctgTransAndEntries" use-cache="true">
+            <condition-list combine="and">
+                <condition-expr field-name="glAccountId" from-field="parameters.glAccountId" ignore="false"
+                                ignore-case="false" ignore-if-empty="false" ignore-if-null="false" operator="equals"/>
+                <condition-expr field-name="isPosted" from-field="parameters.isPosted" ignore="false"
+                                ignore-case="false" ignore-if-empty="true" ignore-if-null="false" operator="equals"/>
+                <condition-expr field-name="transactionDate" from-field="parameters.fromDate" ignore="false"
+                                ignore-case="false" ignore-if-empty="false" ignore-if-null="false"
+                                operator="greater-equals"/>
+                <condition-expr field-name="transactionDate" from-field="parameters.thruDate" ignore="false"
+                                ignore-case="false" ignore-if-empty="false" ignore-if-null="false" operator="less"/>
+            </condition-list>
+            <use-iterator/>
+        </entity-condition>
+        <iterate entry="glAccOrgAndAcctgTransAndEntry" list="glAccOrgAndAcctgTransAndEntries">
+            <if-compare field="glAccOrgAndAcctgTransAndEntry.debitCreditFlag" operator="equals" type="String" value="D">
+                <set default="0" field="openingBalanceDebit"
+                     from="openingBalanceDebit + glAccOrgAndAcctgTransAndEntry.totalAmount" set-if-empty="true"
+                     set-if-null="false" type="BigDecimal"/>
+                <else>
+                    <set default="0" field="openingBalanceCredit"
+                         from="openingBalanceCredit + glAccOrgAndAcctgTransAndEntry.totalAmount" set-if-empty="true"
+                         set-if-null="false" type="BigDecimal"/>
+                </else>
+            </if-compare>
+        </iterate>
+        <calculate decimal-scale="${ledgerDecimals}" field="openingBalanceDebit" rounding-mode="${roundingMode}"
+                   type="BigDecimal">
+            <calcop field="openingBalanceDebit" operator="get"/>
+        </calculate>
+        <calculate decimal-scale="${ledgerDecimals}" field="openingBalanceCredit" rounding-mode="${roundingMode}"
+                   type="BigDecimal">
+            <calcop field="openingBalanceCredit" operator="get"/>
+        </calculate>
+        <set field="debitCreditDifference" from="openingBalanceDebit - openingBalanceCredit" set-if-empty="true"
+             set-if-null="false" type="BigDecimal"/>
+        <field-to-result field="openingBalanceDebit"/>
+        <field-to-result field="openingBalanceCredit"/>
+        <field-to-result field="debitCreditDifference"/>
+    </simple-method>
+
+    <simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_"
+                   event-event-message-name="_event_message_" event-request-object-name="request"
+                   event-response-code-name="_response_code_" event-response-object-name="response"
+                   login-required="true" method-name="revertAcctgTransOnRemovePaymentApplications"
+                   service-error-message-list-name="errorMessageList" service-error-message-map-name="errorMessageMap"
+                   service-error-message-name="errorMessage" service-response-message-name="responseMessage"
+                   service-success-message-list-name="successMessageList" service-success-message-name="successMessage"
+                   short-description="Create Reverse Accounting Transaction and Entries on removing PaymentApplication records."
+                   use-transaction="true">
+        <entity-one auto-field-map="true" entity-name="PaymentApplication" use-cache="false"
+                    value-field="paymentApplication"/>
+        <entity-condition distinct="false" entity-name="AcctgTrans" filter-by-date="false" list="acctgTransPaymentList"
+                          use-cache="false">
+            <condition-list combine="and">
+                <condition-expr field-name="invoiceId" from-field="paymentApplication.invoiceId" ignore="false"
+                                ignore-case="false" ignore-if-empty="false" ignore-if-null="false" operator="equals"/>
+                <condition-expr field-name="paymentId" from-field="paymentApplication.paymentId" ignore="false"
+                                ignore-case="false" ignore-if-empty="false" ignore-if-null="false" operator="equals"/>
+            </condition-list>
+        </entity-condition>
+        <iterate entry="acctgTransPayment" list="acctgTransPaymentList">
+            <set field="copyAcctgTransCtx.fromAcctgTransId" from="acctgTransPayment.acctgTransId" set-if-empty="true"
+                 set-if-null="false"/>
+            <set field="copyAcctgTransCtx.revert" set-if-empty="true" set-if-null="false" value="Y"/>
+            <call-service break-on-error="true" error-code="error" in-map-name="copyAcctgTransCtx"
+                          include-user-login="true" require-new-transaction="false"
+                          service-name="copyAcctgTransAndEntries" success-code="success"/>
+            <clear-field field="copyAcctgTransCtx"/>
+        </iterate>
+    </simple-method>
+
+    <simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_"
+                   event-event-message-name="_event_message_" event-request-object-name="request"
+                   event-response-code-name="_response_code_" event-response-object-name="response"
+                   login-required="true" method-name="revertAcctgTransOnCancelInvoice"
+                   service-error-message-list-name="errorMessageList" service-error-message-map-name="errorMessageMap"
+                   service-error-message-name="errorMessage" service-response-message-name="responseMessage"
+                   service-success-message-list-name="successMessageList" service-success-message-name="successMessage"
+                   short-description="Reverting Accounting Transaction And Entries on Canceling an Invoice"
+                   use-transaction="true">
+        <entity-condition distinct="false" entity-name="AcctgTrans" filter-by-date="false" list="acctgTransInvoiceList"
+                          use-cache="false">
+            <condition-list combine="and">
+                <condition-expr field-name="paymentId" from-field="nullField" ignore="false" ignore-case="false"
+                                ignore-if-empty="false" ignore-if-null="false" operator="equals"/>
+                <condition-expr field-name="invoiceId" from-field="parameters.invoiceId" ignore="false"
+                                ignore-case="false" ignore-if-empty="false" ignore-if-null="false" operator="equals"/>
+            </condition-list>
+        </entity-condition>
+        <iterate entry="acctgTransInvoice" list="acctgTransInvoiceList">
+            <set field="copyAcctgTransCtx.fromAcctgTransId" from="acctgTransInvoice.acctgTransId" set-if-empty="true"
+                 set-if-null="false"/>
+            <set field="copyAcctgTransCtx.revert" set-if-empty="true" set-if-null="false" value="Y"/>
+            <call-service break-on-error="true" error-code="error" in-map-name="copyAcctgTransCtx"
+                          include-user-login="true" require-new-transaction="false"
+                          service-name="copyAcctgTransAndEntries" success-code="success"/>
+            <clear-field field="copyAcctgTransCtx"/>
+        </iterate>
+    </simple-method>
+
+    <simple-method method-name="createRecTransaction" default-error-code="error" default-success-code="success"
+                   event-error-message-name="_error_message_"
+                   event-request-object-name="request" event-response-code-name="_response_code_"
+                   event-response-object-name="response" login-required="true"
+                   service-error-message-list-name="errorMessageList" service-error-message-map-name="errorMessageMap"
+                   event-event-message-name="_event_message_"
+                   service-error-message-name="errorMessage" service-response-message-name="responseMessage"
+                   service-success-message-list-name="successMessageList"
+                   service-success-message-name="successMessage" short-description="Create an AcctgTemplate"
+                   use-transaction="true">
+        <set field="acctgTemplateId" from-field="parameters.acctgTemplateId"/>
+        <if-empty field="acctgTemplateId">
+            <make-value entity-name="AcctgTemplate" value-field="newEntity"/>
+            <set-nonpk-fields map="parameters" set-if-null="true" value-field="newEntity"/>
+            <set field="newEntity.isSchedule" set-if-empty="true" set-if-null="false" value="N"/>
+            <sequenced-id field="newEntity.acctgTemplateId" get-long-only="false" sequence-name="AcctgTemplate"/>
+            <create-value do-cache-clear="true" or-store="false" value-field="newEntity"/>
+            <field-to-result field="newEntity.acctgTemplateId" result-name="acctgTemplateId"/>
+            <else>
+                <field-to-result field="acctgTemplateId" result-name="acctgTemplateId"/>
+            </else>
+        </if-empty>
+    </simple-method>
+
+    <simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_"
+                   event-event-message-name="_event_message_"
+                   event-request-object-name="request" event-response-code-name="_response_code_"
+                   event-response-object-name="response" login-required="true" method-name="updateRecTransaction"
+                   service-error-message-list-name="errorMessageList" service-error-message-map-name="errorMessageMap"
+                   service-error-message-name="errorMessage"
+                   service-response-message-name="responseMessage"
+                   service-success-message-list-name="successMessageList" service-success-message-name="successMessage"
+                   short-description="Update an AcctgTemplate" use-transaction="true">
+        <entity-one auto-field-map="true" entity-name="AcctgTemplate" use-cache="false" value-field="lookedUpEntity">
+            <field-map field-name="acctgTemplateId" from-field="parameters.acctgTemplateId"/>
+        </entity-one>
+        <set-nonpk-fields map="parameters" set-if-null="true" value-field="lookedUpEntity"/>
+        <store-value do-cache-clear="true" value-field="lookedUpEntity"/>
+    </simple-method>
+
+    <simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_"
+                   event-event-message-name="_event_message_"
+                   event-request-object-name="request" event-response-code-name="_response_code_"
+                   event-response-object-name="response" login-required="true"
+                   method-name="createAcctgTemplateEntries" service-error-message-list-name="errorMessageList"
+                   service-error-message-map-name="errorMessageMap"
+                   service-error-message-name="errorMessage" service-response-message-name="responseMessage"
+                   service-success-message-list-name="successMessageList"
+                   service-success-message-name="successMessage" short-description="Create an AcctgTemplateEntry"
+                   use-transaction="true">
+
+        <make-value entity-name="AcctgTemplateEntries" value-field="newEntity"/>
+        <set-nonpk-fields map="parameters" set-if-null="true" value-field="newEntity"/>
+        <set-pk-fields map="parameters" value-field="newEntity"/>
+        <!-- <set field="newEntity.acctgTemplateId" value="parameters.acctgTemplateId" set-if-empty="false" set-if-null="false"/> -->
+        <sequenced-id field="newEntity.aacctgTemplateEntrySeqId" get-long-only="false"
+                      sequence-name="AcctgTemplateEntries"/>
+        <field-to-result field="newEntity.aacctgTemplateEntrySeqId" result-name="aacctgTemplateEntrySeqId"/>
+        <field-to-result field="newEntity.acctgTemplateId" result-name="acctgTemplateId"/>
+        <create-value do-cache-clear="true" or-store="false" value-field="newEntity"/>
+    </simple-method>
+
+    <simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_"
+                   event-event-message-name="_event_message_"
+                   event-request-object-name="request" event-response-code-name="_response_code_"
+                   event-response-object-name="response" login-required="true"
+                   method-name="deleteAcctgTemplateEntries" service-error-message-list-name="errorMessageList"
+                   service-error-message-map-name="errorMessageMap"
+                   service-error-message-name="errorMessage" service-response-message-name="responseMessage"
+                   service-success-message-list-name="successMessageList"
+                   service-success-message-name="successMessage" short-description="Remove Entry From AcctgTemplate"
+                   use-transaction="true">
+        <entity-one auto-field-map="true" entity-name="AcctgTemplateEntries" use-cache="false"
+                    value-field="lookedUpEntity">
+            <field-map field-name="acctgTemplateId" from-field="parameters.acctgTemplateId"/>
+            <field-map field-name="aacctgTemplateEntrySeqId" from-field="parameters.aacctgTemplateEntrySeqId"/>
+        </entity-one>
+        <remove-value value-field="lookedUpEntity"/>
+    </simple-method>
+
+</simple-methods>

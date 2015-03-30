@@ -1,0 +1,27 @@
+<?page title="HRMS-MyHome" contentType="text/html;charset=UTF-8"?>
+<?init class="org.zkoss.zkplus.databind.AnnotateDataBinderInit"?>
+<?init class="org.zkoss.zk.ui.util.Composition"
+arg0="/WEB-INF/layout/Template.zul"?>
+<zk xmlns:n="http://www.zkoss.org/2005/zk/native">	
+<window self="@{define(content}">
+<n:a href="EditSkillTypes">Skill Type</n:a>
+<separator/>
+<n:a href="EditResponsibilityTypes">Responsibility Type</n:a>
+<separator/>
+<n:a href="PositionType">Position Type</n:a>
+<separator/>
+<n:a href="LeaveTypes">Leave Type</n:a>
+<separator/>
+<n:a href="LeavePolicy">Leave Policy</n:a>
+<separator/>
+<n:a href="PublicHoliday">Public Holiday</n:a>
+<separator/>
+<n:a href="PerformancePlanSections">Performance Plan Sections</n:a>
+<separator/>
+<n:a href="PerformancePlanAttributes">Performance Plan Attributes</n:a>
+<separator/>
+<n:a href="PerformanceRating">Performance Rating</n:a>
+<separator/>
+<n:a href="Announcement">Announcement</n:a>
+</window>
+</zk>

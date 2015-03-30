@@ -1,0 +1,83 @@
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<?component name="positionTypebox" macroURI="../macros/textfindMacro.zul" id="macro1"?>
+<zk>
+	<window title="${c:l('HRMS_NEW_SALARY_HEAD_EXCEMPTION') }" border="normal" id="SalaryHeadRuleWindow"
+		self="@{define(content)}" 
+		apply="com.ndz.controller.SalaryHeadAndRuleManagementController" closable="true" width="33%" height="30%" >
+		<custom-attributes entityName="SalaryHeadRule"></custom-attributes>
+		<separator height="20px"></separator>
+
+				<hbox>
+					<div align="right" width="23px"
+						style="margin-right:5px">
+					</div>
+
+					<div align="left" >
+						<label value="${c:l('HRMS_SALARY_HEAD') }"  />
+							<label value="*" style="color:red" />
+						
+					</div>
+					<div  align="left">
+						<listbox id="applySalaryHeadId"
+							name="applySalaryHeadId" mold="select" width="150px">
+							<listitem value=""></listitem>
+						</listbox>
+					</div>					
+				</hbox>
+
+		<separator height="15px" />
+				<hbox>
+					<div align="right" width="62px"
+						style="margin-right:5px">
+					</div>
+
+					<div align="left" 
+						style="margin-right:5px">
+						<label value="${c:l('HRMS_RULE') }" width="10px" />
+											<label value="*" style="color:red" />
+						
+					</div>
+					<div  align="left">
+						<listbox id="applyPayrollRuleId" width="150px"
+							name="applyPayrollRuleId" mold="select" >
+							<listitem value=""></listitem>
+						</listbox>
+					</div>					
+				</hbox>
+		<separator height="20px" />
+		
+
+		<panel>
+			<panelchildren>
+				<hbox>
+					<div align="right" width="234px"
+						style="margin-top:5px">
+						<button id="applySalaryHeadCreateButton" label="${c:l('HRMS_ATTACH') }"
+							  forward="onClick=onEvent" onClick='validateForm();Events.postEvent("onClick", Path
+				.getComponent("/searchPanel//searchPerCompany"), null);'/>
+						<button id="applySalaryHeadCancelButton" label="${c:l('ButtonCancel') }"
+							  onClick="SalaryHeadRuleWindow.detach()" />							
+					</div>
+				</hbox>
+			</panelchildren>
+		</panel>
+		<separator height="15px" />
+<zscript>
+void validateForm(){
+
+Object salaryHeadId = applySalaryHeadId.getSelectedItem();
+		if (salaryHeadId == null) {
+			throw new WrongValueException(applySalaryHeadId,
+					"Salary Head Id Required");
+		}
+		
+		Object payrollRuleId = applyPayrollRuleId.getSelectedItem();
+		if (payrollRuleId == null) {
+			throw new WrongValueException(applyPayrollRuleId,
+					"Gender Cannot Be Left Blank");
+		}
+
+}
+</zscript>
+	</window>
+</zk>

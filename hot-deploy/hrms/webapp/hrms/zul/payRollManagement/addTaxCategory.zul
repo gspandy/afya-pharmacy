@@ -1,0 +1,187 @@
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<?component name="positionTypebox" macroURI="../macros/textfindMacro.zul" id="macro1"?>
+<?component name="fromDatebox" macroURI="../macros/datefindMacro.zul" id="macro2"?>
+<?component name="thruDatebox" macroURI="../macros/datefindMacro.zul" id="macro3"?>
+
+<zk>
+	<window id="AddTaxCategoryWindow" width="50%"
+		title="${c:l('HRMS_ADD_TAX_CATEGORY') }" position="center" closable="true"
+		border="normal"
+		apply="com.ndz.controller.TaxCategoryManagementController">
+		<separator height="30px" />
+
+		<separator height="10px" />
+		<hbox>
+			<div align="right" width="150px" style="margin-right:5px">
+				<label value="${c:l('HRMS_CATEGORY_NAME') }" />
+				<label value="*" style="color:red" />
+			</div>
+			
+			<div width="297px" align="left">
+				<textbox id="categoryName" name="categoryName"
+					constraint="no empty:Category Name Required" />
+			</div>
+		</hbox>
+
+		<separator height="10px" />
+		<panel>
+			<panelchildren>
+				<hbox>
+					<div align="right" width="150px"
+						style="margin-right:5px">
+						<label value="${c:l('HRMS_COUNTRY_GEO_ID') }" />
+						<label value="*" style="color:red" />
+					</div>
+					
+					<div align="left">
+						<zscript>
+	com.ndz.controller.SearchController controller = new com.ndz.controller.SearchController();
+	com.ndz.zkoss.GenericValueRenderer listItemRenderer = new com.ndz.zkoss.GenericValueRenderer(
+			new String[] { "geoId", "geoName" });
+</zscript>
+
+						<!--  <bandbox mold="rounded" apply="${controller}"
+							id="searchPanel" constraint="no empty:Country Geo Id Required" cols="16">
+							<custom-attributes entityName="Geo"
+								companyWide="true" >
+							</custom-attributes>
+							<bandpopup>
+								<vbox>
+									<hbox>
+										<textbox name="geoTypeId"
+											value="COUNTRY" visible="false" type="text" />
+
+										<positionTypebox
+											fieldLabel="Country Geo Id" name="geoId" type="text"
+											cols="18" />
+									</hbox>
+									<hbox></hbox>
+									<button mold="os" label="Search"
+										id="searchPerCompany" autodisable="self" />
+								</vbox>
+								<paging id="paging" width="532px" />
+								<listbox id="dataGrid"
+									itemRenderer="${listItemRenderer}" width="532px"
+									onSelect="searchPanel.value=self.selectedItem.label;searchPanel.close();">
+									<listhead>
+										<listheader
+											label="Country Geo Id" />
+										<listheader
+											label="Country Name" />
+									</listhead>
+								</listbox>
+							</bandpopup>
+						</bandbox> -->
+						<countrybox id="countrybandbox" constraint="no empty:Country Geo Id Required"></countrybox>									
+						
+					</div>
+				</hbox>
+			</panelchildren>
+		</panel>
+
+
+
+		<separator height="10px" />
+		<hbox>
+			<div align="right" width="150px" style="margin-right:5px">
+				<label value="${c:l('HRMS_MINIMUM_AMOUNT') }" />
+				<label value="*" style="color:red" />
+			</div>
+			
+			<div width="297px" align="left">
+				<textbox id="minAmount" name="minAmount"
+					constraint="no empty:Minimum Amount Required" />
+			</div>
+		</hbox>
+
+		<separator height="10px" />
+		<hbox>
+			<div align="right" width="150px" style="margin-right:5px">
+				<label value="${c:l('HRMS_MAXIMUM_AMOUNT') }" />
+				<label value="*" style="color:red" />
+			</div>
+			
+			<div width="297px" align="left">
+				<textbox id="maxAmount" name="maxAmount"
+					constraint="no empty:Maximum Amount Required" />
+			</div>
+		</hbox>
+
+		<separator height="10px" />
+		<hbox>
+			<div align="right" width="150px" style="margin-right:5px">
+				<label value="${c:l('HRMS_DESCRIPTION') }" />
+			</div>
+			<div width="297px" align="left">
+				<textbox id="description" name="description" rows="3"
+					cols="66" width="100%" />
+			</div>
+		</hbox>
+
+		<separator height="10px" />
+		<hbox>
+			<div align="right" width="150px" style="margin-right:5px">
+				<label value="${c:l('HRMS_FROMDATE') }" />
+				<label value="*" style="color:red" />
+			</div>
+			
+			<div  align="left">
+				<datebox id="fromDate" name="fromDate"
+					buttonVisible="true" width="145px"
+					constraint="no empty:From Date Required" />
+			</div>
+		</hbox>
+
+		<separator height="10px" />
+		<hbox>
+			<div align="right" width="150px" style="margin-right:5px">
+				<label value="${c:l('HRMS_THRUDATE') }" />
+				<label value="*" style="color:red" />
+			</div>
+			
+			<div  align="left">
+				<datebox id="thruDate" name="thruDate"
+					buttonVisible="true" width="145px"
+					constraint="no empty:Thru Date Required" />
+			</div>
+		</hbox>
+
+		<separator height="15px" />
+
+		<panel>
+			<panelchildren>
+				<hbox>
+					<div align="right" width="278px"
+						style="margin-top:5px">
+						<button id="AddTaxCategoryCreateButton"
+							label="${c:l('Hrms_Create') }"
+							forward="onClick=onEvent" onClick="validateForm()" />
+						<button id="AddTaxCategoryCancelButton"
+							label="${c:l('ButtonCancel') }"
+							onClick="AddTaxCategoryWindow.detach()" />
+					</div>
+				</hbox>
+			</panelchildren>
+		</panel>
+		<separator height="15px"></separator>
+		<zscript>
+	void validateForm() {
+
+		categoryName.getValue();
+		String s=org.ofbiz.base.util.UtilValidate.stripWhitespace(categoryName.getValue());
+		if(com.ndz.zkoss.HrmsUtil.checkSpecialCharacter(s)){
+		throw new WrongValueException(categoryName,"Special Characters Are Not Allowed Except Space Character");
+		}
+		//searchPanel.getValue();
+		if(!com.ndz.zkoss.HrmsUtil.isInteger(minAmount.getValue())){
+		throw new WrongValueException(minAmount,"Only Numeric Value Allowed");
+		}
+		if(!com.ndz.zkoss.HrmsUtil.isInteger(maxAmount.getValue())){
+		throw new WrongValueException(maxAmount,"Only Numeric Value Allowed");
+		}
+		fromDate.getValue();
+		thruDate.getValue();
+	}
+</zscript>
+	</window>
+</zk>

@@ -1,0 +1,284 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" 
+name="report3" language="java" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20">
+	<parameter name="headOfficeImg" class="java.lang.String"/>
+	<parameter name="verticalLineImg" class="java.lang.String"/>
+	<parameter name="logoImageUrl" class="java.lang.String"/>
+	<parameter name="companyPostalAddr" class="java.lang.String"/>
+	<parameter name="companyName" class="java.lang.String"/>
+	<parameter name="address1" class="java.lang.String"/>
+	<parameter name="address2" class="java.lang.String"/>
+	<parameter name="postalCode" class="java.lang.String"/>
+	<parameter name="city" class="java.lang.String"/>
+	<parameter name="stateProvinceAbbr" class="java.lang.String"/>
+	<parameter name="countryName" class="java.lang.String"/>
+	<parameter name="telephoneNumber" class="java.lang.String"/>
+	<parameter name="faxNumber" class="java.lang.String"/>
+	<parameter name="email" class="java.lang.String"/>
+	<parameter name="companyRegNo" class="java.lang.String"/>
+	<parameter name="vatRegNo" class="java.lang.String"/>
+	<parameter name="tpinNo" class="java.lang.String"/>
+    <parameter name="noOfCadidatesApplied" class="java.lang.String"/>
+    <parameter name="noOfCanOffered" class="java.lang.String"/>
+    <parameter name="noOfCanJoined" class="java.lang.String"/>
+    <parameter name="positiontype" class="java.lang.String"/>
+	<field name="requisitionId" class="java.lang.String" />
+	<title>
+		<band height="50" isSplitAllowed="true">
+			<rectangle radius="0">
+				<reportElement mode="Opaque" x="0" y="0" width="555"
+					height="35" backcolor="#000000" forecolor="#FFFFFF" positionType="FixRelativeToTop"
+					isPrintRepeatedValues="true" isRemoveLineWhenBlank="false"
+					isPrintInFirstWholeBand="false" isPrintWhenDetailOverflows="false" />
+				<graphicElement />
+			</rectangle>
+			<staticText>
+				<reportElement mode="Transparent" x="0" y="0" width="555"
+					height="35" forecolor="#FFFFFF" backcolor="#006699" positionType="FixRelativeToTop"
+					isPrintRepeatedValues="true" isRemoveLineWhenBlank="false"
+					isPrintInFirstWholeBand="false" isPrintWhenDetailOverflows="false" />
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="styled">
+					<font size="20" isBold="true" isItalic="true" isUnderline="false"
+						isPdfEmbedded="false" pdfEncoding="Cp1250" isStrikeThrough="false" />
+				</textElement>
+				<text><![CDATA[Recruitment Offer Status]]></text>
+			</staticText>
+		</band>
+	</title>
+	<pageHeader>
+		<band height="100">
+			<image>
+				<reportElement x="0" y="0" width="110" height="65"/>
+				<imageExpression><![CDATA[$P{logoImageUrl}]]></imageExpression>
+			</image>
+			<image>
+				<reportElement x="90" y="3" width="80" height="65"/>
+				<imageExpression><![CDATA[$P{headOfficeImg}]]></imageExpression>
+			</image>
+			<textField isBlankWhenNull="true">
+				<reportElement x="132" y="8" width="153" height="65"/>
+				<textElement markup="html">
+					<font fontName="Calibri" size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{companyName} + "<br/>" + $P{address1} + "<br/>" + $P{companyPostalAddr}]]></textFieldExpression>
+			</textField>
+			<image>
+				<reportElement x="285" y="2" width="14" height="65"/>
+				<imageExpression><![CDATA[$P{verticalLineImg}]]></imageExpression>
+			</image>
+			<textField isBlankWhenNull="true">
+				<reportElement x="292" y="7" width="140" height="35"/>
+				<textElement markup="html">
+					<font fontName="Calibri" size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{telephoneNumber}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="292" y="18" width="140" height="35"/>
+				<textElement markup="html">
+					<font fontName="Calibri" size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{faxNumber}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="292" y="29" width="140" height="35"/>
+				<textElement markup="html">
+					<font fontName="Calibri" size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{email}]]></textFieldExpression>
+			</textField>
+			<image>
+				<reportElement x="430" y="2" width="14" height="65"/>
+				<imageExpression><![CDATA[$P{verticalLineImg}]]></imageExpression>
+			</image>
+			<textField isBlankWhenNull="true">
+				<reportElement x="438" y="7" width="118" height="35"/>
+				<textElement markup="html">
+					<font fontName="Calibri" size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{companyRegNo}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="438" y="18" width="118" height="35"/>
+				<textElement markup="html">
+					<font fontName="Calibri" size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{vatRegNo}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="438" y="29" width="118" height="35"/>
+				<textElement markup="html">
+					<font fontName="Calibri" size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{tpinNo}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement positionType="FixRelativeToBottom" x="0" y="70" width="555" height="1" forecolor="#C0C0C0"/>
+				<graphicElement>
+					<pen lineWidth="1.0" lineStyle="Solid" lineColor="#959595"/>
+				</graphicElement>
+			</line>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band height="40" isSplitAllowed="true">
+
+			<rectangle radius="0">
+				<reportElement mode="Opaque" x="0" y="0" width="555"
+					height="20" backcolor="#333333" forecolor="#FFFFFF" positionType="FixRelativeToTop"
+					isPrintRepeatedValues="true" isRemoveLineWhenBlank="false"
+					isPrintInFirstWholeBand="false" isPrintWhenDetailOverflows="false" />
+				<graphicElement />
+			</rectangle>
+			<staticText>
+				<reportElement mode="Transparent" x="10" y="0" width="100"
+					height="20" forecolor="#ffffff" backcolor="#FFFFFF" positionType="FixRelativeToTop"
+					isPrintRepeatedValues="true" isRemoveLineWhenBlank="false"
+					isPrintInFirstWholeBand="false" isPrintWhenDetailOverflows="false" />
+				<textElement textAlignment="Center" verticalAlignment="Middle"
+					lineSpacing="Single">
+					<font size="8" isBold="true" isItalic="false" isUnderline="false"
+						isPdfEmbedded="false" pdfEncoding="Cp1250" isStrikeThrough="false" />
+				</textElement>
+				<text><![CDATA[No. Of Applied ]]></text>
+
+			</staticText>
+			<staticText>
+				<reportElement mode="Transparent" x="120" y="0" width="100"
+					height="20" positionType="FixRelativeToTop" isPrintRepeatedValues="true"
+					isRemoveLineWhenBlank="false" isPrintInFirstWholeBand="false"
+					isPrintWhenDetailOverflows="false" backcolor="#FFFFFF" forecolor="#ffffff" />
+				<textElement textAlignment="Center" verticalAlignment="Middle"
+					lineSpacing="Single">
+					<font size="8" isBold="true" isItalic="false" isUnderline="false"
+						isPdfEmbedded="false" pdfEncoding="Cp1250" isStrikeThrough="false" />
+				</textElement>
+
+				<text><![CDATA[Requisition Id]]></text>
+
+			</staticText>
+			<staticText>
+				<reportElement mode="Transparent" x="232" y="0" width="100"
+					height="20" forecolor="#ffffff" backcolor="#FFFFFF" positionType="FixRelativeToTop"
+					isPrintRepeatedValues="true" isRemoveLineWhenBlank="false"
+					isPrintInFirstWholeBand="false" isPrintWhenDetailOverflows="false" />
+				<textElement textAlignment="Center" verticalAlignment="Middle"
+					lineSpacing="Single">
+					<font size="8" isBold="true" isItalic="false" isUnderline="false"
+						isPdfEmbedded="false" pdfEncoding="Cp1250" isStrikeThrough="false" />
+				</textElement>
+				<text><![CDATA[Offered]]></text>
+			</staticText>
+
+			<staticText>
+				<reportElement mode="Transparent" x="338" y="0" width="100"
+					height="20" forecolor="#ffffff" backcolor="#FFFFFF" positionType="FixRelativeToTop"
+					isPrintRepeatedValues="true" isRemoveLineWhenBlank="false"
+					isPrintInFirstWholeBand="false" isPrintWhenDetailOverflows="false" />
+				<textElement textAlignment="Center" verticalAlignment="Middle"
+					lineSpacing="Single">
+					<font size="8" isBold="true" isItalic="false" isUnderline="false"
+						isPdfEmbedded="false" pdfEncoding="Cp1250" isStrikeThrough="false" />
+				</textElement>
+				<text><![CDATA[Joined]]></text>
+
+			</staticText>
+			<staticText>
+				<reportElement mode="Transparent" x="444" y="0" width="100"
+					height="20" forecolor="#ffffff" backcolor="#FFFFFF" positionType="FixRelativeToTop"
+					isPrintRepeatedValues="true" isRemoveLineWhenBlank="false"
+					isPrintInFirstWholeBand="false" isPrintWhenDetailOverflows="false" />
+				<textElement textAlignment="Center" verticalAlignment="Middle"
+					lineSpacing="Single">
+					<font size="8" isBold="true" isItalic="false" isUnderline="false"
+						isPdfEmbedded="false" pdfEncoding="Cp1250" isStrikeThrough="false" />
+				</textElement>
+				<text><![CDATA[Position Type]]></text>
+
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="20">
+			<line>
+				<reportElement isPrintRepeatedValues="false" positionType="Float" x="0" y="12"
+					width="495" height="1" forecolor="#000000" />
+				<graphicElement pen="Thin" />
+			</line>
+			<textField>
+				<reportElement isPrintRepeatedValues="false" x="10" y="0" width="100" height="15" />
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8" isBold="true" isItalic="false" isUnderline="false"
+						isPdfEmbedded="false" pdfEncoding="Cp1250" isStrikeThrough="false" />
+				</textElement>
+				<textFieldExpression class="java.lang.String">
+              <![CDATA[$P{noOfCadidatesApplied}]]>
+				</textFieldExpression>
+			</textField>
+			<textField >
+				<reportElement isPrintRepeatedValues="false" x="120" y="0" width="100" height="15" />
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8" isBold="true" isItalic="false" isUnderline="false"
+						isPdfEmbedded="false" pdfEncoding="Cp1250" isStrikeThrough="false" />
+				</textElement>
+				<textFieldExpression class="java.lang.String">
+              <![CDATA[$F{requisitionId}]]>
+				</textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement isPrintRepeatedValues="false" x="232" y="0" width="98" height="15" />
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8" isBold="true" isItalic="false" isUnderline="false"
+						isPdfEmbedded="false" pdfEncoding="Cp1250" isStrikeThrough="false" />
+				</textElement>
+				<textFieldExpression class="java.lang.String">
+              <![CDATA[$P{noOfCanOffered}]]>
+				</textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement isPrintRepeatedValues="false" x="350" y="0" width="82" height="15" />
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8" isBold="true" isItalic="false" isUnderline="false"
+						isPdfEmbedded="false" pdfEncoding="Cp1250" isStrikeThrough="false" />
+				</textElement>
+				<textFieldExpression class="java.lang.String">
+              <![CDATA[$P{noOfCanJoined}]]>
+				</textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement isPrintRepeatedValues="false" x="444" y="0" width="100" height="15" />
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8" isBold="true" isItalic="false" isUnderline="false"
+						isPdfEmbedded="false" pdfEncoding="Cp1250" isStrikeThrough="false" />
+				</textElement>
+				<textFieldExpression class="java.lang.String">
+              <![CDATA[$P{positiontype}]]>
+				</textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band></band>
+	</columnFooter>
+	<pageFooter>
+		<band height="15">
+			<staticText>
+				<reportElement x="10" y="0" width="35" height="15" />
+				<textElement textAlignment="Left" verticalAlignment="Middle"/>
+				<text><![CDATA[Page : ]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="45" y="0" width="100" height="15" />
+				<textElement textAlignment="Left" verticalAlignment="Middle"/>
+				<textFieldExpression class="java.lang.Integer">
+              <![CDATA[$V{PAGE_NUMBER}]]>
+				</textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+	<summary>
+		<band></band>
+	</summary>
+</jasperReport>

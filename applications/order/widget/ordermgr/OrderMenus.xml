@@ -1,0 +1,1030 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+Licensed to the Apache Software Foundation (ASF) under one
+or more contributor license agreements.  See the NOTICE file
+distributed with this work for additional information
+regarding copyright ownership.  The ASF licenses this file
+to you under the Apache License, Version 2.0 (the
+"License"); you may not use this file except in compliance
+with the License.  You may obtain a copy of the License at
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing,
+software distributed under the License is distributed on an
+"AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+KIND, either express or implied.  See the License for the
+specific language governing permissions and limitations
+under the License.
+-->
+<menus xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://ofbiz.apache.org/dtds/widget-menu.xsd">
+    <menu name="OrderAppBar" title="${uiLabelMap.OrderManager}" extends="CommonAppBarMenu" extends-resource="component://common/widget/CommonMenus.xml">
+     <actions>
+           <script location="component://order/webapp/ordermgr/reports/RoleTypePermissions.groovy"/>
+         </actions>
+
+        <menu-item name="request" title="${uiLabelMap.OrderRequests}">
+            <condition>
+                <or>
+                    <if-has-permission permission="ORDERMGR" action="_VIEW"/>
+                    <if-has-permission permission="ORDERMGR" action="_PURCHASE_VIEW"/>
+                </or>
+            </condition>
+            <link target="FindRequest"/>
+            
+             <menu-item name="createRequest" title="Create New Request">
+             <condition>
+                    		<or>
+                    			<not><if-empty field="isRequestManager"/></not>
+                    			<not><if-empty field="isRequestTaker"/></not>
+                    		</or>
+                    		</condition>
+               <link target="request"/>
+             </menu-item>
+             
+             <menu-item name="findRequest" title="Find Requests">
+             <condition>
+                <or>
+                    <if-has-permission permission="ORDERMGR" action="_VIEW"/>
+                    <if-has-permission permission="ORDERMGR" action="_PURCHASE_VIEW"/>
+                </or>
+            </condition>
+               <link target="FindRequest"/>
+             </menu-item>
+        </menu-item>
+
+        <menu-item name="quote" title="${uiLabelMap.OrderOrderQuotes}">
+            <condition>
+                <or>
+                    <if-has-permission permission="ORDERMGR" action="_VIEW"/>
+                    <if-has-permission permission="ORDERMGR" action="_PURCHASE_VIEW"/>
+                </or>
+            </condition>
+            <link target="FindQuote"/>
+            
+           <menu-item name="createQuote" title="Create New Quote">
+            <condition>
+                    		<or>
+                    			<not><if-empty field="isQuoteManager"/></not>
+                    			<not><if-empty field="isQuoteRepresentative"/></not>
+                    		</or>
+                    		</condition>
+            <link target="EditQuote"/>
+        </menu-item>
+            <menu-item name="findQuotes" title="Find Quotes">
+             <condition>
+                <or>
+                    <if-has-permission permission="ORDERMGR" action="_VIEW"/>
+                    <if-has-permission permission="ORDERMGR" action="_PURCHASE_VIEW"/>
+                </or>
+            </condition>
+            <link target="FindQuote"/>
+        </menu-item>
+        </menu-item>
+
+        <menu-item name="findorders" title="Orders">
+            <condition>
+                <if-has-permission permission="ORDERMGR" action="_VIEW"/>
+            </condition>
+            <link target="findorders"/>
+            <menu-item name="salesOrder" title="Sales Orders">
+                <link target="findorders?type=SALES_ORDER"/>
+                <menu-item name="createSalesOrder" title="Create Sales Order">
+                    <condition>
+	                    <and>
+		                    <if-has-permission permission="ORDERMGR" action="_SALES_CREATE"/>
+		                    <if-has-permission permission="ORDERMGR_SALES_ENTRY"/>
+	                    </and>
+                        <!-- <and>
+                            <if-has-permission permission="ORDERMGR" action="_CREATE"/>
+                            <if-has-permission permission="ORDERMGR" action="_VIEW"/> -->
+                       <!-- <not>
+                                <if-has-permission permission="ORDERMGR" action="_PURCHASE_CREATE"/>
+                            </not>  -->
+                        <!-- </and> -->
+                    </condition>
+                    <link target="orderentry?type=SALES_ORDER"/>
+                </menu-item>
+                <menu-item name="findSalesOrder" title="Find Sales Orders">
+                    <condition>
+                            <if-has-permission permission="ORDERMGR_SALES_ENTRY"/>
+                    </condition>
+                    <link target="findorders?type=SALES_ORDER"/>
+                </menu-item>
+            </menu-item>
+            <menu-item name="purchaseOrder" title="Purchase Orders">
+                <condition>
+                    <or>
+                        <if-has-permission permission="ORDERMGR" action="_PURCHASE_CREATE"/>
+                        <if-has-permission permission="ORDERMGR_PURCHASE_VIEW"/>
+                    </or>
+                </condition>
+                <link target="findorders?type=PURCHASE_ORDER"/>
+            <menu-item name="createPurchaseOrder" title="Create Purchase Order">
+                <condition>
+                    <and>
+                        <if-has-permission permission="ORDERMGR" action="_PURCHASE_CREATE"/>
+                    </and>
+                </condition>
+                <link target="orderentry?type=PURCHASE_ORDER"/>
+            </menu-item>
+            <menu-item name="findPurchaseOrder" title="Find Purchase Orders">
+                <condition>
+                    <or>
+                        <if-has-permission permission="ORDERMGR" action="_PURCHASE_CREATE"/>
+                        <if-has-permission permission="ORDERMGR_PURCHASE_VIEW"/>
+                    </or>
+                </condition> 
+                <link target="findorders?type=PURCHASE_ORDER"/>
+            </menu-item>
+        </menu-item>
+        
+        <!-- <menu-item name="orderlist" title="Order Lists">
+            <condition>
+                <if-has-permission permission="ORDERMGR" action="_VIEW"/>
+            </condition>
+            <link target="orderlist"/>
+        </menu-item> -->
+        
+        </menu-item>
+
+      <!--  <menu-item name="return" title="${uiLabelMap.OrderOrderReturns}">
+            <condition>
+                <if-has-permission permission="ORDERMGR" action="_RETURN"/>
+            </condition>
+            <link target="findreturn"/>
+            
+           <menu-item name="createReturn" title="Create New Return">
+            <link target="returnMain"/>
+          </menu-item> 
+          
+            <menu-item name="find" title="Find Returns">
+            <condition>
+                <if-has-permission permission="ORDERMGR" action="_RETURN"/>
+            </condition>
+            <link target="findreturn"/>
+          </menu-item> 
+       </menu-item>-->
+
+        <menu-item name="requirement" title="${uiLabelMap.OrderRequirements}">
+           <link target="FindRequirements"/>
+          <menu-item name="createNewRequirement" title="Create New Requirement">
+              <condition>
+                  <or>
+                      <if-has-permission permission="ORDERMGR" action="_VIEW"/>
+                      <if-has-permission permission="ORDERMGR_ROLE" action="_VIEW"/>
+                  </or>
+              </condition>
+              <link target="EditRequirement"/>
+        </menu-item>
+        <menu-item name="findRequirement" title="Find Requirements">
+         <condition>
+                <or>
+                    <if-has-permission permission="ORDERMGR" action="_VIEW"/>
+                    <if-has-permission permission="ORDERMGR_ROLE" action="_VIEW"/>
+                </or>
+            </condition> 
+           <link target="FindRequirements"/>
+      </menu-item>
+     </menu-item>
+        
+        <menu-item name="orderReports" title="${uiLabelMap.CommonReports}">
+            <condition>
+            <if-has-permission permission="ORDERMGR_REPORT_VIEW"/>
+            </condition>
+            <!-- <link target="OrderPurchaseReportOptions?show=false"/> -->
+            <link target="CustomerBalanceReport"/>
+            <menu-item name="pendingLoadingSlips" title="Pending Shipments ">
+                <condition>
+                    <if-has-permission permission="ORDERMGR_SALES_ENTRY"/>
+                </condition>
+                <link target="PendingLoadingSlipsReport"/>
+            </menu-item>
+            <menu-item name="customerBalanceReport" title="Customer Balances">
+                <condition>
+                    <if-has-permission permission="ORDERMGR_SALES_ENTRY"/>
+                </condition>
+                <link target="CustomerBalanceReport"/>
+            </menu-item>
+            <!--<menu-item name="debitBalanceReport" title="Debit Balance">
+                <link target="DebitBalanceReport"/>
+            </menu-item>-->
+            <menu-item name="salesByProductReport" title="Sales">
+                <condition>
+                    <if-has-permission permission="ORDERMGR_SALES_ENTRY"/>
+                </condition>
+                <link target="SalesByProductReport"/>
+            </menu-item>
+
+            <!--<menu-item name="comparativeOrderItemReport" title="Comparative Order Item">
+                <link target="ComparativeOrderItemReport"/>
+            </menu-item>-->
+
+            <!--<menu-item name="openOrderItemsReport" title="Open Order Items">
+                <link target="OpenOrderItemsReports"/>
+            </menu-item>-->
+
+            <menu-item name="purchasesByOrganizationReport" title="Purchases By Supplier">
+                <condition>
+                    <if-has-permission permission="ORDERMGR_PURCHASE_CREATE"/>
+                </condition>
+                <link target="PurchasesByOrganizationReports"/>
+            </menu-item>
+            <menu-item name="purchasesByProductReport" title="Purchases By Product">
+                <condition>
+                    <if-has-permission permission="ORDERMGR_PURCHASE_CREATE"/>
+                </condition>
+                <link target="PurchasesByProductReport"/>
+            </menu-item>
+            <menu-item name="salesByDeliveryDateReport" title="Sales By Delivery Date">
+                <condition>
+                    <if-has-permission permission="ORDERMGR_SALES_ENTRY"/>
+                </condition>
+                <link target="SalesByDeliveryDateReports"/>
+            </menu-item>
+            
+            <menu-item name="customerPaymentSummary" title="Customer Payment Summary">
+                <condition>
+                    <if-has-permission permission="ORDERMGR_SALES_ENTRY"/>
+                </condition>
+                <link target="customerPaymentSummary"/>
+            </menu-item>
+            
+            <menu-item name="customerPaymentDetail" title="Customer Payment Detail">
+                <condition>
+                    <if-has-permission permission="ORDERMGR_SALES_ENTRY"/>
+                </condition>
+                <link target="customerPaymentDetail"/>
+            </menu-item>
+            
+            <menu-item name="supplierPaymentDetail" title="Supplier Payment Detail">
+                <condition>
+                    <if-has-permission permission="ORDERMGR_PURCHASE_CREATE"/>
+                </condition>
+                <link target="supplierPaymentDetail"/>
+            </menu-item>
+            
+            <menu-item name="supplierPaymentSummary" title="Supplier Payment Summary">
+                <condition>
+                    <if-has-permission permission="ORDERMGR_PURCHASE_CREATE"/>
+                </condition>
+                <link target="supplierPaymentSummary"/>
+            </menu-item>
+            
+        </menu-item>
+        
+        <menu-item name="help" title="Help">
+            <link target="main"></link>
+            <menu-item name="salesHelp" title="Sales">
+                <condition>
+                    <or>
+                        <if-has-permission permission="ORDERMGR_SALES_ENTRY"/>
+                    </or>
+                </condition>
+                <link target="main" />
+                <menu-item name="incomingPayment" title="Creating Incoming Payment For Sales">
+                    <link target="orderHelp" target-window="_BLANK">
+                        <parameter param-name="helpFileName" value="salesIncomingPayment.swf"/>
+                    </link>
+                </menu-item>
+                <menu-item name="salesforAggegates" title="Sales for Aggegates">
+                    <link target="orderHelp" target-window="_BLANK">
+                        <parameter param-name="helpFileName" value="salesAggegates.swf"/>
+                    </link>
+                </menu-item>
+                <menu-item name="salesForBaggedCementCreditPayment" title="Sales for Bagged Cement 42.5N-Export (Credit Payment)">
+                    <link target="orderHelp" target-window="_BLANK">
+                        <parameter param-name="helpFileName" value="salesBaggedCement42.5N-ExportCreditPayment.swf"/>
+                    </link>
+                </menu-item>
+                <menu-item name="salesForBaggedCementAdvancePayment" title="Sales for Bagged Cement 42.5N-Local (Advance Payment)">
+                    <link target="orderHelp" target-window="_BLANK">
+                        <parameter param-name="helpFileName" value="salesBaggedCement42.5N-LocalAdvancePayment.swf"/>
+                    </link>
+                </menu-item>
+                <menu-item name="salesForHiringCranes" title="Sales for Hiring Cranes">
+                    <link target="orderHelp" target-window="_BLANK">
+                        <parameter param-name="helpFileName" value="salesHiringCranes.swf"/>
+                    </link>
+                </menu-item>
+                <menu-item name="salesForHollowBlocks" title="Sales for Hollow Blocks">
+                    <link target="orderHelp" target-window="_BLANK">
+                        <parameter param-name="helpFileName" value="salesHollowBlocks.swf"/>
+                    </link>
+                </menu-item>
+                <menu-item name="salesForBulkCementCreditPayment" title="Sales for Bulk Cement (Credit Payment)">
+                    <link target="orderHelp" target-window="_BLANK">
+                        <parameter param-name="helpFileName" value="salesBulkCementCreditPayment.swf"/>
+                    </link>
+                </menu-item>
+                <menu-item name="salesForUsedOil" title="Sales For Used Oil">
+                    <link target="orderHelp" target-window="_BLANK">
+                        <parameter param-name="helpFileName" value="salesOil.swf"/>
+                    </link>
+                </menu-item>
+                <menu-item name="salesReturn" title="Sales Return">
+                    <link target="orderHelp" target-window="_BLANK">
+                        <parameter param-name="helpFileName" value="SalesReturn.swf"/>
+                    </link>
+                </menu-item>
+            </menu-item>
+            <menu-item name="purchaseHelp" title="Purchase">
+                <condition>
+                    <if-has-permission permission="ORDERMGR_PURCHASE_CREATE"/>
+                </condition>
+                <link target="main" />
+                <menu-item name="importPO" title="Import PO">
+                    <link target="orderHelp" target-window="_BLANK">
+                        <parameter param-name="helpFileName" value="ImportPO.swf"/>
+                    </link>
+                </menu-item>
+                <menu-item name="multipleItemPO" title="Multiple Item PO">
+                    <link target="orderHelp" target-window="_BLANK">
+                        <parameter param-name="helpFileName" value="MultipleItemPO.swf"/>
+                    </link>
+                </menu-item>
+                <menu-item name="multipleShipmentPO" title="Multiple Shipment PO">
+                    <link target="orderHelp" target-window="_BLANK">
+                        <parameter param-name="helpFileName" value="MultipleShipmentPO.swf"/>
+                    </link>
+                </menu-item>
+                <menu-item name="outgoingPayments" title="Outgoing Payments">
+                    <link target="orderHelp" target-window="_BLANK">
+                        <parameter param-name="helpFileName" value="OutgoingPayments.swf"/>
+                    </link>
+                </menu-item>
+                <menu-item name="pettyCashPO" title="Petty Cash PO">
+                    <link target="orderHelp" target-window="_BLANK">
+                        <parameter param-name="helpFileName" value="PettyCashPO.swf"/>
+                    </link>
+                </menu-item>
+                <menu-item name="quoteToPO" title="Quote to PO">
+                    <link target="orderHelp" target-window="_BLANK">
+                        <parameter param-name="helpFileName" value="QuoteToPO.swf"/>
+                    </link>
+                </menu-item>
+                <menu-item name="requirementToPO" title="Requirement to PO">
+                    <link target="orderHelp" target-window="_BLANK">
+                        <parameter param-name="helpFileName" value="RequirementToPO.swf"/>
+                    </link>
+                </menu-item>
+                <menu-item name="servicePO" title="Service PO">
+                    <link target="orderHelp" target-window="_BLANK">
+                        <parameter param-name="helpFileName" value="ServicePO.swf"/>
+                    </link>
+                </menu-item>
+            </menu-item>
+        </menu-item>
+
+        <menu-item name="stats" title="${uiLabelMap.CommonStats}">
+            <link target="orderstats"/>
+        </menu-item>
+    </menu>
+
+    <menu name="RequirementsTabBar" extends="CommonTabBarMenu" menu-container-style="nav nav-pills" extends-resource="component://common/widget/CommonMenus.xml">
+      
+        <menu-item name="FindRequirements" title="${uiLabelMap.OrderRequirements}">
+            <link target="FindRequirements"/>
+        </menu-item>
+        <menu-item name="ApproveRequirements" title="${uiLabelMap.OrderApproveRequirements}">
+         	<condition>
+        		<not><if-empty field="isRequirementsManager"/></not>
+        	</condition> 
+            <link target="ApproveRequirements"/>
+        </menu-item>
+        <menu-item name="ApprovedProductRequirementsByVendor" title="${uiLabelMap.PageTitleFindApprovedRequirementsBySupplier}">
+            <condition>
+            	<or>
+            	<not><if-empty field="isPurchaseManager"/></not>
+            <!--<not><if-empty field="isSalesManager"/></not>
+            	<not><if-empty field="isSalesRepresentative"/></not> -->
+            	<not><if-empty field="isPurchaseRepresentative"/></not>
+            </or>
+            	
+            </condition>
+            <link target="ApprovedProductRequirementsByVendor"/>
+        </menu-item>
+        <menu-item name="ApprovedProductRequirements" title="${uiLabelMap.OrderApprovedProductRequirements}">
+            <condition>
+            	<or>
+            	<not><if-empty field="isPurchaseManager"/></not>
+            <!--<not><if-empty field="isSalesManager"/></not>
+            	<not><if-empty field="isSalesRepresentative"/></not> -->
+            	<not><if-empty field="isPurchaseRepresentative"/></not>
+            </or>
+            </condition>
+            <link target="ApprovedProductRequirements"/>
+        </menu-item>
+    </menu>
+
+    <menu name="RequirementTabBar" extends="CommonTabBarMenu" menu-container-style="nav nav-pills" extends-resource="component://common/widget/CommonMenus.xml">
+        <menu-item name="EditRequirement" title="${uiLabelMap.OrderRequirement}">
+            <link target="EditRequirement">
+                <parameter param-name="requirementId" from-field="requirement.requirementId"/>
+            </link>
+        </menu-item>
+        <menu-item name="ListRequirementCustRequests" title="${uiLabelMap.OrderRequests}">
+            <link target="ListRequirementCustRequests">
+                <parameter param-name="requirementId" from-field="requirement.requirementId"/>
+            </link>
+        </menu-item>
+        <menu-item name="ListRequirementOrdersTab" title="${uiLabelMap.OrderOrders}">
+            <link target="ListRequirementOrders">
+                <parameter param-name="requirementId" from-field="requirement.requirementId"/>
+            </link>
+        </menu-item>
+        <menu-item name="ListRequirementRolesTab" title="${uiLabelMap.PartyRoles}">
+            <link target="ListRequirementRoles">
+                <parameter param-name="requirementId" from-field="requirement.requirementId"/>
+            </link>
+        </menu-item>
+    </menu>
+
+    <menu name="QuoteTabBar" menu-container-style="nav nav-pills" extends="CommonTabBarMenu" extends-resource="component://common/widget/CommonMenus.xml">
+	    <actions>
+	    	<script location="component://order/webapp/ordermgr/reports/RoleTypePermissions.groovy"/>
+	    </actions>
+        <menu-item name="ViewQuote" title="${uiLabelMap.OrderViewQuote}">
+            <link target="ViewQuote">
+                <parameter param-name="quoteId" from-field="quote.quoteId"/>
+            </link>
+        </menu-item>
+        <menu-item name="EditQuote" title="${uiLabelMap.OrderOrderQuote}">
+       		  <condition >
+       			 	<and>
+						<not><if-empty field="parameters.quoteId" /></not>
+						<if-has-permission permission="ORDERMGR" action="_QUOTE_PRICE"/>
+						<or>
+							<not><if-empty field="isQuoteRepresentative"/></not>
+							<not><if-empty field="isQuoteManager"/></not>
+						</or>
+					</and>
+         	</condition> 
+            <link target="EditQuote">
+                <parameter param-name="quoteId" from-field="quote.quoteId"/>
+				
+            </link>
+        </menu-item>
+
+       <!--  <menu-item name="ListQuoteRoles" title="${uiLabelMap.OrderOrderQuoteRoles}">
+            <link target="ListQuoteRoles">
+                <parameter param-name="quoteId" from-field="quote.quoteId"/>
+            </link>
+        </menu-item> -->
+
+        <menu-item name="ListQuoteItems" title="${uiLabelMap.OrderOrderQuoteItems}">
+        	  <condition >
+       			 <and>
+						<not><if-empty field="parameters.quoteId" /></not>
+						<if-has-permission permission="ORDERMGR" action="_QUOTE_PRICE"/>
+						<or>
+							<not><if-empty field="isQuoteRepresentative"/></not>
+							<not><if-empty field="isQuoteManager"/></not>
+						</or>
+					</and>
+         	</condition> 
+            <link target="ListQuoteItems">
+                <parameter param-name="quoteId" from-field="quote.quoteId"/>
+            </link>
+        </menu-item>
+         <menu-item name="createQuoteItems" title="Create New Quote Item">
+            <link target="EditQuoteItem">
+            <parameter param-name="quoteId" from-field="quote.quoteId"/>
+            </link>
+         </menu-item>
+
+       <!--  <menu-item name="ListQuoteAttributes" title="${uiLabelMap.OrderOrderQuoteAttributes}">
+            <link target="ListQuoteAttributes">
+                <parameter param-name="quoteId" from-field="quote.quoteId"/>
+            </link>
+        </menu-item> -->
+
+        <!-- <menu-item name="ListQuoteCoefficients" title="${uiLabelMap.OrderOrderQuoteCoefficients}">
+            <condition>
+                <if-has-permission permission="ORDERMGR" action="_QUOTE_PRICE"/>
+            </condition>
+            <link target="ListQuoteCoefficients">
+                <parameter param-name="quoteId" from-field="quote.quoteId"/>
+            </link>
+        </menu-item> -->
+
+         <menu-item name="ManageQuotePrices" title="${uiLabelMap.OrderOrderQuotePrices}">
+         <condition >
+       			 <and>
+						<not><if-empty field="parameters.quoteId" /></not>
+						<if-has-permission permission="ORDERMGR" action="_QUOTE_PRICE"/>
+						<or>
+							<not><if-empty field="isQuoteRepresentative"/></not>
+							<not><if-empty field="isQuoteManager"/></not>
+						</or>
+					</and>
+         	</condition> 
+            <link target="ManageQuotePrices">
+                <parameter param-name="quoteId" from-field="quote.quoteId"/>
+            </link>
+        </menu-item>
+      
+            <menu-item name="createAdj" title="Create Quote Adjustment">
+            <link target="EditQuoteAdjustment">
+               <parameter param-name="quoteId" from-field="quote.quoteId"/>
+            </link>
+            </menu-item>
+            
+            <menu-item name="findAdj" title="Find Quote Adjustments">
+            <condition>
+       			 <and>
+						<not><if-empty field="parameters.quoteId" /></not>
+						<if-has-permission permission="ORDERMGR" action="_QUOTE_PRICE"/>
+						<or>
+							<not><if-empty field="isQuoteRepresentative"/></not>
+							<not><if-empty field="isQuoteManager"/></not>
+						</or>
+					</and>
+         	</condition>
+            <link target="ListQuoteAdjustments">
+               <parameter param-name="quoteId" from-field="quote.quoteId"/>
+            </link>
+            </menu-item>
+
+        <menu-item name="ViewQuoteProfit" title="${uiLabelMap.OrderViewQuoteProfit}">
+            <condition >
+	       			 <and>
+						<not><if-empty field="parameters.quoteId" /></not>
+						<if-has-permission permission="ORDERMGR" action="_QUOTE_PRICE"/>
+						<or>
+							<not><if-empty field="isQuoteRepresentative"/></not>
+							<not><if-empty field="isQuoteManager"/></not>
+						</or>
+					</and>
+         	</condition> 
+            <link target="ViewQuoteProfit">
+                <parameter param-name="quoteId" from-field="quote.quoteId"/>
+            </link>
+        </menu-item>
+
+       <!--  <menu-item name="QuoteWorkEfforts" title="${uiLabelMap.OrderOrderQuoteWorkEfforts}">
+            <link target="ListQuoteWorkEfforts">
+                <parameter param-name="quoteId" from-field="quote.quoteId"/>
+            </link>
+        </menu-item> -->
+    </menu>
+
+    <menu name="QuoteSubTabBar" extends="CommonButtonBarMenu" extends-resource="component://common/widget/CommonMenus.xml"
+        menu-container-style="button-bar">
+        <actions>
+        		<script location="component://order/webapp/ordermgr/reports/RoleTypePermissions.groovy"/>
+        </actions>
+        <menu-item name="quoteReport" title="${uiLabelMap.OrderOrderQuoteReport}">
+         <condition>
+          	<not><if-empty field="parameters.quoteId" /></not>
+         </condition>
+            <link target="QuoteReport" target-window="new">
+                <parameter param-name="quoteId" from-field="quote.quoteId"/>
+            </link>
+        </menu-item>
+       <!--  <menu-item name="editQuoteReportMail" title="${uiLabelMap.CommonSendReportByMail}">
+            <link target="EditQuoteReportMail">
+                <parameter param-name="quoteId" from-field="quote.quoteId"/>
+                <parameter param-name="emailType" value="PRDS_QUO_CONFIRM"/>
+            </link>
+        </menu-item> -->
+       <!--  <menu-item name="editQuote" title="${uiLabelMap.OrderCreateOrderQuote}">
+        	<condition>
+        		<or>
+        			<not><if-empty field="isQuoteManager"/></not>
+                    <not><if-empty field="isQuoteRepresentative"/></not>
+        		</or>
+        	</condition>
+            <link target="EditQuote"/>
+        </menu-item> -->
+        <menu-item name="createOrder" title="${uiLabelMap.OrderCreateOrder}">
+            <condition >
+                <or>
+					<and>
+	                    <not><if-empty field="quote"/></not>
+	                    <if-compare operator="equals" value="QUO_APPROVED" field="quote.statusId"/>
+	                    <if-compare operator="not-equals" value="PURCHASE_QUOTE" field="quote.quoteTypeId"/>
+	                    <or>
+	                    	<not><if-empty field="isSalesManager"/></not>
+	                    	<not><if-empty field="isSalesRepresentative"/></not>
+	                    </or>
+					</and> 
+					<and>
+                    	<if-compare operator="equals" value="PURCHASE_QUOTE" field="quote.quoteTypeId"/>
+                    	<if-compare operator="equals" value="QUO_APPROVED" field="quote.statusId"/>
+                    	<or>
+	                    	<not><if-empty field="isPurchaseManager"/></not>
+	                    	<not><if-empty field="isPurchaseRepresentative"/></not>
+	                    </or>
+					</and>               
+                </or>
+            </condition>
+            <link target="loadCartFromQuote">
+                <parameter param-name="quoteId" from-field="quote.quoteId"/>
+                <parameter param-name="finalizeMode" value="init"/>
+            </link>
+        </menu-item>
+         <menu-item name="statusToApproved" title="Status TO  APPROVED">
+         	<condition >
+				<and>
+					<not><if-empty field="parameters.quoteId" /></not>
+					<not><if-empty field="isQuoteManager"/></not>
+					 <if-compare operator="not-equals" value="QUO_ORDERED" field="quote.statusId"/>
+					 <if-compare operator="not-equals" value="QUO_REJECTED" field="quote.statusId"/>
+					 <if-compare operator="not-equals" value="QUO_APPROVED" field="quote.statusId"/>
+				</and>
+         	</condition>
+            <link target="setQuoteStatus">
+                <parameter param-name="quoteId" from-field="parameters.quoteId"/>
+                <parameter param-name="statusId" value="QUO_APPROVED"/>
+            </link>
+        </menu-item>
+         <menu-item name="statusToRejected" title="Status TO Rejected">
+         	<condition >
+				<and>
+					<not>
+						<if-empty field="parameters.quoteId" />
+					</not>
+					<if-compare operator="not-equals" value="QUO_ORDERED" field="quote.statusId"/>
+					<if-compare operator="not-equals" value="QUO_REJECTED" field="quote.statusId"/>
+				</and>
+         	</condition>
+            <link target="setQuoteStatus" request-confirmation="true" confirmation-message="Do you want to Reject this Quote ${quote.quoteId}?">
+                <parameter param-name="quoteId" from-field="parameters.quoteId"/>
+                <parameter param-name="statusId" value="QUO_REJECTED"/>
+            </link>
+        </menu-item>
+    </menu>
+ <menu name="RequestTabBar" title="${uiLabelMap.ProjectMgr}" menu-container-style="nav nav-pills" extends="CommonTabBarMenu" extends-resource="component://common/widget/CommonMenus.xml">
+    	 <actions>
+        	<script location="component://order/webapp/ordermgr/reports/RoleTypePermissions.groovy"/>
+        </actions>
+        <menu-item name="ViewRequest" title="${uiLabelMap.OrderRequestOverview}">
+            <link target="ViewRequest">
+                <parameter param-name="custRequestId" from-field="custRequest.custRequestId"/>
+            </link>
+        </menu-item>
+        <menu-item name="editRequest" title="${uiLabelMap.OrderRequest}">
+            <condition>
+                <and>
+                    <not><if-empty field="custRequest"/></not>
+                    <if-compare field="custRequest.statusId" operator="not-equals" value="CRQ_CANCELLED"/>
+                    <if-compare field="custRequest.statusId" operator="not-equals" value="CRQ_COMPLETED"/>
+                    <if-compare field="custRequest.statusId" operator="not-equals" value="CRQ_REJECTED"/>
+                    <and>
+	                    <or>
+	        				<not><if-empty field="isRequestManager"/></not>
+	                    	<not><if-empty field="isRequestTaker"/></not>
+						</or>
+					</and>
+                </and>
+            </condition>
+            <link target="request">
+                <parameter param-name="custRequestId" from-field="custRequest.custRequestId"/>
+            </link>
+        </menu-item>
+        <menu-item name="requestroles" title="${uiLabelMap.OrderRequestRoles}">
+            <condition>
+                <and>
+                    <not><if-empty field="custRequest"/></not>
+                    <if-compare field="custRequest.statusId" operator="not-equals" value="CRQ_CANCELLED"/>
+                    <if-compare field="custRequest.statusId" operator="not-equals" value="CRQ_COMPLETED"/>
+                    <if-compare field="custRequest.statusId" operator="not-equals" value="CRQ_REJECTED"/>
+                     <and>
+	                    <or>
+	        				<not><if-empty field="isRequestManager"/></not>
+	                    	<not><if-empty field="isRequestTaker"/></not>
+						</or>
+					</and>
+                </and>
+            </condition>
+            <link target="requestroles">
+                <parameter param-name="custRequestId" from-field="custRequest.custRequestId"/>
+            </link>
+        </menu-item>
+        
+          <menu-item name="createRequestitems" title="Add Request Item">
+                 <condition>
+                    		<or>
+                    			<not><if-empty field="isRequestManager"/></not>
+                    			<not><if-empty field="isRequestTaker"/></not>
+                    		</or>
+                    		</condition>
+            <link target="requestitem">
+                <parameter param-name="custRequestId" from-field="custRequest.custRequestId"/>
+            </link>
+        </menu-item>
+         <menu-item name="requestitemsList" title="View Request Items">
+                 <condition>
+                <and>
+                    <not><if-empty field="custRequest"/></not>
+                    <if-compare field="custRequest.statusId" operator="not-equals" value="CRQ_CANCELLED"/>
+                    <if-compare field="custRequest.statusId" operator="not-equals" value="CRQ_COMPLETED"/>
+                    <if-compare field="custRequest.statusId" operator="not-equals" value="CRQ_REJECTED"/>
+                     <and>
+	                    <or>
+	        				<not><if-empty field="isRequestManager"/></not>
+	                    	<not><if-empty field="isRequestTaker"/></not>
+						</or>
+					</and>
+                </and>
+            </condition>
+            <link target="/requestitems">
+                <parameter param-name="custRequestId" from-field="custRequest.custRequestId"/>
+            </link>
+        </menu-item>
+        <menu-item name="custRequestContent" title="${uiLabelMap.OrderRequestContent}">
+            <condition>
+                <and>
+                    <not><if-empty field="custRequest"/></not>
+                    <if-compare field="custRequest.statusId" operator="not-equals" value="CRQ_CANCELLED"/>
+                    <if-compare field="custRequest.statusId" operator="not-equals" value="CRQ_COMPLETED"/>
+                    <if-compare field="custRequest.statusId" operator="not-equals" value="CRQ_REJECTED"/>
+                     <and>
+	                    <or>
+	        				<not><if-empty field="isRequestManager"/></not>
+	                    	<not><if-empty field="isRequestTaker"/></not>
+						</or>
+					</and>
+                </and>
+            </condition>
+            <link target="EditCustRequestContent">
+                <parameter param-name="custRequestId" from-field="custRequest.custRequestId"/>
+            </link>
+        </menu-item>
+    </menu>
+
+    <menu name="RequestSubTabBar" extends="CommonButtonBarMenu" extends-resource="component://common/widget/CommonMenus.xml"
+        menu-container-style="button-bar">
+        <actions>
+        	<script location="component://order/webapp/ordermgr/reports/RoleTypePermissions.groovy"/>
+        </actions>
+        <menu-item name="createQuoteFromRequest"  title="${uiLabelMap.OrderCreateQuoteFromRequest}" >
+            <condition>
+                <and>
+                    <not><if-empty field="custRequest"/></not>
+                    <if-compare field="custRequest.custRequestTypeId" operator="equals" value="RF_QUOTE"/>
+	                	<not><if-empty field="parameters.custRequestId" /></not>
+	                <or>
+	                	<not><if-empty field="isQuoteManager"/></not>
+	                	<not><if-empty field="isQuoteRepresentative"/></not>
+	                </or>
+                </and>
+            </condition>
+            <link target="createQuoteFromCustRequest">
+                <parameter param-name="custRequestId" from-field="custRequest.custRequestId"/>
+                <parameter param-name="createdBy" value="${userLogin.partyId}" />
+            </link>
+        </menu-item>
+        <menu-item name="submitRequest"  title="Submit Request">
+        	<condition>
+        		<and>
+					<not><if-empty field="parameters.custRequestId" /></not>
+        			<not><if-empty field="isRequestManager"/></not>
+        			<if-compare operator="not-equals" value="CRQ_SUBMITTED" field="custRequest.statusId"/>
+					<if-compare operator="not-equals" value="CRQ_ACCEPTED" field="custRequest.statusId"/>
+					<if-compare operator="not-equals" value="CRQ_REVIEWED" field="custRequest.statusId"/>
+					<if-compare operator="not-equals" value="CRQ_COMPLETED" field="custRequest.statusId"/>        			
+					<if-compare operator="not-equals" value="CRQ_CANCELLED" field="custRequest.statusId"/>
+					<if-compare operator="not-equals" value="CRQ_REJECTED" field="custRequest.statusId"/>
+				</and>
+        	</condition>
+        	<link target="updaterequest">
+        		<parameter param-name="custRequestId" from-field="parameters.custRequestId"/>
+        		<parameter param-name="fromPartyId" from-field="custRequest.fromPartyId"/>
+            	<parameter param-name="statusId" value="CRQ_SUBMITTED"/>
+           	</link>
+        </menu-item>
+        <menu-item name="acceptRequest"  title="Accept Request">
+        	<condition>
+        		<and>
+        			<not><if-empty field="parameters.custRequestId" /></not>
+        			<not><if-empty field="isRequestManager"/></not>
+        			<if-compare operator="not-equals" value="CRQ_ACCEPTED" field="custRequest.statusId"/>
+        			<if-compare operator="not-equals" value="CRQ_REVIEWED" field="custRequest.statusId"/>
+					<if-compare operator="not-equals" value="CRQ_COMPLETED" field="custRequest.statusId"/>
+					<if-compare operator="not-equals" value="CRQ_CANCELLED" field="custRequest.statusId"/>
+					<if-compare operator="not-equals" value="CRQ_REJECTED" field="custRequest.statusId"/>
+				</and>
+        	</condition>
+        	<link target="updaterequest">
+        		<parameter param-name="custRequestId" from-field="parameters.custRequestId"/>
+        		<parameter param-name="fromPartyId" from-field="custRequest.fromPartyId"/>
+            	<parameter param-name="statusId" value="CRQ_ACCEPTED"/>
+           	</link>
+        </menu-item>
+        <menu-item name="reviewRequest" title="Review Request">
+        	<condition>
+        		<and>
+        			<not><if-empty field="parameters.custRequestId" /></not>
+        			<not><if-empty field="isRequestManager"/></not>
+        			<if-compare operator="not-equals" value="CRQ_SUBMITTED" field="custRequest.statusId"/>
+        			<if-compare operator="not-equals" value="CRQ_REVIEWED" field="custRequest.statusId"/>
+        			<if-compare operator="not-equals" value="CRQ_COMPLETED" field="custRequest.statusId"/>
+					<if-compare operator="not-equals" value="CRQ_CANCELLED" field="custRequest.statusId"/>
+					<if-compare operator="not-equals" value="CRQ_REJECTED" field="custRequest.statusId"/>
+				</and>
+        	</condition>
+        	<link target="updaterequest">
+        		<parameter param-name="custRequestId" from-field="parameters.custRequestId"/>
+        		<parameter param-name="fromPartyId" from-field="custRequest.fromPartyId"/>
+            	<parameter param-name="statusId" value="CRQ_REVIEWED"/>
+           	</link>
+        </menu-item>
+        <menu-item name="pendingCustomer" title="Pending Customer" >
+        	<condition>
+        		<and>
+        			<not><if-empty field="parameters.custRequestId" /></not>
+        			<not><if-empty field="isRequestManager"/></not>
+        			<if-compare operator="not-equals" value="CRQ_PENDING" field="custRequest.statusId"/>
+        			<if-compare operator="not-equals" value="CRQ_COMPLETED" field="custRequest.statusId"/>
+        			<if-compare operator="not-equals" value="CRQ_CANCELLED" field="custRequest.statusId"/>
+        			<if-compare operator="not-equals" value="CRQ_REJECTED" field="custRequest.statusId"/>
+				</and>
+        	</condition>
+        	<link target="updaterequest">
+        		<parameter param-name="custRequestId" from-field="parameters.custRequestId"/>
+        		<parameter param-name="fromPartyId" from-field="custRequest.fromPartyId"/>
+            	<parameter param-name="statusId" value="CRQ_PENDING"/>
+           	</link>
+        </menu-item>
+        <menu-item name="completeRequest" title="Complete Request" >
+        	<condition>
+        		<and>
+        			<not><if-empty field="parameters.custRequestId" /></not>
+        			<not><if-empty field="isRequestManager"/></not>
+        			<if-compare operator="not-equals" value="CRQ_PENDING" field="custRequest.statusId"/>
+        			<if-compare operator="not-equals" value="CRQ_COMPLETED" field="custRequest.statusId"/>
+        			<if-compare operator="not-equals" value="CRQ_CANCELLED" field="custRequest.statusId"/>
+        			<if-compare operator="not-equals" value="CRQ_REJECTED" field="custRequest.statusId"/>
+				</and>
+        	</condition>
+        	<link target="updaterequest">
+        		<parameter param-name="custRequestId" from-field="parameters.custRequestId"/>
+        		<parameter param-name="fromPartyId" from-field="custRequest.fromPartyId"/>
+            	<parameter param-name="statusId" value="CRQ_COMPLETED"/>
+           	</link>
+        </menu-item>
+        <!-- <menu-item name="reopenRequest" title="Re-open Request">
+        	<condition>
+        		<and>
+        			<not><if-empty field="parameters.custRequestId" /></not>
+        			<not><if-empty field="isRequestManager"/></not>
+        			<if-compare operator="not-equals" value="CRQ_SUBMITTED" field="custRequest.statusId"/>
+        			<if-compare operator="not-equals" value="CRQ_ACCEPTED" field="custRequest.statusId"/>
+        			<if-compare operator="not-equals" value="CRQ_REVIEWED" field="custRequest.statusId"/>
+        			<if-compare operator="not-equals" value="CRQ_PENDING" field="custRequest.statusId"/>
+					<if-compare operator="not-equals" value="CRQ_CANCELLED" field="custRequest.statusId"/>
+					<if-compare operator="not-equals" value="CRQ_REJECTED" field="custRequest.statusId"/>
+				</and>
+        	</condition>
+        	<link target="updateRequest">
+        		<parameter param-name="custRequestId" from-field="parameters.custRequestId"/>
+        		<parameter param-name="fromPartyId" from-field="custRequest.fromPartyId"/>
+            	<parameter param-name="statusId" value="CRQ_COMPLETED"/>
+           	</link>
+        </menu-item> -->
+        <menu-item name="cancelRequest" title="Cancel Request" >
+        	<condition>
+        		<or>
+        			
+	        		<and>
+	        			<not><if-empty field="parameters.custRequestId" /></not>
+	        			<if-compare operator="not-equals" value="CRQ_CANCELLED" field="custRequest.statusId"/>
+	        			<if-compare operator="not-equals" value="CRQ_COMPLETED" field="custRequest.statusId"/>
+	        			<if-compare operator="not-equals" value="CRQ_REJECTED" field="custRequest.statusId"/>
+	        			<or>
+	        				<not><if-empty field="isRequestManager"/></not>
+	        				<not><if-empty field="requestingParty"/></not>
+        				</or>
+	        		</and>
+        		
+	        		<and>
+	        			<not><if-empty field="parameters.custRequestId" /></not>
+	        			<not><if-empty field="isRequestTaker"/></not>
+	        			<if-compare operator="not-equals" value="CRQ_ACCEPTED" field="custRequest.statusId"/>
+	        			<if-compare operator="not-equals" value="CRQ_REVIEWED" field="custRequest.statusId"/>
+	        			<if-compare operator="not-equals" value="CRQ_CANCELLED" field="custRequest.statusId"/>
+	        			<if-compare operator="not-equals" value="CRQ_COMPLETED" field="custRequest.statusId"/>
+	        			<if-compare operator="not-equals" value="CRQ_REJECTED" field="custRequest.statusId"/>
+	        		</and>
+        		</or>
+        	</condition>
+       		<link target="updaterequest" >
+        		<parameter param-name="custRequestId" from-field="parameters.custRequestId"/>
+        		<parameter param-name="fromPartyId" from-field="custRequest.fromPartyId"/>
+            	<parameter param-name="statusId" value="CRQ_CANCELLED"/>
+           	</link>
+        </menu-item>
+        <menu-item name="rejectRequest" title="Reject Request">
+        	<condition>
+        		<and>
+        			<not><if-empty field="parameters.custRequestId" /></not>
+        			<not><if-empty field="isRequestManager"/></not>
+        			<if-compare operator="not-equals" value="CRQ_ACCEPTED" field="custRequest.statusId"/>
+        			<if-compare operator="not-equals" value="CRQ_REVIEWED" field="custRequest.statusId"/>
+        			<if-compare operator="not-equals" value="CRQ_PENDING" field="custRequest.statusId"/>
+        			<if-compare operator="not-equals" value="CRQ_COMPLETED" field="custRequest.statusId"/>
+        			<if-compare operator="not-equals" value="CRQ_CANCELLED" field="custRequest.statusId"/>
+        			<if-compare operator="not-equals" value="CRQ_REJECTED" field="custRequest.statusId"/>
+				</and>
+        	</condition>
+        	<link target="updaterequest">
+        		<parameter param-name="custRequestId" from-field="parameters.custRequestId"/>
+        		<parameter param-name="fromPartyId" from-field="custRequest.fromPartyId"/>
+            	<parameter param-name="statusId" value="CRQ_REJECTED"/>
+           	</link>
+        </menu-item>
+    </menu>
+
+    <menu name="RequestScreenletMenu" extends="CommonTabBarMenu" extends-resource="component://common/widget/CommonMenus.xml"
+        menu-container-style="button-bar no-clear">
+        <menu-item name="newRequest" title="${uiLabelMap.OrderNewRequest}">
+            <link target="EditRequest"/>
+        </menu-item>
+    </menu>
+
+    <menu name="editrequestitemmenu" extends="CommonTabBarMenu" extends-resource="component://common/widget/CommonMenus.xml">
+        <menu-item name="requestitem" title="${uiLabelMap.OrderRequestItem}">
+            <link id="requestitem" target="requestitem">
+                <parameter param-name="custRequestId" from-field="custRequest.custRequestId"/>
+                <parameter param-name="custRequestItemSeqId" from-field="custRequestItem.custRequestItemSeqId"/>
+            </link>
+        </menu-item>
+        <menu-item name="requestitemnotes" title="${uiLabelMap.OrderRequestItemNotes}">
+            <link id="requestitemnotes" target="requestitemnotes">
+                <parameter param-name="custRequestId" from-field="custRequest.custRequestId"/>
+                <parameter param-name="custRequestItemSeqId" from-field="custRequestItem.custRequestItemSeqId"/>
+            </link>
+        </menu-item>
+        <menu-item name="requestitemquotes" title="${uiLabelMap.OrderRequestItemQuotes}">
+            <link id="requestitemquotes" target="RequestItemQuotes">
+                <parameter param-name="custRequestId" from-field="custRequest.custRequestId"/>
+                <parameter param-name="custRequestItemSeqId" from-field="custRequestItem.custRequestItemSeqId"/>
+            </link>
+        </menu-item>
+        <menu-item name="workeffortrequirements" title="${uiLabelMap.OrderRequestItemWorkEffort}">
+            <link id="workeffortrequirements" target="requestitemrequirements">
+                <parameter param-name="custRequestId" from-field="custRequest.custRequestId"/>
+                <parameter param-name="custRequestItemSeqId" from-field="custRequestItem.custRequestItemSeqId"/>
+            </link>
+        </menu-item>
+    </menu>
+        <menu name="RequirementsSubTabBar" extends="CommonButtonBarMenu" extends-resource="component://common/widget/CommonMenus.xml"
+        menu-container-style="button-bar">
+        <actions>
+        		<script location="component://order/webapp/ordermgr/reports/RoleTypePermissions.groovy"/>
+        </actions>
+         <menu-item name="statusToProposed" title="Status TO Confirmed">
+        	<condition >
+				<and>
+					<not><if-empty field="requirementId"/></not>
+	                <if-compare operator="not-equals" value="REQ_REJECTED" field="requirement.statusId"/>
+         	 		<if-compare operator="not-equals" value="REQ_ORDERED" field="requirement.statusId"/>
+         	 		<if-compare operator="not-equals" value="REQ_APPROVED" field="requirement.statusId"/>
+         	 		<if-compare field="isRequirementsProposer" operator="equals" value="true" type="Boolean"/>
+					<!-- <or>
+						<not><if-empty field="isRequirementsRepresentative"/></not>
+	                	<not><if-empty field="isRequirementsManager"/></not>
+					</or> -->
+				</and>
+         	</condition> 
+            <link target="setRequirementsStatus">
+               <parameter param-name="requirementId" from-field="parameters.requirementId"/>
+                <parameter param-name="statusId" value="REQ_PROPOSED"/>
+            </link>
+        </menu-item>
+       <!--  <menu-item name="statusToApproved" title="Status TO  APPROVED">
+         	 <condition >
+         	 	<and>
+         	 		<not><if-empty field="requirementId"/></not>
+	                <not><if-empty field="isRequirementsManager"/></not>
+	                <if-compare operator="not-equals" value="REQ_REJECTED" field="requirement.statusId"/>
+         	 		<if-compare operator="not-equals" value="REQ_ORDERED" field="requirement.statusId"/>
+         	 		<if-compare operator="not-equals" value="REQ_APPROVED" field="requirement.statusId"/>
+         	 	</and>
+         	</condition> 
+            <link target="setRequirementsStatus">
+               <parameter param-name="requirementId" from-field="parameters.requirementId"/>
+                <parameter param-name="statusId" value="REQ_APPROVED"/>
+            </link>
+        </menu-item>-->
+         <menu-item name="statusToRejected" title="Status TO Rejected">
+          <condition >
+				<and>
+					<not><if-empty field="requirementId"/></not>
+					<if-compare operator="not-equals" value="REQ_ORDERED" field="requirement.statusId"/>
+					<if-compare operator="not-equals" value="REQ_REJECTED" field="requirement.statusId"/>
+					<or>
+						<not><if-empty field="isRequirementsRepresentative"/></not>
+	                	<not><if-empty field="isRequirementsManager"/></not>
+					</or>
+				</and>
+         	</condition> 
+            <link target="setRequirementsStatus" request-confirmation="true" confirmation-message="You want to cancel this Requirement ${requirementId}?">
+                <parameter param-name="requirementId" from-field="parameters.requirementId"/>
+                <parameter param-name="statusId" value="REQ_REJECTED"/>
+            </link>
+        </menu-item>
+    </menu>
+</menus>

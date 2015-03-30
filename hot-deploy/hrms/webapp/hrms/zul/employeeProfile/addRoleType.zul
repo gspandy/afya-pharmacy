@@ -1,0 +1,49 @@
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<zk>
+<zscript>
+org.ofbiz.security.Security security = requestScope.get("security");
+	org.ofbiz.entity.GenericValue userLogin = (org.ofbiz.entity.GenericValue) Executions.getCurrent().getDesktop().getSession().getAttribute("userLogin");
+	boolean isAdmin = security.hasPermission("HUMANRES_ADMIN", userLogin);
+</zscript>
+	<window title="${c:l('HRMS_NEW_ROLE_TYPE') }" id="addRoleTypeWindow" border="normal" mode="modal" width="500px" height="200px" maximizable="true" closable="true">
+		<separator height="15px" />
+		<textbox value="EMPLOYEE" id="parentTypeId" visible="false"/>
+		<hbox>
+			<div align="right" width="130px" style="margin-right:5px">
+				<label value="${c:l('HRMS_ROLE_TYPE_ID') }:" style="font-weight:bold" />
+				<label value="*" style="color:red"/>
+			</div>
+			<div align="left" width="150px" style="margin-right:5px">
+				<textbox id="roleTypeId"
+					constraint="no empty: ${c:l('HRMS_ART_REQUIRED_ROLE_TYPE_ID') }" maxlength="20" />
+			</div>
+		</hbox>
+		<separator />
+		<hbox>
+			<div align="right" width="130px" style="margin-right:5px">
+				<label value="${c:l('HRMS_DESCRIPTION') }:" style="font-weight:bold" /><label value="*" style="color:red"/>
+			</div>
+			<div align="left" width="150px" style="margin-right:5px">
+				<textbox id="description"
+					constraint="no empty: ${c:l('Message_DescriptionMissing') }" maxlength="200"  width="300px" height="60px" multiline="true" />
+			</div>
+		</hbox>
+		<separator />
+		<hbox>
+			<div align="right" width="255px" style="margin-right:5px">
+				<button label="${c:l('btnSave') }">
+					<attribute name="onClick">
+					roleTypeId.getValue();
+					description.getValue();
+					com.ndz.controller.UpdateEmployeeProfileController.addRoleType(event);
+					</attribute>
+					</button>
+				<button label="${c:l('HRMS_CancelButton') }">
+				<attribute name="onClick">
+				   addRoleTypeWindow.detach();
+				</attribute>
+				</button>
+			</div>
+		</hbox>
+	</window>
+</zk>

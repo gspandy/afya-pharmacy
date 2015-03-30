@@ -1,0 +1,13 @@
+<zk>
+
+	<hbox style="margin:5px 5px 5px 5px">
+		<div align="right" width="165px" style="float:right">
+			<label style="margin:15px 5px 5px 5px;font-weight:bold"
+				value="${arg.fieldLabel}">
+			</label>
+		</div>
+		<listbox id="${arg.name}" mold="select" style="float:left">
+			<listitem label="${each}"  value="${each}"  forEach="${arg.value}" ></listitem>
+		</listbox>
+	</hbox>
+</zk>

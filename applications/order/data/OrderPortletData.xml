@@ -1,0 +1,252 @@
+<?xml version="1.0" encoding="UTF-8"?>
+	<!--
+		Licensed to the Apache Software Foundation (ASF) under one or more contributor license agreements. See the NOTICE file
+		distributed with this work for additional information regarding copyright ownership. The ASF licenses this file to you
+		under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the
+		License. You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0 Unless required by
+		applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS,
+		WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language
+		governing permissions and limitations under the License.
+	-->
+<entity-engine-xml>
+
+	<!-- customer requests -->
+	<PortletCategory portletCategoryId="CUST_REQUEST" description="Customer Requests" />
+	<PortalPortlet portalPortletId="INCOM_CUST_REQUESTS" portletName="Incoming Cust.Requests" screenName="IncomingCustRequests"
+		screenLocation="component://order/widget/ordermgr/CustRequestScreens.xml" description="List Request List for a request taker"
+		securityServiceName="portalPermissionIsEmployee" securityMainAction="VIEW" screenshot="/images/portlets/INCOM_CUST_REQUESTS.png" />
+	
+	<PortletPortletCategory portalPortletId="INCOM_CUST_REQUESTS" portletCategoryId="CUST_REQUEST" />
+	
+	<PortalPortlet portalPortletId="ViewCustRequest" portletName="View a specific customer request"
+		screenName="ViewCustRequest" screenLocation="component://order/widget/ordermgr/CustRequestScreens.xml" description="View your own customer request inclusive of notes" />
+	<PortletPortletCategory portalPortletId="ViewCustRequest" portletCategoryId="CUST_REQUEST" />
+
+	<PortletCategory portletCategoryId="LIST_CUSTOMER" description="List(s) used by a Customer" />
+	<PortalPortlet portalPortletId="ListCustRequests" portletName="List Cust Requests for a customer"
+		screenName="ListCustRequests" screenLocation="component://order/widget/ordermgr/CustRequestScreens.xml" description="List Cust Requests to the customer"
+		securityServiceName="portalPermissionIsCustomer" securityMainAction="VIEW" editFormName="EditCustReqStatusId"
+		editFormLocation="component://order/widget/ordermgr/CustRequestForms.xml" />
+	<PortletPortletCategory portalPortletId="ListCustRequests" portletCategoryId="LIST_CUSTOMER" />
+
+	<!--List of order(s) placed by a customer in order -->
+	<PortletCategory portletCategoryId="ORDERMGR" description="List of order(s)" />
+	<PortalPortlet portalPortletId="ListCustomerOrders" portletName="List Customer Orders" screenName="ListCustomerOrders"
+		screenLocation="component://order/widget/ordermgr/OrderViewScreens.xml" description="List Orders placed by customer"
+		securityServiceName="portalPermissionIsCustomer" securityMainAction="VIEW" editFormName="EditOrderByCustomer"
+		editFormLocation="component://order/widget/ordermgr/OrderForms.xml" />
+	<PortletPortletCategory portalPortletId="ListCustomerOrders" portletCategoryId="ORDERMGR" />
+
+	<!-- List Todays Order -->
+	<!-- <PortalPortlet portalPortletId="ListSalesOrders" portletName="List Sales Orders By Date" screenName="ListSalesOrders"
+		screenLocation="component://order/widget/ordermgr/OrderViewScreens.xml" description="List Sales Orders placed today"
+		securityServiceName="portalPermissionIsEmployee" securityMainAction="VIEW" />
+	<PortletPortletCategory portalPortletId="ListSalesOrders" portletCategoryId="ORDERMGR" /> -->
+
+	<PortalPage portalPageId="OrderPortalPage" sequenceNum="0" portalPageName="Order Portal Page"
+		description="Order main page using flexible Portal technology" ownerUserLoginId="_NA_" />
+	<PortalPageColumn portalPageId="OrderPortalPage" columnSeqId="00001" />
+	<PortalPageColumn portalPageId="OrderPortalPage" columnSeqId="00002" />
+	
+	<PortalPage portalPageId="OrderPortalPagePo" sequenceNum="0" portalPageName="Order Portal Page For PO"
+		description="Purchase Order main page using flexible Portal technology" ownerUserLoginId="_NA_" />
+	<PortalPageColumn portalPageId="OrderPortalPagePo" columnSeqId="00001" />
+	<PortalPageColumn portalPageId="OrderPortalPagePo" columnSeqId="00002" />
+	
+	<PortalPage portalPageId="OrderPortalPageSo" sequenceNum="0" portalPageName="Order Portal Page For SO"
+		description="Sales Order main page using flexible Portal technology" ownerUserLoginId="_NA_" />
+	<PortalPageColumn portalPageId="OrderPortalPageSo" columnSeqId="00001" />
+	<PortalPageColumn portalPageId="OrderPortalPageSo" columnSeqId="00002" />
+
+<!--	<PortalPagePortlet portalPageId="OrderPortalPage" portalPortletId="BestSellingProducts" portletSeqId="00001"-->
+<!--		columnSeqId="00001" sequenceNum="1" />-->
+<!---->
+	<!-- Order Reports -->
+	<PortalPage portalPageId="OrderReportPage" sequenceNum="0" portalPageName="Order Purchase Report Portal Page"
+		description="Order purchase Report page using flexible Portal technology" ownerUserLoginId="_NA_" />
+	<PortalPageColumn portalPageId="OrderReportPage" columnSeqId="00001" columnWidthPercentage="50" />
+	<PortalPageColumn portalPageId="OrderReportPage" columnSeqId="00002" />
+
+	<!-- <PortalPortlet portalPortletId="SalesByStore" portletName="Sales by store report" screenName="OrderReportSalesByStore"
+		screenLocation="component://order/widget/ordermgr/ReportScreens.xml" description="" />
+	<PortletPortletCategory portalPortletId="SalesByStore" portletCategoryId="REPORT" />  -->
+
+	<PortalPortlet portalPortletId="OpenOrderItems" portletName="Order Report Open OrderItems" screenName="OrderReportOpenOrderItems"
+		screenLocation="component://order/widget/ordermgr/ReportScreens.xml" description="" />
+	<PortletPortletCategory portalPortletId="OpenOrderItems" portletCategoryId="REPORT" />
+
+	<PortalPortlet portalPortletId="PurchasesByOrg" portletName="Order Report Purchases By Organization"
+		screenName="OrderReportPurchasesByOrganization" screenLocation="component://order/widget/ordermgr/ReportScreens.xml"
+		description="" />
+	<PortletPortletCategory portalPortletId="PurchasesByOrg" portletCategoryId="REPORT" />
+
+	<PortalPortlet portalPortletId="PurchasesByProduct" portletName="Order Report Purchases By Product"
+		screenName="OrderReportPurchasesByProduct" screenLocation="component://order/widget/ordermgr/ReportScreens.xml"
+		description="" />
+	<PortletPortletCategory portalPortletId="PurchasesByProduct" portletCategoryId="REPORT" />
+	
+	<PortalPortlet portalPortletId="SalesDelReport" portletName="Sales By DeliveryDate Report" screenName="SalesByDeliveryDateReport"
+		screenLocation="component://order/widget/ordermgr/ReportScreens.xml" description="Sales By DeliveryDate Report" />
+	<PortletPortletCategory portalPortletId="SalesDelReport" portletCategoryId="REPORT" />
+	
+	<PortalPortlet portalPortletId="ComparativeDelReport" portletName="Sales By DeliveryDate Report" screenName="ComparativeOrderItemReports"
+		screenLocation="component://order/widget/ordermgr/ReportScreens.xml" description="Comparative Order Item Report" />
+	<PortletPortletCategory portalPortletId="ComparativeDelReport" portletCategoryId="REPORT" />
+
+	<!-- <PortalPortlet portalPortletId="PurchByPaymMeth" portletName="Order Report Purchases By PaymentMethod"
+		screenName="OrderReportPurchasesByPaymentMethod" screenLocation="component://order/widget/ordermgr/ReportScreens.xml"
+		description="" />
+	<PortletPortletCategory portalPortletId="PurchByPaymMeth" portletCategoryId="REPORT" />  -->
+
+	<!-- <PortalPortlet portalPortletId="ListPurchaseOrders" portletName="List Purchase Orders" screenName="ListPurchaseOrders"
+		screenLocation="component://order/widget/ordermgr/OrderViewScreens.xml" description="List Purchase Orders" />
+	<PortletPortletCategory portalPortletId="ListPurchaseOrders" portletCategoryId="ORDERMGR" /> -->
+
+	<!-- <PortalPortlet portalPortletId="OrderByReferrer" portletName="Sale Orders By Referrer Report" screenName="SaleOrdersByReferrerReport"
+		screenLocation="component://order/widget/ordermgr/ReportScreens.xml" description="" />
+	<PortletPortletCategory portalPortletId="OrderByReferrer" portletCategoryId="REPORT" />  -->
+
+	<!-- <PortalPortlet portalPortletId="OrderByChannel" portletName="Sale Orders by Channel" screenName="SaleOrdersByChannelReport"
+		screenLocation="component://order/widget/ordermgr/ReportScreens.xml" description="" />
+	<PortletPortletCategory portalPortletId="OrderByChannel" portletCategoryId="REPORT" />  -->
+
+	<!-- <PortalPortlet portalPortletId="OrderDiscountCode" portletName="Orders with discount code" screenName="SaleOrderDiscountCodeReport"
+		screenLocation="component://order/widget/ordermgr/ReportScreens.xml" description="" />
+	<PortletPortletCategory portalPortletId="OrderDiscountCode" portletCategoryId="REPORT" />  -->
+
+	<!-- <PortalPortlet portalPortletId="Last3MSalesReport" portletName="Last 3 Months Sales Report" screenName="Last3MonthsSalesReport"
+		screenLocation="component://order/widget/ordermgr/ReportScreens.xml" description="" />
+	<PortletPortletCategory portalPortletId="Last3MSalesReport" portletCategoryId="REPORT" />  -->
+
+	<!-- <PortalPortlet portalPortletId="CouponSalesReport" portletName="Coupon Sales Report" screenName="CouponSalesReport"
+		screenLocation="component://order/widget/ordermgr/ReportScreens.xml" description="" />
+	<PortletPortletCategory portalPortletId="CouponSalesReport" portletCategoryId="REPORT" />  -->
+
+	<!-- <PortalPortlet portalPortletId="SalesReport" portletName="Sales Report" screenName="SalesReport"
+		screenLocation="component://order/widget/ordermgr/ReportScreens.xml" description="" />
+	<PortletPortletCategory portalPortletId="SalesReport" portletCategoryId="REPORT" />  -->
+
+	<!-- <PortalPortlet portalPortletId="NBO_Report" portletName="Net Before Overhead Report" screenName="NetBeforeOverheadReport"
+		screenLocation="component://order/widget/ordermgr/ReportScreens.xml" description="" />
+	<PortletPortletCategory portalPortletId="NBO_Report" portletCategoryId="REPORT" />  -->
+
+	<!-- <PortalPortlet portalPortletId="PDR_Report" portletName="Product Demand Report" screenName="ProductDemandReport"
+		screenLocation="component://order/widget/ordermgr/ReportScreens.xml" description="" />
+	<PortletPortletCategory portalPortletId="PDR_Report" portletCategoryId="REPORT" />  -->
+
+	<PortalPortlet portalPortletId="SalesReturnToday" portletName="Sales Return Today" screenName="SalesReturnToday"
+		screenLocation="component://order/widget/ordermgr/OrderViewScreens.xml" description="List of Sales Return" />
+	<PortletPortletCategory portalPortletId="SalesReturnToday" portletCategoryId="ORDERMGR" />
+
+	<PortalPortlet portalPortletId="PurchaseReturnToday" portletName="Purchase Return Today" screenName="PurchaseReturnToday"
+		screenLocation="component://order/widget/ordermgr/OrderViewScreens.xml" description="List of Purchase Return" />
+	<PortletPortletCategory portalPortletId="PurchaseReturnToday" portletCategoryId="ORDERMGR" />
+
+	<PortalPortlet portalPortletId="SOCreatedDashlet" portletName="Sale Orders Status" screenName="SOCreatedDashlet"
+		screenLocation="component://order/widget/ordermgr/OrderViewScreens.xml" description="Sales Orders Awaiting Approval" />
+	<PortletPortletCategory portalPortletId="SOCreatedDashlet" portletCategoryId="ORDERMGR" />
+	
+	<PortalPortlet portalPortletId="POCreatedDashlet" portletName="Purchase Orders Status" screenName="POCreatedDashlet"
+		screenLocation="component://order/widget/ordermgr/OrderViewScreens.xml" description="Purchase Orders Awaiting Approval" />
+	<PortletPortletCategory portalPortletId="POCreatedDashlet" portletCategoryId="ORDERMGR" />
+	
+	<PortalPortlet portalPortletId="ListSOToday" portletName="Sales Order Today" screenName="ListSalesOrdersToday"
+		screenLocation="component://order/widget/ordermgr/OrderViewScreens.xml" description="List of Sales Orders" />
+	<PortletPortletCategory portalPortletId="ListSOToday" portletCategoryId="ORDERMGR" />
+	
+	<PortalPortlet portalPortletId="ListPOToday" portletName="Purchase Order Today" screenName="ListPurchaseOrdersToday"
+		screenLocation="component://order/widget/ordermgr/OrderViewScreens.xml" description="List of Purchase Orders" />
+	<PortletPortletCategory portalPortletId="ListPOToday" portletCategoryId="ORDERMGR" />
+	
+	<PortalPortlet portalPortletId="RequirementsScreen" portletName="Requirement List" screenName="RequirementsScreen"
+		screenLocation="component://order/widget/ordermgr/OrderViewScreens.xml" description="List of Requirement" />
+	<PortletPortletCategory portalPortletId="RequirementsScreen" portletCategoryId="ORDERMGR" />
+	
+	<PortalPortlet portalPortletId="QuotesScreen" portletName="Quotes List" screenName="QuotesScreen"
+		screenLocation="component://order/widget/ordermgr/OrderViewScreens.xml" description="List of Quotes" />
+	<PortletPortletCategory portalPortletId="QuotesScreen" portletCategoryId="ORDERMGR" />
+	
+	
+
+	<!-- <PortalPagePortlet portalPageId="OrderPortalPage" portalPortletId="ListSalesOrders" portletSeqId="00001"
+			columnSeqId="00001" sequenceNum="0" /> -->
+	<!-- <PortalPagePortlet portalPageId="OrderPortalPage" portalPortletId="ListPurchaseOrders" portletSeqId="00001"
+			columnSeqId="00002" sequenceNum="0" /> -->
+	<!-- <PortalPagePortlet portalPageId="OrderReportPage" portalPortletId="SalesByStore" portletSeqId="00001"
+			columnSeqId="00001" sequenceNum="0" />  -->
+	<PortalPagePortlet portalPageId="OrderReportPage" portalPortletId="OpenOrderItems" portletSeqId="00001"
+			columnSeqId="00001" sequenceNum="1" />
+	<PortalPagePortlet portalPageId="OrderReportPage" portalPortletId="PurchasesByOrg" portletSeqId="00001"
+			columnSeqId="00001" sequenceNum="2" />
+	<PortalPagePortlet portalPageId="OrderReportPage" portalPortletId="PurchasesByProduct" portletSeqId="00001"
+			columnSeqId="00002" sequenceNum="3" /> 
+    <PortalPagePortlet portalPageId="OrderReportPage" portalPortletId="SalesDelReport" portletSeqId="00001"
+			columnSeqId="00002" sequenceNum="4" /> 		
+	<PortalPagePortlet portalPageId="OrderReportPage" portalPortletId="ComparativeDelReport" portletSeqId="00001"
+			columnSeqId="00001" sequenceNum="5" />			
+	<!-- <PortalPagePortlet portalPageId="OrderReportPage" portalPortletId="PurchByPaymMeth" portletSeqId="00001"
+			columnSeqId="00002" sequenceNum="4" /> -->
+	<!-- <PortalPagePortlet portalPageId="OrderReportPage" portalPortletId="OrderByReferrer" portletSeqId="00001"
+			columnSeqId="00001" sequenceNum="5" />  -->
+	<!-- <PortalPagePortlet portalPageId="OrderReportPage" portalPortletId="OrderByChannel" portletSeqId="00001"
+			columnSeqId="00001" sequenceNum="6" />  -->
+	<!--  <PortalPagePortlet portalPageId="OrderReportPage" portalPortletId="OrderDiscountCode" portletSeqId="00001"
+			columnSeqId="00001" sequenceNum="7" /> -->
+	<!-- <PortalPagePortlet portalPageId="OrderReportPage" portalPortletId="Last3MSalesReport" portletSeqId="00001"
+			columnSeqId="00002" sequenceNum="8" />  -->
+	<!-- <PortalPagePortlet portalPageId="OrderReportPage" portalPortletId="CouponSalesReport" portletSeqId="00001"
+			columnSeqId="00002" sequenceNum="9" />  -->
+	<!-- <PortalPagePortlet portalPageId="OrderReportPage" portalPortletId="SalesReport" portletSeqId="00001"
+			columnSeqId="00002" sequenceNum="10" />  -->
+	<!-- <PortalPagePortlet portalPageId="OrderReportPage" portalPortletId="NBO_Report" portletSeqId="00001"
+			columnSeqId="00002" sequenceNum="11" />  -->
+	<!-- <PortalPagePortlet portalPageId="OrderReportPage" portalPortletId="PDR_Report" portletSeqId="00001"
+			columnSeqId="00002" sequenceNum="12" /> -->
+		
+	<PortalPagePortlet portalPageId="OrderPortalPage" portalPortletId="SalesReturnToday" portletSeqId="00001"
+		columnSeqId="00001" sequenceNum="2" />
+	
+	<PortalPagePortlet portalPageId="OrderPortalPage" portalPortletId="PurchaseReturnToday" portletSeqId="00001"
+		columnSeqId="00002" sequenceNum="2" />
+		
+	<PortalPagePortlet portalPageId="OrderPortalPage" portalPortletId="SOCreatedDashlet" portletSeqId="00001"
+		columnSeqId="00001" sequenceNum="1" />
+		
+	<PortalPagePortlet portalPageId="OrderPortalPage" portalPortletId="POCreatedDashlet" portletSeqId="00001"
+		columnSeqId="00002" sequenceNum="1" />	
+		
+	<PortalPagePortlet portalPageId="OrderPortalPage" portalPortletId="ListSOToday" portletSeqId="00001"
+		columnSeqId="00001" sequenceNum="2" />
+	
+	<PortalPagePortlet portalPageId="OrderPortalPage" portalPortletId="ListPOToday" portletSeqId="00001"
+		columnSeqId="00002" sequenceNum="2" />	
+		
+	<PortalPagePortlet portalPageId="OrderPortalPage" portalPortletId="RequirementsScreen" portletSeqId="00001"
+		columnSeqId="00001" sequenceNum="1" />
+		
+	<PortalPagePortlet portalPageId="OrderPortalPage" portalPortletId="QuotesScreen" portletSeqId="00001"
+		columnSeqId="00002" sequenceNum="2" />
+		
+		<!-- seeding for PO -->
+		<PortalPagePortlet portalPageId="OrderPortalPagePo" portalPortletId="POCreatedDashlet" portletSeqId="00001"
+		columnSeqId="00001" sequenceNum="1" />
+		<PortalPagePortlet portalPageId="OrderPortalPagePo" portalPortletId="ListPOToday" portletSeqId="00001"
+		columnSeqId="00002" sequenceNum="1" />
+		<PortalPagePortlet portalPageId="OrderPortalPagePo" portalPortletId="RequirementsScreen" portletSeqId="00001"
+		columnSeqId="00001" sequenceNum="2" />
+		<PortalPagePortlet portalPageId="OrderPortalPagePo" portalPortletId="PurchaseReturnToday" portletSeqId="00001"
+		columnSeqId="00002" sequenceNum="2" />
+		<PortalPagePortlet portalPageId="OrderPortalPagePo" portalPortletId="QuotesScreen" portletSeqId="00001"
+		columnSeqId="00001" sequenceNum="3" />
+		
+		<!-- seeding for SO -->
+		<PortalPagePortlet portalPageId="OrderPortalPageSo" portalPortletId="SOCreatedDashlet" portletSeqId="00001"
+		columnSeqId="00001" sequenceNum="1" />
+		<PortalPagePortlet portalPageId="OrderPortalPageSo" portalPortletId="ListSOToday" portletSeqId="00001"
+		columnSeqId="00002" sequenceNum="1" />
+		<PortalPagePortlet portalPageId="OrderPortalPageSo" portalPortletId="QuotesScreen" portletSeqId="00001"
+		columnSeqId="00001" sequenceNum="2" />
+		<PortalPagePortlet portalPageId="OrderPortalPageSo" portalPortletId="SalesReturnToday" portletSeqId="00001"
+		columnSeqId="00002" sequenceNum="2" />
+		
+</entity-engine-xml>

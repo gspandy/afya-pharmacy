@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<services xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="http://ofbiz.apache.org/dtds/services.xsd">
+	<description>Employee Leave Services</description>
+	<vendor>NthDimenzion</vendor>
+	<version>1.0</version>
+
+	<!-- New Leave Limit Section -->
+	<service name="createLeaveLimitService"  engine="java"
+		location="org.ofbiz.humanresext.leave.LeaveServices" invoke="createLeaveLimit"
+		auth="true">
+		<description>Create Employee Leave Limit For Financial Year</description>
+		<required-permissions join-type="OR">
+    		<check-permission permission="HUMANRES" action="_ADMIN"  /> 
+    	</required-permissions>
+		<attribute name="leaveTypeId" mode="IN" type="String" optional="false"></attribute>
+		<attribute name="partyId" mode="IN" type="String" optional="true"></attribute>
+		<!--    For assigning Leave Limit to each positionType not to each party,so partyId is not required    -->
+		<!--<attribute name="partyId" mode="IN" type="String" optional="false"></attribute>-->
+		<attribute name="emplPosTypeId" mode="IN" type="String" optional="true"></attribute>
+		<attribute name="beginYear" mode="IN" type="java.sql.Timestamp" optional="false"></attribute>
+		<attribute name="endYear" mode="IN" type="java.sql.Timestamp" optional="false"></attribute>
+		<attribute name="description" mode="IN" type="String" optional="true"></attribute>
+		<attribute name="numDays" mode="IN" type="Double" optional="false"></attribute>
+		<attribute name="mgrPositionId" mode="IN" type="String" optional="true"></attribute>
+		<attribute name="partyLeaveId" mode="OUT" type="String" optional="true"></attribute>
+
+        <!--added newly-->
+        <attribute name="employeeType" mode="IN" type="String" optional="true"></attribute>
+        <attribute name="positionCategory" mode="IN" type="String" optional="true"></attribute>
+	</service>
+	
+	<service name="updateLeaveLimitService"  engine="java"
+		location="org.ofbiz.humanresext.leave.LeaveServices" invoke="updateLeaveLimit"
+		auth="true">
+		<description>Update Employee Leave Limit For Financial Year</description>
+		<required-permissions join-type="OR">
+    		<check-permission permission="HUMANRES" action="_ADMIN"  /> 
+    	</required-permissions>
+		<attribute name="leaveTypeId" mode="IN" type="String" optional="false"></attribute>
+		<!--    For assigning Leave Limit to each positionType not to each party,so partyId is not required    -->
+		<!--<attribute name="partyId" mode="IN" type="String" optional="false"></attribute>-->
+		<attribute name="emplPosTypeId" mode="IN" type="String" optional="false"></attribute>
+		<attribute name="beginYear" mode="IN" type="java.sql.Timestamp" optional="false"></attribute>
+		<attribute name="endYear" mode="IN" type="java.sql.Timestamp" optional="false"></attribute>
+		<attribute name="description" mode="IN" type="String" optional="true"></attribute>
+		<attribute name="numDays" mode="IN" type="Double" optional="false"></attribute>
+		<attribute name="mgrPositionId" mode="IN" type="String" optional="true"></attribute>
+		<attribute name="partyLeaveId" mode="INOUT" type="String" optional="false"></attribute>
+		<attribute name="partyId" mode="IN" type="String" optional="true"></attribute>
+
+        <!--added newly-->
+        <attribute name="employeeType" mode="IN" type="String" optional="false"></attribute>
+        <attribute name="positionCategory" mode="IN" type="String" optional="false"></attribute>
+	</service>
+	
+	<service name="processLeaveService"  engine="java"
+		location="org.ofbiz.humanresext.leave.LeaveServices" invoke="processLeave"
+		auth="true">
+		<description>Process Employee Leave Application</description>
+		<required-permissions join-type="OR">
+    		<check-permission permission="HUMANRES" action="_ADMIN"  />
+    		<check-permission permission="HUMANRES" action="_MGR"  /> 
+    	</required-permissions>
+    	<attribute name="leaveId" mode="IN" type="String" optional="false"></attribute>
+		<attribute name="leaveTypeId" mode="IN" type="String" optional="true"></attribute>
+		<attribute name="partyId" mode="IN" type="String" optional="false"></attribute>
+		<attribute name="fromDate" mode="IN" type="java.sql.Date" optional="false"></attribute>
+		<attribute name="thruDate" mode="IN" type="java.sql.Date" optional="true"></attribute>
+		<attribute name="description" mode="IN" type="String" optional="true"></attribute>
+		<attribute name="mgrComment" mode="IN" type="String" optional="true"></attribute>
+		<attribute name="paidDays" mode="IN" type="Double" optional="true"></attribute>
+		<attribute name="unpaidDays" mode="IN" type="Double" optional="true"></attribute>
+		<attribute name="mgrPositionId" mode="IN" type="String" optional="true"></attribute>
+		<attribute name="leaveStatusId" mode="INOUT" type="String" optional="false"></attribute>
+		<attribute name="statusType" mode="IN" type="String" optional="true"></attribute>
+		<attribute name="adminStatusType" mode="IN" type="String" optional="true"></attribute>
+		<attribute name="adminComment" mode="IN" type="String" optional="true"></attribute>
+		<attribute name="updatedBy" mode="IN" type="String" optional="true"></attribute>
+
+		<attribute name="employeeType" mode="IN" type="String" optional="true"></attribute>
+		<attribute name="positionCategory" mode="IN" type="String" optional="true"></attribute>
+		<!--  attribute name="availed" mode="OUT" type="Long" optional="true"></attribute>-->
+	</service>
+	
+	<service name="submitLeaveService"  engine="java"
+		location="org.ofbiz.humanresext.leave.LeaveServices" invoke="submitLeave"
+		auth="true">
+		<description>Submit Employee Leave Application</description>
+		<required-permissions join-type="OR">
+    		<check-permission permission="HUMANRES" action="_MGR"  />
+    		<check-permission permission="HUMANRES" action="_USER"  /> 
+    	</required-permissions>
+    	<attribute name="leaveId" mode="IN" type="String" optional="false"></attribute>
+		<attribute name="partyId" mode="IN" type="String" optional="true"></attribute>
+		<attribute name="fromDate" mode="IN" type="java.sql.Date" optional="true"></attribute>
+		<attribute name="leaveTypeId" mode="IN" type="String" optional="true"></attribute>
+		<attribute name="statusType" mode="IN" type="String" optional="true"></attribute>
+		<attribute name="leaveStatusId" mode="INOUT" type="String" optional="true"></attribute> 
+		<attribute name="mgrPositionId" mode="IN" type="String"	optional="true" />
+		<attribute name="partyId" mode="IN" type="String" optional="true" />
+	</service>
+	
+	<service name="newLeaveTypeService"  engine="java"
+		location="org.ofbiz.humanresext.leave.LeaveServices" invoke="newLeaveType"
+		auth="true">
+		<description>New Leave Type</description>
+		<required-permissions join-type="OR">
+    		<check-permission permission="HUMANRES" action="_ADMIN"  /> 
+    	</required-permissions>
+		<attribute name="enumId" mode="IN" type="String" optional="false"></attribute>
+		<attribute name="enumTypeId" mode="IN" type="String" optional="false"></attribute>
+		<attribute name="description" mode="IN" type="String" optional="false"></attribute>
+		<attribute name="enumCode" mode="IN" type="String" optional="true"></attribute>
+		<attribute name="sequenceId" mode="IN" type="String" optional="true"></attribute>
+	</service>
+	
+	<service name="createLeaveTypeService"  engine="java"
+		location="org.ofbiz.humanresext.leave.LeaveServices" invoke="createLeaveType"
+		auth="true">
+		<description>Create Leave Type</description>
+		<required-permissions join-type="OR">
+    		<check-permission permission="HUMANRES" action="_ADMIN"  /> 
+    	</required-permissions>
+		<attribute name="leaveTypeId" mode="INOUT" type="String" optional="false"></attribute>
+		<attribute name="description" mode="IN" type="String" optional="true"></attribute>
+		<attribute name="parentTypeId" mode="IN" type="String" optional="true"></attribute>
+		<attribute name="limit" mode="IN" type="Double" optional="true"></attribute>
+	</service>
+	
+	<service name="updateLeaveTypeService"  engine="java"
+		location="org.ofbiz.humanresext.leave.LeaveServices" invoke="updateLeaveType"
+		auth="true">
+		<description>Update Leave Type</description>
+		<required-permissions join-type="OR">
+    		<check-permission permission="HUMANRES" action="_ADMIN"  /> 
+    	</required-permissions>
+		<attribute name="leaveTypeId" mode="INOUT" type="String" optional="false"></attribute>
+		<attribute name="description" mode="IN" type="String" optional="true"></attribute>
+		<attribute name="parentTypeId" mode="IN" type="String" optional="true"></attribute>
+		<attribute name="limit" mode="IN" type="Double" optional="true"></attribute>
+	</service>
+	
+	<service name="deleteLeaveTypeService"  engine="java"
+		location="org.ofbiz.humanresext.leave.LeaveServices" invoke="deleteLeaveType"
+		auth="true">
+		<description>Delete Leave Type</description>
+		<required-permissions join-type="OR">
+    		<check-permission permission="HUMANRES" action="_ADMIN"  /> 
+    	</required-permissions>
+		<attribute name="leaveTypeId" mode="INOUT" type="String" optional="false"></attribute>
+	</service>
+</services>

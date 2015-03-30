@@ -1,0 +1,791 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<resource xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <property key="SFAEXTApplication">
+        <value xml:lang="en">SFA Application</value>
+    </property>
+    <property key="SFAEXTCompanyName">
+        <value xml:lang="en">Nthdimenzion Solutions (P) Ltd</value>
+    </property>
+    <property key="SFAEXTCompanySubtitle">
+        <value xml:lang="en">Part of the Open For Business Family of Open Source Software</value>
+    </property>
+    <property key="SFAEXTViewPermissionError">
+        <value xml:lang="en">You are not allowed to view this page.</value>
+    </property>
+    
+    <property key="SfaextAccountLookup">
+        <value xml:lang="en">Lookup Account</value>
+    </property>
+    
+    <property key="CrmShortcuts">
+        <value xml:lang="en">Shortcuts</value>
+    </property>
+    
+    <property key="CrmMyCalendar">
+        <value xml:lang="en">My Calendar</value>
+    </property>
+    
+    <property key="CrmAddNewEvent">
+        <value xml:lang="en">Add New Event</value>
+    </property>
+    
+    <property key="CrmCreateNewEvent">
+        <value xml:lang="en">Create Event</value>
+    </property>
+    
+    <property key="CrmViewEvent">
+        <value xml:lang="en">View Event</value>
+    </property>
+    
+    <property key="CrmEditEvent">
+        <value xml:lang="en">Edit Event</value>
+    </property>
+    
+    <property key="CrmLead">
+        <value xml:lang="en">Lead</value>
+    </property>
+    
+    <property key="CrmMyLeads">
+        <value xml:lang="en">My Leads</value>
+    </property>
+    
+    <property key="CrmTeamsLeads">
+        <value xml:lang="en">Team's Leads</value>
+    </property>
+    
+    <property key="CrmMyTeamLeads">
+        <value xml:lang="en">My Team Leads</value>
+    </property>
+    
+    <property key="CrmFindLeads">
+        <value xml:lang="en">Find Leads</value>
+    </property>
+    
+    <property key="CrmMergeLeads">
+        <value xml:lang="en">Merge Leads</value>
+    </property>
+    
+    <property key="CrmQualifyLead">
+        <value xml:lang="en">Qualify Lead</value>
+    </property>
+    
+    <property key="CrmConvertLead">
+        <value xml:lang="en">Convert Lead</value>
+    </property>
+    
+    <property key="CrmCreateLead">
+        <value xml:lang="en">Create Lead</value>
+    </property>
+    
+    <property key="CrmMyContacts">
+        <value xml:lang="en">My Contacts</value>
+    </property>
+    
+    <property key="CrmMyTeamContacts">
+        <value xml:lang="en">My Team Contacts</value>
+    </property>
+    
+    <property key="CrmFindContacts">
+        <value xml:lang="en">Find Contacts</value>
+    </property>
+    
+    <property key="CrmMergeContacts">
+        <value xml:lang="en">Merge Contacts</value>
+    </property> 
+    
+    <property key="CrmCreateContact">
+        <value xml:lang="en">Create Contact</value>
+    </property>
+    
+    <property key="CrmAccount">
+        <value xml:lang="en">Account</value>
+    </property>
+    
+    <property key="CrmCreateAccount">
+        <value xml:lang="en">Create Account</value>
+    </property>
+    
+    
+    <property key="CrmUpdateAccount">
+        <value xml:lang="en">Update Account</value>
+    </property>
+    
+    
+    <property key="CrmMyAccounts">
+        <value xml:lang="en">My Accounts</value>
+    </property>
+    
+    <property key="CrmMyTeamAccounts">
+        <value xml:lang="en">My Team Accounts</value>
+    </property>
+    
+    <property key="CrmFindAccounts">
+        <value xml:lang="en">Find Accounts</value>
+    </property>
+    
+    <property key="CrmMergeAccounts">
+        <value xml:lang="en">Merge Accounts</value>
+    </property>
+    
+    <property key="CrmOpportunities">
+        <value xml:lang="en">Opportunities</value>
+    </property>
+    
+    <property key="CrmAssign">
+        <value xml:lang="en">Assign</value>
+    </property>
+    
+    <property key="CrmNewAccount">
+        <value xml:lang="en">New Account</value>
+    </property>
+    
+    <property key="CrmCreateOpportunity">
+        <value xml:lang="en">Create Opportunity</value>
+    </property>
+    
+    <property key="CrmViewOpportunity">
+        <value xml:lang="en">View Opportunity</value>
+    </property>
+    
+    <property key="CrmEditOpportunity">
+        <value xml:lang="en">Edit Opportunity</value>
+    </property>
+    
+    <property key="CrmUpdateOpportunity">
+        <value xml:lang="en">Update Opportunity</value>
+    </property>
+    
+    <property key="CrmMyOpportunities">
+        <value xml:lang="en">My Opportunities</value>
+    </property>
+    
+    <property key="CrmMyTeamOpportunities">
+        <value xml:lang="en">My Team Opportunities</value>
+    </property>
+    
+    <property key="CrmLeadHasBeenConverted">
+        <value xml:lang="en">Lead Converted</value>
+    </property>
+    
+    <property key="CrmViewAsContact">
+        <value xml:lang="en">View as Contact</value>
+    </property>
+    
+    <property key="CrmDuplicateLead">
+        <value xml:lang="en">Duplicate Lead</value>
+    </property>
+    
+    <property key="CrmFindOpportunity">
+        <value xml:lang="en">Find Opportunities</value>
+    </property>
+    
+    <property key="CrmMergeOpportunities">
+        <value xml:lang="en">Merge Opportunities</value>
+    </property>
+    
+    <property key="CrmFindSalesForecasts">
+        <value xml:lang="en">Find Forecasts</value>
+    </property>
+    
+    <property key="CrmCreateSalesForecast">
+        <value xml:lang="en">Create Forecast</value>
+    </property>
+    
+    <property key="CrmEditSalesForecast">
+        <value xml:lang="en">Edit Forecasts</value>
+    </property>
+    
+    <property key="CrmUpdateSalesForecast">
+        <value xml:lang="en">Update Forecast</value>
+    </property>
+    
+    <property key="PageTitleFindSalesForecast">
+        <value xml:lang="en">Find Forecast</value>
+    </property>
+    
+    <property key="CrmFindForecasts">
+        <value xml:lang="en">Find Forecasts</value>
+    </property>
+    
+    <property key="CrmEstimatedCloseDate">
+        <value xml:lang="en">Estimated Close Date</value>
+    </property>
+    
+    <property key="CrmTo">
+        <value xml:lang="en">Lead To</value>
+    </property>
+    
+    <property key="CrmFromLead">
+        <value xml:lang="en">Lead From</value>
+    </property>
+    
+    <property key="CrmToContact">
+        <value xml:lang="en">Contact To</value>
+    </property>
+    
+    <property key="CrmFromContact">
+        <value xml:lang="en">Contact From</value>
+    </property>
+    
+     <property key="CrmContactId">
+        <value xml:lang="en">Contact ID</value>
+    </property>
+    
+     <property key="CrmLeadId">
+        <value xml:lang="en">Lead ID</value>
+    </property>
+    
+    <property key="CrmTeam">
+        <value xml:lang="en">Team</value>
+    </property>
+    
+    <property key="CrmFindTeam">
+        <value xml:lang="en">Find Team</value>
+    </property>
+    
+    <property key="CrmFindTeams">
+        <value xml:lang="en">Find Teams</value>
+    </property>
+    
+    <property key="CrmCreateTeam">
+        <value xml:lang="en">Create Team</value>
+    </property>
+    
+    <property key="CrmEditTeam">
+        <value xml:lang="en">Edit Team</value>
+    </property>
+    
+    <property key="CrmUpdateTeam">
+        <value xml:lang="en">Update Team</value>
+    </property>
+    
+    <property key="CrmInitialTeam">
+        <value xml:lang="en">Initial Team</value>
+    </property>
+    
+    <property key="CrmTeamName">
+        <value xml:lang="en">Team Name</value>
+    </property>
+    
+    <property key="CrmDeactivateTeam">
+        <value xml:lang="en">Deactivate Team</value>
+    </property>
+    
+    <property key="NoPermission">
+        <value xml:lang="en">You do not have permission to perform this action</value>
+    </property>
+    
+    <property key="TeamCreated">
+        <value xml:lang="en">Team created successfully</value>
+    </property>
+    
+    
+    <property key="TeamUpdated">
+        <value xml:lang="en">Team updated successfully</value>
+    </property>
+    
+    <property key="TeamMemberAdded">
+        <value xml:lang="en">Team member added successfully</value>
+    </property>
+    
+    <property key="TeamMemberRemoved">
+        <value xml:lang="en">Team member removed successfully</value>
+    </property>
+    
+    <property key="CrmNewTeamMember">
+        <value xml:lang="en">New Team Member</value>
+    </property>
+    
+    <property key="CrmTeamDetails">
+        <value xml:lang="en">Team Details</value>
+    </property>
+    
+    <property key="CrmTeamMembers">
+        <value xml:lang="en">Team Members</value>
+    </property>
+    
+    <property key="CrmTeamMember">
+        <value xml:lang="en">Team Member</value>
+    </property>
+    
+    <property key="CrmTeamLeader">
+        <value xml:lang="en">Team Leader</value>
+    </property>        
+    
+    <property key="CrmAccountId">
+        <value xml:lang="en">Account ID</value>
+    </property>
+    
+            
+    <property key="CrmTeamsOpportunities">
+        <value xml:lang="en">Team's Opportunities</value>
+    </property>
+    
+    <property key="SfaExtCreateLeadPermission">
+        <value xml:lang="en">You do not have permission to create Lead.</value>
+    </property>
+    
+    <property key="CrmCompanyName">
+        <value xml:lang="en">Company Name</value>
+    </property>
+    
+    
+    <property key="CrmSalutation">
+        <value xml:lang="en">Salutation</value>
+    </property>
+    
+    <property key="CrmAnnualRevenue">
+        <value xml:lang="en">Annual Revenue</value>
+    </property>
+    
+    <property key="CrmIndustry">
+        <value xml:lang="en">Industry</value>
+    </property>
+    
+    <property key="CrmOwnership">
+        <value xml:lang="en">Ownership</value>
+    </property>
+    
+    <property key="CrmImportantNote">
+        <value xml:lang="en">Important Note</value>
+    </property>
+    
+    <property key="CrmDataSources">
+        <value xml:lang="en">Lead Source</value>
+    </property>
+    
+    <property key="CrmMarketingCampaigns">
+        <value xml:lang="en">Marketing Campaigns</value>
+    </property>
+    
+    <property key="CrmDepartment">
+        <value xml:lang="en">Department</value>
+    </property>
+    
+    <property key="CrmPreferredCurrency">
+        <value xml:lang="en">Preferred Currency</value>
+    </property>
+    
+    <property key="CrmNumberOfEmployees">
+        <value xml:lang="en">Number Of Employees</value>
+    </property>
+    
+    <property key="CrmTickerSymbol">
+        <value xml:lang="en">Ticker Symbol</value>
+    </property>
+    
+    
+    <property key="CrmPersonResponsibleFor">
+        <value xml:lang="en">Person Responsible For</value>
+    </property>
+    
+    <property key="CrmReassignTo">
+        <value xml:lang="en">Reassign To</value>
+    </property>
+    
+    <property key="CrmReassign">
+        <value xml:lang="en">Reassign To</value>
+    </property>
+    
+    <property key="CrmForecastChangeNotePrefix">
+        <value xml:lang="en">Automatically changed with change to opportunity</value>
+    </property>
+    
+    <property key="SfaExtAccounts">
+        <value xml:lang="en">Accounts</value>
+    </property>
+    
+    <property key="SfaExtSalesOpportunities">
+        <value xml:lang="en">Opportunities</value>
+    </property>
+    
+    <property key="CrmContentList">
+        <value xml:lang="en">File List</value>
+    </property>
+    
+    <property key="CrmLocalName">
+        <value xml:lang="en">Local Name</value>
+    </property>
+    
+    <property key="CrmLastNameLocal">
+        <value xml:lang="en">Last Name(Local)</value>
+    </property>
+    <property key="CrmFirstNameLocal">
+        <value xml:lang="en">First Name(Local)</value>
+    </property>
+    <property key="CrmAccountName">
+        <value xml:lang="en">Account Name</value>
+    </property>
+    <property key="CrmPrimaryEmail">
+        <value xml:lang="en">Primary Email</value>
+    </property>
+    
+    <property key="CrmPrimaryPhone">
+        <value xml:lang="en">Primary Phone</value>
+    </property>
+    <property key="CrmAddUrl">
+        <value xml:lang="en">Add Url</value>
+    </property>
+    <property key="CrmUploadFile">
+        <value xml:lang="en">Upload File</value>
+    </property>
+    <property key="SfaExtViewContact">
+        <value xml:lang="en">View Contact</value>
+    </property>
+    
+    <property key="SfaExtViewOpportunity">
+        <value xml:lang="en">View Opportunity</value>
+    </property>
+    
+    <property key="CrmUpdateContact">
+        <value xml:lang="en">Update Contact</value>
+    </property>
+    
+    
+    <property key="SfaViewAccount">
+        <value xml:lang="en">View Account</value>
+    </property>
+    
+    <property key="CrmContactDeactivated">
+        <value xml:lang="en">Contact Deactivated</value>
+    </property>
+    
+    <property key="CrmDeactivateContact">
+        <value xml:lang="en">Deactivate Contact</value>
+    </property>
+    
+    <property key="CrmInitialAccount">
+        <value xml:lang="en">Initial Account ID</value>
+    </property>
+    <property key="SfaExtIndustry">
+        <value xml:lang="en">Industry</value>
+    </property>
+    <property key="SfaOwnership">
+        <value xml:lang="en">Ownership</value>
+    </property>
+    <property key="CrmPostalCodeExt">
+        <value xml:lang="en">Postal Code Ext</value>
+    </property>
+    
+    <property key="SfaContact">
+        <value xml:lang="en">Contact</value>
+    </property>
+    <property key="sfaNewOpportunity">
+        <value xml:lang="en">New Opportunity</value>
+    </property>
+    <property key="sfaNewAccount">
+        <value xml:lang="en">New Account</value>
+    </property>
+    <property key="CrmNextStep">
+        <value xml:lang="en">Next Step</value>
+    </property>
+    <property key="CrmEstimatedAmount">
+        <value xml:lang="en">Estimated Amount</value>
+    </property>
+    <property key="CrmInitialStage">
+        <value xml:lang="en">Initial Stage</value>
+    </property>
+    <property key="CrmInitialContact">
+        <value xml:lang="en">Initial Contact</value>
+    </property>
+    <property key="CrmInitialLead">
+        <value xml:lang="en">Initial Lead</value>
+    </property>
+    <property key="CrmInitialAccount">
+        <value xml:lang="en">Initial Account</value>
+    </property>
+    <property key="CrmOpportunityName">
+        <value xml:lang="en">Opportunity Name</value>
+    </property>
+    <property key="CrmDataSource">
+        <value xml:lang="en">Data Source</value>
+    </property>
+    <property key="CrmNewDataSource">
+        <value xml:lang="en">New Data Source</value>
+    </property>
+    <property key="CrmMarketingCampaign">
+        <value xml:lang="en">Marketing Campaign</value>
+    </property>
+    <property key="CrmNewMarketingCampaign">
+        <value xml:lang="en">New Marketing Campaign</value>
+    </property>
+    <property key="CrmPrimaryAddress">
+        <value xml:lang="en">Primary Address</value>
+    </property>
+    <property key="CrmPhoneAskForName">
+        <value xml:lang="en">Person To Ask</value>
+    </property>
+    
+    <property key="DataSourceLabel">
+        <value xml:lang="en">Data Source</value>
+    </property>
+    
+    <property key="CrmSearchResults">
+        <value xml:lang="en">Search Results</value>
+    </property>
+    
+    <property key="CrmParentParty">
+        <value xml:lang="en">Parent Party</value>
+    </property>
+    
+    <property key="CrmSiteName">
+        <value xml:lang="en">Site Name</value>
+    </property>
+    
+    <property key="CrmSICCode">
+        <value xml:lang="en">SIC Code</value>
+    </property>
+    
+    <property key="CrmTitle">
+        <value xml:lang="en">Title</value>
+    </property>
+    
+    <property key="CrmAccountId">
+        <value xml:lang="en">Account Id</value>
+    </property>
+    
+    <property key="CrmAccountName">
+        <value xml:lang="en">Account Name</value>
+    </property>
+    
+    <property key="CrmFindSalesRep">
+        <value xml:lang="en">Lookup Sales Representative</value>
+    </property>
+    
+    <property key="CrmSalesRepId">
+        <value xml:lang="en">Sales Rep Id</value>
+    </property>
+    
+    <property key="SfaAcccounts">
+        <value xml:lang="en">Accounts</value>
+    </property>
+    <property key="SfaAccountName">
+        <value xml:lang="en">Account Name</value>
+    </property>
+    <property key="SfaAddSalesForecastDetail">
+        <value xml:lang="en">Add Sales Forecast Detail</value>
+    </property>
+    <property key="SfaAutoCreateContactByImportingVCard">
+        <value xml:lang="en">Automatically create a new contact by importing a vCard</value>
+    </property>
+    <property key="SfaAutoCreateLeadByImportingVCard">
+        <value xml:lang="en">Automatically create a new lead by importing a vCard</value>
+    </property>
+    <property key="SfaCampaigns">
+        <value xml:lang="en">Campaigns</value>
+    </property>
+    <property key="SfaCanNotMergeSameContact">
+        <value xml:lang="en">Failed to merge contacts. You have selected same contact to merge.</value>
+    </property>
+    <property key="SfaCanNotMergeSameLeads">
+        <value xml:lang="en">Failed to merge Leads. You have selected same Lead to merge.</value>
+    </property>
+    <property key="SfaCloneLead">
+        <value xml:lang="en">Clone Lead</value>
+    </property>
+    <property key="SfaCloseDate">
+        <value xml:lang="en">Close Date</value>
+    </property>
+    <property key="SfaCompanyName">
+        <value xml:lang="en">OFBiz: SFA Manager</value>
+    </property>
+    <property key="SfaCompetitors">
+        <value xml:lang="en">Competitors &amp; Partners </value>
+    </property>
+    <property key="SfaContact">
+        <value xml:lang="en">Contact</value>
+    </property>
+    
+    <property key="SfaContacts">
+        <value xml:lang="en">Contacts</value>
+    </property>
+    
+    <property key="CrmContactList">
+        <value xml:lang="en">Contact List</value>
+    </property>
+    
+    <property key="CrmNewContact">
+        <value xml:lang="en">New Contact</value>
+    </property>
+    
+    <property key="CrmContactName">
+        <value xml:lang="en">Contact Name</value>
+    </property>
+    
+    <property key="CrmQuotes">
+        <value xml:lang="en">Quotes</value>
+    </property>
+    
+    <property key="CrmAddQuote">
+        <value xml:lang="en">Add Quote</value>
+    </property>
+    
+    <property key="CrmFindQuotes">
+        <value xml:lang="en">Find Quotes</value>
+    </property>
+    
+    <property key="CrmQuoteId">
+        <value xml:lang="en">Quote Id</value>
+    </property>
+    
+    <property key="CrmQuoteName">
+        <value xml:lang="en">Quote Name</value>
+    </property>
+    
+    <property key="CrmQuoteIssueDate">
+        <value xml:lang="en">Quote Issue Date</value>
+    </property>
+    
+    <property key="CrmCustomer">
+        <value xml:lang="en">Customer</value>
+    </property>
+    
+    <property key="CrmErrorAlreadyMember">
+        <value xml:lang="en">Already Member.</value>
+    </property>
+    
+    <property key="SfaConvertLead">
+        <value xml:lang="en">Convert Lead</value>
+    </property>
+    <property key="SfaCreateAccountForLead">
+        <value xml:lang="en">Create Account For Lead</value>
+    </property>
+    <property key="SfaCreateContactForLead">
+        <value xml:lang="en">Create contact for lead</value>
+    </property>
+    <property key="SfaCreateContactFromVCard">
+        <value xml:lang="en">Create from vCard</value>
+    </property>
+    <property key="SfaDataSourceLabel">
+        <value xml:lang="en">Source</value>
+    </property>
+    <property key="SfaDocuments">
+        <value xml:lang="en">Documents</value>
+    </property>
+    <property key="SfaEditOpportunity">
+        <value xml:lang="en">Edit Opportunity</value>
+    </property>
+    <property key="SfaEditSalesForecast">
+        <value xml:lang="en">Create/Update Sales Forecast</value>
+    </property>
+    <property key="SfaEstimatedAmount">
+        <value xml:lang="en">Estimated Amount</value>
+    </property>
+    <property key="SfaEvents">
+        <value xml:lang="en">Events</value>
+    </property>
+    <property key="SfaFindContacts">
+        <value xml:lang="en">Find Contacts</value>
+    </property>
+    <property key="SfaFindLeads">
+        <value xml:lang="en">Find Leads</value>
+    </property>
+    <property key="SfaFindOpportunities">
+        <value xml:lang="en">Find Opportunities</value>
+    </property>
+    <property key="SfaFindResults">
+        <value xml:lang="en">Find Results</value>
+    </property>
+    <property key="SfaFirstContact">
+        <value xml:lang="en">First Contact</value>
+    </property>
+    <property key="SfaForecasts">
+        <value xml:lang="en">Forecast</value>
+    </property>
+    <property key="SfaEditLead">
+        <value xml:lang="en">Edit Lead</value>
+    </property>
+    <property key="SfaImportLead">
+        <value xml:lang="en">Import Lead</value>
+    </property>
+    <property key="SfaInitialAccount">
+        <value xml:lang="en">Initial Account</value>
+    </property>
+    <property key="SfaInitialStage">
+        <value xml:lang="en">Initial Stage</value>
+    </property>
+    <property key="SfaLead">
+        <value xml:lang="en">Lead</value>
+    </property>
+    <property key="SfaViewLead">
+        <value xml:lang="en">View Lead</value>
+    </property>
+    <property key="SfaLeadSource">
+        <value xml:lang="en">Lead Source</value>
+    </property>
+    <property key="SfaLeads">
+        <value xml:lang="en">Leads</value>
+    </property>
+    <property key="SfaListSalesForecastDetail">
+        <value xml:lang="en">List Sales Forecast Details</value>
+    </property>
+    <property key="SfaManagerApplication">
+        <value xml:lang="en">SFA Manager Application</value>
+    </property>
+    <property key="SfaManagerWelcome">
+        <value xml:lang="en">Welcome to the Sales Force Automation Manager Application.</value>
+    </property>
+    <property key="SfaMergeContacts">
+        <value xml:lang="en">Merge Contacts</value>
+    </property>
+    <property key="SfaMergeLeads">
+        <value xml:lang="en">Merge Leads</value>
+    </property>
+    <property key="SfaMergingFollowing">
+        <value xml:lang="en">Merging Following</value>
+    </property>
+    <property key="SfaNextStep">
+        <value xml:lang="en">Next Step</value>
+    </property>
+    <property key="SfaNoLeadsSelectedToMerged">
+        <value xml:lang="en">No leads selected to merge</value>
+    </property>
+    <property key="SfaOpportunities">
+        <value xml:lang="en">Opportunities</value>
+    </property>
+    <property key="SfaOpportunityId">
+        <value xml:lang="en">Opportunity ID</value>
+    </property>
+    <property key="SfaOpportunityInfo">
+        <value xml:lang="en">Opportunity Information</value>
+    </property>
+    <property key="SfaOpportunityName">
+        <value xml:lang="en">Opportunity Name</value>
+    </property>
+    <property key="SfaOpportunitySummary">
+        <value xml:lang="en">Opportunity Summary</value>
+    </property>
+    <property key="SfaProbability">
+        <value xml:lang="en">Probability(%)</value>
+    </property>
+    <property key="SfaQuickAddContact">
+        <value xml:lang="en">Quick Add Contact</value>
+    </property>
+    <property key="SfaQuickAddLead">
+        <value xml:lang="en">Quick Add Lead</value>
+    </property>
+    <property key="SfaSalesForecast">
+        <value xml:lang="en">Sales Forecast</value>
+    </property>
+    <property key="SfaSecondContact">
+        <value xml:lang="en">Second Contact</value>
+    </property>
+    <property key="SfaSelectExistingAccountOrLeaveBlankToCreateNew">
+        <value xml:lang="en">Either select existing account or leave blank to create new account"</value>
+    </property>
+    <property key="SfaType">
+        <value xml:lang="en">Type</value>
+    </property>
+    <property key="SfaUploadVCard">
+        <value xml:lang="en">Upload vCard</value>
+    </property>
+    <property key="SfaVCard">
+        <value xml:lang="en">vCard</value>
+    </property>
+    <property key="SfaTeams">
+        <value xml:lang="en">Teams</value>
+    </property>
+    <property key="SfaReports">
+        <value xml:lang="en">Reports</value>
+    </property>
+</resource>

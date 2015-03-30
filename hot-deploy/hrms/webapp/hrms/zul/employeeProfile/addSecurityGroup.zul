@@ -1,0 +1,138 @@
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<zk>
+	<zscript>
+	<![CDATA[
+	import org.ofbiz.entity.*;
+	import org.ofbiz.base.util.*;
+	GenericDelegator delegator = com.ndz.zkoss.util.HrmsInfrastructure.getDelegator();//GenericDelegator.getGenericDelegator("default");
+	List groupList = null;
+	groupList = delegator.findList("SecurityGroup",null,null,null,null,false);
+	groupList.add(0, null);
+	groupListArray = groupList.toArray(new GenericValue[groupList.size()]);
+	SimpleListModel groupListModel = new SimpleListModel(groupListArray);
+	public class GroupItemRenderer implements ListitemRenderer {
+
+		public GroupItemRenderer() {
+		}
+
+		public void render(Listitem li, Object data) {
+			if (data instanceof GenericValue) {
+				GenericValue val = (GenericValue) data;
+				li.setLabel(val.getString("groupId") + " "
+						+ val.getString("description"));
+				li.setValue(val.getString("groupId"));
+			}
+		}
+	}
+ListitemRenderer groupItemRenderer = new GroupItemRenderer();
+	Div div = (Div)Executions.getCurrent().getArg().get("window");
+	
+	
+	Constraint dateConstraint = new Constraint() {
+	import org.zkoss.util.resource.Labels;
+public void validate(Component comp, Object value) throws WrongValueException {
+	        	if (value == null){
+					throw new WrongValueException(comp, Labels.getLabel("HRMS_REQUIRED_FROM_DATE"));
+				}
+				java.util.Date now = new java.util.Date();
+	     	}
+	 }
+]]>
+</zscript>
+	<window title="${c:l('HRMS_ADD_SECURITY_GROUP') }" id="addSecurityGroupWindow"
+		border="normal" maximizable="true"
+		style="background-color:#B2A4F2; border:1px solid #8E83C1;"
+		height="30%" width="35%" closable="true"
+		contentStyle="overflow:auto">
+		<separator height="15px" />
+		<textbox id="partyId" value="${partyId}" visible="false" />
+		<textbox id="userLoginId" value="${userLoginId}"
+			visible="false" />
+		<hbox>
+			<div align="right" width="130px" style="margin-right:5px">
+				<label value="${c:l('HumanResSecurityGroup') }" style="font-weight:bold" />
+				<label value="*" style="color:red" />
+			</div>
+			<div align="left" width="150px" style="margin-right:5px">
+				<listbox id="groupId" mold="select"
+					onSelect="Clients.closeErrorBox(self)">
+					<listitem value=""></listitem>
+					<listitem label="${c:l('ListBox_Administrator') }"
+						value="HUMANRES_ADMIN">
+					</listitem>
+					<listitem label="${c:l('ListBox_Manager') }" value="HUMANRES_MGR">
+					</listitem>
+					<listitem label="${c:l('ListBox_Employee') }" value="HUMANRES_USER">
+					</listitem>
+					<listitem label="${c:l('ListBox_RequisitionAdministrator') }"
+						value="Requisition_Admin">
+					</listitem>
+				</listbox>
+			</div>
+		</hbox>
+		<separator />
+		<hbox>
+			<div align="right" width="130px" style="margin-right:5px">
+				<label value="${c:l('HRMS_FROMDATE') }" style="font-weight:bold" />
+				<label value="*" style="color:red" />
+			</div>
+			<div align="left" width="150px" style="margin-right:5px">
+				<datebox id="fromDate" constraint="${dateConstraint}" onChange="Clients.closeErrorBox(self)" />
+			</div>
+		</hbox>
+		<separator />
+		<hbox visible="false">
+			<div align="right" width="130px" style="margin-right:5px">
+				<label value="${c:l('HRMS_THRUATE') }" style="font-weight:bold" />
+				<label value="*" style="color:red" />
+			</div>
+			<div align="left" width="150px" style="margin-right:5px">
+				<datebox id="thruDate" onChange="Clients.closeErrorBox(self)" />
+			</div>
+		</hbox>
+		<separator />
+		<zscript>
+		<![CDATA[
+	import org.zkoss.zul.*;
+	Toolbarbutton tlBarBtn = (Toolbarbutton) div.getFellow("securityGroupBtn");
+]]>
+		</zscript>
+		<zscript><![CDATA[
+	import org.zkoss.util.resource.Labels;
+	void validate() {
+		Listitem groupIdString =  groupId.getSelectedItem();
+		if (groupIdString == null) {
+			throw new WrongValueException(groupId, Labels.getLabel("HRMS_REQUIRED_SECURITY_GROUP"));
+		}
+		GenericValue userLogin = (GenericValue) Executions.getCurrent().getDesktop().getSession().getAttribute("userLogin");
+		List userLoginSecutitieGroupList = delegator.findByAnd("UserLoginSecurityGroup",UtilMisc.toMap("userLoginId",userLoginId.getValue()));
+		if(UtilValidate.isNotEmpty(userLoginSecutitieGroupList)){
+		for(int i=0;i<userLoginSecutitieGroupList.size();i++){
+		GenericValue userLoginSecutitieGroupGV =(GenericValue) userLoginSecutitieGroupList.get(i);
+		String uThruDate = userLoginSecutitieGroupGV.getString("thruDate");
+		String uGroupId = userLoginSecutitieGroupGV.getString("groupId");
+		if(uThruDate == null && !(uGroupId.equals("HRMS"))){
+				java.sql.Timestamp uFromDate = userLoginSecutitieGroupGV.getTimestamp("fromDate");
+				java.text.SimpleDateFormat formater = new java.text.SimpleDateFormat("dd-MM-yyyy");
+				java.util.Date _uFromDate = formater.parse(formater.format(uFromDate));
+				java.util.Date _fromDate = formater.parse(formater.format(fromDate.getValue()));	
+					if(_uFromDate.compareTo(_fromDate) == 1 || _uFromDate.compareTo(_fromDate) == 0){
+						throw new WrongValueException(fromDate, Labels.getLabel("HRMS_ASG_FROM_DATE_MUST_BE_GREATER_THAN") +" "+ formater.format(_uFromDate));
+					}
+				}
+		}
+		}
+	}
+	]]></zscript>
+		<hbox>
+			<div align="right" width="242px">
+				<button label="${c:l('btnSave') }" id="addGroup"
+					onClick='validate();com.ndz.controller.UpdateEmployeeProfileController 
+				.addSecurityGroup(event);Events.postEvent("onClick",tlBarBtn,null);addSecurityGroupWindow.detach();'>
+				</button>
+				<button label="${c:l('ButtonCancel') }"
+					onClick="addSecurityGroupWindow.detach()" />
+			</div>
+		</hbox>
+	</window>
+</zk>

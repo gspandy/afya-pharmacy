@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<services xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+        xsi:noNamespaceSchemaLocation="http://ofbiz.apache.org/dtds/services.xsd">
+    <description>DynaFormLabels Services</description>
+    <vendor></vendor>
+    <version>1.0</version>
+	
+	<service name="dynaform.createCustomForm" engine="simple" default-entity-name="CustomForms"
+		location="com/ndz/dynaforms/CustomForms.xml" invoke="createCustomForm" auth="true">
+			<auto-attributes mode="OUT" include="pk" optional="true" />
+			<auto-attributes mode="IN" include="nonpk" optional="false"/>
+		</service>
+	
+	<service name="dynaform.UpdateCustomForm" engine="simple" default-entity-name="CustomForms"
+		location="com/ndz/dynaforms/CustomForms.xml" invoke="UpdateCustomForm" auth="true">
+			<auto-attributes mode="INOUT" include="pk" optional="true" />
+			<auto-attributes mode="IN" include="nonpk" optional="false"/>
+		</service>
+		
+		
+	<service name="dynaform.addComponent" engine="simple" default-entity-name="CustomFormComponents"
+		location="com/ndz/dynaforms/CustomForms.xml" invoke="addComponent" auth="true">
+			<attribute name="formId" mode="OUT" type="String"></attribute>
+			<auto-attributes mode="IN" include="nonpk" optional="true"/>
+			<attribute name="trail" mode="INOUT" type="String" optional="true"></attribute>
+	</service>
+	
+	
+	<service name="dynaform.updateComponent" engine="simple" default-entity-name="CustomFormComponents"
+		location="com/ndz/dynaforms/CustomForms.xml" invoke="updateComponent" auth="true">
+			<attribute name="formId" mode="IN" type="String"></attribute>
+			<attribute name="compId" mode="IN" type="String"></attribute>
+			<attribute name="compName" mode="IN" type="String"></attribute>
+			<attribute name="dynamicRuleId" mode="IN" type="String" optional="true"></attribute>
+			<attribute name="description" mode="IN" type="String" optional="true"></attribute>
+			<attribute name="trail" mode="IN" type="String" optional="true"></attribute>
+	</service>
+	
+	
+	<service name="dynaform.deleteComponent" engine="simple" default-entity-name="CustomFormComponents"
+		location="com/ndz/dynaforms/CustomForms.xml" invoke="deleteComponent" auth="true">
+			<attribute name="formId" mode="IN" type="String"></attribute>
+			<auto-attributes mode="IN" include="pk" optional="true"/>
+			<attribute name="trail" mode="INOUT" type="String" optional="true"></attribute>
+	</service>
+			
+</services>

@@ -1,0 +1,337 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Licensed to the Apache Software Foundation (ASF) under one or more contributor license agreements. See the NOTICE file distributed with this work for additional 
+	information regarding copyright ownership. The ASF licenses this file to you under the Apache License, Version 2.0 (the "License"); you may not use this file except 
+	in compliance with the License. You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0 Unless required by applicable law or agreed to 
+	in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See 
+	the License for the specific language governing permissions and limitations under the License. -->
+
+<forms xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://ofbiz.apache.org/dtds/widget-form.xsd">
+
+	<form name="ListPaymentMethodType" type="list" target="updatePaymentMethodType" list-name="paymentMethodTypes" odd-row-style="alternate-row"
+		default-table-style="basic-table hover-bar">
+		<field name="paymentMethodTypeId">
+			<display />
+		</field>
+		<field name="description">
+			<display />
+		</field>
+		<field name="defaultGlAccountId" parameter-name="defaultGlAccountId">
+			<lookup target-form-name="LookupGlAccount"></lookup>
+			<!-- <drop-down allow-empty="true">
+				<entity-options description="${glAccountId} : ${accountName}" entity-name="GlAccount" key-field-name="glAccountId">
+					<entity-order-by field-name="glAccountId" />
+				</entity-options>
+			</drop-down> -->
+		</field>
+		<field name="submitButton" title="${uiLabelMap.CommonUpdate}" widget-style="btn btn-mini btn-success" separate-column="true">
+			<submit button-type="button" />
+		</field>
+	</form>
+	<form name="createDutiesTaxes" type="single" title="Duties and Taxes" target="createGlAccountDutiesAndTax">
+		<actions>
+			<entity-condition entity-name="GlAccount" list="parentGlAccounts">
+				<condition-list combine="or">
+					<condition-expr field-name="glAccountId" value="3100000" />
+					<condition-expr field-name="parentGlAccountId" value="3100000" />
+				</condition-list>
+				<order-by field-name="accountName" />
+			</entity-condition>
+		</actions>
+		<field name="GlAccount Id" parameter-name="glAccountId" required-field="true" widget-style="required">
+			<hidden />
+		</field>
+		<field name="Account Name" parameter-name="accountName" required-field="true" widget-style="required">
+			<text />
+		</field>
+
+		<field name="glAccountClassId">
+			<hidden value="CURRENT_LIABILITY" />
+		</field>
+
+		<field name="typeOfDuty" parameter-name="typeOfDuty" title="Type Of Duty" id-name="typeOfDuty" event="onChange" action="javascript:getClassification(typeOfDuty.value);">
+			<drop-down allow-empty="false">
+				<option key="" description="-- Select --" />
+				<entity-options description="${enumId}" entity-name="Enumeration" key-field-name="enumId">
+					<entity-constraint name="enumTypeId" operator="equals" value="DUTIES_TAXES" />
+				</entity-options>
+			</drop-down>
+		</field>
+
+
+		<field name="ParentGlAccountId" parameter-name="parentGlAccountId" title="Parent Gl Account">
+			<drop-down allow-empty="true">
+				<list-options key-name="glAccountId" list-name="parentGlAccounts" description="${accountName}" />
+			</drop-down>
+		</field>
+		<field name="SubTypeOfDuty" parameter-name="subTypeOfDuty" title="Sub Type Of Duty" id-name="enumId" event="onChange" action="javascript:getClassificationVat(subTypeOfDuty.value);">
+		 <drop-down allow-empty="false">
+		 <option key="" description="-- Select --" />
+			<entity-options description="${description}" entity-name="Enumeration" key-field-name="enumId">
+					<entity-constraint name="enumTypeId" operator="equals" value="VAT_SUB_TYPE" />
+				</entity-options>
+			</drop-down>
+		</field>
+		<field name="TaxClassId" parameter-name="taxClassId"  title="Tax Classification" id-name="enumTypeId">
+			<drop-down allow-empty="true">
+			</drop-down>
+		</field>
+
+		<field parameter-name="applyTax" name="ApplyTax" >
+			<drop-down allow-empty="true" >
+				<option key="Y" description="Y"/>
+				<option key="N" description="N"/>
+			</drop-down>
+		</field>
+
+		<field name="submitButton" title="${uiLabelMap.Create}" widget-style="btn btn-success">
+			<submit button-type="button" />
+		</field>
+
+	</form>
+	<form name="createPurchaseAccount" type="single" title="Purchase Account" target="createGlAccountPurchase">
+		<actions>
+			<entity-condition entity-name="TaxClassification" list="taxClassifications" distinct="true">
+				<condition-list combine="or">
+					<condition-expr field-name="vatSubType" value="INPUT_VAT" />
+					<condition-expr field-name="vatSubType" value="INTER_PUR" />
+				</condition-list>
+				<order-by field-name="className" />
+			</entity-condition>
+		</actions>
+		<field name="accountName" required-field="true" widget-style="required">
+			<text />
+		</field>
+
+		<field name="parentGlAccountId">
+			<hidden value="2300000" />
+		</field>
+
+		<field name="taxClassId" parameter-name="taxClassId" title="Tax Classification" id-name="enumTypeId">
+			<drop-down allow-empty="true">
+				<list-options key-name="taxClassId" list-name="taxClassifications" description="${className}" />
+			</drop-down>
+		</field>
+
+		<!-- <field name="applyTax"> <check></check> </field> -->
+
+		<field name="submitButton" title="${uiLabelMap.CommonSubmit}" widget-style="btn btn-success">
+			<submit button-type="button" />
+		</field>
+	</form>
+	<form name="createSalesAccount" type="single" title=" Sales Account" target="createGlAccountSales">
+		<actions>
+			<entity-condition entity-name="TaxClassification" list="taxClassifications" distinct="true">
+				<condition-list combine="or">
+					<condition-expr field-name="vatSubType" value="OUTPUT_VAT" />
+					<condition-expr field-name="vatSubType" value="CST" />
+				</condition-list>
+				<order-by field-name="className" />
+			</entity-condition>
+		</actions>
+		<field name="accountName" required-field="true" widget-style="required">
+			<text />
+		</field>
+		<field name="parentGlAccountId">
+			<hidden value="1300000" />
+		</field>
+		<field name="taxClassId" parameter-name="taxClassId" title="Tax Classification" id-name="enumTypeId">
+			<drop-down allow-empty="true">
+				<list-options key-name="taxClassId" list-name="taxClassifications" description="${className}" />
+			</drop-down>
+		</field>
+		<field name="submitButton" title="${uiLabelMap.CommonSubmit}" widget-style="btn btn-success">
+			<submit button-type="button" />
+		</field>
+	</form>
+
+	<form name="editSalesAccount" type="single" title=" Sales Account" target="updateGlAccountSales">
+		<actions>
+			<entity-one entity-name="GlAccount">
+				<field-map field-name="glAccountId" from-field="parameters.glAccountId"/>
+			</entity-one>
+			<entity-condition entity-name="TaxClassification" list="taxClassifications" distinct="true">
+				<condition-list combine="or">
+					<condition-expr field-name="vatSubType" value="OUTPUT_VAT" />
+					<condition-expr field-name="vatSubType" value="CST" />
+				</condition-list>
+				<order-by field-name="className" />
+			</entity-condition>
+		</actions>
+		<field name="glAccountId"> <hidden/> </field>
+		<field name="accountName" required-field="true" widget-style="required">
+			<text />
+		</field>
+		<field name="taxClassId" parameter-name="taxClassId" title="Tax Classification" id-name="enumTypeId">
+			<drop-down allow-empty="true">
+				<list-options key-name="taxClassId" list-name="taxClassifications" description="${className}" />
+			</drop-down>
+		</field>
+		<field name="submitButton" title="${uiLabelMap.CommonSubmit}" widget-style="btn btn-success">
+			<submit button-type="button" />
+		</field>
+	</form>
+
+	<form name="listSalesAccount" type="list" view-size="20" paginate-target="createSalesAccount" title="" list-name="customerList" odd-row-style="alternate-row"
+		header-row-style="header-row-2" default-table-style="basic-table hover-bar">
+
+		 <field name="glAccountId" title="Gl Account Id" widget-area-style="align-left">
+			<display/>
+		</field> 
+		<field name="accountName" title=" Account Name" widget-area-style="align-left">
+			<display/>
+		</field>
+		<field name="taxClassId" title="Tax Classification" >
+			<display-entity entity-name="TaxClassification" description="${className}" key-field-name="taxClassId"></display-entity>
+		</field>
+		<field name="editSalesGlAccount" widget-style="buttontext" title="Edit">
+			<hyperlink target="editSalesAccount" description="Edit">
+				<parameter param-name="glAccountId" />
+			</hyperlink>
+		</field>
+
+	</form>
+	<form name="listPurchaseAccount" type="list" view-size="20" paginate-target="createPurchaseAccount" title="" list-name="supplierList" odd-row-style="alternate-row"
+		header-row-style="header-row-2" default-table-style="basic-table hover-bar">
+		 <field name="glAccountId" title="Gl Account Id" widget-area-style="align-left">
+			<display-entity entity-name="GlAccount" description="${glAccountId}" key-field-name="glAccountId"></display-entity>
+		</field> 
+		<field name="accountName" title=" Account Name" widget-area-style="align-left">
+			<display-entity entity-name="GlAccount" description="${accountName}" key-field-name="glAccountId"></display-entity>
+		</field>
+		<field name="taxClassId" title="Tax Classification" >
+			<display-entity entity-name="TaxClassification" description="${className}" key-field-name="taxClassId"></display-entity>
+		</field>
+		<field name="editPurchaseGlaccount" widget-style="buttontext" title="Edit">
+			<hyperlink target="editPurchaseAccount" description="Edit">
+				<parameter param-name="glAccountId" />
+			</hyperlink>
+		</field>
+	</form>
+
+	<form name="editPurchaseAccount" type="single" title=" Purchase Account" target="updateGlAccountPurchase">
+		<actions>
+			<entity-one entity-name="GlAccount">
+				<field-map field-name="glAccountId" from-field="parameters.glAccountId"/>
+			</entity-one>
+			<entity-condition entity-name="TaxClassification" list="taxClassifications" distinct="true">
+				<condition-list combine="or">
+					<condition-expr field-name="vatSubType" value="INPUT_VAT" />
+					<condition-expr field-name="vatSubType" value="INTER_PUR" />
+				</condition-list>
+				<order-by field-name="className" />
+			</entity-condition>
+		</actions>
+		<field name="glAccountId" required-field="true" widget-style="required">
+			<hidden />
+		</field>
+		<field name="accountName" required-field="true" widget-style="required">
+			<text></text>
+		</field>
+		<field name="taxClassId" title="Tax Classification">
+			<drop-down allow-empty="true">
+				<list-options key-name="taxClassId" list-name="taxClassifications" description="${className}" />
+			</drop-down>
+		</field>
+		<field name="parentGlAccountId">
+			<hidden value="2300000" />
+		</field>
+		<field name="submitButton" title="${uiLabelMap.CommonSubmit}" widget-style="btn btn-success">
+			<submit button-type="button" />
+		</field>
+	</form>
+	<form name="editDutiesTaxes" type="single" title="Duties and Taxes" target="updateGlAccountDutiesTaxes">
+		<field name="glAccountId" required-field="true" widget-style="required">
+			<hidden/>
+		</field>
+		<field name="accountName" required-field="true" widget-style="required">
+			<text/>
+		</field>
+		 <field name="taxType" title="Type Of Duty" id-name="typeOfDuty" event="onChange" action="javascript:getClassification(typeOfDuty.value);" >
+			<drop-down allow-empty="true" >
+				<option key="taxType" description="${taxType}" />
+				<entity-options description="${enumId}" entity-name="Enumeration" key-field-name="enumId">
+					<entity-constraint name="enumTypeId" operator="equals" value="DUTIES_TAXES" />
+				</entity-options>
+			</drop-down>
+		</field> 
+		<!-- <field name="parentGlAccountId" title="Parent Gl Account">
+			<lookup target-form-name="LookupGlAccount" description-field-name="accountName" default-value="${parentGlAccountId}"></lookup>
+		</field> -->
+		 <!-- <field name="parentGlAccountId" parameter-name="parentGlAccountId" title="Parent Gl Account">
+			<drop-down allow-empty="true" >
+				<entity-options description="${accountName}" entity-name="GlAccount" key-field-name="glAccountId">
+                    <entity-order-by field-name="accountName"/>
+                </entity-options>
+			</drop-down>
+		</field>  -->
+		<field name="parentGlAccountId" parameter-name="parentGlAccountId" title="Parent Gl Account">
+			<drop-down allow-empty="false">
+				<entity-options description="${accountName}" entity-name="GlAccount" key-field-name="glAccountId">
+				<entity-constraint name="parentGlAccountId" operator="equals" value="3100000">
+				</entity-constraint>
+                    <entity-order-by field-name="accountName"/>
+                </entity-options>
+			</drop-down>
+		</field> 
+	   <field name="subTypeOfDuty" title="Sub Type Of Duty" id-name="enumId" event="onChange" action="javascript:getClassificationVat(subTypeOfDuty.value);">
+		 <drop-down allow-empty="true">
+			<entity-options description="${description}" entity-name="Enumeration" key-field-name="enumId">
+					<entity-constraint name="enumTypeId" operator="equals" value="VAT_SUB_TYPE" />
+				</entity-options>
+			</drop-down>
+		</field>
+		<field name="taxClassId" parameter-name="taxClassId" title="Tax Classification"  id-name="enumTypeId">
+			<drop-down allow-empty="true" >
+				<entity-options description="${className}" entity-name="TaxClassification" key-field-name="taxClassId">
+					<entity-order-by field-name="taxClassId" />
+				</entity-options>
+			</drop-down>
+		</field>
+		
+		<field name="applyTax" >
+			<drop-down allow-empty="false" current-description="${applyTax}" >
+				<option key="Y" description="Y"/>
+				<option key="N" description="N"/>
+			</drop-down>
+		</field>
+		<field name="submitButton" title="${uiLabelMap.Update}" widget-style="btn btn-success">
+			<submit button-type="button" />
+		</field>
+	</form>
+	<form name="listDutiesTaxes" type="list" view-size="20" paginate-target="createDutiesTaxes" title="" list-name="dutiesTaxes" odd-row-style="alternate-row"
+		header-row-style="header-row-2" default-table-style="basic-table hover-bar">
+		 <field name="glAccountId" title="Gl Account" widget-area-style="align-left">
+			<display>
+			</display>
+		</field> 
+		<field name="accountName" title="Account Name" widget-area-style="align-left">
+			<display>
+			</display>
+		</field>
+		<field name="taxType" title="Type Of Duty"><display/> </field>
+		
+	     <field name="parentGlAccountId" title="Parent Gl Account" widget-area-style="align-left">
+				<display-entity entity-name="GlAccount" key-field-name="glAccountId" description="${accountName}"></display-entity>
+		</field>
+		 <field name="subTypeOfDuty" title="Sub Type Of Duty">
+			<display-entity entity-name="Enumeration" key-field-name="enumId" description="${description}">
+			</display-entity>
+		</field>
+		<field name="taxClassId" title="Tax Classification">
+			<display-entity entity-name="TaxClassification" description="${className}"></display-entity>
+		</field>
+		<field name="applyTax"><display></display> </field> 
+
+		<field name="editGlAccountDutiesAndTax" widget-style="buttontext" title="${uiLabelMap.CommonEmptyHeader}">
+			<hyperlink target="editGlAccountDutiesAndTax" description="Edit">
+				<parameter param-name="glAccountId" />
+				<parameter param-name="accountName" />
+				<parameter param-name="taxType" />
+				<parameter param-name="taxClassId"/>
+				<parameter param-name="parentGlAccountId" />
+				<parameter param-name="applyTax" />
+				<parameter param-name="subTypeOfDuty" />
+			</hyperlink>
+		</field>
+	</form>
+</forms>

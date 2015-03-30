@@ -1,0 +1,55 @@
+<?init class="org.zkoss.zk.ui.util.Composition"
+arg0="/WEB-INF/layout/template.zul"?>
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<zk>
+	<window self="@{define(content)}" title="${c:l('Hrms_SearchEmployeeAssociate') }">
+		<div width="100%">
+			<panel>
+				<panelchildren>
+					<hbox style="margin-top:15px">
+						<div align="right" width="250px" style="margin-right:5px">
+							<label value="${c:l('FirstName') }"/>
+						</div>
+						<div width="300px" align="left">
+							<textbox value="" name="firstName" width="250px"/>
+						</div>
+						<div align="right" width="150px" style="margin-right:5px">
+							<label value="${c:l('FormFieldTitle_LastName') }"/>
+						</div>
+						<div width="300px" align="left">
+							<textbox value="" name="lastName" width="250px"/>
+						</div>
+					</hbox>
+					<separator/>
+					<hbox style="margin-top:15px">
+						<div align="right" width="250px" style="margin-right:5px">
+							<label value="${c:l('FormFieldTitle_employeeEmployeeId') }"/>
+						</div>
+						<div width="300px" align="left">
+							<textbox value="" name="partyId" width="150px"/>
+						</div>
+					</hbox>
+					<separator/>
+					<hbox style="margin-top:15px">
+						<div align="right" width="360px">
+							<button label="${c:l('HumanResSearch') }" width="100px" height="25px"/>
+						</div>
+						<div align="right" width="10px">
+							<button label="${c:l('HumanResNewEmployee') }" width="100px" height="25px" href="/control/CreateNewEmployeeAssociate"/>
+						</div>
+					</hbox>
+					<separator/>
+					<listbox self="@{define(associateContent)}">
+						<listhead>
+							<listheader label="${c:l('FirstName') }"/>
+							<listheader label="${c:l('FormFieldTitle_LastName') }"/>
+							<listheader label="${c:l('FormFieldTitle_PhoneNumber') }"/>
+							<listheader label="${c:l('FormFieldTitle_Email') }"/>
+							<listheader label="${c:l('FormFieldTitle_DepartmentName') }"/>
+						</listhead>
+					</listbox>
+				</panelchildren>
+			</panel>
+		</div>
+	</window>
+</zk>

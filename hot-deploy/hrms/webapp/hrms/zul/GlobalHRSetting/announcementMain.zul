@@ -1,0 +1,50 @@
+<?page title="HRMS-Announcement" id="announcementmgmt"?>
+<?link rel="icon" type="image/x-icon" href="/images/companyLogo.png"?>
+<?init class="org.zkoss.zk.ui.util.Composition" arg0="/WEB-INF/layout/templateWestCollapsible.zul"?>
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<zk>
+	<groupbox self="@{define(westContent)}" mold="3d"
+		id="announcementMain">
+		<caption label="Announcement" />
+		<vbox>
+
+			<toolbarbutton label="Create Announcement" visible="false"
+				id="createAnnouncement">
+				<attribute name="onClick">
+	Div	div	= (Div) appendDiv;
+	Component	firstChild	= div.getFirstChild();
+	if (firstChild != null) {
+		div.removeChild(firstChild);
+	}
+	Window	winDiv6	= (Window) Executions.createComponents("/zul/GlobalHRSetting/announcement.zul", null, org.ofbiz.base.util.UtilMisc.toMap("createAnnouncement",createAnnouncement));
+	div.appendChild(winDiv6);
+	unselectedToolbarbuttonColor(self);
+	selectedToolbarbuttonColor(self);
+</attribute>
+			</toolbarbutton>
+
+			<toolbarbutton label="Announcement" id="searchAnnouncementNew">
+				<attribute name="onClick">
+	Div	div	= (Div) appendDiv;
+	Component	firstChild	= div.getFirstChild();
+	if (firstChild != null) {
+		div.removeChild(firstChild);
+	}
+	Window	winDiv4	= (Window) Executions.createComponents("/zul/GlobalHRSetting/searchAnnouncementNew.zul", null, org.ofbiz.base.util.UtilMisc.toMap("searchAnnouncementNew",searchAnnouncementNew));
+	div.appendChild(winDiv4);
+	unselectedToolbarbuttonColor(self);
+	selectedToolbarbuttonColor(self);
+</attribute>
+			</toolbarbutton>
+		
+		</vbox>
+	</groupbox>
+
+	<div id="appendDiv" self="@{define(content)}">
+
+	</div>
+<zscript>
+Events.postEvent("onClick",announcementMain.getFellow("searchAnnouncementNew"),null);
+</zscript>
+
+</zk>

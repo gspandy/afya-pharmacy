@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+	<!-- 
+	This holds the Payroll Master Data
+-->
+<entity-engine-xml>
+
+	<SalaryComputationType description="Lumpsum" salaryComputationTypeId="LUMPSUM" />
+	<SalaryComputationType description="Monthly Lumpsum" salaryComputationTypeId="MONTHLY_LUMPSUM" />
+	<SalaryComputationType description="Slab" salaryComputationTypeId="SLAB" />
+	<SalaryComputationType description="Formula" salaryComputationTypeId="FORMULA" />
+
+	<PayrollOpEnumeration operatorId="ADD" description="Add" operatorType="ARITHMETIC" />
+	<PayrollOpEnumeration operatorId="SUBTRACT" description="Subtract" operatorType="ARITHMETIC" />
+	<PayrollOpEnumeration operatorId="MULTIPLY" description="Multiply" operatorType="ARITHMETIC" />
+	<PayrollOpEnumeration operatorId="DIVIDE" description="Divide" operatorType="ARITHMETIC" />
+	<PayrollOpEnumeration operatorId="PERCENT" description="Percentage" operatorType="ARITHMETIC" />
+
+	<PayrollOpEnumeration operatorId="AND" description="Ands conditions" operatorType="LOGICAL" />
+	<PayrollOpEnumeration operatorId="OR" description="Ors conditions" operatorType="LOGICAL" />
+	<PayrollOpEnumeration operatorId="NOT" description="Negates conditions" operatorType="LOGICAL" />
+
+	<PayrollOpEnumeration operatorId="EQUALS" description="Equality" operatorType="LOGICAL" />
+	<PayrollOpEnumeration operatorId="GREATER-THAN" description="Negates conditions" operatorType="LOGICAL" />
+	<PayrollOpEnumeration operatorId="LESS-THAN" description="Negates conditions" operatorType="LOGICAL" />
+	<PayrollOpEnumeration operatorId="GREATER-THAN-EQUALS" description="Negates conditions" operatorType="LOGICAL" />
+	<PayrollOpEnumeration operatorId="LESS-THAN-EQUALS" description="Negates conditions" operatorType="LOGICAL" />
+
+	<!--<PayrollCondition conditionId="NA" conditionName="NO-CONDITION" conditionName="Replica of no-condition"/>-->
+
+
+
+
+
+
+
+
+		<SalaryHeadType salaryHeadTypeId="Allowances" description="Allowances" />
+	<SalaryHeadType salaryHeadTypeId="Benefits" description="Benefits" />
+	<SalaryHeadType salaryHeadTypeId="Deductions" description="Deductions" />
+	<SalaryHeadType salaryHeadTypeId="Perquisites" description="Perquisites" />
+	<SalaryHeadType salaryHeadTypeId="Adhoc" description="Adhoc" />
+
+	<SalaryHead salaryHeadId="9000" hrName="Basic" geoId="UAE" salaryHeadTypeId="Benefits" currencyUomId="ZMW" isTaxable="Y"
+		isMandatory="Y" salaryComputationTypeId="LUMPSUM" isCr="Y" />
+	<SalaryHead salaryHeadId="9001" hrName="DA" geoId="UAE" salaryHeadTypeId="Benefits" currencyUomId="ZMW" isTaxable="Y"
+		isMandatory="Y" salaryComputationTypeId="LUMPSUM" isCr="Y" />
+	<SalaryHead salaryHeadId="9002" hrName="Transport/Conveyance" geoId="UAE" salaryHeadTypeId="Allowances" currencyUomId="ZMW"
+		isTaxable="Y" isMandatory="N" salaryComputationTypeId="LUMPSUM" isCr="Y" />
+	<SalaryHead salaryHeadId="9003" hrName="Academic or Research" geoId="UAE" salaryHeadTypeId="Allowances" currencyUomId="ZMW"
+		isTaxable="Y" isMandatory="N" salaryComputationTypeId="LUMPSUM" isCr="Y" />
+	<SalaryHead salaryHeadId="9004" hrName="Children Education" geoId="UAE" salaryHeadTypeId="Allowances" currencyUomId="ZMW"
+		isTaxable="Y" isMandatory="N" salaryComputationTypeId="LUMPSUM" isCr="Y" />
+	<SalaryHead salaryHeadId="9005" hrName="LTC" geoId="UAE" salaryHeadTypeId="Allowances" currencyUomId="ZMW" isTaxable="Y"
+		isMandatory="N" salaryComputationTypeId="LUMPSUM" isCr="Y" />
+	<SalaryHead salaryHeadId="9006" hrName="Medical Reimbursement" geoId="UAE" salaryHeadTypeId="Allowances" currencyUomId="ZMW"
+		isTaxable="Y" isMandatory="N" salaryComputationTypeId="LUMPSUM" isCr="Y" />
+	<SalaryHead salaryHeadId="9007" hrName="Leave Encashment" geoId="UAE" salaryHeadTypeId="Allowances" currencyUomId="ZMW"
+		isTaxable="Y" isMandatory="n" salaryComputationTypeId="LUMPSUM" isCr="Y" />
+	<SalaryHead salaryHeadId="9008" hrName="Employee Provident Fund" geoId="UAE" salaryHeadTypeId="Deductions" currencyUomId="ZMW"
+		isTaxable="Y" isMandatory="N" salaryComputationTypeId="FORMULA" isCr="N" />
+	<SalaryHead salaryHeadId="9009" hrName="HRA" geoId="UAE" salaryHeadTypeId="Allowances" currencyUomId="ZMW" isTaxable="Y"
+		isMandatory="N" salaryComputationTypeId="LUMPSUM" isCr="Y" />
+	<SalaryHead salaryHeadId="9010" hrName="Special Allowance" geoId="UAE" salaryHeadTypeId="Allowances" currencyUomId="ZMW"
+		isTaxable="Y" isMandatory="N" salaryComputationTypeId="LUMPSUM" isCr="Y" />
+	<SalaryHead salaryHeadId="9011" hrName="Uniform Allowance" geoId="UAE" salaryHeadTypeId="Allowances" currencyUomId="ZMW"
+		isTaxable="Y" isMandatory="N" salaryComputationTypeId="LUMPSUM" isCr="Y" />
+	<SalaryHead salaryHeadId="9012" hrName="Bonus" geoId="UAE" salaryHeadTypeId="Allowances" currencyUomId="ZMW" isTaxable="Y"
+		isMandatory="N" salaryComputationTypeId="LUMPSUM" isCr="Y" />
+	<SalaryHead salaryHeadId="9013" hrName="Increment" geoId="UAE" salaryHeadTypeId="Allowances" currencyUomId="ZMW" isTaxable="Y"
+		isMandatory="N" salaryComputationTypeId="LUMPSUM" isCr="Y" />
+	<SalaryHead salaryHeadId="9014" hrName="Loan/Advances" isCr="Y" geoId="UAE" salaryHeadTypeId="Allowances" currencyUomId="ZMW"
+		isTaxable="Y" isMandatory="N" salaryComputationTypeId="LUMPSUM" />
+
+	<!-- Payroll Related -->
+	<PayrollEmplAttr payrollEmplId="9000" description="CITY" className="com.nthdimenzion.humanres.payroll.LocationEval" />
+	<PayrollEmplAttr payrollEmplId="9001" description="CTC" className="com.nthdimenzion.humanres.payroll.CostToCompanyEval" />
+
+	<PayrollCondition conditionId="9000" conditionName="TRUE Condition" operandOne="true" operandTwo="true" 
+		operatorId="AND" actionListOne="textinput" actionListTwo="textinput1"/>
+	<PayrollCondition conditionId="9001" conditionName="Empl Loc Mumbai" operandOne="#EMPL.(CITY)#" operandTwo="Mumbai"
+		operatorId="EQUALS" actionListOne="employeeAttribute" actionListTwo="textinput1"/>
+	<PayrollCondition conditionId="9002" conditionName="Empl Loc Chennai" operandOne="#EMPL.(CITY)#" operandTwo="Chennai"
+		operatorId="EQUALS" actionListOne="employeeAttribute" actionListTwo="textinput1" />
+	<PayrollCondition conditionId="9003" conditionName="Empl Loc Delhi" operandOne="#EMPL.(CITY)#" operandTwo="Delhi"
+		operatorId="EQUALS" actionListOne="employeeAttribute" actionListTwo="textinput1" />
+	<PayrollCondition conditionId="9004" conditionName="Empl Loc Kolkatta" operandOne="#EMPL.(CITY)#" operandTwo="Kolkatta"
+		operatorId="EQUALS" actionListOne="employeeAttribute" actionListTwo="textinput1" />
+	<PayrollCondition conditionId="9005" conditionName="Empl in Mumbai And Chennai" operandOne="#CONDITION.(9001)#"
+		operandTwo="#CONDITION.(9002)#" operatorId="OR" actionListOne="bandboxcondition" actionListTwo="bandboxcondition2" />
+	<PayrollCondition conditionId="9006" conditionName="Empl in Kolkatta And Delhi" operandOne="#CONDITION.(9003)#"
+		operandTwo="#CONDITION.(9004)#" operatorId="OR" actionListOne="bandboxcondition" actionListTwo="bandboxcondition2"/>
+	<PayrollCondition conditionId="9007" conditionName="Empl in Metros" operandOne="#CONDITION.(9005)#" operandTwo="#CONDITION.(9006)#"
+		operatorId="OR" actionListOne="bandboxcondition" actionListTwo="bandboxcondition2" />
+	<PayrollCondition conditionId="9008" conditionName="Empl Not in Metros" operandOne="#CONDITION.(9007)#" operandTwo="true"
+		operatorId="NOT" actionListOne="bandboxcondition" actionListTwo="textinput1"/>
+	<PayrollCondition conditionId="9009" conditionName="HRA Decl Greater Than 10% of Basic" operandOne="#TAXDECL.(9032)#"
+		operandTwo="#ACTION.(9005)#" operatorId="GREATER-THAN-EQUALS" actionListOne="bandboxtaxItem" actionListTwo="bandboxAction2"/>
+	<PayrollCondition conditionId="9010" conditionName="Not HRA Decl Greater Than 10% of Basic" operandOne="#CONDITION.(9009)#"
+		operandTwo="TRUE" operatorId="NOT" actionListOne="bandboxcondition" actionListTwo="textinput1"/>
+
+	<PayrollAction actionId="9000" actionName="HRA Calc For Metro City" operandOne="#ACTION.(9004)#" operandTwo="50"
+		operatorId="PERCENT" actionListOne="bandboxAction" actionListTwo="textinput1"/>
+	<PayrollAction actionId="9001" actionName="HRA Calc For Non-Metro City" operandOne="#ACTION.(9004)#" operandTwo="40"
+		operatorId="PERCENT" actionListOne="bandboxAction" actionListTwo="textinput1"/>
+	<PayrollAction actionId="9002" actionName="Actual Rent Paid" operandOne="#TAXDECL.(9032)#" operandTwo="0" operatorId="ADD" 
+		actionListOne="bandboxtaxItem" actionListTwo="textinput1"/>
+	<PayrollAction actionId="9003" actionName="Provident Fund Calc" operandOne="#ACTION.(9004)#" operandTwo="12" operatorId="PERCENT" 
+		actionListOne="bandboxAction" actionListTwo="textinput1"/>
+	<PayrollAction actionId="9004" actionName="Sum of Basic and DA" operandOne="#SALARYHEAD.(9000)#" operandTwo="#SALARYHEAD.(9001)#"
+		operatorId="ADD" actionListOne="bandboxSalary" actionListTwo="bandboxSalary2"/>
+	<PayrollAction actionId="9005" actionName="10% of Basic + DA" operandOne="#ACTION.(9004)#" operandTwo="10" operatorId="PERCENT" 
+		actionListOne="bandboxAction" actionListTwo="textinput1"/>
+	<PayrollAction actionId="9006" actionName="Rent pd in excess of 10% of Basic + DA" operandOne="#TAXDECL.(9032)#" operandTwo="#ACTION.(9005)#"
+		operatorId="SUBTRACT" actionListOne="bandboxtaxItem" actionListTwo="bandboxAction2"/>
+	<PayrollAction actionId="9007" actionName="Annual Conveyance Exemption" operandOne="#SALARYHEAD.(9002)#" operandTwo="0" operatorId="ADD" 
+		actionListOne="textinput" actionListTwo="textinput1"/>
+	<PayrollAction actionId="9008" actionName="HRA Allowance" operandOne="#SALARYHEAD.(9009)#" operandTwo="0" operatorId="ADD" 
+		actionListOne="bandboxSalary" actionListTwo="textinput1"/>
+	<PayrollAction actionId="9009" actionName="Zero Payment" operandOne="0" operandTwo="0" operatorId="ADD" 
+		actionListOne="textinput" actionListTwo="textinput1"/>
+	<PayrollAction actionId="9010" actionName="Professional Tax Calculation" operandOne="2400" operandTwo="0" operatorId="ADD" 
+		actionListOne="textinput" actionListTwo="textinput1"/>
+
+	<PayrollRule ruleId="9000" ruleName="Indian PF Rule" ruleDescription="Provident Fund is 12% of Basic and DA" aggregateFunc=""
+		defaultValue="" />
+	<PayrollRule ruleId="9001" ruleName="Conveyance Exemption Rule" ruleDescription="Conveyance Exemption Rule" aggregateFunc=""
+		defaultValue="9600" />
+	<PayrollRule ruleId="9002" ruleName="HRA Calculation for India" ruleDescription="HRA Calculation for India" aggregateFunc="MIN"
+		defaultValue="0" />
+	<PayrollRule ruleId="9003" ruleName="Professional Tax Rule" ruleDescription="Employment Tax deducted from salary"
+		aggregateFunc="" defaultValue="2400" />
+
+	<RuleConditionAction ruleId="9000" conditionId="9000" actionId="9003" />
+	<RuleConditionAction ruleId="9001" conditionId="9000" actionId="9007" />
+
+	<!-- 5 conditions for HRA exemption -->
+	<RuleConditionAction ruleId="9002" conditionId="9007" actionId="9000" />
+	<RuleConditionAction ruleId="9002" conditionId="9008" actionId="9001" />
+	<RuleConditionAction ruleId="9002" conditionId="9000" actionId="9008" />
+	<RuleConditionAction ruleId="9002" conditionId="9009" actionId="9006" />
+	<RuleConditionAction ruleId="9002" conditionId="9010" actionId="9009" />
+
+	<RuleConditionAction ruleId="9003" conditionId="9000" actionId="9010" />
+
+</entity-engine-xml>

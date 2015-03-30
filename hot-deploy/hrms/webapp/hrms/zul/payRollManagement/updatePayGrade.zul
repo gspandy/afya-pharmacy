@@ -1,0 +1,65 @@
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<zk>
+	<window id="UpdatePayGradeWindow" width="50%" position="center"
+		closable="true" border="normal">
+		<separator height="10px" />
+		<hbox>
+			<div align="right" width="150px" style="margin-right:5px">
+				<label value="${c:l('FormFieldTitle_payGradeId') }" />
+			</div>
+			<div align="left" width="300px" style="margin-right:5px">
+				<label id="payGradeId" />
+			</div>
+		</hbox>
+		<separator height="10px" />
+		<hbox>
+			<div align="right" width="150px" style="margin-right:5px">
+				<label value="${c:l('FormFieldTitle_payGradeName') }" />
+			</div>
+			<div align="left" width="300px" style="margin-right:5px">
+				<textbox id="payGradeName" />
+			</div>
+		</hbox>
+		<separator height="10px" />
+		<hbox>
+			<div align="right" width="150px" style="margin-right:5px">
+				<label value="${c:l('HRMS_NEXT_PAY_GRADE_ID') }" />
+			</div>
+			<div align="left" width="300px" style="margin-right:5px">
+				<textbox id="nextPayGradeId" />
+			</div>
+		</hbox>
+		<separator height="10px" />
+		<hbox>
+			<div align="right" width="150px" style="margin-right:5px">
+				<label value="${c:l('FormFieldTitle_comments') }" />
+			</div>
+			<div align="left" width="300px" style="margin-right:5px">
+				<textbox id="comments" />
+			</div>
+		</hbox>
+
+		<separator height="45px" />
+		<hbox>
+			<div align="right" width="470px">
+				<button id="updatePayGrade" label="${c:l('HRMS_UPDATE') }" width="100px"
+					height="25px" mold="os">
+					<zscript>
+						import org.ofbiz.base.util.*;
+						import org.zkoss.zk.ui.event.EventListener;
+						com.ndz.controller.PayGradeManagementController PayGradeController = new com.ndz.controller.PayGradeManagementController();
+						updatePayGrade.addEventListener("onClick", new EventListener() {
+						public void onEvent(Event event) throws Exception {
+							PayGradeController.EditPayGrade(event);
+							Component applyPayGradeWindow = event.getTarget();
+						}
+					});
+					</zscript>
+				</button>
+				<button id="cancelPayGrade" label="${c:l('ButtonCancel') }" width="100px"
+					height="25px" mold="os" onClick="UpdatePayGradeWindow.detach()" />
+			</div>
+		</hbox>
+
+	</window>
+</zk>

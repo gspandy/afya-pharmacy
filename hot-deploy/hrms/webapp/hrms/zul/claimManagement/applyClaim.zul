@@ -1,0 +1,209 @@
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<zk>
+	<zscript>
+	<![CDATA[
+	import org.zkoss.util.resource.Labels;
+	import org.zkoss.util.resource.Labels;
+	import org.ofbiz.entity.*;
+	import com.ndz.zkoss.*;
+	
+	public void fromValidate(Datebox comp) throws WrongValueException {
+		Object value = comp.getValue();
+		Object fromDateObj =((Datebox) applyClaimWindow
+				.getFellow("applyClaimFromDate")).getRawValue();
+		java.util.Date fromDate = (java.util.Date)fromDateObj;
+		if (value == null) {
+			throw new WrongValueException(comp,"From Date Required");
+		}
+		java.util.Date now = new java.util.Date();
+		if ( fromDate.compareTo(now) == 1) {
+			throw new WrongValueException(comp,	"From Date Cannot be Future");
+		}
+	}
+	
+	org.ofbiz.security.Security security = requestScope.get("security");
+	GenericValue userLogin = (GenericValue) Executions.getCurrent().getDesktop().getSession().getAttribute("userLogin");
+	GenericDelegator delegator = userLogin.getDelegator();
+	boolean isManager = false;
+	isManager = security.hasPermission("HUMANRES_MGR", userLogin);
+]]>
+</zscript>
+	<window id="applyClaimWindow" width="600px" height="400px"
+		position="center" closable="true" maximizable="true"
+		apply="com.ndz.controller.ClaimManagementController" border="normal"
+		contentStyle="overflow:auto">
+		<caption label="${c:l('Hrms_ApplyClaim')}"
+			style="font-weight:bold" />
+		<separator height="15px" />
+		<hbox>
+			<div align="right" width="150px" style="margin-right:5px">
+				<label value="${c:l('Hrms_ClaimType') }"
+					style="font-weight:bold" /><label value="*" style="color:red" />
+			</div>
+
+			<div width="300px" align="left">
+				<listbox id="applyClaimType" name="applyClaimType"
+					mold="select" onSelect="Clients.closeErrorBox(self)">
+				</listbox>
+			</div>
+		</hbox>
+		<separator />
+		<hbox visible="${isManager}">	
+			<div align="right" width="150px">
+				<label value="${c:l('HRMS_EMPLOYEE_ID') }" style="font-weight:bold;" />
+			</div>
+			<div align="left">
+				<employeebox id="managerBox" visible="${isManager}"/>
+			</div>
+		</hbox>
+		<separator />
+		<hbox>
+			<div align="right" width="150px" style="margin-right:5px">
+				<label value="${c:l('HumanResLeaveSummaryFromDate') }"
+					style="font-weight:bold" /><label value="*" style="color:red" />
+			</div>
+			<div align="left">
+				<datebox id="applyClaimFromDate"
+					name="applyClaimFromDate" buttonVisible="true"
+					/>
+			</div>
+					<div align="right" width="150px" style="margin-right:5px">
+				<label value="${c:l('HumanResLeaveSummaryThruDate') }"
+					width="100px" style="font-weight:bold" /><label value="*" style="color:red" />
+			</div>
+			<div align="left">
+				<datebox id="applyClaimThruDate" buttonVisible="true"
+					name="applyClaimThruDate" constraint="${throughDateConstraint}" onChange="Clients.closeErrorBox(self)"/>
+			</div>
+		</hbox>
+		<zscript>
+			<![CDATA[
+	import org.zkoss.util.resource.Labels;
+	public void thruValidate(Datebox comp) throws WrongValueException {
+		Object value = comp.getValue();
+		java.util.Date prevDate = (java.util.Date)((Datebox) applyClaimWindow.getFellow(
+				"applyClaimFromDate")).getValue();
+		java.util.Date curr = new java.util.Date();
+		Object thruDateObj =((Datebox) applyClaimWindow
+				.getFellow("applyClaimThruDate")).getRawValue();
+		java.util.Date thruDate = (java.util.Date)thruDateObj;
+		
+		if (value == null) {
+			throw new WrongValueException(comp,
+					"Thru Date Required");
+		} 
+			if (prevDate.compareTo((java.util.Date) value) == 1)
+				throw new WrongValueException(
+						comp,
+						Labels
+								.getLabel("HumanResApplyLeaveThruDateMustBeAfterFromDate"));
+		if(thruDate.compareTo(curr)==1){
+			throw new WrongValueException(comp,"Thru Date Cannot be Future");
+		}
+	}
+]]>
+</zscript>
+	
+		<separator />
+		<hbox>
+			<div align="right" width="150px" style="margin-right:5px">
+				<label value="${c:l('Hrms_Currency') }"
+					style="font-weight:bold" /><label value="*" style="color:red" onChange="Clients.closeErrorBox(self)" />
+			</div>
+
+			<div width="300px" align="left">
+				<listbox id="applyClaimCurrency"
+					name="applyClaimCurrency" mold="select" onSelect="Clients.closeErrorBox(self)">
+				</listbox>
+			</div>
+		</hbox>
+		<separator />
+		<hbox>
+			<div align="right" width="150px" style="margin-right:5px">
+				<label value="${c:l('FormFieldTitle_amount') }"
+					width="100px" style="font-weight:bold" /><label value="*" style="color:red" />
+			</div>
+			<div align="left">
+				<decimalbox id="applyClaimAmount" constraint="no empty:Amount Required" />
+			</div>
+		</hbox>
+		<separator />
+		<hbox>
+			<div align="right" width="150px" style="margin-right:5px">
+				<label value="${c:l('Hrms_Receipts') }" width="100px"
+					style="font-weight:bold" /><label value="*" style="color:red" />
+			</div>
+			<div align="left">
+				<textbox id="applyClaimReceipts"
+					name="applyClaimReceipts" constraint="no empty:Receipts Required"/>
+			</div>
+		</hbox>
+		<separator />
+		<hbox>
+			<div align="right" width="150px" style="margin-right:5px">
+				<label value="${c:l('HRMS_APPROVERCOMMENT') }"
+					width="100px" style="font-weight:bold" />
+			</div>
+			<div align="left">
+				<textbox id="applyClaimHR_COMMENT"
+					name="applyClaimHR_COMMENT" rows="4" cols="55"/>
+			</div>
+		</hbox>
+		<textbox id="applyClaimManagerPositionId"
+			name="applyClaimManagerPositionId" visible="false" />
+		<separator />
+        <hbox>
+            <div align="right" width="155px">
+                <label value="Upload Receipt :"></label>
+            </div>
+            <div align="left">
+                <fileupload label="${c:l('HRMS_BROWSE') }" onUpload="com.ndz.controller.ClaimManagementController.uploadClaimReceipt((UploadEvent)event,uploadMessage);" native="true"/>
+                <label id="uploadMessage" style="font-weight:bold"></label>
+            </div>
+        </hbox>
+        <separator />
+        <hbox>
+            <div align="right" width="275px">
+                <toolbarbutton label="Remove Attachment" onClick="com.ndz.controller.ClaimManagementController.removeAttachment(uploadMessage,null,delegator)"/>
+            </div>
+        </hbox>
+
+
+		<zscript><![CDATA[
+	void validate() {
+		 if (applyClaimType.getSelectedItem() == null||org.apache.commons.lang.StringUtils.isEmpty((String)applyClaimType.getSelectedItem().getValue())) {
+			throw new WrongValueException(applyClaimType,
+					"Claim Type Required");
+		}
+		fromValidate(applyClaimFromDate);
+		thruValidate(applyClaimThruDate);
+		//Object applyClaimCurrencyObj = applyClaimCurrency.getSelectedItem();
+		 if (applyClaimCurrency.getSelectedItem() == null||org.apache.commons.lang.StringUtils.isEmpty((String)applyClaimCurrency.getSelectedItem().getValue())) {
+			throw new WrongValueException(applyClaimCurrency,
+					"Currency Required");
+		}
+		java.math.BigDecimal checkClaimAmount = new java.math.BigDecimal("0.01");
+		if(applyClaimAmount.getValue().compareTo(checkClaimAmount) == -1){
+			throw new WrongValueException(applyClaimAmount,"Amount Must Be Greater Than Zero");
+		}
+		if (applyClaimReceipts.getValue() != "") {
+			String allocateClaimAmountString = applyClaimReceipts.getValue();
+			if(!(org.ofbiz.base.util.UtilValidate.isInteger(allocateClaimAmountString)))
+			    throw new WrongValueException(applyClaimReceipts, "Receipts Must Be Numeric");
+		}
+
+	}
+	]]></zscript>
+		<hbox>
+			<div align="right" width="265px" style="margin-top:5px">
+				<button id="applyClaimSaveButton"
+					label="${c:l('btnSave') }"
+					onClick='validate();com.ndz.controller.ClaimManagementController.applyClaim(event);Events.postEvent("onClick", Path
+				.getComponent("/searchPanel//searchButton"), null);applyClaimWindow.detach();' />
+				<button id="applyClaimCancelButton"
+					label="${c:l('ButtonCancel') }"
+					onClick="applyClaimWindow.detach()" />
+			</div>
+		</hbox>
+	</window>
+</zk>

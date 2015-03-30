@@ -1,0 +1,207 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+Licensed to the Apache Software Foundation (ASF) under one
+or more contributor license agreements.  See the NOTICE file
+distributed with this work for additional information
+regarding copyright ownership.  The ASF licenses this file
+to you under the Apache License, Version 2.0 (the
+"License"); you may not use this file except in compliance
+with the License.  You may obtain a copy of the License at
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing,
+software distributed under the License is distributed on an
+"AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+KIND, either express or implied.  See the License for the
+specific language governing permissions and limitations
+under the License.
+-->
+
+<entity-engine-xml>
+    <Party partyId="_NA_"/>
+    <PartyRole partyId="_NA_" roleTypeId="CARRIER"/>
+
+    <Party partyId="Company" partyTypeId="PARTY_GROUP"/>
+    <PartyGroup partyId="Company" groupName="Your Company Name Here"/>
+    <PartyRole partyId="Company" roleTypeId="BILL_FROM_VENDOR"/>
+    <PartyRole partyId="Company" roleTypeId="BILL_TO_CUSTOMER"/>
+    <PartyRole partyId="Company" roleTypeId="INTERNAL_ORGANIZATIO"/>
+    <PartyRole partyId="Company" roleTypeId="_NA_"/>
+    <ContactMech contactMechId="9000" contactMechTypeId="POSTAL_ADDRESS"/>
+    <PartyContactMech partyId="Company" contactMechId="9000" fromDate="2000-01-01 00:00:00.000" allowSolicitation="Y"/>
+    <PostalAddress contactMechId="9000" toName="Company XYZ" address1="2003 Open Blvd" city="Open City" postalCode="999999" countryGeoId="USA" stateProvinceGeoId="CA"
+                   />
+    <ContactMech contactMechId="Company" contactMechTypeId="EMAIL_ADDRESS" infoString="ofbiztest@example.com"/>
+    <PartyContactMech partyId="Company" contactMechId="Company" fromDate="2000-01-01 00:00:00.000" allowSolicitation="Y"/>
+    <PartyContactMechPurpose contactMechPurposeTypeId="PRIMARY_EMAIL" partyId="Company" contactMechId="Company" fromDate="2003-01-01 00:00:00.000"/>
+    <ContactMech contactMechId="CompanySupport" contactMechTypeId="EMAIL_ADDRESS" infoString="ofbizsupport@example.com"/>
+    <PartyContactMech partyId="Company" contactMechId="CompanySupport" fromDate="2003-01-01 00:00:00.0" allowSolicitation="Y"/>
+    <PartyContactMechPurpose partyId="Company" contactMechId="9000" contactMechPurposeTypeId="BILLING_LOCATION" fromDate="2000-01-01 00:00:00.000"/>
+    <PartyContactMechPurpose partyId="Company" contactMechId="9000" contactMechPurposeTypeId="GENERAL_LOCATION" fromDate="2000-01-01 00:00:00.000"/>
+    <PartyContactMechPurpose partyId="Company" contactMechId="9000" contactMechPurposeTypeId="PAYMENT_LOCATION" fromDate="2000-01-01 00:00:00.000"/>
+
+    <!-- GL journal for suspended transactions (failed post) -->
+    <GlJournal organizationPartyId="Company" glJournalId="ERROR_JOURNAL" glJournalName="Suspense transactions"/>
+
+    <PartyAcctgPreference partyId="Company" cogsMethodId="COGS_LIFO" baseCurrencyUomId="USD"
+                          invoiceSeqCustMethId="INV_HOOK_ENF_SEQ" invoiceIdPrefix="CI"
+                          quoteIdPrefix="CQ"
+                          orderIdPrefix="CO"
+                          errorGlJournalId="ERROR_JOURNAL"/>
+    <!-- suppliers -->
+    <Party partyId="DemoSupplier" partyTypeId="PARTY_GROUP"/>
+    <PartyGroup partyId="DemoSupplier" groupName="Demo Supplier"/>
+    <PartyRole partyId="DemoSupplier" roleTypeId="SUPPLIER"/>
+    <ContactMech contactMechId="9001" contactMechTypeId="POSTAL_ADDRESS"/>
+    <PartyContactMech partyId="DemoSupplier" contactMechId="9001" fromDate="2001-05-13 00:00:00.000" allowSolicitation="Y"/>
+    <PostalAddress contactMechId="9001" toName="Demo Supplier Company" address1="2004 Factory Blvd" city="City of Industry" postalCode="90000" countryGeoId="USA"
+                   stateProvinceGeoId="CA"/>
+    <PartyContactMechPurpose partyId="DemoSupplier" contactMechId="9001" contactMechPurposeTypeId="BILLING_LOCATION" fromDate="2001-05-13 00:00:00.000"/>
+    <PartyContactMechPurpose partyId="DemoSupplier" contactMechId="9001" contactMechPurposeTypeId="GENERAL_LOCATION" fromDate="2001-05-13 00:00:00.000"/>
+    <PartyContactMechPurpose partyId="DemoSupplier" contactMechId="9001" contactMechPurposeTypeId="PAYMENT_LOCATION" fromDate="2001-05-13 00:00:00.000"/>
+    <UserLogin userLoginId="DemoSupplier" currentPassword="{SHA}47ca69ebb4bdc9ae0adec130880165d2cc05db1a" partyId="DemoSupplier"/>
+
+    <Facility facilityId="WebStoreWarehouse" facilityTypeId="WAREHOUSE" facilityName="Web Store Warehouse" description="Warehouse exclusively for the Web Store "
+              ownerPartyId="Company"
+              defaultInventoryItemTypeId="NON_SERIAL_INV_ITEM" defaultWeightUomId="WT_lt" defaultDaysToShip="25"/>
+
+    <ContactMech contactMechId="9200" contactMechTypeId="POSTAL_ADDRESS"/>
+    <ContactMech contactMechId="9201" contactMechTypeId="TELECOM_NUMBER"/>
+    <ContactMech contactMechId="9202" contactMechTypeId="EMAIL_ADDRESS" infoString="ofbiztest@example.com"/>
+    <PostalAddress contactMechId="9200" toName="Company XYZ" attnName="ZJAA" address1="2003 Open Blvd" city="Orem" postalCode="84058" countryGeoId="USA" stateProvinceGeoId="UT"
+                   />
+    <TelecomNumber contactMechId="9201" areaCode="801" contactNumber="555-5555"/>
+    <FacilityContactMech facilityId="WebStoreWarehouse" contactMechId="9200" fromDate="2001-05-13 12:00:00.0"/>
+    <FacilityContactMech facilityId="WebStoreWarehouse" contactMechId="9201" fromDate="2001-05-13 12:00:00.0"/>
+    <FacilityContactMech facilityId="WebStoreWarehouse" contactMechId="9202" fromDate="2001-05-13 12:00:00.0"/>
+    <FacilityContactMechPurpose facilityId="WebStoreWarehouse" contactMechId="9200" contactMechPurposeTypeId="SHIPPING_LOCATION" fromDate="2001-05-13 12:00:00.0"/>
+    <FacilityContactMechPurpose facilityId="WebStoreWarehouse" contactMechId="9200" contactMechPurposeTypeId="SHIP_ORIG_LOCATION" fromDate="2001-05-13 12:00:00.0"/>
+    <FacilityContactMechPurpose facilityId="WebStoreWarehouse" contactMechId="9201" contactMechPurposeTypeId="PHONE_SHIPPING" fromDate="2001-05-13 12:00:00.0"/>
+    <FacilityContactMechPurpose facilityId="WebStoreWarehouse" contactMechId="9201" contactMechPurposeTypeId="PHONE_SHIP_ORIG" fromDate="2001-05-13 12:00:00.0"/>
+    <FacilityContactMechPurpose facilityId="WebStoreWarehouse" contactMechId="9202" contactMechPurposeTypeId="PRIMARY_EMAIL" fromDate="2001-05-13 12:00:00.0"/>
+    <FacilityLocation facilityId="WebStoreWarehouse" locationSeqId="TLTLTLLL01" locationTypeEnumId="FLT_PICKLOC" areaId="TL" aisleId="TL" sectionId="TL" levelId="LL"
+                      positionId="01"/>
+    <FacilityLocation facilityId="WebStoreWarehouse" locationSeqId="TLTLTLUL01" locationTypeEnumId="FLT_BULK" areaId="TL" aisleId="TL" sectionId="TL" levelId="UL" positionId="01"/>
+    <FacilityLocation facilityId="WebStoreWarehouse" locationSeqId="TLTLTLLL02" locationTypeEnumId="FLT_PICKLOC" areaId="TL" aisleId="TL" sectionId="TL" levelId="LL"
+                      positionId="02"/>
+    <FacilityLocation facilityId="WebStoreWarehouse" locationSeqId="TLTLTLUL02" locationTypeEnumId="FLT_BULK" areaId="TL" aisleId="TL" sectionId="TL" levelId="UL" positionId="02"/>
+    <FacilityLocation facilityId="WebStoreWarehouse" locationSeqId="TLTLTLLL03" locationTypeEnumId="FLT_PICKLOC" areaId="TL" aisleId="TL" sectionId="TL" levelId="LL"
+                      positionId="03"/>
+    <FacilityLocation facilityId="WebStoreWarehouse" locationSeqId="TLTLTLUL03" locationTypeEnumId="FLT_BULK" areaId="TL" aisleId="TL" sectionId="TL" levelId="UL" positionId="03"/>
+    <FacilityLocation facilityId="WebStoreWarehouse" locationSeqId="TLTLTLLL04" locationTypeEnumId="FLT_PICKLOC" areaId="TL" aisleId="TL" sectionId="TL" levelId="LL"
+                      positionId="04"/>
+    <FacilityLocation facilityId="WebStoreWarehouse" locationSeqId="TLTLTLUL04" locationTypeEnumId="FLT_BULK" areaId="TL" aisleId="TL" sectionId="TL" levelId="UL" positionId="04"/>
+
+    <Product productId="GZ-2644" smallImageUrl="/images/products/GZ-2644/small.png" largeImageUrl="/images/products/GZ-2644/large.png"/>
+    <SupplierProduct partyId="DemoSupplier" supplierPrefOrderId="10_MAIN_SUPPL" minimumOrderQuantity="0" currencyUomId="USD"
+                     productId="GZ-2644" lastPrice="24.0" supplierProductId="GZ-2644-0" availableFromDate="2005-01-01 00:00:00.000"/>
+
+    <OrderHeader orderId="DEMO10091" orderTypeId="PURCHASE_ORDER" orderName="New Purchase Order" salesChannelEnumId="UNKNWN_SALES_CHANNEL" orderDate="2008-06-10 13:27:07.024"
+                 entryDate="2008-06-10 13:27:07.024" visitId="10000"
+                 statusId="ORDER_CREATED" createdBy="admin" currencyUom="USD" webSiteId="OrderEntry" productStoreId="" remainingSubTotal="108.0"
+                 grandTotal="108.0"/>
+    <OrderItem orderId="DEMO10091" orderItemSeqId="00001" orderItemTypeId="PRODUCT_ORDER_ITEM" productId="GZ-2644" prodCatalogId=""
+               isPromo="N" quantity="5.0" selectedAmount="0.0" unitPrice="21.6" unitListPrice="0.0" isModifiedPrice="N" itemDescription="GZ-2644-5 Round Gizmo"
+               statusId="ITEM_CREATED"/>
+
+    <OrderRole orderId="DEMO10091" partyId="Company" roleTypeId="BILL_TO_CUSTOMER"/>
+    <PartyRole partyId="DemoSupplier" roleTypeId="BILL_FROM_VENDOR"/>
+    <OrderRole orderId="DEMO10091" partyId="DemoSupplier" roleTypeId="BILL_FROM_VENDOR"/>
+    <PartyRole partyId="DemoSupplier" roleTypeId="SHIP_FROM_VENDOR"/>
+    <OrderRole orderId="DEMO10091" partyId="DemoSupplier" roleTypeId="SHIP_FROM_VENDOR"/>
+    <PartyRole partyId="DemoSupplier" roleTypeId="SUPPLIER_AGENT"/>
+    <OrderRole orderId="DEMO10091" partyId="DemoSupplier" roleTypeId="SUPPLIER_AGENT"/>
+
+    <ShipmentMethodType description="No Shipping" shipmentMethodTypeId="NO_SHIPPING"/>
+    <ShipmentMethodType description="Standard" shipmentMethodTypeId="STANDARD"/>
+
+    <CarrierShipmentMethod partyId="_NA_" roleTypeId="CARRIER" shipmentMethodTypeId="STANDARD" sequenceNumber="5"/>
+    <CarrierShipmentMethod partyId="_NA_" roleTypeId="CARRIER" shipmentMethodTypeId="NO_SHIPPING" sequenceNumber="8"/>
+
+    <OrderItemShipGroup orderId="DEMO10091" shipGroupSeqId="00001" shipmentMethodTypeId="NO_SHIPPING" carrierPartyId="_NA_" carrierRoleTypeId="CARRIER" contactMechId="9200"
+                        maySplit="N" isGift="N"/>
+
+    <OrderItemShipGroupAssoc orderId="DEMO10091" orderItemSeqId="00001" shipGroupSeqId="00001" quantity="5.0"/>
+    <OrderStatus orderStatusId="9007" statusId="ORDER_CREATED" orderId="DEMO10091" statusDatetime="2008-06-10 13:27:07.024" statusUserLogin="admin"/>
+    <OrderStatus orderStatusId="9008" statusId="ITEM_CREATED" orderId="DEMO10091" orderItemSeqId="00001" statusDatetime="2008-06-10 13:27:07.024" statusUserLogin="admin"/>
+    <OrderContactMech orderId="DEMO10091" contactMechPurposeTypeId="SHIPPING_LOCATION" contactMechId="9200"/>
+
+    <Shipment shipmentId="9999" shipmentTypeId="PURCHASE_SHIPMENT" statusId="PURCH_SHIP_CREATED" primaryOrderId="DEMO10091" primaryShipGroupSeqId="00001"/>
+    <ShipmentItem shipmentId="9999" shipmentItemSeqId="00001" productId="GZ-2644" quantity="5"/>
+    <OrderShipment shipmentId="9999" shipmentItemSeqId="00001" orderId="DEMO10091" orderItemSeqId="00001" quantity="5" shipGroupSeqId="00001"/>
+
+
+    <!-- Order with Order Adjustment -->
+    <OrderHeader orderId="DEMO10092" orderTypeId="PURCHASE_ORDER" orderName="New Purchase Order" salesChannelEnumId="UNKNWN_SALES_CHANNEL" orderDate="2008-06-10 13:27:07.024"
+                 entryDate="2008-06-10 13:27:07.024" visitId="10000" statusId="ORDER_CREATED" createdBy="admin" currencyUom="USD" webSiteId="OrderEntry" productStoreId="" remainingSubTotal="108.0"
+                 grandTotal="108.0"/>
+
+    <OrderItem orderId="DEMO10092" orderItemSeqId="00001" orderItemTypeId="PRODUCT_ORDER_ITEM" productId="GZ-2644" prodCatalogId=""
+               isPromo="N" quantity="5.0" selectedAmount="0.0" unitPrice="21.6" unitListPrice="0.0" isModifiedPrice="N" itemDescription="GZ-2644-5 Round Gizmo"
+               statusId="ITEM_CREATED"/>
+
+
+    <OrderRole orderId="DEMO10092" partyId="Company" roleTypeId="BILL_TO_CUSTOMER"/>
+    <OrderRole orderId="DEMO10092" partyId="DemoSupplier" roleTypeId="BILL_FROM_VENDOR"/>
+    <OrderRole orderId="DEMO10092" partyId="DemoSupplier" roleTypeId="SHIP_FROM_VENDOR"/>
+    <OrderRole orderId="DEMO10092" partyId="DemoSupplier" roleTypeId="SUPPLIER_AGENT"/>
+
+    <OrderItemShipGroup orderId="DEMO10092" shipGroupSeqId="00001" shipmentMethodTypeId="NO_SHIPPING" carrierPartyId="_NA_" carrierRoleTypeId="CARRIER" contactMechId="9200" maySplit="N" isGift="N"/>
+
+    <OrderItemShipGroupAssoc orderId="DEMO10092" orderItemSeqId="00001" shipGroupSeqId="00001" quantity="5.0"/>
+    <OrderStatus orderStatusId="9007" statusId="ORDER_CREATED" orderId="DEMO10092" statusDatetime="2008-06-10 13:27:07.024" statusUserLogin="admin"/>
+    <OrderStatus orderStatusId="9008" statusId="ITEM_CREATED" orderId="DEMO10092" orderItemSeqId="00001" statusDatetime="2008-06-10 13:27:07.024" statusUserLogin="admin"/>
+    <OrderContactMech orderId="DEMO10092" contactMechPurposeTypeId="SHIPPING_LOCATION" contactMechId="9200"/>
+
+    <Shipment shipmentId="9999" shipmentTypeId="PURCHASE_SHIPMENT" statusId="PURCH_SHIP_CREATED" primaryOrderId="DEMO10092" primaryShipGroupSeqId="00001"/>
+    <ShipmentItem shipmentId="9999" shipmentItemSeqId="00001" productId="GZ-2644" quantity="5"/>
+    <OrderShipment shipmentId="9999" shipmentItemSeqId="00001" orderId="DEMO10092" orderItemSeqId="00001" quantity="5" shipGroupSeqId="00001"/>
+
+
+    <GlAccount glAccountId="214000" accountName="UNINVOICED ITEM RECEIPTS" accountCode="214000" description="" glAccountClassId="CURRENT_LIABILITY" glAccountTypeId="CURRENT_LIABILITY" glResourceTypeId="MONEY" postedBalance="0.0"/>
+
+    <GlAccount glAccountId="140000" accountName="INVENTORY" glAccountClassId="INVENTORY_ASSET" accountCode="140000" glAccountTypeId="INVENTORY_ACCOUNT" glResourceTypeId="MONEY" description="" postedBalance="0.0"/>
+
+    <GlAccount glAccountId="210000" accountName="ACCOUNTS PAYABLE" accountCode="210000" glAccountClassId="CURRENT_LIABILITY" glAccountTypeId="ACCOUNTS_PAYABLE" glResourceTypeId="MONEY"  description="" postedBalance="0.0"/>
+
+    <GlAccount glAccountId="740000" accountName="TAXES" accountCode="740000" glAccountClassId="SGA_EXPENSE" glAccountTypeId="TAX_ACCOUNT" glResourceTypeId="MONEY" description="" postedBalance="0.0"/>
+
+    <GlAccount glAccountId="510000" accountName="FREIGHT IN" accountCode="510000" glAccountClassId="COGS_EXPENSE" glAccountTypeId="" glResourceTypeId="MONEY"  description="" postedBalance="0.0"/>
+
+    <GlAccountOrganization glAccountId="214000" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="140000" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="210000" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="740000" organizationPartyId="Company"/>
+    <GlAccountOrganization glAccountId="510000" organizationPartyId="Company"/>
+
+    <GlAccountTypeDefault organizationPartyId="Company" glAccountTypeId="INVENTORY_ACCOUNT" glAccountId="140000"/>
+    <GlAccountTypeDefault organizationPartyId="Company" glAccountTypeId="UNINVOICED_SHIP_RCPT" glAccountId="214000"/>
+    <GlAccountTypeDefault organizationPartyId="Company" glAccountTypeId="ACCOUNTS_PAYABLE" glAccountId="210000"/>
+
+    <InvoiceItemType invoiceItemTypeId="INV_FPROD_ITEM" defaultGlAccountId="214000"/>
+
+    <!-- Financial Account Setup -->
+
+    <GlAccount accountName="ACCOUNTS PAYABLE - UNAPPLIED PAYMENTS" glAccountId="216000" accountCode="216000" glAccountClassId="CURRENT_LIABILITY" glAccountTypeId="ACCPAYABLE_UNAPPLIED" glResourceTypeId="MONEY"
+               description="" postedBalance="0.0"/>
+    <GlAccountOrganization glAccountId="216000" organizationPartyId="Company"/>
+    <GlAccountTypeDefault organizationPartyId="Company" glAccountTypeId="ACCPAYABLE_UNAPPLIED" glAccountId="216000"/>
+
+    <GlAccount accountName="Standard Chartered Bank A/C" glAccountId="111100" accountCode="111100" glAccountClassId="CASH_EQUIVALENT" glAccountTypeId="CURRENT_ASSET" glResourceTypeId="MONEY"
+              description="" postedBalance="0.0"/>
+    <GlAccountOrganization glAccountId="111100" organizationPartyId="Company"/>
+
+    <FinAccount finAccountId="SC_CHECKING" finAccountTypeId="BANK_ACCOUNT" statusId="FNACT_ACTIVE" finAccountName="Standard Chartered" finAccountCode="1247854852147" finAccountPin="1234"
+                currencyUomId="USD" organizationPartyId="Company" ownerPartyId="Company" postToGlAccountId="111100" isRefundable="Y" replenishLevel="0.00" actualBalance="0.00" availableBalance="0.00"/>
+    <FinAccountStatus finAccountId="SC_CHECKING" statusId="FNACT_ACTIVE" statusDate="2009-04-01 00:00:01.000"/>
+    <PaymentMethod paymentMethodId="SC_CHECKING" paymentMethodTypeId="COMPANY_CHECK"  partyId="Company" description="Checking Account at Standard Chartered Bank" glAccountId="111100" finAccountId="SC_CHECKING" fromDate="2009-04-01 00:00:00.000"/>
+
+    <Payment paymentId="9000" paymentTypeId="VENDOR_PAYMENT" paymentMethodTypeId="COMPANY_CHECK" partyIdFrom="Company" partyIdTo="DemoSupplier" statusId="PMNT_NOT_PAID"
+             effectiveDate="2014-04-25 12:56:54.292" amount="190.97" currencyUomId="USD"/>
+    <PaymentMethodTypeGlAccount organizationPartyId="Company" paymentMethodTypeId="COMPANY_CHECK" glAccountId="111100"/>
+    <OrderAdjustment orderAdjustmentTypeId="MISCELLANEOUS_CHARGE" orderId="DEMO10092" orderItemSeqId="00001" shipGroupSeqId="_NA_" amount="10" overrideGlAccountId="510000"/>
+    <OrderAdjustment orderAdjustmentTypeId="SALES_TAX" orderId="DEMO10092" orderItemSeqId="00001" shipGroupSeqId="_NA_" amount="5" overrideGlAccountId="740000"/>
+
+
+</entity-engine-xml>

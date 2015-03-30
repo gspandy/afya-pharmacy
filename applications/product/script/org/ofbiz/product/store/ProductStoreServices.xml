@@ -1,0 +1,734 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+Licensed to the Apache Software Foundation (ASF) under one
+or more contributor license agreements.  See the NOTICE file
+distributed with this work for additional information
+regarding copyright ownership.  The ASF licenses this file
+to you under the Apache License, Version 2.0 (the
+"License"); you may not use this file except in compliance
+with the License.  You may obtain a copy of the License at
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing,
+software distributed under the License is distributed on an
+"AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+KIND, either express or implied.  See the License for the
+specific language governing permissions and limitations
+under the License.
+-->
+<simple-methods xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://ofbiz.apache.org/dtds/simple-methods.xsd">
+
+    <simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_" event-event-message-name="_event_message_" event-request-object-name="request" event-response-code-name="_response_code_" event-response-object-name="response" login-required="true" method-name="createProductStore" service-error-message-list-name="errorMessageList" service-error-message-map-name="errorMessageMap" service-error-message-name="errorMessage" service-response-message-name="responseMessage" service-success-message-list-name="successMessageList" service-success-message-name="successMessage" short-description="Create a Product Store" use-transaction="true">
+        <check-permission action="_CREATE" error-list-name="error_list" permission="CATALOG">
+            <fail-message message="Security Error: to run createProductStore you must have the CATALOG_CREATE or CATALOG_ADMIN permission"/>
+        </check-permission>
+        <check-errors error-code="error" error-list-name="error_list"/>
+        <if-compare field="parameters.showPricesWithVatTax" operator="equals" type="String" value="Y">
+            <if-empty field="parameters.vatTaxAuthGeoId">
+                <add-error error-list-name="error_list">
+                    <fail-property property="ProductVatTaxAuthGeoNotSet" resource="ProductUiLabels"/>
+                </add-error>
+            </if-empty>
+            <if-empty field="parameters.vatTaxAuthPartyId">
+                <add-error error-list-name="error_list">
+                    <fail-property property="ProductVatTaxAuthPartyNotSet" resource="ProductUiLabels"/>
+                </add-error>
+            </if-empty>
+            <check-errors error-code="error" error-list-name="error_list"/>
+        </if-compare>
+        <make-value entity-name="ProductStore" value-field="newEntity"/>
+        <set-nonpk-fields map="parameters" set-if-null="true" value-field="newEntity"/>
+        <sequenced-id field="productStoreId" get-long-only="false" sequence-name="ProductStore"/>
+        <set field="newEntity.productStoreId" from-field="productStoreId" set-if-empty="true" set-if-null="false"/>
+        <field-to-result field="productStoreId" result-name="productStoreId"/>
+        <create-value do-cache-clear="true" or-store="false" value-field="newEntity"/>
+        <!-- create the ProductStoreFacility record -->
+        <now-timestamp field="nowTimestamp"/>
+        <if-not-empty field="newEntity.inventoryFacilityId">
+            <make-value entity-name="ProductStoreFacility" value-field="storeFacility"/>
+            <set field="storeFacility.facilityId" from-field="newEntity.inventoryFacilityId" set-if-empty="true" set-if-null="false"/>
+            <set field="storeFacility.productStoreId" from-field="newEntity.productStoreId" set-if-empty="true" set-if-null="false"/>
+            <set field="storeFacility.fromDate" from-field="nowTimestamp" set-if-empty="true" set-if-null="false"/>
+            <create-value do-cache-clear="true" or-store="false" value-field="storeFacility"/>
+        </if-not-empty>
+    </simple-method>
+
+    <simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_" event-event-message-name="_event_message_" event-request-object-name="request" event-response-code-name="_response_code_" event-response-object-name="response" login-required="true" method-name="updateProductStore" service-error-message-list-name="errorMessageList" service-error-message-map-name="errorMessageMap" service-error-message-name="errorMessage" service-response-message-name="responseMessage" service-success-message-list-name="successMessageList" service-success-message-name="successMessage" short-description="Update a Product Store" use-transaction="true">
+        <check-permission action="_UPDATE" error-list-name="error_list" permission="CATALOG">
+            <fail-message message="Security Error: to run updateProductStore you must have the CATALOG_UPDATE or CATALOG_ADMIN permission"/>
+        </check-permission>
+        <check-errors error-code="error" error-list-name="error_list"/>
+        <set field="lookupPKMap.productStoreId" from-field="parameters.productStoreId" set-if-empty="true" set-if-null="false"/>
+        <find-by-primary-key entity-name="ProductStore" map="lookupPKMap" use-cache="false" value-field="store"/>
+        <set field="oldFacilityId" from-field="store.inventoryFacilityId" set-if-empty="true" set-if-null="false"/>
+        <set-nonpk-fields map="parameters" set-if-null="true" value-field="store"/>
+        <if-compare field="store.showPricesWithVatTax" operator="equals" type="String" value="Y">
+            <if-empty field="store.vatTaxAuthGeoId">
+                <add-error error-list-name="error_list">
+                    <fail-property property="ProductVatTaxAuthGeoNotSet" resource="ProductUiLabels"/>
+                </add-error>
+            </if-empty>
+            <if-empty field="store.vatTaxAuthPartyId">
+                <add-error error-list-name="error_list">
+                    <fail-property property="ProductVatTaxAuthPartyNotSet" resource="ProductUiLabels"/>
+                </add-error>
+            </if-empty>
+            <check-errors error-code="error" error-list-name="error_list"/>
+        </if-compare>
+        <store-value do-cache-clear="true" value-field="store"/>
+        <!-- update the ProductStoreFacility record -->
+        <now-timestamp field="nowTimestamp"/>
+        <if-compare-field field="store.inventoryFacilityId" operator="not-equals" to-field="oldFacilityId" type="String">
+            <if-compare field="store.oneInventoryFacility" operator="equals" type="String" value="Y">
+                <!-- expire all the facilities -->
+                <set field="lookupPFMap.productStoreId" from-field="store.productStoreId" set-if-empty="true" set-if-null="false"/>
+                <find-by-and entity-name="ProductStoreFacility" list="storeFacilities" map="lookupPFMap" use-cache="false" use-iterator="false"/>
+                <filter-list-by-date all-same="true" from-field-name="fromDate" list="storeFacilities" thru-field-name="thruDate"/>
+                <iterate entry="facility" list="storeFacilities">
+                    <set field="facility.thruDate" from-field="nowTimestamp" set-if-empty="true" set-if-null="false"/>
+                    <store-value do-cache-clear="true" value-field="facility"/>
+                </iterate>
+            </if-compare>
+            <!-- create the new entry -->
+            <make-value entity-name="ProductStoreFacility" value-field="storeFacility"/>
+            <set field="storeFacility.facilityId" from-field="store.inventoryFacilityId" set-if-empty="true" set-if-null="false"/>
+            <set field="storeFacility.productStoreId" from-field="store.productStoreId" set-if-empty="true" set-if-null="false"/>
+            <set field="storeFacility.fromDate" from-field="nowTimestamp" set-if-empty="true" set-if-null="false"/>
+            <create-value do-cache-clear="true" or-store="false" value-field="storeFacility"/>
+        </if-compare-field>
+    </simple-method>
+    <!-- ProductStore and ProdCatalog services -->
+
+    <simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_" event-event-message-name="_event_message_" event-request-object-name="request" event-response-code-name="_response_code_" event-response-object-name="response" login-required="true" method-name="createProductStoreCatalog" service-error-message-list-name="errorMessageList" service-error-message-map-name="errorMessageMap" service-error-message-name="errorMessage" service-response-message-name="responseMessage" service-success-message-list-name="successMessageList" service-success-message-name="successMessage" short-description="Create ProductStoreCatalog" use-transaction="true">
+        <check-permission action="_CREATE" error-list-name="error_list" permission="CATALOG">
+            <fail-message message="Security Error: to run createProductStoreCatalog you must have the CATALOG_CREATE or CATALOG_ADMIN permission"/>
+        </check-permission>
+        <check-errors error-code="error" error-list-name="error_list"/>
+        <make-value entity-name="ProductStoreCatalog" value-field="newEntity"/>
+        <set-pk-fields map="parameters" set-if-null="true" value-field="newEntity"/>
+        <set-nonpk-fields map="parameters" set-if-null="true" value-field="newEntity"/>
+        <if-empty field="newEntity.fromDate">
+            <now-timestamp field="nowTimestamp"/>
+            <set field="newEntity.fromDate" from-field="nowTimestamp" set-if-empty="true" set-if-null="false"/>
+        </if-empty>
+        <create-value do-cache-clear="true" or-store="false" value-field="newEntity"/>
+    </simple-method>
+
+    <simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_" event-event-message-name="_event_message_" event-request-object-name="request" event-response-code-name="_response_code_" event-response-object-name="response" login-required="true" method-name="updateProductStoreCatalog" service-error-message-list-name="errorMessageList" service-error-message-map-name="errorMessageMap" service-error-message-name="errorMessage" service-response-message-name="responseMessage" service-success-message-list-name="successMessageList" service-success-message-name="successMessage" short-description="Update ProductStoreCatalog" use-transaction="true">
+        <check-permission action="_UPDATE" error-list-name="error_list" permission="CATALOG">
+            <fail-message message="Security Error: to run updateProductStoreCatalog you must have the CATALOG_UPDATE or CATALOG_ADMIN permission"/>
+        </check-permission>
+        <check-errors error-code="error" error-list-name="error_list"/>
+        <make-value entity-name="ProductStoreCatalog" value-field="lookupPKMap"/>
+        <set-pk-fields map="parameters" set-if-null="true" value-field="lookupPKMap"/>
+        <find-by-primary-key map="lookupPKMap" use-cache="false" value-field="lookedUpValue"/>
+        <set-nonpk-fields map="parameters" set-if-null="true" value-field="lookedUpValue"/>
+        <store-value do-cache-clear="true" value-field="lookedUpValue"/>
+    </simple-method>
+
+    <simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_" event-event-message-name="_event_message_" event-request-object-name="request" event-response-code-name="_response_code_" event-response-object-name="response" login-required="true" method-name="deleteProductStoreCatalog" service-error-message-list-name="errorMessageList" service-error-message-map-name="errorMessageMap" service-error-message-name="errorMessage" service-response-message-name="responseMessage" service-success-message-list-name="successMessageList" service-success-message-name="successMessage" short-description="Delete ProductStoreCatalog" use-transaction="true">
+        <check-permission action="_DELETE" error-list-name="error_list" permission="CATALOG">
+            <fail-message message="Security Error: to run deleteProductStoreCatalog you must have the CATALOG_DELETE or CATALOG_ADMIN permission"/>
+        </check-permission>
+        <check-errors error-code="error" error-list-name="error_list"/>
+        <make-value entity-name="ProductStoreCatalog" value-field="lookupPKMap"/>
+        <set-pk-fields map="parameters" set-if-null="true" value-field="lookupPKMap"/>
+        <find-by-primary-key map="lookupPKMap" use-cache="false" value-field="lookedUpValue"/>
+        <remove-value do-cache-clear="true" value-field="lookedUpValue"/>
+    </simple-method>
+    <!-- ProductStore Payment Setting Services -->
+
+    <simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_" event-event-message-name="_event_message_" event-request-object-name="request" event-response-code-name="_response_code_" event-response-object-name="response" login-required="true" method-name="createProductStorePaymentSetting" service-error-message-list-name="errorMessageList" service-error-message-map-name="errorMessageMap" service-error-message-name="errorMessage" service-response-message-name="responseMessage" service-success-message-list-name="successMessageList" service-success-message-name="successMessage" short-description="Create a Product Store Payment Setting" use-transaction="true">
+        <check-permission action="_CREATE" error-list-name="error_list" permission="CATALOG">
+            <fail-message message="Security Error: to run createProductStorePaymentSetting you must have the CATALOG_CREATE or CATALOG_ADMIN permission"/>
+        </check-permission>
+        <check-errors error-code="error" error-list-name="error_list"/>
+        <make-value entity-name="ProductStorePaymentSetting" value-field="newEntity"/>
+        <set-pk-fields map="parameters" set-if-null="true" value-field="newEntity"/>
+        <set-nonpk-fields map="parameters" set-if-null="true" value-field="newEntity"/>
+        <create-value do-cache-clear="true" or-store="false" value-field="newEntity"/>
+    </simple-method>
+
+    <simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_" event-event-message-name="_event_message_" event-request-object-name="request" event-response-code-name="_response_code_" event-response-object-name="response" login-required="true" method-name="updateProductStorePaymentSetting" service-error-message-list-name="errorMessageList" service-error-message-map-name="errorMessageMap" service-error-message-name="errorMessage" service-response-message-name="responseMessage" service-success-message-list-name="successMessageList" service-success-message-name="successMessage" short-description="Update a Product Store Payment Setting" use-transaction="true">
+        <check-permission action="_UPDATE" error-list-name="error_list" permission="CATALOG">
+            <fail-message message="Security Error: to run updateProductStorePaymentSetting you must have the CATALOG_UPDATE or CATALOG_ADMIN permission"/>
+        </check-permission>
+        <check-errors error-code="error" error-list-name="error_list"/>
+        <make-value entity-name="ProductStorePaymentSetting" value-field="lookupPKMap"/>
+        <set-pk-fields map="parameters" set-if-null="true" value-field="lookupPKMap"/>
+        <find-by-primary-key entity-name="ProductStorePaymentSetting" map="lookupPKMap" use-cache="false" value-field="setting"/>
+        <set-nonpk-fields map="parameters" set-if-null="true" value-field="setting"/>
+        <store-value do-cache-clear="true" value-field="setting"/>
+    </simple-method>
+
+    <simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_" event-event-message-name="_event_message_" event-request-object-name="request" event-response-code-name="_response_code_" event-response-object-name="response" login-required="true" method-name="deleteProductStorePaymentSetting" service-error-message-list-name="errorMessageList" service-error-message-map-name="errorMessageMap" service-error-message-name="errorMessage" service-response-message-name="responseMessage" service-success-message-list-name="successMessageList" service-success-message-name="successMessage" short-description="Delete a Product Store Payment Setting" use-transaction="true">
+        <check-permission action="_DELETE" error-list-name="error_list" permission="CATALOG">
+            <fail-message message="Security Error: to run deleteProductStorePaymentSetting you must have the CATALOG_DELETE or CATALOG_ADMIN permission"/>
+        </check-permission>
+        <check-errors error-code="error" error-list-name="error_list"/>
+        <make-value entity-name="ProductStorePaymentSetting" value-field="lookupPKMap"/>
+        <set-pk-fields map="parameters" set-if-null="true" value-field="lookupPKMap"/>
+        <find-by-primary-key entity-name="ProductStorePaymentSetting" map="lookupPKMap" use-cache="false" value-field="setting"/>
+        <set-nonpk-fields map="parameters" set-if-null="true" value-field="setting"/>
+        <remove-value do-cache-clear="true" value-field="setting"/>
+    </simple-method>
+    <!-- ProductStore Email Services -->
+
+    <simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_" event-event-message-name="_event_message_" event-request-object-name="request" event-response-code-name="_response_code_" event-response-object-name="response" login-required="true" method-name="createProductStoreEmail" service-error-message-list-name="errorMessageList" service-error-message-map-name="errorMessageMap" service-error-message-name="errorMessage" service-response-message-name="responseMessage" service-success-message-list-name="successMessageList" service-success-message-name="successMessage" short-description="Create Product Store Email Setting" use-transaction="true">
+        <check-permission action="_CREATE" error-list-name="error_list" permission="CATALOG">
+            <fail-message message="Security Error: to run createProductStoreEmail you must have the CATALOG_CREATE or CATALOG_ADMIN permission"/>
+        </check-permission>
+        <check-errors error-code="error" error-list-name="error_list"/>
+        <make-value entity-name="ProductStoreEmailSetting" value-field="newEntity"/>
+        <set-nonpk-fields map="parameters" set-if-null="true" value-field="newEntity"/>
+        <set-pk-fields map="parameters" set-if-null="true" value-field="newEntity"/>
+        <create-value do-cache-clear="true" or-store="false" value-field="newEntity"/>
+    </simple-method>
+
+    <simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_" event-event-message-name="_event_message_" event-request-object-name="request" event-response-code-name="_response_code_" event-response-object-name="response" login-required="true" method-name="updateProductStoreEmail" service-error-message-list-name="errorMessageList" service-error-message-map-name="errorMessageMap" service-error-message-name="errorMessage" service-response-message-name="responseMessage" service-success-message-list-name="successMessageList" service-success-message-name="successMessage" short-description="Update Product Store Email Setting" use-transaction="true">
+        <check-permission action="_UPDATE" error-list-name="error_list" permission="CATALOG">
+            <fail-message message="Security Error: to run updateProductStoreEmail you must have the CATALOG_UPDATE or CAtALOG_ADMIN permission"/>
+        </check-permission>
+        <check-errors error-code="error" error-list-name="error_list"/>
+        <make-value entity-name="ProductStoreEmailSetting" value-field="lookupKeyValue"/>
+        <set-pk-fields map="parameters" set-if-null="true" value-field="lookupKeyValue"/>
+        <find-by-primary-key entity-name="ProductStoreEmailSetting" map="lookupKeyValue" use-cache="false" value-field="lookedUpValue"/>
+        <set-nonpk-fields map="parameters" set-if-null="true" value-field="lookedUpValue"/>
+        <store-value do-cache-clear="true" value-field="lookedUpValue"/>
+    </simple-method>
+
+    <simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_" event-event-message-name="_event_message_" event-request-object-name="request" event-response-code-name="_response_code_" event-response-object-name="response" login-required="true" method-name="removeProductStoreEmail" service-error-message-list-name="errorMessageList" service-error-message-map-name="errorMessageMap" service-error-message-name="errorMessage" service-response-message-name="responseMessage" service-success-message-list-name="successMessageList" service-success-message-name="successMessage" short-description="Remove Product Store Email Setting" use-transaction="true">
+        <check-permission action="_DELETE" error-list-name="error_list" permission="CATALOG">
+            <fail-message message="Security Error: to run removeProductStoreEmail you must have the CATALOG_DELETE or CATALOG_ADMIN permission"/>
+        </check-permission>
+        <check-errors error-code="error" error-list-name="error_list"/>
+        <make-value entity-name="ProductStoreEmailSetting" value-field="lookupPKMap"/>
+        <set-pk-fields map="parameters" set-if-null="true" value-field="lookupPKMap"/>
+        <find-by-primary-key entity-name="ProductStoreEmailSetting" map="lookupPKMap" use-cache="false" value-field="lookedUpValue"/>
+        <remove-value do-cache-clear="true" value-field="lookedUpValue"/>
+    </simple-method>
+    <!-- ProductStore Vendor Payment Services -->
+
+    <simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_" event-event-message-name="_event_message_" event-request-object-name="request" event-response-code-name="_response_code_" event-response-object-name="response" login-required="true" method-name="createProductStoreVendorPayment" service-error-message-list-name="errorMessageList" service-error-message-map-name="errorMessageMap" service-error-message-name="errorMessage" service-response-message-name="responseMessage" service-success-message-list-name="successMessageList" service-success-message-name="successMessage" short-description="Create a ProductStoreVendorPayment" use-transaction="true">
+        <check-permission action="_CREATE" error-list-name="error_list" permission="CATALOG">
+            <fail-message message="Security Error: to run createProductStoreVendorPayment you must have the CATALOG_CREATE or CATALOG_ADMIN permission"/>
+        </check-permission>
+        <check-errors error-code="error" error-list-name="error_list"/>
+        <make-value entity-name="ProductStoreVendorPayment" value-field="newEntity"/>
+        <set-pk-fields map="parameters" set-if-null="true" value-field="newEntity"/>
+        <create-value do-cache-clear="true" or-store="false" value-field="newEntity"/>
+    </simple-method>
+
+    <simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_" event-event-message-name="_event_message_" event-request-object-name="request" event-response-code-name="_response_code_" event-response-object-name="response" login-required="true" method-name="deleteProductStoreVendorPayment" service-error-message-list-name="errorMessageList" service-error-message-map-name="errorMessageMap" service-error-message-name="errorMessage" service-response-message-name="responseMessage" service-success-message-list-name="successMessageList" service-success-message-name="successMessage" short-description="Remove the ProductStoreVendorPayment" use-transaction="true">
+        <check-permission action="_DELETE" error-list-name="error_list" permission="CATALOG">
+            <fail-message message="Security Error: to run deleteProductStoreVendorPayment you must have the CATALOG_CREATE or CATALOG_ADMIN permission"/>
+        </check-permission>
+        <check-errors error-code="error" error-list-name="error_list"/>
+        <make-value entity-name="ProductStoreVendorPayment" value-field="lookedUpValue"/>
+        <set-pk-fields map="parameters" set-if-null="true" value-field="lookedUpValue"/>
+        <remove-value do-cache-clear="true" value-field="lookedUpValue"/>
+    </simple-method>
+    <!-- ProductStore Carrier Shipment Services -->
+
+    <simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_" event-event-message-name="_event_message_" event-request-object-name="request" event-response-code-name="_response_code_" event-response-object-name="response" login-required="true" method-name="createProductStoreShipMeth" service-error-message-list-name="errorMessageList" service-error-message-map-name="errorMessageMap" service-error-message-name="errorMessage" service-response-message-name="responseMessage" service-success-message-list-name="successMessageList" service-success-message-name="successMessage" short-description="Create Product Store Carrier Shipment Method" use-transaction="true">
+        <check-permission action="_CREATE" error-list-name="error_list" permission="CATALOG">
+            <fail-message message="Security Error: to run createProductStoreShipMeth you must have the CATALOG_CREATE or CATALOG_ADMIN permission"/>
+        </check-permission>
+        <check-errors error-code="error" error-list-name="error_list"/>
+        <log level="always" message="${parameters}"/>
+        <make-value entity-name="ProductStoreShipmentMeth" value-field="newEntity"/>
+        <set-nonpk-fields map="parameters" set-if-null="true" value-field="newEntity"/>
+        <sequenced-id field="newEntity.productStoreShipMethId" get-long-only="false" sequence-name="ProductStoreShipmentMeth"/>
+        <create-value do-cache-clear="true" or-store="false" value-field="newEntity"/>
+    </simple-method>
+
+    <simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_" event-event-message-name="_event_message_" event-request-object-name="request" event-response-code-name="_response_code_" event-response-object-name="response" login-required="true" method-name="updateProductStoreShipMeth" service-error-message-list-name="errorMessageList" service-error-message-map-name="errorMessageMap" service-error-message-name="errorMessage" service-response-message-name="responseMessage" service-success-message-list-name="successMessageList" service-success-message-name="successMessage" short-description="Update Product Store Carrier Shipment Method" use-transaction="true">
+        <check-permission action="_UPDATE" error-list-name="error_list" permission="CATALOG">
+            <fail-message message="Security Error: to run updateProductStoreShipMeth you must have the CATALOG_UPDATE or CAtALOG_ADMIN permission"/>
+        </check-permission>
+        <check-errors error-code="error" error-list-name="error_list"/>
+        <make-value entity-name="ProductStoreShipmentMeth" value-field="lookupKeyValue"/>
+        <set-pk-fields map="parameters" set-if-null="true" value-field="lookupKeyValue"/>
+        <find-by-primary-key entity-name="ProductStoreShipmentMeth" map="lookupKeyValue" use-cache="false" value-field="lookedUpValue"/>
+        <set-nonpk-fields map="parameters" set-if-null="true" value-field="lookedUpValue"/>
+        <store-value do-cache-clear="true" value-field="lookedUpValue"/>
+    </simple-method>
+
+    <simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_" event-event-message-name="_event_message_" event-request-object-name="request" event-response-code-name="_response_code_" event-response-object-name="response" login-required="true" method-name="removeProductStoreShipMeth" service-error-message-list-name="errorMessageList" service-error-message-map-name="errorMessageMap" service-error-message-name="errorMessage" service-response-message-name="responseMessage" service-success-message-list-name="successMessageList" service-success-message-name="successMessage" short-description="Remove Product Store Carrier Shipment Method" use-transaction="true">
+        <check-permission action="_DELETE" error-list-name="error_list" permission="CATALOG">
+            <fail-message message="Security Error: to run removeProductStoreShipMeth you must have the CATALOG_DELETE or CATALOG_ADMIN permission"/>
+        </check-permission>
+        <check-errors error-code="error" error-list-name="error_list"/>
+        <make-value entity-name="ProductStoreShipmentMeth" value-field="lookupPKMap"/>
+        <set-pk-fields map="parameters" set-if-null="true" value-field="lookupPKMap"/>
+        <find-by-primary-key entity-name="ProductStoreShipmentMeth" map="lookupPKMap" use-cache="false" value-field="lookedUpValue"/>
+        <remove-value do-cache-clear="true" value-field="lookedUpValue"/>
+    </simple-method>
+    <!-- Product Store Role Services -->
+
+    <simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_" event-event-message-name="_event_message_" event-request-object-name="request" event-response-code-name="_response_code_" event-response-object-name="response" login-required="true" method-name="createProductStoreRole" service-error-message-list-name="errorMessageList" service-error-message-map-name="errorMessageMap" service-error-message-name="errorMessage" service-response-message-name="responseMessage" service-success-message-list-name="successMessageList" service-success-message-name="successMessage" short-description="Create ProductStoreRole" use-transaction="true">
+        <check-permission action="_CREATE" error-list-name="error_list" permission="CATALOG">
+            <fail-message message="Security Error: to run createProductStoreRole you must have the CATALOG_CREATE or CATALOG_ADMIN permission"/>
+        </check-permission>
+        <check-errors error-code="error" error-list-name="error_list"/>
+        <make-value entity-name="ProductStoreRole" value-field="newEntity"/>
+        <set-pk-fields map="parameters" set-if-null="true" value-field="newEntity"/>
+        <set-nonpk-fields map="parameters" set-if-null="true" value-field="newEntity"/>
+        <if-empty field="newEntity.fromDate">
+            <now-timestamp field="nowTimestamp"/>
+            <set field="newEntity.fromDate" from-field="nowTimestamp" set-if-empty="true" set-if-null="false"/>
+        </if-empty>
+        <create-value do-cache-clear="true" or-store="false" value-field="newEntity"/>
+    </simple-method>
+
+    <simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_" event-event-message-name="_event_message_" event-request-object-name="request" event-response-code-name="_response_code_" event-response-object-name="response" login-required="true" method-name="updateProductStoreRole" service-error-message-list-name="errorMessageList" service-error-message-map-name="errorMessageMap" service-error-message-name="errorMessage" service-response-message-name="responseMessage" service-success-message-list-name="successMessageList" service-success-message-name="successMessage" short-description="Update a ProductStoreRole" use-transaction="true">
+        <check-permission action="_UPDATE" error-list-name="error_list" permission="CATALOG">
+            <fail-message message="Security Error: to run updateProductStoreRole you must have the CATALOG_UPDATE or CATALOG_ADMIN permission"/>
+        </check-permission>
+        <check-errors error-code="error" error-list-name="error_list"/>
+        <make-value entity-name="ProductStoreRole" value-field="lookupPKMap"/>
+        <set-pk-fields map="parameters" set-if-null="true" value-field="lookupPKMap"/>
+        <find-by-primary-key map="lookupPKMap" use-cache="false" value-field="lookedUpValue"/>
+        <set-nonpk-fields map="parameters" set-if-null="true" value-field="lookedUpValue"/>
+        <store-value do-cache-clear="true" value-field="lookedUpValue"/>
+    </simple-method>
+
+    <simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_" event-event-message-name="_event_message_" event-request-object-name="request" event-response-code-name="_response_code_" event-response-object-name="response" login-required="true" method-name="removeProductStoreRole" service-error-message-list-name="errorMessageList" service-error-message-map-name="errorMessageMap" service-error-message-name="errorMessage" service-response-message-name="responseMessage" service-success-message-list-name="successMessageList" service-success-message-name="successMessage" short-description="Remove ProductStoreRole" use-transaction="true">
+        <check-permission action="_DELETE" error-list-name="error_list" permission="CATALOG">
+            <fail-message message="Security Error: to run removeProductStoreRole you must have the CATALOG_DELETE or CATALOG_ADMIN permission"/>
+        </check-permission>
+        <check-errors error-code="error" error-list-name="error_list"/>
+        <make-value entity-name="ProductStoreRole" value-field="lookupPKMap"/>
+        <set-pk-fields map="parameters" set-if-null="true" value-field="lookupPKMap"/>
+        <find-by-primary-key map="lookupPKMap" use-cache="false" value-field="lookedUpValue"/>
+        <set-nonpk-fields map="parameters" set-if-null="true" value-field="lookedUpValue"/>
+        <if-empty field="lookedUpValue.thruDate">
+            <now-timestamp field="nowTimestamp"/>
+            <set field="lookedUpValue.thruDate" from-field="nowTimestamp" set-if-empty="true" set-if-null="false"/>
+        </if-empty>
+        <store-value do-cache-clear="true" value-field="lookedUpValue"/>
+    </simple-method>
+    <!-- Product Store Keyword Override Services -->
+
+    <simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_" event-event-message-name="_event_message_" event-request-object-name="request" event-response-code-name="_response_code_" event-response-object-name="response" login-required="true" method-name="createProductStoreKeywordOvrd" service-error-message-list-name="errorMessageList" service-error-message-map-name="errorMessageMap" service-error-message-name="errorMessage" service-response-message-name="responseMessage" service-success-message-list-name="successMessageList" service-success-message-name="successMessage" short-description="Create a ProductStoreKeywordOvrd" use-transaction="true">
+        <check-permission action="_CREATE" error-list-name="error_list" permission="CATALOG">
+            <fail-message message="Security Error: to run createProductStoreKeywordOvrd you must have the CATALOG_CREATE or CATALOG_ADMIN permission"/>
+        </check-permission>
+        <check-errors error-code="error" error-list-name="error_list"/>
+        <make-value entity-name="ProductStoreKeywordOvrd" value-field="newEntity"/>
+        <set-pk-fields map="parameters" set-if-null="true" value-field="newEntity"/>
+        <set-nonpk-fields map="parameters" set-if-null="true" value-field="newEntity"/>
+        <if-empty field="newEntity.fromDate">
+            <now-timestamp field="nowTimestamp"/>
+            <set field="newEntity.fromDate" from-field="nowTimestamp" set-if-empty="true" set-if-null="false"/>
+        </if-empty>
+        <!-- make sure the keyword is lower cased -->
+        <call-object-method method-name="toLowerCase" obj-field="newEntity.keyword" ret-field="newEntity.keyword"/>
+        <create-value do-cache-clear="true" or-store="false" value-field="newEntity"/>
+    </simple-method>
+
+    <simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_" event-event-message-name="_event_message_" event-request-object-name="request" event-response-code-name="_response_code_" event-response-object-name="response" login-required="true" method-name="updateProductStoreKeywordOvrd" service-error-message-list-name="errorMessageList" service-error-message-map-name="errorMessageMap" service-error-message-name="errorMessage" service-response-message-name="responseMessage" service-success-message-list-name="successMessageList" service-success-message-name="successMessage" short-description="Update a ProductStoreKeywordOvrd" use-transaction="true">
+        <check-permission action="_UPDATE" error-list-name="error_list" permission="CATALOG">
+            <fail-message message="Security Error: to run updateProductStoreKeywordOvrd you must have the CATALOG_UPDATE or CATALOG_ADMIN permission"/>
+        </check-permission>
+        <check-errors error-code="error" error-list-name="error_list"/>
+        <make-value entity-name="ProductStoreKeywordOvrd" value-field="lookupPKMap"/>
+        <set-pk-fields map="parameters" set-if-null="true" value-field="lookupPKMap"/>
+        <find-by-primary-key map="lookupPKMap" use-cache="false" value-field="lookedUpValue"/>
+        <set-nonpk-fields map="parameters" set-if-null="true" value-field="lookedUpValue"/>
+        <store-value do-cache-clear="true" value-field="lookedUpValue"/>
+    </simple-method>
+
+    <simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_" event-event-message-name="_event_message_" event-request-object-name="request" event-response-code-name="_response_code_" event-response-object-name="response" login-required="true" method-name="deleteProductStoreKeywordOvrd" service-error-message-list-name="errorMessageList" service-error-message-map-name="errorMessageMap" service-error-message-name="errorMessage" service-response-message-name="responseMessage" service-success-message-list-name="successMessageList" service-success-message-name="successMessage" short-description="Delete a ProductStoreKeywordOvrd" use-transaction="true">
+        <check-permission action="_DELETE" error-list-name="error_list" permission="CATALOG">
+            <fail-message message="Security Error: to run deleteProductStoreKeywordOvrd you must have the CATALOG_DELETE or CATALOG_ADMIN permission"/>
+        </check-permission>
+        <check-errors error-code="error" error-list-name="error_list"/>
+        <make-value entity-name="ProductStoreKeywordOvrd" value-field="lookupPKMap"/>
+        <set-pk-fields map="parameters" set-if-null="true" value-field="lookupPKMap"/>
+        <find-by-primary-key map="lookupPKMap" use-cache="false" value-field="lookedUpValue"/>
+        <remove-value do-cache-clear="true" value-field="lookedUpValue"/>
+    </simple-method>
+    <!-- Product Store Survey Appl Services -->
+
+    <simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_" event-event-message-name="_event_message_" event-request-object-name="request" event-response-code-name="_response_code_" event-response-object-name="response" login-required="true" method-name="createProductStoreSurveyAppl" service-error-message-list-name="errorMessageList" service-error-message-map-name="errorMessageMap" service-error-message-name="errorMessage" service-response-message-name="responseMessage" service-success-message-list-name="successMessageList" service-success-message-name="successMessage" short-description="Create ProductStoreSurveyAppl" use-transaction="true">
+        <check-permission action="_CREATE" error-list-name="error_list" permission="CATALOG">
+            <fail-message message="Security Error: to run createProductStoreSurveyAppl you must have the CATALOG_CREATE or CATALOG_ADMIN permission"/>
+        </check-permission>
+        <check-errors error-code="error" error-list-name="error_list"/>
+        <make-value entity-name="ProductStoreSurveyAppl" value-field="newEntity"/>
+        <sequenced-id field="productStoreSurveyId" get-long-only="false" sequence-name="ProductStoreSurveyAppl"/>
+        <set field="newEntity.productStoreSurveyId" from-field="productStoreSurveyId" set-if-empty="true" set-if-null="false"/>
+        <field-to-result field="productStoreSurveyId" result-name="productStoreSurveyId"/>
+        <set-nonpk-fields map="parameters" set-if-null="true" value-field="newEntity"/>
+        <if-empty field="newEntity.fromDate">
+            <now-timestamp field="nowTimestamp"/>
+            <set field="newEntity.fromDate" from-field="nowTimestamp" set-if-empty="true" set-if-null="false"/>
+        </if-empty>
+        <create-value do-cache-clear="true" or-store="false" value-field="newEntity"/>
+    </simple-method>
+
+    <simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_" event-event-message-name="_event_message_" event-request-object-name="request" event-response-code-name="_response_code_" event-response-object-name="response" login-required="true" method-name="removeProductStoreSurveyAppl" service-error-message-list-name="errorMessageList" service-error-message-map-name="errorMessageMap" service-error-message-name="errorMessage" service-response-message-name="responseMessage" service-success-message-list-name="successMessageList" service-success-message-name="successMessage" short-description="Remove ProductStoreSurveyAppl" use-transaction="true">
+        <check-permission action="_DELETE" error-list-name="error_list" permission="CATALOG">
+            <fail-message message="Security Error: to run removeProductStoreSurveyAppl you must have the CATALOG_DELETE or CATALOG_ADMIN permission"/>
+        </check-permission>
+        <check-errors error-code="error" error-list-name="error_list"/>
+        <make-value entity-name="ProductStoreSurveyAppl" value-field="lookupPKMap"/>
+        <set-pk-fields map="parameters" set-if-null="true" value-field="lookupPKMap"/>
+        <find-by-primary-key map="lookupPKMap" use-cache="false" value-field="lookedUpValue"/>
+        <set-nonpk-fields map="parameters" set-if-null="true" value-field="lookedUpValue"/>
+        <if-empty field="lookedUpValue.thruDate">
+            <now-timestamp field="nowTimestamp"/>
+            <set field="lookedUpValue.thruDate" from-field="nowTimestamp" set-if-empty="true" set-if-null="false"/>
+        </if-empty>
+        <store-value do-cache-clear="true" value-field="lookedUpValue"/>
+    </simple-method>
+    <!-- Product Store FinAccount Settings -->
+
+    <simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_" event-event-message-name="_event_message_" event-request-object-name="request" event-response-code-name="_response_code_" event-response-object-name="response" login-required="true" method-name="createProductStoreFinActSetting" service-error-message-list-name="errorMessageList" service-error-message-map-name="errorMessageMap" service-error-message-name="errorMessage" service-response-message-name="responseMessage" service-success-message-list-name="successMessageList" service-success-message-name="successMessage" short-description="Create a ProductStoreFinActSetting" use-transaction="true">
+        <check-permission action="_CREATE" error-list-name="error_list" permission="CATALOG">
+            <fail-message message="Security Error: to run createProductStoreFinActSetting you must have the CATALOG_CREATE or CATALOG_ADMIN permission"/>
+        </check-permission>
+        <check-errors error-code="error" error-list-name="error_list"/>
+        <make-value entity-name="ProductStoreFinActSetting" value-field="finAcctSetting"/>
+        <set-pk-fields map="parameters" set-if-null="true" value-field="finAcctSetting"/>
+        <set-nonpk-fields map="parameters" set-if-null="true" value-field="finAcctSetting"/>
+        <create-value do-cache-clear="true" or-store="false" value-field="finAcctSetting"/>
+    </simple-method>
+
+    <simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_" event-event-message-name="_event_message_" event-request-object-name="request" event-response-code-name="_response_code_" event-response-object-name="response" login-required="true" method-name="updateProductStoreFinActSetting" service-error-message-list-name="errorMessageList" service-error-message-map-name="errorMessageMap" service-error-message-name="errorMessage" service-response-message-name="responseMessage" service-success-message-list-name="successMessageList" service-success-message-name="successMessage" short-description="Update a ProductStoreFinActSetting" use-transaction="true">
+        <check-permission action="_UPDATE" error-list-name="error_list" permission="CATALOG">
+            <fail-message message="Security Error: to run updateProductStoreFinActSetting you must have the CATALOG_UPDATE or CATALOG_ADMIN permission"/>
+        </check-permission>
+        <check-errors error-code="error" error-list-name="error_list"/>
+        <make-value entity-name="ProductStoreFinActSetting" value-field="lookupPk"/>
+        <set-pk-fields map="parameters" set-if-null="true" value-field="lookupPk"/>
+        <find-by-primary-key map="lookupPk" use-cache="false" value-field="finAccountSetting"/>
+        <set-nonpk-fields map="parameters" set-if-null="true" value-field="finAccountSetting"/>
+        <store-value do-cache-clear="true" value-field="finAccountSetting"/>
+    </simple-method>
+
+    <simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_" event-event-message-name="_event_message_" event-request-object-name="request" event-response-code-name="_response_code_" event-response-object-name="response" login-required="true" method-name="removeProductStoreFinActSetting" service-error-message-list-name="errorMessageList" service-error-message-map-name="errorMessageMap" service-error-message-name="errorMessage" service-response-message-name="responseMessage" service-success-message-list-name="successMessageList" service-success-message-name="successMessage" short-description="Remove a ProductStoreFinActSetting" use-transaction="true">
+        <check-permission action="_DELETE" error-list-name="error_list" permission="CATALOG">
+            <fail-message message="Security Error: to run removeProductStoreFinActSetting you must have the CATALOG_DELETE or CATALOG_ADMIN permission"/>
+        </check-permission>
+        <check-errors error-code="error" error-list-name="error_list"/>
+        <make-value entity-name="ProductStoreFinActSetting" value-field="lookupPk"/>
+        <set-pk-fields map="parameters" set-if-null="true" value-field="lookupPk"/>
+        <find-by-primary-key map="lookupPk" use-cache="false" value-field="finAccountSetting"/>
+        <remove-value do-cache-clear="true" value-field="finAccountSetting"/>
+    </simple-method>
+    <!-- Store Inventory Services -->
+
+    <simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_" event-event-message-name="_event_message_" event-request-object-name="request" event-response-code-name="_response_code_" event-response-object-name="response" login-required="true"
+                   method-name="reserveStoreInventory" service-error-message-list-name="errorMessageList" service-error-message-map-name="errorMessageMap" service-error-message-name="errorMessage" service-response-message-name="responseMessage" service-success-message-list-name="successMessageList" service-success-message-name="successMessage" short-description="Reserve Store Inventory" use-transaction="true">
+        <entity-one auto-field-map="true" entity-name="Product" use-cache="true" value-field="product"/>
+        <entity-one auto-field-map="true" entity-name="ProductStore" use-cache="true" value-field="productStore"/>
+        <if-empty field="productStore">
+            <add-error error-list-name="error_list">
+                <fail-message message="No ProductStore found with id ${parameters.productStoreId}, not reserving inventory."/>
+            </add-error>
+            <check-errors error-code="error" error-list-name="error_list"/>
+        </if-empty>
+        <!-- if prodCatalog is set to not reserve inventory, break here -->
+        <if-compare field="productStore.reserveInventory" operator="equals" type="String" value="N">
+            <!-- note: if not set, defaults to yes, reserve inventory -->
+            <log level="verbose" message="ProductStore with id ${productStore.productStoreId}, is set to NOT reserve inventory, not reserving inventory"/>
+            <field-to-result field="parameters.quantity" result-name="quantityNotReserved"/>
+            <return response-code="success"/>
+        </if-compare>
+        <call-simple-method method-name="isStoreInventoryRequiredInline"/>
+        <set field="facilityId" from-field="parameters.facilityId" set-if-empty="true" set-if-null="false"/>
+        <if-empty field="facilityId">
+            <if-compare field="productStore.oneInventoryFacility" operator="equals" type="String" value="Y">
+                <if-empty field="productStore.inventoryFacilityId">
+                    <add-error error-list-name="error_list">
+                        <fail-message message="ProductStore with id ${productStoreId} has Y for oneInventoryFacility but inventoryFacilityId is empty, not reserving inventory."/>
+                    </add-error>
+                    <check-errors error-code="error" error-list-name="error_list"/>
+                </if-empty>
+                <set-service-fields map="parameters" service-name="reserveProductInventoryByFacility" to-map="callServiceMap"/>
+                <set field="callServiceMap.facilityId" from-field="productStore.inventoryFacilityId" set-if-empty="true" set-if-null="false"/>
+                <set field="callServiceMap.requireInventory" from-field="requireInventory" set-if-empty="true" set-if-null="false"/>
+                <set field="callServiceMap.reserveOrderEnumId" from-field="productStore.reserveOrderEnumId" set-if-empty="true" set-if-null="false"/>
+                <call-service break-on-error="true" error-code="error" in-map-name="callServiceMap" include-user-login="true" require-new-transaction="false" service-name="reserveProductInventoryByFacility" success-code="success">
+                    <result-to-field result-name="quantityNotReserved"/>
+                </call-service>
+                <log level="info" message=" There is no quantity to be reserved. ${quantityNotReserved}"/>
+                <if-compare field="quantityNotReserved" operator="equals" type="BigDecimal" value="0">
+                    <log level="info" message="Inventory IS reserved in facility with id [${productStore.inventoryFacilityId}] for product id [${parameters.productId}]; desired quantity was ${parameters.quantity}"/>
+                    <else>
+                        <log level="info" message="There is insufficient inventory available in facility with id [${productStore.inventoryFacilityId}] for product id [${parameters.productId}]; desired quantity is ${parameters.quantity}, amount could not reserve is ${quantityNotReserved}"/>
+                    </else>
+                </if-compare>
+                <else>
+                    <entity-and entity-name="ProductStoreFacility" filter-by-date="false" list="productStoreFacilities" use-cache="true">
+                        <field-map field-name="productStoreId" from-field="productStore.productStoreId"/>
+                        <order-by field-name="sequenceNum"/>
+                    </entity-and>
+                    <iterate entry="productStoreFacility" list="productStoreFacilities">
+                        <!-- in this case quantityNotReserved will always be empty until it finds a facility it can totally reserve from, then it will be 0.0 and we are done -->
+                        <if-empty field="storeFound">
+                            <!-- TODO: must entire quantity be available in one location? -->
+                            <!-- Right now the answer is yes, it only succeeds if one facility has sufficient inventory for the order. -->
+                            <set field="callServiceMap.productId" from-field="parameters.productId" set-if-empty="true" set-if-null="false"/>
+                            <set field="callServiceMap.facilityId" from-field="productStoreFacility.facilityId" set-if-empty="true" set-if-null="false"/>
+                            <log level="info" message="ProductStoreService:In productStoreFacilities loop: [${parameters.facilityId}]"/>
+                            <call-service break-on-error="true" error-code="error" in-map-name="callServiceMap" include-user-login="true" require-new-transaction="false" service-name="getInventoryAvailableByFacility" success-code="success">
+                                <result-to-field result-name="availableToPromiseTotal"/>
+                            </call-service>
+                            <clear-field field="callServiceMap"/>
+                            <if-compare-field field="availableToPromiseTotal" operator="greater-equals" to-field="parameters.quantity" type="BigDecimal">
+                                <set field="storeFound" from-field="productStoreFacility" set-if-empty="true" set-if-null="false"/>
+                            </if-compare-field>
+                            <clear-field field="availableToPromiseTotal"/>
+                        </if-empty>
+                    </iterate>
+                    <!-- didn't find anything? Take the first facility from list -->
+                    <if-empty field="storeFound">
+                        <first-from-list entry="storeFound" list="productStoreFacilities"/>
+                    </if-empty>
+                    <set default-value="" field="facilityId" from-field="storeFound.facilityId" set-if-empty="true" set-if-null="false"/>
+                    <set-service-fields map="parameters" service-name="reserveProductInventoryByFacility" to-map="callServiceMap"/>
+                    <set field="callServiceMap.facilityId" from-field="facilityId" set-if-empty="true" set-if-null="false"/>
+                    <set field="callServiceMap.requireInventory" from-field="requireInventory" set-if-empty="true" set-if-null="false"/>
+                    <set field="callServiceMap.reserveOrderEnumId" from-field="productStore.reserveOrderEnumId" set-if-empty="true" set-if-null="false"/>
+                    <call-service break-on-error="true" error-code="error" in-map-name="callServiceMap" include-user-login="true" require-new-transaction="false"
+                                  service-name="reserveProductInventoryByFacility" success-code="success">
+                        <result-to-field result-name="quantityNotReserved"/>
+                    </call-service>
+                    <log level="info" message="Inventory IS reserved in facility with id [${storeFound.facilityId}] for product id [${parameters.productId}]; desired quantity was ${parameters.quantity}"/>
+                </else>
+            </if-compare>
+            <else>
+                <entity-and entity-name="ProductStoreFacility" filter-by-date="false" list="productStoreFacilities" use-cache="true">
+                    <field-map field-name="productStoreId" from-field="productStore.productStoreId"/>
+                    <field-map field-name="facilityId" from-field="facilityId"/>
+                    <order-by field-name="sequenceNum"/>
+                </entity-and>
+                <iterate entry="productStoreFacility" list="productStoreFacilities">
+                    <!-- Search Product Store Facilities to insure the facility passed in is associated to the Product Store passed in -->
+                    <set field="facilityFound" from-field="productStoreFacility" set-if-empty="true" set-if-null="false"/>
+                    <log level="info" message="ProductStoreService:Facility Found : [${facilityFound}]"/>
+                </iterate>
+                <if-empty field="facilityFound">
+                    <add-error error-list-name="error_list">
+                        <fail-message message="Facility with id ${parameters.facilityId} is not associated to ProductStore with id ${parameters.productStoreId}, not reserving inventory."/>
+                    </add-error>
+                    <check-errors error-code="error" error-list-name="error_list"/>
+                </if-empty>
+                <set-service-fields map="parameters" service-name="reserveProductInventoryByFacility" to-map="callServiceMap"/>
+                <set field="callServiceMap.facilityId" from-field="facilityId" set-if-empty="true" set-if-null="false"/>
+                <set field="callServiceMap.requireInventory" from-field="requireInventory" set-if-empty="true" set-if-null="false"/>
+                <set field="callServiceMap.reserveOrderEnumId" from-field="productStore.reserveOrderEnumId" set-if-empty="true" set-if-null="false"/>
+                <call-service break-on-error="true" error-code="error" in-map-name="callServiceMap" include-user-login="true" require-new-transaction="false" service-name="reserveProductInventoryByFacility" success-code="success">
+                    <result-to-field result-name="quantityNotReserved"/>
+                </call-service>
+                <if-compare field="quantityNotReserved" operator="equals" type="BigDecimal" value="0">
+                    <log level="info" message="Inventory IS reserved in facility with id [${facilityId}] for product id [${parameters.productId}]; desired quantity was ${parameters.quantity}"/>
+                    <else>
+                        <log level="info" message="There is insufficient inventory available in facility with id [${facilityId}] for product id [${parameters.productId}]; desired quantity is ${parameters.quantity}, amount could not reserve is ${quantityNotReserved}"/>
+                    </else>
+                </if-compare>
+            </else>
+        </if-empty>
+        <field-to-result field="quantityNotReserved"/>
+    </simple-method>
+
+    <simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_" event-event-message-name="_event_message_" event-request-object-name="request" event-response-code-name="_response_code_" event-response-object-name="response" login-required="false" method-name="isStoreInventoryRequired" service-error-message-list-name="errorMessageList" service-error-message-map-name="errorMessageMap" service-error-message-name="errorMessage" service-response-message-name="responseMessage" service-success-message-list-name="successMessageList" service-success-message-name="successMessage" short-description="Is Store Inventory Required" use-transaction="true">
+        <if-empty field="parameters.productStore">
+            <entity-one auto-field-map="true" entity-name="ProductStore" use-cache="true" value-field="productStore"/>
+            <else>
+                <set field="productStore" from-field="parameters.productStore" set-if-empty="true" set-if-null="false"/>
+            </else>
+        </if-empty>
+        <if-empty field="parameters.product">
+            <entity-one auto-field-map="true" entity-name="Product" use-cache="true" value-field="product"/>
+            <else>
+                <set field="product" from-field="parameters.product" set-if-empty="true" set-if-null="false"/>
+            </else>
+        </if-empty>
+        <call-simple-method method-name="isStoreInventoryRequiredInline"/>
+        <field-to-result field="requireInventory"/>
+    </simple-method>
+
+    <simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_" event-event-message-name="_event_message_" event-request-object-name="request" event-response-code-name="_response_code_" event-response-object-name="response" login-required="false" method-name="isStoreInventoryRequiredInline" service-error-message-list-name="errorMessageList" service-error-message-map-name="errorMessageMap" service-error-message-name="errorMessage" service-response-message-name="responseMessage" service-success-message-list-name="successMessageList" service-success-message-name="successMessage" short-description="Is Store Inventory Required" use-transaction="true">
+        <set field="requireInventory" from-field="product.requireInventory" set-if-empty="true" set-if-null="false"/>
+        <if-empty field="requireInventory">
+            <set field="requireInventory" from-field="productStore.requireInventory" set-if-empty="true" set-if-null="false"/>
+        </if-empty>
+        <if-empty field="requireInventory">
+            <set field="requireInventory" set-if-empty="true" set-if-null="false" value="Y"/>
+        </if-empty>
+    </simple-method>
+
+    <simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_" event-event-message-name="_event_message_" event-request-object-name="request" event-response-code-name="_response_code_" event-response-object-name="response" login-required="false"
+                   method-name="isStoreInventoryAvailable" service-error-message-list-name="errorMessageList" service-error-message-map-name="errorMessageMap" service-error-message-name="errorMessage" service-response-message-name="responseMessage" service-success-message-list-name="successMessageList" service-success-message-name="successMessage" short-description="Is Store Inventory Available" use-transaction="true">
+        <if-empty field="parameters.productStore">
+            <entity-one auto-field-map="true" entity-name="ProductStore" use-cache="true" value-field="productStore"/>
+            <else>
+                <set field="productStore" from-field="parameters.productStore" set-if-empty="true" set-if-null="false"/>
+            </else>
+        </if-empty>
+        <if-empty field="parameters.product">
+            <entity-one auto-field-map="true" entity-name="Product" use-cache="true" value-field="product"/>
+            <else>
+                <set field="product" from-field="parameters.product" set-if-empty="true" set-if-null="false"/>
+            </else>
+        </if-empty>
+        <!-- If the given product is a SERVICE or DIGITAL_GOOD -->
+        <if>
+            <condition>
+                <or>
+                    <if-compare field="product.productTypeId" operator="equals" type="String" value="SERVICE"/>
+                    <if-compare field="product.productTypeId" operator="equals" type="String" value="DIGITAL_GOOD"/>
+                </or>
+            </condition>
+            <then>
+                <log level="verbose" message="Product with id ${product.productId}, is of type ${product.productTypeId}, returning true for inventory available check"/>
+                <set field="available" set-if-empty="true" set-if-null="false" value="Y"/>
+                <field-to-result field="available"/>
+                <return response-code="success"/>
+            </then>
+        </if>
+        <!-- TODO: what to do with ASSET_USAGE? Only done elsewhere? Would need date/time range info to check availability -->
+        <!-- if prodCatalog is set to not check inventory break here -->
+        <if-compare field="productStore.checkInventory" operator="equals" type="String" value="N">
+            <!-- note: if not set, defaults to yes, check inventory -->
+            <log level="verbose" message="ProductStore with id ${productStore.productStoreId}, is set to NOT check inventory, returning true for inventory available check"/>
+            <set field="available" set-if-empty="true" set-if-null="false" value="Y"/>
+            <field-to-result field="available"/>
+            <return response-code="success"/>
+        </if-compare>
+        <if-compare field="productStore.oneInventoryFacility" operator="equals" type="String" value="Y">
+            <if-empty field="productStore.inventoryFacilityId">
+                <add-error error-list-name="error_list">
+                    <fail-message message="ProductStore with id ${productStoreId} has Y for oneInventoryFacility but inventoryFacilityId is empty, not checking available inventory."/>
+                </add-error>
+                <check-errors error-code="error" error-list-name="error_list"/>
+            </if-empty>
+            <set field="callServiceMap.productId" from-field="parameters.productId" set-if-empty="true" set-if-null="false"/>
+            <set field="callServiceMap.facilityId" from-field="productStore.inventoryFacilityId" set-if-empty="true" set-if-null="false"/>
+            <set field="isMarketingPkg" from-field="groovy: org.ofbiz.common.CommonWorkers.hasParentType(delegator, 'ProductType', 'productTypeId', product.productTypeId, 'parentTypeId', 'MARKETING_PKG')" set-if-empty="true" set-if-null="false" type="Boolean"/>
+            <if-compare field="isMarketingPkg" operator="equals" type="Boolean" value="true">
+                <call-service break-on-error="true" error-code="error" in-map-name="callServiceMap" include-user-login="true" require-new-transaction="false" service-name="getMktgPackagesAvailable" success-code="success">
+                    <result-to-field result-name="availableToPromiseTotal"/>
+                </call-service>
+                <else>
+                    <call-service break-on-error="true" error-code="error" in-map-name="callServiceMap"
+                                  include-user-login="true" require-new-transaction="false" service-name="getInventoryAvailableByFacility" success-code="success">
+                        <result-to-field result-name="availableToPromiseTotal"/>
+                    </call-service>
+                </else>
+            </if-compare>
+            <log level="info" message=" Get Inventory Available By Facility ${availableToPromiseTotal}"/>
+            <!-- check to see if we got enough back... -->
+            <if-compare-field field="availableToPromiseTotal" operator="greater-equals" to-field="parameters.quantity" type="BigDecimal">
+                <set field="available" set-if-empty="true" set-if-null="false" value="Y"/>
+                <log level="info" message="Inventory IS available in facility with id ${productStore.inventoryFacilityId} for product id ${parameters.productId}; desired quantity is ${parameters.quantity}, available quantity is ${availableToPromiseTotal}"/>
+                <else>
+                    <set field="available" set-if-empty="true" set-if-null="false" value="N"/>
+                    <log level="info" message="Returning false because there is insufficient inventory available in facility with id ${productStore.inventoryFacilityId} for product id ${parameters.productId}; desired quantity is ${parameters.quantity}, available quantity is ${availableToPromiseTotal}"/>
+                </else>
+            </if-compare-field>
+
+            <else>
+                <entity-and entity-name="ProductStoreFacility" filter-by-date="false" list="productStoreFacilities" use-cache="true">
+                    <field-map field-name="productStoreId" from-field="productStore.productStoreId"/>
+                    <order-by field-name="sequenceNum"/>
+                </entity-and>
+                <set field="available" set-if-empty="true" set-if-null="false" value="N"/>
+                <iterate entry="productStoreFacility" list="productStoreFacilities">
+                    <if-compare field="available" operator="equals" type="String" value="N">
+                        <!-- TODO: must entire quantity be available in one location? -->
+                        <!-- Right now the answer is yes, it only succeeds if one facility has sufficient inventory for the order. -->
+                        <set field="callServiceMap.productId" from-field="parameters.productId" set-if-empty="true" set-if-null="false"/>
+                        <set field="callServiceMap.facilityId" from-field="productStoreFacility.facilityId" set-if-empty="true" set-if-null="false"/>
+                        <set field="isMarketingPkg" from-field="groovy: org.ofbiz.common.CommonWorkers.hasParentType(delegator, 'ProductType', 'productTypeId', product.productTypeId, 'parentTypeId', 'MARKETING_PKG')" set-if-empty="true" set-if-null="false" type="Boolean"/>
+                        <if-compare field="isMarketingPkg" operator="equals" type="Boolean" value="true">
+                            <call-service break-on-error="true" error-code="error" in-map-name="callServiceMap" include-user-login="true" require-new-transaction="false" service-name="getMktgPackagesAvailable" success-code="success">
+                                <result-to-field result-name="availableToPromiseTotal"/>
+                            </call-service>
+                            <else>
+                                <call-service break-on-error="true" error-code="error" in-map-name="callServiceMap" include-user-login="true" require-new-transaction="false" service-name="getInventoryAvailableByFacility" success-code="success">
+                                    <result-to-field result-name="availableToPromiseTotal"/>
+                                </call-service>
+                            </else>
+                        </if-compare>
+                        <clear-field field="callServiceMap"/>
+                        <if-compare-field field="availableToPromiseTotal" operator="greater-equals" to-field="parameters.quantity" type="BigDecimal">
+                            <set field="available" set-if-empty="true" set-if-null="false" value="Y"/>
+                            <log level="info" message="Inventory IS available in facility with id ${productStoreFacility.facilityId} for product id ${parameters.productId}; desired quantity is ${parameters.quantity}, available quantity is ${availableToPromiseTotal}"/>
+                        </if-compare-field>
+                        <clear-field field="availableToPromiseTotal"/>
+                    </if-compare>
+                </iterate>
+            </else>
+        </if-compare>
+        <field-to-result field="available"/>
+        <!--
+            /* TODO: must entire quantity be available in one location?
+             *  Right now the answer is yes, it only succeeds if one facility has sufficient inventory for the order.
+             *  When we get into splitting options it is much more complicated. There are various options like:
+             *  - allow split between facilities
+             *  - in split order facilities by highest quantities
+             *  - in split order facilities by lowest quantities
+             *  - in split order facilities by order in database, ie sequence numbers on facility-store join table
+             *  - in split order facilities by nearest locations to customer (not an easy one there...)
+             */
+
+            // loop through all facilities attached to this catalog and check for individual or cumulative sufficient inventory
+        -->
+    </simple-method>
+
+    <simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_" event-event-message-name="_event_message_"
+                   event-request-object-name="request" event-response-code-name="_response_code_" event-response-object-name="response" login-required="false"
+                   method-name="isStoreInventoryAvailableOrNotRequired" service-error-message-list-name="errorMessageList" service-error-message-map-name="errorMessageMap" service-error-message-name="errorMessage" service-response-message-name="responseMessage" service-success-message-list-name="successMessageList" service-success-message-name="successMessage" short-description="Is Store Inventory Available or Not Required" use-transaction="true">
+        <if-empty field="parameters.productStore">
+            <entity-one auto-field-map="true" entity-name="ProductStore" use-cache="true" value-field="productStore"/>
+            <else>
+                <set field="productStore" from-field="parameters.productStore" set-if-empty="true" set-if-null="false"/>
+            </else>
+        </if-empty>
+        <if-empty field="parameters.product">
+            <entity-one auto-field-map="true" entity-name="Product" use-cache="true" value-field="product"/>
+            <else>
+                <set field="product" from-field="parameters.product" set-if-empty="true" set-if-null="false"/>
+            </else>
+        </if-empty>
+        <call-simple-method method-name="isStoreInventoryRequiredInline"/>
+        <if-compare field="requireInventory" operator="not-equals" type="String" value="Y">
+            <set field="availableOrNotRequired" set-if-empty="true" set-if-null="false" value="Y"/>
+            <field-to-result field="availableOrNotRequired"/>
+            <else>
+                <set-service-fields map="parameters" service-name="isStoreInventoryAvailable" to-map="callServiceMap"/>
+                <call-service break-on-error="true" error-code="error" in-map-name="callServiceMap" include-user-login="true" require-new-transaction="false"
+                              service-name="isStoreInventoryAvailable" success-code="success">
+                    <result-to-result result-name="available" service-result-name="availableOrNotRequired"/>
+                </call-service>
+            </else>
+        </if-compare>
+    </simple-method>
+    <!-- ProductStore Vendor Shipment Services -->
+
+    <simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_" event-event-message-name="_event_message_" event-request-object-name="request" event-response-code-name="_response_code_" event-response-object-name="response" login-required="true" method-name="createProductStoreVendorShipment" service-error-message-list-name="errorMessageList" service-error-message-map-name="errorMessageMap" service-error-message-name="errorMessage" service-response-message-name="responseMessage" service-success-message-list-name="successMessageList" service-success-message-name="successMessage" short-description="Create a ProductStoreVendorShipment" use-transaction="true">
+        <check-permission action="_CREATE" error-list-name="error_list" permission="CATALOG">
+            <fail-message message="Security Error: to run createProductStoreVendorShipment you must have the CATALOG_CREATE or CATALOG_ADMIN permission"/>
+        </check-permission>
+        <check-errors error-code="error" error-list-name="error_list"/>
+        <make-value entity-name="ProductStoreVendorShipment" value-field="newEntity"/>
+        <set-pk-fields map="parameters" set-if-null="true" value-field="newEntity"/>
+        <create-value do-cache-clear="true" or-store="false" value-field="newEntity"/>
+    </simple-method>
+
+    <simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_" event-event-message-name="_event_message_" event-request-object-name="request" event-response-code-name="_response_code_" event-response-object-name="response" login-required="true" method-name="deleteProductStoreVendorShipment" service-error-message-list-name="errorMessageList" service-error-message-map-name="errorMessageMap" service-error-message-name="errorMessage" service-response-message-name="responseMessage" service-success-message-list-name="successMessageList" service-success-message-name="successMessage" short-description="Remove the ProductStoreVendorShipment" use-transaction="true">
+        <check-permission action="_DELETE" error-list-name="error_list" permission="CATALOG">
+            <fail-message message="Security Error: to run deleteProductStoreVendorShipment you must have the CATALOG_CREATE or CATALOG_ADMIN permission"/>
+        </check-permission>
+        <check-errors error-code="error" error-list-name="error_list"/>
+        <make-value entity-name="ProductStoreVendorShipment" value-field="lookedUpValue"/>
+        <set-pk-fields map="parameters" set-if-null="true" value-field="lookedUpValue"/>
+        <remove-value do-cache-clear="true" value-field="lookedUpValue"/>
+    </simple-method>
+</simple-methods>

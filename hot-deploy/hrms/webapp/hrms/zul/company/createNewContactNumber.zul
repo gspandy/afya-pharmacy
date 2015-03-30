@@ -1,0 +1,104 @@
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<zk>
+	<zscript>
+	import com.ndz.controller.CompanyInformation;
+</zscript>
+	<window id="createNewContactNumber" width="40%" height="40%"
+		position="center" closable="true" border="normal"
+		contentStyle="overflow:auto">
+		<caption label="${c:l('HRMS_CREATEPHONENUMBER') }" />
+		<separator height="15px" />
+		<div align="left">
+			<separator />
+			<textbox visible="false" id="partyId" value="Company" />
+			<textbox visible="false" id="contactMechTypeId"
+				value="TELECOM_NUMBER" />
+			<hbox visible="true">
+				<div width="150px" align="right">
+					<label value="${c:l('FormFieldTitle_phoneNumberType') }:" />
+					<label value="*" style="color:red" />
+				</div>
+				<listbox id="contactMechPurposeTypeId" mold="select"
+					onSelect="Clients.closeErrorBox(self);">
+					<listitem value="" />
+					<listitem label="${c:l('ListBox_MainHomePhoneNumber') }"
+						value="PHONE_HOME" id="PHONE_HOME"/>
+					<listitem label="${c:l('ListBox_MainMobilePhoneNumber') }"
+						value="PHONE_MOBILE" id="PHONE_MOBILE"/>
+					<listitem label="${c:l('ListBox_MainWorkPhoneNumber') }"
+						value="PHONE_WORK" id="PHONE_WORK"/>
+					<listitem label="${c:l('ListBox_PrimaryPhoneNumber') }"
+						value="PRIMARY_PHONE" id="PRIMARY_PHONE"/>
+				</listbox>
+				<zscript><![CDATA[
+				List partyContactMechPurpose = com.ndz.zkoss.util.HrmsInfrastructure.getDelegator().findByAnd("PartyContactMechPurpose",org.ofbiz.base.util.UtilMisc.toMap("partyId",partyId.getValue()));//org.ofbiz.entity.GenericDelegator.getGenericDelegator("default").findByAnd("PartyContactMechPurpose",org.ofbiz.base.util.UtilMisc.toMap("partyId",partyId.getValue()));
+				for(org.ofbiz.entity.GenericValue partyContactMechPurposeGV : partyContactMechPurpose){
+					Component comp = contactMechPurposeTypeId.getFellowIfAny(partyContactMechPurposeGV.getString("contactMechPurposeTypeId"));
+					if(comp != null){
+						Listitem li = (Listitem) (comp);
+						li.detach();
+					}
+				}
+			]]>
+			</zscript>
+			</hbox>
+			<separator />
+			<hbox>
+				<div width="150px" align="right">
+					<label value="${c:l('FormFieldTitle_CountryCode') }:" />
+				</div>
+				<textbox id="countryCode" maxlength="8" />
+			</hbox>
+			<separator />
+			<hbox>
+				<div width="150px" align="right">
+					<label value="${c:l('FormFieldTitle_AreaCode') }:" />
+				</div>
+				<textbox id="areaCode" maxlength="10" />
+			</hbox>
+			<separator />
+			<hbox>
+				<div width="150px" align="right">
+					<label value="${c:l('FormFieldTitle_PhoneNumber') }:" />
+					<label value="*" style="color:red" />
+				</div>
+				<textbox id="contactNumber" maxlength="15"
+					constraint="no empty:Phone Number Required" />
+			</hbox>
+			<separator />
+			<div style="margin-left:155px">
+				<hbox>
+					<button label="${c:l('btnSave') }">
+						<attribute name="onClick">
+	if (com.ndz.zkoss.HrmsUtil.listboxValidation(contactMechPurposeTypeId)) {
+		throw new WrongValueException(contactMechPurposeTypeId, "Phone Number Type Required");
+	}
+	String strcountryCode = countryCode.getValue();
+	if (!(org.ofbiz.base.util.UtilValidate.isInteger(strcountryCode))) {
+		throw new WrongValueException(countryCode, "Country Code Must Be Numeric");
+	}
+	String strAreaCode = areaCode.getValue();
+	if (!(org.ofbiz.base.util.UtilValidate.isInteger(strAreaCode))) {
+		throw new WrongValueException(areaCode, "Area Code Must Be Numeric");
+	}
+	String str = contactNumber.getValue();
+	if (!(org.ofbiz.base.util.UtilValidate.isInteger(str))) {
+		throw new WrongValueException(contactNumber, "Contact Number Must Be Numeric");
+	}
+
+	com.ndz.controller.CompanyInformation.createNewPhoneNumber(event);
+	Events.postEvent("onClick", createNewContactNumber.getPage().getFellow("companyWindow").getFellow("appendGroupbox").getFellow("personPostalAddressWindow")
+			.getFellow("phoneNumberTab"), null);
+	createNewContactNumber.detach();
+</attribute>
+					</button>
+
+					<button label="${c:l('ButtonCancel') }"
+						onClick="createNewContactNumber.detach();">
+					</button>
+				</hbox>
+			</div>
+		</div>
+
+	</window>
+</zk>

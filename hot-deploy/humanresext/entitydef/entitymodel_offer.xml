@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<entitymodel xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="http://www.ofbiz.org/dtds/entitymodel.xsd">
+  <!-- ========================================================= -->
+  <!-- ======================== Defaults ======================= -->
+  <!-- ========================================================= -->
+    <title>Entity of an Open For Business Project Component</title>
+    <description>Prospect Offer Entity Model</description>
+    <copyright>NthDimenzion Solutions Pvt Limited</copyright>
+    <author>Pankaj</author>
+    <version>1.0</version>
+
+    <entity entity-name="OfferHead" package-name="org.ofbiz.offer" title="Prospect offer Entity">
+      <field name="offerId" type="id-ne"></field>
+      <field name="partyId" type="id-ne"></field>
+      <field name="applicationId" type="id-ne"></field>
+      <field name="mgrPositionId" type="id"></field>
+      <field name="offerDate" type="date"></field>
+      <field name="joiningDate" type="date"></field>
+      <field name="actualJoiningDate" type="date"></field>
+      <field name="requsitionId" type="id-ne"></field>
+      <field name="expatriatesOfferLetter" type="blob"></field>
+      <field name="expatriatesOfferLetterFileName" type="description"/>
+      <prim-key field="offerId" />
+      <relation rel-entity-name="Party" type="one" fk-name="FK_OH_PARTY">
+    		<key-map field-name="partyId"/>
+      </relation>
+      <relation rel-entity-name="EmploymentApp" type="one" fk-name="FK_OH_APP">
+    		<key-map field-name="applicationId"/>
+      </relation>
+      <relation rel-entity-name="EmployeeRequisition" type="many" fk-name="FK_OH_ER">
+      	<key-map field-name="requisitionId"/>
+      </relation>
+   	</entity>    
+    
+   	<entity entity-name="OfferStatus" package-name="org.ofbiz.offer" title="Prospect Offer Status Entity">
+      <field name="osId" type="id-ne"></field>
+      <field name="offerId" type="id-ne"></field>
+      <field name="statusId" type="id-ne"></field>
+      <field name="hr_comment" type="description"></field>
+      <field name="requisitionId" type="id-ne"></field>
+      <field name="updatedBy" type="id-ne"></field>
+      <prim-key field="osId"/>
+  	  <relation rel-entity-name="OfferHead" type="one" fk-name="FK_OS_OH">
+    		<key-map field-name="offerId"/>
+      </relation>
+      <relation rel-entity-name="StatusItem" type="one" fk-name="FK_OS_ST">
+    		<key-map field-name="statusId"/>
+      </relation>
+   	</entity>
+    
+    <entity entity-name="OfferSal" package-name="org.ofbiz.offer">
+		<description>Entity to hold the Prospect CTC</description>
+		<field name="offerId" type="id-ne"/>
+		<field name="partyId" type="id-ne"/>
+		<field name="salaryHeadId" type="id-ne"/>
+		<field name="fromDate" type="date"></field>
+		<field name="amount" type="currency-double"/>
+		<prim-key field="offerId"/>
+		<prim-key field="salaryHeadId"/>
+		<relation rel-entity-name="OfferHead" type="one" fk-name="OFSAL_OH_ID">
+			<key-map field-name="offerId"/>
+		</relation>	
+		<relation rel-entity-name="Party" type="one" fk-name="OF_SAL_PARTY">
+			<key-map field-name="partyId"/>
+		</relation>
+		<relation rel-entity-name="SalaryHead" type="one" fk-name="OF_SAL_HEAD">
+			<key-map field-name="salaryHeadId"/>
+		</relation>
+	</entity>
+	
+	 <view-entity entity-name="OfferSalDetail" package-name="org.ofbiz.offer">
+    	<member-entity entity-alias="SH" entity-name="SalaryHead"/>
+    	<member-entity entity-alias="OS" entity-name="OfferSal"/>
+    	<alias-all entity-alias="OS"></alias-all>
+    	<alias name="hrName" entity-alias="SH"></alias>
+    	<view-link entity-alias="SH" rel-entity-alias="OS" >
+    		<key-map field-name="salaryHeadId"/>
+    	</view-link>
+    </view-entity>
+    
+    <view-entity entity-name="OfferDetail" package-name="org.ofbiz.offer">
+    	<member-entity entity-alias="OH" entity-name="OfferHead"/>
+    	<member-entity entity-alias="OS" entity-name="OfferStatus"/>
+    	<alias-all entity-alias="OH"></alias-all>
+    	<alias-all entity-alias="OS"></alias-all>
+    	<view-link entity-alias="OH" rel-entity-alias="OS" >
+    		<key-map field-name="offerId"/>
+    	</view-link>
+    </view-entity>
+    
+    <view-entity entity-name="MaxOsId" package-name="org.ofbiz.offer" title="Max Offer Status ID Entity">
+   		<member-entity entity-alias="OS" entity-name="OfferStatus"></member-entity>
+   		<alias name="osId" entity-alias="OS" col-alias="maxosId" function="max"></alias>
+   		<alias name="offerId" entity-alias="OS" col-alias="offerId" group-by="true"></alias>
+   	</view-entity>
+    
+    <!--   View with latest status of offer -->
+    <view-entity entity-name="MaxOfferDetail" package-name="org.ofbiz.offer" 
+			title="Employee Offer Detail Entity">
+		<member-entity entity-alias="OS" entity-name="OfferStatus"/>
+		<member-entity entity-alias="OH" entity-name="OfferHead"/>
+		<member-entity entity-alias="MOI" entity-name="MaxOsId"/>		
+		<alias-all entity-alias="OS"/>		
+		<alias-all entity-alias="OH"/>	
+		<view-link entity-alias="OS" rel-entity-alias="OH">
+			<key-map field-name="offerId"/>
+		</view-link>
+		<view-link entity-alias="OS" rel-entity-alias="MOI">
+			<key-map field-name="osId"/>
+		</view-link>
+	</view-entity>
+	
+	<!--  Entity to view selected candidates with positions -->
+	<view-entity entity-name="ApplicationDetail" package-name="org.ofbiz.offer">
+    	<member-entity entity-alias="EA" entity-name="EmploymentApp"/>
+    	<member-entity entity-alias="PN" entity-name="PerformanceNote"/>
+    	<alias-all entity-alias="EA"><exclude field="statusId"/> </alias-all>
+    	<alias-all entity-alias="PN"><exclude field="statusId"/> </alias-all>
+    	<alias entity-alias="PN" field="statusId" name="interviewStatusId"></alias>
+    	<alias entity-alias="EA" field="statusId" name="appStatusId"></alias>
+    	<view-link entity-alias="EA" rel-entity-alias="PN">
+    		<key-map field-name="applyingPartyId" rel-field-name="partyId"/>
+    		<key-map field-name="applicationId" rel-field-name="applicationId"/>
+    	</view-link>
+    </view-entity>
+    
+    <view-entity entity-name="EmploymentAppAndEmployeeRequisition" package-name="org.ofbiz.offer">
+    	<member-entity entity-alias="ER" entity-name="EmployeeRequisition"/>
+    	<member-entity entity-alias="EA" entity-name="EmploymentApp"/>
+    	
+    	<!--  <alias name="noOfCadidatesApplied" entity-alias="EA" function="count" field="requisitionId" /> -->
+    	<alias name="positionType" entity-alias="ER" field="positionType" />
+    	<alias name="requisitionId" entity-alias="ER" field="requisitionId"/>
+    	<alias name="applyingPartyId" entity-alias="EA" field="applyingPartyId" />
+
+    	<view-link entity-alias="ER" rel-entity-alias="EA">
+    		<key-map field-name="requisitionId" rel-field-name="requisitionId"/>
+    	</view-link>
+    </view-entity>
+    
+    <view-entity entity-name="OfferHeadView" package-name="org.ofbiz.offer">
+    	<member-entity entity-alias="OH" entity-name="OfferHead"/>
+    	<alias name="applyingPartyId" entity-alias="OH" field="partyId"></alias>
+    	<alias name="offerId" entity-alias="OH" field="offerId"></alias>
+    </view-entity>
+    
+    <view-entity entity-name="RecruitmentOfferStatus" package-name="org.ofbiz.offer">
+    	<member-entity entity-alias="EAER" entity-name="EmploymentAppAndEmployeeRequisition"/>
+    	<member-entity entity-alias="OHV" entity-name="OfferHeadView"/>
+    	<member-entity entity-alias="OS" entity-name="OfferStatus"/>
+    	
+    	<alias-all entity-alias="EAER"/>
+    	<alias-all entity-alias="OH"/>
+    	<alias-all entity-alias="OS"/>
+    	
+    	<!-- <alias name="noOfCanOffered" entity-alias="OHV" function="count" field="applyingPartyId" />
+    	<alias name="noOfCanJoined" entity-alias="OS" function="count" field="offerId" />  -->
+    	
+    	
+    	<view-link entity-alias="EAER" rel-entity-alias="OHV">
+    		<key-map field-name="applyingPartyId" rel-field-name="applyingPartyId"/>
+    	</view-link>
+    	<view-link entity-alias="OHV" rel-entity-alias="OS">
+    		<key-map field-name="offerId" rel-field-name="offerId"/>
+    	</view-link>
+    	
+    </view-entity>
+    
+</entitymodel>

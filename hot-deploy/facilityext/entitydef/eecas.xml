@@ -1,0 +1,13 @@
+
+<entity-eca xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="http://ofbiz.apache.org/dtds/entity-eca.xsd">
+	<eca operation="create-store" entity="InventoryItem" event="run">
+		<action service="LoadInventoryItemFactForReports" mode="sync" value-attr="InventoryItem"/>
+	</eca>
+	<eca operation="create-store" entity="OrderHeader" event="return">
+		<action service="loadSalesOrderFact" mode="sync" value-attr="OrderHeader"/>
+	</eca>
+	<eca operation="create-store" entity="OrderHeader" event="return">
+		<action service="loadPurchaseOrderFact" mode="sync" value-attr="OrderHeader"/>
+	</eca>
+</entity-eca>

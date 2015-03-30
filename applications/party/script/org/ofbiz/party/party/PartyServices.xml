@@ -1,0 +1,1472 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Licensed to the Apache Software Foundation (ASF) under one or more contributor license agreements. See the NOTICE file distributed with this work for additional 
+	information regarding copyright ownership. The ASF licenses this file to you under the Apache License, Version 2.0 (the "License"); you may not use this file except 
+	in compliance with the License. You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0 Unless required by applicable law or agreed to 
+	in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See 
+	the License for the specific language governing permissions and limitations under the License. -->
+<simple-methods xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://ofbiz.apache.org/dtds/simple-methods-v2.xsd">
+
+    <simple-method method-name="createPartyRole" short-description="Create Party Role">
+        <entity-one entity-name="PartyRole" value-field="partyRole"/>
+        <if-empty field="partyRole">
+            <make-value entity-name="PartyRole" value-field="newEntity"/>
+            <set-pk-fields map="parameters" set-if-null="true" value-field="newEntity"/>
+            <create-value value-field="newEntity"/>
+        </if-empty>
+    </simple-method>
+
+    <simple-method method-name="deletePartyRole" short-description="Delete a  PartyRole">
+        <entity-and distinct="false" entity-name="PartyRole" filter-by-date="false" list="partyRoleList" use-cache="false">
+            <field-map field-name="roleTypeId" from-field="parameters.roleTypeId"/>
+            <field-map field-name="partyId" from-field="parameters.partyId"/>
+        </entity-and>
+        <remove-list do-cache-clear="true" list="partyRoleList"/>
+    </simple-method>
+
+    <simple-method method-name="createPartyRoute" short-description="Create Party Route">
+        <entity-one entity-name="PartyShipmentRouteAssoc" value-field="partyRoute"/>
+        <if-empty field="partyRoute">
+            <make-value entity-name="PartyShipmentRouteAssoc" value-field="newEntity"/>
+            <set-pk-fields map="parameters" set-if-null="true" value-field="newEntity"/>
+            <create-value value-field="newEntity"/>
+        </if-empty>
+    </simple-method>
+
+    <simple-method method-name="deletePartyRoute" short-description="Delete a  Party Route">
+        <entity-one entity-name="PartyShipmentRouteAssoc" value-field="partyRoutes"/>
+        <remove-value do-cache-clear="true" value-field="partyRoutes"/>
+    </simple-method>
+
+    <simple-method method-name="savePartyNameChange" short-description="Save Party Name Change">
+        <!-- for special case in ecommerce, if no partyId is passed in use userLogin.partyId -->
+        <if-empty field="parameters.partyId">
+            <set field="parameters.partyId" from="userLogin.partyId"/>
+        </if-empty>
+        <make-value entity-name="PartyNameHistory" value-field="partyNameHistory"/>
+        <set-pk-fields map="parameters" set-if-null="true" value-field="partyNameHistory"/>
+        <now-timestamp field="partyNameHistory.changeDate"/>
+        <if>
+            <condition>
+                <not>
+                    <if-empty field="parameters.groupName"/>
+                </not>
+            </condition>
+            <then>
+                <entity-one entity-name="PartyGroup" value-field="partyGroup"/>
+                <if>
+                    <condition>
+                        <if-compare-field field="partyGroup.groupName" operator="not-equals" to-field="parameters.groupName"/>
+                    </condition>
+                    <then>
+                        <set-nonpk-fields map="partyGroup" set-if-null="true" value-field="partyNameHistory"/>
+                        <create-value value-field="partyNameHistory"/>
+                    </then>
+                </if>
+            </then>
+            <else-if>
+                <condition>
+                    <or>
+                        <not>
+                            <if-empty field="parameters.firstName"/>
+                        </not>
+                        <not>
+                            <if-empty field="parameters.middleName"/>
+                        </not>
+                        <not>
+                            <if-empty field="parameters.lastName"/>
+                        </not>
+                        <not>
+                            <if-empty field="parameters.personalTitle"/>
+                        </not>
+                        <not>
+                            <if-empty field="parameters.suffix"/>
+                        </not>
+                    </or>
+                </condition>
+                <then>
+                    <entity-one entity-name="Person" value-field="person"/>
+                    <if>
+                        <condition>
+                            <or>
+                                <if-compare-field field="person.firstName" operator="not-equals" to-field="parameters.firstName"/>
+                                <if-compare-field field="person.middleName" operator="not-equals" to-field="parameters.middleName"/>
+                                <if-compare-field field="person.lastName" operator="not-equals" to-field="parameters.lastName"/>
+                                <if-compare-field field="person.personalTitle" operator="not-equals" to-field="parameters.personalTitle"/>
+                                <if-compare-field field="person.suffix" operator="not-equals" to-field="parameters.suffix"/>
+                            </or>
+                        </condition>
+                        <then>
+                            <set-nonpk-fields map="person" set-if-null="true" value-field="partyNameHistory"/>
+                            <create-value value-field="partyNameHistory"/>
+                        </then>
+                    </if>
+                </then>
+            </else-if>
+        </if>
+    </simple-method>
+
+    <simple-method method-name="getPartyNameForDate" short-description="Get Party Name For Date">
+        <entity-and distinct="false" entity-name="PartyNameHistory" filter-by-date="false" list="partyNameHistoryList" use-cache="false">
+            <field-map field-name="partyId" from-field="parameters.partyId"/>
+            <order-by field-name="-changeDate"/>
+        </entity-and>
+        <entity-one entity-name="Person" value-field="person"/>
+        <entity-one entity-name="PartyGroup" value-field="partyGroup"/>
+        <if-empty field="parameters.compareDate">
+            <now-timestamp field="nowTimestamp"/>
+            <set field="parameters.compareDate" from="nowTimestamp"/>
+        </if-empty>
+        <!-- go through the list which is sorted by most recent first and find the oldest (last) one with the changeDate greater than the compareDate -->
+        <iterate entry="partyNameHistory" list="partyNameHistoryList">
+            <if-compare-field field="partyNameHistory.changeDate" operator="greater" to-field="parameters.compareDate" type="Timestamp">
+                <set field="partyNameHistoryCurrent" from="partyNameHistory"/>
+            </if-compare-field>
+        </iterate>
+        <if-empty field="partyNameHistoryCurrent">
+            <if-not-empty field="person">
+                <field-to-result field="person.firstName" result-name="firstName"/>
+                <if-not-empty field="person.middleName">
+                    <field-to-result field="person.middleName" result-name="middleName"/>
+                </if-not-empty>
+                <field-to-result field="person.lastName" result-name="lastName"/>
+                <if-not-empty field="person.personalTitle">
+                    <field-to-result field="person.personalTitle" result-name="personalTitle"/>
+                </if-not-empty>
+                <if-not-empty field="person.suffix">
+                    <field-to-result field="person.suffix" result-name="suffix"/>
+                </if-not-empty>
+                <if-compare field="parameters.lastNameFirst" operator="equals" value="Y">
+                    <set field="fullName" value="${person.personalTitle} ${person.lastName}, ${person.firstName} ${person.middleName} ${person.suffix}"/>
+                    <else>
+                        <set field="fullName" value="${person.personalTitle} ${person.firstName} ${person.middleName} ${person.lastName} ${person.suffix}"/>
+                    </else>
+                </if-compare>
+                <field-to-result field="fullName"/>
+                <else>
+                    <if-not-empty field="partyGroup">
+                        <field-to-result field="partyGroup.groupName" result-name="groupName"/>
+                        <field-to-result field="partyGroup.groupName" result-name="fullName"/>
+                    </if-not-empty>
+                </else>
+            </if-not-empty>
+            <else>
+                <!-- partyNameHistoryCurrent has a value -->
+                <if-not-empty field="person">
+                    <field-to-result field="partyNameHistoryCurrent.firstName" result-name="firstName"/>
+                    <if-not-empty field="partyNameHistoryCurrent.middleName">
+                        <field-to-result field="partyNameHistoryCurrent.middleName" result-name="middleName"/>
+                    </if-not-empty>
+                    <field-to-result field="partyNameHistoryCurrent.lastName" result-name="lastName"/>
+                    <if-not-empty field="partyNameHistoryCurrent.personalTitle">
+                        <field-to-result field="partyNameHistoryCurrent.personalTitle" result-name="personalTitle"/>
+                    </if-not-empty>
+                    <if-not-empty field="partyNameHistoryCurrent.suffix">
+                        <field-to-result field="partyNameHistoryCurrent.suffix" result-name="suffix"/>
+                    </if-not-empty>
+                    <if-compare field="parameters.lastNameFirst" operator="equals" value="Y">
+                        <set field="fullName" value="${partyNameHistoryCurrent.personalTitle} ${partyNameHistoryCurrent.lastName}, ${partyNameHistoryCurrent.firstName} ${partyNameHistoryCurrent.middleName} ${partyNameHistoryCurrent.suffix}"/>
+                        <else>
+                            <set field="fullName" value="${partyNameHistoryCurrent.personalTitle} ${partyNameHistoryCurrent.firstName} ${partyNameHistoryCurrent.middleName} ${partyNameHistoryCurrent.lastName} ${partyNameHistoryCurrent.suffix}"/>
+                        </else>
+                    </if-compare>
+                    <field-to-result field="fullName"/>
+                    <else>
+                        <if-not-empty field="partyGroup">
+                            <field-to-result field="partyNameHistoryCurrent.groupName" result-name="groupName"/>
+                            <field-to-result field="partyNameHistoryCurrent.groupName" result-name="fullName"/>
+                        </if-not-empty>
+                    </else>
+                </if-not-empty>
+            </else>
+        </if-empty>
+    </simple-method>
+    <!-- PostalAddressBoundary methods -->
+
+    <simple-method method-name="createPostalAddressBoundary" short-description="Create Postal Address Boundary">
+        <make-value entity-name="PostalAddressBoundary" value-field="newEntity"/>
+        <set-pk-fields map="parameters" set-if-null="true" value-field="newEntity"/>
+        <create-value value-field="newEntity"/>
+    </simple-method>
+
+    <simple-method method-name="deletePostalAddressBoundary" short-description="Delete a  Postal Address Boundary">
+        <entity-one entity-name="PostalAddressBoundary" value-field="postalAddressBoundary"/>
+        <remove-value do-cache-clear="true" value-field="postalAddressBoundary"/>
+    </simple-method>
+
+    <simple-method method-name="getPostalAddressBoundary" short-description="Get Postal Address Boundary">
+        <make-value entity-name="PostalAddressBoundary" value-field="postalAddressBoundaryLookupMap"/>
+        <set field="postalAddressBoundaryLookupMap.geoId" from="parameters.geoId"/>
+        <find-by-and entity-name="PostalAddressBoundary" list="postalAddressBoundaries" map="postalAddressBoundaryLookupMap"/>
+        <iterate entry="postalAddressBoundary" list="postalAddressBoundaries">
+            <get-related-one relation-name="Geo" to-value-field="geo" use-cache="false" value-field="postalAddressBoundary"/>
+            <field-to-list field="geo" list="geos"/>
+        </iterate>
+        <field-to-result field="geos"/>
+    </simple-method>
+    <!-- PartyIdentification methods -->
+
+    <simple-method method-name="createPartyIdentifications" short-description="create mass party identification with association between vale and type">
+        <set field="partyIdentCtx.partyId" from="parameters.partyId"/>
+        <iterate-map key="key" map="parameters.identifications" value="value">
+            <entity-one entity-name="PartyIdentificationType" use-cache="true" value-field="identificationType">
+                <field-map field-name="partyIdentificationTypeId" from-field="value"/>
+            </entity-one>
+            <if-not-empty field="identificationType">
+                <set field="idValue" value="${parameters.identifications.${identificationType.partyIdentificationTypeId}}"/>
+                <if-not-empty field="idValue">
+                    <set field="partyIdentCtx.partyIdentificationTypeId" from="identificationType.partyIdentificationTypeId"/>
+                    <set field="partyIdentCtx.idValue" from="idValue"/>
+                    <call-service in-map-name="partyIdentCtx" service-name="createPartyIdentification"/>
+                </if-not-empty>
+            </if-not-empty>
+        </iterate-map>
+    </simple-method>
+    <!-- PartyClassification methods -->
+
+    <simple-method method-name="createPartyClassification" short-description="create a PartyClassification">
+        <make-value entity-name="PartyClassification" value-field="newEntity"/>
+        <set-pk-fields map="parameters" set-if-null="true" value-field="newEntity"/>
+        <set-nonpk-fields map="parameters" set-if-null="true" value-field="newEntity"/>
+        <if-empty field="newEntity.fromDate">
+            <now-timestamp field="newEntity.fromDate"/>
+        </if-empty>
+        <create-value value-field="newEntity"/>
+    </simple-method>
+
+    <simple-method method-name="updatePartyClassification" short-description="update a PartyClassification">
+        <entity-one entity-name="PartyClassification" value-field="lookedUpValue"/>
+        <set-nonpk-fields map="parameters" set-if-null="true" value-field="lookedUpValue"/>
+        <store-value do-cache-clear="true" value-field="lookedUpValue"/>
+    </simple-method>
+
+    <simple-method method-name="deletePartyClassification" short-description="delete a PartyClassification">
+        <entity-one entity-name="PartyClassification" value-field="lookedUpValue"/>
+        <remove-value do-cache-clear="true" value-field="lookedUpValue"/>
+    </simple-method>
+    <!-- PartyClassificationGroup methods -->
+
+    <simple-method method-name="createPartyClassificationGroup" short-description="create a PartyClassificationGroup">
+        <log level="verbose" message="in newEntity"/>
+        <make-value entity-name="PartyClassificationGroup" value-field="newEntity"/>
+        <sequenced-id field="newEntity.partyClassificationGroupId" get-long-only="false" sequence-name="PartyClassificationGroup"/>
+        <field-to-result field="newEntity.partyClassificationGroupId" result-name="partyClassificationGroupId"/>
+        <set-nonpk-fields map="parameters" set-if-null="true" value-field="newEntity"/>
+        <log level="verbose" message="newEntity:${newEntity}"/>
+        <create-value value-field="newEntity"/>
+    </simple-method>
+
+    <simple-method method-name="updatePartyClassificationGroup" short-description="update a PartyClassificationGroup">
+        <entity-one entity-name="PartyClassificationGroup" value-field="lookedUpValue"/>
+        <set-nonpk-fields map="parameters" set-if-null="true" value-field="lookedUpValue"/>
+        <store-value do-cache-clear="true" value-field="lookedUpValue"/>
+    </simple-method>
+
+    <simple-method method-name="deletePartyClassificationGroup" short-description="delete a PartyClassificationGroup">
+        <entity-one entity-name="PartyClassificationGroup" value-field="lookedUpValue"/>
+        <remove-value do-cache-clear="true" value-field="lookedUpValue"/>
+    </simple-method>
+    <!-- Vendor Party services -->
+
+    <simple-method method-name="createVendor" short-description="createVendor">
+        <make-value entity-name="Vendor" value-field="newEntity"/>
+        <set-pk-fields map="parameters" set-if-null="true" value-field="newEntity"/>
+        <set-nonpk-fields map="parameters" set-if-null="true" value-field="newEntity"/>
+        <create-value value-field="newEntity"/>
+    </simple-method>
+
+    <simple-method method-name="updateVendor" short-description="updateVendor">
+        <entity-one entity-name="Vendor" value-field="lookedUpValue"/>
+        <set-nonpk-fields map="parameters" set-if-null="true" value-field="lookedUpValue"/>
+        <store-value do-cache-clear="true" value-field="lookedUpValue"/>
+    </simple-method>
+
+    <simple-method method-name="deleteVendor" short-description="deleteVendor">
+        <entity-one entity-name="Vendor" value-field="lookedUpValue"/>
+        <remove-value do-cache-clear="true" value-field="lookedUpValue"/>
+    </simple-method>
+    <!-- party attribute services -->
+
+    <simple-method method-name="createPartyAttribute" short-description="createPartyAttribute">
+        <make-value entity-name="PartyAttribute" value-field="newEntity"/>
+        <set-pk-fields map="parameters" set-if-null="true" value-field="newEntity"/>
+        <set-nonpk-fields map="parameters" set-if-null="true" value-field="newEntity"/>
+        <create-value value-field="newEntity"/>
+    </simple-method>
+
+    <simple-method method-name="updatePartyAttribute" short-description="updatePartyAttribute">
+        <entity-one entity-name="PartyAttribute" value-field="lookedUpValue"/>
+        <set-nonpk-fields map="parameters" set-if-null="true" value-field="lookedUpValue"/>
+        <store-value do-cache-clear="true" value-field="lookedUpValue"/>
+    </simple-method>
+
+    <simple-method method-name="removePartyAttribute" short-description="removePartyAttribute">
+        <entity-one entity-name="PartyAttribute" value-field="lookedUpValue"/>
+        <remove-value do-cache-clear="true" value-field="lookedUpValue"/>
+    </simple-method>
+    <!-- party profile default -->
+
+    <simple-method method-name="setPartyProfileDefaults" short-description="Sets Party Profile Defaults">
+        <if-empty field="parameters.partyId">
+            <set field="parameters.partyId" from="userLogin.partyId"/>
+        </if-empty>
+        <!-- lookup existing value -->
+        <entity-one entity-name="PartyProfileDefault" value-field="partyProfileDefault"/>
+        <if-empty field="partyProfileDefault">
+            <make-value entity-name="PartyProfileDefault" value-field="partyProfileDefault"/>
+            <set-pk-fields map="parameters" set-if-null="true" value-field="partyProfileDefault"/>
+            <create-value value-field="partyProfileDefault"/>
+        </if-empty>
+        <!-- update the fields -->
+        <set-nonpk-fields map="parameters" set-if-null="false" value-field="partyProfileDefault"/>
+        <store-value do-cache-clear="true" value-field="partyProfileDefault"/>
+    </simple-method>
+    <!-- create party content -->
+    <!-- TODO: this method will be deleted in favor of new content methods and the PartyContentServices.xml -->
+
+    <simple-method login-required="false" method-name="createPartyContent" short-description="Creates Party Associated Content">
+        <!-- make sure we are logged in when passing a partyId -->
+        <if-not-empty field="parameters.partyId">
+            <if-empty field="parameters.userLogin">
+                <add-error>
+                    <fail-property property="PartyPermissionErrorForThisParty" resource="PartyUiLabels"/>
+                </add-error>
+                <check-errors/>
+            </if-empty>
+        </if-not-empty>
+        <!-- check permission when creating content on behalf of another party -->
+        <if-empty field="parameters.partyId">
+            <if-not-empty field="parameters.userLogin">
+                <set field="parameters.partyId" from="userLogin.partyId"/>
+                <if-compare-field field="parameters.partyId" operator="not-equals" to-field="userLogin.partyId">
+                    <check-permission action="_UPDATE" permission="PARTYMGR">
+                        <fail-property property="PartyPermissionErrorForThisParty" resource="PartyUiLabels"/>
+                    </check-permission>
+                </if-compare-field>
+            </if-not-empty>
+        </if-empty>
+        <if-not-empty field="parameters._uploadedFile_fileName">
+            <call-class-method class-name="org.ofbiz.content.data.DataResourceWorker" method-name="getDataResourceContentUploadPath" ret-field="uploadPath"/>
+            <log level="always" message="[createPartyContent] - Found Subdir : ${uploadPath}"/>
+            <!-- locate the file extension to use based on mime-type -->
+            <set field="extenLookup.mimeTypeId" from="parameters._uploadedFile_contentType"/>
+            <find-by-and entity-name="FileExtension" list="extensions" map="extenLookup"/>
+            <first-from-list entry="extension" list="extensions"/>
+            <set-service-fields map="parameters" service-name="createDataResource" to-map="dataResource"/>
+            <!-- create the data resource object -->
+            <set field="dataResource.dataResourceName" from="parameters._uploadedFile_fileName"/>
+            <set field="dataResource.mimeTypeId" from="parameters._uploadedFile_contentType"/>
+            <set field="dataResource.dataResourceTypeId" value="LOCAL_FILE"/>
+            <call-service break-on-error="false" in-map-name="dataResource" service-name="createDataResource">
+                <result-to-field field="dataResourceId" result-name="dataResourceId"/>
+            </call-service>
+            <set-service-fields map="dataResource" service-name="updateDataResource" to-map="dataResource"/>
+            <set field="dataResource.dataResourceId" from="dataResourceId"/>
+            <call-service break-on-error="false" in-map-name="dataResource" service-name="updateDataResource"/>
+            <set field="lookup.dataResourceId" from="dataResource.dataResourceId"/>
+            <find-by-primary-key entity-name="DataResource" map="lookup" use-cache="true" value-field="dataResourceMap"/>
+        </if-not-empty>
+        <set-service-fields map="parameters" service-name="createContent" to-map="createContentMap"/>
+        <if-not-empty field="parameters._uploadedFile_fileName">
+            <set field="createContentMap.dataResourceId" from="dataResourceId"/>
+        </if-not-empty>
+        <call-service break-on-error="false" in-map-name="createContentMap" service-name="createContent">
+            <result-to-field field="contentId" result-name="contentId"/>
+        </call-service>
+        <!-- create the content role -->
+        <if-not-empty field="parameters.partyId">
+            <now-timestamp field="nowTimestamp"/>
+            <set-service-fields map="parameters" service-name="createContentRole" to-map="contentRole"/>
+            <set field="contentRole.contentId" from="contentId"/>
+            <set field="contentRole.partyId" from="parameters.partyId"/>
+            <set field="contentRole.fromDate" from="nowTimestamp"/>
+            <set field="contentRole.roleTypeId" value="OWNER"/>
+            <call-service break-on-error="false" in-map-name="contentRole" service-name="createContentRole"/>
+            <!-- check party role -->
+            <make-value entity-name="PartyRole" value-field="partyRole"/>
+            <set-pk-fields map="contentRole" set-if-null="true" value-field="partyRole"/>
+            <find-by-and entity-name="PartyRole" list="pRoles" map="partyRole"/>
+            <if-empty field="pRoles">
+                <set-service-fields map="contentRole" service-name="createPartyRole" to-map="partyRole"/>
+                <call-service break-on-error="false" in-map-name="partyRole" service-name="createPartyRole"/>
+            </if-empty>
+        </if-not-empty>
+        <if-not-empty field="parameters._uploadedFile_fileName">
+            <!-- store the file -->
+            <set-service-fields map="dataResourceMap" service-name="createAnonFile" to-map="fileCtx"/>
+            <set field="fileCtx.binData" from="parameters.uploadedFile"/>
+            <set field="fileCtx.dataResource" from="dataResourceMap"/>
+            <call-service in-map-name="fileCtx" include-user-login="true" service-name="createAnonFile"/>
+        </if-not-empty>
+        <field-to-result field="contentId"/>
+    </simple-method>
+    <!-- Update party content -->
+    <!-- TODO: this method will be deleted in favor of new content methods and the PartyContentServices.xml -->
+
+    <simple-method login-required="false" method-name="updatePartyContent" short-description="Creates Party Associated Content">
+        <!-- make sure we are logged in when passing a partyId -->
+        <if-not-empty field="parameters.partyId">
+            <if-empty field="parameters.userLogin">
+                <add-error>
+                    <fail-property property="PartyPermissionErrorForThisParty" resource="PartyUiLabels"/>
+                </add-error>
+                <check-errors/>
+            </if-empty>
+        </if-not-empty>
+        <!-- check permission when creating content on behalf of another party -->
+        <if-empty field="parameters.partyId">
+            <if-not-empty field="parameters.userLogin">
+                <set field="parameters.partyId" from="userLogin.partyId"/>
+                <if-compare-field field="parameters.partyId" operator="not-equals" to-field="userLogin.partyId">
+                    <check-permission action="_UPDATE" permission="PARTYMGR">
+                        <fail-property property="PartyPermissionErrorForThisParty" resource="PartyUiLabels"/>
+                    </check-permission>
+                </if-compare-field>
+            </if-not-empty>
+        </if-empty>
+        <if-not-empty field="parameters._uploadedFile_fileName">
+            <set field="lookupParam.contentId" from="parameters.contentId"/>
+            <find-by-primary-key entity-name="Content" map="lookupParam" use-cache="true" value-field="content"/>
+            <if-not-empty field="content.dataResourceId">
+                <set-service-fields map="parameters" service-name="updateDataResource" to-map="dataResource"/>
+                <set field="dataResource.dataResourceId" from="content.dataResourceId"/>
+                <call-service break-on-error="false" in-map-name="dataResource" service-name="updateDataResource"/>
+                <set field="lookup.dataResourceId" from="content.dataResourceId"/>
+                <find-by-primary-key entity-name="DataResource" map="lookup" use-cache="true" value-field="dataResourceMap"/>
+                <else>
+                    <call-class-method class-name="org.ofbiz.content.data.DataResourceWorker" method-name="getDataResourceContentUploadPath" ret-field="uploadPath"/>
+                    <log level="always" message="[createPartyContent] - Found Subdir : ${uploadPath}"/>
+                    <!-- locate the file extension to use based on mime-type -->
+                    <set field="extenLookup.mimeTypeId" from="parameters._uploadedFile_contentType"/>
+                    <find-by-and entity-name="FileExtension" list="extensions" map="extenLookup"/>
+                    <first-from-list entry="extension" list="extensions"/>
+                    <set-service-fields map="parameters" service-name="createDataResource" to-map="dataResource"/>
+                    <!-- create the data resource object -->
+                    <!-- create the data resource object -->
+                    <set field="dataResource.dataResourceName" from="parameters._uploadedFile_fileName"/>
+                    <set field="dataResource.mimeTypeId" from="parameters._uploadedFile_contentType"/>
+                    <set field="dataResource.dataResourceTypeId" value="LOCAL_FILE"/>
+                    <call-service break-on-error="false" in-map-name="dataResource" service-name="createDataResource">
+                        <result-to-field field="dataResourceId" result-name="dataResourceId"/>
+                    </call-service>
+                    <set field="dataResource.objectInfo" value="${uploadPath}/${dataResourceId}"/>
+                    <if-not-empty field="extension">
+                        <set field="dataResource.objectInfo" value="${uploadPath}/${dataResourceId}.${extension.fileExtensionId}"/>
+                    </if-not-empty>
+                    <set-service-fields map="dataResource" service-name="updateDataResource" to-map="dataResource"/>
+                    <set field="dataResource.dataResourceId" from="dataResourceId"/>
+                    <call-service break-on-error="false" in-map-name="dataResource" service-name="updateDataResource"/>
+                    <set field="lookup.dataResourceId" from="dataResource.dataResourceId"/>
+                    <find-by-primary-key entity-name="DataResource" map="lookup" use-cache="true" value-field="dataResourceMap"/>
+                </else>
+            </if-not-empty>
+        </if-not-empty>
+        <set-service-fields map="parameters" service-name="updateContent" to-map="updateContentMap"/>
+        <if-not-empty field="dataResourceId">
+            <set field="updateContentMap.dataResourceId" from="dataResourceId"/>
+        </if-not-empty>
+        <call-service break-on-error="false" in-map-name="updateContentMap" service-name="updateContent"/>
+        <if-not-empty field="parameters._uploadedFile_fileName">
+            <set-service-fields map="dataResourceMap" service-name="createAnonFile" to-map="fileCtx"/>
+            <set field="fileCtx.binData" from="parameters.uploadedFile"/>
+            <set field="fileCtx.dataResource" from="dataResourceMap"/>
+            <call-service in-map-name="fileCtx" include-user-login="true" service-name="createAnonFile"/>
+        </if-not-empty>
+        <field-to-result field="parameters.contentId" result-name="contentId"/>
+    </simple-method>
+    <!-- get parties based on PartyRelationship -->
+
+    <simple-method login-required="false" method-name="getPartiesByRelationship" short-description="Gets all parties related to partyIdFrom using the PartyRelationship entity">
+        <set field="lookupMap.partyIdFrom" from="parameters.partyIdFrom"/>
+        <set field="lookupMap.partyIdTo" from="parameters.partyIdTo"/>
+        <set field="lookupMap.roleTypeIdFrom" from="parameters.roleTypeIdFrom"/>
+        <set field="lookupMap.roleTypeIdTo" from="parameters.roleTypeIdTo"/>
+        <set field="lookupMap.statusId" from="parameters.statusId"/>
+        <set field="lookupMap.priorityTypeId" from="parameters.priorityTypeId"/>
+        <set field="lookupMap.partyRelationshipTypeId" from="parameters.partyRelationshipTypeId"/>
+        <find-by-and entity-name="PartyRelationship" list="partyRelationships" map="lookupMap"/>
+        <iterate entry="partyRelationship" list="partyRelationships">
+            <get-related-one relation-name="ToParty" to-value-field="party" use-cache="false" value-field="partyRelationship"/>
+            <field-to-list field="party" list="parties"/>
+        </iterate>
+        <if-not-empty field="parties">
+            <field-to-result field="parties"/>
+        </if-not-empty>
+    </simple-method>
+
+    <simple-method method-name="getParentOrganizations" short-description="Gets Parent Organizations for an Organization Party">
+        <set field="relatedPartyIdList[]" from="parameters.organizationPartyId"/>
+        <set field="recurse" from="parameters.getParentsOfParents"/>
+        <if-empty field="recurse">
+            <set field="recurse" value="Y"/>
+        </if-empty>
+        <set field="partyRelationshipTypeId" value="GROUP_ROLLUP"/>
+        <set field="roleTypeIdFrom" value="ORGANIZATION_UNIT"/>
+        <set field="roleTypeIdTo" value="PARENT_ORGANIZATION"/>
+        <set field="roleTypeIdFromInclueAllChildTypes" value="Y"/>
+        <set field="includeFromToSwitched" value="Y"/>
+        <set field="useCache" value="true"/>
+        <call-simple-method method-name="followPartyRelationshipsInline"/>
+        <field-to-result field="relatedPartyIdList" result-name="parentOrganizationPartyIdList"/>
+    </simple-method>
+
+    <simple-method method-name="getRelatedParties" short-description="Get Parties Related to a Party">
+        <set field="relatedPartyIdList[]" from="parameters.partyIdFrom"/>
+        <set field="partyRelationshipTypeId" from="parameters.partyRelationshipTypeId"/>
+        <set field="roleTypeIdFrom" from="parameters.roleTypeIdFrom"/>
+        <set field="roleTypeIdFromInclueAllChildTypes" from="parameters.roleTypeIdFromInclueAllChildTypes"/>
+        <set field="roleTypeIdTo" from="parameters.roleTypeIdTo"/>
+        <set field="roleTypeIdToIncludeAllChildTypes" from="parameters.roleTypeIdToIncludeAllChildTypes"/>
+        <set field="includeFromToSwitched" from="parameters.includeFromToSwitched"/>
+        <set field="recurse" from="parameters.recurse"/>
+        <set field="useCache" from="parameters.useCache"/>
+        <call-simple-method method-name="followPartyRelationshipsInline"/>
+        <field-to-result field="relatedPartyIdList"/>
+    </simple-method>
+
+    <simple-method method-name="followPartyRelationshipsInline" short-description="followPartyRelationshipsInline">
+        <!-- Uses the following fields in the env (with * are required): - relatedPartyIdList* (initial partyIdFrom should be in this list; accumulator of new partyIds, 
+			ie all partyIdTo found will be added to this, thus can support recursion) - partyRelationshipTypeId - roleTypeIdFrom - roleTypeIdFromInclueAllChildTypes - roleTypeIdTo 
+			- roleTypeIdToIncludeAllChildTypes - includeFromToSwitched - recurse - useCache (should be "true" or "false") -->
+        <if-empty field="nowTimestamp">
+            <now-timestamp field="nowTimestamp"/>
+        </if-empty>
+        <!-- only create these if they don't already exist, more efficient and avoids potential problems in recursed calls -->
+        <if-empty field="_inline_roleTypeIdFromList">
+            <field-to-list field="roleTypeIdFrom" list="_inline_roleTypeIdFromList"/>
+            <if-compare field="roleTypeIdFromInclueAllChildTypes" operator="equals" value="Y">
+                <set field="roleTypeIdListName" value="_inline_roleTypeIdFromList"/>
+                <call-simple-method method-name="getChildRoleTypesInline"/>
+            </if-compare>
+        </if-empty>
+        <if-empty field="_inline_roleTypeIdToList">
+            <field-to-list field="roleTypeIdTo" list="_inline_roleTypeIdToList"/>
+            <if-compare field="roleTypeIdToInclueAllChildTypes" operator="equals" value="Y">
+                <set field="roleTypeIdListName" value="_inline_roleTypeIdToList"/>
+                <call-simple-method method-name="getChildRoleTypesInline"/>
+            </if-compare>
+        </if-empty>
+        <call-simple-method method-name="followPartyRelationshipsInlineRecurse"/>
+    </simple-method>
+
+    <simple-method method-name="followPartyRelationshipsInlineRecurse" short-description="followPartyRelationshipsInlineRecurse">
+        <clear-field field="_inline_NewRelatedPartyIdList"/>
+        <iterate entry="relatedPartyId" list="relatedPartyIdList">
+            <if>
+                <condition>
+                    <not>
+                        <if-compare-field field="_inline_relatedPartyIdAlreadySearchedList" operator="contains" to-field="relatedPartyId"/>
+                    </not>
+                </condition>
+                <then>
+                    <field-to-list field="relatedPartyId" list="_inline_relatedPartyIdAlreadySearchedList"/>
+                    <clear-field field="_inline_PartyRelationshipList"/>
+                    <entity-condition distinct="false" entity-name="PartyRelationship" filter-by-date="false" list="_inline_PartyRelationshipList" use-cache="${useCache}">
+                        <condition-list combine="and">
+                            <condition-expr field-name="partyIdFrom" from-field="relatedPartyId" ignore="false" ignore-case="false" ignore-if-empty="false" ignore-if-null="false" operator="equals"/>
+                            <condition-expr field-name="roleTypeIdFrom" from-field="_inline_roleTypeIdFromList" ignore="false" ignore-case="false" ignore-if-empty="true" ignore-if-null="false" operator="in"/>
+                            <condition-expr field-name="roleTypeIdTo" from-field="_inline_roleTypeIdToList" ignore="false" ignore-case="false" ignore-if-empty="true" ignore-if-null="false" operator="in"/>
+                            <condition-expr field-name="partyRelationshipTypeId" from-field="partyRelationshipTypeId" ignore="false" ignore-case="false" ignore-if-empty="true" ignore-if-null="false" operator="equals"/>
+                            <condition-expr field-name="fromDate" from-field="nowTimestamp" ignore="false" ignore-case="false" ignore-if-empty="false" ignore-if-null="false" operator="less-equals"/>
+                            <condition-list combine="or">
+                                <condition-expr field-name="thruDate" from-field="nullField" ignore="false" ignore-case="false" ignore-if-empty="false" ignore-if-null="false" operator="equals"/>
+                                <condition-expr field-name="thruDate" from-field="nowTimestamp" ignore="false" ignore-case="false" ignore-if-empty="false" ignore-if-null="false" operator="greater"/>
+                            </condition-list>
+                        </condition-list>
+                        <!-- get the newest (highest date) first -->
+                        <order-by field-name="-fromDate"/>
+                    </entity-condition>
+                    <iterate entry="_inline_PartyRelationship" list="_inline_PartyRelationshipList">
+                        <if>
+                            <condition>
+                                <and>
+                                    <not>
+                                        <if-compare-field field="relatedPartyIdList" operator="contains" to-field="_inline_PartyRelationship.partyIdTo"/>
+                                    </not>
+                                    <not>
+                                        <if-compare-field field="_inline_NewRelatedPartyIdList" operator="contains" to-field="_inline_PartyRelationship.partyIdTo"/>
+                                    </not>
+                                </and>
+                            </condition>
+                            <then>
+                                <field-to-list field="_inline_PartyRelationship.partyIdTo" list="_inline_NewRelatedPartyIdList"/>
+                            </then>
+                        </if>
+                    </iterate>
+                    <if-compare field="includeFromToSwitched" operator="equals" value="Y">
+                        <clear-field field="_inline_PartyRelationshipList"/>
+                        <entity-condition distinct="false" entity-name="PartyRelationship" filter-by-date="false" list="_inline_PartyRelationshipList" use-cache="${useCache}">
+                            <condition-list combine="and">
+                                <condition-expr field-name="partyIdTo" from-field="relatedPartyId" ignore="false" ignore-case="false" ignore-if-empty="false" ignore-if-null="false" operator="equals"/>
+                                <condition-expr field-name="roleTypeIdTo" from-field="_inline_roleTypeIdFromList" ignore="false" ignore-case="false" ignore-if-empty="true" ignore-if-null="false" operator="in"/>
+                                <condition-expr field-name="roleTypeIdFrom" from-field="_inline_roleTypeIdToList" ignore="false" ignore-case="false" ignore-if-empty="true" ignore-if-null="false" operator="in"/>
+                                <condition-expr field-name="partyRelationshipTypeId" from-field="partyRelationshipTypeId" ignore="false" ignore-case="false" ignore-if-empty="true" ignore-if-null="false" operator="equals"/>
+                                <condition-expr field-name="fromDate" from-field="nowTimestamp" ignore="false" ignore-case="false" ignore-if-empty="false" ignore-if-null="false" operator="less-equals"/>
+                                <condition-list combine="or">
+                                    <condition-expr field-name="thruDate" from-field="nullField" ignore="false" ignore-case="false" ignore-if-empty="false" ignore-if-null="false" operator="equals"/>
+                                    <condition-expr field-name="thruDate" from-field="nowTimestamp" ignore="false" ignore-case="false" ignore-if-empty="false" ignore-if-null="false" operator="greater"/>
+                                </condition-list>
+                            </condition-list>
+                            <!-- get the newest (highest date) first -->
+                            <order-by field-name="-fromDate"/>
+                        </entity-condition>
+                        <iterate entry="_inline_PartyRelationship" list="_inline_PartyRelationshipList">
+                            <if>
+                                <condition>
+                                    <and>
+                                        <not>
+                                            <if-compare-field field="relatedPartyIdList" operator="contains" to-field="_inline_PartyRelationship.partyIdFrom"/>
+                                        </not>
+                                        <not>
+                                            <if-compare-field field="_inline_NewRelatedPartyIdList" operator="contains" to-field="_inline_PartyRelationship.partyIdFrom"/>
+                                        </not>
+                                    </and>
+                                </condition>
+                                <then>
+                                    <field-to-list field="_inline_PartyRelationship.partyIdFrom" list="_inline_NewRelatedPartyIdList"/>
+                                </then>
+                            </if>
+                        </iterate>
+                    </if-compare>
+                </then>
+            </if>
+        </iterate>
+        <!-- if we found new ones, add them to the master list and if recurse=Y then recurse -->
+        <if-not-empty field="_inline_NewRelatedPartyIdList">
+            <list-to-list list="_inline_NewRelatedPartyIdList" to-list="relatedPartyIdList"/>
+            <if-compare field="recurse" operator="equals" value="Y">
+                <log level="verbose" message="Recursively calling followPartyRelationshipsInlineRecurse _inline_NewRelatedPartyIdList=${_inline_NewRelatedPartyIdList}"/>
+                <call-simple-method method-name="followPartyRelationshipsInlineRecurse"/>
+            </if-compare>
+        </if-not-empty>
+    </simple-method>
+
+    <simple-method method-name="getChildRoleTypes" short-description="Get Child RoleTypes">
+        <field-to-list field="roleTypeId" list="childRoleTypeIdList"/>
+        <set field="roleTypeIdListName" value="childRoleTypeIdList"/>
+        <call-simple-method method-name="getChildRoleTypesInline"/>
+        <field-to-result field="childRoleTypeIdList"/>
+    </simple-method>
+
+    <simple-method method-name="getChildRoleTypesInline" short-description="getChildRoleTypes">
+        <clear-field field="_inline_NewRoleTypeIdList"/>
+        <iterate entry="roleTypeId" list="${roleTypeIdListName}">
+            <if>
+                <condition>
+                    <not>
+                        <if-compare-field field="_inline_roleTypeIdAlreadySearchedList" operator="contains" to-field="roleTypeId"/>
+                    </not>
+                </condition>
+                <then>
+                    <field-to-list field="roleTypeId" list="_inline_roleTypeIdAlreadySearchedList"/>
+                    <clear-field field="_inline_RoleTypeList"/>
+                    <entity-condition distinct="false" entity-name="RoleType" filter-by-date="false" list="_inline_RoleTypeList" use-cache="true">
+                        <condition-expr field-name="parentTypeId" from-field="roleTypeId" ignore="false" ignore-case="false" ignore-if-empty="false" ignore-if-null="false" operator="equals"/>
+                    </entity-condition>
+                    <iterate entry="newRoleType" list="_inline_RoleTypeList">
+                        <if>
+                            <condition>
+                                <and>
+                                    <not>
+                                        <if-compare-field field="${roleTypeIdListName}" operator="contains" to-field="newRoleType.roleTypeId"/>
+                                    </not>
+                                    <not>
+                                        <if-compare-field field="_inline_NewRoleTypeIdList" operator="contains" to-field="newRoleType.roleTypeId"/>
+                                    </not>
+                                </and>
+                            </condition>
+                            <then>
+                                <field-to-list field="newRoleType.roleTypeId" list="_inline_NewRoleTypeIdList"/>
+                            </then>
+                        </if>
+                    </iterate>
+                </then>
+            </if>
+        </iterate>
+        <!-- if we found some new types, add them to the main list -->
+        <if-not-empty field="_inline_NewRoleTypeIdList">
+            <list-to-list list="_inline_NewRoleTypeIdList" to-list="${roleTypeIdListName}"/>
+            <log level="verbose" message="Recursively calling getChildRoleTypesInline roleTypeIdListName=${roleTypeIdListName}, _inline_NewRoleTypeIdList=${_inline_NewRoleTypeIdList}"/>
+            <call-simple-method method-name="getChildRoleTypesInline"/>
+        </if-not-empty>
+    </simple-method>
+
+    <simple-method method-name="getPartyEmail" short-description="Get the email of the party">
+        <!-- first try to find primary email Address when not found get other email -->
+        <entity-and distinct="false" entity-name="PartyContactWithPurpose" filter-by-date="false" list="emailAddressesPurposes" use-cache="false">
+            <field-map field-name="partyId" from-field="parameters.partyId"/>
+            <field-map field-name="contactMechPurposeTypeId" value="PRIMARY_EMAIL"/>
+        </entity-and>
+        <filter-list-by-date from-field-name="purposeFromDate" list="emailAddressesPurposes" thru-field-name="purposeThruDate" to-list="emailAddressesPurposes1"/>
+        <filter-list-by-date from-field-name="contactFromDate" list="emailAddressesPurposes1" thru-field-name="contactThruDate" to-list="emailAddresses"/>
+        <!-- any other email -->
+        <if-empty field="emailAddresses">
+            <entity-and distinct="false" entity-name="PartyAndContactMech" filter-by-date="true" list="emailAddresses" use-cache="false">
+                <field-map field-name="partyId" from-field="parameters.partyId"/>
+                <field-map field-name="contactMechTypeId" value="EMAIL_ADDRESS"/>
+            </entity-and>
+        </if-empty>
+        <!-- any other electronic address -->
+        <if-empty field="emailAddresses">
+            <entity-and distinct="false" entity-name="PartyAndContactMech" filter-by-date="true" list="emailAddresses" use-cache="false">
+                <field-map field-name="partyId" from-field="parameters.partyId"/>
+                <field-map field-name="contactMechTypeId" value="ELECTRONIC_ADDRESS"/>
+            </entity-and>
+        </if-empty>
+        <if-not-empty field="emailAddresses">
+            <first-from-list entry="emailAddress" list="emailAddresses"/>
+            <field-to-result field="emailAddress.infoString" result-name="emailAddress"/>
+            <field-to-result field="emailAddress.contactMechId" result-name="contactMechId"/>
+        </if-not-empty>
+    </simple-method>
+
+    <simple-method method-name="getPartyTelephone" short-description="Get the telephone number of the party">
+        <set field="findMap.partyId" from="parameters.partyId"/>
+        <if-empty field="parameters.contactMechPurposeTypeId">
+            <!-- search in this order if not provided -->
+            <set field="type" value="PRIMARY_PHONE"/>
+            <field-to-list field="type" list="types"/>
+            <set field="type" value="PHONE_MOBILE"/>
+            <field-to-list field="type" list="types"/>
+            <set field="type" value="PHONE_WORK"/>
+            <field-to-list field="type" list="types"/>
+            <set field="type" value="PHONE_QUICK"/>
+            <field-to-list field="type" list="types"/>
+            <set field="type" value="PHONE_HOME"/>
+            <field-to-list field="type" list="types"/>
+            <set field="type" value="PHONE_BILLING"/>
+            <field-to-list field="type" list="types"/>
+            <set field="type" value="PHONE_SHIPPING"/>
+            <field-to-list field="type" list="types"/>
+            <set field="type" value="PHONE_SHIP_ORIG"/>
+            <field-to-list field="type" list="types"/>
+            <else>
+                <set field="type" from="parameters.contactMechPurposeTypeId"/>
+                <field-to-list field="type" list="types"/>
+            </else>
+        </if-empty>
+        <set field="findMap.contactMechTypeId" value="TELECOM_NUMBER"/>
+        <find-by-and entity-name="PartyContactDetailByPurpose" list="telephoneAll1" map="findMap"/>
+        <filter-list-by-date from-field-name="purposeFromDate" list="telephoneAll1" thru-field-name="purposeThruDate" to-list="telephoneAll2"/>
+        <filter-list-by-date list="telephoneAll2" to-list="telephoneAll3"/>
+        <if-not-empty field="telephoneAll3">
+            <iterate entry="type" list="types">
+                <iterate entry="telephone" list="telephoneAll3">
+                    <if-empty field="found">
+                        <if-compare-field field="telephone.contactMechPurposeTypeId" operator="equals" to-field="type">
+                            <set field="found" value="notImportant"/>
+                            <field-to-result field="telephone.contactMechId" result-name="contactMechId"/>
+                            <if-not-empty field="telephone.countryCode">
+                                <field-to-result field="telephone.countryCode" result-name="countryCode"/>
+                            </if-not-empty>
+                            <if-not-empty field="telephone.areaCode">
+                                <field-to-result field="telephone.areaCode" result-name="areaCode"/>
+                            </if-not-empty>
+                            <if-not-empty field="telephone.contactNumber">
+                                <field-to-result field="telephone.contactNumber" result-name="contactNumber"/>
+                            </if-not-empty>
+                            <if-not-empty field="telephone.extension">
+                                <field-to-result field="telephone.extension" result-name="extension"/>
+                            </if-not-empty>
+                            <field-to-result field="telephone.contactMechPurposeTypeId" result-name="contactMechPurposeTypeId"/>
+                        </if-compare-field>
+                    </if-empty>
+                </iterate>
+            </iterate>
+            <else>
+                <find-by-and entity-name="PartyAndContactMech" list="telephoneAll1" map="findMap"/>
+                <filter-list-by-date list="telephoneAll1" to-list="telephoneAll2"/>
+                <first-from-list entry="telephone" list="telephoneAll2"/>
+                <field-to-result field="telephone.contactMechId" result-name="contactMechId"/>
+                <if-not-empty field="telephone.tnCountryCode">
+                    <field-to-result field="telephone.tnCountryCode" result-name="countryCode"/>
+                </if-not-empty>
+                <if-not-empty field="telephone.tnAreaCode">
+                    <field-to-result field="telephone.tnAreaCode" result-name="areaCode"/>
+                </if-not-empty>
+                <if-not-empty field="telephone.tnContactNumber">
+                    <field-to-result field="telephone.tnContactNumber" result-name="contactNumber"/>
+                </if-not-empty>
+                <if-not-empty field="telephone.extension">
+                    <field-to-result field="telephone.extension" result-name="extension"/>
+                </if-not-empty>
+            </else>
+        </if-not-empty>
+    </simple-method>
+
+    <simple-method method-name="getPartyPostalAddress" short-description="Get the postal address of the party">
+        <set field="findMap.partyId" from="parameters.partyId"/>
+        <if-empty field="parameters.contactMechPurposeTypeId">
+            <!-- search in this order if not provided -->
+            <set field="type" value="GENERAL_LOCATION"/>
+            <field-to-list field="type" list="types"/>
+            <set field="type" value="BILLING_LOCATION"/>
+            <field-to-list field="type" list="types"/>
+            <set field="type" value="PAYMENT_LOCATION"/>
+            <field-to-list field="type" list="types"/>
+            <set field="type" value="SHIPPING_LOCATION"/>
+            <field-to-list field="type" list="types"/>
+            <else>
+                <set field="type" from="parameters.contactMechPurposeTypeId"/>
+                <field-to-list field="type" list="types"/>
+            </else>
+        </if-empty>
+        <set field="findMap.contactMechTypeId" value="POSTAL_ADDRESS"/>
+        <find-by-and entity-name="PartyContactDetailByPurpose" list="addressAll1" map="findMap"/>
+        <filter-list-by-date from-field-name="purposeFromDate" list="addressAll1" thru-field-name="purposeThruDate" to-list="addressAll2"/>
+        <filter-list-by-date list="addressAll2" to-list="addressAll3"/>
+        <if-not-empty field="addressAll3">
+            <iterate entry="type" list="types">
+                <iterate entry="address" list="addressAll3">
+                    <if-empty field="found">
+                        <if-compare-field field="address.contactMechPurposeTypeId" operator="equals" to-field="type">
+                            <set field="found" value="notImportant"/>
+                            <field-to-result field="address.contactMechId" result-name="contactMechId"/>
+                            <if-not-empty field="address.address1">
+                                <field-to-result field="address.address1" result-name="address1"/>
+                            </if-not-empty>
+                            <if-not-empty field="address.address2">
+                                <field-to-result field="address.address2" result-name="address2"/>
+                            </if-not-empty>
+                            <if-not-empty field="address.directions">
+                                <field-to-result field="address.directions" result-name="directions"/>
+                            </if-not-empty>
+                            <if-not-empty field="address.city">
+                                <field-to-result field="address.city" result-name="city"/>
+                            </if-not-empty>
+                            <if-not-empty field="address.postalCode">
+                                <field-to-result field="address.postalCode" result-name="postalCode"/>
+                            </if-not-empty>
+                            <if-not-empty field="address.stateProvinceGeoId">
+                                <field-to-result field="address.stateProvinceGeoId" result-name="stateProvinceGeoId"/>
+                            </if-not-empty>
+                            <if-not-empty field="address.countyGeoId">
+                                <field-to-result field="address.countyGeoId" result-name="countyGeoId"/>
+                            </if-not-empty>
+                            <if-not-empty field="address.countryGeoId">
+                                <field-to-result field="address.countryGeoId" result-name="countryGeoId"/>
+                            </if-not-empty>
+                            <field-to-result field="address.contactMechPurposeTypeId" result-name="contactMechPurposeTypeId"/>
+                        </if-compare-field>
+                    </if-empty>
+                </iterate>
+            </iterate>
+            <else>
+                <find-by-and entity-name="PartyAndContactMech" list="addressAll1" map="findMap"/>
+                <filter-list-by-date list="addressAll1" to-list="addressAll2"/>
+                <first-from-list entry="address" list="addressAll2"/>
+                <field-to-result field="address.contactMechId" result-name="contactMechId"/>
+                <if-not-empty field="address.paAddress1">
+                    <field-to-result field="address.paAddress1" result-name="address1"/>
+                </if-not-empty>
+                <if-not-empty field="address.paAddress2">
+                    <field-to-result field="address.paAddress2" result-name="address2"/>
+                </if-not-empty>
+                <if-not-empty field="address.paDirections">
+                    <field-to-result field="address.paDirections" result-name="directions"/>
+                </if-not-empty>
+                <if-not-empty field="address.paCity">
+                    <field-to-result field="address.paCity" result-name="city"/>
+                </if-not-empty>
+                <if-not-empty field="address.paPostalCode">
+                    <field-to-result field="address.paPostalCode" result-name="postalCode"/>
+                </if-not-empty>
+                <if-not-empty field="address.paStateProvinceGeoId">
+                    <field-to-result field="address.paStateProvinceGeoId" result-name="stateProvinceGeoId"/>
+                </if-not-empty>
+                <if-not-empty field="address.paCountyGeoId">
+                    <field-to-result field="address.paCountyGeoId" result-name="countyGeoId"/>
+                </if-not-empty>
+                <if-not-empty field="address.paCountryGeoId">
+                    <field-to-result field="address.paCountryGeoId" result-name="countryGeoId"/>
+                </if-not-empty>
+            </else>
+        </if-not-empty>
+    </simple-method>
+    <!-- address match map -->
+
+    <simple-method method-name="createAddressMatchMap" short-description="create a AddressMatchMap">
+        <call-object-method method-name="toUpperCase" obj-field="parameters.mapValue" ret-field="parameters.mapValue"/>
+        <call-object-method method-name="toUpperCase" obj-field="parameters.mapKey" ret-field="parameters.mapKey"/>
+        <make-value entity-name="AddressMatchMap" value-field="newEntity"/>
+        <set-pk-fields map="parameters" set-if-null="true" value-field="newEntity"/>
+        <set-nonpk-fields map="parameters" set-if-null="true" value-field="newEntity"/>
+        <create-value value-field="newEntity"/>
+    </simple-method>
+
+    <simple-method method-name="deleteAddressMatchMap" short-description="remove a AddressMatchMap">
+        <make-value entity-name="AddressMatchMap" value-field="fieldMap"/>
+        <set-pk-fields map="parameters" set-if-null="true" value-field="fieldMap"/>
+        <remove-value do-cache-clear="true" value-field="fieldMap"/>
+    </simple-method>
+
+    <simple-method method-name="clearAddressMatchMap" short-description="remove all AddressMatchMap">
+        <entity-condition distinct="false" entity-name="AddressMatchMap" filter-by-date="false" list="addrs" use-cache="false">
+            <use-iterator/>
+        </entity-condition>
+        <iterate entry="addr" list="addrs">
+            <remove-value do-cache-clear="true" value-field="addr"/>
+        </iterate>
+    </simple-method>
+    <!-- PartyRelationship services -->
+
+    <simple-method method-name="createNewPartyRelationship" short-description="createNewPartyRelationship">
+        <if-empty field="parameters.roleTypeIdFrom">
+            <set field="parameters.roleTypeIdFrom" value="_NA_"/>
+        </if-empty>
+        <if-empty field="parameters.roleTypeIdTo">
+            <set field="parameters.roleTypeIdTo" value="_NA_"/>
+        </if-empty>
+        <if-empty field="parameters.partyIdFrom">
+            <set field="parameters.partyIdFrom" from="userLogin.partyId"/>
+        </if-empty>
+        <if-empty field="parameters.fromDate">
+            <now-timestamp field="parameters.fromDate"/>
+        </if-empty>
+        <!-- check if not already exist -->
+        <entity-and distinct="false" entity-name="PartyRelationship" filter-by-date="true" list="partyRels" use-cache="false">
+            <field-map field-name="partyIdFrom" from-field="parameters.partyIdFrom"/>
+            <field-map field-name="roleTypeIdFrom" from-field="parameters.roleTypeIdFrom"/>
+            <field-map field-name="partyIdTo" from-field="parameters.partyIdTo"/>
+            <field-map field-name="roleTypeIdTo" from-field="parameters.roleTypeIdTo"/>
+            <field-map field-name="accountName" from-field="parameters.accountName"/>
+        </entity-and>
+        <if-empty field="partyRels">
+            <make-value entity-name="PartyRelationship" value-field="newEntity"/>
+            <set-pk-fields map="parameters" set-if-null="true" value-field="newEntity"/>
+            <set-nonpk-fields map="parameters" set-if-null="true" value-field="newEntity"/>
+            <create-value value-field="newEntity"/>
+        </if-empty>
+    </simple-method>
+
+    <simple-method method-name="createPartyRelationship" short-description="createPartyRelationship">
+        <if-empty field="parameters.roleTypeIdFrom">
+            <set field="parameters.roleTypeIdFrom" value="_NA_"/>
+        </if-empty>
+        <if-empty field="parameters.roleTypeIdTo">
+            <set field="parameters.roleTypeIdTo" value="_NA_"/>
+        </if-empty>
+        <if-empty field="parameters.partyIdFrom">
+            <set field="parameters.partyIdFrom" from="userLogin.partyId"/>
+        </if-empty>
+        <if-empty field="parameters.fromDate">
+            <now-timestamp field="parameters.fromDate"/>
+        </if-empty>
+        <!-- check if not already exist -->
+        <entity-and distinct="false" entity-name="PartyRelationship" filter-by-date="true" list="partyRels" use-cache="false">
+            <field-map field-name="partyIdFrom" from-field="parameters.partyIdFrom"/>
+            <field-map field-name="roleTypeIdFrom" from-field="parameters.roleTypeIdFrom"/>
+            <field-map field-name="partyIdTo" from-field="parameters.partyIdTo"/>
+            <field-map field-name="roleTypeIdTo" from-field="parameters.roleTypeIdTo"/>
+        </entity-and>
+        <if-empty field="partyRels">
+            <make-value entity-name="PartyRelationship" value-field="newEntity"/>
+            <set-pk-fields map="parameters" set-if-null="true" value-field="newEntity"/>
+            <set-nonpk-fields map="parameters" set-if-null="true" value-field="newEntity"/>
+            <create-value value-field="newEntity"/>
+        </if-empty>
+    </simple-method>
+
+    <simple-method method-name="updatePartyRelationship" short-description="updatePartyRelationship">
+        <if-empty field="parameters.roleTypeIdFrom">
+            <set field="parameters.roleTypeIdFrom" value="_NA_"/>
+        </if-empty>
+        <if-empty field="parameters.roleTypeIdTo">
+            <set field="parameters.roleTypeIdTo" value="_NA_"/>
+        </if-empty>
+        <entity-one entity-name="PartyRelationship" value-field="lookedUpValue"/>
+        <set-nonpk-fields map="parameters" set-if-null="true" value-field="lookedUpValue"/>
+        <store-value do-cache-clear="true" value-field="lookedUpValue"/>
+    </simple-method>
+
+    <simple-method method-name="deletePartyRelationship" short-description="deletePartyRelationship">
+        <if-empty field="parameters.roleTypeIdFrom">
+            <set field="parameters.roleTypeIdFrom" value="_NA_"/>
+        </if-empty>
+        <if-empty field="parameters.roleTypeIdTo">
+            <set field="parameters.roleTypeIdTo" value="_NA_"/>
+        </if-empty>
+        <entity-one entity-name="PartyRelationship" value-field="lookedUpValue"/>
+        <remove-value do-cache-clear="true" value-field="lookedUpValue"/>
+    </simple-method>
+
+    <simple-method method-name="createPartyRelationshipContactAccount" short-description="create a company/contact relationship and add the related roles">
+        <set field="roleMap.partyId" from="parameters.accountPartyId"/>
+        <set field="roleMap.roleTypeId" value="ACCOUNT"/>
+        <call-service in-map-name="roleMap" service-name="createPartyRole"/>
+        <set field="roleMap.partyId" from="parameters.contactPartyId"/>
+        <set field="roleMap.roleTypeId" value="CONTACT"/>
+        <call-service in-map-name="roleMap" service-name="createPartyRole"/>
+        <set field="relMap.partyIdFrom" from="parameters.accountPartyId"/>
+        <set field="relMap.roleTypeIdFrom" value="ACCOUNT"/>
+        <set field="relMap.partyIdTo" from="parameters.contactPartyId"/>
+        <set field="relMap.roleTypeIdTo" value="CONTACT"/>
+        <set field="relMap.partyRelationshipTypeId" value="EMPLOYMENT"/>
+        <set field="relMap.comments" from="parameters.comments"/>
+        <call-service in-map-name="relMap" service-name="createPartyRelationship"/>
+    </simple-method>
+
+    <simple-method method-name="createPartyCarrierAccount" short-description="Create PartyCarrierAccount">
+        <make-value entity-name="PartyCarrierAccount" value-field="newEntity"/>
+        <set-pk-fields map="parameters" set-if-null="true" value-field="newEntity"/>
+        <set-nonpk-fields map="parameters" set-if-null="true" value-field="newEntity"/>
+        <if-empty field="newEntity.fromDate">
+            <now-timestamp field="nowTimeStamp"/>
+            <set field="newEntity.fromDate" from="nowTimeStamp"/>
+        </if-empty>
+        <create-value value-field="newEntity"/>
+    </simple-method>
+
+    <simple-method method-name="updatePartyCarrierAccount" short-description="Update a PartyCarrierAccount">
+        <entity-one entity-name="PartyCarrierAccount" value-field="lookedUpValue"/>
+        <set-nonpk-fields map="parameters" set-if-null="true" value-field="lookedUpValue"/>
+        <store-value do-cache-clear="true" value-field="lookedUpValue"/>
+    </simple-method>
+    <!-- send party creation email notification -->
+
+    <simple-method login-required="false" method-name="sendCreatePartyEmailNotification" short-description="Notification email on party creation">
+        <map-to-map map="parameters" to-map="bodyParameters"/>
+        <set field="emailType" value="PARTY_REGIS_CONFIRM"/>
+        <set field="productStoreId" from="parameters.productStoreId"/>
+        <if-empty field="productStoreId">
+            <log level="warning" message="No productStoreId specified."/>
+        </if-empty>
+        <entity-one entity-name="ProductStoreEmailSetting" value-field="storeEmail">
+            <field-map field-name="emailType"/>
+            <field-map field-name="productStoreId"/>
+        </entity-one>
+        <entity-and distinct="false" entity-name="WebSite" filter-by-date="false" list="webSites" use-cache="false">
+            <field-map field-name="productStoreId" from-field="storeEmail.productStoreId"/>
+        </entity-and>
+        <first-from-list entry="webSite" list="webSites"/>
+        <if-not-empty field="storeEmail.bodyScreenLocation">
+            <entity-one entity-name="Person" value-field="person"/>
+            <set field="bodyParameters.person" from="person"/>
+            <set field="emailParams.bodyParameters" from="bodyParameters"/>
+            <set field="emailParams.sendTo" from="parameters.emailAddress"/>
+            <set field="emailParams.subject" from="storeEmail.subject"/>
+            <set field="emailParams.sendFrom" from="storeEmail.fromAddress"/>
+            <set field="emailParams.sendCc" from="storeEmail.ccAddress"/>
+            <set field="emailParams.sendBcc" from="storeEmail.bccAddress"/>
+            <set field="emailParams.contentType" from="storeEmail.contentType"/>
+            <set field="emailParams.bodyScreenUri" from="storeEmail.bodyScreenLocation"/>
+            <set field="emailParams.webSiteId" from="webSite.webSiteId"/>
+            <set field="emailParams.emailType" from="emailType"/>
+            <call-service in-map-name="emailParams" service-name="sendMailFromScreen"/>
+        </if-not-empty>
+    </simple-method>
+    <!-- send personal information update email notification -->
+
+    <simple-method login-required="false" method-name="sendUpdatePersonalInfoEmailNotification" short-description="Send the Notification email on personal information updation">
+        <map-to-map map="parameters" to-map="bodyParameters"/>
+        <set field="productStoreId" from="parameters.productStoreId"/>
+        <if-empty field="productStoreId">
+            <log level="warning" message="No productStoreId specified."/>
+        </if-empty>
+        <entity-one entity-name="ProductStoreEmailSetting" value-field="storeEmail">
+            <field-map field-name="emailType" value="UPD_PRSNL_INF_CNFRM"/>
+            <field-map field-name="productStoreId"/>
+        </entity-one>
+        <entity-and distinct="false" entity-name="WebSite" filter-by-date="false" list="webSites" use-cache="false">
+            <field-map field-name="productStoreId" from-field="storeEmail.productStoreId"/>
+        </entity-and>
+        <first-from-list entry="webSite" list="webSites"/>
+        <if-not-empty field="storeEmail.bodyScreenLocation">
+            <if-not-empty field="parameters.updatedUserLogin.partyId">
+                <set field="partyId" from="parameters.updatedUserLogin.partyId"/>
+                <else>
+                    <set field="partyId" from="parameters.partyId"/>
+                </else>
+            </if-not-empty>
+            <entity-condition distinct="false" entity-name="PartyContactDetailByPurpose" filter-by-date="true" list="partyContactDetailByPurposes" use-cache="false">
+                <condition-list combine="and">
+                    <condition-expr field-name="contactMechPurposeTypeId" ignore="false" ignore-case="false" ignore-if-empty="false" ignore-if-null="false" operator="equals" value="PRIMARY_EMAIL"/>
+                    <condition-expr field-name="partyId" from-field="partyId" ignore="false" ignore-case="false" ignore-if-empty="false" ignore-if-null="false" operator="equals"/>
+                </condition-list>
+            </entity-condition>
+            <first-from-list entry="partyContactDetailByPurpose" list="partyContactDetailByPurposes"/>
+            <entity-one entity-name="PartyAndPerson" value-field="partyAndPerson"/>
+            <set field="bodyParameters.partyAndPerson" from="partyAndPerson"/>
+            <set field="contactMechId" from="partyContactDetailByPurpose.contactMechId"/>
+            <entity-one entity-name="ContactMech" value-field="contactMech"/>
+            <set field="emailParams.sendTo" from="contactMech.infoString"/>
+            <set field="emailParams.subject" from="storeEmail.subject"/>
+            <set field="emailParams.sendFrom" from="storeEmail.fromAddress"/>
+            <set field="emailParams.sendCc" from="storeEmail.ccAddress"/>
+            <set field="emailParams.sendBcc" from="storeEmail.bccAddress"/>
+            <set field="emailParams.contentType" from="storeEmail.contentType"/>
+            <set field="emailParams.bodyParameters" from="bodyParameters"/>
+            <set field="emailParams.bodyScreenUri" from="storeEmail.bodyScreenLocation"/>
+            <set field="emailParams.webSiteId" from="webSite.webSiteId"/>
+            <if-not-empty field="emailParams.sendTo">
+                <call-service in-map-name="emailParams" service-name="sendMailFromScreen"/>
+                <else>
+                    <log level="warning" message="Tried to send Update Personal Info Notifcation with no to address; partyId is [${partyId}], subject is: ${emailParams.subject}"/>
+                </else>
+            </if-not-empty>
+        </if-not-empty>
+    </simple-method>
+
+    <simple-method login-required="false" method-name="getCountryList" short-description="Returns a list of country">
+        <call-class-method class-name="org.ofbiz.common.CommonWorkers" method-name="getCountryList" ret-field="geoList">
+            <field field="delegator" type="org.ofbiz.entity.Delegator"/>
+        </call-class-method>
+        <iterate entry="countryGeo" list="geoList">
+            <set field="countryName" value="${countryGeo.geoName}: ${countryGeo.geoId}"/>
+            <field-to-list field="countryName" list="countryList"/>
+        </iterate>
+        <field-to-result field="countryList"/>
+    </simple-method>
+
+    <simple-method login-required="false" method-name="getAssociatedStateList" short-description="set the state options for selected country">
+        <set field="countryGeoId" from="parameters.countryGeoId"/>
+        <set field="listOrderBy" from="parameters.listOrderBy"/>
+        <call-class-method class-name="org.ofbiz.common.CommonWorkers" method-name="getAssociatedStateList" ret-field="geoList">
+            <field field="delegator" type="org.ofbiz.entity.Delegator"/>
+            <field field="countryGeoId" type="String"/>
+            <field field="listOrderBy" type="String"/>
+        </call-class-method>
+        <iterate entry="stateGeo" list="geoList">
+            <set field="stateName" value="${stateGeo.geoName}: ${stateGeo.geoId}"/>
+            <field-to-list field="stateName" list="stateList"/>
+        </iterate>
+        <if-empty field="stateList">
+            <set field="noOption" value="No States/Provinces exist: _NA_"/>
+            <field-to-list field="noOption" list="stateList"/>
+        </if-empty>
+        <field-to-result field="stateList"/>
+    </simple-method>
+
+    <simple-method login-required="false" method-name="createUpdatePerson" short-description="Create and update a person">
+        <call-map-processor in-map-name="parameters" out-map-name="personMap" processor-name="person" xml-resource="component://party/script/org/ofbiz/party/party/PartyMapProcs.xml"/>
+        <check-errors/>
+        <set field="partyId" from="parameters.partyId"/>
+        <entity-one entity-name="Party" value-field="party"/>
+        <set field="personContext.partyId" from="partyId"/>
+        <set-service-fields map="personMap" service-name="createPerson" to-map="personContext"/>
+        <if-empty field="party">
+            <call-service in-map-name="personContext" service-name="createPerson">
+                <result-to-field field="partyId" result-name="partyId"/>
+            </call-service>
+            <else>
+                <!-- If party object already exist, update the person record. -->
+                <set field="personContext.userLogin" from="parameters.userLogin"/>
+                <call-service in-map-name="personContext" service-name="updatePerson"/>
+            </else>
+        </if-empty>
+        <field-to-result field="partyId"/>
+    </simple-method>
+
+    <simple-method login-required="false" method-name="quickCreateCustomer" short-description="Create customer profile on basis of First Name ,Last Name and Email Address">
+        <call-map-processor in-map-name="parameters" out-map-name="personInMap" processor-name="person" xml-resource="component://party/script/org/ofbiz/party/contact/PartyContactMechMapProcs.xml"/>
+        <call-map-processor in-map-name="parameters" out-map-name="emailAddressInMap" processor-name="emailAddress" xml-resource="component://party/script/org/ofbiz/party/contact/PartyContactMechMapProcs.xml"/>
+        <check-errors/>
+        <!-- create person -->
+        <call-service in-map-name="personInMap" service-name="createPerson">
+            <result-to-field result-name="partyId"/>
+            <result-to-result result-name="partyId"/>
+        </call-service>
+        <!-- Create email address -->
+        <entity-one entity-name="UserLogin" value-field="userLogin">
+            <field-map field-name="userLoginId" value="system"/>
+        </entity-one>
+        <set field="emailAddressInMap.partyId" from="partyId"/>
+        <set field="emailAddressInMap.userLogin" from="userLogin"/>
+        <set field="emailAddressInMap.contactMechPurposeTypeId" value="PRIMARY_EMAIL"/>
+        <call-service in-map-name="emailAddressInMap" service-name="createPartyEmailAddress"/>
+        <!-- Signup for Contact List -->
+        <if-compare field="parameters.subscribeContactList" operator="equals" value="Y">
+            <set field="signUpForContactListMap.partyId" from="partyId"/>
+            <set field="signUpForContactListMap.contactListId" from="parameters.contactListId"/>
+            <set field="signUpForContactListMap.email" from="parameters.emailAddress"/>
+            <call-service in-map-name="signUpForContactListMap" service-name="signUpForContactList"/>
+        </if-compare>
+        <!-- Create the PartyRole -->
+        <set field="createPartyRoleInMap.partyId" from="partyId"/>
+        <set field="createPartyRoleInMap.roleTypeId" value="CUSTOMER"/>
+        <set field="createPartyRoleInMap.userLogin" from="userLogin"/>
+        <call-service in-map-name="createPartyRoleInMap" service-name="createPartyRole"/>
+    </simple-method>
+
+    <simple-method method-name="getPartyMainRole" short-description="Get the main role of this party which is a child of the MAIN_ROLE roletypeId">
+        <entity-and distinct="false" entity-name="PartyRole" filter-by-date="false" list="partyRoles" use-cache="false">
+            <field-map field-name="partyId" from-field="parameters.partyId"/>
+        </entity-and>
+        <!-- find the role in the list -->
+        <clear-field field="mainRoleTypeId"/>
+        <iterate entry="partyRole" list="partyRoles">
+            <if-empty field="mainRoleTypeId">
+                <entity-and distinct="false" entity-name="RoleTypeIn3Levels" filter-by-date="false" list="roleTypeIn3Levels" use-cache="false">
+                    <field-map field-name="topRoleTypeId" value="MAIN_ROLE"/>
+                    <field-map field-name="lowRoleTypeId" from-field="partyRole.roleTypeId"/>
+                </entity-and>
+                <if-not-empty field="roleTypeIn3Levels">
+                    <set field="mainRoleTypeId" from="partyRole.roleTypeId"/>
+                </if-not-empty>
+            </if-empty>
+        </iterate>
+        <if-not-empty field="mainRoleTypeId">
+            <field-to-result field="mainRoleTypeId" result-name="roleTypeId"/>
+            <entity-one entity-name="RoleType" value-field="roleType">
+                <field-map field-name="roleTypeId" from-field="mainRoleTypeId"/>
+            </entity-one>
+            <field-to-result field="roleType.description" result-name="description"/>
+        </if-not-empty>
+    </simple-method>
+    <!-- Gl Account for party -->
+
+    <simple-method method-name="createGlAccountForParty" short-description="Creating GlAccount to party and associate with oragnization">
+        <entity-one entity-name="PartyGroup" value-field="partyGV">
+            <field-map field-name="partyId" from-field="parameters.partyIdTo"/>
+        </entity-one>
+        <if-compare field="parameters.roleTypeIdTo" operator="equals" value="BILL_TO_CUSTOMER">
+            <string-append field="accountName" string="${parameters.accountName}"/>
+            <set field="accountType" value="ACCOUNTS_RECEIVABLE"/>
+            <entity-one entity-name="PartyGlAccount" value-field="partyGlAccount">
+                <field-map field-name="organizationPartyId" from-field="parameters.partyIdFrom"/>
+                <field-map field-name="roleTypeId" from-field="parameters.roleTypeIdTo"/>
+                <field-map field-name="partyId" from-field="parameters.partyIdTo"/>
+                <field-map field-name="glAccountTypeId" value="ACCOUNTS_RECEIVABLE"/>
+            </entity-one>
+            <entity-one entity-name="GlAccountTypeDefault" value-field="glAccountDefault">
+                <field-map field-name="glAccountTypeId" value="ACCOUNTS_RECEIVABLE"/>
+                <field-map field-name="organizationPartyId" from-field="parameters.partyIdFrom"/>
+            </entity-one>
+            <entity-one entity-name="GlAccount" value-field="parentGL">
+                <field-map field-name="glAccountId" from-field="glAccountDefault.glAccountId"/>
+            </entity-one>
+        </if-compare>
+        <if-compare field="parameters.roleTypeIdTo" operator="equals" value="BILL_FROM_VENDOR">
+            <string-append field="accountName" string="${parameters.accountName}"/>
+            <set field="accountType" value="ACCOUNTS_PAYABLE"/>
+            <entity-one entity-name="PartyGlAccount" value-field="partyGlAccount">
+                <field-map field-name="organizationPartyId" from-field="parameters.partyIdFrom"/>
+                <field-map field-name="roleTypeId" from-field="parameters.roleTypeIdTo"/>
+                <field-map field-name="partyId" from-field="parameters.partyIdTo"/>
+                <field-map field-name="glAccountTypeId" value="ACCOUNTS_PAYABLE"/>
+            </entity-one>
+            <entity-one entity-name="GlAccountTypeDefault" value-field="glAccountDefault">
+                <field-map field-name="glAccountTypeId" value="ACCOUNTS_PAYABLE"/>
+                <field-map field-name="organizationPartyId" from-field="parameters.partyIdFrom"/>
+            </entity-one>
+            <entity-one entity-name="GlAccount" value-field="parentGL">
+                <field-map field-name="glAccountId" from-field="glAccountDefault.glAccountId"/>
+            </entity-one>
+        </if-compare>
+        
+        <sequenced-id field="glAccountId" get-long-only="false" sequence-name="GlAccount"/>
+        <set field="glAccountId" value="${bsh:parentGL.getString(&quot;parentGlAccountId&quot;).concat(&quot;_&quot;).concat(glAccountId)}"/>
+        <make-value entity-name="GlAccount" value-field="newEntityGlAccount"/>
+        <set field="newEntityGlAccount.accountCode" from="glAccountId"/>
+        <set field="newEntityGlAccount.glAccountTypeId" from="parentGL.glAccountTypeId"/>
+        <set field="newEntityGlAccount.glAccountClassId" from="parentGL.glAccountClassId"/>
+        <set field="newEntityGlAccount.glResourceTypeId" from="parentGL.glResourceTypeId"/>
+        <set field="newEntityGlAccount.accountCode" from="glAccountId"/>
+        <set field="newEntityGlAccount.glAccountId" from="glAccountId"/>
+        <set field="newEntityGlAccount.parentGlAccountId" from="parentGL.glAccountId"/>
+        <set field="newEntityGlAccount.accountName" from="accountName"/>
+        <!-- Create a New GLAccount for the Party -->
+        <create-value value-field="newEntityGlAccount"/>
+
+        <!-- Associate the New GLAccount with the Organization with whom the relation is created -->
+        <make-value entity-name="GlAccountOrganization" value-field="newEntityGlAccountOrg"/>
+        <set field="newEntityGlAccountOrg.organizationPartyId" from="parameters.partyIdFrom"/>
+        <set field="newEntityGlAccountOrg.glAccountId" from="glAccountId"/>
+        <create-value value-field="newEntityGlAccountOrg"/>
+        <make-value entity-name="PartyGlAccount" value-field="newEntity"/>
+        <set field="newEntity.partyId" from="parameters.partyIdTo"/>
+        <set field="newEntity.organizationPartyId" from="parameters.partyIdFrom"/>
+        <set field="newEntity.roleTypeId" from="parameters.roleTypeIdTo"/>
+        <set field="newEntity.glAccountTypeId" from="accountType"/>
+        <set field="newEntity.glAccountId" from="glAccountId"/>
+        <create-value value-field="newEntity"/>
+        <field-to-result field="parameters.partyIdTo" result-name="partyIdTo"/>
+    </simple-method>
+
+    <simple-method method-name="updateGlAccountForParty" short-description="updating GlAccount to party and associate with oragnization">
+        <entity-one entity-name="Person" value-field="personGv">
+            <field-map field-name="partyId" from-field="parameters.partyIdTo"/>
+        </entity-one>
+        <if-compare field="parameters.roleTypeIdTo" operator="equals" value="CUSTOMER">
+            <set field="glAccountTypeIdName" value="ACCOUNTS_RECEIVABLE"/>
+        </if-compare>
+        <if-compare field="parameters.roleTypeIdTo" operator="equals" value="SUPPLIER">
+            <set field="glAccountTypeIdName" value="ACCOUNTS_PAYABLE"/>
+        </if-compare>
+        <entity-and distinct="false" entity-name="PartyGlAccount" filter-by-date="false" list="PartyGlAccountList" use-cache="false">
+            <field-map field-name="partyId" from-field="parameters.partyIdTo"/>
+        </entity-and>
+        <store-list do-cache-clear="true" list="PartyGlAccountList"/>
+    </simple-method>
+
+    <simple-method method-name="deleteGlAccountRelationForParty" short-description="deleting GlAccount relation to party and associate with oragnization">
+        <entity-and distinct="false" entity-name="GlAccountOrganization" filter-by-date="false" list="PartyGlAccountList" use-cache="false">
+            <field-map field-name="organizationPartyId" from-field="parameters.partyIdFrom"/>
+            <field-map field-name="roleTypeId" from-field="parameters.roleTypeIdTo"/>
+        </entity-and>
+        <remove-list do-cache-clear="true" list="PartyGlAccountList"/>
+    </simple-method>
+
+    <simple-method method-name="deletePartyGlAccountDetails" short-description="deleting Party realated Gl Accounts">
+        <!-- if Role Type ID is Bill to Customer -->
+        <if-compare field="parameters.roleTypeId" operator="equals" value="BILL_TO_CUSTOMER">
+            <set field="roleTypeId" value="BILL_TO_CUSTOMER"/>
+            <set field="glAccountTypeId" value="ACCOUNTS_RECEIVABLE"/>
+            <entity-and distinct="false" entity-name="PartyGlAccount" filter-by-date="false" list="partyGlAccountList" use-cache="false">
+                <field-map field-name="partyId" from-field="parameters.partyId"/>
+                <field-map field-name="roleTypeId" from-field="roleTypeId"/>
+                <field-map field-name="glAccountTypeId" from-field="glAccountTypeId"/>
+            </entity-and>
+            <iterate entry="partyGlAccount" list="partyGlAccountList">
+                <set field="glAccountId" from="partyGlAccount.glAccountId"/>
+            </iterate>
+            <!-- Delete Party Gl Account -->
+            <if-not-empty field="partyGlAccountList">
+                <remove-list do-cache-clear="true" list="partyGlAccountList"/>
+            </if-not-empty>
+            <!--Delete GlAccount organization relation -->
+            <entity-and distinct="false" entity-name="GlAccountOrganization" filter-by-date="false" list="glAccountOrganizationList" use-cache="false">
+                <field-map field-name="glAccountId" from-field="glAccountId"/>
+                <field-map field-name="roleTypeId" from-field="roleTypeId"/>
+            </entity-and>
+            <if-not-empty field="glAccountOrganizationList">
+                <remove-list do-cache-clear="true" list="glAccountOrganizationList"/>
+            </if-not-empty>
+            <!-- Delete GlAccount -->
+            <entity-one entity-name="GlAccount" value-field="glAccountGv">
+                <field-map field-name="glAccountId" from-field="glAccountId"/>
+            </entity-one>
+            <if-not-empty field="glAccountGv">
+                <remove-value do-cache-clear="true" value-field="glAccountGv"/>
+            </if-not-empty>
+            <!-- Delete Party Relationship -->
+            <entity-and distinct="false" entity-name="PartyRelationship" filter-by-date="false" list="partyRelationshipList" use-cache="false">
+                <field-map field-name="roleTypeIdTo" from-field="roleTypeId"/>
+                <field-map field-name="partyIdTo" from-field="parameters.partyId"/>
+            </entity-and>
+            <if-not-empty field="partyRelationshipList">
+                <remove-list do-cache-clear="true" list="partyRelationshipList"/>
+            </if-not-empty>
+        </if-compare>
+        <!-- if Role Type ID is Bill Form Vendor -->
+        <if-compare field="parameters.roleTypeId" operator="equals" value="BILL_FROM_VENDOR">
+            <set field="roleTypeId" value="BILL_FROM_VENDOR"/>
+            <set field="glAccountTypeId" value="ACCOUNTS_PAYABLE"/>
+            <entity-and distinct="false" entity-name="PartyGlAccount" filter-by-date="false" list="partyGlAccountList" use-cache="true">
+                <field-map field-name="partyId" from-field="parameters.partyId"/>
+                <field-map field-name="roleTypeId" from-field="roleTypeId"/>
+                <field-map field-name="glAccountTypeId" from-field="glAccountTypeId"/>
+            </entity-and>
+            <iterate entry="partyGlAccount" list="partyGlAccountList">
+                <set field="glAccountId" from="partyGlAccount.glAccountId"/>
+            </iterate>
+            <!-- Delete Party Gl Account -->
+            <if-not-empty field="partyGlAccountList">
+                <remove-list do-cache-clear="true" list="partyGlAccountList"/>
+            </if-not-empty>
+            <!--Delete GlAccount organization relation -->
+            <entity-and distinct="false" entity-name="GlAccountOrganization" filter-by-date="false" list="glAccountOrganizationList" use-cache="true">
+                <field-map field-name="glAccountId" from-field="glAccountId"/>
+                <field-map field-name="roleTypeId" from-field="roleTypeId"/>
+            </entity-and>
+            <if-not-empty field="glAccountOrganizationList">
+                <remove-list do-cache-clear="true" list="glAccountOrganizationList"/>
+            </if-not-empty>
+            <!-- Delete GlAccount -->
+            <entity-one entity-name="GlAccount" value-field="glAccountGv">
+                <field-map field-name="glAccountId" from-field="glAccountId"/>
+            </entity-one>
+            <if-not-empty field="glAccountGv">
+                <remove-value do-cache-clear="true" value-field="glAccountGv"/>
+            </if-not-empty>
+            <!-- Delete Party Relationship -->
+            <entity-and distinct="false" entity-name="PartyRelationship" filter-by-date="false" list="partyRelationshipList" use-cache="false">
+                <field-map field-name="roleTypeIdTo" from-field="roleTypeId"/>
+                <field-map field-name="partyIdTo" from-field="parameters.partyId"/>
+            </entity-and>
+            <if-not-empty field="partyRelationshipList">
+                <remove-list do-cache-clear="true" list="partyRelationshipList"/>
+            </if-not-empty>
+        </if-compare>
+        <call-simple-method method-name="deletePartyRole"/>
+    </simple-method>
+
+    <!--Added simple methods to sync with HRMS-->
+    <simple-method method-name="createUpdateTelecomNumber" short-description="Create and update phone number" login-required="false">
+        <if-empty field="parameters.contactMechId">
+            <set-service-fields service-name="createPartyTelecomNumber" map="parameters" to-map="phoneContext"/>
+            <call-service service-name="createPartyTelecomNumber" in-map-name="phoneContext">
+                <result-to-field result-name="contactMechId" field="contactMechId"/>
+            </call-service>
+            <log level="info" message="Phone Contact created phoneContactMechId is ${contactMechId}"/>
+            <else>
+                <set-service-fields service-name="createPartyTelecomNumber" map="parameters" to-map="phoneContext"/>
+                <call-service service-name="updatePartyTelecomNumber" in-map-name="phoneContext">
+                    <result-to-field result-name="contactMechId" field="contactMechId"/>
+                </call-service>
+                <log level="info" message="Phone Contact updated phoneContactMechId is ${contactMechId}"/>
+            </else>
+        </if-empty>
+        <field-to-result field="contactMechId"/>
+    </simple-method>
+
+    <simple-method method-name="createUpdateEmailAddress" short-description="Create and update email address" login-required="false">
+        <if-empty field="parameters.contactMechId">
+            <set-service-fields service-name="createPartyEmailAddress" map="parameters" to-map="emailAddressContext"/>
+            <set field="emailAddressContext.partyId" from-field="userLogin.partyId"/>
+            <call-service service-name="createPartyEmailAddress" in-map-name="emailAddressContext">
+                <result-to-field result-name="contactMechId" field="contactMechId"/>
+            </call-service>
+            <log level="info" message="Email Contact Created emailContactMechId is ${contactMechId}"></log>
+            <else>
+                <set-service-fields service-name="updatePartyEmailAddress" map="parameters" to-map="emailAddressContext"/>
+                <call-service service-name="updatePartyEmailAddress" in-map-name="emailAddressContext">
+                    <result-to-field result-name="contactMechId" field="contactMechId"/>
+                </call-service>
+                <log level="info" message="Email Contact updated emailContactMechId is ${contactMechId}"></log>
+            </else>
+        </if-empty>
+        <entity-one entity-name="ContactMech" value-field="contactMech"/>
+        <field-to-result field="contactMech.infoString" result-name="emailAddress"/>
+        <field-to-result field="contactMechId"/>
+    </simple-method>
+    
+    <simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_" 
+       event-event-message-name="_event_message_" event-request-object-name="request" event-response-code-name="_response_code_" 
+        event-response-object-name="response" login-required="false" method-name="NewCustomerEmailAlert" 
+         service-error-message-list-name="errorMessageList" service-error-message-map-name="errorMessageMap" 
+         service-error-message-name="errorMessage" service-response-message-name="responseMessage" 
+         service-success-message-list-name="successMessageList" service-success-message-name="successMessage" 
+         short-description="" use-transaction="true">
+        
+        <property-to-field resource="general.properties" property="emailAlert.sendTo" field="sendTo"/>
+        <string-append field="sendEmailMap.sendTo" string="${sendTo}" prefix=","/>
+        <set field="sendEmailMap.subject" value="New Customer created with Party ID #${parameters.partyId}"/>
+        <set field="sendEmailMap.contentType" value="text/html"/>
+        <property-to-field resource="general.properties" property="server.url" field="serverUrl"/>
+        <set field="sendEmailMap.body" value="New Customer created with Party ID  #${parameters.partyId} in environment ${serverUrl}"/>
+        <set field="sendEmailMap.templateName" value="template"/>
+        <call-service service-name="sendGenericNotificationEmail" in-map-name="sendEmailMap"/>
+        
+    </simple-method>
+    
+    <simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_" 
+       event-event-message-name="_event_message_" event-request-object-name="request" event-response-code-name="_response_code_" 
+        event-response-object-name="response" login-required="false" method-name="NewSupplierEmailAlert" 
+         service-error-message-list-name="errorMessageList" service-error-message-map-name="errorMessageMap" 
+         service-error-message-name="errorMessage" service-response-message-name="responseMessage" 
+         service-success-message-list-name="successMessageList" service-success-message-name="successMessage" 
+         short-description="" use-transaction="true">
+        
+        <property-to-field resource="general.properties" property="emailAlert.sendTo" field="sendTo"/>
+        <string-append field="sendEmailMap.sendTo" string="${sendTo}" prefix=","/>
+        <set field="sendEmailMap.subject" value="New Supplier created with Party ID #${parameters.partyId}"/>
+        <set field="sendEmailMap.contentType" value="text/html"/>
+        <property-to-field resource="general.properties" property="server.url" field="serverUrl"/>
+        <set field="sendEmailMap.body" value="New Supplier created with Party ID  #${parameters.partyId} in environment ${serverUrl}"/>
+        <set field="sendEmailMap.templateName" value="template"/>
+        <call-service service-name="sendGenericNotificationEmail" in-map-name="sendEmailMap"/>
+        
+    </simple-method>
+    
+    
+</simple-methods>

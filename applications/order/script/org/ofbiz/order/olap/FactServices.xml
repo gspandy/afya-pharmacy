@@ -1,0 +1,327 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Licensed to the Apache Software Foundation (ASF) under one or more contributor license agreements. See the NOTICE file distributed with this work for additional 
+	information regarding copyright ownership. The ASF licenses this file to you under the Apache License, Version 2.0 (the "License"); you may not use this file except 
+	in compliance with the License. You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0 Unless required by applicable law or agreed to 
+	in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See 
+	the License for the specific language governing permissions and limitations under the License. -->
+<simple-methods xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://ofbiz.apache.org/dtds/simple-methods-v2.xsd">
+
+	<simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_" event-event-message-name="_event_message_"
+		event-request-object-name="request" event-response-code-name="_response_code_" event-response-object-name="response" login-required="true" method-name="loadSalesOrderFact"
+		service-error-message-list-name="errorMessageList" service-error-message-map-name="errorMessageMap" service-error-message-name="errorMessage"
+		service-response-message-name="responseMessage" service-success-message-list-name="successMessageList" service-success-message-name="successMessage"
+		short-description="" use-transaction="true">
+		<entity-one auto-field-map="true" entity-name="OrderHeader" use-cache="false" value-field="orderHeader" />
+		<!--<if-empty field="orderHeader"> <add-error> <fail-message message="Order with id [${parameters.orderId}] doesn't exist." /> </add-error> </if-empty> -->
+		<check-errors error-code="error" error-list-name="error_list" />
+		<if-compare field="orderHeader.orderTypeId" operator="equals" type="String" value="SALES_ORDER">
+			<set field="andConditions.orderItemTypeId" set-if-empty="true" set-if-null="false" value="PRODUCT_ORDER_ITEM" />
+			<get-related list="orderItems" map="andConditions" relation-name="OrderItem" use-cache="false" value-field="orderHeader" />
+			<iterate entry="orderItem" list="orderItems">
+				<clear-field field="inMap" />
+				<set field="inMap.orderHeader" from="orderHeader" set-if-empty="true" set-if-null="false" />
+				<set field="inMap.orderItem" from="orderItem" set-if-empty="true" set-if-null="false" />
+				<set field="inMap.orderAdjustment" from="orderAdjustment" set-if-empty="true" set-if-null="false" />
+				<call-service break-on-error="true" error-code="error" in-map-name="inMap" include-user-login="true" require-new-transaction="false"
+					service-name="loadSalesOrderItemFact" success-code="success" />
+			</iterate>
+		</if-compare>
+	</simple-method>
+
+	<simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_" event-event-message-name="_event_message_"
+		event-request-object-name="request" event-response-code-name="_response_code_" event-response-object-name="response" login-required="true" method-name="loadSalesOrderItemFact"
+		service-error-message-list-name="errorMessageList" service-error-message-map-name="errorMessageMap" service-error-message-name="errorMessage"
+		service-response-message-name="responseMessage" service-success-message-list-name="successMessageList" service-success-message-name="successMessage"
+		short-description="" use-transaction="true">
+		<set field="orderHeader" from="parameters.orderHeader" set-if-empty="true" set-if-null="false" />
+		<set field="orderItem" from="parameters.orderItem" set-if-empty="true" set-if-null="false" />
+		<set field="orderAdjustment" from="parameters.orderAdjustment" set-if-empty="true" set-if-null="false" />
+		<if-empty field="orderHeader">
+			<entity-one auto-field-map="true" entity-name="OrderHeader" use-cache="false" value-field="orderHeader" />
+		</if-empty>
+		<if-empty field="orderItem">
+			<entity-one auto-field-map="true" entity-name="OrderItem" use-cache="false" value-field="orderItem" />
+		</if-empty>
+		<if-empty field="orderAdjustment">
+			<entity-and entity-name="OrderAdjustment" filter-by-date="false" list="orderAdjustments" use-cache="false">
+				<field-map field-name="orderId" from-field="orderItem.orderId" />
+			</entity-and>
+		</if-empty>
+		<!--<if-empty field="orderHeader"> <add-error> <fail-message message="Order with id [${orderHeader.orderId}] doesn't exist." /> </add-error> </if-empty> -->
+		<if-empty field="orderItem">
+			<add-error error-list-name="error_list">
+				<fail-message message="The Orders Item with id [${orderItem.orderItemSeqId}] doesn't exist." />
+			</add-error>
+		</if-empty>
+		<check-errors error-code="error" error-list-name="error_list" />
+		<if-compare field="orderHeader.orderTypeId" operator="equals" type="String" value="SALES_ORDER">
+			<entity-one auto-field-map="false" entity-name="SalesOrderItemFact" use-cache="false" value-field="fact">
+				<field-map field-name="orderId" from-field="orderItem.orderId" />
+				<field-map field-name="orderItemSeqId" from-field="orderItem.orderItemSeqId" />
+			</entity-one>
+			<!-- key handling -->
+			<if-empty field="fact">
+				<make-value entity-name="SalesOrderItemFact" value-field="fact" />
+				<set field="fact.orderId" from="orderHeader.orderId" set-if-empty="true" set-if-null="false" />
+				<set field="fact.orderDate" from="orderHeader.orderDate" set-if-empty="true" set-if-null="false" type="Timestamp" />
+				<set field="fact.orderItemSeqId" from="orderItem.orderItemSeqId" set-if-empty="true" set-if-null="false" />
+				<set field="fact.salesChannelEnumId" from="orderHeader.salesChannelEnumId" set-if-empty="true" set-if-null="false" />
+				<!-- <set field="fact.orderDate" value="orderHeader.orderDate" type="String"/> -->
+				<!-- conversion of the order date -->
+				<!-- conversion of the product id -->
+				<if-not-empty field="orderItem.productId">
+					<clear-field field="inMap" />
+					<set field="inMap.dimensionEntityName" set-if-empty="true" set-if-null="false" value="ProductDimension" />
+					<set field="inMap.naturalKeyFields.productId" from="orderItem.productId" set-if-empty="true" set-if-null="false" />
+					<call-service break-on-error="true" error-code="error" in-map-name="inMap" include-user-login="true" require-new-transaction="false"
+						service-name="getDimensionIdFromNaturalKey" success-code="success">
+						<result-to-field field="fact.productDimId" result-name="dimensionId" />
+					</call-service>
+					<if-empty field="fact.productDimId">
+						<set field="fact.productDimId" set-if-empty="true" set-if-null="false" value="_NF_" />
+					</if-empty>
+					<else>
+						<set field="fact.productDimId" set-if-empty="true" set-if-null="false" value="_NA_" />
+					</else>
+				</if-not-empty>
+				<!-- conversion of the order currency -->
+				<if-not-empty field="orderHeader.currencyUom">
+					<clear-field field="inMap" />
+					<set field="inMap.dimensionEntityName" set-if-empty="true" set-if-null="false" value="CurrencyDimension" />
+					<set field="inMap.naturalKeyFields.currencyId" from="orderHeader.currencyUom" set-if-empty="true" set-if-null="false" />
+					<call-service break-on-error="true" error-code="error" in-map-name="inMap" include-user-login="true" require-new-transaction="false"
+						service-name="getDimensionIdFromNaturalKey" success-code="success">
+						<result-to-field field="fact.origCurrencyDimId" result-name="dimensionId" />
+					</call-service>
+					<if-empty field="fact.origCurrencyDimId">
+						<set field="fact.origCurrencyDimId" set-if-empty="true" set-if-null="false" value="_NF_" />
+					</if-empty>
+					<else>
+						<set field="fact.origCurrencyDimId" set-if-empty="true" set-if-null="false" value="_NA_" />
+					</else>
+				</if-not-empty>
+				<!-- TODO -->
+				<set field="fact.billToCustomerDimId" set-if-empty="true" set-if-null="false" value="_NA_" />
+				<create-value do-cache-clear="true" or-store="false" value-field="fact" />
+			</if-empty>
+			<!-- =============== -->
+			<!-- facts handling -->
+			<!-- =============== -->
+			<set field="fact.quantity" from="orderItem.quantity" set-if-empty="true" set-if-null="false" type="BigDecimal" />
+			<set field="fact.extGrossAmount" set-if-empty="true" set-if-null="false" type="BigDecimal" value="0.0" />
+			<set field="fact.extDiscountAmount" set-if-empty="true" set-if-null="false" type="BigDecimal" value="0.0" />
+			<set field="fact.extNetAmount" set-if-empty="true" set-if-null="false" type="BigDecimal" value="0.0" />
+			<set field="fact.extShippingAmount" set-if-empty="true" set-if-null="false" type="BigDecimal" value="0.0" />
+			<set field="fact.extTaxAmount" set-if-empty="true" set-if-null="false" type="BigDecimal" value="0.0" />
+			<set field="fact.GrossSales" set-if-empty="true" set-if-null="false" type="BigDecimal" value="0.0" />
+			<set field="fact.GrossMerchandizeSales" set-if-empty="true" set-if-null="false" type="BigDecimal" value="0.0" />
+			<set field="fact.GrossMerchandizeProfit" set-if-empty="true" set-if-null="false" type="BigDecimal" value="0.0" />
+			<set field="fact.GrossShippingProfit" set-if-empty="true" set-if-null="false" type="BigDecimal" value="0.0" />
+			<set field="fact.GrossProfit" set-if-empty="true" set-if-null="false" type="BigDecimal" value="0.0" />
+			<!-- <set field="fact.AverageMerchandizeProfit" value="0.0" type="BigDecimal"/> <set field="fact.AverageGrossProfit" value="0.0" type="BigDecimal"/> -->
+			<!-- amount -->
+			<calculate decimal-scale="2" field="fact.extGrossAmount" rounding-mode="HalfEven" type="BigDecimal">
+				<calcop field="fact.quantity" operator="multiply">
+					<calcop field="orderItem.unitPrice" operator="get" />
+				</calcop>
+			</calculate>
+			<!-- cost -->
+			<entity-and entity-name="SupplierProduct" filter-by-date="false" list="costs" use-cache="false">
+				<field-map field-name="productId" from-field="orderItem.productId" />
+			</entity-and>
+			<iterate entry="cost" list="costs">
+				<if-compare field="cost.minimumOrderQuantity" operator="equals" type="String" value="0">
+					<calculate decimal-scale="2" field="fact.extGrossCost" rounding-mode="HalfEven" type="BigDecimal">
+						<calcop field="fact.quantity" operator="multiply">
+							<calcop field="cost.lastPrice" operator="get" />
+						</calcop>
+					</calculate>
+				</if-compare>
+			</iterate>
+			<!-- shipping -->
+			<iterate entry="shipping" list="orderAdjustments">
+				<if-compare field="shipping.orderAdjustmentTypeId" operator="equals" type="String" value="SHIPPING_CHARGES">
+					<calculate decimal-scale="2" field="fact.extShippingAmount" rounding-mode="HalfEven" type="BigDecimal">
+						<calcop field="fact.extShippingAmount" operator="add">
+							<calcop field="shipping.amount" operator="get" />
+						</calcop>
+					</calculate>
+				</if-compare>
+			</iterate>
+			<!-- taxes -->
+			<iterate entry="tax" list="orderAdjustments">
+				<if-compare field="tax.orderAdjustmentTypeId" operator="equals" type="String" value="SALES_TAX">
+					<calculate decimal-scale="2" field="fact.extTaxAmount" rounding-mode="HalfEven" type="BigDecimal">
+						<calcop field="fact.extTaxAmount" operator="add">
+							<calcop field="tax.amount" operator="get" />
+						</calcop>
+					</calculate>
+				</if-compare>
+			</iterate>
+			<!-- discounts -->
+			<iterate entry="discount" list="orderAdjustments">
+				<if-compare field="discount.orderAdjustmentTypeId" operator="equals" type="String" value="PROMOTION_ADJUSTMENT">
+					<calculate decimal-scale="2" field="fact.extDiscountAmount" rounding-mode="HalfEven" type="BigDecimal">
+						<calcop field="fact.extDiscountAmount" operator="add">
+							<calcop field="discount.amount" operator="get" />
+						</calcop>
+					</calculate>
+					<!-- product promo code -->
+					<entity-and entity-name="ProductPromoCode" filter-by-date="false" list="productPromo" use-cache="false">
+						<field-map field-name="productPromoId" from-field="discount.productPromoId" />
+					</entity-and>
+					<first-from-list entry="productPromoCode" list="productPromo" />
+					<if-not-empty field="productPromoCode">
+						<set field="fact.productPromoCode" from="productPromoCode.productPromoCodeId" set-if-empty="true" set-if-null="false" />
+						<else>
+							<set field="fact.productPromoCode" set-if-empty="true" set-if-null="false" value="Not require code" />
+						</else>
+					</if-not-empty>
+				</if-compare>
+			</iterate>
+			<!-- net -->
+			<calculate decimal-scale="2" field="fact.extNetAmount" rounding-mode="HalfEven" type="BigDecimal">
+				<calcop field="fact.extGrossAmount" operator="subtract">
+					<calcop field="fact.extDiscountAmount" operator="get" />
+				</calcop>
+			</calculate>
+			<!-- Gross Sales -->
+			<calculate decimal-scale="2" field="fact.GrossSales" rounding-mode="HalfEven" type="BigDecimal">
+				<calcop field="fact.extGrossAmount" operator="add">
+					<calcop field="fact.extShippingAmount" operator="get" />
+				</calcop>
+			</calculate>
+			<!-- Gross Merchandize Sales -->
+			<calculate decimal-scale="2" field="fact.GrossMerchandizeSales" rounding-mode="HalfEven" type="BigDecimal">
+				<calcop field="fact.GrossMerchandizeSales" operator="add">
+					<calcop field="fact.extGrossAmount" operator="get" />
+				</calcop>
+			</calculate>
+			<!-- Gross Merchandize Profit -->
+			<calculate decimal-scale="2" field="fact.GrossMerchandizeProfit" rounding-mode="HalfEven" type="BigDecimal">
+				<calcop field="fact.GrossMerchandizeSales" operator="subtract">
+					<calcop field="fact.extGrossCost" operator="get" />
+				</calcop>
+			</calculate>
+			<!-- Product Store -->
+			<if-not-empty field="orderHeader.productStoreId">
+				<set field="fact.productStoreId" from="orderHeader.productStoreId" set-if-empty="true" set-if-null="false" />
+			</if-not-empty>
+			<!-- Sale Channel -->
+			<if-not-empty field="orderHeader.salesChannelEnumId">
+				<entity-one auto-field-map="true" entity-name="Enumeration" use-cache="false" value-field="enumeration">
+					<field-map field-name="enumId" from-field="orderHeader.salesChannelEnumId" />
+				</entity-one>
+				<if-not-empty field="enumeration">
+					<set field="fact.saleChannel" from="enumeration.description" set-if-empty="true" set-if-null="false" />
+				</if-not-empty>
+			</if-not-empty>
+			<!-- Order status -->
+			<if-not-empty field="orderHeader.statusId">
+				<entity-one auto-field-map="true" entity-name="StatusItem" use-cache="false" value-field="statusItem">
+					<field-map field-name="statusId" from-field="orderHeader.statusId" />
+				</entity-one>
+				<if-not-empty field="statusItem">
+					<set field="fact.orderStatus" from="statusItem.description" set-if-empty="true" set-if-null="false" />
+				</if-not-empty>
+			</if-not-empty>
+			<!-- Order visit and referrer -->
+			<if-not-empty field="orderHeader.visitId">
+				<entity-one auto-field-map="true" entity-name="Visit" use-cache="false" value-field="visit">
+					<field-map field-name="visitId" from-field="orderHeader.visitId" />
+				</entity-one>
+				<if-not-empty field="visit">
+					<set field="fact.visitId" from="visit.visitId" set-if-empty="true" set-if-null="false" />
+					<set field="fact.initialReferrer" from="visit.initialReferrer" set-if-empty="true" set-if-null="false" />
+				</if-not-empty>
+			</if-not-empty>
+			<!-- Gross Shipping Profit -->
+			<!-- Gross Profit -->
+			<calculate decimal-scale="2" field="fact.GrossProfit" rounding-mode="HalfEven" type="BigDecimal">
+				<calcop field="fact.GrossMerchandizeProfit" operator="subtract">
+					<calcop field="fact.GrossShippingProfit" operator="get" />
+				</calcop>
+			</calculate>
+			<!-- Average Merchandize Profit -->
+			<!-- Average Gross Profit -->
+			<!-- TODO: prorate order header discounts and shipping charges -->
+			<!-- TODO: costs -->
+			<!-- <set field="fact.extManFixedCost" value="0.0" type="BigDecimal"/> <set field="fact.extManVarCost" value="0.0" type="BigDecimal"/> <set field="fact.extStorageCost" 
+				value="0.0" type="BigDecimal"/> <set field="fact.extDistributionCost" value="0.0" type="BigDecimal"/> <calculate field="fact.contributionAmount"> <calcop field="fact.extNetAmount" 
+				operator="subtract"> <calcop field="fact.extManFixedCost" operator="get"/> <calcop field="fact.extManVarCost" operator="get"/> <calcop field="fact.extStorageCost" 
+				operator="get"/> <calcop field="fact.extDistributionCost" operator="get"/> </calcop> </calculate> -->
+			<!-- eBay -->
+			<set field="fact.eBay" set-if-empty="true" set-if-null="false" type="BigDecimal" value="7" />
+			<!-- RRC -->
+			<set field="fact.RRC" set-if-empty="true" set-if-null="false" type="BigDecimal" value="2" />
+			<!-- Others -->
+			<set field="fact.OtherFree" set-if-empty="true" set-if-null="false" type="BigDecimal" value="5" />
+			<!-- Others -->
+			<calculate decimal-scale="2" field="fees" rounding-mode="HalfEven" type="BigDecimal">
+				<calcop operator="add">
+					<calcop field="fact.eBay" operator="get" />
+					<calcop field="fact.RRC" operator="get" />
+					<calcop field="fact.OtherFree" operator="get" />
+				</calcop>
+			</calculate>
+			<!-- NBO -->
+			<calculate decimal-scale="2" field="NBO" rounding-mode="HalfEven" type="BigDecimal">
+				<calcop operator="subtract">
+					<calcop field="fact.GrossProfit" operator="get" />
+					<calcop field="fees" operator="get" />
+				</calcop>
+			</calculate>
+			<set field="fact.NBO" from="NBO" set-if-empty="true" set-if-null="false" />
+			<!-- CountDate -->
+			<set field="fact.CountDate" set-if-empty="true" set-if-null="false" type="BigDecimal" value="1" />
+			<!-- Category -->
+			<if-not-empty field="orderItem.productId">
+				<clear-field field="defaultTopCategoryId" />
+				<entity-one auto-field-map="true" entity-name="Product" use-cache="false" value-field="product">
+					<field-map field-name="productId" from-field="orderItem.productId" />
+				</entity-one>
+				<set field="defaultTopCategoryId.topCategory" from="product.primaryProductCategoryId" set-if-empty="true" set-if-null="false" />
+				<call-service break-on-error="true" error-code="error" in-map-name="defaultTopCategoryId" include-user-login="true" require-new-transaction="false"
+					service-name="getAllCategories" success-code="success">
+					<result-to-field field="categories" result-name="categories" />
+				</call-service>
+				<if-not-empty field="categories">
+					<first-from-list entry="category" list="categories" />
+					<set field="fact.categoryName" from="category.categoryName" set-if-empty="true" set-if-null="false" />
+				</if-not-empty>
+				<set field="fact.productId" from="orderItem.productId" set-if-empty="true" set-if-null="false" />
+				<set field="fact.description" from="product.internalName" set-if-empty="true" set-if-null="false" />
+				<set field="fact.quantityUomId" from="product.quantityUomId" set-if-empty="true" set-if-null="false" />
+				<entity-and entity-name="OrderRole" filter-by-date="false" list="getSupplier" use-cache="false">
+					<field-map field-name="orderId" from-field="orderHeader.orderId" />
+					<field-map field-name="roleTypeId" value="END_USER_CUSTOMER" />
+				</entity-and>
+				<if-not-empty field="orderHeader.orderId">
+					<call-bsh><![CDATA[
+                    import java.math.BigDecimal;
+                    import org.ofbiz.order.order.OrderReadHelper;
+                    import org.ofbiz.entity.GenericValue;
+                    import org.ofbiz.base.util.UtilValidate;
+                    orderReadHelper = new OrderReadHelper(orderHeader);
+                    GenericValue groupNameComp = orderReadHelper.getSupplierAgent();
+                    BigDecimal qtyOrdered = orderReadHelper.getTotalOrderItemsOrderedQuantity();
+			        BigDecimal qtyOutstanding=  orderReadHelper.getTotalOrderItemsOrderedQuantity().subtract(orderReadHelper.getShippableQuantity());
+			        BigDecimal qtyShipped =orderReadHelper.getShippableQuantity();
+			        if(UtilValidate.isNotEmpty(getSupplier)){
+			        String groupName = getSupplier.get(0).getString("partyId");
+			        parameters.put("groupName", groupName);
+			        }
+			        parameters.put("qtyOrdered", qtyOrdered);
+			        parameters.put("qtyShipped", qtyShipped);
+
+            ]]></call-bsh>
+				</if-not-empty>
+			</if-not-empty>
+			<set field="fact.groupName" from="parameters.groupName" set-if-empty="true" set-if-null="false" type="String" />
+			<set field="fact.qtyOrdered" from="parameters.fqtyOrdered" set-if-empty="true" set-if-null="false" type="BigDecimal" />
+			<set field="fact.qtyShipped" from="parameters.qtyShipped" set-if-empty="true" set-if-null="false" type="BigDecimal" />
+			<set field="fact.categoryName" from="parameters.longDescription" set-if-empty="true" set-if-null="false" type="String" />
+			<store-value do-cache-clear="true" value-field="fact" />
+		</if-compare>
+	</simple-method>
+</simple-methods>

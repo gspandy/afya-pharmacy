@@ -1,0 +1,20 @@
+<?init class="org.zkoss.zk.ui.util.Composition"
+arg0="/WEB-INF/layout/template.zul"?>
+<zk xmlns:n="http://www.zkoss.org/2005/zk/native">
+<div self="@{define(content)}">
+<tabbox>
+<tabs>
+<tab label="PaySlip" onClick='Executions.getCurrent().sendRedirect("/control/leaveSummary")' />
+<tab label="Track My Pay Scale" onClick='Executions.getCurrent().sendRedirect("/control/applyLeave")' />
+<tab label="My Salary Structure" onClick='Executions.getCurrent().sendRedirect("/control/searchLeave")' />
+<tab label="Preferences" onClick='Executions.getCurrent().sendRedirect("/control/allocateLeave")' />
+<tab label="Employee CTC" onClick='Executions.getCurrent().sendRedirect("/control/searchLeaveLimit")'/>
+<tab label="TDS" onClick='Executions.getCurrent().sendRedirect("/control/searchLeaveLimit")'/>
+<tab label="Total TDS" onClick='Executions.getCurrent().sendRedirect("/control/searchLeaveLimit")'/>
+<tab label="Total TDS" onClick='Executions.getCurrent().sendRedirect("/control/searchLeaveLimit")'/>
+</tabs>
+</tabbox>
+<window self="@{insert(empContent)}">
+</window>
+</div>
+</zk>

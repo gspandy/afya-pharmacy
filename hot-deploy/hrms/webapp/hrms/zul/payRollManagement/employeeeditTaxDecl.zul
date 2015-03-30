@@ -1,0 +1,276 @@
+<?init class="org.zkoss.zk.ui.util.Composition" arg0="/WEB-INF/layout/template.zul"?>
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<?component name="positionTypebox" macroURI="../macros/textfindMacro.zul" id="macro2"?>
+<?component name="findbox1" macroURI="../macros/textfindMacro.zul" id="macro6"?>
+
+
+<zk xmlns:n="http://www.zkoss.org/2005/zk/native">
+	<zscript>
+		<![CDATA[
+	import com.ndz.controller.*;
+	import org.ofbiz.entity.GenericValue;
+	import javax.servlet.http.HttpServletRequest;
+	import org.ofbiz.entity.condition.EntityCondition;
+	import org.ofbiz.entity.condition.EntityOperator;
+	import org.ofbiz.humanresext.util.HumanResUtil;
+	import org.ofbiz.entity.GenericValue;
+	import org.ofbiz.base.util.UtilMisc;
+	import java.util.*;
+	import org.ofbiz.base.util.UtilHttp;
+	import org.ofbiz.service.DispatchContext;
+	import org.ofbiz.security.Security;
+	import org.ofbiz.entity.GenericDelegator;
+	import org.ofbiz.entity.condition.EntityExpr;
+	SearchController controller = new SearchController();
+	GenericValue person = (GenericValue) Executions.getCurrent().getDesktop()
+			.getSession().getAttribute("person");
+	HttpServletRequest request = (HttpServletRequest) Executions.getCurrent()
+			.getNativeRequest();
+	Map parameterMap = UtilHttp.getParameterMap(request);
+	String validTaxDeclId = (String) parameterMap.get("validTaxDeclId");
+	String newPartyId = (String) parameterMap.get("partyId");
+
+	
+	
+	Set buggyFields=new HashSet();
+	boolean approved = false;
+	boolean disabled=false;
+	boolean hasError = false;
+
+	boolean isNew= (Boolean)request.getAttribute("isNew");
+	boolean belongsToFscal= (Boolean)request.getAttribute("belongsToFscal");
+
+	
+	
+	
+	ArrayList categories = (ArrayList) request.getAttribute("categories");
+	boolean isEditable = (Boolean) request.getAttribute("isEditable");
+	
+	
+	
+	System.out.println("isEditable " +  isEditable);
+	System.out.println("newPartyId" + newPartyId);
+	categories.toArray();
+	System.out.println("\n\n\n\n\n ia[]:	" + categories.size());
+	int totalSize = categories.size();
+	int varSize = 0;
+	String partyId = (String) person.get("partyId");
+	String firstName = (String) person.get("firstName");
+	String lastName = (String) person.get("lastName");
+	System.out.println("\n\n\n\n\n partyId partyId: " + partyId);
+	if (firstName == null)
+		firstName = "";
+	if (lastName == null)
+		lastName = "";
+	firstName = firstName + " " + lastName;
+	String mode = request.getParameter("parameter") != null ? "/hrms/control/storeValidTaxDecl" : "/hrms/control/ApproveemployeetaxDecl";
+	String submission=null;
+	String rejection=null;
+	if (request.getParameter("parameter") != null)
+	{
+	 submission="Submit";
+	 rejection="Cancel";
+	}
+	else{
+	 submission="Approve";
+	 rejection="Reject";
+
+	}
+
+	if (request.getParameter("parameter") != null && isEditable)
+	{
+			 disabled=false;
+	}
+	else
+	{
+		 disabled=true;
+	}
+	
+	
+]]>
+</zscript>
+	<window title="${c:l('HRMS_TAX_DECLARATION') }" border="none" id="leaveReportWindow"
+		self="@{define(content) }" contentStyle="background-color:#F9F9F9">
+		
+		
+		
+		<zscript>
+		
+		
+		<![CDATA[
+		void validateLimit(Component self){
+		
+		int maxSupportedValue = self.getAttribute("maxvalue");
+        if (self.value  > self.getAttribute("maxvalue")) {        
+        	SubmitAttachEmployee.disabled = true;
+        	buggyFields.add(self);
+        	
+            throw new WrongValueException(self, "Please put value less than or equal to " + maxSupportedValue);  
+            
+        }        
+        buggyFields.remove(self);
+        if (buggyFields.isEmpty())
+	        SubmitAttachEmployee.disabled=false;
+		}
+		
+		
+		]]>
+		</zscript>
+		<separator height="10px"></separator>
+
+		<box width="100%" height="30px"
+			style="background-color:#25587E;color:#FFFFFF;">
+			<label value="${c:l('HRMS_MY_TAX_DECLARATION') }" style="margin:10px"></label>
+		</box>
+		
+		<n:form method="post" name="generateReportForm" 
+			action="${mode}" id="editTaxDeclForm" >
+			<separator height="20px"></separator>
+<zscript>
+
+</zscript>
+			<div forEach="${categories}" id="${each.categoryId+100}" >
+				<box width="100%" height="20px"
+					style="background-color:#FFE87C;color:#25587E;">
+					<label value="${each.categoryName}"
+						style="margin:10px;font-weight:bold">
+					</label>
+					
+					<label value="**${each.description} --Maximum Amount (${each.maxAmount})"
+						style="margin:10px">
+					</label>
+				</box>
+				<div align="right" width="50px"
+					style="margin-right:5px">
+				</div>
+				<variables fieldName1="_${each.categoryId}" />
+				<separator height="10px"></separator>
+				<hbox forEach="${each.taxItems}" align="center">
+					<variables fieldName="${fieldName1}_${each.itemId}" />
+					<div align="left" width="400px">
+						<label value="${each.itemName}"
+							style="float:right;text-align:right;display: block" />
+					</div>
+					<div align="left" width="30px"></div>
+					<div>
+					
+						<intbox name="${fieldName}_N" tooltiptext="value should be less than ${each.maxAmount}" 
+							if="${each.itemTypeId=='NUMERIC'}" value="${each.numValue}" 
+							width="150px" style="margin:10px" constraint="no empty ,no negative" disabled="${disabled}" onChange="validateLimit(self)">
+			
+							
+							<custom-attributes maxvalue= "${each.maxAmount}" />
+						</intbox>
+						
+						
+	
+						
+						<label value="${each.description}" if="${each.itemTypeId=='NUMERIC'}"
+							width="150px" style="margin:10px"  id="${each.itemId}">
+						</label>
+						<textbox name="${fieldName}_S"
+							if="${each.itemTypeId=='LONGTEXT'}" value="${each.numValue}"
+							width="150px" style="margin:10px" disabled="${disabled}">
+						</textbox>
+						
+						<label value="${each.description}" if="${each.itemTypeId=='LONGTEXT'}" 
+							width="150px" style="margin:10px"  id="${each.itemId+400}">
+						</label>
+						
+						<datebox name="${fieldName}_S"
+							if="${each.itemTypeId=='DATE'}" width="150px"
+							style="margin:10px"  disabled="${disabled}">
+						</datebox>
+						
+						<label value="${each.description}" if="${each.itemTypeId=='DATE'}" 
+							width="150px" style="margin:10px"  id="${each.itemId+100}">
+						</label>
+						
+						<textbox name="${fieldName}_S"
+							if="${each.itemTypeId=='TEXT'}" value="${each.numValue}"
+							width="150px" style="margin:10px"  disabled="${disabled}">
+						</textbox>
+						
+						
+						<label value="${each.description}" if="${each.itemTypeId=='TEXT'}" 
+							width="150px" style="margin:10px"  id="${each.itemId+1000}">
+						</label>
+						
+						
+						<listbox name="${fieldName}_S"
+							if="${each.itemTypeId=='BOOLEAN'}" mold="select"
+							style="margin:10px" disabled="${disabled}">
+							<listitem label="${each.stringValue}"
+								value="${each.stringValue}" if="${each.stringValue!=''}">
+							</listitem>
+							<listitem label="N" value="N"
+								if="${each.stringValue=='Y'}">
+							</listitem>
+							<listitem label="Y" value="Y"
+								if="${each.stringValue=='N'}">
+							</listitem>
+							<listitem label="N" value="N"
+								if="${each.stringValue=='' || each.stringValue==null}">
+							</listitem>
+							<listitem label="Y" value="Y"
+								if="${each.stringValue=='' || each.stringValue==null}">
+							</listitem>
+						</listbox>
+						
+						<label value="${each.description}" if="${each.itemTypeId=='BOOLEAN'}"
+							width="150px" style="margin:10px"  id="${each.itemId+1000}">
+						</label>
+						
+					</div>
+				</hbox>
+			</div>
+			<hbox visible="false">
+				<separator height="20px"></separator>
+				<div align="left" width="15px">
+					<label value="${c:l('HRMS_PARTY_ID') }"
+						style="float:right;text-align:right;display: block;font-weight:bold" />
+				</div>
+				<div align="right" width="50px">
+					<textbox id="partyId" name="partyId"
+						value="${newPartyId}" />
+
+					<textbox id="validTaxDeclId" name="validTaxDeclId"
+						value="${validTaxDeclId}" />
+					<textbox id="hasPermission" name="hasPermission"
+						value="true" />
+				</div>
+			</hbox>
+			
+			<separator height="50px"></separator>
+			<box width="100%" height="30px" align="center"
+				style="background-color:#FFE4E1">
+				
+				<hbox style="margin-top:10px;margin-bottom:10px">
+				<div>
+					<button id="SubmitAttachEmployee" label="${submission}"
+						width="100px" height="25px" mold="os"
+						onClick='validate();'>
+					</button>
+					</div>
+					<zscript>
+					void validate(){
+					
+					if (buggyFields.isEmpty()){
+					Clients.submitForm("editTaxDeclForm");
+					Messagebox.show("Tax Saved Successfully","Success",1,null);
+					}
+					
+					}
+					</zscript>
+					<div>
+					<button id="${c:l('HRMS_CANCEL') }" label="${rejection}"
+						width="100px" height="25px" mold="os"
+						onClick='Executions.getCurrent().sendRedirect("/control/MyPayRoll?id=" + "tax")'>
+					</button>
+					</div>
+				</hbox>
+			</box>
+		</n:form>
+	</window>
+
+</zk>

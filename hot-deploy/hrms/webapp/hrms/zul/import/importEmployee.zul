@@ -1,0 +1,40 @@
+<zk>
+	<zscript>
+	com.hrms.settings.composer.ImportEmployeeComposer employeecomposer = new com.hrms.settings.composer.ImportEmployeeComposer();
+</zscript>
+	<window self="@{define(content)}" apply="${employeecomposer}">
+		<separator></separator>
+		<separator></separator>
+			<panel width="100%">
+				<caption label="Employee Data Import">
+					<fileupload label="Upload Data File" upload="true" number="1" native="false"
+						onUpload="employeecomposer.setFileUploadMedia(event.getMedia());" maxsize="-1" />
+					<button id="startImport" label="Start Import" onClick="employeecomposer.startImport(event);"></button>
+				</caption>
+				<panelchildren>
+					<listbox model="@{employeecomposer.rowModel}" id="importBox" width="100%" style="text-align:center">
+						<listhead>
+							<listheader label="File Field"></listheader>
+							<listheader label="Table Column"></listheader>
+						</listhead>
+						<listitem self="@{each='zk'}" value="@{zk}" height="25px">
+							<listcell>
+								<listbox selectedItem="@{zk.selectedFieldId}" model="@{employeecomposer.fieldModel}" mold="select">
+									<listitem self="@{each='zk1'}" value="@{zk1.fieldId}" label="@{zk1.fieldId}"></listitem>
+								</listbox>
+							</listcell>
+							<listcell>
+								<label value="@{zk.columnId}"></label>
+							</listcell>
+						</listitem>
+					</listbox>
+				</panelchildren>
+			</panel>
+	</window>
+	<window id="progressWin" visible="false" width="400px" height="150px" border="normal" defaultActionOnShow="moveRight" closable="false"
+		maximizable="true">
+		<progressmeter value="0" id="progressbar" style="text-align:center"></progressmeter>
+	</window>
+
+
+</zk>

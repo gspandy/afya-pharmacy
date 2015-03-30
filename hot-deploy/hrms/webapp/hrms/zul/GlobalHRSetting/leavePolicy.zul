@@ -1,0 +1,48 @@
+<?init class="org.zkoss.zk.ui.util.Composition"
+arg0="/WEB-INF/layout/Template.zul"?>
+<zk>
+<zscript>
+	import com.ndz.controller.*;
+	SearchController controller = new SearchController();
+</zscript>
+	<window title="Leave Policy" border="normal" id="searchPanel"
+		self="@{define(content)}" apply="${controller}" >
+		<custom-attributes entityName="PolicyDetailView"></custom-attributes>
+          
+		
+			<zscript>
+	import org.ofbiz.base.util.*;
+	class MyRowRenderer implements RowRenderer {
+
+		MyRowRenderer() {
+		}
+
+		public void render(Row row, Object data) {
+			org.ofbiz.entity.GenericValue gv = ((org.ofbiz.entity.GenericValue) data);
+
+			new Label(gv.getString("attrNumValue")).setParent(row);
+			
+			
+
+		}
+	}
+	RowRenderer tableRenderer = new MyRowRenderer();
+</zscript>
+<button label="Show" mold="os"
+							id="searchButton" >
+							
+						</button>
+<paging id="paging" width="100%" visible="false"/>
+		<grid width="100%" id="dataGrid" rowRenderer="${tableRenderer}">
+		<rows>
+		<row >
+		
+		</row>
+		</rows>
+				
+				
+				
+			
+		</grid>
+	</window>
+</zk>

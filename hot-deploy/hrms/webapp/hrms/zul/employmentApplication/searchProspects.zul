@@ -1,0 +1,192 @@
+<?component name="findbox1" macroURI="../macros/textfindMacro.zul" id="macro1"?>
+<?component name="findbox2" macroURI="../macros/textfindMacro.zul" id="macro2"?>
+<?component name="findbox3" macroURI="../macros/textfindMacro.zul" id="macro3"?>
+<?component name="fromDatebox" macroURI="../macros/datefindMacro.zul" id="macro2"?>
+<?component name="thruDatebox" macroURI="../macros/datefindMacro.zul" id="macro3"?>
+<?component name="selectbox" macroURI="../macros/findselectbox.zul" id="macro4"?>
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<zk xmlns:h="http://www.zkoss.org/2005/zk/native">
+	<zscript>
+		import com.ndz.controller.*;
+		import org.ofbiz.entity.GenericValue;
+		import org.ofbiz.entity.GenericDelegator;
+		GenericDelegator delegator = com.ndz.zkoss.util.HrmsInfrastructure.getDelegator();//GenericDelegator.getGenericDelegator("default");
+		String[] values = new String[] { "", "MANAGER", "PROGRAMMER", "BIZ_ANALYST", "HOD", "SYS_ADMIN" };
+		SearchController controller = new SearchController();
+		GenericValue userLogin = (GenericValue) Executions.getCurrent().getDesktop().getSession().getAttribute("userLogin");
+		employeeId = userLogin.getString("partyId");
+		GenericValue employeePosIdGv = org.ofbiz.humanresext.util.HumanResUtil.getEmplPositionForParty(employeeId, delegator);
+		String employeePosId = null;
+		if (employeePosIdGv != null) {
+			employeePosId = employeePosIdGv.getString("emplPositionId");
+		}
+		boolean isAdmin = security.hasPermission("HUMANRES_ADMIN", userLogin);
+		Toolbarbutton myLeaveToolbarBtn = (Toolbarbutton)Executions.getCurrent().getArg().get("myLeaveBtn");
+		java.util.List prospects;
+		Toolbarbutton initiateOfferLink = arg.get("myLeaveBtn");
+	</zscript>
+	<window id="searchPanel"  contentStyle="overflow:auto">
+		<div align="center">
+			<h:table>
+				<h:tr height="50px">
+					<h:td style="text-align:right">
+						<label value="${c:l('HRMS_CANDIDATE_ID') }" />
+					</h:td>
+					<h:td>
+						<prospectbox id="prospect" buttonVisible="false" width="200px" />
+					</h:td>
+				</h:tr>
+				<h:tr>
+					<h:td></h:td>
+					<h:td>
+						<div align="center">
+							<hbox>
+								<button label="${c:l('HRMS_SearchButton') }" mold="os" id="searchPerCompany"
+									onClick="performSearch();results.setVisible(true);results.setFocus(true)">
+									<attribute name="onCreate">
+										Events.postEvent("onClick",self,null);
+									</attribute>
+								</button>
+								<button label="${c:l('HRMS_ResetButton') }" onClick='results.setVisible(false);Events.postEvent("onClick",myLeaveToolbarBtn,null)'></button>
+							</hbox>
+						</div>
+					</h:td>
+				</h:tr>
+			</h:table>
+		</div>
+		<separator height="15px" />
+		<zscript>
+			<![CDATA[
+				import org.ofbiz.base.util.*;
+				import org.zkoss.zk.ui.event.EventListener;
+				import org.zkoss.util.resource.Labels;
+				import org.zkoss.*;
+				class MyRowRenderer implements RowRenderer {
+			
+					MyRowRenderer() {
+					}
+			
+					public void render(Row row, Object data) {
+					org.ofbiz.entity.GenericDelegator delegator = com.ndz.zkoss.util.HrmsInfrastructure.getDelegator();//org.ofbiz.entity.GenericDelegator.getGenericDelegator("default");
+					org.ofbiz.entity.GenericValue gv = ((org.ofbiz.entity.GenericValue) data);
+			
+					String candidateId = gv.getString("applyingPartyId");
+					String s = candidateId + "-"+ com.ndz.zkoss.HrmsUtil.getFullName(delegator, candidateId);
+					List offerHeadGvs = delegator.findByAnd("OfferHead",UtilMisc.toMap("partyId",candidateId));
+					new Label(s).setParent(row);
+					new Label(gv.getString("referredByPartyId")).setParent(row);
+					if(UtilValidate.isNotEmpty(offerHeadGvs))
+					new Label(Labels.getLabel("ListBox_Yes")).setParent(row);
+					else
+					new Label(Labels.getLabel("ListBox_No")).setParent(row);
+					String requisitionId = null; 
+					if (gv.getString("requisitionId") != null) {
+						Map arg = new HashMap();
+						requisitionId = gv.getString("requisitionId");
+						arg.put("requisitionId", requisitionId);
+						arg.put("initiateOfferLink",initiateOfferLink);
+						Toolbarbutton toolBtn1 = new Toolbarbutton();
+						toolBtn1.setLabel(gv.getString("requisitionId"));
+						toolBtn1.setParent(row);
+						toolBtn1.setTooltiptext(Labels.getLabel("HRMS_CLICK_TO_VIEW_REQUISITION_DETAIL"));
+						toolBtn1.addEventListener("onClick", new EventListener() {
+							public void onEvent(Event event) throws Exception {
+							Window win = (Window) Executions.createComponents(
+									"/zul/employeeRequisition/viewRequisitionForSchedule.zul", null, arg);
+							win.doModal();
+							}
+			
+						});
+					}
+
+
+
+
+
+					row.setTooltiptext(Labels.getLabel("HRMS_DOUBLE_CLICK_TO_INITIATE_OFFER"));
+
+					Map arg = new HashMap();
+					arg.put("gv", gv);
+					arg.put("initiateOfferLink",initiateOfferLink);
+					row.addEventListener("onDoubleClick", new EventListener() {
+						public void onEvent(Event event) throws Exception {
+						Executions.getCurrent().getDesktop().setAttribute("button",searchPerCompany);
+						GenericValue reqGv = delegator.findByPrimaryKey("EmployeeRequisition",UtilMisc.toMap("requisitionId",requisitionId));
+						List offerList = delegator.findByAnd("MaxOfferDetail",UtilMisc.toMap("statusId","OF_ACCEPT_JOINED","requisitionId",requisitionId));
+						Long noOfOfferAccepted = offerList!=null?Long.valueOf(offerList.size()):0l;
+						Long noOfPositionRequested = 0L;
+						if(reqGv!=null)
+							noOfPositionRequested = reqGv.getLong("numberOfPosition");
+						if(noOfOfferAccepted!=null && noOfPositionRequested.intValue()<=noOfOfferAccepted.intValue()){
+						Messagebox.show(Labels.getLabel("HRMS_SP_OFFER_CANNOT_BE_INITIATED_AS_POSITION_GOT_CLOSED"),
+						"Error", Messagebox.OK, "", 1, new org.zkoss.zk.ui.event.EventListener() {
+							public void onEvent(Event evt) {
+							}
+						});
+						return;		
+						}								
+						Window win = (Window) Executions.createComponents("/zul/offer/initiateOffer.zul", null, arg);
+						win.doModal();
+						}
+					});
+					}
+				}
+				RowRenderer tableRenderer = new MyRowRenderer();
+			]]>
+		</zscript>
+		<div id="results" visible="false">
+			<h:table style="border:0px" cellspacing="0px" cellpadding="0px">
+				<h:tr>
+					<h:td width="90%">
+						<label value="${c:l('HRMS_SEARCHRESULTS') }"></label>
+					</h:td>
+					<h:td width="10%" style="text-align:right">
+						<paging id="paging" />
+					</h:td>
+				</h:tr>
+			</h:table>
+			<grid id="dataGrid" rowRenderer="${tableRenderer}" mold="paging" pageSize="10" pagingPosition="top">
+				<columns menupopup="auto">
+					<column label="${c:l('HRMS_CANDIDATE_ID_NAME') }" />
+					<column label="${c:l('HumanResAllocateEmployeeLeaveAppliedBy') }" />
+					<column label="${c:l('HRMS_OFFER_INITIATED') }" />
+					<column label="${c:l('HRMS_REQUISITION_REQUISITIONID') }"></column>
+				</columns>
+			</grid>
+		</div>
+		<zscript>
+			<![CDATA[
+				public void performSearch() {
+				prospects = delegator.findList("ApplicationDetail", org.apache.commons.lang.StringUtils.isNotBlank(prospect
+						.getValue()) ? org.ofbiz.entity.condition.EntityCondition.makeCondition("partyId", prospect.getValue())
+						: null, null, null, null, false);
+				java.util.List p = new java.util.ArrayList();
+				if (prospects.size() > 0) {
+					Map interviewPerParty = new HashMap();
+					for (GenericValue gv : prospects) {
+						String partyId = gv.getString("partyId");
+						List interviews = interviewPerParty.get(partyId);
+						if (interviews == null) {
+							interviews = new ArrayList();
+							interviewPerParty.put(partyId, interviews);
+						}
+						interviews.add(gv);
+					}
+					for (String party : interviewPerParty.keySet()) {
+						boolean allSeletected = true;
+						GenericValue prospectGV = null;
+						for (GenericValue interview : interviewPerParty.get(party)) {
+							allSeletected = allSeletected && "PER_SELECTED".equals(interview.getString("interviewStatusId"));
+							prospectGV = interview;
+						}
+						if (allSeletected) {
+							p.add(prospectGV);
+						}
+					}
+				}
+				dataGrid.setModel(new org.zkoss.zkplus.databind.BindingListModelList(p, false));
+				}
+			]]>
+		</zscript>
+	</window>
+</zk>

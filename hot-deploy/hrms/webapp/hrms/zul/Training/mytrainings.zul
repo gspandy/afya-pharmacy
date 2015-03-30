@@ -1,0 +1,113 @@
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<?init class="org.zkoss.zkplus.databind.AnnotateDataBinderInit" arg0="./listReqsWin"?>
+<?page title="HRMS-MyHome" contentType="text/html;charset=UTF-8"?>
+<zk xmlns:n="http://www.zkoss.org/2005/zk/native">
+	<zscript>
+	import com.hrms.training.composer.*;
+	import org.ofbiz.entity.GenericDelegator;
+	import java.security.Security;
+	import org.ofbiz.entity.GenericValue;
+	MyTrainingComposer myComposer = new MyTrainingComposer();
+	GenericDelegator delegator = (GenericDelegator) Executions.getCurrent().getAttributes().get("delegator");
+	List trainingClassTypes = null;
+	GenericValue userLogin = (GenericValue) Executions.getCurrent().getDesktop().getSession().getAttribute("userLogin");
+	try {
+		trainingClassTypes = delegator.findList("TrainingClassType",null,null,null,null,false);
+	} catch (org.ofbiz.entity.GenericEntityException g) {
+	}
+	boolean isAdmin = security.hasPermission("HUMANRES_ADMIN", userLogin);
+	boolean isManager = security.hasPermission("HUMANRES_MGR", userLogin);
+</zscript>
+	<window apply="${myComposer}" id="listReqsWin" width="100%" title="${c:l('HumanResMyTrainings') }" style="margin-top:1px">
+		<separator></separator>
+		<div align="center" style="margin-left:8px">
+			<label value="${c:l('HRMS_EMPLOYEE_ID') }" style="font-weight:bold;" visible="${isManager}"/>
+		
+			<employeebox id="employeeBox" value="@{myComposer.employeeId}" visible="${isManager}"/>
+		<button label="${c:l('HumanResSearch') }" mold="os"
+					id="searchButton" visible="${isManager}">
+		</button>
+	</div>
+	<separator></separator>
+		<n:table width="100%" style="border:0px" cellspacing="0px" cellpadding="0px">
+			<n:tr>
+				<n:td width="80%">
+					<toolbarbutton id="updateStatus" label="${c:l('HRMS_SaveButton') }"/>
+				</n:td>
+				<n:td width="20%" style="text-align:right">
+					<paging id="approvalListPaging" totalSize="@{myComposer.totalSize}" pageSize="10"></paging>
+				</n:td>
+			</n:tr>
+		</n:table>
+		<listbox id="myTrainingsListBox" model="@{myComposer.model}" checkmark="true" multiple="false" 
+			selectedItem="@{myComposer.selectedTraining}" onSelect='showDetails()' itemRenderer="@{myComposer.myTrainingRenderer}">
+			<listhead>
+				<listheader label="${c:l('FormFieldTitle_trainingId') }"></listheader>
+				<listheader label="${c:l('FormFieldTitle_trainingName') }"></listheader>
+				<listheader label="${c:l('HumanResLeaveSummaryFromDate') }"></listheader>
+				<listheader label="${c:l('HumanResLeaveSummaryThruDate') }"></listheader>
+				<listheader label="${c:l('HRMS_ACTIONS') }"></listheader>
+			</listhead>
+		</listbox>
+
+		<zscript>
+	void showDetails() {
+		details.setVisible(true);
+	}
+</zscript>
+
+		<separator></separator>
+		<panel id="details" visible="false">
+			<caption label="${c:l('HRMS_TRAINING_DETAILS') }"></caption>
+			<panelchildren>
+				<separator></separator>
+				<n:table cellspacing="5px" width="100%">
+					<n:tr>
+						<n:td style="text-align:right" width="15%">
+							<label value="${c:l('FormFieldTitle_trainingName') }" style="font-weight:bold"></label>
+						</n:td>
+						<n:td>
+							<label value="@{myComposer.selectedTraining.trainingName,load-after='myTrainingsListBox.onSelect'}" />
+						</n:td>
+						<n:td style="text-align:right">
+							<label value="${c:l('HRMS_STARTDATE') }" style="font-weight:bold"></label>
+						</n:td>
+						<n:td>
+							<label value="@{myComposer.selectedTraining.estimatedStartDate,load-after='myTrainingsListBox.onSelect',converter='com.ndz.zkoss.util.DateTimeFormater'}" self="@{format(dd-MM-yyyy)}"/>
+						</n:td>
+					</n:tr>
+					<n:tr>
+						<n:td style="text-align:right" width="15%">
+							<label value="${c:l('FormFieldTitle_trainingType') }" style="font-weight:bold"></label>
+						</n:td>
+						<n:td>
+							<label value="@{myComposer.selectedTraining.trainingClassTypeId,load-after='myTrainingsListBox.onSelect',converter='com.ndz.zkoss.util.RunTimeFormatter'}" self="@{entity(TrainingClassType)field(trainingClassTypeId)}"/>
+						</n:td>
+						<n:td style="text-align:right">
+							<label value="${c:l('HRMS_ENDDATE') }" style="font-weight:bold"></label>
+						</n:td>
+						<n:td>
+							<label value="@{myComposer.selectedTraining.estimatedCompletionDate,load-after='myTrainingsListBox.onSelect',converter='com.ndz.zkoss.util.DateTimeFormater'}" self="@{format(dd-MM-yyyy)}"/>
+						</n:td>
+					</n:tr>
+					<n:tr>
+						<n:td style="text-align:right" width="15%">
+							<label value="${c:l('HumanResAllocateEmployeeDescription') }" style="font-weight:bold"></label>
+						</n:td>
+						<n:td colspan="3">
+							<label value="@{myComposer.selectedTraining.description,load-after='myTrainingsListBox.onSelect'}"></label>
+						</n:td>
+					</n:tr>
+					<n:tr>
+						<n:td style="text-align:right" width="15%">
+							<label value="${c:l('HRMS_MAX_TRAINEES') }" style="font-weight:bold"></label>
+						</n:td>
+						<n:td>
+							<label value="@{myComposer.selectedTraining.maxTrainees,load-after='myTrainingsListBox.onSelect'}"></label>
+						</n:td>
+					</n:tr>
+				</n:table>
+			</panelchildren>
+		</panel>
+	</window>
+</zk>

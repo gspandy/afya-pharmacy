@@ -1,0 +1,665 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+Licensed to the Apache Software Foundation (ASF) under one
+or more contributor license agreements.  See the NOTICE file
+distributed with this work for additional information
+regarding copyright ownership.  The ASF licenses this file
+to you under the Apache License, Version 2.0 (the
+"License"); you may not use this file except in compliance
+with the License.  You may obtain a copy of the License at
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing,
+software distributed under the License is distributed on an
+"AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+KIND, either express or implied.  See the License for the
+specific language governing permissions and limitations
+under the License.
+-->
+
+<screens xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="http://ofbiz.apache.org/dtds/widget-screen.xsd">
+    <screen name="CommonConfigDecorator">
+        <section>
+            <widgets>
+                <decorator-screen name="main-decorator"  location="${parameters.mainDecoratorLocation}">
+                    <decorator-section name="pre-body">
+                        <section>
+                            <condition>
+                                <and>
+                                    <if-has-permission permission="CATALOG" action="_VIEW"/>
+                                    <not><if-empty field="configItemId"/></not>
+                                </and>
+                            </condition>
+                            <widgets>
+                                <include-menu name="ConfigItemTabBar" location="component://systemConfig/widget/systemConfig/SystemConfigMenus.xml"/>
+                            </widgets>
+                        </section>
+                    </decorator-section>
+                   <!--  <decorator-section name="left-column">
+                        <include-screen name="leftbar" location="component://systemConfig/widget/systemConfig/CommonScreens.xml"/>
+                    </decorator-section>   -->                  
+                    <decorator-section name="body">
+                        <section>
+                            <!-- do check for CATALOG, _VIEW permission -->
+                            <condition>
+                                <if-has-permission permission="CATALOG" action="_VIEW"/>
+                            </condition>
+                            <widgets>
+                                <section>
+                                    <condition><not><if-empty field="configItemId"/></not></condition>
+                                    <widgets>
+                                        <container>
+                                            <label style="h1">${uiLabelMap[labelTitleProperty]} ${uiLabelMap.CommonFor}: ${configItem.configItemName} [${uiLabelMap.CommonId}:${configItemId}]  ${${extraFunctionName}}</label>
+                                        </container>
+                                        <container style="button-bar">
+                                            <link target="EditProductConfigItem" text="[${uiLabelMap.CommonNew} ${uiLabelMap.ProductConfigItem}]" style="buttontext create"/>
+                                        </container>
+                                    </widgets>
+                                </section>
+                                <decorator-section-include name="body"/>
+                            </widgets>
+                            <fail-widgets>
+                                <label style="h3">${uiLabelMap.ProductCatalogViewPermissionError}</label>
+                            </fail-widgets>
+                        </section>
+                    </decorator-section>
+                </decorator-screen>
+            </widgets>
+        </section>
+    </screen>
+     <screen name="CommonPartyDecorator">
+        <section>
+            <actions>
+
+                <set field="partyId" from-field="parameters.partyId"/>
+                <entity-one entity-name="Party" value-field="party"/>
+                <entity-one entity-name="Person" value-field="lookupPerson"/>
+                <entity-one entity-name="PartyGroup" value-field="lookupGroup"/>
+            </actions>
+            <widgets>
+                <decorator-screen name="main-decorator" location="${parameters.mainDecoratorLocation}">
+                    <decorator-section name="pre-body">
+                        <section>
+                            <condition>
+                                <and>
+                                    <if-service-permission service-name="partyBasePermissionCheck" main-action="VIEW"/>
+                                    <not><if-empty field="party"/></not>
+                                </and>
+                            </condition>
+                            <widgets>
+                            <!--     <include-menu location="component://party/widget/partymgr/PartyMenus.xml" name="ProfileTabBar"/> -->
+                            </widgets>
+                        </section>
+                    </decorator-section>
+                    <decorator-section name="body">
+                        <section>
+                            <!-- do check for PARTYMGR, _VIEW permission -->
+                            <condition>
+                                <if-service-permission service-name="partyBasePermissionCheck" main-action="VIEW"/>
+                            </condition>
+                            <widgets>
+                                <section>
+                                    <condition><not><if-empty field="partyId"/></not></condition>
+                                    <widgets>
+                                    <!--     <include-menu location="component://party/widget/partymgr/PartyMenus.xml" name="ProfileSubTabBar"/> -->
+                                        <container style="clear"/>
+                                        <container style="h1">
+                                            <section>
+                                                <condition>
+                                                    <or>
+                                                        <not><if-empty field="lookupPerson"/></not>
+                                                        <not><if-empty field="lookupGroup"/></not>
+                                                    </or>
+                                                </condition>
+                                                <widgets>
+                                                  <!--   <label text="${uiLabelMap.PartyTheProfileOf} ${lookupPerson.personalTitle} ${lookupPerson.firstName} ${lookupPerson.middleName} ${lookupPerson.lastName} ${lookupPerson.suffix} ${lookupGroup.groupName} [${partyId}]"/> -->
+                                                </widgets>
+                                                <fail-widgets>
+                                                    <label text="${uiLabelMap.PartyNewUser}"/>
+                                                </fail-widgets>
+                                            </section>
+                                        </container>
+                                    </widgets>
+                                </section>
+
+                                <decorator-section-include name="body"/>
+                            </widgets>
+                            <fail-widgets>
+                                <label style="h3">${uiLabelMap.PartyMgrViewPermissionError}</label>
+                            </fail-widgets>
+                        </section>
+                    </decorator-section>
+                </decorator-screen>
+            </widgets>
+        </section>
+    </screen>
+    
+     <screen name="CommonGlSetupDecorator">
+        <section>
+            <actions>
+                <set field="tabButtonItemTop" value="Admin"/>
+                <entity-one entity-name="PartyNameView" value-field="currentOrganization" auto-field-map="false">
+                    <field-map field-name="partyId" from-field="organizationPartyId"/>
+                </entity-one>
+            </actions>
+            <widgets>
+                <decorator-screen name="CommonPartyDecorator" location="${parameters.partyDecoratorLocation}">
+                    <decorator-section name="body">
+                      <!--   <include-menu name="PartyAdminTabBar" location="component://accounting/widget/AccountingMenus.xml"/> -->
+                        <section>
+                            <condition>
+                                <if-compare field="tabButtonItem" operator="equals" value="GlAccountAssignment"/>
+                            </condition>
+                            <widgets>
+                           <!--      <include-menu name="PartyAdminAssignTabBar" location="component://accounting/widget/AccountingMenus.xml"/> -->
+                            </widgets>
+                        </section>
+                        <label style="h1">${labelTitleProperty} ${uiLabelMap.CommonFor}: ${currentOrganization.groupName} [${organizationPartyId}]</label>
+                        <decorator-section-include name="body"/>
+                    </decorator-section>
+                </decorator-screen>
+            </widgets>
+        </section>
+    </screen>
+    <screen name="FindProductConfigItems">
+        <section>
+            <actions>
+                <set field="titleProperty" value="PageTitleFindConfigItems"/>
+                <set field="headerItem" value="configs"/>
+            </actions>
+            <widgets>
+                <decorator-screen name="CommonConfigDecorator">
+                    <decorator-section name="body">
+                        <decorator-screen name="FindScreenDecorator" location="component://common/widget/CommonScreens.xml">
+                            <decorator-section name="menu-bar">
+                                <container style="button-bar">
+                                    <link target="EditProductConfigItem" text="${uiLabelMap.CommonCreateNew}" style="buttontext create"/>
+                                </container>
+                            </decorator-section>
+                            <decorator-section name="search-options">
+                                <include-form location="component://product/widget/catalog/ConfigForms.xml" name="FindProductConfigItemsFrom"/>
+                            </decorator-section>
+                            <decorator-section name="search-results">
+                                <include-form location="component://product/widget/catalog/ConfigForms.xml" name="FindProductConfigItems"/>
+                            </decorator-section>
+                        </decorator-screen>
+                    </decorator-section>
+                </decorator-screen>
+            </widgets>
+        </section>
+    </screen>
+    <screen name="EditProductConfigItem">
+        <section>
+            <actions>
+                <set field="titleProperty" value="PageTitleEditConfigItem"/>
+                <set field="headerItem" value="configs"/>
+                <set field="tabButtonItem" value="EditProductConfigItem"/>
+                <set field="labelTitleProperty" value="ProductConfigItem"/>
+
+                <set field="configItemId" from-field="parameters.configItemId"/>
+                <entity-one entity-name="ProductConfigItem" value-field="configItem" auto-field-map="true"/>
+            </actions>
+            <widgets>
+                <decorator-screen name="CommonConfigDecorator">
+                    <decorator-section name="body">
+                        <screenlet title="${uiLabelMap.PageTitleEditConfigItem}">
+                            <include-form name="EditProductConfigItem" location="component://product/widget/catalog/ConfigForms.xml"/>
+                        </screenlet>
+                    </decorator-section>
+                </decorator-screen>
+            </widgets>
+        </section>
+    </screen>
+    <screen name="EditProductConfigOptions">
+        <section>
+            <actions>
+                <set field="titleProperty" value="PageTitleEditConfigOptions"/>
+                <set field="headerItem" value="configs"/>
+                <set field="tabButtonItem" value="EditProductConfigOptions"/>
+                <set field="labelTitleProperty" value="ProductConfigOptions"/>
+
+                <set field="configItemId" from-field="parameters.configItemId"/>
+                <entity-one entity-name="ProductConfigItem" value-field="configItem" auto-field-map="true"/>
+
+                <set field="configOptionId" from-field="parameters.configOptionId"/>
+                <entity-one entity-name="ProductConfigOption" value-field="configOption" auto-field-map="true"/>
+
+                <set field="productId" from-field="parameters.productId"/>
+                <entity-one entity-name="ProductConfigProduct" value-field="productConfigProduct" auto-field-map="true"/>
+                <entity-condition entity-name="ProductConfigOption" list="configOptionList">
+                    <condition-expr field-name="configItemId" from-field="configItemId"/>
+                    <order-by field-name="sequenceNum"/>
+                </entity-condition>
+                <entity-condition entity-name="ProductConfigProduct" list="configProducts">
+                    <condition-list combine="and">
+                        <condition-expr field-name="configItemId" from-field="configItemId"/>
+                        <condition-expr field-name="configOptionId" from-field="configOptionId"/>
+                    </condition-list>
+                    <order-by field-name="sequenceNum"/>
+                </entity-condition>
+            </actions>
+            <widgets>
+                <decorator-screen name="CommonConfigDecorator">
+                    <decorator-section name="body">
+                        <include-screen name="configOptions"/>
+                        <include-screen name="configComponent"/>
+                    </decorator-section>
+                </decorator-screen>
+            </widgets>
+        </section>
+    </screen>
+    <screen name="configOptions">
+        <section>
+            <widgets>
+                <screenlet title="${uiLabelMap.ProductConfigOptionList}">
+                    <include-form name="ProductConfigOptionList" location="component://product/widget/catalog/ConfigForms.xml"/>
+                </screenlet>
+                <section>
+                    <condition><not><if-empty field="configOptionId"/></not></condition>
+                    <widgets>
+                        <screenlet title="${uiLabelMap.PageTitleEditConfigOptions}">
+                            <link style="buttontext" text="${uiLabelMap.ProductCreateNewConfigOptions}" target="EditProductConfigOptions">
+                                <parameter param-name="configItemId"/>
+                            </link>
+                            <include-form name="CreateConfigOption" location="component://product/widget/catalog/ConfigForms.xml"/>
+                        </screenlet>
+                    </widgets>
+                    <fail-widgets>
+                        <screenlet title="${uiLabelMap.ProductCreateNewConfigOptions}">
+                            <include-form name="CreateConfigOption" location="component://product/widget/catalog/ConfigForms.xml"/>
+                        </screenlet>
+                    </fail-widgets>
+                </section>
+            </widgets>
+        </section>
+    </screen>
+    <screen name="configComponent">
+        <section>
+            <condition>
+                <not>
+                    <if-empty field="configOptionId"/>
+                </not>
+            </condition>
+            <widgets>
+                <screenlet title="${uiLabelMap.ProductComponents} - ${uiLabelMap.CommonId}: ${configOption.configOptionId} - ${configOption.description}">
+                    <include-form name="ProductConfigList" location="component://product/widget/catalog/ConfigForms.xml"/>
+                </screenlet>
+                <section>
+                    <condition>
+                        <not><if-empty field="productId"/></not>
+                    </condition>
+                    <widgets>
+                        <screenlet title="${uiLabelMap.CommonEdit} ${uiLabelMap.ProductConfigs}">
+                            <link style="buttontext" text="${uiLabelMap.CommonNew} ${uiLabelMap.ProductConfigs}" target="EditProductConfigOptions">
+                                <parameter param-name="configItemId"/>
+                                <parameter param-name="configOptionId"/>
+                            </link>
+                            <include-form name="CreateProductConfigProduct" location="component://product/widget/catalog/ConfigForms.xml"/>
+                        </screenlet>
+                    </widgets>
+                    <fail-widgets>
+                        <screenlet title="${uiLabelMap.CommonAddA} ${uiLabelMap.ProductConfigs}">
+                            <link style="buttontext" text="${uiLabelMap.CommonNew} ${uiLabelMap.ProductConfigs}" target="EditProductConfigOptions">
+                                <parameter param-name="configItemId"/>
+                                <parameter param-name="configOptionId"/>
+                            </link>
+                            <include-form name="CreateProductConfigProduct" location="component://product/widget/catalog/ConfigForms.xml"/>
+                        </screenlet>
+                    </fail-widgets>
+                </section>
+            </widgets>
+        </section>
+    </screen>
+
+    <screen name="EditProductConfigItemContent">
+        <section>
+            <actions>
+                <set field="titleProperty" value="PageTitleEditProductConfigItemContent"/>
+                <set field="headerItem" value="configs"/>
+                <set field="tabButtonItem" value="EditProductConfigItemContent"/>
+                <set field="labelTitleProperty" value="ProductContent"/>
+
+                <set field="configItemId" from-field="parameters.configItemId"/>
+                <entity-one entity-name="ProductConfigItem" value-field="configItem" auto-field-map="true"/>
+
+                <script location="component://product/webapp/catalog/WEB-INF/actions/config/EditProductConfigItemContent.groovy"/>
+            </actions>
+            <widgets>
+                <decorator-screen name="CommonConfigDecorator">
+                    <decorator-section name="body">
+                        <platform-specific>
+                            <html><html-template location="component://product/webapp/catalog/config/EditProductConfigItemContent.ftl"/></html>
+                        </platform-specific>
+                    </decorator-section>
+                </decorator-screen>
+            </widgets>
+        </section>
+    </screen>
+    <screen name="EditProductConfigItemContentContent">
+        <section>
+            <actions>
+                <set field="titleProperty" value="PageTitleEditProductConfigItemContent"/>
+                <set field="headerItem" value="configs"/>
+                <set field="tabButtonItem" value="EditProductConfigItemContent"/>
+                <set field="labelTitleProperty" value=""/>
+
+                <set field="configItemId" from-field="parameters.configItemId"/>
+                <entity-one entity-name="ProductConfigItem" value-field="configItem" auto-field-map="true"/>
+
+                <set field="fromDate" from-field="requetParameters.fromDate" type="Timestamp"/>
+
+                <script location="component://product/webapp/catalog/WEB-INF/actions/config/EditProductConfigItemContentContent.groovy"/>
+            </actions>
+            <widgets>
+                <decorator-screen name="CommonConfigDecorator">
+                    <decorator-section name="body">
+                        <platform-specific>
+                            <html><html-template location="component://product/webapp/catalog/config/EditProductConfigItemContentContent.ftl"/></html>
+                        </platform-specific>
+                    </decorator-section>
+                </decorator-screen>
+            </widgets>
+        </section>
+    </screen>
+    <screen name="ProductConfigItemArticle">
+        <section>
+            <actions>
+                <set field="titleProperty" value="PageTitleEditProductConfigItemContent"/>
+                <set field="headerItem" value="configs"/>
+                <set field="tabButtonItem" value="ProductConfigItemArticle"/>
+                <set field="labelTitleProperty" value=""/>
+                <set field="configItemId" from-field="parameters.configItemId"/>
+                <entity-one entity-name="ProductConfigItem" value-field="configItem" auto-field-map="true"/>
+            </actions>
+            <widgets>
+                <decorator-screen name="CommonConfigDecorator">
+                    <decorator-section name="body">
+                        <screenlet title="${uiLabelMap.PageTitleEditProductConfigItemContent}">
+                            <include-form name="ListProductConfigItem" location="component://product/widget/catalog/ConfigForms.xml"/>
+                        </screenlet>
+                    </decorator-section>
+                </decorator-screen>
+            </widgets>
+        </section>
+    </screen>
+    
+     <screen name="AdjustmentTypeGlAccounts">
+        <section>
+            <actions>
+                <property-map resource="AccountingUiLabels" map-name="uiLabelMap" global="true"/>
+                <set field="titleProperty" value="AdjustmentType GlAccount"/>
+                <set field="headerItem" value="AdjustmentType"/>
+                <set field="tabButtonItem" value="AdjustmentTypeGlAccounts"/>
+                <script location="component://party/webapp/partymgr/WEB-INF/actions/party/GetCompanyInfo.groovy"/>
+                <set field="organizationPartyId" from-field="context.company.partyId" />
+            </actions>
+            <widgets>
+                <decorator-screen name="CommonConfigDecorator" location="${parameters.commonGlSetupDecoratorLocation}">
+                    <decorator-section name="body">
+                        <screenlet id="AdjustmentTypeGlAccountPanel" title="Adjustment Type" collapsible="true">
+                            <include-form name="AddAdjustmentTypeGlAccount" location="component://systemConfig/widget/systemConfig/ConfigForms.xml"/>
+                        </screenlet>
+                        	<include-form name="AdjustmentTypeGlAccounts" location="component://systemConfig/widget/systemConfig/ConfigForms.xml"/>
+                    </decorator-section>
+                </decorator-screen>
+            </widgets>
+        </section>
+    </screen>
+    
+    
+    <screen name="EditAdjustmentTypeGlAccounts">
+        <section>
+            <actions>
+                <property-map resource="AccountingUiLabels" map-name="uiLabelMap" global="true"/>
+                <set field="titleProperty" value="AdjustmentType GlAccount"/>
+                <set field="headerItem" value="AdjustmentType"/>
+                <set field="tabButtonItem" value="AdjustmentTypeGlAccounts"/>
+                <script location="component://party/webapp/partymgr/WEB-INF/actions/party/GetCompanyInfo.groovy"/>
+                <script location="component://product/webapp/catalog/WEB-INF/actions/AdjustmentGlAccount.groovy"/>
+                <set field="organizationPartyId" from-field="context.company.partyId" />
+            </actions>
+            <widgets>
+                <decorator-screen name="CommonConfigDecorator" location="${parameters.commonGlSetupDecoratorLocation}">
+                    <decorator-section name="body">
+                        <screenlet title="Edit Adjustment Type" collapsible="false">
+                          <include-form name="EditAdjustmentTypeGlAccounts" location="component://systemConfig/widget/systemConfig/ConfigForms.xml"/>
+                        </screenlet>
+                    </decorator-section>
+                </decorator-screen>
+            </widgets>
+        </section>
+    </screen>
+    
+    <screen name="GlAccounts">
+        <section>
+            <actions>
+                <property-map resource="AccountingUiLabels" map-name="uiLabelMap" global="true"/>
+                <set field="titleProperty" value="AdjustmentType GlAccount"/>
+                <set field="headerItem" value="GlAccounts"/>
+                <set field="tabButtonItem" value="GlAccountAssignment"/>
+                <script location="component://party/webapp/partymgr/WEB-INF/actions/party/GetCompanyInfo.groovy"/>
+                <set field="organizationPartyId" from-field="context.company.partyId"/>
+            </actions>
+            <widgets>
+                <decorator-screen name="CommonConfigDecorator" location="${parameters.commonGlSetupDecoratorLocation}">
+                    <decorator-section name="body">
+                        <screenlet id="AdjustmentTypeGlAccountPanel" title="GL Accounts" collapsible="true">
+                            <include-form name="createGlAccounts" location="component://systemConfig/widget/systemConfig/ConfigForms.xml"/>
+                        </screenlet>
+                        	<include-form name="glAccountList" location="component://systemConfig/widget/systemConfig/ConfigForms.xml"/>
+                    </decorator-section>
+                </decorator-screen>
+            </widgets>
+        </section>
+    </screen>
+    
+    <screen name="EditGlAccount">
+        <section>
+            <actions>
+                <property-map resource="AccountingUiLabels" map-name="uiLabelMap" global="true"/>
+                <set field="titleProperty" value="AdjustmentType GlAccount"/>
+                <set field="headerItem" value="GlAccounts"/>
+                <set field="tabButtonItem" value="GlAccountAssignment"/>
+                <script location="component://party/webapp/partymgr/WEB-INF/actions/party/GetCompanyInfo.groovy"/>
+                <set field="organizationPartyId" from-field="context.company.partyId"/>
+                <entity-one entity-name="GlAccount" value-field="glAccount"/>
+            </actions>
+            <widgets>
+                <decorator-screen name="CommonConfigDecorator" location="${parameters.commonGlSetupDecoratorLocation}">
+                    <decorator-section name="body">
+                        <screenlet title="Edit GL Accounts" collapsible="false">
+                            <include-form name="EditGlAccounts" location="component://systemConfig/widget/systemConfig/ConfigForms.xml"/>
+                        </screenlet>
+                    </decorator-section>
+                </decorator-screen>
+            </widgets>
+        </section>
+    </screen>
+    
+    <screen name="VoucherList">
+        <section>
+            <actions>
+                <property-map resource="AccountingUiLabels" map-name="uiLabelMap" global="true"/>
+                <set field="titleProperty" value="Voucher"/>
+                <set field="headerItem" value="voucher"/>
+                <set field="tabButtonItem" value="voucher"/>
+                <script location="component://party/webapp/partymgr/WEB-INF/actions/party/GetCompanyInfo.groovy"/>
+                <set field="organizationPartyId" from-field="context.company.partyId"/>
+                <entity-condition list="voucherList" entity-name="VoucherType">
+                </entity-condition>
+            </actions>
+            <widgets>
+                <decorator-screen name="CommonConfigDecorator" location="${parameters.commonGlSetupDecoratorLocation}">
+                    <decorator-section name="body">
+                        <screenlet id="createVoucher" title="Create Voucher" collapsible="true">
+                            <include-form name="createVoucher" location="component://systemConfig/widget/systemConfig/ConfigForms.xml"/>
+                        </screenlet>
+                        	<include-form name="voucherList" location="component://systemConfig/widget/systemConfig/ConfigForms.xml"/>
+                    </decorator-section>
+                </decorator-screen>
+            </widgets>
+        </section>
+    </screen>
+    
+    <screen name="ListGlAccounts">
+        <section>
+            <actions>
+                <set field="titleProperty" value="PageTitleListAccounts"/>
+                <set field="labelTitleProperty" value="PageTitleListAccounts"/>
+                <set field="tabButtonItem" value="Chartofaccounts"/>
+                <!-- no longer works requies a fieldMap entity-and entity-name="GlAccount" list="entityList" use-cache="true" >
+                    <limit-range start="0" size="20"/>
+                </entity-and -->
+                <set field="viewIndex" from-field="parameters.VIEW_INDEX" type="Integer" default-value="0"/>
+                <set field="viewSize" from-field="parameters.VIEW_SIZE" type="Integer" default-value="50"/>
+            </actions>
+            <widgets>
+                <decorator-screen name="GlobalGLSettingsDecorator" location="${parameters.mainDecoratorLocation}">
+                    <decorator-section name="body">
+                        <include-menu name="GlSettingTabBar" location="component://accounting/widget/AccountingMenus.xml"/>
+                        <screenlet title="${uiLabelMap[labelTitleProperty]}">
+                            <container style="button-bar">
+                                <link target="ListGlAccountsReport" text="${uiLabelMap.CommonPrint}" style="buttontext"/>
+                                <link target="ListGlAccountsExport" text="${uiLabelMap.CommonExport}" style="buttontext"/>
+                            </container>
+                            <include-form name="ListGlAccount" location="component://systemConfig/widget/systemConfig/ConfigForms.xml"/>
+                        </screenlet>
+                    </decorator-section>
+                </decorator-screen>
+            </widgets>
+        </section>
+    </screen>
+    
+     <screen name="GlAccountNavigate">
+        <section>
+            <actions>
+                <set field="titleProperty" value="AcctgNavigateAccts"/>
+                <set field="tabButtonItem" value="Chartofaccounts"/>
+                <set field="tabButtonItem2" value="GlAccountNavigate"/>
+                <set field="labelTitleProperty" value="AcctgNavigateAccts"/>
+                <!-- parameters includes requestAttributes and parameter map -->
+                <!-- requestParameters is just the parameter map -->
+                <set field="glAccountId" from-field="requestParameters.glAccountId"/>
+                <set field="trail" from-field="requestParameters.trail"/>
+
+                <entity-one entity-name="GlAccount" value-field="glAccount"/>
+            </actions>
+            <widgets>
+                <decorator-screen name="GlobalGLSettingsDecorator" location="${parameters.mainDecoratorLocation}">
+                    <decorator-section name="body">
+                        <include-menu name="GlSettingTabBar" location="component://accounting/widget/AccountingMenus.xml"/>
+                        <screenlet title="${uiLabelMap.AcctgNavigateAccts}">
+                            <include-tree name="GlAccountTree" location="component://accounting/widget/AccountingTrees.xml"/>
+                        </screenlet>
+                        <screenlet title="${uiLabelMap.PageTitleEditGlAccount}">
+                            <include-form name="EditGlAccount" location="component://systemConfig/widget/systemConfig/ConfigForms.xml"/>
+                        </screenlet>
+                     </decorator-section>
+                </decorator-screen>
+            </widgets>
+        </section>
+    </screen>
+    
+    <screen name="AssignGlAccount">
+        <section>
+            <actions>
+                <set field="titleProperty" value="AcctgAssignGlAccount"/>
+                <set field="tabButtonItem" value="Chartofaccounts"/>
+                <set field="tabButtonItem2" value="AssignGlAccount"/>
+                <set field="labelTitleProperty" value="AcctgAssignGlAccount"/>
+
+                <!-- <set field="accountId" from-field="parameters.accountId"/> -->
+            </actions>
+            <widgets>
+                <decorator-screen name="GlobalGLSettingsDecorator" location="${parameters.mainDecoratorLocation}">
+                    <decorator-section name="body">
+                        <include-menu name="GlSettingTabBar" location="component://accounting/widget/AccountingMenus.xml"/>
+                        <screenlet title="${uiLabelMap.AcctgAssignGlAccount}">
+                            <include-form name="AssignGlAccount" location="component://systemConfig/widget/systemConfig/ConfigForms.xml"/>
+                        </screenlet>
+                    </decorator-section>
+                </decorator-screen>
+            </widgets>
+        </section>
+    </screen>
+    
+    <screen name="ListGlAccountOrganization">
+        <section>
+            <actions>
+                <property-map resource="AccountingUiLabels" map-name="uiLabelMap" global="true"/>
+                <set field="titleProperty" value="AccountingChartOfAcctsMenu"/>
+                <set field="tabButtonItem" value="ListGlAccountOrganization"/>
+                <set field="labelTitleProperty" value="${uiLabelMap.AccountingChartOfAcctsMenu}"/>
+            </actions>
+            <widgets>
+                <decorator-screen name="CommonGlSetupDecorator" location="${parameters.commonGlSetupDecoratorLocation}">
+                    <decorator-section name="body">
+                        <screenlet id="GlAccountOrganizationPanel" title="${uiLabelMap.AccountingChartOfAcctsMenu}" collapsible="true">
+                            <include-form name="AssignGlAccount" location="component://systemConfig/widget/systemConfig/ConfigForms.xml"/>
+                        </screenlet>
+                        <link text="${uiLabelMap.AccountingExportAsCsv}" style="button" target="ListGlAccountOrgCsv.csv">
+                            <parameter param-name="organizationPartyId"/>
+                        </link>
+                        <link text="${uiLabelMap.AccountingExportAsPdf}" style="button" target="ListGlAccountOrgPdf.pdf">
+                            <parameter param-name="organizationPartyId"/>
+                        </link>
+                        <include-form name="ListGlAccountOrganization" location="component://systemConfig/widget/systemConfig/ConfigForms.xml"/>
+                    </decorator-section>
+                </decorator-screen>
+            </widgets>
+        </section>
+    </screen>
+    
+     <screen name="PartyAcctgPreference">
+        <section>
+            <actions>
+                <property-map resource="AccountingUiLabels" map-name="uiLabelMap" global="true"/>
+                <set field="titleProperty" value="AccountingPreference"/>
+                <set field="labelTitleProperty" value="${uiLabelMap.AccountingPreference}"/>
+                <set field="tabButtonItem" value="PartyAcctgPreference"/>
+                <set field="organizationPartyId" from-field="parameters.organizationPartyId"/>
+                <property-to-field field="defaultCurrencyUomId" resource="general" property="currency.uom.id.default" default="INR"/>
+                <set field="partyId" from-field="parameters.organizationPartyId"/>
+                <!-- <entity-one entity-name="PartyAcctgPreference" value-field="partyAcctgPreference"/> -->
+                <entity-one entity-name="PartyAcctgPrefAndGroupAll" value-field="partyAcctgPreference"/>
+            </actions>
+            <widgets>
+                <decorator-screen name="CommonGlSetupDecorator" location="${parameters.commonGlSetupDecoratorLocation}">
+                    <decorator-section name="body">
+                    	<include-menu location="component://systemConfig/widget/systemConfig/SystemConfigMenus.xml" name="PartyAcctgPref"/>
+                        <screenlet title="${uiLabelMap.AccountingPreference}">
+                            <include-form name="PartyAcctgPreference" location="component://systemConfig/widget/systemConfig/ConfigForms.xml"/>
+                        </screenlet>
+                    </decorator-section>
+                </decorator-screen>
+            </widgets>
+        </section>
+    </screen>
+    
+     <screen name="AddGlAccount">
+        <section>
+            <actions>
+                <set field="titleProperty" value="PageTitleAddGlAccount"/>
+                <set field="tabButtonItem" value=""/>
+                <set field="labelTitleProperty" value=""/>
+                <set field="glAccount" value=""/><!-- make sure glAccountId field is shown -->
+            </actions>
+
+            <widgets>
+                <decorator-screen name="main-decorator" location="${parameters.mainDecoratorLocation}">
+                    <decorator-section name="body">
+                        <screenlet title="${uiLabelMap.PageTitleAddGlAccount}">
+                            <include-form name="EditGlAccount" location="component://systemConfig/widget/systemConfig/ConfigForms.xml"/>
+                        </screenlet>
+
+                        <!-- include-screen screen-name="ListGlAccounts" name="ListGlAccounts" / -->
+
+                        <!-- tree name="GlAccountTree" location="component://accounting/widget/AccountingTrees.xml"/ -->
+                     </decorator-section>
+                </decorator-screen>
+            </widgets>
+        </section>
+    </screen>
+</screens>

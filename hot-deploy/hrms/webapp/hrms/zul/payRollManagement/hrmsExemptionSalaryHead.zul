@@ -1,0 +1,183 @@
+<?component name="findbox" macroURI="../macros/textfindMacro.zul" id="macro1"?>
+<?component name="findbox1" macroURI="../macros/textfindMacro.zul" id="macro2"?>
+
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<zk xmlns:h="http://www.zkoss.org/2005/zk/native">
+	<zscript>
+	<![CDATA[
+	import com.ndz.controller.*;
+	SearchController controller = new SearchController();
+	Toolbarbutton exemtionForSalaryHead = arg.get("exemtionForSalaryHead");
+]]>
+</zscript>
+	<window id="searchPanel" apply="${controller}">
+		<custom-attributes entityName="SalaryHeadRule"
+			CompanyWide="true">
+		</custom-attributes>
+		<caption label="${c:l('HRMS_SALARY_EXCEMPTIONS') }" style="font-weight:bold">
+			<div align="right">
+				<toolbarbutton label="${c:l('HumanResNewEmployee') }"
+					image="/images/icon/update.png" style="color:#FFFFFF">
+					<attribute name="onClick" >
+	{
+		final Window win = (Window) Executions.createComponents("/zul/payRollManagement/hrmsAddExemptionSalaryHead.zul", null, null);
+		win.setMaximizable(true);
+		win.doModal();
+	}
+</attribute>
+				</toolbarbutton>
+			</div>
+		</caption>
+
+		<h:table>
+			<h:tr>
+				<h:td valign="top" style="text-align:left">
+					<findbox fieldLabel="${c:l('HRMS_SALARY_HEAD') } "
+						name="salaryHeadId" type="text" cols="20" />
+				</h:td>
+			
+				<h:td valign="top" style="text-align:left">
+
+					<findbox1 fieldLabel="${c:l('HRMS_RULE') }" name="ruleId"
+						type="text" cols="17" />
+				</h:td>
+			</h:tr>
+		</h:table>
+		<separator tooltip="New"></separator>
+
+		<box width="100%" height="30px" align="center">
+			<hbox>
+				<button label="${c:l('HumanResSearch') }" mold="os"
+					onClick="results.setVisible(true);results.setFocus(true)"
+					id="searchPerCompany">
+				</button>
+				<button label="${c:l('HRMS_ResetButton') }" mold="os"
+					onClick='Events.postEvent("onClick",exemtionForSalaryHead,null)'>
+				</button>
+			</hbox>
+		</box>
+		<separator height="15px" />
+		<zscript>
+				<![CDATA[
+	import org.ofbiz.base.util.*;
+	import java.sql.Timestamp;
+	import java.util.Date;
+	import java.util.HashSet;
+	import java.util.List;
+	import java.util.Map;
+	import java.util.Set;
+	import org.ofbiz.base.util.UtilMisc;
+	import org.ofbiz.entity.GenericDelegator;
+	import org.ofbiz.entity.GenericValue;
+	import org.ofbiz.entity.condition.EntityCondition;
+	import org.ofbiz.entity.condition.EntityExpr;
+	import org.ofbiz.entity.condition.EntityOperator;
+	import org.ofbiz.humanresext.util.HumanResUtil;
+	import org.ofbiz.service.GenericDispatcher;
+	import org.ofbiz.service.LocalDispatcher;
+	import org.zkoss.zhtml.Messagebox;
+	import org.zkoss.zk.ui.Component;
+	import org.zkoss.zk.ui.Executions;
+	import org.zkoss.zk.ui.event.Event;
+	import org.zkoss.zk.ui.event.Events;
+	import org.zkoss.zk.ui.util.GenericForwardComposer;
+	import org.zkoss.zul.Datebox;
+	import org.zkoss.zul.Listbox;
+	import org.zkoss.zul.Bandbox;
+	import org.zkoss.zul.Listitem;
+	import org.zkoss.zul.SimpleListModel;
+	import org.zkoss.zul.Textbox;
+	class MyRowRenderer implements RowRenderer {
+
+		MyRowRenderer() {
+		}
+
+		public void render(Row row, Object data) {
+			org.ofbiz.entity.GenericValue gv = ((org.ofbiz.entity.GenericValue) data);
+			String salaryHeadId = gv.getString("salaryHeadId");
+			String salryHeadName = "";
+			String PayrollRuleName = "";
+			String ruleId = gv.getString("ruleId");
+			//String salaryHeadId=gv.getString("salaryHeadId");
+			//String salryHeadName="";		
+
+			//=====================SalaryComputationType==============================
+			EntityCondition condition = EntityCondition.makeCondition("salaryHeadId", EntityOperator.EQUALS, salaryHeadId);
+			EntityCondition Payrollcondition = EntityCondition.makeCondition("ruleId", EntityOperator.EQUALS, ruleId);
+			GenericDelegator delegator = com.ndz.zkoss.util.HrmsInfrastructure.getDelegator();//GenericDelegator.getGenericDelegator("default");
+			List SalaryHeadList = delegator.findList("SalaryHead", condition, null, null, null, false);
+
+			for (int i = 0; i < SalaryHeadList.size(); i++) {
+
+				GenericValue gvSalary = SalaryHeadList.get(i);
+				salryHeadName = gvSalary.getString("hrName");
+
+				break;
+			}
+			List PayrollRuleList = delegator.findList("PayrollRule", Payrollcondition, null, null, null, false);
+
+			for (int i = 0; i < PayrollRuleList.size(); i++) {
+				GenericValue gvPayRoll = PayrollRuleList.get(i);
+				PayrollRuleName = gvPayRoll.getString("ruleName");
+
+				break;
+			}
+
+			new Label(salryHeadName).setParent(row);
+			new Label(PayrollRuleName).setParent(row);
+
+			//----------------------------------------------------------------
+			Button btn = new com.ndz.zkoss.HrmsButton();
+			btn.setParent(row);
+			btn.setMold("os");
+			btn.setLabel("Delete");
+			btn.setTooltiptext("Click here to delete");
+			btn.setSclass("btnDelete");
+			btn.addEventListener("onClick", new org.zkoss.zk.ui.event.EventListener() {
+				public void onEvent(Event event) throws Exception {
+					Messagebox.show("Do You Want To Delete this Record?", "Warning", Messagebox.YES|Messagebox.NO,Messagebox.QUESTION,
+						     new org.zkoss.zk.ui.event.EventListener() {
+						         public void onEvent(Event evt) {
+						                 if ("onYes".equals(evt.getName())) {
+					SalaryHeadAndRuleManagementController.deleteSalaryHeadRule(event, salaryHeadId, ruleId);
+						                 }}});
+				}
+			});
+			//----------------------------------------------------------------
+
+		}
+	}
+	RowRenderer tableRenderer = new MyRowRenderer();
+]]>
+</zscript>
+
+		<panel id="results" visible="false">
+			<panelchildren>
+				<h:table  style="border:0px"
+					cellspacing="0px" cellpadding="0px">
+					<h:tr>
+						<h:td width="80%">
+							<label
+								value="${c:l('HRMS_SEARCHRESULTS') }">
+							</label>
+						</h:td>
+						<h:td width="20%" style="text-align:right">
+							<paging id="paging" width="100%" />
+						</h:td>
+					</h:tr>
+				</h:table>
+				<grid  id="dataGrid"
+					rowRenderer="${tableRenderer}">
+					<columns menupopup="auto">
+						<column label="${c:l('HRMS_SALARY_HEAD') } " />
+						<column label="${c:l('HRMS_RULE') } " />
+						<column label="${c:l('Hrms_Action') }" align="center"/>
+					</columns>
+				</grid>
+			</panelchildren>
+		</panel>
+		<zscript>
+		Events.postEvent("onClick",searchPerCompany,null);
+		</zscript>
+	</window>
+</zk>

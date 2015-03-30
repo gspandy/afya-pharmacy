@@ -1,0 +1,72 @@
+<zk xmlns:n="http://www.zkoss.org/2005/zk/native">
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+	<zscript>
+	<![CDATA[
+	import org.ofbiz.entity.*;
+	GenericValue userLogin = (GenericValue) Executions.getCurrent()
+			.getDesktop().getSession().getAttribute("userLogin");
+	Map map = Executions.getCurrent().getArg();
+	
+	String partyId = (String)Executions.getCurrent().getArg().get("partyId");
+	org.ofbiz.entity.GenericDelegator delegator = userLogin.getDelegator();
+	List postalAddressDetails = org.ofbiz.party.contact.ContactMechWorker
+			.getPartyContactMechValueMaps(delegator, partyId, true,
+					"POSTAL_ADDRESS");
+	boolean sameUser = Executions.getCurrent().getArg().get("sameUser");
+	org.ofbiz.security.Security security = requestScope.get("security");
+	boolean isAdmin = security.hasPermission("HUMANRES_ADMIN", userLogin);
+	boolean isManager = security.hasPermission("HUMANRES_MGR", userLogin);
+	boolean anyOne = false;
+	if (isAdmin || isManager || sameUser) {
+		anyOne = true;
+	}
+]]>
+</zscript>
+	<window id="personPostalAddressWindow">
+	<tabbox tabscroll="true" panelSpacing="10px">
+	<tabs>
+	<tab label="${c:l('HRMS_POSTALADDRESS') }" id="postalAddressTab">
+	<attribute name="onClick">
+	Map party = new HashMap();
+	party.put("partyId", partyId);
+	party.put("sameUser", sameUser);
+	Window win = (Window)Executions.createComponents("/zul/employeeProfile/postalAddress.zul",null,party);
+	Div div = (Div)personPostalAddressWindow.getFellow("appendSubWindow");
+	Component cmp = div.getFirstChild();
+	if (cmp != null)
+		cmp.detach();
+	div.appendChild(win);
+	</attribute>
+	</tab>
+	<tab label="${c:l('HRMS_EMAILADDRESS') }" id="emailAddressTab">
+	<attribute name="onClick">
+	Map party = new HashMap();
+	party.put("partyId", partyId);
+	party.put("sameUser", sameUser);
+	Window win = (Window)Executions.createComponents("/zul/employeeProfile/employeeEmailAddress.zul",null,party);
+	Div div = (Div)personPostalAddressWindow.getFellow("appendSubWindow");
+	Component cmp = div.getFirstChild();
+	if (cmp != null)
+		cmp.detach();
+	div.appendChild(win);
+	</attribute>
+	</tab>
+	<tab label="${c:l('HRMS_PHONENUMBER') }" id="phoneNumberTab">
+	<attribute name="onClick">
+	Map party = new HashMap();
+	party.put("partyId", partyId);
+	party.put("sameUser", sameUser);
+	Window win = (Window)Executions.createComponents("/zul/employeeProfile/employeePhoneNumber.zul",null,party);
+	Div div = (Div)personPostalAddressWindow.getFellow("appendSubWindow");
+	Component cmp = div.getFirstChild();
+	if (cmp != null)
+		cmp.detach();
+	div.appendChild(win);
+	</attribute>
+	</tab>
+	</tabs>
+	</tabbox>
+	<div id="appendSubWindow"></div>
+		<div onCreate='Events.postEvent("onClick",postalAddressTab,null)'></div>
+	</window>
+</zk>

@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<site-conf xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+        xsi:noNamespaceSchemaLocation="http://www.ofbiz.org/dtds/site-conf.xsd">
+		
+    <!-- End of Security Mappings -->
+	
+    <!-- Request Mappings -->
+   
+   	<request-map uri="Claims">
+		<security https="true" auth="true" />
+		<response name="success" type="view" value="ApplyClaim" />
+	</request-map>
+ 	
+ 	<request-map uri="AdminViewClaim">
+   		<security https="true" auth="true"/>
+ 		<response name="success" type="view" value="AdminViewClaim"/>	
+ 	</request-map>
+ 	
+   <request-map uri="ApplyClaim">
+   		<security https="true" auth="true"/>
+ 		<response name="success" type="view" value="ApplyClaim"/>	
+ 	</request-map>
+ 	
+ 	<request-map uri="createClaim">
+   		<security https="true" auth="true"/>
+		<event type="service" invoke="createClaimService"/> 
+ 		<response name="success" type="request-redirect" value="AdminViewClaim"/>	
+ 	</request-map>
+ 	
+ 	<request-map uri="updateClaim">
+   		<security https="true" auth="true"/>
+		<event type="service" invoke="updateClaimService"/> 
+ 		<response name="success" type="request-redirect" value="AdminViewClaim"/>	
+ 	</request-map>
+
+ 	<request-map uri="submitClaim">
+   		<security https="true" auth="true"/>
+		<event type="service" invoke="submitClaimService"/> 
+ 		<response name="success" type="request-redirect" value="AdminViewClaim"/>	
+ 	</request-map>
+ 	
+   <request-map uri="Reimbursement">
+   		<security https="true" auth="true"/>
+ 		<response name="success" type="view" value="ReimbursementSlip"/>	
+ 	</request-map>
+ 	
+ 	<request-map uri="AdminProcessClaim">
+   		<security https="true" auth="true" direct-request="false"/>
+ 		<response name="success" type="view" value="AdminProcessClaim"/>	
+ 	</request-map>
+ 	
+ 	<request-map uri="processClaim">
+   		<security https="true" auth="true"/>
+		<event type="service" invoke="processClaimService"/> 
+ 		<response name="success" type="request-redirect" value="AdminViewClaim"/>	
+ 	</request-map>
+ 	
+ 	<request-map uri="ClaimLimit">
+   		<security https="true" auth="true"/>
+ 		<response name="success" type="view" value="ClaimLimit"/>	
+ 	</request-map>
+ 	
+ 	<request-map uri="EditClaimLimit">
+   		<security https="true" auth="true"/>
+ 		<response name="success" type="view" value="EditClaimLimit"/>	
+ 	</request-map>
+ 	
+ 	<request-map uri="createClaimLimit">
+   		<security https="true" auth="true"/>
+		<event type="service" invoke="createClaimLimitService"/> 
+ 		<response name="success" type="request-redirect" value="ClaimLimit"/>	
+ 	</request-map>
+ 	
+ 	<request-map uri="updateClaimLimit">
+   		<security https="true" auth="true"/>
+		<event type="service" invoke="updateClaimLimitService"/> 
+ 		<response name="success" type="request-redirect" value="ClaimLimit"/>	
+ 	</request-map>
+ 	  
+ 	<request-map uri="fetchClaimComment">
+   		<security https="true" auth="true"/>
+		<event type="service" invoke="fetchClaimComment"/> 
+ 		<response name="success" type="view" value="ApplyClaim"/>	
+ 	</request-map>
+ 	
+ 	<request-map uri="ClaimReports">
+   		<security https="true" auth="true"/>
+ 		<response name="success" type="view" value="ClaimReports"/>	
+ 	</request-map>
+ 	
+    <request-map uri="ListClaims">
+    	<security https="true" auth="true"/>
+		<response name="success" type="view" value="ListClaims" />
+    </request-map>
+
+    <request-map uri="listClaims.pdf">
+    	<security https="true" auth="true" direct-request="false"/>
+		<response name="success" type="view" value="ListClaimsPDF" />
+    </request-map>
+    
+    <request-map uri="listClaims.xls">
+    	<security https="true" auth="true" direct-request="false"/>
+		<response name="success" type="view" value="ListClaimsXLS" />
+    </request-map>
+ 	
+ 	<request-map uri="ReimbursementSlipReport">
+ 		<security https="true" auth="true"/>
+		<response name="success" type="view" value="ReimbursementSlipReport" />
+    </request-map>
+
+    <request-map uri="reimbursement.pdf">
+    	<security https="true" auth="true" direct-request="false"/>
+		<response name="success" type="view" value="ReimbursementPDF" />
+    </request-map>
+    
+    <request-map uri="reimbursement.xls">
+    	<security https="true" auth="true" direct-request="false"/>
+		<response name="success" type="view" value="ReimbursementXLS" />
+    </request-map>
+    
+    <request-map uri="ClaimLimitsReport">
+    	<security https="true" auth="true"/>
+		<response name="success" type="view" value="ClaimLimitsReport" />
+    </request-map>
+
+    <request-map uri="claimLimits.pdf">
+    	<security https="true" auth="true" direct-request="false"/>
+		<response name="success" type="view" value="ClaimLimitsPDF" />
+    </request-map>
+    
+    <request-map uri="claimLimits.xls">
+    	<security https="true" auth="true" direct-request="false"/>
+		<response name="success" type="view" value="ClaimLimitsXLS" />
+    </request-map>
+     
+	<view-map name="login" type="screen" page="component://common/widget/CommonScreens.xml#login"/>
+	<view-map name="ApplyClaim" type="screen" page="component://humanresext/widget/ClaimsScreens.xml#ApplyClaimScreen"/>
+	<view-map name="ReimbursementSlip" type="screen" page="component://humanresext/widget/ClaimsScreens.xml#ReimbursementSlipScreen"/>
+	<view-map name="AdminViewClaim" type="screen" page="component://humanresext/widget/ClaimsScreens.xml#AdminViewClaimScreen"/>
+	<view-map name="AdminProcessClaim" type="screen" page="component://humanresext/widget/ClaimsScreens.xml#AdminProcessClaimScreen"/>
+	<view-map name="ClaimLimit" type="screen" page="component://humanresext/widget/ClaimsScreens.xml#ClaimLimitScreen"/>
+	<view-map name="EditClaimLimit" type="screen" page="component://humanresext/widget/ClaimsScreens.xml#EditClaimLimitScreen"/>
+	<view-map name="ClaimReports" type="screen" page="component://humanresext/widget/ClaimsReportScreens.xml#ClaimReports"/>
+ 	
+ 	
+ 	<!--  Report Maps -->
+ 	<view-map name="ListClaims" type="screen" page="component://humanresext/widget/ClaimsReportScreens.xml#ListClaims"/>
+    <view-map name="ListClaimsPDF" type="screenfop" page="component://humanresext/widget/ClaimsReportScreens.xml#ListClaimsPDF" content-type="application/pdf" encoding="none"/>
+    <view-map name="ListClaimsXLS" type="excel" page="component://humanresext/widget/ClaimsReportScreens.xml#ListClaimsXls" content-type="application/ms-excel" encoding="none"/>
+	<view-map name="ReimbursementSlipReport" type="screen" page="component://humanresext/widget/ClaimsReportScreens.xml#ReimbursementSlipReport"/>
+    <view-map name="ReimbursementPDF" type="screenfop" page="component://humanresext/widget/ClaimsReportScreens.xml#ReimbursementPDF" content-type="application/pdf" encoding="none"/>
+    <view-map name="ReimbursementXLS" type="excel" page="component://humanresext/widget/ClaimsReportScreens.xml#ReimbursementXLS" content-type="application/ms-excel" encoding="none"/>
+	<view-map name="ClaimLimitsReport" type="screen" page="component://humanresext/widget/ClaimsReportScreens.xml#ClaimLimitsReport"/>
+    <view-map name="ClaimLimitsPDF" type="screenfop" page="component://humanresext/widget/ClaimsReportScreens.xml#ClaimLimitsPDF" content-type="application/pdf" encoding="none"/>
+    <view-map name="ClaimLimitsXLS" type="excel" page="component://humanresext/widget/ClaimsReportScreens.xml#ClaimLimitsXLS" content-type="application/ms-excel" encoding="none"/>
+
+</site-conf>
+

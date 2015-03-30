@@ -1,0 +1,33 @@
+<entity-engine-xml>
+    
+ 	<EnumerationType enumTypeId="LEAVE_TYPE" hasTable="N" description="Leave Types" />
+ 	<Enumeration enumId="LT_SPECIAL" enumTypeId="LEAVE_TYPE" enumCode="SPECIAL" sequenceId="01" description="Special Leave"/>
+    <Enumeration enumId="LT_ANNUAL" enumTypeId="LEAVE_TYPE" enumCode="ANNUAL" sequenceId="02" description="Annual Leave"/>
+	<Enumeration enumId="LT_COMPASSIONATE" enumTypeId="LEAVE_TYPE" enumCode="COMPASSIONATE" sequenceId="03" description="Compassionate Leave"/>
+    <Enumeration enumId="LT_MATERNITY" enumTypeId="LEAVE_TYPE" enumCode="MATERNITY" sequenceId="04" description="Maternity Leave"/>
+    <Enumeration enumId="LT_SICK" enumTypeId="LEAVE_TYPE" enumCode="SICK" sequenceId="05" description="Sick Leave"/>
+    <Enumeration enumId="LT_OTHER" enumTypeId="LEAVE_TYPE" enumCode="OTHER" sequenceId="06" description="Other Leave"/>
+	
+	<StatusType description="Employee Leave Status Changes" hasTable="N" parentTypeId="" statusTypeId="LEAVE_STATUS"/>
+ 
+    <StatusItem statusId="LT_SAVED" statusTypeId="LEAVE_STATUS" statusCode="SAVED" sequenceId="01" description="Saved"/>
+    <StatusItem statusId="LT_SUBMITTED" statusTypeId="LEAVE_STATUS" statusCode="SUBMITTED" sequenceId="02" description="Submitted"/>
+    <StatusItem statusId="LT_MGR_APPROVED" statusTypeId="LEAVE_STATUS" statusCode="MGR_APPROVED" sequenceId="03" description="Manager Approved"/>
+    <StatusItem statusId="LT_MGR_REJECTED" statusTypeId="LEAVE_STATUS" statusCode="MGR_REJECTED" sequenceId="04" description="Manager Rejected"/> 
+	<StatusItem statusId="LT_ADM_APPROVED" statusTypeId="LEAVE_STATUS" statusCode="ADM_APPROVED" sequenceId="05" description="Admin Approved"/>
+	<StatusItem statusId="LT_ADM_REJECTED" statusTypeId="LEAVE_STATUS" statusCode="ADM_REJECTED" sequenceId="06" description="Admin Rejected"/>
+
+	<!-- <PublicHoliday onDate="2009-08-14 00:00:00.000000000" description="Janamashtami"/>
+	<PublicHoliday onDate="2009-10-02 00:00:00.000000000" description="Gandhi Jayanti"/>
+	 -->
+	
+	    <hr_Weekday hr_day="Sunday" isWorking="Y" />
+		<hr_Weekday hr_day="Monday" isWorking="Y" />
+		<hr_Weekday hr_day="Tuesday" isWorking="Y" />
+		<hr_Weekday hr_day="Wednesday" isWorking="Y" />
+		<hr_Weekday hr_day="Thursday" isWorking="Y" />
+		<hr_Weekday hr_day="Friday" isWorking="Y" />
+		<hr_Weekday hr_day="Saturday" isWorking="Y" />
+	
+	
+</entity-engine-xml>

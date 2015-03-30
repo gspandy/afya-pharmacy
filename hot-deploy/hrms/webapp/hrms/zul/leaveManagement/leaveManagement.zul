@@ -1,0 +1,228 @@
+<?init class="org.zkoss.zk.ui.util.Composition" arg0="/WEB-INF/layout/templateWestCollapsible.zul"?>
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<?page title="${c:l('HRMS_LEAVEPAGETITLE')}" id="leavemgmt"?>
+<?link rel="icon" type="image/x-icon" href="/images/companyLogo.png"?>
+
+<zk>
+	<zscript>
+	import org.zkoss.zk.ui.event.EventListener;
+	import org.ofbiz.entity.*;
+<![CDATA[
+	org.ofbiz.security.Security security = requestScope.get("security");
+	GenericValue userLogin = (GenericValue) Executions.getCurrent().getDesktop().getSession().getAttribute("userLogin");
+	boolean isAdmin = security.hasPermission("HUMANRES_ADMIN", userLogin);
+	boolean isManager = security.hasPermission("HUMANRES_MGR", userLogin);
+	boolean bothAccess = false;
+	if (isAdmin || isManager) {
+		bothAccess = true;
+	}
+	String employeeId1 = null;
+	employeeId1 = (String)Executions.getCurrent().getParameter("partyId");
+	boolean isOnlyAdmin=isAdmin;
+	if(isManager){
+		isOnlyAdmin=false;
+	}
+	
+]]>
+</zscript>
+	<div width="100%" self="@{define(westContent)}"
+		id="leaveMgmtTemplateDiv">
+		<cell width="18%">
+			<groupbox mold="3d" closable="false">
+				<caption label="${c:l('HRMS_LEAVEMANAGEMENT') }"></caption>
+				<toolbarbutton label="${c:l('HRMS_MYLEAVE')}"
+					style="font-weight:bold" id="myLeaveBtn" disabled="${isOnlyAdmin}">
+					<attribute name="onClick">
+						<![CDATA[
+grpBoxCaption.setVisible(true);
+String tlBarBtnLabel = ((Toolbarbutton) leaveMgmtTemplateDiv
+			.getFellow("myLeaveBtn")).getLabel();
+	Toolbarbutton tlBarBtn = ((Toolbarbutton) leaveMgmtTemplateDiv
+			.getFellow("myLeaveBtn"));
+	
+	Caption caption = (Caption) leaveMgmtTemplateDiv.getFellow("grpBoxCaption");
+	Component cmp1 = caption.getFellowIfAny("new");
+	Component cmp2 = caption.getFellowIfAny("apply");
+	Component cmp3 = caption.getFellowIfAny("leaveInfo");
+	if (cmp1 != null)
+		cmp1.detach();
+	if (cmp2 != null)
+		cmp2.detach();
+	if(cmp3!=null)
+		cmp3.detach();
+	caption.setLabel(tlBarBtnLabel);
+	Toolbarbutton newToolBarBtn = new Toolbarbutton();
+	newToolBarBtn.setLabel(org.zkoss.util.resource.Labels.getLabel("HRMS_APPLY"));
+	newToolBarBtn.setId("apply");
+	newToolBarBtn.setImage("/images/icon/update.png");
+	newToolBarBtn.setParent(caption);
+	newToolBarBtn.setStyle("color:#FFFFFF!important;font-weight:bold");
+	newToolBarBtn.addEventListener("onClick", new EventListener() {
+public void onEvent(Event event) throws Exception {
+		Window applyWin = (Window) Executions.createComponents(
+				"/zul/leaveManagement/leave.zul", null, null);
+		applyWin.doModal();
+	}
+});
+	Toolbarbutton leaveInfoToolBarBtn = new Toolbarbutton();
+	leaveInfoToolBarBtn.setLabel("Leave Info");
+	leaveInfoToolBarBtn.setId("leaveInfo");
+	leaveInfoToolBarBtn.setImage("/images/icon/update.png");
+	leaveInfoToolBarBtn.setParent(caption);
+	leaveInfoToolBarBtn.setStyle("color:#FFFFFF!important;font-weight:bold");
+	leaveInfoToolBarBtn.addEventListener("onClick", new EventListener() {
+	public void onEvent(Event event) throws Exception {
+		Window applyWin = (Window) Executions.createComponents(
+				"/zul/leaveManagement/leaveInfo.zul", null, null);
+		applyWin.doModal();
+	}
+});
+	Div div = (Div) leaveMgmtTemplateDiv.getFellow("appendWindow");
+	Component cmp = div.getFirstChild();
+	if (cmp != null)
+		cmp.detach();
+	Window win = (Window) Executions.createComponents(
+                "/zul/leaveManagement/leaveSummary.zul", null, org.ofbiz.base.util.UtilMisc.toMap("myLeaveBtn",myLeaveBtn));
+	div.appendChild(win);
+	unselectedToolbarbuttonColor(self);
+	selectedToolbarbuttonColor(self);
+]]>
+</attribute>
+				</toolbarbutton>
+				<separator if="${bothAccess}"/>
+				<toolbarbutton label="${c:l('HRMS_PROCESSLEAVE')}"
+					style="font-weight:bold" id="processLeaveBtn" if="${bothAccess}">
+					<attribute name="onClick">
+					grpBoxCaption.setVisible(true);
+	String tlBarBtnLabel = ((Toolbarbutton) leaveMgmtTemplateDiv
+			.getFellow("processLeaveBtn")).getLabel();
+	Caption caption = (Caption) leaveMgmtTemplateDiv.getFellow("grpBoxCaption");
+	caption.setLabel(tlBarBtnLabel);
+	Component cmp1 = caption.getFellowIfAny("new");
+	Component cmp2 = caption.getFellowIfAny("apply");
+	Component cmp3 = caption.getFellowIfAny("leaveInfo");
+	if (cmp1 != null)
+		cmp1.detach();
+	if (cmp2 != null)
+		cmp2.detach();
+	if (cmp3 != null)
+		cmp3.detach();
+	Div div = (Div) leaveMgmtTemplateDiv.getFellow("appendWindow");
+	Component cmp = div.getFirstChild();
+	if (cmp != null)
+		cmp.detach();
+	Window win = (Window) Executions.createComponents(
+			"/zul/leaveManagement/addProcessLeaveWindow.zul", null, org.ofbiz.base.util.UtilMisc.toMap("employeeId",employeeId1,"processLeaveBtn",processLeaveBtn));
+	div.appendChild(win);
+	unselectedToolbarbuttonColor(self);
+	selectedToolbarbuttonColor(self);
+</attribute>
+				</toolbarbutton>
+				<separator if="${isAdmin}"/>
+				<toolbarbutton label="${c:l('HRMS_ALLOCATELEAVE') }"
+					style="font-weight:bold" id="allocateLeaveLimitBtn"
+					if="${isAdmin}">
+					<attribute name="onClick">
+					grpBoxCaption.setVisible(true);
+	String tlBarBtnLabel = ((Toolbarbutton) leaveMgmtTemplateDiv
+			.getFellow("allocateLeaveLimitBtn")).getLabel();
+	Caption caption = (Caption) leaveMgmtTemplateDiv.getFellow("grpBoxCaption");
+	Component cmp1 = caption.getFellowIfAny("new");
+	Component cmp2 = caption.getFellowIfAny("apply");
+	Component cmp3 = caption.getFellowIfAny("leaveInfo");
+	if (cmp1 != null)
+		cmp1.detach();
+	if (cmp2 != null)
+		cmp2.detach();
+	if (cmp3 != null)
+		cmp3.detach();
+	caption.setLabel(tlBarBtnLabel);
+	Toolbarbutton newToolBarBtn = new Toolbarbutton();
+newToolBarBtn.setLabel(org.zkoss.util.resource.Labels.getLabel("HRMS_NEW"));
+	newToolBarBtn.setId("new");
+	newToolBarBtn.setStyle("color:#FFFFFF!important;font-weight:bold");
+	newToolBarBtn.setImage("/images/icon/update.png");
+	newToolBarBtn.setParent(caption);
+	newToolBarBtn.addEventListener("onClick", new EventListener() {
+	public void onEvent(Event event) throws Exception {
+		Window applyWin = (Window) Executions.createComponents(
+				"/zul/leaveManagement/assignLeave.zul", null, null);
+		applyWin.doModal();
+	}
+});
+	Div div = (Div) leaveMgmtTemplateDiv.getFellow("appendWindow");
+	Component cmp = div.getFirstChild();
+	if (cmp != null)
+		cmp.detach();
+	Window win = (Window) Executions.createComponents(
+			"/zul/leaveManagement/allocateLeave.zul", null, org.ofbiz.base.util.UtilMisc.toMap("allocateLeaveLimitBtn",allocateLeaveLimitBtn));
+	div.appendChild(win);
+	unselectedToolbarbuttonColor(self);
+	selectedToolbarbuttonColor(self);
+</attribute>
+				</toolbarbutton>
+				<separator />
+				<toolbarbutton label="Public Holiday" 
+					style="font-weight:bold" id="publicHoliday" >
+					<attribute name="onClick">
+	grpBoxCaption.setVisible(false);
+	Div div = (Div) leaveMgmtTemplateDiv.getFellow("appendWindow");
+	Component cmp = div.getFirstChild();
+	if (cmp != null)
+		cmp.detach();
+	Window win = (Window) Executions.createComponents(
+			"/zul/GlobalHRSetting/publicHoliday.zul", null, org.ofbiz.base.util.UtilMisc.toMap("publicHoliday",publicHoliday));
+	div.appendChild(win);
+	unselectedToolbarbuttonColor(self);
+	selectedToolbarbuttonColor(self);
+</attribute>
+				</toolbarbutton>
+				<separator />
+				<toolbarbutton label="Working Days"
+					style="font-weight:bold" id="viewWorkingDays" >
+					<attribute name="onClick">
+	grpBoxCaption.setVisible(false);
+	Div div = (Div) leaveMgmtTemplateDiv.getFellow("appendWindow");
+	Component cmp = div.getFirstChild();
+	if (cmp != null)
+		cmp.detach();
+	Window win = (Window) Executions.createComponents(
+			"/zul/GlobalHRSetting/viewWorkingDays.zul", null, null);
+	div.appendChild(win);
+	unselectedToolbarbuttonColor(self);
+	selectedToolbarbuttonColor(self);
+</attribute>
+				</toolbarbutton>
+				
+			</groupbox>
+		</cell>
+	</div>
+	<div self="@{define(content)}">
+		<groupbox mold="3d" width="100%" closable="false">
+			<caption id="grpBoxCaption"></caption>
+			<div id="appendWindow"></div>
+		</groupbox>
+	</div>
+	<zscript>
+	String selectedMenuItemId = null;
+	Component defaultComp = leaveMgmtTemplateDiv.getFellowIfAny("myLeaveBtn");
+	if(isAdmin)
+	 defaultComp = leaveMgmtTemplateDiv.getFellow("processLeaveBtn");
+	if(employeeId1 == null){
+	selectedMenuItemId = sessionScope.get("id");
+	if (selectedMenuItemId != null) {
+	 	Component compId = leaveMgmtTemplateDiv.getFellowIfAny(selectedMenuItemId);
+	    if(compId != null){
+		Events.postEvent("onClick", compId, null);
+		} else {
+		Events.postEvent("onClick", defaultComp, null);
+	}
+	} else {
+		Events.postEvent("onClick", defaultComp, null);
+	}
+	sessionScope.remove("id");
+	}else{
+	Events.postEvent("onClick", leaveMgmtTemplateDiv.getFellow("processLeaveBtn"), null);
+	}
+</zscript>
+</zk>

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<trees xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+        xsi:noNamespaceSchemaLocation="http://ofbiz.apache.org/dtds/widget-tree.xsd">
+    <tree name="TreeFormComponents" entity-name="CustomFormComponents" root-node-name="node-root" default-render-style="expand-collapse" default-wrap-style="accountItem">
+        
+        <node name="node-root" render-style="simple">
+            <sub-node node-name="node-body">
+                <entity-and entity-name="CustomFormComponents">
+                    <field-map field-name="parentCompId" from-field="null"/>
+                    <field-map field-name="formId" from-field="parameters.formId"/>
+                    <order-by field-name="compId"/>
+                </entity-and>
+            </sub-node>
+        </node>
+        <node name="node-body">
+            <entity-one entity-name="CustomFormComponents" value-field="comp"></entity-one>
+            <include-screen location="component://dyna-forms/widget/DynaFormScreens.xml" name="FormTreeLine"/>
+            <sub-node node-name="node-body">
+                <entity-and entity-name="CustomFormComponents">
+                    <field-map field-name="parentCompId" from-field="compId"/> 
+                    <field-map field-name="formId" from-field="parameters.formId"/>
+                    <order-by field-name="compId"/>
+                </entity-and>
+            </sub-node>
+        </node>
+    </tree>
+ 
+ </trees>

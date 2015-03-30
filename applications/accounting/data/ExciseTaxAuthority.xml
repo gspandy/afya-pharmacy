@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<entity-engine-xml>
+
+
+	<Party partyId="CBEC" partyTypeId="PARTY_GROUP" />
+	<PartyGroup partyId="CBEC" groupName="Central Board of Excise and Customs"/>
+    <PartyRole partyId="CBEC" roleTypeId="TAX_AUTHORITY"/>
+	<TaxAuthority taxAuthGeoId="IND" taxAuthPartyId="CBEC" includeTaxInPrice="N" />
+		
+</entity-engine-xml>
+
+
+
+

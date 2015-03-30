@@ -1,0 +1,276 @@
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<?init class="org.zkoss.zkplus.databind.AnnotateDataBinderInit" arg0="./listReqsWin"?>
+<zk xmlns:n="http://www.zkoss.org/2005/zk/native">
+	<zscript>
+	import com.hrms.training.composer.*;
+	import org.ofbiz.entity.GenericDelegator;
+	import java.security.Security;
+	import org.ofbiz.entity.GenericValue;
+	TrainingComposer trngComposer = new TrainingComposer();
+	GenericDelegator delegator = (GenericDelegator) Executions.getCurrent()
+			.getAttributes().get("delegator");
+	List trainingClassTypes = null;
+	GenericValue userLogin = (GenericValue) Executions.getCurrent()
+			.getDesktop().getSession().getAttribute("userLogin");
+	try {
+		trainingClassTypes = delegator.findList("TrainingClassType",null,null,null,null,false);
+	} catch (org.ofbiz.entity.GenericEntityException g) {
+	}
+	boolean isAdmin = security.hasPermission("HUMANRES_ADMIN", userLogin);
+	boolean isManager = security.hasPermission("HUMANRES_MGR", userLogin);
+	
+	
+	
+</zscript>
+	<window apply="${trngComposer}" id="listReqsWin" width="100%"
+		title="${c:l('HRMS_ALL_TRAININGS') }" style="margin-top:1px">
+		<separator></separator>
+		<n:table width="100%" style="border:0px" cellspacing="0px"
+			cellpadding="0px">
+			<n:tr>
+				<n:td width="80%">
+					<toolbarbutton id="newTraining" label="${c:l('HRMS_NEW') }"
+						onClick="createNewTraining()" visible="${isAdmin}">
+						
+					</toolbarbutton>
+					<toolbarbutton id="cancel" label="${c:l('HRMS_CANCEL') }" if="${isAdmin}">
+					</toolbarbutton>
+				</n:td>
+				<n:td width="20%" style="text-align:right">
+					<paging id="pageTraining" 
+						totalSize="@{trngComposer.totalSize,load-after='saveTraining.onClick'}"
+						pageSize="10">
+					</paging>
+				</n:td>
+			</n:tr>
+		</n:table>
+		<listbox id="trainingListbox" model="@{trngComposer.model}"
+			checkmark="true" multiple="false"
+			selectedItem="@{trngComposer.selectedTraining}"
+			onSelect='showDetailsToEdit();'
+			itemRenderer="@{trngComposer.listitemRenderer}">
+			<listhead>
+				<listheader label="${c:l('FormFieldTitle_trainingId') }"></listheader>
+				<listheader label="${c:l('FormFieldTitle_trainingName') }"></listheader>
+				<listheader label="${c:l('HumanResLeaveSummaryFromDate') }"></listheader>
+				<listheader label="${c:l('HumanResLeaveSummaryThruDate') }"></listheader>
+				<listheader label="${c:l('HRMS_ACTIONS') }"></listheader>
+			</listhead>
+		</listbox>
+		<separator></separator>
+					<zscript>
+					<![CDATA[
+	void validateForm() {
+		java.util.Date currDate = new java.util.Date();
+		trainingNameValidation(trainingName);
+
+		if (startDate.getValue() == null)
+			throw new WrongValueException(startDate, org.zkoss.util.resource.Labels.getLabel("AL_START_DATE_REQUIRED"));
+		trainingClassTypeId.getValue();
+		if (currDate.compareTo(startDate.getValue()) == 1)
+			throw new WrongValueException(startDate,
+					org.zkoss.util.resource.Labels.getLabel("AL_START_DATE_CANNOT_BE_CURRENT_DATE"));
+
+		if (endDate.getValue() == null)
+			throw new WrongValueException(endDate, org.zkoss.util.resource.Labels.getLabel("AL_END_DATE_REQUIRED"));
+		if (startDate.getValue().compareTo(endDate.getValue()) == 1)
+			throw new WrongValueException(endDate,
+					org.zkoss.util.resource.Labels.getLabel("AL_END_DATE_CANNOT_BE_BEFORE_START_DATE"));
+
+		if (maxTrainees.getValue() == 0)
+			throw new WrongValueException(maxTrainees,
+					org.zkoss.util.resource.Labels.getLabel("AL_MAX_TRAINEES_CANNOT_BE_ZERO"));
+		if (org.ofbiz.base.util.UtilValidate.isNegativeInteger(maxTrainees
+				.getValue().toString()))
+			throw new WrongValueException(maxTrainees,
+					org.zkoss.util.resource.Labels.getLabel("AL_MAX_TRAINEES_CANNOT_BE_NEGATIVE"));
+			Events.postEvent("onClick",listReqsWin.getParent().getParent().getFellowIfAny("button2"),null);
+	}
+]]>
+					</zscript>
+					<zscript>
+					<![CDATA[
+
+	
+
+	void createNewTraining() {
+		details.setVisible(true);
+		reportSection.setVisible(false);
+		trngComposer.setSelectedTraining(delegator.makeValidValue("Training",new HashMap()));
+			saveTraining.setFocus(true);
+			if (trngComposer.getSelectedTraining() != null) {
+				if (trngComposer.getSelectedTraining().getTimestamp(
+						"estimatedCompletionDate") != null) {
+					if (trngComposer.getSelectedTraining().getTimestamp(
+							"estimatedCompletionDate").before(
+							org.ofbiz.base.util.UtilDateTime.nowTimestamp())) {
+	//					reportSection.setVisible(true);
+					} else {
+					//reportSection.setVisible(false);
+					}				
+				}
+				
+				saveTraining.setVisible(true);
+				updateTraining.setVisible(false);
+			}
+				
+	}
+	void showDetailsToEdit() {
+			details.setVisible(true);
+			reportSection.setVisible(true);
+			saveTraining.setFocus(true);
+			if (trngComposer.getSelectedTraining() != null) {
+				if (trngComposer.getSelectedTraining().getTimestamp(
+						"estimatedCompletionDate") != null) {
+					if (trngComposer.getSelectedTraining().getTimestamp(
+							"estimatedCompletionDate").before(
+							org.ofbiz.base.util.UtilDateTime.nowTimestamp())) {
+						//reportSection.setVisible(true);
+					} else {
+						//reportSection.setVisible(false);
+					}
+				}
+				saveTraining.setVisible(false);
+				updateTraining.setVisible(true);
+			} 
+		
+	}
+	void show() {
+		String val = actions.getSelectedItem().getValue();
+		Component comp = actions.getFellowIfAny(val, true);
+		comp.setVisible(true);
+		
+		
+	}
+]]>
+</zscript>
+<panel title="${c:l('HRMS_TRAINING_DETAILS') }" id="details" visible="false">
+			<panelchildren>
+				<n:table cellspacing="2px" cellpadding="2px">
+					<n:tr>
+						<n:td>
+							<label value="${c:l('FormFieldTitle_trainingName') }" style="font-weight:bold"></label>
+							<label value="*" style="color:red" />
+						</n:td>
+						
+						<n:td>
+							<textbox id="trainingName" constraint="no empty: ${c:l('HRMS_TRAINING_NAME_REQUIRED') }"
+								value="@{trngComposer.selectedTraining.trainingName,load-after='trainingListbox.onSelect,newTraining.onClick',save-when='saveTraining.onClick,updateTraining.onClick'}" cols="55">
+								</textbox>
+								<zscript>		
+									<![CDATA[
+									import org.zkoss.util.resource.Labels;
+									import org.zkoss.util.resource.Labels;
+									public void trainingNameValidation(Textbox comp) throws WrongValueException {
+										String value = comp.getValue();
+										if (org.ofbiz.base.util.UtilValidate.isEmpty(value)) {
+											throw new WrongValueException(comp, org.zkoss.util.resource.Labels.getLabel("HRMS_TRAINING_NAME_REQUIRED"));
+										}
+										
+									}
+								]]>
+								</zscript>
+						</n:td>
+						<n:td>
+							<label value="${c:l('HRMS_STARTDATE') }" style="font-weight:bold"></label>
+							<label value="*" style="color:red" />
+						</n:td>
+						<n:td>
+							<datebox id="startDate" name="startDate" cols="20"
+								constraint="no past:${c:l('HRMS_START_DATE_CANNOT_BE_PAST') }"
+									value="@{trngComposer.selectedTraining.estimatedStartDate,load-after='trainingListbox.onSelect,newTraining.onClick',save-when='saveTraining.onClick,updateTraining.onClick'}">
+							</datebox>
+						</n:td>
+						<n:td>
+							<label value="${c:l('HRMS_EMPLOYEE_ID') }" style="font-weight:bold;" visible="${isManager}"/>
+						</n:td>
+						<n:td>
+						<employeebox id="employeeBox" value="@{trngComposer.employeeId}" visible="${isManager}"/>
+						</n:td>
+					</n:tr>
+					<n:tr>
+						<n:td>
+							<label value="${c:l('FormFieldTitle_trainingType') }" style="font-weight:bold"></label>
+							<label value="*" style="color:red" />
+						</n:td>
+						<n:td>
+							<combobox id="trainingClassTypeId" name="trainingClassTypeId" constraint="no empty:${c:l('HRMS_AET_REQUIRED_TRAINING_TYPE') }" readonly="true"
+								selectedItem="@{trngComposer.selectedTraining.trainingClassTypeId,save-when='saveTraining.onClick,updateTraining.onClick'}">
+								<comboitem forEach="${trainingClassTypes}" label="${each.description}" value="${each.trainingClassTypeId}"></comboitem>
+							</combobox>
+						</n:td>
+						<n:td>
+							<label value="${c:l('HRMS_END_DATE') }" style="font-weight:bold"></label>
+							<label value="*" style="color:red" />
+						</n:td>
+						<n:td>
+							<datebox id="endDate" cols="20" constraint="no past: ${c:l('HRMS_END_DATE_CANNOT_BE_PAST') }"
+								value="@{trngComposer.selectedTraining.estimatedCompletionDate,load-after='trainingListbox.onSelect,newTraining.onClick',save-when='saveTraining.onClick,updateTraining.onClick'}">
+							</datebox>
+						</n:td>
+					</n:tr>
+					<n:tr>
+						<n:td>	
+							<label value="${c:l('FormFieldTitle_description') }" style="font-weight:bold"></label>
+						</n:td>
+						<n:td colspan="3">
+							<textbox cols="100" rows="3"
+								value="@{trngComposer.selectedTraining.description,load-after='trainingListbox.onSelect,newTraining.onClick',save-when='saveTraining.onClick,updateTraining.onClick'}">
+							</textbox>
+						</n:td>
+					</n:tr>
+					<n:tr>
+						<n:td>
+							<label value="${c:l('HRMS_MAX_TRAINEES') }" style="font-weight:bold"></label>
+							<label value="*" style="color:red"></label>
+						</n:td>
+						<n:td>
+							<intbox id="maxTrainees"
+								value="@{trngComposer.selectedTraining.maxTrainees,load-after='trainingListbox.onSelect,newTraining.onClick',save-when='saveTraining.onClick,updateTraining.onClick'}"
+								constraint="no empty:${c:l('HRMS_MAX_TRAINEES_REQUIRED') }">
+							</intbox>
+						</n:td>
+					</n:tr>
+					<box align="center" width="100%" visible="${isAdmin}">
+						<button label="${c:l('btnSave') }" visible="false" id="saveTraining" onClick="trainingName.getValue();validateForm();"></button>
+						<button label="${c:l('HRMS_UPDATE') }" visible="false" id="updateTraining" onClick="trainingName.getValue();validateForm();"></button>
+					</box>
+				
+				<hbox id="reportSection">
+					<toolbarbutton label="Training Attendance" visible="${isAdmin}"
+						onClick="export_to_csv()">
+					</toolbarbutton>
+				</hbox>
+				</n:table>
+		</panelchildren>
+		</panel>
+		
+	</window>
+
+	<zscript>
+	<![CDATA[
+	public void export_to_csv() {
+		List all = trngComposer.getAllConfirmedAttendees();
+		String delimiter = ",";
+		StringBuilder buffer = new StringBuilder();
+		buffer.append("SrNo.").append(delimiter).append("Employee Id").append(delimiter).append("Employee Name").append(delimiter).append("\n");
+		String trainingId = "";
+		for (int i = 0; i < all.size(); i++) {
+			buffer.append((i + 1)).append(delimiter);
+			GenericValue gv = (GenericValue) all.get(i);
+			trainingId = gv.getString("trainingId");
+			buffer.append(gv.getString("partyId")).append(delimiter);
+			GenericDelegator delegator = gv.getDelegator();
+			GenericValue person = delegator.findByPrimaryKeyCache("Person",
+					org.ofbiz.base.util.UtilMisc.toMap("partyId", gv
+							.getString("partyId")));
+			buffer.append(person.getString("firstName")
+							+" "+ person.getString("lastName")).append(delimiter);
+			buffer.append("\n");
+		}
+		org.zkoss.zhtml.Filedownload.save(buffer.toString().getBytes(),
+				"application/vnd.ms-excel", "training-" + trainingId + ".csv");
+	}
+]]>
+	</zscript>
+</zk>

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<test-suite suite-name="payrolltests"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="http://ofbiz.apache.org/dtds/test-suite.xsd">
+   
+   <!--  
+   <test-case case-name="payroll-tests">
+    	<junit-test-suite class-name="com.nthdimenzion.humanres.payroll.test.RuleTest">
+    	</junit-test-suite>
+    </test-case>
+    <test-case case-name="taxdecl-tests">
+    	<junit-test-suite class-name="com.nthdimenzion.humanres.payroll.test.TaxDeclCompTest">
+    	</junit-test-suite>
+    </test-case>
+-->
+
+   <test-case case-name="payslip-tests">
+    	<junit-test-suite class-name="com.nthdimenzion.humanres.payroll.test.PayslipTest">
+    	</junit-test-suite>
+    </test-case>
+    
+ </test-suite>

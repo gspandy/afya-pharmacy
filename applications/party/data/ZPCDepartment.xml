@@ -1,0 +1,415 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<entity-engine-xml>
+
+    <Party partyId="Company"/>
+    <Party partyId="_NA_"/>
+    <Party partyId="DEV" partyTypeId="PARTY_GROUP" lastUpdatedStamp="2010-02-20 13:28:09.0" lastUpdatedTxStamp="2010-02-20 13:28:09.0" createdStamp="2010-02-20 13:28:09.0" createdTxStamp="2010-02-20 13:28:09.0"/>
+    <EmplPositionType emplPositionTypeId="SYS_ADMIN" hasTable="N" description="System Administrator" lastUpdatedStamp="2010-02-20 13:27:12.0" lastUpdatedTxStamp="2010-02-20 13:27:12.0" createdStamp="2010-02-20 13:27:12.0" createdTxStamp="2010-02-20 13:27:12.0"/>
+    <EmplPosition emplPositionId="adminpos" statusId="EMPL_POS_FULFILLED" partyId="DEV" emplPositionTypeId="SYS_ADMIN" salaryFlag="Y" exemptFlag="Y" fulltimeFlag="Y" temporaryFlag="Y" lastUpdatedStamp="2010-03-17 11:55:20.0" lastUpdatedTxStamp="2010-03-17 11:55:20.0" createdStamp="2010-03-17 11:55:15.0" createdTxStamp="2010-03-17 11:55:15.0"/>
+    <EmplPositionFulfillment emplPositionId="adminpos" partyId="admin" fromDate="2010-03-18 10:56:00.0" thruDate="2011-03-18 10:56:05.0" lastUpdatedStamp="2010-03-17 11:56:11.0" lastUpdatedTxStamp="2010-03-17 11:56:10.0" createdStamp="2010-03-17 11:56:11.0" createdTxStamp="2010-03-17 11:56:10.0"/>
+    <PartyGroup partyId="DEV" groupName="Development department" lastUpdatedStamp="2010-02-20 13:28:09.0" lastUpdatedTxStamp="2010-02-20 13:28:09.0" createdStamp="2010-02-20 13:28:09.0" createdTxStamp="2010-02-20 13:28:09.0"/>
+    <PartyGroup partyId="Company" groupName="Zambezi Portland Cement"/>
+    <PartyRole partyId="Company" roleTypeId="INTERNAL_ORGANIZATIO"/>
+    <PartyRole partyId="Company" roleTypeId="_NA_"/>
+    <PartyRole partyId="_NA_" roleTypeId="CARRIER"/>
+
+    <Party partyId="DEP-10000"/>
+    <PartyGroup partyId="DEP-10000" groupName="Sales and Marketing"/>
+    <PartyRole partyId="DEP-10000" roleTypeId="ORGANIZATION_ROLE"/>
+    <PartyRelationship partyRelationshipTypeId="GROUP_ROLLUP" partyIdTo="DEP-10000" fromDate="2014-01-01 12:00:00.0"
+                       roleTypeIdFrom="INTERNAL_ORGANIZATIO" partyIdFrom="Company" roleTypeIdTo="ORGANIZATION_ROLE"/>
+
+    <Party partyId="DEP-10005"/>
+    <PartyGroup partyId="DEP-10005" groupName="Finance"/>
+    <PartyRole partyId="DEP-10005" roleTypeId="ORGANIZATION_ROLE"/>
+
+
+    <Facility facilityId="FAC-10000" ownerPartyId="DEP-10000" facilityTypeId="WAREHOUSE"
+              facilityName="Sales and Marketing" description="Sales and Marketing"
+              defaultInventoryItemTypeId="NON_SERIAL_INV_ITEM"/>
+
+    <Party partyId="HOD-10000"/>
+    <Person partyId="HOD-10000" firstName="Isaac" middleName="" lastName="Ngoma"/>
+    <PartyRole partyId="HOD-10000" roleTypeId="EMPLOYEE"/>
+    <PartyRole partyId="HOD-10000" roleTypeId="MANAGER"/>
+    <PartyRelationship partyRelationshipTypeId="GROUP_ROLLUP" partyIdTo="HOD-10000" roleTypeIdFrom="ORGANIZATION_ROLE"
+                       partyIdFrom="DEP-10000" roleTypeIdTo="EMPLOYEE" fromDate="2014-01-01 12:00:00.0"/>
+
+    <UserLogin userLoginId="isaac_ngoma" partyId="HOD-10000" currentPassword="$SHA$RAhDPn1Hqn6$1B7HV6F5tAu_JLW-VFCJ5Fx7VLo"
+               enabled="Y"/>
+    <UserLoginSecurityGroup userLoginId="isaac_ngoma" groupId="ORDERENTRY" fromDate="2014-01-01 12:00:00.0"/>
+    <UserLoginSecurityGroup userLoginId="isaac_ngoma" groupId="ACCTG_FUNCTNL_ADMIN" fromDate="2014-01-01 12:00:00.0"/>
+    <UserLoginSecurityGroup userLoginId="isaac_ngoma" groupId="MANU_ADMIN" fromDate="2014-01-01 12:00:00.0"/>
+
+
+    <Party partyId="DEP-20000"/>
+    <PartyGroup partyId="DEP-20000" groupName="Electrical and Instrumentation"/>
+    <PartyRole partyId="DEP-20000" roleTypeId="ORGANIZATION_ROLE"/>
+    <PartyRelationship partyRelationshipTypeId="GROUP_ROLLUP" partyIdTo="DEP-20000" fromDate="2014-01-01 12:00:00.0"
+                       roleTypeIdFrom="INTERNAL_ORGANIZATIO" partyIdFrom="Company" roleTypeIdTo="ORGANIZATION_ROLE"/>
+
+    <Facility facilityId="FAC-20000" ownerPartyId="DEP-20000" facilityTypeId="WAREHOUSE"
+              facilityName="Electrical and Instrumentation" description="Electrical and Instrumentation"
+              defaultInventoryItemTypeId="NON_SERIAL_INV_ITEM"/>
+
+    <Party partyId="HOD-20000"/>
+    <Person partyId="HOD-20000" firstName="Prashant" middleName="" lastName="Karande"/>
+    <PartyRole partyId="HOD-20000" roleTypeId="EMPLOYEE"/>
+    <PartyRole partyId="HOD-20000" roleTypeId="MANAGER"/>
+    <PartyRelationship partyRelationshipTypeId="GROUP_ROLLUP" partyIdTo="HOD-20000" roleTypeIdFrom="ORGANIZATION_ROLE"
+                       partyIdFrom="DEP-20000" roleTypeIdTo="MANAGER" fromDate="2014-01-01 12:00:00.0"/>
+
+    <UserLogin userLoginId="prashant_karande" partyId="HOD-20000"
+               currentPassword="$SHA$RAhDPn1Hqn6$1B7HV6F5tAu_JLW-VFCJ5Fx7VLo" enabled="Y"/>
+    <UserLoginSecurityGroup userLoginId="prashant_karande" groupId="FACILITY_ADMIN" fromDate="2014-01-01 12:00:00.0"/>
+    <UserLoginSecurityGroup userLoginId="prashant_karande" groupId="ORDERPURCH" fromDate="2014-01-01 12:00:00.0"/>
+
+    <Party partyId="DEP-30000"/>
+    <PartyGroup partyId="DEP-30000" groupName="Procurement"/>
+    <PartyRole partyId="DEP-30000" roleTypeId="ORGANIZATION_ROLE"/>
+    <PartyRelationship partyRelationshipTypeId="GROUP_ROLLUP" partyIdTo="DEP-30000" fromDate="2014-01-01 12:00:00.0"
+                       roleTypeIdFrom="INTERNAL_ORGANIZATIO" partyIdFrom="Company" roleTypeIdTo="ORGANIZATION_ROLE"/>
+
+    <Facility facilityId="FAC-30000" ownerPartyId="DEP-30000" facilityTypeId="WAREHOUSE" facilityName="Procurement"
+              description="Procurement" defaultInventoryItemTypeId="NON_SERIAL_INV_ITEM"/>
+
+    <Party partyId="HOD-30000"/>
+    <Person partyId="HOD-30000" firstName="Judith" middleName="" lastName=""/>
+    <PartyRole partyId="HOD-30000" roleTypeId="EMPLOYEE"/>
+    <PartyRole partyId="HOD-30000" roleTypeId="MANAGER"/>
+    <PartyRelationship partyRelationshipTypeId="GROUP_ROLLUP" partyIdTo="HOD-30000" roleTypeIdFrom="ORGANIZATION_ROLE"
+                       partyIdFrom="DEP-30000" roleTypeIdTo="MANAGER" fromDate="2014-01-01 12:00:00.0"/>
+
+    <UserLogin userLoginId="judith" partyId="HOD-30000" currentPassword="$SHA$RAhDPn1Hqn6$1B7HV6F5tAu_JLW-VFCJ5Fx7VLo"
+               enabled="Y"/>
+    <UserLoginSecurityGroup userLoginId="judith" groupId="ORDERPURCH" fromDate="2014-01-01 12:00:00.0"/>
+    <UserLoginSecurityGroup userLoginId="judith" groupId="ACCTG_FUNCTNL_ADMIN" fromDate="2014-01-01 12:00:00.0"/>
+    <UserLoginSecurityGroup userLoginId="judith" groupId="FACILITY_ADMIN" fromDate="2014-01-01 12:00:00.0"/>
+
+
+    <Party partyId="DEP-40000"/>
+    <PartyGroup partyId="DEP-40000" groupName="Civil"/>
+    <PartyRole partyId="DEP-40000" roleTypeId="ORGANIZATION_ROLE"/>
+    <PartyRelationship partyRelationshipTypeId="GROUP_ROLLUP" partyIdTo="DEP-40000" fromDate="2014-01-01 12:00:00.0"
+                       roleTypeIdFrom="INTERNAL_ORGANIZATIO" partyIdFrom="Company" roleTypeIdTo="ORGANIZATION_ROLE"/>
+
+    <Facility facilityId="FAC-40000" ownerPartyId="DEP-40000" facilityTypeId="WAREHOUSE" facilityName="Civil"
+              description="Civil" defaultInventoryItemTypeId="NON_SERIAL_INV_ITEM"/>
+
+    <Party partyId="HOD-40000"/>
+    <Person partyId="HOD-40000" firstName="Victor" middleName="" lastName=""/>
+    <PartyRole partyId="HOD-40000" roleTypeId="EMPLOYEE"/>
+    <PartyRole partyId="HOD-40000" roleTypeId="MANAGER"/>
+
+    <Party partyId="DEP-50000"/>
+    <PartyGroup partyId="DEP-50000" groupName="Quarry"/>
+    <PartyRole partyId="DEP-50000" roleTypeId="ORGANIZATION_ROLE"/>
+    <PartyRelationship partyRelationshipTypeId="GROUP_ROLLUP" partyIdTo="DEP-50000" fromDate="2014-01-01 12:00:00.0"
+                       roleTypeIdFrom="INTERNAL_ORGANIZATIO" partyIdFrom="Company" roleTypeIdTo="ORGANIZATION_ROLE"/>
+
+
+    <PartyRelationship partyRelationshipTypeId="GROUP_ROLLUP" partyIdTo="HOD-40000" roleTypeIdFrom="ORGANIZATION_ROLE"
+                       partyIdFrom="DEP-40000" roleTypeIdTo="MANAGER" fromDate="2014-01-01 12:00:00.0"/>
+
+    <PartyRelationship partyRelationshipTypeId="GROUP_ROLLUP" partyIdTo="HOD-40000" roleTypeIdFrom="ORGANIZATION_ROLE"
+                       partyIdFrom="DEP-10005" roleTypeIdTo="MANAGER" fromDate="2014-01-01 12:00:00.0"/>
+
+    <UserLogin userLoginId="victor" partyId="HOD-40000" currentPassword="$SHA$RAhDPn1Hqn6$1B7HV6F5tAu_JLW-VFCJ5Fx7VLo"
+               enabled="Y"/>
+    <UserLoginSecurityGroup userLoginId="victor" groupId="FACILITY_ADMIN" fromDate="2014-01-01 12:00:00.0"/>
+    <UserLoginSecurityGroup userLoginId="victor" groupId="HUMANRES_ADMIN" fromDate="2014-01-01 12:00:00.0"/>
+    <UserLoginSecurityGroup userLoginId="victor" groupId="HRMS_ADMIN" fromDate="2014-01-01 12:00:00.0"/>
+
+
+
+    <Facility facilityId="FAC-50000" ownerPartyId="DEP-50000" facilityTypeId="WAREHOUSE" facilityName="Quarry"
+              description="Quarry" defaultInventoryItemTypeId="NON_SERIAL_INV_ITEM"/>
+
+    <Party partyId="HOD-50000"/>
+    <Person partyId="HOD-50000" firstName="Haribabu" middleName="" lastName=""/>
+    <PartyRole partyId="HOD-50000" roleTypeId="EMPLOYEE"/>
+    <PartyRole partyId="HOD-50000" roleTypeId="MANAGER"/>
+    <PartyRelationship partyRelationshipTypeId="GROUP_ROLLUP" partyIdTo="HOD-50000" roleTypeIdFrom="ORGANIZATION_ROLE"
+                       partyIdFrom="DEP-50000" roleTypeIdTo="MANAGER" fromDate="2014-01-01 12:00:00.0"/>
+
+
+    <UserLogin userLoginId="haribabu" partyId="HOD-50000" currentPassword="$SHA$RAhDPn1Hqn6$1B7HV6F5tAu_JLW-VFCJ5Fx7VLo"
+               enabled="Y"/>
+    <UserLoginSecurityGroup userLoginId="haribabu" groupId="FACILITY_ADMIN" fromDate="2014-01-01 12:00:00.0"/>
+
+    <Party partyId="DEP-60000"/>
+    <PartyGroup partyId="DEP-60000" groupName="Quality"/>
+    <PartyRole partyId="DEP-60000" roleTypeId="ORGANIZATION_ROLE"/>
+    <PartyRelationship partyRelationshipTypeId="GROUP_ROLLUP" partyIdTo="DEP-60000" fromDate="2014-01-01 12:00:00.0"
+                       roleTypeIdFrom="INTERNAL_ORGANIZATIO" partyIdFrom="Company" roleTypeIdTo="ORGANIZATION_ROLE"/>
+
+    <Facility facilityId="FAC-60000" ownerPartyId="DEP-60000" facilityTypeId="WAREHOUSE" facilityName="Quality"
+              description="Quality" defaultInventoryItemTypeId="NON_SERIAL_INV_ITEM"/>
+
+    <Party partyId="HOD-60000"/>
+    <Person partyId="HOD-60000" firstName="Sandip" middleName="" lastName="Samanta"/>
+    <PartyRole partyId="HOD-60000" roleTypeId="EMPLOYEE"/>
+    <PartyRole partyId="HOD-60000" roleTypeId="MANAGER"/>
+    <PartyRelationship partyRelationshipTypeId="GROUP_ROLLUP" partyIdTo="HOD-60000" roleTypeIdFrom="ORGANIZATION_ROLE"
+                       partyIdFrom="DEP-60000" roleTypeIdTo="MANAGER" fromDate="2014-01-01 12:00:00.0"/>
+
+    <UserLogin userLoginId="sandip" partyId="HOD-60000" currentPassword="$SHA$RAhDPn1Hqn6$1B7HV6F5tAu_JLW-VFCJ5Fx7VLo"
+               enabled="Y"/>
+    <UserLoginSecurityGroup userLoginId="sandip" groupId="FACILITY_ADMIN" fromDate="2014-01-01 12:00:00.0"/>
+
+    <Party partyId="DEP-70000"/>
+    <PartyGroup partyId="DEP-70000" groupName="Mechanical"/>
+    <PartyRole partyId="DEP-70000" roleTypeId="ORGANIZATION_ROLE"/>
+
+    <Party partyId="DEP-10006"/>
+    <PartyGroup partyId="DEP-10006" groupName="Packing Plant"/>
+    <PartyRole partyId="DEP-10006" roleTypeId="ORGANIZATION_ROLE"/>
+    <PartyRelationship partyRelationshipTypeId="GROUP_ROLLUP" partyIdTo="DEP-10006"
+                       fromDate="2014-01-01 12:00:00.0" roleTypeIdFrom="INTERNAL_ORGANIZATIO" partyIdFrom="Company"
+                       roleTypeIdTo="ORGANIZATION_ROLE"/>
+
+    <PartyRelationship partyRelationshipTypeId="GROUP_ROLLUP" partyIdTo="DEP-70000"
+                       roleTypeIdFrom="INTERNAL_ORGANIZATIO" partyIdFrom="Company" roleTypeIdTo="ORGANIZATION_ROLE"
+                       fromDate="2014-01-01 12:00:00.0"/>
+
+    <Facility facilityId="FAC-70000" ownerPartyId="DEP-70000" facilityTypeId="WAREHOUSE" facilityName="Mechanical"
+              description="Mechanical" defaultInventoryItemTypeId="NON_SERIAL_INV_ITEM"/>
+
+    <Party partyId="HOD-70000"/>
+    <Person partyId="HOD-70000" firstName="James" middleName="M" lastName="Zulu"/>
+    <PartyRole partyId="HOD-70000" roleTypeId="EMPLOYEE"/>
+    <PartyRole partyId="HOD-70000" roleTypeId="MANAGER"/>
+    <PartyRelationship partyRelationshipTypeId="GROUP_ROLLUP" partyIdTo="HOD-70000" roleTypeIdFrom="ORGANIZATION_ROLE"
+                       partyIdFrom="DEP-70000" roleTypeIdTo="MANAGER" fromDate="2014-01-01 12:00:00.0"/>
+
+
+    <UserLogin userLoginId="james" partyId="HOD-70000" currentPassword="$SHA$RAhDPn1Hqn6$1B7HV6F5tAu_JLW-VFCJ5Fx7VLo"
+               enabled="Y"/>
+    <UserLoginSecurityGroup userLoginId="james" groupId="FACILITY_ADMIN" fromDate="2014-01-01 12:00:00.0"/>
+
+    <Party partyId="DEP-80000"/>
+    <PartyGroup partyId="DEP-80000" groupName="Mobile"/>
+    <PartyRole partyId="DEP-80000" roleTypeId="ORGANIZATION_ROLE"/>
+    <PartyRelationship partyRelationshipTypeId="GROUP_ROLLUP" partyIdTo="DEP-80000" fromDate="2014-01-01 12:00:00.0"
+                       roleTypeIdFrom="INTERNAL_ORGANIZATIO" partyIdFrom="Company" roleTypeIdTo="ORGANIZATION_ROLE"/>
+
+    <Facility facilityId="FAC-80000" ownerPartyId="DEP-80000" facilityTypeId="WAREHOUSE" facilityName="Mobile"
+              description="Mobile" defaultInventoryItemTypeId="NON_SERIAL_INV_ITEM"/>
+
+
+    <PartyRelationship partyRelationshipTypeId="GROUP_ROLLUP" partyIdTo="HOD-70000" roleTypeIdFrom="ORGANIZATION_ROLE"
+                       partyIdFrom="DEP-80000" roleTypeIdTo="MANAGER" fromDate="2014-01-01 12:00:00.0"/>
+
+
+
+    <Party partyId="DEP-90000"/>
+    <PartyGroup partyId="DEP-90000" groupName="Crusher"/>
+    <PartyRole partyId="DEP-90000" roleTypeId="ORGANIZATION_ROLE"/>
+    <PartyRelationship partyRelationshipTypeId="GROUP_ROLLUP" partyIdTo="DEP-90000" fromDate="2014-01-01 12:00:00.0"
+                       roleTypeIdFrom="INTERNAL_ORGANIZATIO" partyIdFrom="Company" roleTypeIdTo="ORGANIZATION_ROLE"/>
+
+    <Facility facilityId="FAC-90000" ownerPartyId="DEP-90000" facilityTypeId="WAREHOUSE" facilityName="Crusher"
+              description="Crusher" defaultInventoryItemTypeId="NON_SERIAL_INV_ITEM"/>
+
+
+    <PartyRelationship partyRelationshipTypeId="GROUP_ROLLUP" partyIdTo="HOD-70000" roleTypeIdFrom="ORGANIZATION_ROLE"
+                       fromDate="2014-01-01 12:00:00.0" partyIdFrom="DEP-90000" roleTypeIdTo="MANAGER"/>
+
+
+    <Party partyId="DEP-10001"/>
+    <PartyGroup partyId="DEP-10001" groupName="Process"/>
+    <PartyRole partyId="DEP-10001" roleTypeId="ORGANIZATION_ROLE"/>
+    <PartyRelationship partyRelationshipTypeId="GROUP_ROLLUP" partyIdTo="DEP-10001"
+                       fromDate="2014-01-01 12:00:00.0" roleTypeIdFrom="INTERNAL_ORGANIZATIO" partyIdFrom="Company"
+                       roleTypeIdTo="ORGANIZATION_ROLE"/>
+
+    <Facility facilityId="FAC-10001" ownerPartyId="DEP-10001" facilityTypeId="WAREHOUSE" facilityName="Crusher"
+              description="Crusher" defaultInventoryItemTypeId="NON_SERIAL_INV_ITEM"/>
+
+    <Party partyId="HOD-10001"/>
+    <Person partyId="HOD-10001" firstName="Alex" middleName="" lastName=""/>
+    <PartyRole partyId="HOD-10001" roleTypeId="EMPLOYEE"/>
+    <PartyRole partyId="HOD-10001" roleTypeId="MANAGER"/>
+    <PartyRelationship partyRelationshipTypeId="GROUP_ROLLUP" partyIdTo="HOD-10001" roleTypeIdFrom="ORGANIZATION_ROLE"
+                       fromDate="2014-01-01 12:00:00.0" partyIdFrom="DEP-10001" roleTypeIdTo="MANAGER"/>
+
+    <PartyRelationship partyRelationshipTypeId="GROUP_ROLLUP" partyIdTo="HOD-10001" roleTypeIdFrom="INTERNAL_ORGANIZATIO"
+                       fromDate="2014-01-01 12:00:00.0" partyIdFrom="Company" roleTypeIdTo="MANAGER"/>
+
+    <PartyRelationship partyRelationshipTypeId="GROUP_ROLLUP" partyIdTo="HOD-10001" roleTypeIdFrom="ORGANIZATION_ROLE"
+                       fromDate="2014-01-01 12:00:00.0" partyIdFrom="DEP-10005" roleTypeIdTo="MANAGER"/>
+
+    <PartyRelationship partyRelationshipTypeId="GROUP_ROLLUP" partyIdTo="HOD-10001" roleTypeIdFrom="ORGANIZATION_ROLE"
+                       fromDate="2014-01-01 12:00:00.0" partyIdFrom="DEP-10006" roleTypeIdTo="MANAGER"/>
+
+
+    <UserLogin userLoginId="alex" partyId="HOD-10001" currentPassword="$SHA$RAhDPn1Hqn6$1B7HV6F5tAu_JLW-VFCJ5Fx7VLo"
+               enabled="Y"/>
+    <UserLoginSecurityGroup userLoginId="alex" groupId="FACILITY_ADMIN" fromDate="2014-01-01 12:00:00.0"/>
+
+
+    <Party partyId="HOD-10010"/>
+    <Person partyId="HOD-10010" firstName="Shiji" middleName="" lastName=""/>
+    <PartyRole partyId="HOD-10010" roleTypeId="EMPLOYEE"/>
+    <PartyRole partyId="HOD-10010" roleTypeId="MANAGER"/>
+    <PartyRelationship partyRelationshipTypeId="GROUP_ROLLUP" partyIdTo="HOD-10010" roleTypeIdFrom="ORGANIZATION_ROLE"
+                       fromDate="2014-01-01 12:00:00.0" partyIdFrom="DEP-10001" roleTypeIdTo="MANAGER"/>
+
+    <PartyRelationship partyRelationshipTypeId="GROUP_ROLLUP" partyIdTo="HOD-10010" roleTypeIdFrom="ORGANIZATION_ROLE"
+                       fromDate="2014-01-01 12:00:00.0" partyIdFrom="DEP-10005" roleTypeIdTo="MANAGER"/>
+
+    <PartyRelationship partyRelationshipTypeId="GROUP_ROLLUP" partyIdTo="HOD-10010" roleTypeIdFrom="ORGANIZATION_ROLE"
+                       fromDate="2014-01-01 12:00:00.0" partyIdFrom="DEP-10006" roleTypeIdTo="MANAGER"/>
+
+    <PartyRelationship partyRelationshipTypeId="GROUP_ROLLUP" partyIdTo="HOD-10010" roleTypeIdFrom="INTERNAL_ORGANIZATIO"
+                       fromDate="2014-01-01 12:00:00.0" partyIdFrom="Company" roleTypeIdTo="MANAGER"/>
+
+
+    <UserLogin userLoginId="shiji" partyId="HOD-10010" currentPassword="$SHA$RAhDPn1Hqn6$1B7HV6F5tAu_JLW-VFCJ5Fx7VLo"
+               enabled="Y"/>
+    <UserLoginSecurityGroup userLoginId="shiji" groupId="FACILITY_ADMIN" fromDate="2014-01-01 12:00:00.0"/>
+
+
+    <Facility facilityId="FAC-10002" ownerPartyId="Company" facilityTypeId="WAREHOUSE" facilityName="Stores"
+              description="Stores" defaultInventoryItemTypeId="NON_SERIAL_INV_ITEM"/>
+
+    <Party partyId="HOD-10002"/>
+    <Person partyId="HOD-10002" firstName="Mbewe" middleName="" lastName=""/>
+    <PartyRole partyId="HOD-10002" roleTypeId="EMPLOYEE"/>
+    <PartyRole partyId="HOD-10002" roleTypeId="MANAGER"/>
+    <PartyRelationship partyRelationshipTypeId="GROUP_ROLLUP" partyIdTo="HOD-10002" roleTypeIdFrom="INTERNAL_ORGANIZATIO"
+                       fromDate="2014-01-01 12:00:00.0" partyIdFrom="Company" roleTypeIdTo="MANAGER"/>
+
+    <PartyRelationship partyRelationshipTypeId="GROUP_ROLLUP" partyIdTo="HOD-10002" roleTypeIdFrom="ORGANIZATION_ROLE"
+                       fromDate="2014-01-01 12:00:00.0" partyIdFrom="DEP-10005" roleTypeIdTo="MANAGER"/>
+
+    <PartyRelationship partyRelationshipTypeId="GROUP_ROLLUP" partyIdTo="HOD-10002" roleTypeIdFrom="ORGANIZATION_ROLE"
+                       fromDate="2014-01-01 12:00:00.0" partyIdFrom="DEP-30000" roleTypeIdTo="MANAGER"/>
+
+    <UserLogin userLoginId="mbewe" partyId="HOD-10002" currentPassword="$SHA$RAhDPn1Hqn6$1B7HV6F5tAu_JLW-VFCJ5Fx7VLo"
+               enabled="Y"/>
+    <UserLoginSecurityGroup userLoginId="mbewe" groupId="FACILITY_ADMIN" fromDate="2014-01-01 12:00:00.0"/>
+
+    <Party partyId="DEP-10003"/>
+    <PartyGroup partyId="DEP-10003" groupName="Project"/>
+    <PartyRole partyId="DEP-10003" roleTypeId="ORGANIZATION_ROLE"/>
+    <PartyRelationship partyRelationshipTypeId="GROUP_ROLLUP" partyIdTo="DEP-10003"
+                       fromDate="2014-01-01 12:00:00.0" roleTypeIdFrom="INTERNAL_ORGANIZATIO" partyIdFrom="Company"
+                       roleTypeIdTo="ORGANIZATION_ROLE"/>
+
+    <Facility facilityId="FAC-10003" ownerPartyId="DEP-10003" facilityTypeId="WAREHOUSE" facilityName="Project"
+              description="Project" defaultInventoryItemTypeId="NON_SERIAL_INV_ITEM"/>
+
+    <Party partyId="HOD-10003"/>
+    <Person partyId="HOD-10003" firstName="Rajkumar" middleName="" lastName=""/>
+    <PartyRole partyId="HOD-10003" roleTypeId="EMPLOYEE"/>
+    <PartyRole partyId="HOD-10003" roleTypeId="MANAGER"/>
+    <PartyRelationship partyRelationshipTypeId="GROUP_ROLLUP" partyIdTo="HOD-10003" roleTypeIdFrom="ORGANIZATION_ROLE"
+                       fromDate="2014-01-01 12:00:00.0" partyIdFrom="DEP-10003" roleTypeIdTo="MANAGER"/>
+
+    <PartyRelationship partyRelationshipTypeId="GROUP_ROLLUP" partyIdTo="HOD-10003" roleTypeIdFrom="INTERNAL_ORGANIZATIO"
+                       fromDate="2014-01-01 12:00:00.0" partyIdFrom="Company" roleTypeIdTo="MANAGER"/>
+
+    <UserLogin userLoginId="rajkumar" partyId="HOD-10003" currentPassword="$SHA$RAhDPn1Hqn6$1B7HV6F5tAu_JLW-VFCJ5Fx7VLo"
+               enabled="Y"/>
+    <UserLoginSecurityGroup userLoginId="rajkumar" groupId="FACILITY_ADMIN" fromDate="2014-01-01 12:00:00.0"/>
+
+
+
+    <Party partyId="DEP-10004"/>
+    <PartyGroup partyId="DEP-10004" groupName="HR"/>
+    <PartyRole partyId="DEP-10004" roleTypeId="ORGANIZATION_ROLE"/>
+
+
+    <PartyRelationship partyRelationshipTypeId="GROUP_ROLLUP" partyIdTo="DEP-10004"
+                       fromDate="2014-01-01 12:00:00.0" roleTypeIdFrom="INTERNAL_ORGANIZATIO" partyIdFrom="Company"
+                       roleTypeIdTo="ORGANIZATION_ROLE"/>
+
+    <Facility facilityId="FAC-10004" ownerPartyId="DEP-10004" facilityTypeId="WAREHOUSE" facilityName="HR"
+              description="HR" defaultInventoryItemTypeId="NON_SERIAL_INV_ITEM"/>
+
+
+    <PartyRelationship partyRelationshipTypeId="GROUP_ROLLUP" partyIdTo="HOD-40000" roleTypeIdFrom="ORGANIZATION_ROLE"
+                       fromDate="2014-01-01 12:00:00.0" partyIdFrom="DEP-10004" roleTypeIdTo="MANAGER"/>
+
+
+    <PartyRelationship partyRelationshipTypeId="GROUP_ROLLUP" partyIdTo="DEP-10005"
+                       fromDate="2014-01-01 12:00:00.0" roleTypeIdFrom="INTERNAL_ORGANIZATIO" partyIdFrom="Company"
+                       roleTypeIdTo="ORGANIZATION_ROLE"/>
+
+    <Facility facilityId="FAC-10005" ownerPartyId="DEP-10005" facilityTypeId="WAREHOUSE" facilityName="Finance"
+              description="Finance" defaultInventoryItemTypeId="NON_SERIAL_INV_ITEM"/>
+
+    <Party partyId="HOD-10005"/>
+    <Person partyId="HOD-10005" firstName="CFO" middleName="" lastName=""/>
+    <PartyRole partyId="HOD-10005" roleTypeId="EMPLOYEE"/>
+    <PartyRole partyId="HOD-10005" roleTypeId="MANAGER"/>
+    <PartyRelationship partyRelationshipTypeId="GROUP_ROLLUP" partyIdTo="HOD-10005" roleTypeIdFrom="ORGANIZATION_ROLE"
+                       fromDate="2014-01-01 12:00:00.0" partyIdFrom="DEP-10005" roleTypeIdTo="MANAGER"/>
+    <PartyRelationship partyRelationshipTypeId="GROUP_ROLLUP" partyIdTo="HOD-10005" roleTypeIdFrom="ORGANIZATION_ROLE"
+                       fromDate="2014-01-01 12:00:00.0" partyIdFrom="DEP-10004" roleTypeIdTo="MANAGER"/>
+    <PartyRelationship partyRelationshipTypeId="GROUP_ROLLUP" partyIdTo="HOD-10005" roleTypeIdFrom="INTERNAL_ORGANIZATIO"
+                       fromDate="2014-01-01 12:00:00.0" partyIdFrom="Company" roleTypeIdTo="MANAGER"/>
+    <PartyRelationship partyRelationshipTypeId="GROUP_ROLLUP" partyIdTo="HOD-10005" roleTypeIdFrom="ORGANIZATION_ROLE"
+                       fromDate="2014-01-01 12:00:00.0" partyIdFrom="DEP-30000" roleTypeIdTo="MANAGER"/>
+
+    <UserLogin userLoginId="cfo" partyId="HOD-10005" currentPassword="$SHA$RAhDPn1Hqn6$1B7HV6F5tAu_JLW-VFCJ5Fx7VLo"
+               enabled="Y"/>
+    <UserLoginSecurityGroup userLoginId="cfo" groupId="FULLADMIN" fromDate="2014-01-01 12:00:00.0"/>
+
+
+
+
+    <Facility facilityId="FAC-10006" ownerPartyId="DEP-10006" facilityTypeId="WAREHOUSE" facilityName="Packing Plant"
+              description="Packing Plant" defaultInventoryItemTypeId="NON_SERIAL_INV_ITEM"/>
+
+    <Party partyId="HOD-10006"/>
+    <Person partyId="HOD-10006" firstName="Peter" middleName="" lastName="Kasonde"/>
+    <PartyRole partyId="HOD-10006" roleTypeId="EMPLOYEE"/>
+    <PartyRole partyId="HOD-10006" roleTypeId="MANAGER"/>
+    <PartyRelationship partyRelationshipTypeId="GROUP_ROLLUP" partyIdTo="HOD-10006" roleTypeIdFrom="ORGANIZATION_ROLE"
+                       fromDate="2014-01-01 12:00:00.0" partyIdFrom="DEP-10006" roleTypeIdTo="MANAGER"/>
+
+    <PartyRelationship partyRelationshipTypeId="GROUP_ROLLUP" partyIdTo="HOD-10006" roleTypeIdFrom="INTERNAL_ORGANIZATIO"
+                       fromDate="2014-01-01 12:00:00.0" partyIdFrom="Company" roleTypeIdTo="MANAGER"/>
+    <PartyRelationship partyRelationshipTypeId="GROUP_ROLLUP" partyIdTo="HOD-10006" roleTypeIdFrom="ORGANIZATION_ROLE"
+                       fromDate="2014-01-01 12:00:00.0" partyIdFrom="DEP-10000" roleTypeIdTo="MANAGER"/>
+
+    <UserLogin userLoginId="peterk" partyId="HOD-10006" currentPassword="$SHA$RAhDPn1Hqn6$1B7HV6F5tAu_JLW-VFCJ5Fx7VLo"
+               enabled="Y"/>
+    <UserLoginSecurityGroup userLoginId="peterk" groupId="ORDERENTRY" fromDate="2014-01-01 12:00:00.0"/>
+    <UserLoginSecurityGroup userLoginId="peterk" groupId="FACILITY_ADMIN" fromDate="2014-01-01 12:00:00.0"/>
+
+
+
+    <Party partyId="DEP-10007"/>
+    <PartyGroup partyId="DEP-10007" groupName="Information Technology"/>
+    <PartyRole partyId="DEP-10007" roleTypeId="ORGANIZATION_ROLE"/>
+    <PartyRelationship partyRelationshipTypeId="GROUP_ROLLUP" partyIdTo="DEP-10007"
+                       fromDate="2014-01-01 12:00:00.0" roleTypeIdFrom="INTERNAL_ORGANIZATIO" partyIdFrom="Company"
+                       roleTypeIdTo="ORGANIZATION_ROLE"/>
+
+    <Facility facilityId="FAC-10007" ownerPartyId="DEP-10007" facilityTypeId="WAREHOUSE" facilityName="Information Technology"
+              description="Information Technology" defaultInventoryItemTypeId="NON_SERIAL_INV_ITEM"/>
+
+    <Party partyId="HOD-10007"/>
+    <Person partyId="HOD-10007" firstName="Sherman" middleName="" lastName=""/>
+    <PartyRole partyId="HOD-10007" roleTypeId="EMPLOYEE"/>
+    <PartyRole partyId="HOD-10007" roleTypeId="MANAGER"/>
+    <PartyRelationship partyRelationshipTypeId="GROUP_ROLLUP" partyIdTo="HOD-10007" roleTypeIdFrom="ORGANIZATION_ROLE"
+                       fromDate="2014-01-01 12:00:00.0" partyIdFrom="DEP-10007" roleTypeIdTo="MANAGER"/>
+    <PartyRelationship partyRelationshipTypeId="GROUP_ROLLUP" partyIdTo="HOD-10007" roleTypeIdFrom="ORGANIZATION_ROLE"
+                       fromDate="2014-01-01 12:00:00.0" partyIdFrom="DEP-10005" roleTypeIdTo="MANAGER"/>
+    <PartyRelationship partyRelationshipTypeId="GROUP_ROLLUP" partyIdTo="HOD-10007" roleTypeIdFrom="ORGANIZATION_ROLE"
+                       fromDate="2014-01-01 12:00:00.0" partyIdFrom="DEP-10004" roleTypeIdTo="MANAGER"/>
+    <PartyRelationship partyRelationshipTypeId="GROUP_ROLLUP" partyIdTo="HOD-10007" roleTypeIdFrom="INTERNAL_ORGANIZATIO"
+                       fromDate="2014-01-01 12:00:00.0" partyIdFrom="Company" roleTypeIdTo="MANAGER"/>
+    <PartyRelationship partyRelationshipTypeId="GROUP_ROLLUP" partyIdTo="HOD-10007" roleTypeIdFrom="ORGANIZATION_ROLE"
+                       fromDate="2014-01-01 12:00:00.0" partyIdFrom="DEP-80000" roleTypeIdTo="MANAGER"/>
+
+
+    <UserLogin userLoginId="sherman" partyId="HOD-10007" currentPassword="$SHA$RAhDPn1Hqn6$1B7HV6F5tAu_JLW-VFCJ5Fx7VLo"
+               enabled="Y"/>
+    <UserLoginSecurityGroup userLoginId="sherman" groupId="FACILITY_ADMIN" fromDate="2014-01-01 12:00:00.0"/>
+
+</entity-engine-xml>

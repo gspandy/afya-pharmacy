@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<entity-engine-xml>
+    <SecurityPermission description="View operations in the facilityext Component." permissionId="FACILITY_VIEW"/>
+    <SecurityPermission description="Create operations in the facilityext Component." permissionId="FACILITY_CREATE"/>
+    <SecurityPermission description="Update operations in the facilityext Component." permissionId="FACILITY_UPDATE"/>
+    <SecurityPermission description="Delete operations in the facilityext Component." permissionId="FACILITY_DELETE"/>
+    <SecurityPermission description="ALL operations in the facilityext Component." permissionId="FACILITY_ADMIN"/>
+    <SecurityGroupPermission groupId="FULLADMIN" permissionId="FACILITY_ADMIN"/>
+    <SecurityGroupPermission groupId="FLEXADMIN" permissionId="FACILITY_CREATE"/>
+    <SecurityGroupPermission groupId="FLEXADMIN" permissionId="FACILITY_DELETE"/>
+    <SecurityGroupPermission groupId="FLEXADMIN" permissionId="FACILITY_UPDATE"/>
+    <SecurityGroupPermission groupId="FLEXADMIN" permissionId="FACILITY_VIEW"/>
+    <SecurityGroupPermission groupId="VIEWADMIN" permissionId="FACILITY_VIEW"/>
+    <SecurityGroupPermission groupId="BIZADMIN" permissionId="FACILITY_ADMIN"/>
+</entity-engine-xml>

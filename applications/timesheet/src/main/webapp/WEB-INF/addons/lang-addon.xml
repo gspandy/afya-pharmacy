@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<language-addon>
+	<!-- The name of this addon. It must be unique -->
+	<addon-name>Timesheet</addon-name>
+	<!-- Which language this addon will be added to -->
+	<language-name>xul/html</language-name>
+	<!--<stylesheet href="/images/mainCSS.css" type="text/css" />-->
+<!--	<stylesheet href="/images/style.css" type="text/css" />-->
+
+	<component>
+		<extends>bandbox</extends>
+		<component-name>bandbox</component-name>
+		<property>
+			<property-name>readonly</property-name>
+			<property-value>true</property-value>
+		</property>
+	</component>
+	<component>
+		<extends>datebox</extends>
+		<component-name>datebox</component-name>
+		<property>
+			<property-name>style</property-name>
+			<property-value>background:none</property-value>
+		</property>
+		<property>
+			<property-name>lenient</property-name>
+			<property-value>false</property-value>
+		</property>
+		<property>
+			<property-name>format</property-name>
+			<property-value>dd-MM-yyyy</property-value>
+		</property>
+	</component>
+	<component>
+		<extends>timebox</extends>
+		<component-name>timebox</component-name>
+		<property>
+			<property-name>readonly</property-name>
+			<property-value>true</property-value>
+		</property>
+		<property>
+			<property-name>style</property-name>
+			<property-value>border:none</property-value>
+		</property>
+	</component>
+	<component>
+		<extends>columns</extends>
+		<component-name>columns</component-name>
+		<property>
+			<property-name>sizable</property-name>
+			<property-value>true</property-value>
+		</property>
+	</component>
+	<component>
+		<extends>window</extends>
+		<component-name>window</component-name>
+		<property>
+			<property-name>contentStyle</property-name>
+			<property-value>overflow:auto</property-value>
+		</property>
+	</component>
+	<component>
+		<extends>window</extends>
+		<component-name>window</component-name>
+		<property>
+			<property-name>maximizable</property-name>
+			<property-value>false</property-value>
+		</property>
+	</component>
+	<component>
+		<extends>column</extends>
+		<component-name>column</component-name>
+		<property>
+			<property-name>style</property-name>
+			<property-value>font-weight:bold;font-family: Verdana, Tahoma, Arial, Helvetica, sans-serif;</property-value>
+		</property>
+	</component>
+
+	<component>
+		<extends>label</extends>
+		<component-name>label</component-name>
+		<property>
+			<property-name>style</property-name>
+			<property-value>font-size:10px;font-weight:bold</property-value>
+		</property>
+	</component>
+	
+
+	<component>
+		<extends>grid</extends>
+		<component-name>grid</component-name>
+		<property>
+			<property-name>height</property-name>
+			<property-value>300px</property-value>
+		</property>
+	</component>
+	<component>
+		<extends>column</extends>
+		<component-name>column</component-name>
+		<property>
+			<property-name>style</property-name>
+			<property-value>font-size:10px;font-weight:bold</property-value>
+		</property>
+	</component>
+</language-addon>

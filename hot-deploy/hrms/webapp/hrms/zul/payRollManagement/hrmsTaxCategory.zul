@@ -1,0 +1,179 @@
+<?component name="findbox1" macroURI="../macros/textfindMacro.zul" id="macro1"?>
+<?component name="findbox2" macroURI="../macros/textfindMacro.zul" id="macro2"?>
+<?component name="findbox3" macroURI="../macros/textfindMacro.zul" id="macro3"?>
+<?component name="findbox4" macroURI="../macros/textfindMacro.zul" id="macro4"?>
+<?component name="fromDatebox" macroURI="../macros/datefindMacro.zul" id="macro10"?>
+<?component name="thruDatebox" macroURI="../macros/datefindMacro.zul" id="macro11"?>
+
+<?page title="Tax Category" ?>
+
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<zk xmlns:h="http://www.zkoss.org/2005/zk/native">
+	<zscript>
+	<![CDATA[
+	import com.ndz.controller.*;
+	SearchController controller = new SearchController();
+	Tab taxCatagoryTab = arg.get("taxCatagoryTab");
+]]>
+</zscript>
+	<window id="searchPanel" apply="${controller}">
+		<custom-attributes entityName="TaxCategory"
+			CompanyWide="true">
+		</custom-attributes>
+		<caption label="${c:l('HRMS_TAX_CATEGORY') }" style="font-weight:bold">
+			<div align="right">
+				<toolbarbutton label="${c:l('HRMS_NEW') }"
+					image="/images/icon/update.png" style="color:#FFFFFF">
+					<attribute name="onClick" >
+	{
+		final Window win = (Window) Executions.createComponents("/zul/payRollManagement/addTaxCategory.zul", null, null);
+		win.setMaximizable(true);
+		win.doModal();
+	}
+</attribute>
+				</toolbarbutton>
+			</div>
+		</caption>
+
+		<separator height="10px"></separator>
+
+
+		<h:table>
+			<h:tr>
+				<h:td>
+					<findbox1 fieldLabel="${c:l('HRMS_CATEGORY_ID') }" name="categoryId"
+						type="text" cols="17" />
+				</h:td>
+				<h:td>
+					<findbox3 fieldLabel="${c:l('HRMS_GEO_ID') }" name="geoId"
+						type="text" cols="17" />
+				</h:td>
+				
+			</h:tr>
+			<h:tr>
+				<h:td>
+				
+					<findbox2 fieldLabel="${c:l('HRMS_CATEGORY_NAME') }"
+						name="categoryName" type="text" cols="17" />
+						</h:td>
+					<h:td>
+					<findbox4 fieldLabel="${c:l('FormFieldTitle_description') }"
+						name="description" type="text" cols="17" />
+				</h:td>
+			</h:tr>
+		</h:table>
+
+
+
+
+
+		<separator />
+
+
+		<box width="100%" height="30px" align="center">
+			<hbox>
+				<button label="${c:l('HumanResSearch') }" mold="os"
+					onClick="results.setVisible(true);results.setFocus(true)"
+					id="searchPerCompany">
+				</button>
+				<button label="${c:l('HRMS_ResetButton') }" mold="os"
+					onClick='Events.postEvent("onClick",taxCatagoryTab,null)'>
+				</button>
+			</hbox>
+		</box>
+		<separator height="15px" />
+		<zscript>
+				<![CDATA[
+	import org.ofbiz.base.util.*;
+	import org.zkoss.zk.ui.event.EventListener;
+	class MyRowRenderer implements RowRenderer {
+
+		MyRowRenderer() {
+		}
+
+		public void render(Row row, Object data) {
+			org.ofbiz.entity.GenericValue gv = ((org.ofbiz.entity.GenericValue) data);
+
+			String categoryId = gv.getString("categoryId");
+			String categoryName = gv.getString("categoryName");
+			String description = gv.getString("description");
+			String geoId = gv.getString("geoId");
+
+			String minAmount = gv.getString("minAmount");
+			String maxAmount = gv.getString("maxAmount");
+			String fromDate = gv.getString("fromDate");
+			String thruDate = gv.getString("thruDate");
+
+			new Label(categoryId).setParent(row);
+			new Label(categoryName).setParent(row);
+			new Label(description).setParent(row);
+			new Label(geoId).setParent(row);
+			new Label(minAmount).setParent(row);
+			new Label(maxAmount).setParent(row);
+			row.setTooltiptext("Double Click To Edit");
+			//----------------------------------------------------------------
+			row.addEventListener("onDoubleClick", new EventListener() {
+				public void onEvent(Event event) throws Exception {
+					TaxCategoryManagementController.showTaxCategoryWindow(event, gv);
+				}
+			});
+			//----------------------------------------------------------------
+
+			Button btn = new com.ndz.zkoss.HrmsButton();
+			btn.setParent(row);
+			btn.setMold("os");
+			btn.setLabel("Delete");
+			btn.setTooltiptext("Click here to delete");
+			btn.setSclass("btnDelete");
+			btn.addEventListener("onClick", new EventListener() {
+				public void onEvent(Event event) throws Exception {
+					Messagebox.show("Do You Want To Delete this Record?", "Warning", Messagebox.YES|Messagebox.NO,Messagebox.QUESTION,
+						     new org.zkoss.zk.ui.event.EventListener() {
+						         public void onEvent(Event evt) {
+						                 if ("onYes".equals(evt.getName())) {
+					TaxCategoryManagementController.DeleteTaxCategory(event, categoryId);
+						                 }}});
+				}
+			});
+			//----------------------------------------------------------------			
+
+		}
+	}
+	RowRenderer tableRenderer = new MyRowRenderer();
+]]>
+</zscript>
+
+		<panel id="results" visible="false">
+			<panelchildren>
+				<h:table width="100%" style="border:0px"
+					cellspacing="0px" cellpadding="0px">
+					<h:tr>
+						<h:td width="90%">
+							<label
+								value="${c:l('HRMS_SEARCHRESULTS') }">
+							</label>
+						</h:td>
+						<h:td width="10%" style="text-align:right">
+							<paging id="paging" width="100%" />
+						</h:td>
+					</h:tr>
+				</h:table>
+				<grid width="100%" id="dataGrid"
+					rowRenderer="${tableRenderer}">
+					<columns menupopup="auto">
+						<column label="${c:l('HRMS_CATEGORY_ID') }" width="10%"/>
+						<column label="${c:l('HRMS_CATEGORY_NAME') }" width="10%"/>
+						<column label="${c:l('FormFieldTitle_description') }" width="40%"/>
+						<column label="${c:l('HRMS_GEO_ID') }" />
+						<column label="${c:l('HRMS_SHORT_MIN') }" width="10%"/>
+						<column label="${c:l('HRMS_SHORT_MAX') }" width="10%"/>
+						<column label="${c:l('Hrms_Action') }" align="center"/>
+					</columns>
+				</grid>
+			</panelchildren>
+		</panel>
+		<zscript>
+		  Events.postEvent("onClick",searchPerCompany,null);
+		</zscript>
+	</window>
+</zk>

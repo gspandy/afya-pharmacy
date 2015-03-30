@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+	<services xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.ofbiz.org/dtds/services.xsd">
+	    <description>CRM SFA Accounts Services</description>
+	    <vendor>nthdimenzion</vendor>
+	    <version>1.0</version>
+
+		<service name="sfaext.createBasicContactInfoForPartyInterface"  engine="interface" location="" invoke="">
+	        <description>Helper service to create the primary phone number, primary email, primary web url, and general correspondence postal address for a party. 
+	            The userLogin must have CRMSFA_ACCOUNT_CREATE permission on this party.</description>
+	        <attribute name="partyId" type="String" mode="IN" optional="true"/>
+	        <attribute name="primaryEmail" type="String" mode="IN" optional="true"/>
+	        <attribute name="primaryWebUrl" type="String" mode="IN" optional="true"/>
+	        <attribute name="primaryPhoneCountryCode" type="String" mode="IN" optional="true"/>
+	        <attribute name="primaryPhoneAreaCode" type="String" mode="IN" optional="true"/>
+	        <attribute name="primaryPhoneNumber" type="String" mode="IN" optional="true"/>
+	        <attribute name="primaryPhoneExtension" type="String" mode="IN" optional="true"/>
+	        <attribute name="primaryPhoneAskForName" type="String" mode="IN" optional="true"/>
+	        <!-- address fields -->
+	        <attribute name="generalToName" type="String" mode="IN" optional="true"/>
+	        <attribute name="generalAttnName" type="String" mode="IN" optional="true"/>
+	        <attribute name="generalAddress1" type="String" mode="IN" optional="true"/>
+	        <attribute name="generalAddress2" type="String" mode="IN" optional="true"/>
+	        <attribute name="generalCity" type="String" mode="IN" optional="true"/>
+	        <attribute name="generalStateProvinceGeoId" type="String" mode="IN" optional="true"/>
+	        <attribute name="generalPostalCode" type="String" mode="IN" optional="true"/>
+	        <attribute name="generalPostalCodeExt" type="String" mode="IN" optional="true"/>
+	        <attribute name="generalCountryGeoId" type="String" mode="IN" optional="true"/>
+	        <!-- output fields which are set only if generated -->
+	        <attribute name="primaryEmailContactMechId" type="String" mode="OUT" optional="true"/>
+	        <attribute name="primaryWebUrlContactMechId" type="String" mode="OUT" optional="true"/>
+	        <attribute name="primaryPhoneContactMechId" type="String" mode="OUT" optional="true"/>
+	        <attribute name="generalAddressContactMechId" type="String" mode="OUT" optional="true"/>
+    	</service>
+    
+
+	    <service name="sfaext.createBasicContactInfoForParty" engine="java"
+        location="com.smebiz.sfa.party.PartyContactServices" invoke="createBasicContactInfoForParty" auth="true">
+	        <description>Helper service to create the primary phone number, primary email, primary web url, and general correspondence postal address for a party. 
+	            The userLogin must have CRMSFA_ACCOUNT_CREATE permission on this party.</description>
+	        <implements service="sfaext.createBasicContactInfoForPartyInterface"/>
+	    </service>
+
+		<service name="sfaext.createPostalAddress" 
+			engine="simple" location="com/smebiz/sfa/ContactServices.xml" invoke="createPostalAddress">
+			<auto-attributes mode="IN" include="all" entity-name="PostalAddress" optional="true"></auto-attributes >
+			<attribute mode="OUT"  name="DONE_PAGE" type="String"/>
+			<attribute mode="INOUT" name="partyId" type="String"/>
+		</service>
+	    
+</services>
+ 

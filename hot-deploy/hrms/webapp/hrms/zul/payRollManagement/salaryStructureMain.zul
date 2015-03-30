@@ -1,0 +1,64 @@
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<zk>
+	<div id="salaryStructureDiv">
+		<tabbox>
+			<tabs>
+				<tab label="${c:l('HRMS_SALARY_STRUCTURE') }" style="font-weight:bold"
+					selected="true" id="salaryStructureTab">
+					<attribute name="onClick">
+	Div div = (Div) salaryStructureDiv.getFellow("appendWindow");
+	Component firstChild = div.getFirstChild();
+	if (firstChild != null) {
+		div.removeChild(firstChild);
+	}
+	Window win = (Window) Executions.createComponents(
+			"/zul/payRollManagement/hrmsSalaryStructure.zul", null, null);
+	div.appendChild(win);
+</attribute>
+				</tab>
+				<tab label="${c:l('HRMS_FIND_EMPLOYEE_SALARY_STRUCTURE') }" style="font-weight:bold" >
+					<attribute name="onClick">
+	Div div = (Div) salaryStructureDiv.getFellow("appendWindow");
+	Component firstChild = div.getFirstChild();
+	if (firstChild != null) {
+		div.removeChild(firstChild);
+	}
+	Window win = (Window) Executions.createComponents(
+			"/zul/payRollManagement/hrmsEmployeeSalaryStructure.zul", null, null);
+	div.appendChild(win);
+</attribute>
+				</tab>
+				<tab label="${c:l('HRMS_INITIATE_PAYROLL') }" style="font-weight:bold" >
+					<attribute name="onClick">
+	Div div = (Div) salaryStructureDiv.getFellow("appendWindow");
+	Component firstChild = div.getFirstChild();
+	if (firstChild != null) {
+		div.removeChild(firstChild);
+	}
+	Window win = (Window) Executions.createComponents(
+			"/zul/payRollManagement/hrmsInitiatePayroll.zul", null, null);
+	div.appendChild(win);
+</attribute>
+				</tab><!--
+				
+				<tab label="Find Pay Grade" style="font-weight:bold" >
+					<attribute name="onClick">
+	Div div = (Div) salaryStructureDiv.getFellow("appendWindow");
+	Component firstChild = div.getFirstChild();
+	if (firstChild != null) {
+		div.removeChild(firstChild);
+	}
+	Window win = (Window) Executions.createComponents(
+			"/zul/payRollManagement/hrmsPayGrade.zul", null, null);
+	div.appendChild(win);
+</attribute>
+				</tab>
+
+			--></tabs>
+		</tabbox>
+		<div id="appendWindow"> 
+		<div onCreate='Events.postEvent("onClick",salaryStructureTab,null)'/>
+
+		</div>
+	</div>
+</zk>

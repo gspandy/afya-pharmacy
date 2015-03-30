@@ -1,0 +1,592 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Licensed to the Apache Software Foundation (ASF) under one or more contributor license agreements. See the NOTICE file distributed with this work for additional 
+	information regarding copyright ownership. The ASF licenses this file to you under the Apache License, Version 2.0 (the "License"); you may not use this file except 
+	in compliance with the License. You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0 Unless required by applicable law or agreed to 
+	in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See 
+	the License for the specific language governing permissions and limitations under the License. -->
+<simple-methods xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://ofbiz.apache.org/dtds/simple-methods-v2.xsd">
+
+	<simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_" event-event-message-name="_event_message_"
+		event-request-object-name="request" event-response-code-name="_response_code_" event-response-object-name="response" login-required="true" method-name="createProdCatalog"
+		service-error-message-list-name="errorMessageList" service-error-message-map-name="errorMessageMap" service-error-message-name="errorMessage"
+		service-response-message-name="responseMessage" service-success-message-list-name="successMessageList" service-success-message-name="successMessage"
+		short-description="Create an ProdCatalog" use-transaction="true">
+		<make-value entity-name="ProdCatalog" value-field="newEntity" />
+		<set-nonpk-fields map="parameters" set-if-null="true" value-field="newEntity" />
+		<if-empty field="parameters.prodCatalogId">
+			<sequenced-id field="newEntity.prodCatalogId" get-long-only="false" sequence-name="ProdCatalog" />
+			<else>
+				<set field="newEntity.prodCatalogId" from="parameters.prodCatalogId" set-if-empty="true" set-if-null="false" />
+				<check-id error-list-name="error_list" field="newEntity.prodCatalogId" />
+				<check-errors error-code="error" error-list-name="error_list" />
+			</else>
+		</if-empty>
+		<field-to-result field="newEntity.prodCatalogId" result-name="prodCatalogId" />
+		<create-value do-cache-clear="true" or-store="false" value-field="newEntity" />
+	</simple-method>
+
+	<simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_" event-event-message-name="_event_message_"
+		event-request-object-name="request" event-response-code-name="_response_code_" event-response-object-name="response" login-required="true" method-name="updateProdCatalog"
+		service-error-message-list-name="errorMessageList" service-error-message-map-name="errorMessageMap" service-error-message-name="errorMessage"
+		service-response-message-name="responseMessage" service-success-message-list-name="successMessageList" service-success-message-name="successMessage"
+		short-description="Update an ProdCatalog" use-transaction="true">
+		<entity-one auto-field-map="true" entity-name="ProdCatalog" use-cache="false" value-field="prodCatalog" />
+		<set-nonpk-fields map="parameters" set-if-null="true" value-field="prodCatalog" />
+		<store-value do-cache-clear="true" value-field="prodCatalog" />
+	</simple-method>
+
+	<simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_" event-event-message-name="_event_message_"
+		event-request-object-name="request" event-response-code-name="_response_code_" event-response-object-name="response" login-required="true" method-name="deleteProdCatalog"
+		service-error-message-list-name="errorMessageList" service-error-message-map-name="errorMessageMap" service-error-message-name="errorMessage"
+		service-response-message-name="responseMessage" service-success-message-list-name="successMessageList" service-success-message-name="successMessage"
+		short-description="Delete an ProdCatalog" use-transaction="true">
+		<entity-one auto-field-map="true" entity-name="ProdCatalog" use-cache="false" value-field="prodCatalog" />
+		<remove-value do-cache-clear="true" value-field="prodCatalog" />
+	</simple-method>
+
+	<simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_" event-event-message-name="_event_message_"
+		event-request-object-name="request" event-response-code-name="_response_code_" event-response-object-name="response" login-required="true"
+		method-name="addProductCategoryToProdCatalog" service-error-message-list-name="errorMessageList" service-error-message-map-name="errorMessageMap"
+		service-error-message-name="errorMessage" service-response-message-name="responseMessage" service-success-message-list-name="successMessageList"
+		service-success-message-name="successMessage" short-description="Add Category To ProdCatalog" use-transaction="true">
+		<!-- Check that the ProductCategory exists -->
+		<entity-one auto-field-map="true" entity-name="ProductCategory" use-cache="false" value-field="productCategory" />
+		<if-empty field="productCategory">
+			<add-error error-list-name="error_list">
+				<fail-property property="ProductCategoryNotFoundForCategoryID" resource="ProductUiLabels" />
+			</add-error>
+		</if-empty>
+		<check-errors error-code="error" error-list-name="error_list" />
+		<make-value entity-name="ProdCatalogCategory" value-field="newEntity" />
+		<set-pk-fields map="parameters" set-if-null="true" value-field="newEntity" />
+		<set-nonpk-fields map="parameters" set-if-null="true" value-field="newEntity" />
+		<if-empty field="newEntity.fromDate">
+			<now-timestamp field="nowTimestamp" />
+			<set field="newEntity.fromDate" from="nowTimestamp" set-if-empty="true" set-if-null="false" />
+		</if-empty>
+		<create-value do-cache-clear="true" or-store="false" value-field="newEntity" />
+	</simple-method>
+
+	<simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_" event-event-message-name="_event_message_"
+		event-request-object-name="request" event-response-code-name="_response_code_" event-response-object-name="response" login-required="true"
+		method-name="updateProductCategoryToProdCatalog" service-error-message-list-name="errorMessageList" service-error-message-map-name="errorMessageMap"
+		service-error-message-name="errorMessage" service-response-message-name="responseMessage" service-success-message-list-name="successMessageList"
+		service-success-message-name="successMessage" short-description="Remove ContactMech From ProdCatalog" use-transaction="true">
+		<make-value entity-name="ProdCatalogCategory" value-field="lookupPKMap" />
+		<set-pk-fields map="parameters" set-if-null="true" value-field="lookupPKMap" />
+		<find-by-primary-key entity-name="ProdCatalogCategory" map="lookupPKMap" use-cache="false" value-field="prodCatalogCategory" />
+		<set-nonpk-fields map="parameters" set-if-null="true" value-field="prodCatalogCategory" />
+		<store-value do-cache-clear="true" value-field="prodCatalogCategory" />
+	</simple-method>
+
+	<simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_" event-event-message-name="_event_message_"
+		event-request-object-name="request" event-response-code-name="_response_code_" event-response-object-name="response" login-required="true"
+		method-name="removeProductCategoryFromProdCatalog" service-error-message-list-name="errorMessageList" service-error-message-map-name="errorMessageMap"
+		service-error-message-name="errorMessage" service-response-message-name="responseMessage" service-success-message-list-name="successMessageList"
+		service-success-message-name="successMessage" short-description="Remove ContactMech From ProdCatalog" use-transaction="true">
+		<make-value entity-name="ProdCatalogCategory" value-field="lookupPKMap" />
+		<set-pk-fields map="parameters" set-if-null="true" value-field="lookupPKMap" />
+		<find-by-primary-key entity-name="ProdCatalogCategory" map="lookupPKMap" use-cache="false" value-field="prodCatalogCategory" />
+		<remove-value do-cache-clear="true" value-field="prodCatalogCategory" />
+	</simple-method>
+	<!-- Party and Catalog services -->
+
+	<simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_" event-event-message-name="_event_message_"
+		event-request-object-name="request" event-response-code-name="_response_code_" event-response-object-name="response" login-required="true" method-name="addProdCatalogToParty"
+		service-error-message-list-name="errorMessageList" service-error-message-map-name="errorMessageMap" service-error-message-name="errorMessage"
+		service-response-message-name="responseMessage" service-success-message-list-name="successMessageList" service-success-message-name="successMessage"
+		short-description="Add ProdCatalog To Party" use-transaction="true">
+		<make-value entity-name="ProdCatalogRole" value-field="newEntity" />
+		<set-pk-fields map="parameters" set-if-null="true" value-field="newEntity" />
+		<set-nonpk-fields map="parameters" set-if-null="true" value-field="newEntity" />
+		<if-empty field="newEntity.fromDate">
+			<now-timestamp field="newEntity.fromDate" />
+		</if-empty>
+		<create-value do-cache-clear="true" or-store="false" value-field="newEntity" />
+	</simple-method>
+
+	<simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_" event-event-message-name="_event_message_"
+		event-request-object-name="request" event-response-code-name="_response_code_" event-response-object-name="response" login-required="true" method-name="updateProdCatalogToParty"
+		service-error-message-list-name="errorMessageList" service-error-message-map-name="errorMessageMap" service-error-message-name="errorMessage"
+		service-response-message-name="responseMessage" service-success-message-list-name="successMessageList" service-success-message-name="successMessage"
+		short-description="Update ProdCatalog To Party" use-transaction="true">
+		<make-value entity-name="ProdCatalogRole" value-field="lookupPKMap" />
+		<set-pk-fields map="parameters" set-if-null="true" value-field="lookupPKMap" />
+		<find-by-primary-key entity-name="ProdCatalogRole" map="lookupPKMap" use-cache="false" value-field="lookedUpValue" />
+		<set-nonpk-fields map="parameters" set-if-null="true" value-field="lookedUpValue" />
+		<store-value do-cache-clear="true" value-field="lookedUpValue" />
+	</simple-method>
+
+	<simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_" event-event-message-name="_event_message_"
+		event-request-object-name="request" event-response-code-name="_response_code_" event-response-object-name="response" login-required="true"
+		method-name="removeProdCatalogFromParty" service-error-message-list-name="errorMessageList" service-error-message-map-name="errorMessageMap"
+		service-error-message-name="errorMessage" service-response-message-name="responseMessage" service-success-message-list-name="successMessageList"
+		service-success-message-name="successMessage" short-description="Remove ProdCatalog From Party" use-transaction="true">
+		<make-value entity-name="ProdCatalogRole" value-field="lookupPKMap" />
+		<set-pk-fields map="parameters" set-if-null="true" value-field="lookupPKMap" />
+		<find-by-primary-key entity-name="ProdCatalogRole" map="lookupPKMap" use-cache="false" value-field="lookedUpValue" />
+		<remove-value do-cache-clear="true" value-field="lookedUpValue" />
+	</simple-method>
+
+	<simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_" event-event-message-name="_event_message_"
+		event-request-object-name="request" event-response-code-name="_response_code_" event-response-object-name="response" login-required="false" method-name="getAllCategories"
+		service-error-message-list-name="errorMessageList" service-error-message-map-name="errorMessageMap" service-error-message-name="errorMessage"
+		service-response-message-name="responseMessage" service-success-message-list-name="successMessageList" service-success-message-name="successMessage"
+		short-description="get All categories" use-transaction="true">
+		<if-not-empty field="parameters.topCategory">
+			<set field="defaultTopCategoryId" from="parameters.topCategory" set-if-empty="true" set-if-null="false" />
+			<else>
+				<property-to-field field="defaultTopCategoryId" no-locale="false" property="top.category.default" resource="catalog" />
+			</else>
+		</if-not-empty>
+		<!-- set field="productCategoryContext.productCategoryId" from-field="defaultTopCategoryId"/> <find-by-primary-key entity-name="ProductCategory" map="productCategoryContext" 
+			value-field="productCategory"/> <field-to-list list="categories" field="productCategory"/> -->
+		<set field="relatedCategoryContext.parentProductCategoryId" from="defaultTopCategoryId" set-if-empty="true" set-if-null="false" />
+		<call-service break-on-error="true" error-code="error" in-map-name="relatedCategoryContext" include-user-login="true" require-new-transaction="false"
+			service-name="getRelatedCategories" success-code="success">
+			<result-to-field field="resCategories" result-name="categories" />
+		</call-service>
+		<field-to-result field="resCategories" result-name="categories" />
+		<!-- iterate entry-name="category" list-name="resCategories"> <log level="info" message="=========${category.productCategoryId}"/> </iterate -->
+	</simple-method>
+
+	<simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_" event-event-message-name="_event_message_"
+		event-request-object-name="request" event-response-code-name="_response_code_" event-response-object-name="response" login-required="false" method-name="getRelatedCategories"
+		service-error-message-list-name="errorMessageList" service-error-message-map-name="errorMessageMap" service-error-message-name="errorMessage"
+		service-response-message-name="responseMessage" service-success-message-list-name="successMessageList" service-success-message-name="successMessage"
+		short-description="get All Related categories" use-transaction="true">
+		<set field="orderByString" set-if-empty="true" set-if-null="false" value="sequenceNum" />
+		<field-to-list field="orderByString" list="orderByStringList" />
+		<set field="productCategoryRollUpContext.parentProductCategoryId" from="parameters.parentProductCategoryId" set-if-empty="true" set-if-null="false" />
+		<!--set field="categories" from-field="parameters.categories" / -->
+		<find-by-and entity-name="ProductCategoryRollup" list="rollups" map="productCategoryRollUpContext" order-by-list="orderByStringList" use-cache="false"
+			use-iterator="false" />
+		<if-not-empty field="parameters.categories">
+			<list-to-list list="parameters.categories" to-list="categories" />
+		</if-not-empty>
+		<if-not-empty field="rollups">
+			<iterate entry="parent" list="rollups">
+				<get-related-one relation-name="CurrentProductCategory" to-value-field="currentProductCategory" use-cache="false" value-field="parent" />
+				<field-to-list field="currentProductCategory" list="subCategories" />
+			</iterate>
+			<if-not-empty field="subCategories">
+				<set field="relatedCategoryContext.categories" from="subCategories" set-if-empty="true" set-if-null="false" />
+				<iterate entry="subCategory" list="subCategories">
+					<set field="relatedCategoryContext.parentProductCategoryId" from="subCategory.productCategoryId" set-if-empty="true" set-if-null="false" />
+					<call-service break-on-error="true" error-code="error" in-map-name="relatedCategoryContext" include-user-login="true" require-new-transaction="false"
+						service-name="getRelatedCategories" success-code="success">
+						<result-to-field field="relCategories" result-name="categories" />
+					</call-service>
+					<if-not-empty field="relCategories">
+						<if-not-empty field="categories">
+							<iterate entry="relCategory" list="relCategories">
+								<call-object-method method-name="contains" obj-field="categories" ret-field="addInCategories">
+									<field field="relCategory" type="java.lang.Object" />
+								</call-object-method>
+								<if-compare field="addInCategories" operator="equals" type="Boolean" value="false">
+									<field-to-list field="relCategory" list="categories" />
+								</if-compare>
+							</iterate>
+							<else>
+								<list-to-list list="relCategories" to-list="categories" />
+							</else>
+						</if-not-empty>
+						<field-to-result field="categories" result-name="categories" />
+						<!-- iterate entry-name="category" list-name="categories"> <log level="info" message="Category ${category.productCategoryId}"/> </iterate -->
+					</if-not-empty>
+					<!-- field-to-result field-name="categories" result-name="categories"/ -->
+				</iterate>
+			</if-not-empty>
+			<else>
+				<set field="productCategoryContext.productCategoryId" from="parameters.parentProductCategoryId" set-if-empty="true" set-if-null="false" />
+				<find-by-primary-key entity-name="ProductCategory" map="productCategoryContext" use-cache="false" value-field="productCategory" />
+				<field-to-list field="productCategory" list="categories" />
+				<field-to-result field="categories" result-name="categories" />
+			</else>
+		</if-not-empty>
+		<!-- iterate entry-name="category" list-name="categories"> <log level="info" message="Category ${category.productCategoryId}"/> </iterate -->
+		<field-to-result field="categories" result-name="categories" />
+	</simple-method>
+
+	<simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_" event-event-message-name="_event_message_"
+		event-request-object-name="request" event-response-code-name="_response_code_" event-response-object-name="response" login-required="false"
+		method-name="checkImageUrlForAllCategories" service-error-message-list-name="errorMessageList" service-error-message-map-name="errorMessageMap"
+		service-error-message-name="errorMessage" service-response-message-name="responseMessage" service-success-message-list-name="successMessageList"
+		service-success-message-name="successMessage" short-description="Check for image url exists or not for All categories" use-transaction="true">
+		<!-- Get all the categories from top category -->
+		<set-service-fields map="parameters" service-name="getAllCategories" to-map="categoryFindContext" />
+		<call-service break-on-error="true" error-code="error" in-map-name="categoryFindContext" include-user-login="true" require-new-transaction="false"
+			service-name="getAllCategories" success-code="success">
+			<result-to-field field="categories" result-name="categories" />
+		</call-service>
+		<!-- Get the category from categories -->
+		<if-not-empty field="categories">
+			<iterate entry="category" list="categories">
+				<set field="checkImageUrlForCategoryContext.categoryId" from="category.productCategoryId" set-if-empty="true" set-if-null="false" />
+				<call-service break-on-error="true" error-code="error" in-map-name="checkImageUrlForCategoryContext" include-user-login="true"
+					require-new-transaction="false" service-name="checkImageUrlForCategoryAndProduct" success-code="success">
+					<result-to-field field="fileStatusMap.fileExists" result-name="fileExists" />
+					<result-to-field field="fileStatusMap.fileNotExists" result-name="fileNotExists" />
+				</call-service>
+				<set field="categoryId" from="category.productCategoryId" set-if-empty="true" set-if-null="false" />
+				<set field="categoriesMap[categoryId]" from="fileStatusMap" set-if-empty="true" set-if-null="false" />
+			</iterate>
+			<field-to-result field="categoriesMap" result-name="categoriesMap" />
+		</if-not-empty>
+	</simple-method>
+
+	<simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_" event-event-message-name="_event_message_"
+		event-request-object-name="request" event-response-code-name="_response_code_" event-response-object-name="response" login-required="false"
+		method-name="checkImageUrlForCategoryAndProduct" service-error-message-list-name="errorMessageList" service-error-message-map-name="errorMessageMap"
+		service-error-message-name="errorMessage" service-response-message-name="responseMessage" service-success-message-list-name="successMessageList"
+		service-success-message-name="successMessage" short-description="Check for image url exists or not for category and product " use-transaction="true">
+		<!--set from-field="parameters.categoryId" field="productCategoryContext.categoryId"/ -->
+		<set-service-fields map="parameters" service-name="getProductCategoryMembers" to-map="productCategoryContext" />
+		<call-service break-on-error="true" error-code="error" in-map-name="productCategoryContext" include-user-login="true" require-new-transaction="false"
+			service-name="getProductCategoryMembers" success-code="success">
+			<result-to-field field="categoryMembers" result-name="categoryMembers" />
+			<result-to-field field="category" result-name="category" />
+		</call-service>
+		<!-- Get category images and check it exists or not -->
+		<if-not-empty field="category">
+			<set field="checkImageUrlForCategoryContext.categoryId" from="category.productCategoryId" set-if-empty="true" set-if-null="false" />
+			<call-service break-on-error="true" error-code="error" in-map-name="checkImageUrlForCategoryContext" include-user-login="true"
+				require-new-transaction="false" service-name="checkImageUrlForCategory" success-code="success">
+				<result-to-field field="filesImageMap" result-name="filesImageMap" />
+			</call-service>
+			<if-not-empty field="filesImageMap.categoryImageUrlMap.categoryImageUrl">
+				<if-compare field="filesImageMap.categoryImageUrlMap.isExists" operator="equals" type="String" value="Y">
+					<field-to-list field="" list="" />
+					<field-to-list field="filesImageMap.categoryImageUrlMap.categoryImageUrl" list="fileExists" />
+					<else>
+						<field-to-list field="filesImageMap.categoryImageUrlMap.categoryImageUrl" list="fileNotExists" />
+					</else>
+				</if-compare>
+			</if-not-empty>
+			<if-not-empty field="filesImageMap.linkOneImageUrlMap.linkOneImageUrl">
+				<if-compare field="filesImageMap.linkOneImageUrlMap.isExists" operator="equals" type="String" value="Y">
+					<field-to-list field="filesImageMap.linkOneImageUrlMap.linkOneImageUrl" list="fileExists" />
+					<else>
+						<field-to-list field="filesImageMap.linkOneImageUrlMap.linkOneImageUrl" list="fileNotExists" />
+					</else>
+				</if-compare>
+			</if-not-empty>
+			<if-not-empty field="filesImageMap.linkTwoImageUrlMap.linkTwoImageUrl">
+				<if-compare field="filesImageMap.linkTwoImageUrlMap.isExists" operator="equals" type="String" value="Y">
+					<field-to-list field="filesImageMap.linkTwoImageUrlMap.linkTwoImageUrl" list="fileExists" />
+					<else>
+						<field-to-list field="filesImageMap.linkTwoImageUrlMap.linkTwoImageUrl" list="fileNotExists" />
+					</else>
+				</if-compare>
+			</if-not-empty>
+		</if-not-empty>
+		<if-not-empty field="categoryMembers">
+			<iterate entry="productCategoryMember" list="categoryMembers">
+				<set field="checkImageUrlForProductContext.productId" from="productCategoryMember.productId" set-if-empty="true" set-if-null="false" />
+				<call-service break-on-error="true" error-code="error" in-map-name="checkImageUrlForProductContext" include-user-login="true"
+					require-new-transaction="false" service-name="checkImageUrlForProduct" success-code="success">
+					<result-to-field field="filesImageMap" result-name="filesImageMap" />
+				</call-service>
+				<if-not-empty field="filesImageMap">
+					<if-not-empty field="filesImageMap.smallImageUrlMap.smallImageUrl">
+						<if-compare field="filesImageMap.smallImageUrlMap.isExists" operator="equals" type="String" value="Y">
+							<field-to-list field="filesImageMap.smallImageUrlMap.smallImageUrl" list="fileExists" />
+							<else>
+								<field-to-list field="filesImageMap.smallImageUrlMap.smallImageUrl" list="fileNotExists" />
+							</else>
+						</if-compare>
+					</if-not-empty>
+					<if-not-empty field="filesImageMap.mediumImageUrlMap.mediumImageUrl">
+						<if-compare field="filesImageMap.mediumImageUrlMap.isExists" operator="equals" type="String" value="Y">
+							<field-to-list field="filesImageMap.mediumImageUrlMap.mediumImageUrl" list="fileExists" />
+							<else>
+								<field-to-list field="filesImageMap.mediumImageUrlMap.mediumImageUrl" list="fileNotExists" />
+							</else>
+						</if-compare>
+					</if-not-empty>
+					<if-not-empty field="filesImageMap.largeImageUrlMap.largeImageUrl">
+						<if-compare field="filesImageMap.largeImageUrlMap.isExists" operator="equals" type="String" value="Y">
+							<field-to-list field="filesImageMap.largeImageUrlMap.largeImageUrl" list="fileExists" />
+							<else>
+								<field-to-list field="filesImageMap.largeImageUrlMap.largeImageUrl" list="fileNotExists" />
+							</else>
+						</if-compare>
+					</if-not-empty>
+					<if-not-empty field="filesImageMap.detailImageUrlMap.detailImageUrl">
+						<if-compare field="filesImageMap.detailImageUrl.isExists" operator="equals" type="String" value="Y">
+							<field-to-list field="filesImageMap.detailImageUrl.detailImageUrl" list="fileExists" />
+							<else>
+								<field-to-list field="filesImageMap.detailImageUrl.detailImageUrl" list="fileNotExists" />
+							</else>
+						</if-compare>
+					</if-not-empty>
+				</if-not-empty>
+				<!-- Case For virtual Product -->
+				<!-- get related assoc product -->
+				<get-related-one relation-name="Product" to-value-field="product" use-cache="false" value-field="productCategoryMember" />
+				<if-compare field="product.isVirtual" operator="equals" type="String" value="Y">
+					<!-- log level="info" message = "Virtual product =====${productCategoryMember.productId}"/ -->
+					<set field="virtualProductContext.productId" from="product.productId" set-if-empty="true" set-if-null="false" />
+					<set field="virtualProductContext.productAssocTypeId" set-if-empty="true" set-if-null="false" value="PRODUCT_VARIANT" />
+					<find-by-and entity-name="ProductAssoc" list="variantProducts" map="virtualProductContext" use-cache="false" use-iterator="false" />
+					<filter-list-by-date from-field-name="fromDate" list="variantProducts" thru-field-name="thruDate" />
+					<if-not-empty field="variantProducts">
+						<iterate entry="variantProduct" list="variantProducts">
+							<!-- log level="info" message = "Variant product =====${variantProduct.productIdTo}"/ -->
+							<set field="variantProductContext.productId" from="variantProduct.productIdTo" set-if-empty="true" set-if-null="false" />
+							<call-service break-on-error="true" error-code="error" in-map-name="variantProductContext" include-user-login="true"
+								require-new-transaction="false" service-name="checkImageUrlForProduct" success-code="success">
+								<result-to-field field="filesImageMap" result-name="filesImageMap" />
+							</call-service>
+							<if-not-empty field="filesImageMap">
+								<if-not-empty field="filesImageMap.smallImageUrlMap.smallImageUrl">
+									<if-compare field="filesImageMap.smallImageUrlMap.isExists" operator="equals" type="String" value="Y">
+										<field-to-list field="filesImageMap.smallImageUrlMap.smallImageUrl" list="fileExists" />
+										<else>
+											<field-to-list field="filesImageMap.smallImageUrlMap.smallImageUrl" list="fileNotExists" />
+										</else>
+									</if-compare>
+								</if-not-empty>
+								<if-not-empty field="filesImageMap.mediumImageUrlMap.mediumImageUrl">
+									<if-compare field="filesImageMap.mediumImageUrlMap.isExists" operator="equals" type="String" value="Y">
+										<field-to-list field="filesImageMap.mediumImageUrlMap.mediumImageUrl" list="fileExists" />
+										<else>
+											<field-to-list field="filesImageMap.mediumImageUrlMap.mediumImageUrl" list="fileNotExists" />
+										</else>
+									</if-compare>
+								</if-not-empty>
+								<if-not-empty field="filesImageMap.largeImageUrlMap.largeImageUrl">
+									<if-compare field="filesImageMap.largeImageUrlMap.isExists" operator="equals" type="String" value="Y">
+										<field-to-list field="filesImageMap.largeImageUrlMap.largeImageUrl" list="fileExists" />
+										<else>
+											<field-to-list field="filesImageMap.largeImageUrlMap.largeImageUrl" list="fileNotExists" />
+										</else>
+									</if-compare>
+								</if-not-empty>
+								<if-not-empty field="filesImageMap.detailImageUrlMap.detailImageUrl">
+									<if-compare field="filesImageMap.detailImageUrl.isExists" operator="equals" type="String" value="Y">
+										<field-to-list field="filesImageMap.detailImageUrl.detailImageUrl" list="fileExists" />
+										<else>
+											<field-to-list field="filesImageMap.detailImageUrl.detailImageUrl" list="fileNotExists" />
+										</else>
+									</if-compare>
+								</if-not-empty>
+							</if-not-empty>
+						</iterate>
+					</if-not-empty>
+				</if-compare>
+			</iterate>
+			<field-to-result field="fileExists" result-name="fileExists" />
+			<field-to-result field="fileNotExists" result-name="fileNotExists" />
+		</if-not-empty>
+	</simple-method>
+	<!-- This service get the category id and check all the images of category exists or not -->
+
+	<simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_" event-event-message-name="_event_message_"
+		event-request-object-name="request" event-response-code-name="_response_code_" event-response-object-name="response" login-required="false" method-name="checkImageUrlForCategory"
+		service-error-message-list-name="errorMessageList" service-error-message-map-name="errorMessageMap" service-error-message-name="errorMessage"
+		service-response-message-name="responseMessage" service-success-message-list-name="successMessageList" service-success-message-name="successMessage"
+		short-description="Check for image url exists or not for product" use-transaction="true">
+		<if-not-empty field="parameters.categoryId">
+			<set field="productCategoryFindContext.productCategoryId" from="parameters.categoryId" set-if-empty="true" set-if-null="false" />
+			<find-by-primary-key entity-name="ProductCategory" map="productCategoryFindContext" use-cache="false" value-field="category" />
+			<!-- check for category image url -->
+			<if-not-empty field="category.categoryImageUrl">
+				<set field="checkImageUrlContext.imageUrl" from="category.categoryImageUrl" set-if-empty="true" set-if-null="false" />
+				<call-service break-on-error="true" error-code="error" in-map-name="checkImageUrlContext" include-user-login="true" require-new-transaction="false"
+					service-name="checkImageUrl" success-code="success">
+					<result-to-field field="isExists" result-name="isExists" />
+				</call-service>
+				<set field="categoryImageUrlMap.categoryImageUrl" from="category.categoryImageUrl" set-if-empty="true" set-if-null="false" />
+				<set field="categoryImageUrlMap.isExists" from="isExists" set-if-empty="true" set-if-null="false" />
+				<set field="filesImageMap.categoryImageUrlMap" from="categoryImageUrlMap" set-if-empty="true" set-if-null="false" />
+				<if-compare field="isExists" operator="equals" type="String" value="N">
+					<clear-field field="category.categoryImageUrl" />
+				</if-compare>
+			</if-not-empty>
+			<!-- check for link image url -->
+			<if-not-empty field="category.linkOneImageUrl">
+				<clear-field field="checkImageUrlContext.imageUrl" />
+				<set field="checkImageUrlContext.imageUrl" from="category.linkOneImageUrl" set-if-empty="true" set-if-null="false" />
+				<call-service break-on-error="true" error-code="error" in-map-name="checkImageUrlContext" include-user-login="true" require-new-transaction="false"
+					service-name="checkImageUrl" success-code="success">
+					<result-to-field field="isExists" result-name="isExists" />
+				</call-service>
+				<set field="linkOneImageUrlMap.linkOneImageUrl" from="category.linkOneImageUrl" set-if-empty="true" set-if-null="false" />
+				<set field="linkOneImageUrlMap.isExists" from="isExists" set-if-empty="true" set-if-null="false" />
+				<set field="filesImageMap.linkOneImageUrlMap" from="linkOneImageUrlMap" set-if-empty="true" set-if-null="false" />
+				<if-compare field="isExists" operator="equals" type="String" value="N">
+					<clear-field field="category.linkOneImageUrl" />
+				</if-compare>
+			</if-not-empty>
+			<!-- check for link two image url -->
+			<if-not-empty field="category.linkTwoImageUrl">
+				<clear-field field="checkImageUrlContext.imageUrl" />
+				<set field="checkImageUrlContext.imageUrl" from="category.linkTwoImageUrl" set-if-empty="true" set-if-null="false" />
+				<call-service break-on-error="true" error-code="error" in-map-name="checkImageUrlContext" include-user-login="true" require-new-transaction="false"
+					service-name="checkImageUrl" success-code="success">
+					<result-to-field field="isExists" result-name="isExists" />
+				</call-service>
+				<set field="linkTwoImageUrlMap.largeImageUrl" from="category.linkTwoImageUrl" set-if-empty="true" set-if-null="false" />
+				<set field="linkTwoImageUrlMap.isExists" from="isExists" set-if-empty="true" set-if-null="false" />
+				<set field="filesImageMap.linkTwoImageUrlMap" from="linkTwoImageUrlMap" set-if-empty="true" set-if-null="false" />
+				<if-compare field="isExists" operator="equals" type="String" value="N">
+					<clear-field field="category.linkTwoImageUrl" />
+				</if-compare>
+			</if-not-empty>
+			<!-- set-service-fields service-name="updateProductCategory" map-name="category" to-map-name="updateProductCategoryContext"/> <call-service service-name="updateProductCategory" 
+				in-map-name="updateProductCategoryContext" / -->
+			<store-value do-cache-clear="true" value-field="category" />
+			<field-to-result field="filesImageMap" result-name="filesImageMap" />
+		</if-not-empty>
+	</simple-method>
+
+	<simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_" event-event-message-name="_event_message_"
+		event-request-object-name="request" event-response-code-name="_response_code_" event-response-object-name="response" login-required="false" method-name="checkImageUrlForProduct"
+		service-error-message-list-name="errorMessageList" service-error-message-map-name="errorMessageMap" service-error-message-name="errorMessage"
+		service-response-message-name="responseMessage" service-success-message-list-name="successMessageList" service-success-message-name="successMessage"
+		short-description="Check for image url exists or not for product" use-transaction="true">
+		<if-not-empty field="parameters.productId">
+			<set field="productFindContext.productId" from="parameters.productId" set-if-empty="true" set-if-null="false" />
+			<find-by-primary-key entity-name="Product" map="productFindContext" use-cache="false" value-field="product" />
+			<!-- check for small image url -->
+			<if-not-empty field="product.smallImageUrl">
+				<set field="checkImageUrlContext.imageUrl" from="product.smallImageUrl" set-if-empty="true" set-if-null="false" />
+				<call-service break-on-error="true" error-code="error" in-map-name="checkImageUrlContext" include-user-login="true" require-new-transaction="false"
+					service-name="checkImageUrl" success-code="success">
+					<result-to-field field="isExists" result-name="isExists" />
+				</call-service>
+				<set field="smallImageUrlMap.smallImageUrl" from="product.smallImageUrl" set-if-empty="true" set-if-null="false" />
+				<set field="smallImageUrlMap.isExists" from="isExists" set-if-empty="true" set-if-null="false" />
+				<set field="filesImageMap.smallImageUrlMap" from="smallImageUrlMap" set-if-empty="true" set-if-null="false" />
+				<if-compare field="isExists" operator="equals" type="String" value="N">
+					<log level="info" message="Update SmallImage for product Id ${parameters.productId}" />
+					<clear-field field="product.smallImageUrl" />
+				</if-compare>
+			</if-not-empty>
+			<!-- check for medium image url -->
+			<if-not-empty field="product.mediumImageUrl">
+				<clear-field field="checkImageUrlContext.imageUrl" />
+				<set field="checkImageUrlContext.imageUrl" from="product.mediumImageUrl" set-if-empty="true" set-if-null="false" />
+				<call-service break-on-error="true" error-code="error" in-map-name="checkImageUrlContext" include-user-login="true" require-new-transaction="false"
+					service-name="checkImageUrl" success-code="success">
+					<result-to-field field="isExists" result-name="isExists" />
+				</call-service>
+				<set field="mediumImageUrlMap.mediumImageUrl" from="product.mediumImageUrl" set-if-empty="true" set-if-null="false" />
+				<set field="mediumImageUrlMap.isExists" from="isExists" set-if-empty="true" set-if-null="false" />
+				<set field="filesImageMap.mediumImageUrlMap" from="mediumImageUrlMap" set-if-empty="true" set-if-null="false" />
+				<if-compare field="isExists" operator="equals" type="String" value="N">
+					<clear-field field="product.mediumImageUrl" />
+				</if-compare>
+			</if-not-empty>
+			<!-- check for large image url -->
+			<if-not-empty field="product.largeImageUrl">
+				<clear-field field="checkImageUrlContext.imageUrl" />
+				<set field="checkImageUrlContext.imageUrl" from="product.largeImageUrl" set-if-empty="true" set-if-null="false" />
+				<call-service break-on-error="true" error-code="error" in-map-name="checkImageUrlContext" include-user-login="true" require-new-transaction="false"
+					service-name="checkImageUrl" success-code="success">
+					<result-to-field field="isExists" result-name="isExists" />
+				</call-service>
+				<set field="largeImageUrlMap.largeImageUrl" from="product.largeImageUrl" set-if-empty="true" set-if-null="false" />
+				<set field="largeImageUrlMap.isExists" from="isExists" set-if-empty="true" set-if-null="false" />
+				<set field="filesImageMap.largeImageUrlMap" from="largeImageUrlMap" set-if-empty="true" set-if-null="false" />
+				<if-compare field="isExists" operator="equals" type="String" value="N">
+					<clear-field field="product.largeImageUrl" />
+				</if-compare>
+			</if-not-empty>
+			<!-- check for detail image url -->
+			<if-not-empty field="product.detailImageUrl">
+				<clear-field field="checkImageUrlContext.imageUrl" />
+				<set field="checkImageUrlContext.imageUrl" from="product.detailImageUrl" set-if-empty="true" set-if-null="false" />
+				<call-service break-on-error="true" error-code="error" in-map-name="checkImageUrlContext" include-user-login="true" require-new-transaction="false"
+					service-name="checkImageUrl" success-code="success">
+					<result-to-field field="isExists" result-name="isExists" />
+				</call-service>
+				<set field="detailImageUrlMap.detailImageUrl" from="product.detailImageUrl" set-if-empty="true" set-if-null="false" />
+				<set field="detailImageUrlMap.isExists" from="isExists" set-if-empty="true" set-if-null="false" />
+				<set field="filesImageMap.detailImageUrlMap" from="detailImageUrlMap" set-if-empty="true" set-if-null="false" />
+				<if-compare field="isExists" operator="equals" type="String" value="N">
+					<clear-field field="product.detailImageUrl" />
+				</if-compare>
+			</if-not-empty>
+			<field-to-result field="filesImageMap" result-name="filesImageMap" />
+			<store-value do-cache-clear="true" value-field="product" />
+			<!-- set-service-fields service-name="updateProduct" map-name="product" to-map-name="updateProductContext"/> <call-service service-name="updateProduct" in-map-name="updateProductContext" 
+				/ -->
+		</if-not-empty>
+	</simple-method>
+	<!-- get file image url and return Y or N -->
+
+	<simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_" event-event-message-name="_event_message_"
+		event-request-object-name="request" event-response-code-name="_response_code_" event-response-object-name="response" login-required="false" method-name="checkImageUrl"
+		service-error-message-list-name="errorMessageList" service-error-message-map-name="errorMessageMap" service-error-message-name="errorMessage"
+		service-response-message-name="responseMessage" service-success-message-list-name="successMessageList" service-success-message-name="successMessage"
+		short-description="Check for image url exists or not" use-transaction="true">
+		<set field="imageUrl" from="parameters.imageUrl" set-if-empty="true" set-if-null="false" />
+		<call-object-method method-name="startsWith" obj-field="imageUrl" ret-field="httpFlag">
+			<string value="http" />
+		</call-object-method>
+		<call-object-method method-name="startsWith" obj-field="imageUrl" ret-field="httpsFlag">
+			<string value="https" />
+		</call-object-method>
+		<call-object-method method-name="startsWith" obj-field="imageUrl" ret-field="ftpFlag">
+			<string value="ftp" />
+		</call-object-method>
+		<if>
+			<condition>
+				<or>
+					<if-compare field="httpFlag" operator="equals" type="Boolean" value="true" />
+					<if-compare field="httpsFlag" operator="equals" type="Boolean" value="true" />
+					<if-compare field="ftpFlag" operator="equals" type="Boolean" value="true" />
+				</or>
+			</condition>
+			<then>
+				<call-class-method class-name="org.ofbiz.base.util.UtilURL" method-name="fromUrlString" ret-field="url">
+					<string value="${imageUrl}" />
+				</call-class-method>
+			</then>
+			<else>
+				<set field="imageUrl" set-if-empty="true" set-if-null="false" value="/framework/images/webapp${parameters.imageUrl}" />
+				<call-class-method class-name="org.ofbiz.base.util.UtilURL" method-name="fromOfbizHomePath" ret-field="url">
+					<string value="${imageUrl}" />
+				</call-class-method>
+			</else>
+		</if>
+		<if-not-empty field="url">
+			<set field="isExists" set-if-empty="true" set-if-null="false" value="Y" />
+			<else>
+				<set field="isExists" set-if-empty="true" set-if-null="false" value="N" />
+			</else>
+		</if-not-empty>
+		<field-to-result field="isExists" result-name="isExists" />
+	</simple-method>
+
+	<simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_" event-event-message-name="_event_message_"
+		event-request-object-name="request" event-response-code-name="_response_code_" event-response-object-name="response" login-required="true" method-name="catalogPermissionCheck"
+		service-error-message-list-name="errorMessageList" service-error-message-map-name="errorMessageMap" service-error-message-name="errorMessage"
+		service-response-message-name="responseMessage" service-success-message-list-name="successMessageList" service-success-message-name="successMessage"
+		short-description="Catalog permission logic" use-transaction="true">
+		<set field="primaryPermission" set-if-empty="true" set-if-null="false" value="CATALOG" />
+		<call-simple-method method-name="genericBasePermissionCheck" xml-resource="component://common/script/org/ofbiz/common/permission/CommonPermissionServices.xml" />
+	</simple-method>
+
+	<simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_" event-event-message-name="_event_message_"
+		event-request-object-name="request" event-response-code-name="_response_code_" event-response-object-name="response" login-required="true"
+		method-name="prodCatalogToPartyPermissionCheck" service-error-message-list-name="errorMessageList" service-error-message-map-name="errorMessageMap"
+		service-error-message-name="errorMessage" service-response-message-name="responseMessage" service-success-message-list-name="successMessageList"
+		service-success-message-name="successMessage" short-description="ProdCatalogToParty permission logic" use-transaction="true">
+		<set field="altPermission" set-if-empty="true" set-if-null="false" value="PARTYMGR" />
+		<call-simple-method method-name="catalogPermissionCheck" />
+	</simple-method>
+
+	<simple-method  login-required="true" method-name="createProductContent" use-transaction="true">
+		<make-value entity-name="ProductContent" value-field="productContent"/>
+		<set-pk-fields map="parameters" set-if-null="true" value-field="productContent"/>
+		<set-nonpk-fields map="parameters" set-if-null="true" value-field="productContent"/>
+		<if-empty field="productContent.fromDate">
+			<now-timestamp field="nowTimestamp"/>
+			<set field="productContent.fromDate" from="nowTimestamp" set-if-empty="true" set-if-null="false"/>
+		</if-empty>
+		<create-value do-cache-clear="true" or-store="false" value-field="productContent"/>
+	</simple-method>
+</simple-methods>

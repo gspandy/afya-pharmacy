@@ -1,0 +1,127 @@
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<zk>
+	<zscript>
+	import org.ofbiz.base.util.*;
+	import java.util.*;
+	import org.ofbiz.entity.*;
+	import org.zkoss.zul.*;
+	delegator = com.ndz.zkoss.util.HrmsInfrastructure.getDelegator();//GenericDelegator.getGenericDelegator("default");
+	Set fieldToSelect = new HashSet();
+	fieldToSelect.add("trainingClassTypeId");
+	fieldToSelect.add("description");
+	List trainings = delegator.findList("TrainingClassType", null,
+			fieldToSelect, null, null, false);
+	trainings.add(0, null);
+	trainingsArray = trainings.toArray(new GenericValue[trainings.size()]);
+	SimpleListModel trainingList = new SimpleListModel(trainingsArray);
+	public class TrainingItemRenderer implements ListitemRenderer {
+
+		public TrainingItemRenderer() {
+		}
+
+		public void render(Listitem li, Object data) {
+			if (data instanceof GenericValue) {
+				GenericValue val = (GenericValue) data;
+				li.setLabel(val.getString("description"));
+				li.setValue(val.getString("trainingClassTypeId"));
+			}
+		}
+	}
+ListitemRenderer trainingItemRenderer = new TrainingItemRenderer();
+	
+	Map map = Executions.getCurrent().getArg();
+	String partyId = (String) map.get("partyId");
+	
+	Constraint dateConstraint = new Constraint() {
+	import org.zkoss.util.resource.Labels;
+public void validate(Component comp, Object value) throws WrongValueException {
+	        	if (value == null){
+					throw new WrongValueException(comp, Labels.getLabel("HRMS_REQUIRED_FROM_DATE"));
+				}
+				java.util.Date now = new java.util.Date();
+	     	}
+	 }
+</zscript>
+	<window title="${c:l('HRMS_ADDTRAINING') }" id="addTrainingWindow" border="normal"
+		style="background-color:#B2A4F2; border:1px solid #8E83C1;"
+		height="30%" width="40%" closable="true" contentStyle="overflow:auto"
+		self="@{define(content)}">
+		<separator height="15px" />
+		<textbox id="partyId" visible="false" value="${partyId}" />
+		<hbox>
+			<div align="right" width="130px" style="margin-right:5px">
+				<label value="${c:l('FormFieldTitle_trainingType') }:" style="font-weight:bold" />
+				<label value="*" style="color:red" />
+			</div>
+			<div align="left" width="150px" style="margin-right:5px">
+				<listbox id="trainingClassTypeId" mold="select"
+					itemRenderer="${trainingItemRenderer}" model="${trainingList}"
+					onSelect="Clients.closeErrorBox(self)" />
+			</div>
+		</hbox>
+		<separator />
+		<hbox>
+			<div align="right" width="130px" style="margin-right:5px">
+				<label value="${c:l('HRMS_FROMDATE') }:" style="font-weight:bold" />
+				<label value="*" style="color:red" />
+			</div>
+			<div align="left" style="margin-right:5px">
+				<datebox id="fromDate" constraint="${dateConstraint}"
+					onChange="Clients.closeErrorBox(self)" />
+			</div>
+			<zscript>
+	import org.zkoss.util.resource.Labels;
+Constraint throughDateConstraint = new Constraint() {
+ 		
+     	public void validate(Component comp, Object value) throws WrongValueException {
+		     	if (value != null){
+		     	 java.util.Date prevDate = ((java.util.Date) addTrainingWindow.getFellow("fromDate").getValue());
+		        	if (prevDate.compareTo((java.util.Date)value) == 1){
+						throw new WrongValueException(comp,Labels.getLabel("HumanResApplyLeaveThruDateMustBeAfterFromDate"));
+					}	
+		     	}else{
+			throw new WrongValueException(comp, Labels.getLabel("HRMS_REQUIRED_THRU_DATE"));
+			}
+			}
+     	
+ }
+</zscript>
+			<div align="right" width="100px" style="margin-right:5px">
+				<label value="${c:l('HRMS_THRUDATE') }:" style="font-weight:bold" />
+				<label value="*" style="color:red" />
+			</div>
+			<div align="left" style="margin-right:5px">
+				<datebox id="thruDate"
+					constraint="${throughDateConstraint}"
+					onChange="Clients.closeErrorBox(self)" />
+			</div>
+		</hbox>
+		<separator />
+		<zscript>
+	import org.zkoss.zul.*;
+	Div div = (Div) Executions.getCurrent().getArg().get("window");
+	Toolbarbutton tlbarBtn = (Toolbarbutton) div
+			.getFellow("trainingInformationBtn");
+</zscript>
+		<hbox>
+			<div align="right" width="252px">
+				<button label="${c:l('btnSave') }" id="saveSkill">
+					<attribute name="onClick">
+	Listitem trainingClassTypeListItem = trainingClassTypeId.getSelectedItem();
+	if (trainingClassTypeListItem == null) {
+		throw new WrongValueException(trainingClassTypeId,
+				Labels.getLabel("HRMS_AET_REQUIRED_TRAINING_TYPE"));
+	}
+	fromDate.getValue();
+	thruDate.getValue();
+	com.ndz.controller.UpdateEmployeeProfileController.addEmployeeTraining(event);
+	Events.postEvent("onClick", tlbarBtn, null);
+	addTrainingWindow.detach();
+</attribute>
+				</button>
+				<button label="${c:l('HRMS_CancelButton') }"
+					onClick="addTrainingWindow.detach()" />
+			</div>
+		</hbox>
+	</window>
+</zk>

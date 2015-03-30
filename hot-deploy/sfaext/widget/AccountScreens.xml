@@ -1,0 +1,413 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<screens xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="http://ofbiz.apache.org/dtds/widget-screen.xsd">
+
+	
+	<screen name="AccountDecorator">
+		<section>
+			<widgets>
+				<decorator-screen name="main-decorator" location="${parameters.mainDecoratorLocation}">
+						<decorator-section name="body">
+							<include-menu location="component://sfaext/widget/SfaMenus.xml" name="AccountTabBar"/>
+							<decorator-section-include name="body"/>
+						</decorator-section>
+				</decorator-screen>
+			</widgets>
+		</section>
+	</screen>
+
+	<screen name="main-section-decorator">
+		<section>
+			<widgets>
+				<!-- <decorator-screen name="AccountDecorator"> -->
+				<decorator-screen name="main-decorator" location="${parameters.mainDecoratorLocation}">
+					<decorator-section name="body">
+						<container style="screenlet">
+							<container style="screenlet-title-bar">
+								<container style="h3">
+									<label text="${uiLabelMap.${sectionTitle}Accounts}"></label>
+								</container>
+							</container>
+							<container style="form">
+								<decorator-section-include name="section-body"/>
+							</container>
+						</container>
+					</decorator-section>
+				</decorator-screen>
+			</widgets>
+		</section>
+	</screen>
+
+
+	<screen name="FindAccounts">
+		<section>
+			<actions>
+				<set field="titleProperty" value="Find Accounts" />
+				<set field="tabButtonItem" value="FindAccounts"/>
+			</actions>
+			<widgets>
+			    <decorator-screen name="AccountDecorator">
+					<decorator-section name="body">
+							<include-screen name="AccountSearchScreen"/>							
+							<include-screen name="AccountSearchResultsScreen"/>							
+					</decorator-section>
+				</decorator-screen>
+			</widgets>
+		</section>
+	</screen>
+	
+	<screen name="AccountSearchScreen">
+		<section>
+			<widgets>
+				<container style="screenlet">
+					<container style="screenlet-title-bar">
+						<container style="h3">
+							<label text="${uiLabelMap.CrmFindAccounts}"></label>
+						</container>
+					</container>
+					<container style="form">
+						<include-form location="component://sfaext/widget/forms/AccountForms.xml" name="AccountSearchForm"/>
+					</container>
+				</container>
+			</widgets>
+		</section>
+	</screen>
+	
+	<screen name="AccountSearchResultsScreen">
+		<section>
+			<widgets>
+				<container style="screenlet">
+					<container style="screenlet-title-bar">
+						<container style="h3">
+							<label text="${uiLabelMap.CrmSearchResults}"></label>
+						</container>
+					</container>
+					<container style="form">
+						<include-form location="component://sfaext/widget/forms/AccountForms.xml" name="AccountSearchResults"/>
+					</container>
+				</container>
+			</widgets>
+		</section>
+	</screen>
+	
+	<screen name="createAccount">
+        <section>
+            <!-- <condition><if-has-permission permission="CRMSFA_ACCOUNT" action="_CREATE"/></condition> -->
+            <actions>
+                <set field="titleProperty" value="${uiLabelMap.CrmCreateAccount}"/>
+                <set field="sectionTitle" value="CrmCreateAccount"/>
+                <script location="component://sfaext/webapp/sfaext/WEB-INF/actions/accounts/createOrUpdateAccount.groovy"/>
+            </actions>
+            <widgets>
+                <!-- <decorator-screen name="main-section-decorator"> -->
+                <decorator-screen name="main-decorator" location="${parameters.mainDecoratorLocation}">
+                    <decorator-section name="body">
+                        <container style="screenlet">
+                            <container style="screenlet-title-bar">
+								<container style="h3"><label text="Create Account" /></container>
+							</container>
+                            <platform-specific>
+                                <html><html-template location="component://sfaext/webapp/sfaext/accounts/createOrUpdateAccount.ftl"/></html>
+                            </platform-specific>
+                    	</container>
+                    </decorator-section>
+                </decorator-screen>
+            </widgets>
+            <fail-widgets>
+                <!-- <decorator-screen name="main-section-decorator"> -->
+                    <decorator-screen name="main-decorator" location="${parameters.mainDecoratorLocation}">
+                    <decorator-section name="body">
+                        <container style="screenlet">
+                            <container style="screenlet-title-bar">
+								<container style="h3"><label text="Create Account" /></container>
+							</container>
+                            <label style="head2">${uiLabelMap.CrmErrorPermissionDenied}</label>
+                        </container>
+                    </decorator-section>
+                </decorator-screen>
+            </fail-widgets>
+        </section>
+    </screen>
+
+    <screen name="updateAccountForm">
+        <section>
+            <actions>
+                <set field="pageTitleLabel" value="CrmUpdateAccount"/>
+                <set field="sectionHeaderUiLabel" value="CrmUpdateAccount"/>
+                <set field="hasModulePermission" value="CRMSFA_ACCOUNT"/>
+                <set field="hasOperationPermission" value="_UPDATE"/>
+                <script location="component://sfaext/webapp/sfaext/WEB-INF/actions/accounts/createOrUpdateAccount.groovy"/>
+                <script location="component://sfaext/webapp/sfaext/WEB-INF/actions/accounts/viewAccounts.groovy"/>
+                <set field="sectionTitle" value="CrmUpdateAccount"/>
+            </actions>
+            <widgets>
+                <!-- <decorator-screen name="main-section-decorator"> -->
+                <decorator-screen name="main-decorator" location="${parameters.mainDecoratorLocation}">
+                    <decorator-section name="body">
+                        <container style="screenlet">
+                            <container style="screenlet-title-bar">
+                                <container style="h3"><label text="Edit Account" /></container>
+                            </container>
+                            <container style="form">
+                                <include-form name="updateAccountForm" location="component://sfaext/widget/forms/AccountForms.xml"/>
+                            </container>
+                        </container>
+                        
+                        <!-- account data sources -->
+                        <include-screen name="viewAccountDataSources"/>
+
+                        <!-- account marketing campaigns -->
+                        <include-screen name="viewAccountMarketingCampaigns"/>
+                        
+                    </decorator-section>
+                </decorator-screen>
+            </widgets>
+        </section>
+    </screen>
+    
+    <screen name="NewAccountForm">
+        <section>
+            <actions>
+                <set field="titleProperty" value="${uiLabelMap.CrmCreateAccount}"/>
+                   
+                <!-- fields for setDependentDropdownValuesJs.ftl -->
+                <set field="dependentForm" value="NewAccount"/>
+                <set field="paramKey" value="countryGeoId"/>
+                <set field="mainId" value="generalCountryGeoId"/>
+                <set field="dependentId" value="generalStateProvinceGeoId"/>
+                <set field="requestName" value="getAssociatedStateList"/>
+                <set field="responseName" value="stateList"/>
+                <set field="dependentKeyName" value="geoId"/>
+                <set field="descName" value="geoName"/>
+                <set field="selectedDependentOption" from-field="mechMap.postalAddress.stateProvinceGeoId" default-value="_none_"/>
+            </actions>
+            <widgets>
+                <container style="form">
+                    <platform-specific><html><html-template location="component://common/webcommon/includes/setDependentDropdownValuesJs.ftl"/></html></platform-specific>
+                    <include-form name="NewAccount" location="component://sfaext/widget/forms/AccountForms.xml"/>
+                </container>
+            </widgets>
+        </section>
+    </screen>
+    
+    <!-- account data sources -->
+    <screen name="viewAccountDataSources">
+        <section>
+            <actions>
+                <!-- set the form parameters -->
+                <set field="addDataSourceFormTarget" value="addAccountDataSource"/>
+                <set field="removeDataSourceFormTarget" value="removeAccountDataSource"/>
+            </actions>
+            <widgets>
+                <include-screen name="viewDataSources" location="component://sfaext/widget/CommonScreens.xml"/>
+            </widgets>
+        </section>
+    </screen>
+
+    <!-- account marketing campaigns -->
+    <screen name="viewAccountMarketingCampaigns">
+        <section>
+            <actions>
+                <!-- set the form parameters -->
+                <set field="addMarketingCampaignFormTarget" value="addAccountMarketingCampaign"/>
+                <set field="removeMarketingCampaignFormTarget" value="removeAccountMarketingCampaign"/>
+            </actions>
+            <widgets>
+                <include-screen name="viewMarketingCampaigns" location="component://sfaext/widget/CommonScreens.xml"/>
+            </widgets>
+        </section>
+    </screen>
+    
+    <screen name="MyAccounts">
+        <section>
+            <actions>
+                <!-- these will be reused in the script -->
+				<set field="parameters.partyIdTo" from-field="userLogin.partyId"/>
+                <set field="parameters.roleTypeIdFrom" value="ACCOUNT"/>
+				<set field="parameters.partyRelationshipTypeId" value="RESPONSIBLE_FOR" />
+                <script location="component://sfaext/webapp/sfaext/WEB-INF/actions/common/findActiveParties.groovy"/>
+				<set field="titleProperty" value="${VIEW_PREF}Accounts"/>
+				<set field="tabButtonItem" value="${VIEW_PREF}Accounts"/>
+
+            </actions>
+            <widgets>
+                <!-- <decorator-screen name="main-section-decorator"> -->
+				<section>
+					<condition>
+						<if-compare field="parameters.viewPrefTypeId" operator="equals" value="my"/>
+					</condition>
+					<widgets>
+						<decorator-screen name="main-decorator" location="${parameters.mainDecoratorLocation}">
+							<decorator-section name="body">
+								<container style="screenlet">
+									<container style="screenlet-title-bar">
+										<container style="h3"><label text="My Accounts" /></container>
+									</container>
+			                        <platform-specific>
+			                            <html>
+			                        	    <html-template location="component://sfaext/webapp/sfaext/accounts/myAccountsMenu.ftl"/>
+			                            </html>
+			                        </platform-specific>
+			                      	<platform-specific>
+			                            <html>
+			                        	    <html-template location="component://sfaext/webapp/sfaext/accounts/myAccounts.ftl"/>
+			                            </html>
+		                            </platform-specific>
+		                        </container>
+							</decorator-section>
+                		</decorator-screen>
+            		</widgets>
+                </section>
+                <!-- <decorator-screen name="main-section-decorator"> -->
+				<section>
+					<condition>
+						<if-compare field="parameters.viewPrefTypeId" operator="equals" value="team"/>
+					</condition>
+					<widgets>
+						<decorator-screen name="main-decorator" location="${parameters.mainDecoratorLocation}">
+							<decorator-section name="body">
+								<container style="screenlet">
+									<container style="screenlet-title-bar">
+										<container style="h3"><label text="Team's Accounts" /></container>
+									</container>
+			                        <platform-specific>
+			                            <html>
+			                        	    <html-template location="component://sfaext/webapp/sfaext/accounts/myAccountsMenu.ftl"/>
+			                            </html>
+			                        </platform-specific>
+			                      	<platform-specific>
+			                            <html>
+			                        	    <html-template location="component://sfaext/webapp/sfaext/accounts/myAccounts.ftl"/>
+			                            </html>
+		                            </platform-specific>
+		                        </container>
+							</decorator-section>
+                		</decorator-screen>
+            		</widgets>
+                </section>
+            </widgets>
+        </section>
+    </screen>
+    
+    
+	<screen name="ViewAccount">
+		<section>
+			<actions>
+				<set field="editContactMechPage" value="accountsEditContactMech"/>
+				<set field="donePage" value="viewAccount"/>
+				<set field="displayContactMechs" value="Y"/>
+				<set field="partyId" from-field="parameters.partyId"/>
+				<script location="component://sfaext/webapp/sfaext/WEB-INF/actions/accounts/viewAccounts.groovy"/>
+				<script location="component://sfaext/webapp/sfaext/WEB-INF/actions/contactmech/viewProfile.groovy"/>			      
+			</actions>
+			<widgets>
+				<!-- <decorator-screen name="AccountDecorator"> -->
+				<decorator-screen name="main-decorator" location="${parameters.mainDecoratorLocation}">
+					<decorator-section name="body">
+						<container style="screenlet">
+								<!-- <container style="h3"><label text="${uiLabelMap.SfaViewAccount}"/></container> -->
+									<platform-specific>
+										<html>
+											<html-template location="component://sfaext/webapp/sfaext/accounts/viewAccountDetail.ftl"/>
+										</html>
+									</platform-specific>
+									<container style="form">
+										<include-form name="ViewAccount" location="component://sfaext/widget/forms/AccountForms.xml"/>
+									</container>
+							</container>
+							<container style="screenlet">
+								<container style="screenlet-title-bar">
+									<container style="h3"><label text="${uiLabelMap.SfaContacts}"></label></container>
+								</container>
+								<container style="form">
+									<include-form name="viewResponsibleFor" location="component://sfaext/widget/forms/AccountForms.xml"/>
+									<!-- If the user can reassign accounts, include the relevant form -->
+									<section>
+										<condition><if-compare field="hasReassignPermission" operator="equals" value="true" type="Boolean"/></condition>
+										<widgets>
+											<include-form name="reassignToForm" location="component://sfaext/widget/forms/AccountForms.xml"/>
+										</widgets>
+									</section>
+								</container>
+							</container>
+
+							<container style="screenlet">
+								<platform-specific><html><html-template location="component://sfaext/webapp/sfaext/contactmech/viewprofile.ftl"/></html></platform-specific>
+							</container>
+
+							<include-screen name="ContactsForAccountScreen"/>
+							
+							<container style="screenlet">
+								<container style="screenlet-title-bar">
+									<container style="h3"><label text="${uiLabelMap.SfaExtSalesOpportunities}"></label>
+								</container>
+							</container>
+							<container style="form">
+								<include-form location="component://sfaext/widget/forms/AccountForms.xml" name="ListOpportunitiesForAccount"/>
+							</container>
+						</container>
+						
+						<container style="screenlet">
+							<platform-specific><html><html-template location="component://sfaext/webapp/sfaext/party/Notes.ftl"/></html></platform-specific>
+						</container>
+						
+						<container style="screenlet">
+							<include-screen location="component://sfaext/widget/ContentScreens.xml" name="contentList"/>
+						</container>
+					
+					
+					</decorator-section>
+				</decorator-screen>
+			</widgets>
+		</section>
+	</screen>
+	
+	<screen name="ContactsForAccountScreen">
+			<section>
+			<actions>
+				<set field="sectionTitle" value="SfaContacts"/>
+			</actions>
+				<widgets>
+					<container style="screenlet">
+						<container style="screenlet-title-bar">
+							<container style="h3">
+									<label>${uiLabelMap.CrmContactList}</label>
+							</container>
+						</container>
+						<container style="form">
+							<include-form name="ListContactsForAccount" location="component://sfaext/widget/forms/ContactForms.xml"/>
+							<include-form name="assignContactToAccountForm" location="component://sfaext/widget/forms/AccountForms.xml"/>
+						</container>
+					</container>
+				</widgets>
+			</section>
+	</screen>
+
+	<screen name="LookupAccounts">
+		<section>
+			<actions>
+				<property-map resource="SFAEXTUiLabels" map-name="uiLabelMap" global="true"/>
+				<set field="title" value="${uiLabelMap.SfaextAccountLookup}"/>
+                <set field="queryString" from-field="result.queryString"/>
+                <set field="entityName" value="PartyFromSummaryByRelationship"/>
+                <set field="searchFields" value="[partyId, groupName]"/>
+                <set field="andCondition" value="${groovy: return org.ofbiz.entity.condition.EntityCondition.makeCondition(org.ofbiz.base.util.UtilMisc.toMap('partyIdTo', userLogin.partyId, 'roleTypeIdFrom', 'ACCOUNT')) }"/>
+                <set field="viewIndex" from-field="parameters.VIEW_INDEX" type="Integer"/>
+                <set field="viewSize" from-field="parameters.VIEW_SIZE" type="Integer" default-value="20"/>
+			</actions>
+			<widgets>
+				   <decorator-screen name="LookupDecorator" location="component://common/widget/CommonScreens.xml">
+                    <decorator-section name="search-options">
+                		<include-form location="component://sfaext/widget/forms/AccountForms.xml" name="LookupAccount"/>
+				    </decorator-section>
+                    <decorator-section name="search-results">
+                		<include-form location="component://sfaext/widget/forms/AccountForms.xml" name="ListLookupAccount"/>
+				    </decorator-section>
+                </decorator-screen>
+			</widgets>
+		</section>
+	</screen>
+
+		
+</screens>

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<simple-map-processors xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="http://ofbiz.apache.org/dtds/simple-methods.xsd">
+
+	<simple-map-processor name="lead">
+		<process field="firstName"><copy/><not-empty><fail-property resource="PartyUiLabels" property="PartyFirstNameMissing"/></not-empty></process>
+	    <process field="middleName"><copy/></process>
+	    <process field="lastName"><copy/><not-empty><fail-property resource="PartyUiLabels" property="PartyLastNameMissingError"/></not-empty></process>
+	    <process field="personalTitle"><copy/></process>
+	    <process field="suffix"><copy/></process>
+	    <process field="birthDate"><convert type="Date"><fail-property resource="PartyUiLabels" property="PartyBirthDateMissingError"/></convert></process>
+	    <process field="companyName"><not-empty><fail-message  message="CompanyName is required."/> </not-empty></process>
+	</simple-map-processor>
+
+</simple-map-processors>

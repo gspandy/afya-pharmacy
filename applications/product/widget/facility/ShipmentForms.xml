@@ -1,0 +1,951 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+Licensed to the Apache Software Foundation (ASF) under one
+or more contributor license agreements.  See the NOTICE file
+distributed with this work for additional information
+regarding copyright ownership.  The ASF licenses this file
+to you under the Apache License, Version 2.0 (the
+"License"); you may not use this file except in compliance
+with the License.  You may obtain a copy of the License at
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing,
+software distributed under the License is distributed on an
+"AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+KIND, either express or implied.  See the License for theEditShipmentPlan
+specific language governing permissions and limitations
+under the License.
+-->
+
+<forms xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="http://ofbiz.apache.org/dtds/widget-form.xsd">
+    <!-- target="updateShipment" -->
+    <form name="EditShipment" type="single" target="validateUpdateShipment" title="" default-map-name="shipment"
+          header-row-style="header-row" default-table-style="basic-table">
+
+        <alt-target use-when="shipment==null&amp;&amp;shipmentTypeId==null" target="createShipment"/>
+        <alt-target use-when="shipment==null&amp;&amp;shipmentTypeId!=null&amp;&amp;shipmentTypeId.equals(&quot;PURCHASE_RETURN&quot;)"
+                    target="createShipmentAndItemsForVendorReturn"/>
+        <auto-fields-service service-name="updateShipment"/>
+        <field use-when="shipment==null" name="submitButton2" title="${uiLabelMap.CommonCreate}" widget-area-style="centered" widget-style="btn btn-success">
+            <submit button-type="button"/>
+        </field>
+        <field use-when="shipment!=null" name="submitButton2" title="${uiLabelMap.CommonUpdate}" widget-area-style="centered" widget-style="btn btn-success">
+            <submit button-type="button"/>
+        </field>
+        <field use-when="shipment!=null" name="shipmentId" title="${uiLabelMap.ProductShipmentId}" tooltip="${uiLabelMap.ProductNotModificationRecreatingProductShipment}">
+            <display/>
+        </field>
+        <field use-when="shipment==null&amp;&amp;shipmentId!=null" name="shipmentId" title="${uiLabelMap.ProductShipmentId}"
+               tooltip="${uiLabelMap.ProductCouldNotFindProductShipmentWithId} [${shipmentId}]">
+            <display description="" also-hidden="false"/>
+        </field>
+        <field use-when="shipment==null&amp;&amp;shipmentId==null" name="shipmentId" title="${uiLabelMap.ProductShipmentId}">
+            <ignored/>
+        </field>
+
+        <field use-when="shipment==null" name="planType">
+            <hidden/>
+        </field>
+        <field use-when="shipment!=null&amp;&amp;shipment.getString(&quot;shipmentTypeId&quot;).equals(&quot;PURCHASE_SHIPMENT&quot;)" name="planType">
+            <hidden/>
+        </field>
+        <field use-when="shipment!=null&amp;&amp;shipment.getString(&quot;shipmentTypeId&quot;).equals(&quot;DROP_SHIPMENT&quot;)" name="planType">
+            <hidden/>
+        </field>
+        <field use-when="shipment!=null&amp;&amp;shipment.getString(&quot;shipmentTypeId&quot;).equals(&quot;TRANSFER&quot;)" name="planType">
+            <hidden/>
+        </field>
+        <field use-when="shipment!=null&amp;&amp;shipment.getString(&quot;shipmentTypeId&quot;).equals(&quot;INCOMING_SHIPMENT&quot;)" name="planType">
+            <hidden/>
+        </field>
+        <field use-when="shipment!=null&amp;&amp;shipment.getString(&quot;shipmentTypeId&quot;).equals(&quot;OUTGOING_SHIPMENT&quot;)" name="planType">
+            <hidden/>
+        </field>
+        <field use-when="shipment!=null&amp;&amp;shipment.getString(&quot;shipmentTypeId&quot;).equals(&quot;SALES_RETURN&quot;)" name="planType">
+            <hidden/>
+        </field>
+        <field use-when="shipment!=null&amp;&amp;shipment.getString(&quot;shipmentTypeId&quot;).equals(&quot;PURCHASE_RETURN&quot;)" name="planType">
+            <hidden/>
+        </field>
+        <field use-when="shipment!=null&amp;&amp;shipment.getString(&quot;shipmentTypeId&quot;).equals(&quot;SALES_SHIPMENT&quot;)" name="planType">
+            <radio no-current-selected-key="STANDARD">
+                <option key="STANDARD" description="Standard Default"/>
+                <option key="ROUTE" description="Route Based"/>
+                <option key="PRIORITY" description="Priority Based"/>
+            </radio>
+        </field>
+        <field use-when="shipment==null" name="shipmentTypeId" title="${uiLabelMap.ProductShipmentTypeId}"  event="onchange" action="populateParty(this.value)">
+            <drop-down allow-empty="false" current="first-in-list">
+                <entity-options description="${description}" entity-name="ShipmentType"/>
+            </drop-down>
+        </field>
+        <field use-when="shipment!=null" name="shipmentTypeId" title="${uiLabelMap.ProductShipmentTypeId}">
+            <drop-down allow-empty="false" current="first-in-list" current-description="${currentShipStatus.description}">
+                <entity-options description="${description}" entity-name="ShipmentType">
+                    <entity-constraint name="parentTypeId" operator="equals" value="${shipment.shipmentTypeId}"/>
+                </entity-options>
+            </drop-down>
+        </field>
+
+        <field use-when="shipment==null" name="statusId" title="${uiLabelMap.ProductStatusId}">
+            <hidden/>
+            <!--
+                      <drop-down allow-empty="false" current="first-in-list">
+                         <entity-options entity-name="StatusItem" description="${description}">
+                               <entity-constraint name="statusTypeId" value="${statusItemType}"/>
+                               <entity-order-by field-name="sequenceId"/>
+                           </entity-options>
+                       </drop-down>
+                    -->
+        </field>
+        <field use-when="shipment!=null" name="statusId" title="${uiLabelMap.ProductStatusId}">
+            <drop-down allow-empty="false" current="first-in-list" current-description="${currentStatus.description}">
+                <entity-options entity-name="StatusValidChangeToDetail" key-field-name="statusIdTo" description="${transitionName} (${description})">
+                    <entity-constraint name="statusId" value="${shipment.statusId}"/>
+                    <entity-order-by field-name="sequenceId"/>
+                </entity-options>
+            </drop-down>
+        </field>
+
+        <field position="1" name="primaryOrderId" title="${uiLabelMap.ProductPrimaryOrderId}">
+            <lookup target-form-name="LookupOrder"/>
+        </field>
+        <field position="2" name="primaryReturnId" title="${uiLabelMap.ProductPrimaryReturnId}">
+            <text/>
+        </field>
+        <field position="1" name="primaryShipGroupSeqId" title="${uiLabelMap.ProductPrimaryShipGroupSeqId}">
+            <text/>
+        </field>
+        <field position="2" name="picklistBinId">
+            <text/>
+        </field>
+        <field position="1" name="estimatedReadyDate" title="${uiLabelMap.ProductEstimatedReadyDate}">
+            <date-time/>
+        </field>
+        <field position="2" name="estimatedShipDate" title="${uiLabelMap.ProductEstimatedShipDate}">
+            <date-time/>
+        </field>
+        <field position="2" name="transformerId" title="Transporter Name">
+            <lookup target-form-name="LookupPartyNameForCarrierRole"></lookup>
+        </field>
+
+        <field use-when="(shipment==null) || (shipment!=null&amp;&amp;!shipment.getString(&quot;shipmentTypeId&quot;).equals(&quot;SALES_SHIPMENT&quot;))" position="1" name="truckNumber" title="Truck Number">
+            <text/>
+        </field>
+
+        <field use-when="shipment!=null&amp;&amp;shipment.getString(&quot;shipmentTypeId&quot;).equals(&quot;SALES_SHIPMENT&quot;)" position="1" name="truckNumber" title="Truck Number" required-field="true">
+            <text/>
+        </field>
+
+        <field use-when="(shipment==null) || (shipment!=null&amp;&amp;!shipment.getString(&quot;shipmentTypeId&quot;).equals(&quot;SALES_SHIPMENT&quot;))" position="1" name="trailerNumber" title="Trailer Number">
+            <text/>
+        </field>
+        <field use-when="shipment!=null&amp;&amp;shipment.getString(&quot;shipmentTypeId&quot;).equals(&quot;SALES_SHIPMENT&quot;)" position="1" name="trailerNumber" title="Trailer Number" required-field="true">
+            <text/>
+        </field>
+
+        <field use-when="(shipment==null) || (shipment!=null&amp;&amp;!shipment.getString(&quot;shipmentTypeId&quot;).equals(&quot;SALES_SHIPMENT&quot;))" position="1" name="driverName" title="Driver Name">
+            <text/>
+        </field>
+        <field use-when="shipment!=null&amp;&amp;shipment.getString(&quot;shipmentTypeId&quot;).equals(&quot;SALES_SHIPMENT&quot;)" position="1" name="driverName" title="Driver Name" required-field="true">
+            <text/>
+        </field>
+
+        <field use-when="(shipment==null) || (shipment!=null&amp;&amp;!shipment.getString(&quot;shipmentTypeId&quot;).equals(&quot;SALES_SHIPMENT&quot;))" position="1" name="nrcNumber" title="NRC Number">
+            <text/>
+        </field>
+        <field use-when="shipment!=null&amp;&amp;shipment.getString(&quot;shipmentTypeId&quot;).equals(&quot;SALES_SHIPMENT&quot;)" position="1" name="nrcNumber" title="NRC Number" required-field="true">
+            <text/>
+        </field>
+
+        <field position="1" name="note">
+            <textarea/>
+        </field>
+
+        <field use-when="productStoreId!=null" name="originFacilityId" title="${uiLabelMap.ProductOriginFacility} [${shipment.primaryOrderId}]" position="2">
+            <drop-down allow-empty="true" current="first-in-list">
+                <entity-options entity-name="ProductStoreFacilityByOrder" key-field-name="facilityId" description="${facilityName} [${facilityId}]">
+                    <entity-constraint name="orderId" value="${orderHeader.orderId}"/>
+                    <entity-order-by field-name="facilityName"/>
+                </entity-options>
+            </drop-down>
+        </field>
+
+        <field use-when="(shipment==null) || (shipment!=null&amp;&amp;shipment.getString(&quot;shipmentTypeId&quot;).equals(&quot;TRANSFER&quot;))"
+                 name="originFacilityId" title="${uiLabelMap.ProductOriginFacility}" position="2" required-field="true">
+            <drop-down allow-empty="false" current="first-in-list" size="1">
+                <entity-options entity-name="Facility" key-field-name="facilityId" description="${facilityName} [${facilityId}]">
+                    <entity-order-by field-name="facilityName"/>
+                </entity-options>
+            </drop-down>
+        </field>
+
+        <field use-when="(shipment==null) || (shipment!=null&amp;&amp;!shipment.getString(&quot;shipmentTypeId&quot;).equals(&quot;TRANSFER&quot;))"
+               name="originFacilityId" title="${uiLabelMap.ProductOriginFacility}" position="2">
+            <drop-down allow-empty="true" current="first-in-list" size="1">
+                <entity-options entity-name="Facility" key-field-name="facilityId" description="${facilityName} [${facilityId}]">
+                    <entity-order-by field-name="facilityName"/>
+                </entity-options>
+            </drop-down>
+        </field>
+
+        <field use-when="(shipment==null) || (shipment!=null&amp;&amp;shipment.getString(&quot;shipmentTypeId&quot;).equals(&quot;TRANSFER&quot;))"
+               name="destinationFacilityId" title="${uiLabelMap.ProductDestinationFacility}" position="2" required-field="true">
+            <drop-down allow-empty="false" current="first-in-list" size="1">
+                <entity-options entity-name="Facility" key-field-name="facilityId" description="${facilityName} [${facilityId}]">
+                    <entity-order-by field-name="facilityName"/>
+                </entity-options>
+            </drop-down>
+        </field>
+
+        <field use-when="(shipment==null) || (shipment!=null&amp;&amp;!shipment.getString(&quot;shipmentTypeId&quot;).equals(&quot;TRANSFER&quot;))"
+               name="destinationFacilityId" title="${uiLabelMap.ProductDestinationFacility}" position="2">
+            <drop-down allow-empty="false" current="first-in-list" size="1">
+                <entity-options entity-name="Facility" key-field-name="facilityId" description="${facilityName} [${facilityId}]">
+                    <entity-order-by field-name="facilityName"/>
+                </entity-options>
+            </drop-down>
+        </field>
+
+        <field name="estimatedShipWorkEffId" title="${uiLabelMap.ProductEstimatedShipWorkEffId}" widget-style="btn-link">
+            <hidden/>
+            <!--
+                        <hyperlink target="/workeffort/control/WorkEffortSummary" also-hidden="false" description="${shipment.estimatedShipWorkEffId}" target-type="inter-app">
+                            <parameter param-name="workEffortId" from-field="shipment.estimatedShipWorkEffId"/>
+                        </hyperlink>
+                    -->
+        </field>
+        <field position="1" name="estimatedArrivalDate" title="${uiLabelMap.ProductEstimatedArrivalDate}">
+            <date-time/>
+        </field>
+        <field name="estimatedArrivalWorkEffId" title="${uiLabelMap.ProductEstimatedArrivalWorkEffId}" widget-style="btn-link">
+            <hidden/>
+            <!--
+                        <hyperlink target="/workeffort/control/WorkEffortSummary" also-hidden="false" description="${shipment.estimatedArrivalWorkEffId}" target-type="inter-app">
+                            <parameter param-name="workEffortId" from-field="shipment.estimatedArrivalWorkEffId"/>
+                        </hyperlink>
+                    -->
+        </field>
+        <field position="2" name="latestCancelDate" title="${uiLabelMap.ProductLatestCancelDate}">
+            <date-time/>
+        </field>
+        <field position="1" name="estimatedShipCost" title="${uiLabelMap.ProductEstimatedShipCost}">
+            <text/>
+        </field>
+        <field position="2" name="currencyUomId" title="${uiLabelMap.ProductCurrencyUomId}">
+            <drop-down allow-empty="true" no-current-selected-key="${defaultOrganizationPartyCurrencyUomId}">
+                <entity-options key-field-name="uomId" description="${description} - ${abbreviation}" entity-name="Uom">
+                    <entity-constraint name="uomTypeId" operator="equals" value="CURRENCY_MEASURE"/>
+                    <entity-order-by field-name="description"/>
+                </entity-options>
+            </drop-down>
+        </field>
+
+        <field position="1" name="eventDate"></field>
+
+        <field position="1" name="originContactMechId" title="${uiLabelMap.ProductOriginPostalAddressId}"
+               tooltip="${uiLabelMap.CommonTo}: ${originPostalAddress.toName}, ${uiLabelMap.CommonAttn}: ${originPostalAddress.attnName}, ${originPostalAddress.address1}, ${originPostalAddress.address2}, ${originPostalAddress.city}, ${originPostalAddress.stateProvinceGeoId}, ${originPostalAddress.postalCode}, ${originPostalAddress.countryGeoId}">
+        </field>
+        <field position="2" name="destinationContactMechId" title="${uiLabelMap.ProductDestinationPostalAddressId}"
+               tooltip="${uiLabelMap.CommonTo}: ${destinationPostalAddress.toName}, ${uiLabelMap.CommonAttn}: ${destinationPostalAddress.attnName}, ${destinationPostalAddress.address1}, ${destinationPostalAddress.address2}, ${destinationPostalAddress.city}, ${destinationPostalAddress.stateProvinceGeoId}, ${destinationPostalAddress.postalCode}, ${destinationPostalAddress.countryGeoId}">
+        </field>
+        <field position="1" name="originTelecomNumberId" title="${uiLabelMap.ProductOriginPhoneNumberId}"
+               tooltip="${originTelecomNumber.countryCode}  ${originTelecomNumber.areaCode} ${originTelecomNumber.contactNumber}">
+        </field>
+        <field position="2" name="destinationTelecomNumberId" title="${uiLabelMap.ProductDestinationPhoneNumberId}"
+               tooltip="${destinationTelecomNumber.countryCode}  ${destinationTelecomNumber.areaCode} ${destinationTelecomNumber.contactNumber}">
+        </field>
+        <field position="1" name="partyIdTo" title="${uiLabelMap.ProductToParty}"
+               tooltip="${toPerson.firstName} ${toPerson.middleName} ${toPerson.lastName} ${toPartyGroup.groupName}" required-field="true" widget-style="required">
+            <lookup target-form-name="LookupPartyName"></lookup>
+        </field>
+        <field position="1" name="partyIdFrom" title="${uiLabelMap.ProductFromParty}"
+               tooltip="${fromPerson.firstName} ${fromPerson.middleName} ${fromPerson.lastName} ${fromPartyGroup.groupName}" required-field="true" widget-style="required">
+            <lookup target-form-name="LookupPartyName"></lookup>
+        </field>
+        <field position="1" name="additionalShippingCharge" title="${uiLabelMap.ProductAdditionalShippingCharge}">
+            <text/>
+        </field>
+        <field position="1" name="addtlShippingChargeDesc">
+            <textarea/>
+        </field>
+        <field position="2" name="handlingInstructions" title="${uiLabelMap.ProductHandlingInstructions}">
+            <textarea/>
+        </field>
+        <field position="1" use-when="shipment!=null" name="createdDate" title="${uiLabelMap.ProductCreatedDate}">
+            <display also-hidden="false" description="${shipment.createdDate}"/>
+        </field>
+        <field position="1" use-when="shipment!=null" name="createdByUserLogin" title="${uiLabelMap.ProductCreatedByUserLogin}">
+            <display also-hidden="false" description="${shipment.createdByUserLogin}"/>
+        </field>
+        <field position="2" use-when="shipment!=null" name="lastModifiedDate" title="${uiLabelMap.ProductLastModifiedDate}">
+            <display also-hidden="false" description="${shipment.lastModifiedDate}"/>
+        </field>
+        <field position="2" use-when="shipment!=null" name="lastModifiedByUserLogin" title="${uiLabelMap.ProductLastModifiedByUserLogin}">
+            <display also-hidden="false" description="${shipment.lastModifiedByUserLogin}"/>
+        </field>
+        <field name="inspectedBy"><hidden/></field>
+        <field name="inspectionNote"><hidden/></field>
+        <field name="inspectionResult"><hidden/></field>
+        <field name="approvalStatus"><hidden/></field>
+        <field name="rejectedReason"><hidden/></field>
+        <field name="approvedBy"><hidden/></field>
+        <field name="receivedBy"><hidden/></field>
+        <field name="inspectionDescription"><hidden/></field>
+        <!-- <field use-when="shipment==null&amp;&amp;shipmentTypeId==null" name="submitButton" title="${uiLabelMap.CommonCreate}" widget-area-style="centered" widget-style="btn btn-success"> <submit button-type="button" /> </field>
+        <field use-when="shipment==null&amp;&amp;shipmentTypeId!=null&amp;&amp;shipmentTypeId.equals(&quot;PURCHASE_RETURN&quot;)" name="submitButton" title="${uiLabelMap.CommonCreate}" widget-area-style="centered" widget-style="btn btn-success"> <submit button-type="button" /> </field> -->
+        <field use-when="shipment==null" name="submitButton" title="${uiLabelMap.CommonCreate}" widget-area-style="centered" widget-style="btn btn-success">
+            <submit button-type="button"/>
+        </field>
+        <field use-when="shipment!=null" name="submitButton" title="${uiLabelMap.CommonUpdate}" widget-area-style="centered" widget-style="btn btn-success">
+            <submit button-type="button"/>
+        </field>
+        <sort-order>
+            <field-group>
+                <sort-field name="submitButton2"/>
+            </field-group>
+            
+            <sort-field name="shipmentId"/>
+            <sort-field name="shipmentTypeId"/>
+            <sort-field name="statusId"/>
+            <sort-field name="planType"/>
+            <sort-field name="primaryOrderId"/>
+            <sort-field name="primaryReturnId"/>
+            <sort-field name="primaryShipGroupSeqId"/>
+            <sort-field name="picklistBinId"/>
+            <sort-field name="eventDate"/>
+            <sort-field name="transformerId"/>
+            <sort-field name="truckNumber"/>
+            <sort-field name="trailerNumber"/>
+            <sort-field name="driverName"/>
+            <sort-field name="nrcNumber"/>
+            <sort-field name="note"/>
+            
+            <field-group title="Shipping Cost" initially-collapsed="true" collapsible="true">
+                <sort-field name="estimatedReadyDate"/>
+                <sort-field name="estimatedShipDate"/>
+                <sort-field name="estimatedArrivalDate"/>
+                <sort-field name="latestCancelDate"/>
+                <sort-field name="estimatedShipCost"/>
+                <sort-field name="currencyUomId"/>
+                <sort-field name="additionalShippingCharge"/>
+                <sort-field name="addtlShippingChargeDesc"/>
+                <sort-field name="handlingInstructions"/>
+            </field-group>
+            <field-group title="Party Information">
+                <sort-field name="partyIdFrom"/>
+                <sort-field name="originFacilityId"/>
+                <sort-field name="partyIdTo"/>
+                <sort-field name="destinationFacilityId"/>
+                <sort-field name="originContactMechId"/>
+                <sort-field name="destinationContactMechId"/>
+                <sort-field name="originTelecomNumberId"/>
+                <sort-field name="destinationTelecomNumberId"/>
+            </field-group>
+
+            <sort-field name="createdDate"/>
+            <sort-field name="lastModifiedDate"/>
+            <sort-field name="createdByUserLogin"/>
+            <sort-field name="lastModifiedByUserLogin"/>
+        </sort-order>
+    </form>
+
+    <!-- ******************* -->
+    <!-- Shipment Plan Forms -->
+    <!-- ******************* -->
+    <!-- List for Shipment Plan -->
+    <form name="listShipmentPlan" type="list" target="" title="" list-name="listShipmentPlanRows"
+          odd-row-style="alternate-row" default-table-style="basic-table hover-bar">
+        <field name="shipmentItemSeqId" title="${uiLabelMap.ProductShipmentItemSeqId}">
+            <display/>
+        </field>
+        <field name="orderId" title="${uiLabelMap.ProductOrderId}" widget-area-style="align-text" widget-style="btn-link">
+            <hyperlink target="/ordermgr/control/orderview?orderId=${orderId}" target-type="inter-app" description="${orderId}" also-hidden="false"/>
+        </field>
+        <field name="orderItemSeqId" title="${uiLabelMap.ProductOrderItem}">
+            <display/>
+        </field>
+        <field name="shipGroupSeqId">
+            <display/>
+        </field>
+        <field name="productId" title="${uiLabelMap.ProductProductId}">
+            <display/>
+        </field>
+        <!-- quantity planned in this shipment -->
+        <field name="quantity" title="${uiLabelMap.ProductQuantity}">
+            <display/>
+        </field>
+        <!-- quantity issued in this shipment -->
+        <field name="issuedQuantity" title="${uiLabelMap.ProductIssuedQuantity}">
+            <display/>
+        </field>
+        <!-- total ordered quantity -->
+        <field name="totOrderedQuantity" title="${uiLabelMap.ProductTotOrderedQuantity}">
+            <display/>
+        </field>
+        <!-- total not available quantity -->
+        <field name="notAvailableQuantity" title="${uiLabelMap.ProductNotAvailable}">
+            <display/>
+        </field>
+        <!-- total planned quantity not issued -->
+        <field name="totPlannedQuantity" title="${uiLabelMap.ProductTotPlannedQuantity}">
+            <display/>
+        </field>
+        <!-- total issued quantity -->
+        <field name="totIssuedQuantity" title="${uiLabelMap.ProductTotIssuedQuantity}">
+            <display/>
+        </field>
+        <!-- planned weight -->
+        <field name="weight" title="${uiLabelMap.ProductWeight}">
+            <display/>
+        </field>
+        <field name="weightUom" title="${uiLabelMap.CommonUom}">
+            <display/>
+        </field>
+        <!-- planned volume -->
+        <field name="volume" title="${uiLabelMap.CommonVolume}">
+            <display/>
+        </field>
+        <field name="volumeUom" title="${uiLabelMap.CommonUom}">
+            <display/>
+        </field>
+        <field use-when="!&quot;SHIPMENT_CANCELLED&quot;.equals(statusId)" name="deleteLink" title="${uiLabelMap.FormFieldTitle_actionEnumId}" widget-style="btn btn-mini btn-danger">
+            <hyperlink target="removeOrderShipmentFromShipment?routeId=${parameters.routeId}" description="${uiLabelMap.CommonDelete}" also-hidden="false">
+                <parameter param-name="shipmentId"/>
+                <parameter param-name="shipmentItemSeqId"/>
+                <parameter param-name="orderId"/>
+                <parameter param-name="orderItemSeqId"/>
+                <parameter param-name="shipGroupSeqId"/>
+            </hyperlink>
+        </field>
+    </form>
+    <form name="addToShipmentPlan" type="multi" target="addToShipmentPlan?shipmentId=${shipmentId}&amp;routeId=${parameters.routeId}" title="" list-name="addToShipmentPlanRows"
+          odd-row-style="alternate-row" default-table-style="basic-table hover-bar">
+        <field name="shipmentId">
+            <hidden/>
+        </field>
+        <field name="orderId">
+            <hidden/>
+        </field>
+        <field name="orderItemSeqId">
+            <hidden/>
+        </field>
+        <field name="orderId" title="${uiLabelMap.ProductOrderId}">
+            <display/>
+        </field>
+        <field name="orderItemSeqId" title="${uiLabelMap.ProductOrderItem}">
+            <display/>
+        </field>
+        <field name="shipGroupSeqId">
+            <display/>
+        </field>
+        <field name="productId" title="${uiLabelMap.ProductProductId}">
+            <display/>
+        </field>
+        <!-- ordered quantity -->
+        <field name="orderedQuantity" title="${uiLabelMap.ProductOrderedQuantity}">
+            <display/>
+        </field>
+        <!-- planned quantity not issued -->
+        <field name="plannedQuantity" title="${uiLabelMap.ProductPlannedQuantity}">
+            <display/>
+        </field>
+        <!-- issued quantity -->
+        <field name="issuedQuantity" title="${uiLabelMap.ProductIssuedQuantity}">
+            <display/>
+        </field>
+        <!-- quantity for plan -->
+        <field name="quantity" title="${uiLabelMap.ProductQuantity}">
+            <text default-value="${addToShipmentPlanRows.quantity}"/>
+        </field>
+        <!-- planned weight -->
+        <field name="weight" title="${uiLabelMap.ProductWeight}">
+            <display/>
+        </field>
+        <field name="weightUom" title="${uiLabelMap.CommonUom}">
+            <display/>
+        </field>
+        <!-- planned volume -->
+        <field name="volume" title="${uiLabelMap.CommonVolume}">
+            <display/>
+        </field>
+        <field name="volumeUom" title="${uiLabelMap.CommonUom}">
+            <display/>
+        </field>
+        <field use-when="!(&quot;SHIPMENT_PICKED&quot;.equals(statusId) || &quot;SHIPMENT_PACKED&quot;.equals(statusId) || &quot;SHIPMENT_SHIPPED&quot;.equals(statusId) || &quot;SHIPMENT_DELIVERED&quot;.equals(statusId))" name="submitButton" title="${uiLabelMap.CommonAdd}" widget-style="btn btn-success">
+            <submit button-type="button"/>
+        </field>
+    </form>
+
+    <!-- Search by Order Id -->
+    <form name="findPurchaseOrderItems" type="single" target="EditShipmentPlan" title=""
+          header-row-style="header-row" default-table-style="basic-table">
+        <field name="action">
+            <hidden value="search"/>
+        </field>
+        <field name="shipmentId">
+            <hidden/>
+        </field>
+        <field name="orderId" entry-name="shipment.primaryOrderId" title="${uiLabelMap.ProductOrderId}">
+            <lookup target-form-name="LookupPurchaseOrderHeaderAndShipInfo"/>
+        </field>
+        <field name="shipGroupSeqId" entry-name="shipment.primaryShipGroupSeqId">
+            <text/>
+        </field>
+        <field name="submitButton" title="${uiLabelMap.CommonSubmit}" widget-style="btn btn-success">
+            <submit button-type="button"/>
+        </field>
+    </form>
+    <form name="findOrderItems" type="single" target="EditShipmentPlan?shipmentId=${shipmentId}" title=""
+          header-row-style="header-row" default-table-style="basic-table">
+        <field name="action">
+            <hidden value="search"/>
+        </field>
+        <!-- <field name="shipmentId">
+            <hidden/>
+        </field> -->
+        <!-- <field name="orderId" entry-name="shipment.primaryOrderId"  title="${uiLabelMap.ProductOrderId}">
+            <lookup target-form-name="LookupOrderHeaderAndShipInfo" />       
+        </field> -->
+        <field name="orderId" entry-name="shipment.primaryOrderId" title="${uiLabelMap.ProductOrderId}">
+            <lookup target-form-name="LookupOrder"/>
+        </field>
+        <field name="shipGroupSeqId" entry-name="shipment.primaryShipGroupSeqId">
+            <text/>
+        </field>
+        <field use-when="!&quot;SHIPMENT_CANCELLED&quot;.equals(statusId)" name="submitButton" title="${uiLabelMap.CommonSubmit}" widget-style="btn btn-success">
+            <submit button-type="button"/>
+        </field>
+    </form>
+    <form name="ShipmentReceipts" type="list" target="" title="" list-name="shipmentReceiptList"
+          odd-row-style="alternate-row" default-table-style="basic-table hover-bar">
+        <actions>
+            <entity-and entity-name="ShipmentReceipt" list="shipmentReceiptList">
+                <field-map field-name="shipmentId" from-field="shipmentId"/>
+            </entity-and>
+        </actions>
+        <auto-fields-entity entity-name="ShipmentReceipt" map-name="shipmentReceipt" default-field-type="display"/>
+        <field name="shipmentId">
+            <hidden/>
+        </field>
+        <field name="orderItemSeqId">
+            <hidden/>
+        </field>
+        <field name="orderId" widget-style="btn-link">
+            <hyperlink target="/ordermgr/control/orderview" target-type="inter-app" description="${orderId} - ${orderItemSeqId}">
+                <parameter param-name="orderId"/>
+            </hyperlink>
+        </field>
+        <field name="inventoryItemId" widget-style="btn-link">
+            <hyperlink target="EditInventoryItem" description="${inventoryItemId}">
+                <parameter param-name="inventoryItemId"/>
+            </hyperlink>
+        </field>
+    </form>
+
+    <form name="FindOrdersByRoute" type="single" target="FindOrdersFromRoute?shipmentId=${shipmentId}" title=""
+          header-row-style="header-row" default-table-style="basic-table">
+        <field name="action">
+            <hidden value="search"/>
+        </field>
+        <field name="routeId" title="Route Id">
+            <lookup target-form-name="LookupRoute"/>
+        </field>
+        <field name="submitButton" title="${uiLabelMap.CommonSubmit}" widget-style="btn btn-primary">
+            <submit button-type="button"/>
+        </field>
+    </form>
+
+    <form name="addToCustomerPlan" type="list" target="EditShipmentPlan" title="" list-name="ordersFromRoute"
+          odd-row-style="alternate-row" default-table-style="basic-table hover-bar" paginate-target="EditShipmentPlan" paginate="true">
+        <row-actions>
+            <entity-one entity-name="OrderHeader">
+            </entity-one>
+        </row-actions>
+        <field name="routeId">
+            <hidden value="${parameters.routeId}"/>
+        </field>
+        <field name="action">
+            <hidden value="search"/>
+        </field>
+        <field name="shipmentId">
+            <hidden/>
+        </field>
+        <field name="orderId" title="Order Id">
+            <display/>
+        </field>
+        <field name="orderName" title="Order Name">
+            <display/>
+        </field>
+        <field name="partyId" title="Customer Name">
+            <display/>
+        </field>
+        <field name="submitButton" title="${uiLabelMap.CommonAdd}" widget-style="btn btn-success">
+            <submit button-type="button"/>
+        </field>
+    </form>
+
+    <form name="FindRoute" type="single" target="" title="">
+        <field name="action">
+            <hidden value="search"/>
+        </field>
+        <field name="routeName" title="Route Name">
+            <text/>
+        </field>
+        <field name="noConditionFind">
+            <hidden value="Y"/>
+            <!-- if this isn't there then with all fields empty no query will be done -->
+        </field>
+        <field name="submit" title="${uiLabelMap.CommonFind}" widget-style="btn btn-primary">
+            <submit button-type="button"/>
+        </field>
+    </form>
+
+    <form name="ListRoute" type="list" list-name="listRoutes" odd-row-style="alternate-row"
+          default-table-style="basic-table hover-bar" paginate-target="">
+        <field name="routeId" title="Route Id">
+            <display/>
+        </field>
+        <field name="routeName" title="Route Name">
+            <display/>
+        </field>
+        <field name="origin" title="Origin">
+            <display/>
+        </field>
+        <field name="destination" title="Destination">
+            <display/>
+        </field>
+    </form>
+
+    <form name="CreateRoute" target="EditRoute" title="" type="single"
+          header-row-style="header-row" default-table-style="basic-table">
+        <field name="routeName" title="Route Name">
+            <text size="20"/>
+        </field>
+        <field name="origin" title="Origin">
+            <text size="20"/>
+        </field>
+        <field name="destination" title="Destination">
+            <text size="20"/>
+        </field>
+        <field name="submitButton" title="${uiLabelMap.CommonSubmit}" widget-style="btn btn-success">
+            <submit button-type="button"/>
+        </field>
+    </form>
+
+    <!-- Verify Pick in Shipment -->
+    <form name="VerifyPickInShipment" type="single" target="VerifyPickShipment?facilityId=${parameters.facilityId}&amp;mode=${requestParameters.mode}" title=""
+          header-row-style="header-row" default-table-style="basic-table">
+        <field name="action">
+            <hidden value="search"/>
+        </field>
+        <field name="shipmentId" title="${uiLabelMap.ProductShipmentId}">
+            <lookup target-form-name="LookupShipment"/>
+        </field>
+        <field name="submitButton" title="${uiLabelMap.CommonSubmit}" widget-style="btn btn-primary">
+            <submit button-type="button"/>
+        </field>
+    </form>
+    <form name="addToPickPlan" type="list" target="VerifyPickShipment?facilityId=${facilityId}&amp;mode=${requestParameters.mode}&amp;shipmentId=${parameters.shipmentId}" title=""
+          list-name="picklistBin"
+          odd-row-style="alternate-row" default-table-style="basic-table hover-bar">
+        <row-actions>
+            <entity-one entity-name="PicklistAndBinAndItem">
+            </entity-one>
+        </row-actions>
+        <field name="picklistBinId" title="PickList Bin Id">
+            <display/>
+        </field>
+        <field name="orderId" title="Order Id">
+            <display/>
+        </field>
+        <field name="picklistId" title="Issuance Complete">
+            <display description="${pick3.${picklistBinId}}"/>
+        </field>
+        <field use-when="${pick6.${picklistBinId}}==false" name="submitButton" title="Verify Order" widget-style="btn btn-success">
+            <submit button-type="button"/>
+        </field>
+    </form>
+
+
+    <!-- Pack in Shipment form -->
+
+    <form name="PackInShipment" type="single" target="" title="" header-row-style="header-row" default-table-style="basic-table">
+        <field name="action">
+            <hidden value="search"/>
+        </field>
+        <field name="shipmentId" title="${uiLabelMap.ProductShipmentId}">
+            <lookup target-form-name="LookupShipment"/>
+        </field>
+        <field name="submitButton" title="${uiLabelMap.CommonSubmit}" widget-style="btn btn-primary">
+            <submit button-type="button"/>
+        </field>
+    </form>
+    <form name="addToPackPlan" type="list" target="PackOrderShipment?facilityId=${facilityId}&amp;mode=${requestParameters.mode}&amp;shipmentId=${parameters.shipmentId}" title=""
+          list-name="pickLists"
+          odd-row-style="alternate-row" default-table-style="basic-table hover-bar" paginate-target="">
+        <row-actions>
+            <entity-one entity-name="PicklistAndBinAndItem">
+            </entity-one>
+        </row-actions>
+        <field name="picklistBinId">
+            <display/>
+        </field>
+        <field name="orderId" title="Order Id">
+            <display/>
+        </field>
+        <field name="picklistId" title="Issuance Complete">
+            <display description="${pick3.${picklistBinId}}"/>
+        </field>
+        <field name="" title="Pack Item">
+            <display description="${pick8.${picklistBinId}}"/>
+        </field>
+        <field use-when="${pick6.${picklistBinId}}==false" name="submitButton" title="Pack Order" widget-style="btn btn-success">
+            <submit button-type="button"/>
+        </field>
+    </form>
+
+
+    <!-- Transfer Shipment Forms-->
+    <form name="EditTransferShipment" type="single"
+          target="validateTransferUpdateShipment" title="" default-map-name="shipment"
+          header-row-style="header-row" default-table-style="basic-table">
+        <alt-target use-when="shipment==null&amp;&amp;shipmentTypeId==null" target="createTransferShipment"/>
+        <field name="shipmentId">
+            <hidden/>
+        </field>
+        <field use-when="shipment==null" name="shipmentTypeId" title="${uiLabelMap.ProductShipmentTypeId}">
+            <hidden value="TRANSFER"/>
+        </field>
+        <field use-when="shipment!=null" name="statusId" title="${uiLabelMap.ProductStatusId}">
+            <drop-down allow-empty="false" current="first-in-list" current-description="${currentStatus.description}">
+                <entity-options entity-name="StatusValidChangeToDetail" key-field-name="statusIdTo" description="${transitionName} (${description})">
+                    <entity-constraint name="statusId" value="${shipment.statusId}"/>
+                    <entity-order-by field-name="sequenceId"/>
+                </entity-options>
+            </drop-down>
+        </field>
+        <field position="1" name="estimatedShipDate" title="${uiLabelMap.ProductEstimatedShipDate}">
+            <date-time/>
+        </field>
+        <field position="2" name="estimatedArrivalDate" title="${uiLabelMap.ProductEstimatedArrivalDate}">
+            <date-time/>
+        </field>
+
+        <field name="methodOfApportion" parameter-name="methodOfApportion" required-field="true" position="1">
+            <drop-down allow-empty="true">
+                <option key="BASED_ON_VALUE" description="Based on Value"/>
+                <option key="BASED_ON_QUANTITY" description="Based on Quantity"/>
+            </drop-down>
+        </field>
+        <field position="2" name="originFacilityId" title="${uiLabelMap.ProductOriginFacility}" required-field="true">
+            <drop-down allow-empty="false" current="first-in-list" size="1">
+                <entity-options entity-name="Facility" key-field-name="facilityId" description="${facilityName} [${facilityId}]">
+                    <entity-order-by field-name="facilityName"/>
+                </entity-options>
+            </drop-down>
+        </field>
+        <field position="1" name="destinationFacilityId" title="${uiLabelMap.ProductDestinationFacility}" required-field="true">
+            <drop-down allow-empty="false" current="first-in-list">
+                <entity-options entity-name="Facility" key-field-name="facilityId" description="${facilityName} [${facilityId}]">
+                    <entity-order-by field-name="facilityName"/>
+                </entity-options>
+            </drop-down>
+        </field>
+        <field position="1" name="estimatedShipCost" title="${uiLabelMap.ProductEstimatedShipCost}">
+            <text/>
+        </field>
+        <field position="2" name="currencyUomId" title="${uiLabelMap.ProductCurrencyUomId}">
+            <drop-down allow-empty="true" no-current-selected-key="${defaultOrganizationPartyCurrencyUomId}">
+                <entity-options key-field-name="uomId" description="${description} - ${abbreviation}" entity-name="Uom">
+                    <entity-constraint name="uomTypeId" operator="equals" value="CURRENCY_MEASURE"/>
+                    <entity-order-by field-name="description"/>
+                </entity-options>
+            </drop-down>
+        </field>
+        <field position="1" name="additionalShippingCharge" title="${uiLabelMap.ProductAdditionalShippingCharge}">
+            <text/>
+        </field>
+        <field position="1" name="addtlShippingChargeDesc">
+            <textarea/>
+        </field>
+        <field position="2" name="handlingInstructions" title="${uiLabelMap.ProductHandlingInstructions}">
+            <textarea/>
+        </field>
+        <field name="submitButton" use-when="shipment==null" title="${uiLabelMap.CommonCreate}" widget-area-style="centered" widget-style="btn btn-success">
+            <submit button-type="button"/>
+        </field>
+        <field name="submitButton" title="${uiLabelMap.CommonUpdate}" widget-area-style="centered" widget-style="btn btn-success">
+            <submit button-type="button"/>
+        </field>
+
+        <sort-order>
+            <sort-field name="shipmentId"/>
+            <sort-field name="shipmentTypeId"/>
+            <sort-field name="statusId"/>
+            <sort-field name="destinationFacilityId"/>
+            <sort-field name="originFacilityId"/>
+            <sort-field name="estimatedShipDate"/>
+            <sort-field name="estimatedArrivalDate"/>
+            <sort-field name="estimatedShipCost"/>
+            <sort-field name="currencyUomId"/>
+            <sort-field name="additionalShippingCharge"/>
+            <sort-field name="addtlShippingChargeDesc"/>
+            <sort-field name="handlingInstructions"/>
+            <sort-field name="methodOfApportion"/>
+        </sort-order>
+    </form>
+
+    <form name="ListShipmentItems" type="list" list-name="listIt" paginate-target="" separate-columns="true"
+          odd-row-style="alternate-row" header-row-style="header-row-2" default-table-style="basic-table hover-bar">
+        <actions>
+            <service service-name="performFind" result-map="result" result-map-list="listIt">
+                <field-map field-name="inputFields" from-field="parameters"/>
+                <field-map field-name="entityName" value="ShipmentItem"/>
+                <field-map field-name="orderBy" from-field="parameters.sortField"/>
+                <field-map field-name="viewIndex" from-field="viewIndex"/>
+                <field-map field-name="viewSize" from-field="viewSize"/>
+            </service>
+        </actions>
+        <row-actions>
+            <entity-one entity-name="Product" auto-field-map="true" value-field="product"/>
+        </row-actions>
+        <field name="shipmentId">
+            <hidden/>
+        </field>
+        <field name="shipmentItemId">
+            <hidden/>
+        </field>
+        <field name="productId">
+            <display description="${product.productId} - ${product.internalName}"/>
+        </field>
+        <field name="quantity">
+            <display/>
+        </field>
+        <field name="deleteLink" title="${uiLabelMap.FormFieldTitle_actionEnumId}" widget-style="btn btn-mini btn-danger">
+            <hyperlink target="deleteTransferShipmentItem" request-confirmation="true" description="${uiLabelMap.CommonDelete}" also-hidden="false"
+                       confirmation-message="${uiLabelMap.CommonConfirmDelete}" image-location="${iconsLocation}/delete.png">
+                <parameter param-name="shipmentId"/>
+                <parameter param-name="shipmentItemId"/>
+            </hyperlink>
+        </field>
+        <on-event-update-area event-type="submit" area-id="ListShipmentItems" area-target="ListShipmentItems?shipmentId=${parameters.shipmentId}"/>
+    </form>
+    <form name="AddTransferShipmentItems" type="single" target="createTransferShipmentItem">
+        <field name="shipmentId">
+            <display/>
+        </field>
+        <field name="productId" required-field="true">
+            <lookup target-form-name="LookupProduct"/>
+        </field>
+        <field name="quantity" required-field="true">
+            <text/>
+        </field>
+        <field name="submitButton" title="${uiLabelMap.CommonCreate}" widget-style="btn btn-success">
+            <submit button-type="button"/>
+        </field>
+        <on-event-update-area event-type="submit" area-id="ListShipmentItems" area-target="ListShipmentItems?shipmentId=${parameters.shipmentId}"/>
+        <!--<on-event-update-area event-type="submit" area-id="ListShipmentItems" area-target="AddTransferShipmentItems"/> JLR: this does not seem to be useful-->
+    </form>
+
+    <form name="FindInventoryItem" type="single">
+        <field name="productId" title="Product">
+            <drop-down allow-empty="false">
+                <list-options list-name="productList" description="${internalName}" key-name="productId"/>
+            </drop-down>
+        </field>
+        <field name="lotId" title="${uiLabelMap.ProductLotId}">
+            <text/>
+        </field>
+        <field name="binNumber" title="${uiLabelMap.ProductBinNumber}" position="2">
+            <text/>
+        </field>
+        <field name="facilityId">
+            <display default-value="${facilityId}"/>
+        </field>
+        <!-- <field name="dateTimeManufacturedFrom">
+             <date-time type="date"/>
+         </field>
+         <field name="dateTimeManufacturedTo" position="2">
+             <date-time type="date"/>
+         </field>-->
+        <field name="submitButton" title="${uiLabelMap.CommonSubmit}" widget-style="btn btn-primary">
+            <submit button-type="button"/>
+        </field>
+    </form>
+
+    <form name="InventoryListTransferShipment" list-name="listIt" header-row-style="header-row-2"
+          paginate-target="InventoryListForTransferShipment" odd-row-style="alternate-row"
+          default-table-style="basic-table hover-bar" type="list" use-row-submit="false" target="issueInventoryForTransferShipment">
+        <actions>
+            <set field="parameters.availableToPromiseTotal" value="0"/>
+            <set field="parameters.availableToPromiseTotal_op" value="greaterThan"/>
+            <service service-name="performFind" result-map="results" result-map-list="listIt">
+                <field-map field-name="inputFields" from-field="parameters"/>
+                <field-map field-name="entityName" value="InventoryItem"/>
+                <field-map field-name="viewIndex" from-field="viewIndex"/>
+                <field-map field-name="viewSize" from-field="viewSize"/>
+                <field-map field-name="noConditionFind" value="N"/>
+            </service>
+        </actions>
+        <row-actions>
+            <entity-one entity-name="Product" value-field="product"/>
+        </row-actions>
+        <field name="inventoryItemId">
+            <display also-hidden="true" default-value="${inventoryItemId}"/>
+        </field>
+        <field name="shipmentId">
+            <hidden value="${shipmentId}"/>
+        </field>
+        <field name="shipmentItemSeqId">
+            <hidden value="${parameters.shipmentItemSeqId}"/>
+        </field>
+        <field name="productId" widget-style="btn-link">
+            <hyperlink description="${productId}"
+                       target="/catalog/control/EditProductInventoryItems" target-type="inter-app">
+                <parameter param-name="productId"/>
+            </hyperlink>
+        </field>
+        <field name="internalName">
+            <display description="${product.internalName}"/>
+        </field>
+        <field name="availableToPromiseTotal">
+            <display/>
+        </field>
+        <field name="quantityOnHandTotal">
+            <display/>
+        </field>
+        <field name="datetimeReceived" title="DateTime Received">
+            <display/>
+        </field>
+        <field name="datetimeManufactured" title="Datetime Manufactured">
+            <display/>
+        </field>
+        <field name="submitButton" title="Issue" widget-style="btn btn-primary">
+            <submit button-type="button"/>
+        </field>
+    </form>
+    <!-- ===================== -->
+    
+    <!-- <form name="listThirdParty" type="list" list-name="shipmentInvoices"
+        target="ClearRequestInventoryProduct?facilityId=${parameters.facilityId}" use-row-submit="true" odd-row-style="alternate-row"
+        default-table-style="basic-table hover-bar" separate-columns="true">
+        <field name="facilityId"><hidden/></field>
+        <field name="shipmentId"><hidden/></field>
+        <field name="shipInvId"><hidden/></field>
+        <field name="partyId" title="Third Party Name">
+            <display-entity entity-name="PartyGroup" description="${partyId} - ${groupName}" key-field-name="partyId">
+            </display-entity>
+        </field>
+        <field name="invoiceIds" title="Applied Invoices">
+            <display />
+        </field>
+        <field name="showInvoices" title="Show Invoices" use-when="invoiceIds == null">
+            <lookup target-form-name="showInvoices" target-parameter="partyId,shipmentId,shipInvId" size="0" show-description="true" default-value="Show invoices">
+            </lookup> 
+        </field>
+    </form> -->
+
+</forms>

@@ -1,0 +1,104 @@
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<zk>
+	<zscript>
+		import org.ofbiz.entity.*;
+		import org.ofbiz.entity.condition.*;
+		import org.zkoss.zul.*;
+		GenericValue userLogin = (GenericValue) Executions.getCurrent()
+				.getDesktop().getSession().getAttribute("userLogin");
+		GenericDelegator delegator = userLogin.getDelegator();
+		Set fieldToSelect = new HashSet();
+		fieldToSelect.add("responsibilityTypeId");
+		fieldToSelect.add("description");
+		List employeeResponsibility = null;
+		employeeResponsibility = delegator.findList("ResponsibilityType", null,	fieldToSelect, null, null, false);
+		employeeResponsibilityArray = employeeResponsibility.toArray(new GenericValue[employeeResponsibility.size()]);
+		SimpleListModel responsibilityList = new SimpleListModel(employeeResponsibilityArray);
+		public class ResponsibilityItemRenderer implements ListitemRenderer {
+			public ResponsibilityItemRenderer() {
+			}
+	
+			public void render(Listitem li, Object data) {
+				if (data instanceof GenericValue) {
+					GenericValue val = (GenericValue) data;
+					li.setLabel(val.getString("description"));
+					li.setValue(val.getString("responsibilityTypeId"));
+				}
+			}
+		}
+		ListitemRenderer responsibilityItemRenderer = new ResponsibilityItemRenderer();
+		GenericValue gv = (GenericValue) Executions.getCurrent().getArg().get("gv");
+		String positionId = (String) gv.getString("emplPositionId");
+		Grid positionGrid = arg.get("positionGrid");
+	</zscript>
+	<window id="addPartyResponsibilityWindow" border="normal" maximizable="true"
+		style="background-color:#B2A4F2; border:1px solid #8E83C1;"
+		height="60%" width="45%" closable="true"
+		contentStyle="overflow:auto">
+		<caption label="${c:l('HRMS_ADD_RESPONSIBILITY') }"></caption>
+		<separator height="20px" />
+		<hbox>
+			<div align="right" width="165px">
+				<label value="${c:l('HRMS_RESPONSIBILITY_TYPE') }"
+					style="font-weight:bold" />
+				<label value="*" style="color:red"></label>
+			</div>
+			<div align="left">
+				<listbox id="responsibilityTypeId"
+					itemRenderer="${responsibilityItemRenderer}"
+					model="${responsibilityList}" checkmark="true" multiple="true"
+					onSelect="Clients.closeErrorBox(self)" />
+			</div>
+		</hbox>
+		<textbox id="positionId" value="${positionId}"	visible="false"/>
+		<separator />
+		<hbox>
+			<div align="right" width="165px">
+				<label value="${c:l('HRMS_FROMDATE') }" style="font-weight:bold" />
+				<label value="*" style="color:red"></label>
+			</div>
+			<div align="left">
+				<datebox id="fromDate"
+					constraint="no past : ${c:l('HRMS_FROM_DATE_CANNOT_BE_PAST') }" />
+			</div>
+			<div align="right" width="120px">
+				<label value="${c:l('HRMS_THRUDATE') }" style="font-weight:bold" />
+			</div>
+			<div align="left">
+				<datebox id="thruDate"/>
+			</div>
+		</hbox>
+		<separator />
+		<hbox>
+			<div align="right" width="165px">
+				<label value="${c:l('HRMS_ADDITIONAL_RESPONSIBILITY') }"
+					style="font-weight:bold" />
+			</div>
+			<div align="left">
+				<textbox id="responsibilitySubType" rows="4" cols="50" />
+			</div>
+		</hbox>
+		<separator />
+		<zscript>
+			<![CDATA[
+				import org.zkoss.util.resource.Labels;
+				void validateForm() {
+					if (responsibilityTypeId.getSelectedItem() == null) {
+						throw new WrongValueException(responsibilityTypeId,
+								Labels.getLabel("HRMS_APRS_REQUIRED_RESPONSIBILITY_TYPE"));
+					}
+					if(fromDate.getValue() == null)
+						throw new WrongValueException(fromDate,Labels.getLabel("HRMS_REQUIRED_FROM_DATE"));
+				}
+			]]>
+		</zscript>
+		<hbox>
+			<div align="right" width="285px">
+				<button label="${c:l('HRMS_ADD') }"
+					onClick='validateForm();com.ndz.controller.UpdateEmployeeProfileController.addEmployeeResponsibility(event);Events.postEvent("onReloadRequest", positionGrid,null);addPartyResponsibilityWindow.detach();' />
+				<button label="${c:l('HRMS_CANCEL') }"
+					onClick="addPartyResponsibilityWindow.detach()" />
+			</div>
+		</hbox>
+	</window>
+</zk>

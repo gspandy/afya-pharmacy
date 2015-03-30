@@ -1,0 +1,85 @@
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<?page title="new page title" contentType="text/html;charset=UTF-8"?>
+<?xel-method prefix="u" name="format" class="org.ofbiz.base.util.UtilDateTime" signature="java.lang.String toDateString(java.util.Date date, java.lang.String format)"?>
+
+<zk>
+	<zscript>
+	import com.hrms.composer.*;
+	import org.ofbiz.entity.condition.EntityCondition;
+	import org.ofbiz.entity.condition.EntityOperator;
+	TimeEntryComposer timeEntrycomposer = new TimeEntryComposer();
+</zscript>
+	<window title="${c:l('HRMS_TIME_ENTRY') }" border="normal"
+		apply="${timeEntrycomposer}" self="@{define(content)}">
+		<separator height="20px"></separator>
+		<grid id="timeEntriesGrid"
+			model="@{timeEntrycomposer.model}">
+			<columns>
+				<column label="${c:l('HRMS_TIME_ENTRY_ID') }"></column>
+				<column label="${c:l('HRMS_DAY') }"></column>
+				<column label="${c:l('HRMS_HOURS') }"></column>
+				<column label="${c:l('FormFieldTitle_comments') }"></column>
+			</columns>
+			<rows>
+				<row self="@{each='zk1'}" value="@{zk1}">
+					<custom-attributes entity="@{zk1}" />
+					<label value="@{zk1.timeEntryId}"></label>
+					<label value="@{zk1.fromDate,converter='org.zkoss.zkplus.databind.DateFormatConverter'}"  self="@{format(dd-MM-yyyy)}" />
+					<decimalbox value="@{zk1.hours,save-when='saveTimeEntries.onClick'}" cols="4" format="#,##0.##" constraint="no negative: ${c:l('HRMS_HOURS_MUST_BE_GREATER_THAN_OR_EQUAL_TO_ZERO') }">
+						<attribute name="onBlur"><![CDATA[
+							org.ofbiz.entity.GenericValue timesheet = ((org.ofbiz.entity.GenericValue)self.getParent().getValue());
+							List employmentList = checkJoinigDate(timesheet);
+							if(org.ofbiz.base.util.UtilValidate.isEmpty(employmentList)){
+								if(self.getValue() != null && !(self.getValue().compareTo(new java.math.BigDecimal(0)) == 0)){
+								 throw new WrongValueException(self,org.zkoss.util.resource.Labels.getLabel("ET_HOURS_MUST_BE_ZERO_BEFORE_JOINING_DATE"));
+								}else
+								 self.clearErrorMessage();
+								self.setValue(new java.math.BigDecimal(0));
+							}
+							]]></attribute>
+					</decimalbox>
+					<textbox value="@{zk1.comments,save-when='saveTimeEntries.onClick'}" rows="2" cols="40">
+						<attribute name="onBlur">
+							org.ofbiz.entity.GenericValue timesheet = ((org.ofbiz.entity.GenericValue)self.getParent().getValue());
+							List employmentList = checkJoinigDate(timesheet);
+							if(org.ofbiz.base.util.UtilValidate.isEmpty(employmentList))
+								self.setValue("");
+						</attribute>
+					</textbox>
+				</row>
+			</rows>
+		</grid>
+		<box align="center" width="100%">
+		<button id="saveTimeEntries" label="${c:l('btnSave') }" onClick="validate();"></button>
+		<zscript><![CDATA[
+	List checkJoinigDate(org.ofbiz.entity.GenericValue timesheet){
+		java.text.SimpleDateFormat dateFormat = new java.text.SimpleDateFormat("yyyy-MM-dd hh:mm:ss.SSS");
+		java.util.Date parsedDate = dateFormat.parse(timesheet.getString("fromDate"));
+		EntityCondition employmentCondition1 = EntityCondition.makeCondition("partyIdTo", EntityOperator.EQUALS, timesheet.getString("partyId"));
+		EntityCondition employmentCondition2 = EntityCondition.makeCondition("fromDate", EntityOperator.LESS_THAN_EQUAL_TO, 
+								org.ofbiz.base.util.UtilDateTime.getDayEnd(new java.sql.Timestamp(parsedDate.getTime())));
+		EntityCondition employmentCondition = EntityCondition.makeCondition(employmentCondition1,EntityOperator.AND, employmentCondition2);
+		List employmentList = timesheet.getDelegator().findList("Employment", employmentCondition, null, null, null,false);
+		return employmentList;
+		}
+		void validate(){
+			for (Iterator iter = timeEntriesGrid.getFellows().iterator(); iter.hasNext();) {
+			Component c = (Component) iter.next();
+			if (c instanceof Decimalbox) {
+				java.math.BigDecimal bi = ((Decimalbox) c).getValue();
+				java.math.BigDecimal maxHour = new java.math.BigDecimal(24);
+				java.math.BigDecimal minHour = new java.math.BigDecimal(0);
+				if(bi != null){
+					if((bi.compareTo(maxHour)== 1) || (bi.compareTo(minHour) == -1)){
+						throw new WrongValueException(c,org.zkoss.util.resource.Labels.getLabel("ET_HOURS_CANNOT_BE_GREATER_THAN_24_OR_CANNOT_BE_LESS_THAN_ZERO"));
+					}
+				}else{
+					((Decimalbox) c).setValue(new java.math.BigDecimal(0));
+				}
+			}
+		}
+		}
+		]]></zscript>
+		</box>
+	</window>
+</zk>

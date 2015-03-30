@@ -1,0 +1,71 @@
+<?init class="org.zkoss.zkplus.databind.AnnotateDataBinderInit" arg0="./loanInfoWindow"?>
+<zk>
+	<zscript>
+<![CDATA[
+	import org.ofbiz.entity.*;
+	import org.ofbiz.base.util.*;
+	import org.ofbiz.humanresext.util.*;
+	GenericDelegator delegator = com.ndz.zkoss.util.HrmsInfrastructure.getDelegator();//GenericDelegator.getGenericDelegator("default");
+	GenericValue userLogin = (GenericValue) Executions.getCurrent()
+			.getDesktop().getSession().getAttribute("userLogin");
+	String partyId = (String) userLogin.getString("partyId");
+	GenericValue emplPosTypeIdOfPartyGv = null;
+	emplPosTypeIdOfPartyGv = HumanResUtil.getEmplPositionForParty(partyId,
+			delegator);
+	String emplPosTypeIdOfParty = null;
+	if (emplPosTypeIdOfPartyGv != null) {
+		emplPosTypeIdOfParty = emplPosTypeIdOfPartyGv
+				.getString("emplPositionTypeId");
+	}
+	List leaveInfoList = null;
+	List leaveLimitList = null;
+	leaveInfoList = delegator.findByAnd("EmployeeLoanDetail", UtilMisc.toMap("partyId", partyId));
+	BindingListModelList model = new BindingListModelList(leaveInfoList,false);
+	
+]]>
+</zscript>
+	<window border="normal" id="loanInfoWindow" width="50%" height="50%" contentStyle="overflow:auto" closable="true" maximizable="true">
+		<caption label="Loan Information" style="font-weight:bold"></caption>
+		<separator height="10px"></separator>
+		<listbox id="leaveLimitListbox">
+		<attribute name="onCreate">
+			List loanLimitList = com.ndz.zkoss.HrmsUtil.getEmployeeLoanInfo(emplPosTypeIdOfParty,partyId);
+			SimpleListModel loanList = new SimpleListModel(loanLimitList);
+			self.setModel(loanList);
+		</attribute>
+			<listhead>
+				<listheader label="Loan Type" style="font-weight:bold" />
+				<listheader label="Loan Limit" style="font-weight:bold"/>
+				<listheader label="Tenure in Years" style="font-weight:bold" />
+				<listheader label="Interest" style="font-weight:bold"  />
+				
+				<listheader label="Currency" style="font-weight:bold" />
+			</listhead>
+			<listitem self="@{each='zk'}">
+				<listcell label="@{zk.description}"></listcell>
+				<listcell label="@{zk.loanAmount,converter='com.ndz.zkoss.util.CurrencyFormatter'}"></listcell>
+				<listcell label="@{zk.hr_period}"></listcell>
+				<listcell label="@{zk.interest,converter='com.ndz.zkoss.util.CurrencyFormatter'}"></listcell>
+				
+				<listcell label="@{zk.currencyUomId}"></listcell>
+			</listitem>
+		</listbox>
+		<separator />
+		<listbox id="leaveInfoListbox" model="@{model}">
+			<listhead>
+				<listheader label="Loan Type" />
+				<listheader label="Balance Loan Limit"  />
+				<listheader label="Availed Loan" id="availedLoan"/>
+			</listhead>
+			<listitem self="@{each='data'}">
+				<listcell label="@{data.description}"></listcell>
+				<listcell label="@{data.balanceAmount}" ></listcell>
+				<listcell label="@{data.availedAmount}"></listcell>
+			</listitem>
+		</listbox>
+		<separator />
+		<box align="center" width="100%">
+			<button label="Close" onClick="loanInfoWindow.detach();"></button>
+		</box>
+	</window>
+</zk>

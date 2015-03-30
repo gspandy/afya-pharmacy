@@ -1,0 +1,50 @@
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<zk>
+	<zscript>
+		import com.ndz.zkoss.*;
+		import com.hrms.composer.*;
+		import org.ofbiz.entity.GenericDelegator;
+		InterviewDetailComposer interviewDetailComposer = new InterviewDetailComposer();
+	</zscript>
+	<window border="normal" apply="${interviewDetailComposer}" id="viewInterviewDeatilWindow" width="60%" height="80%" closable="true" maximizable="true">
+		<caption label="${c:l('HRMS_EDIT_INTERVIEW_SCHEDULE') }"></caption>
+		<listbox id="viewInterviewDeatilListbox" model="@{interviewDetailComposer.model}" selectedItem="@{interviewDetailComposer.selectedInterviewDetail}" tooltiptext="Double click to Edit Interview Schedule"
+			onSelect="showDetails(self)">
+			<listhead>
+				<listheader label="${c:l('HRMS_CANDIDATE_ID') }"></listheader>
+				<listheader label="${c:l('HRMS_INTERVIEWER_ID') }"></listheader>
+			<listheader label="${c:l('HRMS_SCHEDULED_DATE_TIME') }"></listheader>
+				<listheader label="${c:l('HRMS_STATUS') }"></listheader>
+				<listheader label="${c:l('HRMS_INTERVIEWER_COMMENTS') }"></listheader>
+			</listhead>
+			<listitem self="@{each='zk1'}" value="@{zk1}">
+				<listcell label="@{zk1.partyId}"></listcell>
+				<listcell label="@{zk1.interviewerId}" />
+				<listcell>
+				<label value="@{zk1.fromDate,converter='com.ndz.zkoss.util.DateTimeFormater'}" width="160px" style="border:none;background:transparent;"  />
+				</listcell>
+				<listcell label="@{zk1.statusId,converter='com.ndz.zkoss.util.RunTimeFormatter'}" />
+				<listcell label="@{zk1.comments}" />
+			</listitem>
+		</listbox>
+		<zscript>
+			<![CDATA[
+				import org.ofbiz.entity.GenericValue;
+				import org.ofbiz.base.util.UtilMisc;
+				public void showDetails(Listbox listbox){
+					Listitem li = listbox.getSelectedItem();
+					GenericValue interviewDetailGv = (GenericValue)li.getValue();
+					Component childComp = appendEditInterviewScheduleWindowDiv.getFirstChild();
+					if (childComp != null)
+						childComp.detach();
+					 Executions.createComponents(
+							"/zul/employmentApplication/editInterviewSchedule.zul", appendEditInterviewScheduleWindowDiv,
+							UtilMisc.toMap("interviewDetailGv", interviewDetailGv,
+									"interviewDetailComposer", interviewDetailComposer, "item",li));
+				}
+			]]>	
+		</zscript>
+		<div id="appendEditInterviewScheduleWindowDiv">
+		</div>
+	</window>
+</zk>

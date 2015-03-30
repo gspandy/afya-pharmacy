@@ -1,0 +1,220 @@
+<?component name="profileField" macroURI="../macros/profileField.zul" id="profileMacro"?>
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<zk>
+	<zscript>
+	org.ofbiz.entity.GenericDelegator delegator = (org.ofbiz.entity.GenericDelegator) requestScope.get("delegator");
+	org.ofbiz.entity.GenericValue person = null;
+	person = delegator.findByPrimaryKey("PartyGroup", org.ofbiz.base.util.UtilMisc.toMap("partyId", "Company"));
+	String groupId = (String) person.getString("partyId");
+	List partyAttributeList = null;
+	partyAttributeList = delegator.findByAnd("PartyAttribute", org.ofbiz.base.util.UtilMisc.toMap("partyId", groupId));
+	org.ofbiz.entity.GenericValue partyAttributeGv = null;
+	partyAttributeGv = org.ofbiz.entity.util.EntityUtil.getFirst(partyAttributeList);
+	String attributeValue = null;
+	if (partyAttributeGv != null) {
+		attributeValue = (String) partyAttributeGv.getString("attrValue");
+		if (attributeValue.equals("MONTHLY")) {
+			attributeValue = "Monthly";
+		} else {
+			attributeValue = "Bi-Weekly";
+		}
+
+	}
+	import org.ofbiz.entity.*;
+	org.ofbiz.security.Security security = requestScope.get("security");
+	GenericValue userLogin = (GenericValue) Executions.getCurrent().getDesktop().getSession().getAttribute("userLogin");
+	boolean isAdmin = false;
+	isAdmin = security.hasPermission("HUMANRES_ADMIN", userLogin);
+	boolean isManager = false;
+	isManager = security.hasPermission("HUMANRES_MGR", userLogin);
+</zscript>
+	<window title="${c:l('HRMS_COMPANYPREFERENCES') }" id="companyProfile">
+		<caption>
+			<div align="right" if="${isAdmin }">
+				<toolbarbutton label="Edit" style="color:#FFFFFF"
+					image="/images/icon/update.png">
+					<attribute name="onClick" >
+	{
+		Component parentComp = companyProfile.getParent().getParent().getParent();
+		Component companyInformationEdit = parentComp.getFellow("companyMain").getFellow("companyInformationEdit");
+		Events.postEvent("onClick", companyInformationEdit, null);
+	}
+</attribute>
+				</toolbarbutton>
+			</div>
+		</caption>
+		<hbox style="border-bottom:1px solid grey;" width="100%"
+			height="20px" align="center">
+			<div visible="false" style="margin-right:4px" width="200px"
+				align="right">
+				<label value="${c:l('FormFieldTitle_companyId') }:" />
+			</div>
+			<div>
+				<label id="companyId" value="${person.partyId}"	visible="false" />
+			</div>
+		</hbox>
+		<hbox style="border-bottom:1px solid grey;" width="100%"
+			height="20px" align="center">
+			<div style="margin-right:4px" width="200px" align="right">
+				<label value="${c:l('FormFieldTitle_groupName') }:" />
+			</div>
+			<div>
+				<label id="groupName" value="${person.groupName}" />
+			</div>
+		</hbox>
+		<!-- <hbox style="border-bottom:1px solid grey;" width="100%"
+			height="20px" align="center">
+			<div style="margin-right:4px" width="200px" align="right">
+				<label value="Employer Id:" />
+			</div>
+			<div>
+				<label id="employerId" value="${person.employerId}" />
+			</div>
+		</hbox>
+		<hbox style="border-bottom:1px solid grey;" width="100%"
+			height="20px" align="center">
+			<div style="margin-right:4px" width="200px" align="right">
+				<label value="Agent Id:" />
+			</div>
+			<div>
+				<label id="agentId" value="${person.agentId}" />
+			</div>
+		</hbox>
+		<hbox style="border-bottom:1px solid grey;" width="100%"
+			height="20px" align="center">
+			<div style="margin-right:4px" width="200px" align="right">
+				<label value="Bank Code:" />
+			</div>
+			<div>
+				<label id="bankCode" value="${person.bankCode}" />
+			</div>
+		</hbox> -->
+		<hbox style="border-bottom:1px solid grey;" width="100%"
+			height="20px" align="center">
+			<div style="margin-right:4px" width="200px" align="right">
+				<label value="${c:l('FormFieldTitle_website') }:" />
+			</div>
+			<div>
+				<label id="OfficeSiteName"
+					value="${person.officeSiteName}" />
+			</div>
+			<div visible="false" style="margin-right:4px" width="200px"
+				align="right">
+				<label value="${c:l('FormFieldTitle_annualRevenue') }:" />
+			</div>
+			<div visible="false">
+				<label id="annualRevenue"
+					value="${person.annualRevenue}" />
+			</div>
+
+		</hbox>
+		<hbox style="border-bottom:1px solid grey;" width="100%"
+			height="20px" align="center">
+
+			<div style="margin-right:4px" width="200px" align="right">
+				<label value="${c:l('FormFieldTitle_numberOfEmployees') }:" />
+			</div>
+			<div>
+				<label id="numEmployees" value="${person.numEmployees}" />
+			</div>
+		</hbox>
+		<hbox style="border-bottom:1px solid grey;" width="100%"
+			height="20px" align="center">
+
+			<div style="margin-right:4px" width="200px" align="right">
+				<label value="${c:l('Hrms_Currency') }:" />
+			</div>
+			<div>
+				<label>
+					<attribute name="onCreate">
+	GenericValue gv = delegator.findByPrimaryKey("Uom", org.ofbiz.base.util.UtilMisc.toMap("uomId", person.getString("currencyType")));
+	if (gv != null)
+		self.setValue(gv.getString("description"));
+</attribute>
+				</label>
+			</div>
+		</hbox>
+		<hbox visible="false" style="border-bottom:1px solid grey;"
+			width="100%" height="20px" align="center">
+
+			<div style="margin-right:4px" width="200px" align="right">
+				<label value="${c:l('FormFieldTitle_imageURL') }:" />
+			</div>
+			<div>
+				<label id="logoImageUrl" value="${person.logoImageUrl}" />
+			</div>
+		</hbox>
+		<groupbox>
+			<caption>${c:l('FormFieldTitle_payroll') }</caption>
+			<hbox>
+			<div style="margin-right:4px" width="200px" align="right">
+					<label value="${c:l('FormFieldTitle_salaryFrequency') }:"></label>
+			</div>
+			<div style="margin-left:4px;">
+				<label value="${attributeValue}" />
+			</div>
+			</hbox>
+			<hbox>
+			<div style="margin-right:4px" width="200px" align="right">
+					<label value="${c:l('FormFieldTitle_subordinatesPayrollVisibleToManager') }:"></label>
+			</div>
+			<div style="margin-left:4px;">
+				<label id="mgrViewSubOrdinatePayroll"/>
+			</div>
+			<zscript>
+					boolean partyAttMgr = com.ndz.zkoss.HrmsUtil.isManagerViewSubOrdinatePayroll();
+					if(partyAttMgr){
+						mgrViewSubOrdinatePayroll.setValue("Yes");
+					}else{
+						mgrViewSubOrdinatePayroll.setValue("No");
+					}
+				</zscript>
+			</hbox>
+					
+		</groupbox>
+			<groupbox>
+					<caption>Custom Sequence</caption>
+					<hbox>
+						<div align="right" width="150px">
+							<label value="${c:l('FormFieldTitle_prefix') }"></label>
+						</div>
+						<div align="right" width="150px">
+							<label value="${c:l('FormFieldTitle_suffix') }"></label>
+						</div>
+						<div align="right" width="170px">
+							<label value="${c:l('FormFieldTitle_startValue') }"></label>
+						</div>
+					</hbox>
+					<separator />
+					<zscript>
+						org.ofbiz.entity.GenericValue prospectGv = delegator.findByPrimaryKey("SequenceValueItem",org.ofbiz.base.util.UtilMisc.toMap("seqName","PROSPECT"));
+						org.ofbiz.entity.GenericValue employeeGv = delegator.findByPrimaryKey("SequenceValueItem",org.ofbiz.base.util.UtilMisc.toMap("seqName","EMPLOYEE"));
+					</zscript>
+					<hbox>
+						<label value="${c:l('FormFieldTitle_prospect') }"></label>
+						<div align="right" width="155px">
+							<textbox id="prospectPrefix" readonly="true" value="${prospectGv.seqPrefix}"/>
+						</div>
+						<div align="right" width="150px">
+							<textbox id="prospectSuffix" readonly="true" value="${prospectGv.suffix}"/>
+						</div>
+						<div align="right" width="120px">
+							<textbox id="prospectStartValue" readonly="true" value="${prospectGv.seqId}"/>
+						</div>
+					</hbox>
+					<separator />
+					<hbox>
+						<label value="${c:l('FormFieldTitle_employee') }"></label>
+						<!--<div align="right" width="150px" visible="false">
+							<textbox id="employeePrefix" readonly="true" value="${employeeGv.seqPrefix}"/>
+						</div>
+						<div align="right" width="150px" visible="false">
+							<textbox id="employeeSuffix" readonly="true" value="${employeeGv.suffix}"/>
+						</div>-->
+						<div align="right" width="120px">
+							<textbox id="employeeStartValue" readonly="true" value="${employeeGv.seqId}"/>
+						</div>
+					</hbox>
+				</groupbox>
+	</window>
+</zk>

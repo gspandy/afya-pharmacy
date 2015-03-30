@@ -1,0 +1,33 @@
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<?page title="new page title" contentType="text/html;charset=UTF-8"?>
+<zk>
+
+	<zscript>
+	import com.hrms.composer.*;
+	TimeSheetViewComposer viewTimeEntrycomposer = new TimeSheetViewComposer();
+</zscript>
+
+	<window title="${c:l('HRMS_VIEW_TIME_ENTRY') }" border="normal"
+		apply="${viewTimeEntrycomposer}" self="@{define(content)}">
+		<separator height="20px"></separator>
+		<grid id="appendEditTimeSheetGrid"
+			model="@{viewTimeEntrycomposer.model}">
+			<columns>
+				<column label="${c:l('HRMS_TIME_ENTRY_ID') }"></column>
+				<column label="${c:l('HRMS_DAY') }"></column>
+				<column label="${c:l('HRMS_HOURS') }"></column>
+				<column label="${c:l('FormFieldTitle_comments') }"></column>
+			</columns>
+			<rows>
+				<row self="@{each='zk1'}">
+					<custom-attributes entity="@{zk1}" />
+					<label value="@{zk1.timeEntryId}"></label>
+					<label value="@{zk1.fromDate,converter='org.zkoss.zkplus.databind.DateFormatConverter'}"  self="@{format(dd-MM-yyyy)}" />
+					<decimalbox value="@{zk1.hours}" cols="4" readonly="true"  format="#,##0.##"></decimalbox>
+					
+					<textbox value="@{zk1.comments}" rows="2" cols="40" readonly="true"></textbox>
+				</row>
+			</rows>
+		</grid>
+	</window>
+</zk>

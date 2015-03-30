@@ -1,0 +1,2069 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<screens xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="http://ofbiz.apache.org/dtds/widget-screen.xsd">
+
+	<screen name="main">
+		<section>
+			<actions>
+				<set field="headerItem" value="main" />
+				<!-- this highlights the selected menu-item with name "main" -->
+
+			</actions>
+			<widgets>
+				<decorator-screen name="facilityextCommonDecorator"
+					location="${parameters.mainDecoratorLocation}">
+					<decorator-section name="body">
+					</decorator-section>
+				</decorator-screen>
+			</widgets>
+		</section>
+	</screen>
+	<screen name="SearchTransformation">
+		<section>
+			<actions>
+				<set field="tabButtonItem" value="transformations" />
+				<set field="facilityId" value="${parameters.facilityId}" />
+			</actions>
+			<widgets>
+				<decorator-screen name="SplitsDecorator">
+					<decorator-section name="body">
+						<label text="Find Transformations" style="h1"/>
+						<!-- <link target="NewTransformation" text="New Transformation"
+							style="buttontext" /> -->
+						<include-form
+							location="component://facilityext/widget/FacilityExtForms.xml"
+							name="SearchTransformation" />
+						<include-form
+							location="component://facilityext/widget/FacilityExtForms.xml"
+							name="ListTransformation" />
+					</decorator-section>
+				</decorator-screen>
+			</widgets>
+		</section>
+	</screen>
+
+	<screen name="SplitsDecorator">
+		<section>
+			<actions>
+				<set field="transformationMenuItem" value="splits" />
+				<set field="layoutSettings.javaScripts[]" value="/facilityext/images/productTransformation.js"
+					global="true" />
+			</actions>
+			<widgets>
+				<decorator-screen name="TransformationDecorator">
+					<decorator-section name="body">
+						<decorator-section-include name="body" />
+					</decorator-section>
+				</decorator-screen>
+			</widgets>
+		</section>
+	</screen>
+
+	<screen name="TransformationDecorator">
+		<section>
+			<actions>
+				<set field="headerItem" value="transformations" />
+				<set field="layoutSettings.javaScripts[]" value="/facilityext/images/productTransformation.js"
+					global="true" />
+			</actions>
+			<widgets>
+				<decorator-screen name="CommonFacilityDecorator"
+					location="${parameters.commonFacilityDecoratorLocation}">
+					<decorator-section name="body">
+						<screenlet title="">
+							<!-- <include-menu
+								location="component://facilityext/widget/FacilityExtMenus.xml"
+								name="TransformationMenuBar" /> -->
+							<decorator-section-include name="body" />
+						</screenlet>
+					</decorator-section>
+				</decorator-screen>
+			</widgets>
+		</section>
+	</screen>
+	<screen name="SearchProductBundle">
+		<section>
+			<actions>
+				<set field="tabButtonItem" value="transformations" />
+			</actions>
+			<widgets>
+				<decorator-screen name="BundlingDecorator">
+					<decorator-section name="body">
+						<label text="Find Bundling" style="h1"/>
+						<decorator-screen name="FindScreenDecorator"
+							location="component://common/widget/CommonScreens.xml">
+							<decorator-section name="search-options">
+								<include-form name="SearchProductBundle"
+									location="component://facilityext/widget/FacilityExtForms.xml" />
+							</decorator-section>
+							<decorator-section name="search-results">
+								<include-form name="ListProductBundle"
+									location="component://facilityext/widget/FacilityExtForms.xml" />
+							</decorator-section>
+						</decorator-screen>
+					</decorator-section>
+				</decorator-screen>
+			</widgets>
+		</section>
+	</screen>
+	<screen name="BundlingDecorator">
+		<section>
+			<actions>
+				<set field="transformationMenuItem" value="bundling" />
+			</actions>
+			<widgets>
+				<decorator-screen name="TransformationDecorator">
+					<decorator-section name="body">
+						<!-- <link target="CreateProductBundle" text="New Bundling" style="buttontext">
+							<parameter param-name="facilityId" value="${parameters.facilityId}" />
+						</link> -->
+						<decorator-section-include name="body" />
+					</decorator-section>
+				</decorator-screen>
+			</widgets>
+		</section>
+	</screen>
+	<screen name="MergeInvScreen">
+		<section>
+			<actions>
+				<set field="headerItem" value="transformations" />
+				<set field="transformationMenuItem" value="merge" />
+				<set field="tabButtonItem" value="transformations" />
+				<set field="title" value="Merge"/>
+			</actions>
+			<widgets>
+				<decorator-screen name="TransformationDecorator">
+					<decorator-section name="body">
+						<label text="Merge" style="h1"/>
+						<include-form
+							location="component://facilityext/widget/FacilityExtForms.xml"
+							name="MergeForm" />
+					</decorator-section>
+				</decorator-screen>
+			</widgets>
+		</section>
+	</screen>
+	<screen name="NewTransformation">
+		<section>
+
+			<actions>
+				<set field="headerItem" value="transformations" />
+				<set field="tabButtonItem" value="transformations" />
+				<set field="title" value="Create Transformation"/>
+				<set field="layoutSettings.javaScripts[]" value="/images/prototypejs/prototype.js" global="true"/>
+				<set field="layoutSettings.javaScripts[]" value="/facilityext/images/productTransformation.js" global="true" />
+			</actions>
+
+			<widgets>
+				<decorator-screen name="SplitsDecorator">
+					<decorator-section name="body">
+					<label text="Create Transformation" style="h1"/>
+						<platform-specific>
+							<html>
+								<html-template
+									location="component://facilityext/webapp/facilityext/transformations/NewTransformation.ftl" />
+							</html>
+						</platform-specific>
+					</decorator-section>
+				</decorator-screen>
+			</widgets>
+		</section>
+	</screen>
+	<screen name="ViewTransformation">
+		<section>
+			<actions>
+				<script
+					location="component://facilityext/webapp/facilityext/WEB-INF/actions/transormation/LoadProductTransfer.groovy" />
+			</actions>
+			<widgets>
+				<decorator-screen name="SplitsDecorator">
+					<decorator-section name="body">
+					<label text="Transformation" style="h1"/>
+						<platform-specific>
+							<html>
+								<html-template
+									location="component://facilityext/webapp/facilityext/transformations/ViewTransformation.ftl" />
+							</html>
+						</platform-specific>
+						<include-form
+							location="component://facilityext/widget/FacilityExtForms.xml"
+							name="TransformationTxn" />
+						<include-form
+							location="component://facilityext/widget/FacilityExtForms.xml"
+							name="ListTransformationTxn" />
+					</decorator-section>
+				</decorator-screen>
+			</widgets>
+		</section>
+	</screen>
+
+	<screen name="dummy">
+		<section>
+			<actions>
+				<set field="facilityId" value="${parameters.facilityId}" />
+				<script
+					location="component://facilityext/webapp/facilityext/WEB-INF/actions/transormation/Dummy.groovy" />
+			</actions>
+			<widgets>
+				<decorator-screen name="SplitsDecorator">
+					<decorator-section name="body">
+						<label text="Transformation" style="h1"/>
+						<!-- <link target="NewTransformation" text="New Transformation"
+							style="buttontext" /> -->
+						<include-form
+							location="component://facilityext/widget/FacilityExtForms.xml"
+							name="SearchTransformation" />
+						<include-form
+							location="component://facilityext/widget/FacilityExtForms.xml"
+							name="ListTransformation" />
+					</decorator-section>
+				</decorator-screen>
+			</widgets>
+		</section>
+	</screen>
+	<screen name="CreateProductBundle">
+		<section>
+			<actions>
+				<set field="headerItem" value="transformations" />
+				<set field="tabButtonItem" value="transformations" />
+				<set field="titleProperty" value="Create Bundling"/>
+			</actions>
+			<widgets>
+				<decorator-screen name="TransformationDecorator">
+					<decorator-section name="body">
+						<label text="Create Bundling" style="h1"/>
+						<include-form
+							location="component://facilityext/widget/FacilityExtForms.xml"
+							name="ProductBundleForm" />
+					</decorator-section>
+				</decorator-screen>
+			</widgets>
+		</section>
+	</screen>
+	<screen name="ProductBundle">
+		<section>
+			<actions>
+				<set field="headerItem" value="transformations" />
+				<set field="tabButtonItem" value="transformations" />
+				<set field="title" value="Create Bundling" />
+			</actions>
+			<widgets>
+				<decorator-screen name="TransformationDecorator">
+					<decorator-section name="body">
+						<label text="Create Bundling" style="h1"/>
+						<include-form
+							location="component://facilityext/widget/FacilityExtForms.xml"
+							name="BundlesForm" />
+						<include-form
+							location="component://facilityext/widget/FacilityExtForms.xml"
+							name="BundlesListForm" />
+					</decorator-section>
+				</decorator-screen>
+			</widgets>
+		</section>
+	</screen>
+	<!-- Stock Reservation Screens -->
+	<screen name="StockReservationsScreen">
+		<section>
+			<actions>
+				<set field="FacilityTabBarItem" value="StockReservations" />
+				<set field="tabButtonItem" value="stockReserve" />
+				<set field="buttonItem" value="ReserveInventoryItem" />
+				<set field="title" value="Reserve Inventory Item"/>
+			</actions>
+			<widgets>
+				<decorator-screen name="CommonFacilityDecorator"
+					location="${parameters.commonFacilityDecoratorLocation}">
+					<decorator-section name="body">
+						<section>
+							<widgets>
+								<screenlet id="inventory-item-reservations">
+									<!-- <include-menu location="component://product/widget/facility/FacilityMenus.xml" name="ReservationMenu" /> -->
+									<include-screen name="StockReservationsSubScreen" />
+								</screenlet>
+							</widgets>
+						</section>
+					</decorator-section>
+				</decorator-screen>
+			</widgets>
+		</section>
+	</screen>
+	<screen name="StockReservationsSubScreen">
+		<section>
+			<actions>
+				<set field="FacilityTabBarItem" value="StockReservations" />
+				<set field="tabButtonItem" value="stockReserve" />
+				<set field="buttonItem" value="ReserveOrders" />
+			</actions>
+			<widgets>
+				<label id="h1" text="${_ERROR_MESSAGE_}"></label>
+				<decorator-screen name="FindScreenDecorator"
+					location="component://common/widget/CommonScreens.xml">
+					<decorator-section name="menu-bar">
+
+					</decorator-section>
+					<decorator-section name="search-options">
+						<include-form name="FindInventoryByProductForm"
+							location="component://facilityext/widget/FacilityExtForms.xml" />
+					</decorator-section>
+					<decorator-section name="search-results">
+
+						<include-form name="ListInventoryByProduct"
+							location="component://facilityext/widget/FacilityExtForms.xml" />
+					</decorator-section>
+
+				</decorator-screen>
+			</widgets>
+
+		</section>
+	</screen>
+
+	<screen name="ViewInventoryReservation">
+		<section>
+			<actions>
+				<set field="FacilityTabBarItem" value="StockReservations" />
+				<set field="tabButtonItem" value="ReserveInventoryItem" />
+				<set field="inventoryItemId" from-field="parameters.inventoryItemId" />
+				<set field="facilityId" from-field="parameters.facilityId" />
+
+				<entity-condition entity-name="OrderItemShipGrpInvRes"
+					list="inventoryItemReservations">
+					<condition-list combine="and">
+						<condition-expr field-name="inventoryItemId"
+							operator="equals" from-field="inventoryItemId" />
+					</condition-list>
+				</entity-condition>
+				<set field="layoutSettings.javaScripts[]" value="/facilityext/images/picking.js"
+
+					global="true" />
+			</actions>
+
+			<widgets>
+				<decorator-screen name="CommonFacilityDecorator"
+					location="${parameters.commonFacilityDecoratorLocation}">
+					<decorator-section name="body">
+						<section>
+							<widgets>
+
+								<screenlet id="inventory-item-reservations" title="Stock Reservations"
+									collapsible="true">
+									<!-- <include-menu
+										location="component://product/widget/facility/FacilityMenus.xml"
+										name="ReservationMenu" /> -->
+								</screenlet>
+								<screenlet id="inventory-item-reservations" title="${uiLabelMap.ProductInventoryItem}"
+									collapsible="true">
+									<include-form
+										location="component://facilityext/widget/FacilityExtForms.xml"
+										name="ReserveInventoryForm" />
+								</screenlet>
+								<screenlet id="inventory-item-reservations" title="${uiLabelMap.ProductInventoryItem}"
+									collapsible="true">
+									<include-form
+										location="component://facilityext/widget/FacilityExtForms.xml"
+										name="InventoryItemReservations" />
+								</screenlet>
+							</widgets>
+						</section>
+					</decorator-section>
+				</decorator-screen>
+			</widgets>
+		</section>
+	</screen>
+	<screen name="FindOrderToReserveScreen">
+		<section>
+			<actions>
+				<set field="FacilityTabBarItem" value="StockReservations" />
+				<set field="tabButtonItem" value="stockReserve" />
+				<set field="buttonItem" value="ReserveOrders" />
+				<set field="title" value="Reserve Sales Orders" />
+			</actions>
+			<widgets>
+				<decorator-screen name="CommonFacilityDecorator"
+					location="${parameters.commonFacilityDecoratorLocation}">
+					<decorator-section name="body">
+						<section>
+							<widgets>
+								<screenlet id="inventory-item-reservations">
+									<!-- <include-menu
+										location="component://product/widget/facility/FacilityMenus.xml"
+										name="ReservationMenu" /> -->
+									<include-screen name="SalerOrderReservationSubScreen" />
+								</screenlet>
+							</widgets>
+						</section>
+					</decorator-section>
+				</decorator-screen>
+			</widgets>
+		</section>
+	</screen>
+	<screen name="SalerOrderReservationSubScreen">
+		<section>
+			<widgets>
+				<decorator-screen name="FindScreenDecorator"
+					location="component://common/widget/CommonScreens.xml">
+					<decorator-section name="menu-bar">
+					</decorator-section>
+					<decorator-section name="search-options">
+						<include-form name="FindOrders"
+							location="component://facilityext/widget/FacilityExtForms.xml" />
+					</decorator-section>
+					<decorator-section name="search-results">
+						<include-form name="OrderSearchResults"
+							location="component://facilityext/widget/FacilityExtForms.xml" />
+					</decorator-section>
+				</decorator-screen>
+			</widgets>
+		</section>
+	</screen>
+	<screen name="ViewSalesOrderReservation">
+		<section>
+			<actions>
+
+				<set field="headerItem" value="stockReserve" />
+				<set field="tabButtonItem" value="stockReserve" />
+				<set field="buttonItem" value="ReserveOrders" />
+
+				<!-- <set field="layoutSettings.javaScripts[]" value="/facilityext/images/picking.js"> 
+					</set> -->
+			</actions>
+			<widgets>
+				<decorator-screen name="CommonFacilityDecorator"
+					location="${parameters.commonFacilityDecoratorLocation}">
+					<decorator-section name="body">
+						<!-- <include-menu
+							location="component://product/widget/facility/FacilityMenus.xml"
+							name="ReservationMenu" /> -->
+						<screenlet collapsible="false" title="Inventories Reserved For Order"
+							id="createReserveOrder">
+							<include-form
+								location="component://facilityext/widget/FacilityExtForms.xml"
+								name="SalesOrderReservationForm" />
+						</screenlet>
+					</decorator-section>
+				</decorator-screen>
+			</widgets>
+		</section>
+	</screen>
+	<screen name="ViewOrderReservationScreen">
+		<section>
+			<actions>
+				<set field="headerItem" value="stockReserve" />
+				<set field="tabButtonItem" value="ReserveOrders" />
+				<set field="layoutSettings.javaScripts[]" value="/facilityext/images/picking.js"
+					global="true" />
+			</actions>
+			<widgets>
+				<decorator-screen name="CommonFacilityDecorator"
+					location="${parameters.commonFacilityDecoratorLocation}">
+					<decorator-section name="body">
+						<!-- <include-menu
+							location="component://product/widget/facility/FacilityMenus.xml"
+							name="ReservationMenu" /> -->
+						<screenlet collapsible="true" id="InvItems"
+							title="Inventories Reserved For Order">
+							<include-form name="OrderReservationResults"
+								location="component://facilityext/widget/FacilityExtForms.xml" />
+						</screenlet>
+					</decorator-section>
+				</decorator-screen>
+			</widgets>
+		</section>
+	</screen>
+	<screen name="FindReserveOrders">
+		<section>
+			<actions>
+				<set field="headerItem" value="stockReserve" />
+				<set field="tabButtonItem" value="stockReserve" />
+				<set field="buttonItem" value="FindReserveOrders" />
+				<set field="reserveButtonItem" value="AddOrderItems" />
+				<set field="title" value="Reserve Order" />
+			</actions>
+			<widgets>
+				<decorator-screen name="CommonFacilityDecorator"
+					location="${parameters.commonFacilityDecoratorLocation}">
+					<decorator-section name="body">
+						<section>
+							<widgets>
+								<screenlet id="inventory-item-reservations">
+									<!-- <include-menu
+										location="component://product/widget/facility/FacilityMenus.xml"
+										name="ReservationMenu" />
+									<link target="reserveOrderEntry" text="New Reserve Order"
+										style="buttontext">
+										<parameter param-name="facilityId" value="${parameters.facilityId}" />
+									</link> -->
+									<decorator-screen name="FindScreenDecorator"
+										location="component://common/widget/CommonScreens.xml">
+										<decorator-section name="search-options">
+											<include-form name="FindReserveOrders"
+												location="component://facilityext/widget/FacilityExtForms.xml" />
+										</decorator-section>
+										<decorator-section name="search-results">
+											<include-form name="ListReserveOrders"
+												location="component://facilityext/widget/FacilityExtForms.xml" />
+										</decorator-section>
+									</decorator-screen>
+								</screenlet>
+							</widgets>
+						</section>
+					</decorator-section>
+				</decorator-screen>
+			</widgets>
+		</section>
+	</screen>
+	<screen name="ReserveOrderEntryScreen">
+		<section>
+			<actions>
+				<set field="headerItem" value="stockReserve" />
+				<set field="tabButtonItem" value="stockReserve" />
+				<set field="buttonItem" value="FindReserveOrders" />
+				<set field="reserveButtonItem" value="AddOrderItems" />
+				<set field="title" value="Create Reserve Order" />
+			</actions>
+			<widgets>
+				<decorator-screen name="CommonFacilityDecorator"
+					location="${parameters.commonFacilityDecoratorLocation}">
+					<decorator-section name="body">
+						<!-- <include-menu
+							location="component://product/widget/facility/FacilityMenus.xml"
+							name="ReservationMenu" /> -->
+						<screenlet collapsible="false" title="Create Reserve Order"
+							id="createReserveOrder">
+							<include-form
+								location="component://facilityext/widget/FacilityExtForms.xml"
+								name="EditReserveOrderHeader" />
+						</screenlet>
+					</decorator-section>
+				</decorator-screen>
+			</widgets>
+		</section>
+	</screen>
+
+	<screen name="OrderItemEntry">
+		<section>
+			<condition>
+				<not>
+					<if-empty field="parameters.orderId" />
+				</not>
+			</condition>
+			<actions>
+				<set field="headerItem" value="stockReserve" />
+				<set field="tabButtonItem" value="FindReserveOrders" />
+				<set field="reserveButtonItem" value="AddOrderItems" />
+				<entity-one entity-name="ReserveOrderHeader" value-field="reserveOrderHeader">
+					<field-map field-name="orderId" from-field="parameters.orderId" />
+				</entity-one>
+				<set field="reserveOrderStatusId" from-field="reserveOrderHeader.statusId" />
+				<set field="isNotComplete"
+					value="${bsh:!&quot;ORDER_COMPLETED&quot;.equals(reserveOrderStatusId);}"
+					type="Boolean" />
+			</actions>
+			<widgets>
+				<decorator-screen name="CommonFacilityDecorator"
+					location="${parameters.commonFacilityDecoratorLocation}">
+					<decorator-section name="body">
+						<!-- <include-menu
+							location="component://product/widget/facility/FacilityMenus.xml"
+							name="ReservationMenu" /> -->
+						<include-menu
+							location="component://product/widget/facility/FacilityMenus.xml"
+							name="ReserveOrderMenu" />
+
+						<screenlet title="Reserve Order : ${parameters.orderId}"
+							id="reserveOrder" collapsible="true">
+							<include-form
+								location="component://facilityext/widget/FacilityExtForms.xml"
+								name="ReserveOrderHeaderView" />
+						</screenlet>
+						<screenlet
+							title="Add New Product To Reserve Order ${parameters.orderId}"
+							id="items" collapsible="false">
+							<include-form
+								location="component://facilityext/widget/FacilityExtForms.xml"
+								name="AddOrderItemForm" />
+						</screenlet>
+						<platform-specific>
+							<html>
+								<html-template
+									location="component://facilityext/webapp/facilityext/transformations/ReserveInventory.ftl" />
+							</html>
+						</platform-specific>
+						<screenlet title="Items in Reserve Order ${parameters.orderId}"
+							id="reserveorders" collapsible="false">
+							<include-form
+								location="component://facilityext/widget/FacilityExtForms.xml"
+								name="ListOrderItemForm" />
+						</screenlet>
+						<!-- <container style="screenlet-title-bar"> -->
+						<!-- <container style="h3"> -->
+						<!-- <label text="Items in Reserve Order" /> -->
+						<!-- </container> -->
+						<!-- </container> -->
+						<!-- <container style="screenlet-body"> -->
+						<!-- <section> -->
+						<!-- <widgets> -->
+						<!-- <section> -->
+						<!-- <condition> -->
+						<!-- <if-compare field="isNotComplete" operator="equals" value="true" 
+							type="Boolean" /> -->
+						<!-- </condition> -->
+						<!-- <widgets> -->
+						<!-- -->
+						<!-- <container> -->
+						<!-- <link text="Reserve Inventories" target="reserveInventoryForOrder" 
+							style="buttontext"> -->
+						<!-- <parameter param-name="orderId" from-field="parameters.orderId" 
+							/> -->
+						<!-- </link> -->
+						<!-- </container> -->
+						<!-- </widgets> -->
+						<!-- </section> -->
+						<!-- <include-form location="component://facilityext/widget/FacilityExtForms.xml" 
+							name="ListOrderItemForm" /> -->
+						<!-- </widgets> -->
+						<!-- </section> -->
+						<!-- </container> -->
+					</decorator-section>
+				</decorator-screen>
+			</widgets>
+			<fail-widgets>
+				<label text="Order Id is not Selected."></label>
+			</fail-widgets>
+		</section>
+	</screen>
+
+	<screen name="SearchSOForSwap">
+		<section>
+			<actions>
+
+				<set field="headerItem" value="stockReserve" />
+				<set field="tabButtonItem" value="FindReserveOrders" />
+				<!-- <set field="divisionId" value="${bsh:com.smebiz.common.PartyUtil.getDivision(userLogin).getString(&quot;partyIdFrom&quot;);}" 
+					/> -->
+				<set field="reserveOrderId" from-field="parameters.orderId" />
+			</actions>
+			<widgets>
+				<decorator-screen name="CommonFacilityDecorator"
+					location="${parameters.commonFacilityDecoratorLocation}">
+					<decorator-section name="body">
+						<!-- <include-menu
+							location="component://product/widget/facility/FacilityMenus.xml"
+							name="ReservationMenu" /> -->
+						<include-form name="ViewReserveOrder"
+							location="component://facilityext/widget/FacilityExtForms.xml" />
+
+						<decorator-screen name="FindScreenDecorator"
+							location="component://common/widget/CommonScreens.xml">
+							<decorator-section name="search-options">
+								<include-form
+									location="component://facilityext/widget/FacilityExtForms.xml"
+									name="FindOrders" />
+							</decorator-section>
+							<decorator-section name="search-results">
+								<include-form name="ListSalesOrders"
+									location="component://facilityext/widget/FacilityExtForms.xml" />
+							</decorator-section>
+						</decorator-screen>
+					</decorator-section>
+				</decorator-screen>
+			</widgets>
+		</section>
+	</screen>
+
+	<screen name="CheckForRelease">
+		<section>
+			<actions>
+				<set field="headerItem" value="stockReserve" />
+				<set field="tabButtonItem" value="FindReserveOrders" />
+			</actions>
+			<widgets>
+				<decorator-screen name="CommonFacilityDecorator"
+					location="${parameters.commonFacilityDecoratorLocation}">
+					<decorator-section name="body">
+						<!-- <include-menu
+							location="component://product/widget/facility/FacilityMenus.xml"
+							name="ReservationMenu" /> -->
+						<include-form name="ConfirmRelease"
+							location="component://facilityext/widget/FacilityExtForms.xml" />
+					</decorator-section>
+				</decorator-screen>
+			</widgets>
+		</section>
+	</screen>
+	<screen name="InventoriesReserved">
+		<section>
+			<actions>
+				<set field="headerItem" value="stockReserve" />
+				<set field="tabButtonItem" value="FindReserveOrders" />
+				<set field="reserveButtonItem" value="reservations" />
+				<set field="reserveOrderId" default-value="${parameters.orderId}" />
+			</actions>
+			<widgets>
+				<decorator-screen name="CommonFacilityDecorator"
+					location="${parameters.commonFacilityDecoratorLocation}">
+					<decorator-section name="body">
+						<!-- <include-menu
+							location="component://product/widget/facility/FacilityMenus.xml"
+							name="ReservationMenu" /> -->
+						<include-menu
+							location="component://product/widget/facility/FacilityMenus.xml"
+							name="ReserveOrderMenu" />
+						<screenlet title="Inventories Reserved" id="Inventories"
+							collapsible="false">
+							<include-form name="ReserveOrderItemInvResList"
+								location="component://facilityext/widget/FacilityExtForms.xml" />
+						</screenlet>
+						<screenlet title="Allocated Sales Order Items" id="salesOrders"
+							collapsible="false">
+							<include-form name="ReserveOrderDetailList"
+								location="component://facilityext/widget/FacilityExtForms.xml" />
+						</screenlet>
+					</decorator-section>
+				</decorator-screen>
+			</widgets>
+		</section>
+	</screen>
+	<screen name="ReleasedScreen">
+		<section>
+			<actions>
+				<set field="headerItem" value="stockReserve" />
+				<set field="tabButtonItem" value="FindReserveOrders" />
+			</actions>
+			<widgets>
+				<decorator-screen name="main-decorator"
+					location="${parameters.mainDecoratorLocation}">
+					<decorator-section name="body">
+						<!-- <include-menu
+							location="component://product/widget/facility/FacilityMenus.xml"
+							name="ReservationMenu" /> -->
+						<include-form name="OISGIRForm"
+							location="component://facilityext/widget/FacilityExtForms.xml" />
+					</decorator-section>
+				</decorator-screen>
+			</widgets>
+		</section>
+	</screen>
+	<screen name="NewBundlingTxn1">
+		<section>
+			<actions>
+				<set field="headerItem" value="transformations" />
+				<set field="tabButtonItem" value="transformations" />
+			</actions>
+			<widgets>
+				<decorator-screen name="BundlingDecorator">
+					<decorator-section name="body">
+						<label text="Bundling" style="h1"/>
+						<include-form
+							location="component://facilityext/widget/FacilityExtForms.xml"
+							name="NewBundlingTxn1" />
+					</decorator-section>
+				</decorator-screen>
+			</widgets>
+		</section>
+	</screen>
+	<screen name="NewBundlingTxn2">
+		<section>
+			<actions>
+				<set field="headerItem" value="transformations" />
+				<set field="tabButtonItem" value="transformations" />
+				<entity-one entity-name="ProductBundleTxn" value-field="productTxn">
+					<field-map field-name="productBundleTxnId" from-field="parameters.productBundleTxnId" />
+				</entity-one>
+				<entity-one entity-name="ProductBundle" value-field="bundle">
+					<field-map field-name="productBundleId" from-field="productTxn.productBundleId" />
+				</entity-one>
+				<script
+					location="hot-deploy/facilityext/webapp/facilityext/WEB-INF/actions/transormation/SetSession.groovy" />
+			</actions>
+			<widgets>
+				<decorator-screen name="BundlingDecorator">
+					<decorator-section name="body">
+						<label text="Bundling" style="h1"/>
+						<include-form
+							location="component://facilityext/widget/FacilityExtForms.xml"
+							name="FinalizeForm" />
+
+						<screenlet title="Select Inventories For Bundling">
+							<include-form
+								location="component://facilityext/widget/FacilityExtForms.xml"
+								name="ListProductAssoc" />
+						</screenlet>
+						<screenlet title="Inventory Items Reserved">
+							<include-form
+								location="component://facilityext/widget/FacilityExtForms.xml"
+								name="ListProductBundleTxnDetail" />
+						</screenlet>
+					</decorator-section>
+				</decorator-screen>
+			</widgets>
+		</section>
+	</screen>
+	<screen name="LookupLocation">
+		<section>
+			<actions>
+				<set field="title" value="Location Lookup" />
+				<set field="queryString" from-field="result.queryString"/>
+				<set field="viewIndex" from-field="parameters.VIEW_INDEX" type="Integer" default-value="0"/>
+				<set field="viewSize" from-field="parameters.VIEW_SIZE" type="Integer" default-value="20"/>
+				<set field="entityName" value="FacilityLocation"/>
+				<set field="searchFields" value="[locationSeqId]"/>
+			</actions>
+			<widgets>
+				<decorator-screen name="LookupDecorator"
+					location="component://common/widget/CommonScreens.xml">
+					<decorator-section name="search-options">
+						<include-form
+							location="component://facilityext/widget/FacilityExtForms.xml"
+							name="LookupLocationForm" />
+
+					</decorator-section>
+					<decorator-section name="search-results">
+						<include-form
+							location="component://facilityext/widget/FacilityExtForms.xml"
+							name="LookupLocationListForm" />
+
+					</decorator-section>
+				</decorator-screen>
+			</widgets>
+		</section>
+	</screen>
+	<screen name="NewBundlingTxn3">
+		<section>
+			<actions>
+				<script
+					location="component://facilityext/webapp/facilityext/WEB-INF/actions/transormation/LoadProductBundleItemDetail.groovy" />
+			</actions>
+			<widgets>
+				<decorator-screen name="BundlingDecorator">
+					<decorator-section name="body">
+						<platform-specific>
+							<html>
+								<html-template
+									location="component://facilityext/webapp/facilityext/transformations/NewBundlingTxn2.ftl" />
+							</html>
+						</platform-specific>
+					</decorator-section>
+				</decorator-screen>
+			</widgets>
+		</section>
+	</screen>
+	<screen name="LookupInventoryItems">
+		<section>
+			<actions>
+				<set field="title" value="Inventory Items Lookup" />
+				<set field="queryString" from-field="result.queryString" />
+				<set field="viewIndex" from-field="parameters.VIEW_INDEX" type="Integer"
+					default-value="0" />
+				<set field="viewSize" from-field="parameters.VIEW_SIZE" type="Integer"
+					default-value="20" />
+				<set field="entityName" value="InventoryItem" />
+				<set field="searchFields" value="[inventoryItemId]" />
+			</actions>
+			<widgets>
+				<decorator-screen name="LookupDecorator"
+					location="component://common/widget/CommonScreens.xml">
+					<decorator-section name="search-options">
+						<include-form name="LookupInventoryForm"
+							location="component://facilityext/widget/FacilityExtForms.xml" />
+					</decorator-section>
+					<decorator-section name="search-results">
+						<include-form name="LookupInventoryListForm"
+							location="component://facilityext/widget/FacilityExtForms.xml" />
+					</decorator-section>
+				</decorator-screen>
+			</widgets>
+		</section>
+	</screen>
+	<screen name="TransferInventoryItem">
+		<section>
+			<actions>
+				<set field="facilityId" from-field="parameters.facilityId" />
+				<script
+					location="component://product/webapp/facility/WEB-INF/actions/inventory/TransferInventoryItem.groovy" />
+				<set field="titleProperty" value="PageTitleFindFacilityTransfers" />
+				<set field="tabButtonItem" value="FindFacilityTransfers" />
+				<set field="facilityId" from-field="parameters.facilityId" />
+				<entity-one entity-name="Facility" value-field="facility" />
+				<property-map resource="ProductUiLabels" map-name="uiLabelMap" />
+				<set field="title" value="${uiLabelMap.PageTitleTransferInventoryItem}" />
+			</actions>
+			<widgets>
+				<decorator-screen name="CommonFacilityDecorator"
+					location="${parameters.commonFacilityDecoratorLocation}">
+					<decorator-section name="body">
+
+						<container style="screenlet">
+							<container style="screenlet-title-bar">
+								<container style="h3">
+									<label text="Find Facility Physical Inventory Transfers" />
+								</container>
+							</container>
+							<container style="screenlet-body">
+								<section>
+									<widgets>
+										<include-form
+											location="component://facilityext/widget/FacilityExtForms.xml"
+											name="FindInvXfer" />
+									</widgets>
+								</section>
+							</container>
+						</container>
+						<container style="screenlet">
+							<container style="screenlet-title-bar">
+								<container style="h3">
+									<label text="Facility Physical Inventory Transfers List" />
+								</container>
+							</container>
+							<container style="screenlet-body">
+								<section>
+									<widgets>
+										<include-form
+											location="component://facilityext/widget/FacilityExtForms.xml"
+											name="ListInventoryXfr" />
+									</widgets>
+								</section>
+							</container>
+						</container>
+					</decorator-section>
+				</decorator-screen>
+			</widgets>
+		</section>
+	</screen>
+
+	<screen name="FindPhysicalInvNew">
+		<section>
+			<actions>
+				<set field="titleProperty" value="PageTitleFindFacilityTransfers" />
+				<set field="tabButtonItem" value="PhysicalInventory" />
+				<set field="facilityId" from-field="parameters.facilityId" />
+				<set field="locationSeqId" from-field="parameters.locationSeqId" />
+				<set field="datetimeReceived" from-field="parameters.datetimeReceived" type="Timestamp"/>
+			    <set field="manufacturingDate" from-field="parameters.manufacturingDate" type="Timestamp"/>
+				<entity-one entity-name="Facility" value-field="facility" />
+				<script
+					location="component://product/webapp/facility/WEB-INF/actions/inventory/FindFacilityPhysicalInventory.groovy" />
+			</actions>
+			<widgets>
+				<decorator-screen name="CommonFacilityDecorator"
+					location="${parameters.commonFacilityDecoratorLocation}">
+					<decorator-section name="body">
+						<container style="screenlet">
+							<container style="screenlet-title-bar">
+								<container style="h3">
+									<label text="${uiLabelMap.PageTitleFindFacilityPhysicalInventory}" />
+								</container>
+							</container>
+							<container style="screenlet-body">
+								<section>
+									<widgets>
+										<include-form name="FindPhysicalInv"
+											location="component://facilityext/widget/FacilityExtForms.xml" />
+									</widgets>
+								</section>
+							</container>
+						</container>
+						<container style="screenlet">
+							<container style="screenlet-title-bar">
+								<container style="h3">
+									<label text="Facility Physical Inventory List" />
+								</container>
+							</container>
+							<container style="screenlet-body">
+								<section>
+									<widgets>
+										<include-form name="ListPhysicalInventory"
+											location="component://facilityext/widget/FacilityExtForms.xml" />
+									</widgets>
+								</section>
+							</container>
+						</container>
+					</decorator-section>
+				</decorator-screen>
+			</widgets>
+		</section>
+	</screen>
+
+	<!--Reports -->
+	<screen name="ShipmentReports">
+		<section>
+			<actions>
+				<set field="FacilityTabBarItem" value="ShipmentReports" />
+				<set field="tabButtonItem" value="Reports" />
+			</actions>
+			<widgets>
+				<decorator-screen name="CommonFacilityDecorator"
+					location="${parameters.commonFacilityDecoratorLocation}">
+					<decorator-section name="body">
+						<section>
+							<widgets>
+								<screenlet id="inventory-item-reservations" title="Reports"
+									collapsible="true">
+									<platform-specific>
+										<html>
+											<html-template
+												location="component://facilityext/webapp/reports/reports.ftl" />
+										</html>
+									</platform-specific>
+
+								</screenlet>
+							</widgets>
+						</section>
+					</decorator-section>
+				</decorator-screen>
+			</widgets>
+		</section>
+	</screen>
+	<screen name="InventorySummary">
+		<section>
+			<actions>
+				<set field="FacilityTabBarItem" value="ShipmentReports" />
+				<set field="tabButtonItem" value="Reports" />
+				<set field="title" value="Inventory Summary" />
+			</actions>
+			<widgets>
+				<decorator-screen name="CommonFacilityDecorator"
+					location="${parameters.commonFacilityDecoratorLocation}">
+					<decorator-section name="body">
+						<container style="page-title">
+							<label text="Inventory Summary"/>
+						</container>
+						<platform-specific>
+							<html>
+								<html-template
+									location="component://facilityext/webapp/reports/InventorySummary.ftl" />
+							</html>
+						</platform-specific>
+					</decorator-section>
+				</decorator-screen>
+			</widgets>
+		</section>
+	</screen>
+	<screen name="GeneratePDF">
+		<section>
+			<actions>
+				<set field="result" value="${parameters.resultList}" type="List" />
+				<script
+					location="component://facilityext/webapp/facilityext/WEB-INF/actions/ShipmentReports/GeneratePDF.groovy" />
+			</actions>
+			<widgets>
+				<decorator-screen name="main-decorator"
+					location="${parameters.mainDecoratorLocation}">
+					<decorator-section name="body">
+						<include-form
+							location="component://facilityext/widget/FacilityExtForms.xml"
+							name="PhysicalInventorySummaryListForm" />
+					</decorator-section>
+				</decorator-screen>
+			</widgets>
+		</section>
+	</screen>
+
+	<screen name="InventoryByExpireDateReport">
+		<section>
+			<actions>
+				<set field="tabButtonItem" value="Reports" />
+				<set field="target" value="GenerateInvItemByExpDatePDF" />
+				<script
+					location="component://facilityext/webapp/facilityext/WEB-INF/actions/ShipmentReports/InventoryItemsByExpireDate.groovy" />
+			</actions>
+			<widgets>
+				<decorator-screen name="main-decorator"
+					location="${parameters.mainDecoratorLocation}">
+					<decorator-section name="body">
+						<section>
+							<widgets>
+								<decorator-screen name="FindScreenDecorator"
+									location="component://common/widget/CommonScreens.xml">
+									<decorator-section name="search-options">
+										<screenlet id="master" title="Inventories By Expire Date"
+											collapsible="true">
+
+											<include-form
+												location="component://facilityext/widget/FacilityExtForms.xml"
+												name="InventoryByExpiryDateForm" />
+
+										</screenlet>
+									</decorator-section>
+									<decorator-section name="search-results">
+										<platform-specific>
+											<html>
+												<html-template
+													location="component://facilityext/webapp/reports/GenerateReport.ftl" />
+											</html>
+										</platform-specific>
+										<include-form
+											location="component://facilityext/widget/FacilityExtForms.xml"
+											name="InventoryByExpiryDateListForm" />
+
+									</decorator-section>
+								</decorator-screen>
+							</widgets>
+						</section>
+					</decorator-section>
+				</decorator-screen>
+			</widgets>
+		</section>
+	</screen>
+	<screen name="PhysicalInventorySummaryReport">
+		<section>
+			<actions>
+				<set field="tabButtonItem" value="Reports" />
+				<set field="title" value="Physical Inventory Summary"/>
+				<set field="facilityId" from-field="parameters.facilityId" type="String" />
+				<!-- <set field="target" value="GenerateInvItemSummaryPDF" /> <set field="excelTarget" 
+					value="PhysicalInventorySummary.xls" /> -->
+				<script	location="component://facilityext/webapp/facilityext/WEB-INF/actions/ShipmentReports/PhysicalInventorySummaryReport.groovy" />
+			</actions>
+			<widgets>
+				<decorator-screen name="CommonFacilityDecorator"
+					location="${parameters.commonFacilityDecoratorLocation}">
+					<decorator-section name="body">
+						<section>
+							<widgets>
+								<decorator-screen name="FindScreenDecorator" location="component://common/widget/CommonScreens.xml">
+									<decorator-section name="search-options">
+											<include-form location="component://facilityext/widget/FacilityExtForms.xml" name="PhysicalInventorySummaryForm" />
+									</decorator-section>
+									<decorator-section name="search-results">
+										<include-form location="component://facilityext/widget/FacilityExtForms.xml" name="PhysicalInventorySummaryListForm" />
+									</decorator-section>
+								</decorator-screen>
+							</widgets>
+						</section>
+					</decorator-section>
+				</decorator-screen>
+			</widgets>
+		</section>
+	</screen>
+	<screen name="SalesOutboundReport">
+		<section>
+			<actions>
+				<set field="tabButtonItem" value="Reports" />
+				<!-- <set field="target" value="SalesOutboundPDF" /> <set field="excelTarget" 
+					value="SalesOutbound.xls" /> -->
+				<set field="navigate" value="SalesOutboundReport.xls" />
+				<set field="groupName" value="Customer" /> 
+				<set field="PurchaseOrderStatus" value="Sales Order Status" />
+				<set field="title" value="Sales Outbound" />
+				<set field="qtyShipped" value="Quantity Shipped" />
+				<script
+					location="component://facilityext/webapp/facilityext/WEB-INF/actions/ShipmentReports/PurchaseInBound.groovy" />
+				<entity-condition list="supplierList" entity-name="PartyRoleAndPartyDetail">
+					<condition-list combine="and">
+						<condition-expr field-name="roleTypeId" operator="equals"
+							value="CUSTOMER" />
+					</condition-list>
+				</entity-condition>
+			</actions>
+			<widgets>
+				<decorator-screen name="CommonFacilityDecorator"
+					location="${parameters.commonFacilityDecoratorLocation}">
+					<decorator-section name="body" >
+						<section>
+							<widgets>
+								<decorator-screen name="FindScreenDecorator"
+									location="component://common/widget/CommonScreens.xml">
+									<decorator-section name="search-options">
+										<include-form location="component://facilityext/widget/FacilityExtForms.xml" name="SalesOutboundForm" />
+									</decorator-section>
+									<decorator-section name="search-results">
+										<include-form location="component://facilityext/widget/FacilityExtForms.xml" name="SalesOutboundListForm" />
+									</decorator-section>
+								</decorator-screen>
+							</widgets>
+						</section>
+					</decorator-section>
+				</decorator-screen>
+			</widgets>
+		</section>
+	</screen>
+	<screen name="PurchaseInboundReport">
+		<section>
+			<actions>
+				<set field="tabButtonItem" value="Reports" />
+				<!-- <set field="target" value="PurchaseInboundPDF" /> <set field="excelTarget" 
+					value="PurchaseInbound.xls" /> -->
+				<set field="navigate" value="PurchaseInboundReport.xls" />
+				<set field="groupName" value="Supplier" /> 
+				<set field="PurchaseOrderStatus" value="Purchase Order Status" />
+				<set field="qtyShipped" value="Quantity Received" />
+				<set field="title" value="Purchase Inbound" />
+				<set field="facilityId" from-field="parameters.facilityId" type="String" />
+				<script 
+					location="component://facilityext/webapp/facilityext/WEB-INF/actions/ShipmentReports/PurchaseInBound.groovy" />
+				<entity-condition list="supplierList" entity-name="PartyRoleAndPartyDetail">
+					<condition-list combine="and">
+						<condition-expr field-name="roleTypeId" operator="equals"
+							value="SUPPLIER" />
+					</condition-list>
+				</entity-condition>
+			</actions>
+			<widgets>
+				<decorator-screen name="CommonFacilityDecorator"
+					location="${parameters.commonFacilityDecoratorLocation}">
+					<decorator-section name="body">
+						<section>
+							<widgets>
+								<decorator-screen name="FindScreenDecorator"
+									location="component://common/widget/CommonScreens.xml">
+									<decorator-section name="search-options">
+										<include-form location="component://facilityext/widget/FacilityExtForms.xml" name="PurchaseInboundForm" />
+									</decorator-section>
+									<decorator-section name="search-results">
+										<include-form location="component://facilityext/widget/FacilityExtForms.xml"	name="PurchaseInboundListForm" />
+									</decorator-section>
+								</decorator-screen>
+							</widgets>
+						</section>
+					</decorator-section>
+				</decorator-screen>
+			</widgets>
+		</section>
+	</screen>
+	<screen name="ShipmentArrivalsReport">
+		<section>
+			<actions>
+				<set field="tabButtonItem" value="Reports" />
+				<!-- <set field="target" value="ShipmentArrivalsPDF" /> <set field="excelTarget"	value="ShipmentArrivals.xls" /> -->
+				<set field="title" value="Shipment Arrivals" />
+				<script	location="component://facilityext/webapp/facilityext/WEB-INF/actions/ShipmentReports/ShipmentArrivals.groovy" />
+			</actions>
+			<widgets>
+				<decorator-screen name="CommonFacilityDecorator"
+					location="${parameters.commonFacilityDecoratorLocation}">
+					<decorator-section name="body">
+						<section>
+							<widgets>
+								<decorator-screen name="FindScreenDecorator"
+									location="component://common/widget/CommonScreens.xml">
+									<decorator-section name="search-options">
+											<include-form location="component://facilityext/widget/FacilityExtForms.xml" name="ShipmentArrivalsForm" />
+									</decorator-section>
+									<decorator-section name="search-results">
+										<include-form	location="component://facilityext/widget/FacilityExtForms.xml"	name="ShipmentArrivalsListForm" />
+
+									</decorator-section>
+								</decorator-screen>
+							</widgets>
+						</section>
+					</decorator-section>
+				</decorator-screen>
+			</widgets>
+		</section>
+	</screen>
+
+	<screen name="Test">
+		<section>
+			<widgets>
+				<decorator-screen name="SplitsDecorator">
+					<decorator-section name="body">
+						<include-form
+							location="component://facilityext/widget/FacilityExtForms.xml"
+							name="Test" />
+						<include-form
+							location="component://facilityext/widget/FacilityExtForms.xml"
+							name="TestList" />
+					</decorator-section>
+				</decorator-screen>
+			</widgets>
+		</section>
+	</screen>
+	<screen name="PurchaseInboundExcel">
+		<section>
+			<actions>
+				<!-- <set field="layoutSettings.documentTitle" value="Purchase Inbound" />
+				<entity-condition entity-name="PurchaseOrderItemFact"
+					list-name="reportList">
+					<condition-list combine="and">
+						<condition-expr field-name="orderId" operator="equals"
+							value="${parameters.orderId}" ignore-if-empty="true" />
+						<condition-expr field-name="productId" operator="equals"
+							value="${parameters.productId}" ignore-if-empty="true" />
+						<condition-expr field-name="groupName" operator="equals"
+							value="${parameters.groupName}" ignore-if-empty="true" />
+						<condition-expr field-name="statusCode" operator="greater-equals" 
+							value="${PurchaseOrderStatus}" ignore-if-empty="true"/> 
+						<condition-expr field-name="orderDate" operator="greater-equals" 
+							value="${parameters.orderDate}" ignore-if-empty="true"/> 
+					</condition-list>
+					<select-field field-name="orderDate" />
+					<select-field field-name="orderId" />
+					<select-field field-name="productId" />
+					<select-field field-name="description" />
+					<select-field field-name="qtyOrdered" />
+					<select-field field-name="qtyShipped" />
+				</entity-condition> -->
+				<script
+					location="component://facilityext/webapp/facilityext/WEB-INF/actions/ShipmentReports/PurchaseInBound.groovy" />
+			</actions>
+
+			<widgets>
+
+				<include-form name="ListPurchaseInboundExcel"
+					location="component://facilityext/widget/FacilityExtForms.xml" />
+			</widgets>
+		</section>
+	</screen>
+	<screen name="SalesOutboundExcel">
+		<section>
+			<actions>
+				<!-- <set field="layoutSettings.documentTitle" value="SalesOut bound" />
+				<entity-condition entity-name="SalesOrderItemFact"
+					list="SalesList">
+					<condition-list combine="or">
+						<condition-expr field-name="orderId" operator="equals"
+							value="${parameters.orderId}" ignore-if-empty="true" />
+						<condition-expr field-name="productId" operator="equals"
+							value="${parameters.productId}" ignore-if-empty="true" />
+						<condition-expr field-name="groupName" operator="equals"
+							value="${parameters.groupName}" ignore-if-empty="true" />
+						<condition-expr field-name="statusCode" operator="greater-equals" 
+							value="${PurchaseOrderStatus}" ignore-if-empty="true"/> 
+						<condition-expr field-name="orderDate" operator="greater-equals" 
+							value="${parameters.orderDate}" ignore-if-empty="true"/> 
+					</condition-list>
+					<select-field field-name="orderDate" />
+					<select-field field-name="orderId" />
+					<select-field field-name="productId" />
+					<select-field field-name="description" />
+					<select-field field-name="qtyOrdered" />
+					<select-field field-name="qtyShipped" />
+				</entity-condition> -->
+				<script
+					location="component://facilityext/webapp/facilityext/WEB-INF/actions/ShipmentReports/PurchaseInBound.groovy" />
+			</actions>
+			<widgets>
+				<include-form name="ListSalesOutboundExcel"
+					location="component://facilityext/widget/FacilityExtForms.xml" />
+			</widgets>
+		</section>
+	</screen>
+	<screen name="ShipmentArrivalsExcel">
+
+		<section>
+			<actions>
+			<script
+					location="component://facilityext/webapp/facilityext/WEB-INF/actions/ShipmentReports/ShipmentArrivals.groovy" />
+				<!-- <entity-condition entity-name="PurchaseOrderItemFact" list="reportList">
+					<condition-list combine="and">
+						<condition-expr field-name="orderId" operator="equals"
+							value="${parameters.orderId}" ignore-if-empty="true" />
+						<condition-expr field-name="productId" operator="equals"
+							value="${parameters.productId}" ignore-if-empty="true" />
+						<condition-expr field-name="orderDate" operator="greater-equals" 
+							value="${parameters.orderDate}" ignore-if-empty="true"/> 
+					</condition-list>
+					<select-field field-name="orderDate" />
+					<select-field field-name="orderId" />
+					<select-field field-name="productId" />
+					<select-field field-name="description" />
+					<select-field field-name="quantityUomId" />
+					<select-field field-name="quantity" />
+					<select-field field-name="qtyShipped" />
+				</entity-condition> -->
+			</actions>
+			<widgets>
+				<include-form name="ListShipmentArrivalExcel"
+					location="component://facilityext/widget/FacilityExtForms.xml" />
+			</widgets>
+		</section>
+	</screen>
+	<screen name="PhysicalInventorySummaryExcel">
+		<section>
+			<actions>
+				<script
+					location="component://facilityext/webapp/facilityext/WEB-INF/actions/ShipmentReports/PhysicalInventorySummaryReport.groovy" />
+			</actions>
+			<widgets>
+			
+				<include-form name="PhysicalInventorySummaryExcel"
+					location="component://facilityext/widget/FacilityExtForms.xml" />
+			</widgets>
+		</section>
+	</screen>
+	<screen name="ManufecIssuanceExcel">
+		<section>
+			<actions>
+				<script	location="component://facilityext/webapp/facilityext/WEB-INF/actions/ShipmentReports/ManufacturingIssuanceReports.groovy" />
+			</actions>
+			<widgets>
+			
+				<include-form name="ManufecIssuanceExcel"
+					location="component://facilityext/widget/FacilityExtForms.xml" />
+			</widgets>
+		</section>
+	</screen>
+	<screen name="ProductInventoryPositionReportsExcel">
+		<section>
+			<actions>
+				<script	location="component://order/webapp/ordermgr/reports/ProductInventoryPositionReport.groovy" />
+			</actions>
+			<widgets>
+			
+				<include-form name="ProductInventoryPositionReportsExcel"
+					location="component://facilityext/widget/FacilityExtForms.xml" />
+			</widgets>
+		</section>
+	</screen>
+	<!-- End of reports -->
+
+	<screen name="LookupProductName">
+		<section>
+			<actions>
+				<set field="title" value="Location Lookup" />
+			</actions>
+			<widgets>
+				<decorator-screen name="LookupDecorator"
+					location="component://common/widget/CommonScreens.xml">
+					<decorator-section name="search-options">
+						<include-form
+							location="component://facilityext/widget/FacilityExtForms.xml"
+							name="LookupProductNameForm" />
+
+					</decorator-section>
+					<decorator-section name="search-results">
+						<include-form
+							location="component://facilityext/widget/FacilityExtForms.xml"
+							name="LookupProductNameListForm" />
+
+					</decorator-section>
+				</decorator-screen>
+			</widgets>
+		</section>
+	</screen>
+
+	<screen name="ManufecIssuance">
+		<section>
+			<actions>
+				<set field="tabButtonItem" value="Reports" />
+				<set field="target" value="issuanceReport" />
+				<set field="title" value="Manufacturing Issuance" />
+				<set field="navigate" value="SalesOutboundReport.xls" />
+				<set field="facilityId" from-field="parameters.facilityId" type="String" />
+			</actions>
+			<widgets>
+				<decorator-screen name="CommonFacilityDecorator"
+					location="${parameters.commonFacilityDecoratorLocation}">
+					<decorator-section name="body">
+						<section>
+							<widgets>
+								<decorator-screen name="FindScreenDecorator"
+									location="component://common/widget/CommonScreens.xml">
+									<decorator-section name="search-options">
+											<include-form location="component://facilityext/widget/FacilityExtForms.xml" name="ManufecIssuanceForm" />
+									</decorator-section>
+								</decorator-screen>
+							</widgets>
+						</section>
+					</decorator-section>
+				</decorator-screen>
+			</widgets>
+		</section>
+	</screen>
+
+	<screen name="ManufecIssuanceReport">
+		<section>
+			<actions>
+				<set field="titleProperty" value="OrderReportOpenOrderItems" />
+				<set field="headerItem" value="reports" />
+				<set field="fromOrderDate" from-field="parameters.fromOrderDate"
+					type="Timestamp" />
+				<set field="thruOrderDate" from-field="parameters.thruOrderDate"
+					type="Timestamp" />
+				<script
+					location="component://facilityext/webapp/facilityext/WEB-INF/actions/ShipmentReports/ManufacturingIssuanceReports.groovy" />
+			</actions>
+			<widgets>
+				<decorator-screen name="FoReportDecorator" location="component://common/widget/CommonScreens.xml">
+					<!-- at the top of every page we put the logo and company information -->
+					<decorator-section name="header">
+						<section>
+							<widgets>
+								<include-screen name="ZPCHeader" location="component://facilityext/widget/FacilityExtScreens.xml"/>
+							</widgets>
+						</section>
+					</decorator-section>
+					<decorator-section name="body">
+						<section>
+							<widgets>
+								<platform-specific>
+									<xsl-fo>
+										<html-template
+												location="component://facilityext/webapp/reports/MenufacturingIssuanceReportsFtl.fo.ftl"/>
+									</xsl-fo>
+								</platform-specific>
+							</widgets>
+						</section>
+					</decorator-section>
+				</decorator-screen>
+			</widgets>
+		</section>
+	</screen>
+	
+	<screen name="ABCAnalysis">
+		<section>
+			<actions>
+				<set field="tabButtonItem" value="Reports" />
+				<set field="title" value="ABC Analysis" />
+			</actions>
+			<widgets>
+				<decorator-screen name="CommonFacilityDecorator"
+					location="${parameters.commonFacilityDecoratorLocation}">
+					<decorator-section name="body">
+						<section>
+							<widgets>
+								<decorator-screen name="FindScreenDecorator"
+									location="component://common/widget/CommonScreens.xml">
+									<decorator-section name="search-options">
+											<include-form
+												location="component://facilityext/widget/FacilityExtForms.xml"
+												name="ABCAnalysisForm" />
+									</decorator-section>
+								</decorator-screen>
+							</widgets>
+						</section>
+					</decorator-section>
+				</decorator-screen>
+			</widgets>
+		</section>
+	</screen>
+	
+	<screen name="ABCAnalysisReport">
+		<section>
+			<actions>
+				<set field="headerItem" value="reports" />
+				<set field="fromOrderDate" from-field="parameters.fromOrderDate"
+					type="Timestamp" />
+				<set field="thruOrderDate" from-field="parameters.thruOrderDate"
+					type="Timestamp" />
+				<set field="facilityId" from-field="parameters.facilityId" type="String" />
+				<script
+					location="component://facilityext/webapp/facilityext/WEB-INF/actions/ShipmentReports/ABCAnalysisReports.groovy" />
+			</actions>
+			<widgets>
+				<platform-specific>
+					<xsl-fo>
+						<html-template
+							location="component://facilityext/webapp/reports/ABCAnalysisReports.ftl" />
+					</xsl-fo>
+				</platform-specific>
+			</widgets>
+		</section>
+	</screen>
+	<screen name="ABCAnalysisXlReport">
+		<section>
+			<actions>
+				<script	location="component://facilityext/webapp/facilityext/WEB-INF/actions/ShipmentReports/ABCAnalysisReports.groovy" />
+			</actions>
+			<widgets>
+			<include-form name="ListABCAnalysisXlReport"
+					location="component://facilityext/widget/FacilityExtForms.xml" />
+			</widgets>
+		</section>
+	</screen> 
+	<screen name="ProductInventoryPositionReport">
+		<section>
+			<actions>
+				<set field="tabButtonItem" value="Reports" />
+				<set field="title" value="Product Inventory Position Form" />
+				<script location="component://order/webapp/ordermgr/reports/ProductInventoryPositionReport.groovy"/>   
+			</actions>
+			<widgets>
+				<decorator-screen name="CommonFacilityDecorator"
+					location="${parameters.commonFacilityDecoratorLocation}">
+					<decorator-section name="body">
+						<section>
+							<widgets>
+								<decorator-screen name="FindScreenDecorator"
+									location="component://common/widget/CommonScreens.xml">
+									<decorator-section name="search-options">
+											<include-form name="ProductInventoryPositionReport"	location="component://facilityext/widget/FacilityExtForms.xml" />
+									</decorator-section>
+									<decorator-section name="search-results">
+											<include-form name="ProductInventoryPositionList" location="component://facilityext/widget/FacilityExtForms.xml" />
+									</decorator-section>
+								</decorator-screen>
+							</widgets>
+						</section>
+					</decorator-section>
+				</decorator-screen>
+			</widgets>
+		</section>
+	</screen>
+	<screen name="ProductInventoryPositionList">
+		<section>
+			<actions>
+				<set field="tabButtonItem" value="Reports" />
+				<set field="title" value="Product Inventory Position" />
+			</actions>
+			<widgets>
+				<decorator-screen name="CommonFacilityDecorator"
+					location="${parameters.commonFacilityDecoratorLocation}">
+					<decorator-section name="body">
+						<section>
+							<widgets>
+								<decorator-screen name="FindScreenDecorator"
+									location="component://common/widget/CommonScreens.xml">
+									<decorator-section name="search-options">
+											<include-form name="ProductInventoryPositionReport"	location="component://facilityext/widget/FacilityExtForms.xml" />
+									</decorator-section>
+									<decorator-section name="search-results">
+											<include-form name="ProductInventoryPositionList" location="component://facilityext/widget/FacilityExtForms.xml" />
+									</decorator-section>
+								</decorator-screen>
+							</widgets>
+						</section>
+					</decorator-section>
+				</decorator-screen>
+			</widgets>
+		</section>
+	</screen>
+	
+	<screen name="openRequest">
+		<section>
+			<actions>
+				<set field="tabButtonItem" value="Reports" />
+				<set field="title" value="Open Request" />
+				<script location="component://facilityext/webapp/reports/openRequest.groovy"/>
+			</actions>
+			<widgets>
+				<decorator-screen name="CommonFacilityDecorator" location="${parameters.commonFacilityDecoratorLocation}">
+					<decorator-section name="body">
+						<section>
+							<widgets>
+								<container>
+									<link target="OpenRequest.pdf" text="PDF" style="btn btn-link btn-right" target-window="_blank" />
+								</container>
+								<screenlet id="inventory-item-reservations" title="Open Request">
+									<platform-specific>
+											<html>
+												<html-template location="component://facilityext/webapp/reports/openRequest.ftl" />
+											</html>
+										</platform-specific>
+								</screenlet>
+							</widgets>
+						</section>
+					</decorator-section>
+				</decorator-screen>
+			</widgets>
+		</section>
+	</screen>
+	
+	<screen name="OpenRequest.fo">
+		<section>
+			<actions>
+				<set field="footerLabel" value="Open Request" />
+				<script location="component://facilityext/webapp/reports/openRequest.groovy"/>
+			</actions>
+			<widgets>
+				<decorator-screen name="FoReportDecorator" location="component://common/widget/CommonScreens.xml">
+					<!-- at the top of every page we put the logo and company information -->
+					<decorator-section name="header">
+						<section>
+							<widgets>
+								<include-screen name="ZPCHeader" location="component://facilityext/widget/FacilityExtScreens.xml"/>
+							</widgets>
+						</section>
+					</decorator-section>
+					<decorator-section name="body">
+						<section>
+							<widgets>
+								<platform-specific>
+									<xsl-fo>
+										<html-template
+												location="component://facilityext/webapp/reports/OpenRequest.fo.ftl"/>
+									</xsl-fo>
+								</platform-specific>
+							</widgets>
+						</section>
+					</decorator-section>
+				</decorator-screen>
+			</widgets>
+		</section>
+	</screen>
+	
+	<screen name="StoreIssuanceNote">
+		<section>
+			<actions>
+				<set field="tabButtonItem" value="Reports" />
+				<set field="title" value="Stores Issuance Report" />
+			</actions>
+			<widgets>
+				<decorator-screen name="CommonFacilityDecorator" location="${parameters.commonFacilityDecoratorLocation}">
+					<decorator-section name="body">
+						<section>
+							<widgets>
+								<screenlet id="inventory-item-reservations" title="Stores Issuance">
+									<include-form name="StoreIssuanceNoteReportForm" location="component://facilityext/widget/FacilityExtForms.xml" />
+								</screenlet>
+							</widgets>
+						</section>
+					</decorator-section>
+				</decorator-screen>
+			</widgets>
+		</section>
+	</screen>
+	
+	<screen name="StoreIssuanceNoteReport">
+		<section>
+			<actions>
+				<set field="headerItem" value="reports" />
+				<set field="footerLabel" value="Stores Issuance"/>
+				<set field="fromDate" from-field="parameters.fromDate"
+					type="Timestamp" />
+				<set field="thruDate" from-field="parameters.thruDate"
+					type="Timestamp" />
+				<set field="facilityId" from-field="parameters.facilityId" type="String" />
+				<script location="component://facilityext/webapp/reports/storeIssuanceNote.groovy"/>
+			</actions>
+			<widgets>
+				<decorator-screen name="FoReportDecorator" location="component://common/widget/CommonScreens.xml">
+					<decorator-section name="header">
+						<section>
+							<widgets>
+								<include-screen name="ZPCHeader"
+									location="component://facilityext/widget/FacilityExtScreens.xml"/>
+							</widgets>
+						</section>
+					</decorator-section>
+					<decorator-section name="body">
+						<section>
+							<widgets>
+								<platform-specific>
+									<xsl-fo>
+										<html-template
+											location="component://facilityext/webapp/reports/StoreIssuanceNote.fo.ftl" />
+									</xsl-fo>
+								</platform-specific>
+							</widgets>
+						</section>
+					</decorator-section>
+				</decorator-screen>
+			</widgets>
+		</section>
+	</screen>
+	
+	<screen name="StockVariance">
+		<section>
+			<actions>
+				<set field="tabButtonItem" value="Reports" />
+				<set field="title" value="Stock Variance" />
+			</actions>
+			<widgets>
+				<decorator-screen name="CommonFacilityDecorator" location="${parameters.commonFacilityDecoratorLocation}">
+					<decorator-section name="body">
+						<section>
+							<widgets>
+								<screenlet id="inventory-item-reservations" title="Stock Variance">
+									<include-form name="StockVarianceReportForm" location="component://facilityext/widget/FacilityExtForms.xml" />
+								</screenlet>
+							</widgets>
+						</section>
+					</decorator-section>
+				</decorator-screen>
+			</widgets>
+		</section>
+	</screen>
+	
+	<screen name="StockVarianceReport">
+		<section>
+			<actions>
+				<set field="headerItem" value="reports" />
+				<set field="footerLabel" value="Stock Variance"/>
+				<set field="facilityId" from-field="parameters.facilityId" type="String" />
+				<set field="fromDate" from-field="parameters.fromDate"
+					type="Timestamp" />
+				<set field="thruDate" from-field="parameters.thruDate"
+					type="Timestamp" />
+				<script location="component://facilityext/webapp/reports/stockVariance.groovy"/>
+			</actions>
+			<widgets>
+				<decorator-screen name="FoReportDecorator" location="component://common/widget/CommonScreens.xml">
+					<decorator-section name="header">
+						<section>
+							<widgets>
+								<include-screen name="ZPCHeader"
+									location="component://facilityext/widget/FacilityExtScreens.xml"/>
+							</widgets>
+						</section>
+					</decorator-section>
+					<decorator-section name="body">
+						<section>
+							<widgets>
+								<platform-specific>
+									<xsl-fo>
+										<html-template
+											location="component://facilityext/webapp/reports/StockVariance.fo.ftl" />
+									</xsl-fo>
+								</platform-specific>
+							</widgets>
+						</section>
+					</decorator-section>
+				</decorator-screen>
+			</widgets>
+		</section>
+	</screen>
+	
+	<screen name="Returnable">
+		<section>
+			<actions>
+				<set field="tabButtonItem" value="Reports" />
+				<set field="title" value="Returnables" />
+			</actions>
+			<widgets>
+				<decorator-screen name="CommonFacilityDecorator" location="${parameters.commonFacilityDecoratorLocation}">
+					<decorator-section name="body">
+						<section>
+							<widgets>
+								<screenlet id="inventory-item-reservations" title="Returnables">
+									<include-form name="ReturnableReportForm" location="component://facilityext/widget/FacilityExtForms.xml" />
+								</screenlet>
+							</widgets>
+						</section>
+					</decorator-section>
+				</decorator-screen>
+			</widgets>
+		</section>
+	</screen>
+	
+	<screen name="ReturnableReport">
+		<section>
+			<actions>
+				<set field="headerItem" value="reports" />
+				<set field="footerLabel" value="Returnables"/>
+				<set field="fromDate" from-field="parameters.fromDate"
+					type="Timestamp" />
+				<set field="thruDate" from-field="parameters.thruDate"
+					type="Timestamp" />
+				<set field="facilityId" from-field="parameters.facilityId" type="String" />
+				<script location="component://facilityext/webapp/reports/returnables.groovy"/>
+			</actions>
+			<widgets>
+				<decorator-screen name="FoReportDecorator" location="component://common/widget/CommonScreens.xml">
+					<decorator-section name="header">
+						<section>
+							<widgets>
+								<include-screen name="ZPCHeader"
+									location="component://facilityext/widget/FacilityExtScreens.xml"/>
+							</widgets>
+						</section>
+					</decorator-section>
+					<decorator-section name="body">
+						<section>
+							<widgets>
+								<platform-specific>
+									<xsl-fo>
+										<html-template
+											location="component://facilityext/webapp/reports/Returnables.fo.ftl" />
+									</xsl-fo>
+								</platform-specific>
+							</widgets>
+						</section>
+					</decorator-section>
+				</decorator-screen>
+			</widgets>
+		</section>
+	</screen>
+	
+	<screen name="QualityMaterialsReceived">
+		<section>
+			<actions>
+				<set field="tabButtonItem" value="Reports" />
+				<set field="title" value="Quality Materials Received" />
+			</actions>
+			<widgets>
+				<decorator-screen name="CommonFacilityDecorator" location="${parameters.commonFacilityDecoratorLocation}">
+					<decorator-section name="body">
+						<section>
+							<widgets>
+								<screenlet id="inventory-item-reservations" title="Quality Materials Received">
+									<include-form name="QualityMaterialsReceivedReportForm" location="component://facilityext/widget/FacilityExtForms.xml" />
+								</screenlet>
+							</widgets>
+						</section>
+					</decorator-section>
+				</decorator-screen>
+			</widgets>
+		</section>
+	</screen>
+	
+	<screen name="QualityMaterialsReceivedReport">
+		<section>
+			<actions>
+				<set field="headerItem" value="reports" />
+				<set field="footerLabel" value="Quality Materials Received"/>
+				<set field="fromDate" from-field="parameters.fromDate"
+					type="Timestamp" />
+				<set field="thruDate" from-field="parameters.thruDate"
+					type="Timestamp" />
+				<set field="facilityId" from-field="parameters.facilityId" type="String" />
+				<script location="component://facilityext/webapp/reports/qualityMaterialsReceived.groovy"/>
+			</actions>
+			<widgets>
+				<decorator-screen name="FoReportDecorator" location="component://common/widget/CommonScreens.xml">
+					<decorator-section name="header">
+						<section>
+							<widgets>
+								<include-screen name="ZPCHeader"
+									location="component://facilityext/widget/FacilityExtScreens.xml"/>
+							</widgets>
+						</section>
+					</decorator-section>
+					<decorator-section name="body">
+						<section>
+							<widgets>
+								<platform-specific>
+									<xsl-fo>
+										<html-template
+											location="component://facilityext/webapp/reports/QualityMaterialsReceived.fo.ftl" />
+									</xsl-fo>
+								</platform-specific>
+							</widgets>
+						</section>
+					</decorator-section>
+				</decorator-screen>
+			</widgets>
+		</section>
+	</screen>
+	
+	<screen name="StoresMaterialReceived">
+		<section>
+			<actions>
+				<set field="tabButtonItem" value="Reports" />
+				<set field="title" value="Stores Material Received" />
+			</actions>
+			<widgets>
+				<decorator-screen name="CommonFacilityDecorator" location="${parameters.commonFacilityDecoratorLocation}">
+					<decorator-section name="body">
+						<section>
+							<widgets>
+								<screenlet id="inventory-item-reservations" title="Stores Material Received">
+									<include-form name="StoresMaterialReceivedReportForm" location="component://facilityext/widget/FacilityExtForms.xml" />
+								</screenlet>
+							</widgets>
+						</section>
+					</decorator-section>
+				</decorator-screen>
+			</widgets>
+		</section>
+	</screen>
+	
+	<screen name="StoresMaterialReceivedReport">
+		<section>
+			<actions>
+				<set field="headerItem" value="reports" />
+				<set field="footerLabel" value="Stores Material Received"/>
+				<set field="fromDate" from-field="parameters.fromDate"
+					type="Timestamp" />
+				<set field="thruDate" from-field="parameters.thruDate"
+					type="Timestamp" />
+				<set field="facilityId" from-field="parameters.facilityId" type="String" />
+				<script location="component://facilityext/webapp/reports/storesMaterialReceived.groovy"/>
+			</actions>
+			<widgets>
+				<decorator-screen name="FoReportDecorator" location="component://common/widget/CommonScreens.xml">
+					<decorator-section name="header">
+						<section>
+							<widgets>
+								<include-screen name="ZPCHeader"
+									location="component://facilityext/widget/FacilityExtScreens.xml"/>
+							</widgets>
+						</section>
+					</decorator-section>
+					<decorator-section name="body">
+						<section>
+							<widgets>
+								<platform-specific>
+									<xsl-fo>
+										<html-template
+											location="component://facilityext/webapp/reports/StoresMaterialReceived.fo.ftl" />
+									</xsl-fo>
+								</platform-specific>
+							</widgets>
+						</section>
+					</decorator-section>
+				</decorator-screen>
+			</widgets>
+		</section>
+	</screen>
+	
+	<screen name="StoppageAnalysis">
+		<section>
+			<actions>
+				<set field="tabButtonItem" value="Reports" />
+				<set field="title" value="Stoppage Analysis" />
+			</actions>
+			<widgets>
+				<decorator-screen name="CommonFacilityDecorator" location="${parameters.commonFacilityDecoratorLocation}">
+					<decorator-section name="body">
+						<section>
+							<widgets>
+								<screenlet id="inventory-item-reservations" title="Stoppage Analysis">
+									<include-form name="StoppageAnalysisReportForm" location="component://facilityext/widget/FacilityExtForms.xml" />
+								</screenlet>
+							</widgets>
+						</section>
+					</decorator-section>
+				</decorator-screen>
+			</widgets>
+		</section>
+	</screen>
+	
+	<screen name="StoppageAnalysisReport">
+		<section>
+			<actions>
+				<set field="headerItem" value="reports" />
+				<set field="titleProperty" value="StoppageAnalysisRepPdf"/>
+				<set field="footerLabel" value="Stoppage Analysis"/>
+				<set field="facilityId" from-field="parameters.facilityId" type="String" />
+				<set field="fromDate" from-field="parameters.fromDate"
+					type="Timestamp" />
+				<set field="thruDate" from-field="parameters.thruDate"
+					type="Timestamp" />
+				<set field="workEffortTypeId" from-field="parameters.workEffortTypeId" type="String" />
+				<script location="component://facilityext/webapp/reports/stoppageAnalysis.groovy"/> 
+			</actions>
+			<widgets>
+				<decorator-screen name="FoReportDecorator" location="component://common/widget/CommonScreens.xml">
+					<decorator-section name="header">
+						<section>
+							<widgets>
+								<include-screen name="ZPCHeader"
+									location="component://facilityext/widget/FacilityExtScreens.xml"/>
+							</widgets>
+						</section>
+					</decorator-section>
+					<decorator-section name="body">
+						<section>
+							<widgets>
+								<platform-specific>
+									<xsl-fo>
+										<html-template
+											location="component://facilityext/webapp/reports/StoppageAnalysis.fo.ftl" />
+									</xsl-fo>
+								</platform-specific>
+							</widgets>
+						</section>
+					</decorator-section>
+				</decorator-screen>
+			</widgets>
+		</section>
+	</screen>
+	
+	<screen name="ZPCHeader">
+		<section>
+			<actions>
+				<script location="component://order/webapp/ordermgr/WEB-INF/actions/order/CompanyHeader.groovy"/>
+			</actions>
+			<widgets>
+				<platform-specific>
+					<xsl-fo>
+						<html-template location="component://order/webapp/ordermgr/order/companyHeaderInfo.fo.ftl"/>
+					</xsl-fo>
+				</platform-specific>
+			</widgets>
+		</section>
+	</screen>
+
+</screens>

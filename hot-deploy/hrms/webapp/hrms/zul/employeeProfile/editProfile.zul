@@ -1,0 +1,413 @@
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<?component name="profileField" macroURI="../macros/profileField.zul" id="profileMacro"?>
+<zk xmlns:h="http://www.zkoss.org/2005/zk/native">
+	<zscript>
+        import org.ofbiz.entity.*;
+		import org.zkoss.util.resource.Labels;
+		String partyId = (String) Executions.getCurrent().getArg().get("partyId");
+		org.ofbiz.entity.GenericDelegator delegator = (org.ofbiz.entity.GenericDelegator) requestScope.get("delegator");
+		org.ofbiz.entity.GenericValue person = null;
+		person = delegator.findByPrimaryKey("Person", org.ofbiz.base.util.UtilMisc.toMap("partyId", partyId));
+        GenericValue userLogin = (GenericValue) Executions.getCurrent().getDesktop().getSession().getAttribute("userLogin");
+        org.ofbiz.security.Security security =requestScope.get("security");
+        boolean isAdmin = security.hasPermission("HUMANRES_ADMIN", userLogin);
+	</zscript>
+	<window id="updateProfileWindow" height="100%">
+		<h:table width="100%" CELLSPACING="12">
+			<h:tr>
+				<h:td style="text-align:right">
+					<label value="${c:l('FormFieldTitle_employeeEmployeeId') } :"></label>
+				</h:td>
+				<h:td>
+					<label id="employeeId" visible="false" value="${partyId}"/>
+					
+					<label id="employeeUniqueId" value="${partyId}" style="font-weight:regular"></label>
+				</h:td>
+				<!-- <h:td style="text-align:right">
+					<label value="${c:l('HRMS_EMP_ACC_WITH_AGENT') }"></label>
+				</h:td>
+				<h:td>
+					<textbox id="employeeAccWithAgent" value="${person.employeeAccWithAgent}" style="font-weight:regular" constraint="no empty : ${c:l('HRMS_EP_REQUIRED_EMPLOYEE_ID_WITH_AGENT') }"></textbox>
+				</h:td>
+				<h:td style="text-align:right">
+					<label value="${c:l('HRMS_Salutation')}:"></label>
+				</h:td>
+				<h:td>
+					<textbox id="salutation" value="${person.salutation}" />
+				</h:td> -->
+				<h:td style="text-align:right">
+					<label value="${c:l('HRMS_PersonTitle')}:" style="font-weight:bold"></label>
+				</h:td>
+				<h:td>
+					<textbox id="title" value="${person.personalTitle}" />
+				</h:td>
+			</h:tr>
+			<h:tr>
+				<h:td style="text-align:right">
+					<label value="${c:l('HRMS_FirstName')}:" style="font-weight:bold"></label>
+					<label value="*" style="color:red" />
+				</h:td>
+				<h:td>
+					<textbox id="firstName" value="${person.firstName}" constraint="no empty: ${c:l('HRMS_REQUIRED_FIRST_NAME') }" >
+						<zscript>		
+							<![CDATA[
+								import org.zkoss.util.resource.Labels;
+								import org.zkoss.util.resource.Labels;
+								import org.ofbiz.base.util.*;
+								public void nameValidation(Textbox comp) throws WrongValueException {
+									String value = comp.getValue();
+									if (value == "") {
+										throw new WrongValueException(comp, Labels.getLabel("HRMS_REQUIRED_FIRST_NAME"));
+									}
+									boolean isNotString = true;
+									isNotString = UtilValidate.isAlphabetic(value);
+									if (!isNotString) {
+										throw new WrongValueException(comp, Labels.getLabel("HRMS_NAME_SHOULD_BE_ONLY_CHARACTERS"));
+									}
+								}
+							]]>
+						</zscript>
+					</textbox>
+				</h:td>
+				<h:td style="text-align:right">
+					<label value="${c:l('HRMS_MiddleName')}:" style="font-weight:bold"></label>
+				</h:td>
+				<h:td style="text-align:left">
+					<textbox id="middleName" value="${person.middleName}" />
+				</h:td>
+				<h:td style="text-align:right">
+					<label value="${c:l('HRMS_LastName')}:"></label>
+					<label value="*" style="color:red" />
+				</h:td>
+				<h:td>
+					<textbox id="lastName" value="${person.lastName}" constraint="no empty: ${c:l('HRMS_REQUIRED_LAST_NAME') }"/>
+				</h:td>
+			</h:tr>
+			<h:tr>
+				<h:td style="text-align:right">
+					<label value="${c:l('HRMS_BirthDate')}:" style="font-weight:bold"></label>
+					<label value="*" style="color:red" />
+				</h:td>
+				<h:td>
+					<datebox id="birthDate" value="${person.birthDate}" />
+				</h:td>
+				<h:td style="text-align:right">
+					<label value="${c:l('HRMS_MaritalStatus')}:"></label>
+				</h:td>
+				<h:td>
+					<listbox id="maritalStatusListbox" mold="select" onSelect="Clients.closeErrorBox(self)">
+						<listitem label="" />
+						<listitem label="${c:l('ListBox_Married') }" value="M" id="married" />
+						<listitem label="${c:l('ListBox_Unmarried') }" value="U" id="unmarried" />
+					</listbox>
+				</h:td>
+				<h:td style="text-align:right">
+					<label value="${c:l('HRMS_Gender')}:" style="font-weight:bold"></label>
+					<label value="*" style="color:red" />
+				</h:td>
+				<h:td>
+					<listbox id="genderlistBox" mold="select" onSelect="Clients.closeErrorBox(self)">
+						<listitem label="" />
+						<listitem label="${c:l('ListBox_GenderMale') }" value="M" id="male" />
+						<listitem label="${c:l('ListBox_GenderFemale') }" value="F" id="female" />
+					</listbox>
+				</h:td>
+			</h:tr>
+			<h:tr>
+				<h:td style="text-align:right">
+					<label value="${c:l('HRMS_IdentificationMark')}:" style="font-weight:bold"></label>
+				</h:td>
+				<h:td>
+					<textbox id="identificationMark" value="${person.identificationMark}" />
+				</h:td>
+
+				<h:td style="text-align:right">
+					<label value="${c:l('HRMS_BloodGroup')}:" style="font-weight:bold"></label>
+
+				</h:td>
+				<h:td>
+					<textbox id="bloodGroup" value="${person.bloodGroup}" maxlength="4" />
+				</h:td>
+				<h:td style="text-align:right">
+					<label value="${c:l('HRMS_Nationality')}:" style="font-weight:bold"></label>
+
+				</h:td>
+				<h:td>
+					<textbox id="nationality" value="${person.nationality}" />
+				</h:td>
+			</h:tr>
+			<h:tr>
+				<h:td style="text-align:right">
+					<label value="${c:l('HRMS_PassportNumber')}:" style="font-weight:bold"></label>
+				</h:td>
+				<h:td>
+					<textbox id="passportNumber" value="${person.passportNumber}" />
+				</h:td>
+				<h:td style="text-align:right">
+					<label value="${c:l('HRMS_PassportExpireDate')}:" style="font-weight:bold"></label>
+				</h:td>
+				<h:td>
+					<datebox id="passportExpireDate" value="${person.passportExpireDate}" readonly="false" />
+				</h:td>
+				<h:td style="text-align:right">
+					<label value="${c:l('HRMS_CountryCode')}:" style="font-weight:bold"></label>
+				</h:td>
+				<h:td>
+					<textbox id="countryCode" value="${person.countryCode}" visible="true" />
+				</h:td>
+			</h:tr>
+			<h:tr>
+				<h:td style="text-align:right">
+					<label value="${c:l('HRMS_NomineeName')}:" style="font-weight:bold"></label>
+				</h:td>
+				<h:td>
+					<textbox id="nomineeName" value="${person.nomineeName}" />
+				</h:td>
+				<h:td style="text-align:right">
+					<label value="${c:l('HRMS_FatherName')}:"></label>
+				</h:td>
+				<h:td>
+					<textbox id="fatherName" value="${person.fatherName}" />
+				</h:td>
+				<h:td style="text-align:right">
+					<label value="${c:l('HRMS_SpouceName')}:"></label>
+				</h:td>
+				<h:td>
+					<textbox id="spouceName" value="${person.spouseName}" />
+				</h:td>
+			</h:tr>
+			<h:tr>
+				<h:td style="text-align:right">
+					<label value="${c:l('HRMS_VehicleNumber')}:" style="font-weight:bold"></label>
+				</h:td>
+				<h:td>
+					<textbox id="vehicleNumber" value="${person.vehicleNumber}" />
+				</h:td>
+				<h:td style="text-align:right">
+					<label value="${c:l('HRMS_VehicleType')}:" style="font-weight:bold"></label>
+				</h:td>
+				<h:td>
+					<textbox id="vehicleType" value="${person.vehicleType}" />
+				</h:td>
+				<h:td style="text-align:right">
+            		<label value="${c:l('FormFieldTitle_nrcNo') }:" width="100px" />
+                    <label value="*" style="color:red" />
+            	</h:td>
+            	<h:td>
+            		 <textbox id="addEmployee_NRCNo" name="addEmployee_NRCNo" value="${person.nrcNo}" constraint="no empty : NRC Number Required"
+            		 onChange = "checkUniqueNrcNo()"/>
+            	</h:td>
+            <zscript>
+					<![CDATA[
+	void checkUniqueNrcNo() {
+		GenericDelegator delegator = com.ndz.zkoss.util.HrmsInfrastructure.getDelegator();//GenericDelegator.getGenericDelegator("default");
+		String nrcNo = addEmployee_NRCNo.getValue();
+		List nrcNoList = delegator.findByAnd("Person", UtilMisc.toMap("nrcNo", nrcNo));
+		if (nrcNoList.size() > 0 ) {
+			throw new WrongValueException(addEmployee_NRCNo, "Please provide unique nrc no.");
+		}
+	
+}
+]]></zscript>
+			</h:tr>
+			<h:tr>
+            	<h:td style="text-align:right">
+            		<label value="${c:l('FormFieldTitle_socialSecurityNumber') }:"/>
+                    <label value="*" style="color:red" />
+            	</h:td>
+            	<h:td>
+            		<textbox id="addEmployee_socialSecurityNumber" name="addEmployee_socialSecurityNumber" value="${person.socialSecurityNumber}" constraint="no empty : SSN Number Required"/>
+            	</h:td>
+            	            	
+            	<h:td style="text-align:right">
+                  			<label value="${c:l('FormFieldTitle_grades') }"  visible="${isAdmin}"/>
+                  			<label value="*" style="color:red" visible="${isAdmin}"/>
+                </h:td>
+                 <zscript>
+                 <![CDATA[
+                            ListModelList gradesArr = HrmsUtil.getGrades();
+                  ]]>
+                 </zscript>
+            	
+            	<h:td>
+            		<combobox id="addEmployee_grades" name="addEmployee_grades" model="${gradesArr}" value="${person.grades}" width="130px" visible="${isAdmin}"/>
+            	</h:td>
+                 
+               <h:td width="116px">
+                <label value="${c:l('FormFieldTitle_positionCategories') }:" visible="${isAdmin}"/>
+                <label value="*" style="color:red" visible="${isAdmin}" />
+               </h:td> 
+                <zscript>
+              <![CDATA[
+                ListModelList positionCategoriesArr = new ListModelList(Arrays.asList(new String[] {"Employees","Management","Expatriates"}));
+              ]]>
+             </zscript>
+          
+               <h:td>
+               	<combobox id="positionCategories" model="${positionCategoriesArr}" value="${person.positionCategory}" width="130px" visible="${isAdmin}"></combobox>
+               </h:td> 
+               </h:tr>
+          
+          <h:tr>
+            	<h:td style="text-align:right">
+            		<label value="${c:l('FormFieldTitle_qualification') }:"/>
+            	</h:td>
+            	<h:td>
+            		<textbox id="empQualification" name="empQualification" value="${person.qualification}" multiline="true" cols="30" rows="2"/>
+            	</h:td>
+
+              <h:td style="text-align:right">
+                  <label value="NAPSA:"/>
+              </h:td>
+              <h:td>
+                  <textbox id="empNapsaNo" name="empNapsaNo" value="${person.napsaNo}"/>
+              </h:td>
+
+              <!--<h:td style="text-align:right">
+                  <label value="Gang:"/>
+              </h:td>
+              <h:td>
+                  <textbox id="empGang" name="empGang" value="${person.gang}"/>
+              </h:td>-->
+
+            </h:tr>
+           <h:tr>
+           	<h:td width="16%" style="text-align:right">
+                     	<label value="${c:l('FormFieldTitle_employeeType') }:" visible="${isAdmin}"/>
+                     	<label value="*" style="color:red" visible="${isAdmin}"/>
+            </h:td>
+                     
+             <h:td>
+               	<radiogroup id="emp_administration" visible="${isAdmin}">
+        		<radio id="emp_administration_administrative"
+        			label="${c:l('FormFieldTitle_administrative')}"
+        			value="Administrative" style="font-weight: bold;font-size:10px;">
+        		</radio>
+        		<radio id="emp_administration_non_administrative"
+        			label="${c:l('FormFieldTitle_nonadministrative') }"
+        			value="Non-Administrative"
+        			style="font-weight: bold;font-size:10px;">
+        		</radio>
+        	</radiogroup>
+          </h:td>  
+       </h:tr>
+		</h:table>
+		<textbox id="gender" value="${person.gender}" maxlength="1" visible="false" />
+		<zscript>
+			if (gender.getValue().equalsIgnoreCase("M"))
+				male.setSelected(true);
+			if (gender.getValue().equalsIgnoreCase("F"))
+				female.setSelected(true);
+		</zscript>
+		<textbox id="maritalStatus" visible="false" value="${person.maritalStatus}" />
+		<zscript>
+			if (maritalStatus.getValue().equalsIgnoreCase("M"))
+				married.setSelected(true);
+			if (maritalStatus.getValue().equalsIgnoreCase("U"))
+				unmarried.setSelected(true);
+		</zscript>
+		<textbox id="employeeType" value="${person.employeeType}" visible="false"/>
+		<zscript>
+			if(employeeType.getValue().equals("Administrative"))
+				emp_administration_administrative.setSelected(true);
+			if(employeeType.getValue().equals("Non-Administrative"))
+				emp_administration_non_administrative.setSelected(true);
+		</zscript>
+		
+		
+		<textbox id="suffix" value="${person.suffix}" visible="false" />
+		<textbox id="nickName" value="${person.nickname}" visible="false" />
+		<textbox id="memberId" value="${person.memberId}" visible="false" />
+		<doublebox id="heightDouble" value="${person.height}" maxlength="4" tooltiptext="ex: 6.6" visible="false" />
+		<textbox id="height" visible="false" />
+		<doublebox id="weightDouble" value="${person.weight}" maxlength="4" tooltiptext="ex: 70.00" visible="false" />
+		<textbox id="weight" visible="false" />
+		<textbox id="emergencyContact" value="${person.emergencyContactNo}" visible="false" />
+		<textbox id="yrsOfExprience" value="${person.totalYearsWorkExperience}" visible="false" />
+		<textbox id="comments" value="${person.comments}" visible="false" />
+		<textbox id="occupation" value="${person.occupation}" visible="false" />
+		<textbox id="residenceStatusEnumId" value="${person.residenceStatusEnumId}" visible="false" />
+		<textbox id="employmentStatusEnumId" value="${person.employmentStatusEnumId}" visible="false" />
+		<zscript>
+			<![CDATA[
+				void validateForm() {
+					firstName.getValue();
+					lastName.getValue();
+					/** if(UtilValidate.isEmpty(employeeAccWithAgent.getValue())){
+						throw new WrongValueException(employeeAccWithAgent,"Employee Account With Agent Required");
+					}
+					if(employeeAccWithAgent.getValue().length()>16){
+						throw new WrongValueException(employeeAccWithAgent,"Employee Account With Agent should not be more than 16 digit");
+					}
+					
+					if(!(UtilValidate.isAlphanumeric(employeeAccWithAgent.getValue()))){
+						throw new WrongValueException(employeeAccWithAgent,"Employee Account With Agent Should have only Alphanumeric, no special characters or spaces allowed");
+					} **/
+					
+					nameValidation(firstName);
+					nameValidation(lastName);
+					java.text.SimpleDateFormat formater = new java.text.SimpleDateFormat("dd-MM-yyyy");
+					java.util.Date currentDate = new java.util.Date();
+					java.util.Date todayDate = formater.parse(formater.format(currentDate));
+					java.util.Date birthD = birthDate.getValue();
+					if (birthD != null) {
+						if (todayDate.compareTo(formater.parse(formater.format(birthD))) == -1 || todayDate.compareTo(formater.parse(formater.format(birthD))) == 0) {
+							throw new WrongValueException(birthDate, Labels.getLabel("HRMS_EP_BIRTH_DATE_CANNOT_BE_CURRENT_OR_FUTURE_DATE"));
+						}
+					} else {
+						throw new WrongValueException(birthDate, Labels.getLabel("HRMS_REQUIRED_BIRTH_DATE"));
+					}
+					/*if (genderlistBox != null) {
+						String genderlistBoxStr = (String) genderlistBox.getSelectedItem().getValue();
+						if (genderlistBoxStr == null)
+							throw new WrongValueException(genderlistBox, "Gender Required");
+						gender.setValue(genderlistBoxStr);
+					} else {
+						throw new WrongValueException(genderlistBox, "Gender Required");
+					}*/
+					if(genderlistBox.getSelectedItem()!=null){
+					String genderlistBoxStr = (String) genderlistBox.getSelectedItem().getValue();
+					if(genderlistBoxStr==null){
+						throw new WrongValueException(genderlistBox, Labels.getLabel("HRMS_REQUIRED_GENDER"));
+					}
+					}else{
+						throw new WrongValueException(genderlistBox, Labels.getLabel("HRMS_REQUIRED_GENDER"));
+					}
+				
+					String maritialStatus = "";
+					Listitem maritialStatusListitem = maritalStatusListbox.getSelectedItem();
+					if (maritialStatusListitem != null)
+						maritialStatus = (String) maritialStatusListitem.getValue();
+					maritalStatus.setValue(maritialStatus);
+					String empHeight = "";
+					if (heightDouble.getValue() != null)
+						empHeight = heightDouble.getValue().toString();
+					height.setValue(empHeight);
+					String empWeight = "";
+					if (weightDouble.getValue() != null)
+						empWeight = weightDouble.getValue().toString();
+					weight.setValue(empWeight);
+					String employeeGradesStr = addEmployee_grades.getSelectedItem() == null ? null : addEmployee_grades.getSelectedItem().getValue();
+					if (isAdmin && UtilValidate.isEmpty(employeeGradesStr)) {
+						throw new WrongValueException(addEmployee_grades, "Grade Required");
+					}
+					String positionCategoriesStr = positionCategories.getSelectedItem() == null ? null : positionCategories.getSelectedItem().getValue();
+					if (UtilValidate.isEmpty(positionCategoriesStr)) {
+						throw new WrongValueException(positionCategories, "Position Category Required");
+					}
+					String employeeTypeStr = emp_administration.getSelectedItem() == null ? null : emp_administration.getSelectedItem().getValue();
+					if (UtilValidate.isEmpty(employeeTypeStr)) {
+						throw new WrongValueException(emp_administration, "Employee Type Required");
+					}
+					if(UtilValidate.isEmpty(addEmployee_NRCNo.getValue()))
+						throw new WrongValueException(addEmployee_NRCNo,"NRC Number is Required");
+					if(UtilValidate.isEmpty(addEmployee_socialSecurityNumber.getValue()))
+						throw new WrongValueException(addEmployee_socialSecurityNumber,"SSN is Required");
+				}
+			]]>
+		</zscript>
+		<button label="${c:l('HRMS_UPDATE') }" id="updatePersonalInformation" visible="false"
+			onClick="validateForm();com.ndz.controller.UpdateEmployeeProfileController.updatePersonalInformation(event);">
+		</button>
+	</window>
+</zk>

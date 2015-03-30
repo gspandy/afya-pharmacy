@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<services xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.ofbiz.org/dtds/services.xsd">
+    <description>SFA Accounts Services</description>
+    <vendor>Nthdimenzion</vendor>
+    <version>1.0</version>
+    
+    <service name="sfaext.accountInterface" engine="interface" location="" invoke="">
+        <!-- Party and PartyGroup fields -->
+        <attribute name="accountName" type="String" mode="IN" optional="false"/>
+        <attribute name="groupNameLocal" type="String" mode="IN" optional="true"/>
+        <attribute name="officeSiteName" type="String" mode="IN" optional="true"/>
+        <attribute name="description" type="String" mode="IN" optional="true"/>
+        <!-- PartySupplementalData fields -->
+        <attribute name="parentPartyId" type="String" mode="IN" optional="true"/>
+        <attribute name="annualRevenue" type="java.math.BigDecimal" mode="IN" optional="true"/>
+        <attribute name="currencyUomId" type="String" mode="IN" optional="true"/>
+        <attribute name="numberEmployees" type="Long" mode="IN" optional="true"/>
+        <attribute name="industryEnumId" type="String" mode="IN" optional="true"/>
+        <attribute name="ownershipEnumId" type="String" mode="IN" optional="true"/>
+        <attribute name="sicCode" type="String" mode="IN" optional="true"/>
+        <attribute name="tickerSymbol" type="String" mode="IN" optional="true"/>
+        <attribute name="importantNote" type="String" mode="IN" optional="true"/>
+    </service>
+    <service name="sfaext.createAccount" engine="java" location="smebiz.sfa.accounts.AccountsServices" invoke="createAccount">
+        <description>Creates an Account, which is a combination of Party, PartyGroup, Person, and PartySupplementalData.
+        Accounts can be created by anyone with CRMSFA_ACCOUNT_CREATE permission.</description>
+        <implements service="sfaext.accountInterface"/>
+        <implements service="sfaext.createBasicContactInfoForParty"/> 
+        <attribute name="initialTeamPartyId" type="String" mode="IN" optional="true"/>
+        <attribute name="partyId" type="String" mode="OUT" optional="false"/>
+        <attribute name="dataSourceId" type="String" mode="IN" optional="true"/> <!-- initial data source -->
+        <attribute name="marketingCampaignId" type="String" mode="IN" optional="true"/> <!-- initial marketing campaign -->
+    </service>
+
+    <service name="sfaext.updateAccount" engine="java" location="smebiz.sfa.accounts.AccountsServices" invoke="updateAccount">
+        <description>updates an Account, which is a combination of Party, PartyGroup, Person, and PartySupplementalData. 
+            The userLogin will need CRMSFA_ACCOUNT_UPDATE permission on this account.</description>
+        <implements service="sfaext.accountInterface"/>
+        <attribute name="partyId" type="String" mode="IN" optional="false"/>
+    </service>
+
+    <service name="sfaext.deactivateAccount" engine="java" location="smebiz.sfa.accounts.AccountsServices" invoke="deactivateAccount">
+        <description>Deactivates an account by expiring all party relationships with the account and setting the account party statusId to PARTY_DISABLED. 
+            Checks if userLogin has permission CRMSFA_ACCOUNT_DEACTIVATE on the account.</description>
+        <attribute name="partyId" type="String" mode="IN" optional="false"/>
+        <attribute name="expireDate" type="Timestamp" mode="IN" optional="true"/>
+    </service>
+
+    <service name="sfaext.reassignAccountResponsibleParty" engine="java"
+        location="smebiz.sfa.accounts.AccountsServices" invoke="reassignAccountResponsibleParty" auth="true">
+        <description>Reassigns the person RESPONSIBLE_FOR an account</description>
+        <attribute name="accountPartyId" type="String" mode="IN" optional="false"/>
+        <attribute name="newPartyId" type="String" mode="IN" optional="false"/>
+    </service>
+
+</services>

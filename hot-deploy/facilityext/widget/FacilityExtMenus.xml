@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<menus xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://ofbiz.apache.org/dtds/widget-menu.xsd">
+    <menu name="MainAppBar" title="${uiLabelMap.facilityextApplication}" extends="CommonAppBarMenu" extends-resource="component://common/widget/CommonMenus.xml">
+        <menu-item name="main" title="${uiLabelMap.CommonMain}"><link target="main"/></menu-item>
+    </menu>
+    <menu name="TransformationMenuBar" default-menu-item-name="bundling" menu-container-style="nav nav-pills"
+		selected-menuitem-context-field-name="transformationMenuItem">
+		<menu-item name="splits" title="Splitting">
+			<link target="SearchTransformation">
+			<parameter param-name="facilityId" value="${parameters.facilityId}"/>
+			</link>
+		</menu-item>
+		<menu-item name="bundling" title="Bundling">
+			<link target="SearchProductBundle">
+			<parameter param-name="facilityId" value="${parameters.facilityId}"/>
+			</link>
+		</menu-item>
+		<menu-item name="merge" title="Merge">
+			<link target="mergeInv">
+			<parameter param-name="facilityId" value="${parameters.facilityId}"/>
+			</link>
+		</menu-item>
+	</menu>
+</menus>

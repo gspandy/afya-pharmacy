@@ -1,0 +1,20 @@
+<zk xmlns:n="http://www.zkoss.org/2005/zk/native">
+<window id="win">
+<zscript>
+	String demoId = Executions.getCurrent().getParameter("demoId");
+	String url = "/hrms/zul/HRMSDemo/" + demoId + ".swf";
+
+</zscript>
+	<panel width="100%" border="none" >
+		<panelchildren>
+			<hbox pack="center" width="100%">
+				<div>
+					<n:embed id="flash" src="${url}" quality="high" type="application/x-shockwave-flash"
+						pluginspage="http://www.macromedia.com/go/getflashplayer" width="1000" height="800"/>
+				</div>
+			</hbox>
+		</panelchildren>
+	</panel>
+	
+</window>
+</zk>

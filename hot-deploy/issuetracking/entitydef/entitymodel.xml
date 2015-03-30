@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<entitymodel xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="http://ofbiz.apache.org/dtds/entitymodel.xsd">
+    
+    <title>Entity of an Open For Business Project Component</title>
+    <description>None</description>
+    <copyright>Copyright 2001-2008 The Apache Software Foundation</copyright>
+    <author>Sandeep</author>
+    <version>1.0</version>
+    
+    <entity entity-name="IssueStatus" package-name="org.ofbiz.incidentracking.model" title="IssueStatus Entity">
+
+      <field name="issueStatusId" type="id-ne"/>
+      <field name="issueStatusCaption" type="short-varchar"/>
+      <field name="issueStatusDescription" type="long-varchar"/>
+
+      <prim-key field="issueStatusId"/>
+
+    </entity>
+  
+    <entity entity-name="IssueSeverity" package-name="org.ofbiz.incidentracking.model" title="IssueSeverity Entity">
+    
+      <field name="issueSeverityId" type="id-ne"/>
+      <field name="issueSeverityCaption" type="short-varchar"/>
+      <field name="issueSeverityDescription" type="long-varchar"/>
+      <field name="responseTime" type="numeric"/>
+      <field name="resolutionTime" type="numeric"/>
+
+      <prim-key field="issueSeverityId"/>
+
+    </entity>
+
+    <entity entity-name="IssueCategory" package-name="org.ofbiz.incidentracking.model" title="IssueCategory Entity">
+
+      <field name="issueCategoryId" type="id-ne"/>
+      <field name="ownerId" type="id-ne"/>
+      <field name="issueCategoryCaption" type="short-varchar"/>
+      <field name="issueCategoryDescription" type="long-varchar"/>
+
+      <prim-key field="issueCategoryId"/>
+      
+      <relation type="one" title="OwnerId" rel-entity-name="Party">
+          <key-map field-name="ownerId" rel-field-name="partyId"/>
+      </relation>
+
+    </entity>
+
+    <entity entity-name="IssueSubCategory" package-name="org.ofbiz.incidentracking.model" title="IssueSubCategory Entity">
+
+      <field name="issueSubCategoryId" type="id-ne"/>
+      <field name="categoryId" type="id-ne"/>
+      <field name="issueSubCategoryDescription" type="long-varchar"/>
+      <field name="issueSubCategoryCaption" type="short-varchar"/>
+
+      <prim-key field="issueSubCategoryId"/>
+      
+      <relation type="one" title="CategorySubCategoryMapping" rel-entity-name="IssueCategory">
+          <key-map field-name="categoryId" rel-field-name="issueCategoryId"/>
+      </relation>
+
+    </entity>
+    
+    <entity entity-name="IssueHeader" package-name="org.ofbiz.incidentracking.model" title="IssueHeader Entity">
+    
+      <field name="issueId" type="id-ne"/>
+      <field name="issueStatusId" type="id-ne"/>
+      <field name="issueSeverityId" type="id-ne"/>
+      <field name="issueCategoryId" type="id-ne"/>
+      <field name="issueSubCategoryId" type="id-ne"/>       
+      <field name="createdBy" type="id-ne"/>   
+      <field name="lastUpdatedBy" type="id-ne"/>   
+      <field name="assignedTo" type="id"/>
+      <field name="issueNoteId" type="id"/>
+	  <field name="responseTime" type="date-time"/>
+	  <field name="resolutionTime" type="date-time"/>
+	  <field name="responseViolated" type="floating-point"/>
+	  <field name="resolutionViolated" type="floating-point"/>
+	  
+      <prim-key field="issueId"/>
+      
+      <relation type="one" rel-entity-name="IssueStatus" fk-name="ISH_STATUS">
+          <key-map field-name="issueStatusId" rel-field-name="issueStatusId"/>
+      </relation>
+
+      <relation type="one" rel-entity-name="IssueSeverity" fk-name="ISH_SEV">
+          <key-map field-name="issueSeverityId" rel-field-name="issueSeverityId"/>
+      </relation>
+      
+      <relation type="one" rel-entity-name="IssueCategory" fk-name="ISH_CAT">
+          <key-map field-name="issueCategoryId" rel-field-name="issueCategoryId"/>
+      </relation>
+
+      <relation type="one" rel-entity-name="IssueSubCategory" fk-name="ISH_SUB_CAT">
+          <key-map field-name="issueSubCategoryId" rel-field-name="issueSubCategoryId"/>
+      </relation>
+      
+      <relation type="one" title="ReportedBy" rel-entity-name="Party" fk-name="ISH_REP_PARTY">
+          <key-map field-name="createdBy" rel-field-name="partyId"/>
+      </relation>
+   
+      <relation type="one" title="UpdatedBy" rel-entity-name="Party" fk-name="ISH_UPD_PARTY">
+          <key-map field-name="lastUpdatedBy" rel-field-name="partyId"/>
+      </relation>
+  
+      <relation type="one" rel-entity-name="Party" fk-name="ISH_ASSIGN">
+          <key-map field-name="assignedTo" rel-field-name="partyId"/>
+      </relation>
+      
+      <relation type="one" rel-entity-name="IssueNote" fk-name="ISH_NOTE">
+          <key-map field-name="issueNoteId" rel-field-name="issueNoteId"/>
+      </relation>
+
+    </entity>
+    
+    <entity entity-name="IssueNote" package-name="org.ofbiz.incidentracking.model" title="IssueNote Entity">
+    
+      <field name="issueNoteId" type="id-ne"/>
+      <field name="issueSummary" type="description"/>
+      <field name="issueDescription" type="description"/>
+      <field name="issueAdditionalInfo" type="description"/>
+      
+      <prim-key field="issueNoteId"/>
+
+    </entity>
+    
+    <entity entity-name="IssueHistory" package-name="org.ofbiz.incidentracking.model" title="IssueHistory Entity">
+      <field name="issueHistoryId" type="id-ne"/>
+      <field name="issueId" type="id-ne"/>
+      <field name="commentedBy" type="id-ne"/>
+      <field name="response" type="description"/>
+      <field name="issueStatusCaption" type="short-varchar"/>
+      <prim-key field="issueHistoryId"/>
+
+      <relation type="one" title="CommentedBy" rel-entity-name="Party">
+          <key-map field-name="commentedBy" rel-field-name="partyId"/>
+      </relation>
+
+      <relation type="one" title="IssueId" rel-entity-name="IssueHeader">
+          <key-map field-name="issueId" rel-field-name="issueId"/>
+      </relation>
+    </entity>
+    
+    <entity entity-name="IssueAttachment" package-name="org.ofbiz.incidentracking.model" title="Issue Data Object Entity">
+      <field name="issueAttachmentId" type="id-ne"/>
+      <field name="issueId" type="id-ne"/>
+      <field name="fileName" type="long-varchar"/>
+      <field name="uploadLocation" type="long-varchar"/>
+
+      <prim-key field="issueAttachmentId"/>
+      
+      <relation type="one" rel-entity-name="IssueHeader">
+        <key-map field-name="issueId" rel-field-name="issueId"/>
+      </relation>
+    </entity>
+</entitymodel>

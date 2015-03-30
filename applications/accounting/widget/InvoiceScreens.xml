@@ -1,0 +1,1309 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+Licensed to the Apache Software Foundation (ASF) under one
+or more contributor license agreements.  See the NOTICE file
+distributed with this work for additional information
+regarding copyright ownership.  The ASF licenses this file
+to you under the Apache License, Version 2.0 (the
+"License"); you may not use this file except in compliance
+with the License.  You may obtain a copy of the License at
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing,
+software distributed under the License is distributed on an
+"AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+KIND, either express or implied.  See the License for the
+specific language governing permissions and limitations
+under the License.
+-->
+
+<screens xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="http://ofbiz.apache.org/dtds/widget-screen.xsd">
+
+    <!-- Custom apps can use their own invoice decorator by specifying its
+         location in parameters.invoiceDecoratorLocation -->
+    <screen name="CommonInvoiceDecorator">
+        <section>
+            <actions>
+                <property-map resource="ProjectMgrUiLabels" map-name="uiLabelMap" global="true"/>
+                <set field="headerItem" value="invoices"/>
+            </actions>
+            <widgets>
+                <decorator-screen name="main-decorator" location="${parameters.mainDecoratorLocation}">
+                    <decorator-section name="pre-body">
+                        <section>
+                            <condition>
+                                <if-service-permission service-name="acctgInvoicePermissionCheck" main-action="VIEW"/>
+                            </condition>
+                            <widgets>
+                            <platform-specific>
+                                  <html>
+                                    <html-template location="component://accounting/webapp/accounting/invoice/invoiceDocuments.ftl" />
+                                  </html>
+                               </platform-specific>
+                            </widgets>
+                        </section>
+                    </decorator-section>
+                    <decorator-section name="body">
+                        <section>
+                            <condition>
+                                <if-service-permission service-name="acctgInvoicePermissionCheck" main-action="VIEW"/>
+                            </condition>
+                            <widgets>
+                                <section>
+                                    <condition><not><if-empty field="parameters.invoiceId"/></not></condition>
+                                    <widgets>
+                                        <include-menu name="InvoiceSubTabBar" location="component://accounting/widget/AccountingMenus.xml"/>
+                                        <container style="leftclear">
+                                            <label style="h1" text="${uiLabelMap[labelTitleProperty]} ${uiLabelMap.CommonFor}: ${invoice.description} [${invoiceId}]  ${${extraFunctionName}}"/>
+                                        </container>
+                                    </widgets>
+                                </section>
+                                <decorator-section-include name="body"/>
+                            </widgets>
+                            <fail-widgets>
+                                <label style="h3">${uiLabelMap.AccountingViewPermissionError}</label>
+                            </fail-widgets>
+                        </section>
+                    </decorator-section>
+
+                </decorator-screen>
+            </widgets>
+        </section>
+    </screen>
+
+    <screen name="FindInvoices">
+        <section>
+            <actions>
+                <set field="headerItem" value="invoices"/>
+                <set field="tabButtonItem" value="find"/>
+                <set field="titleProperty" value="PageTitleFindInvoice"/>
+               <entity-condition list="invoiceTypesList" entity-name="InvoiceType">
+					<condition-list combine="and">
+						<condition-expr field-name="parentTypeId" operator="equals" value="${parameters.category}" />
+					</condition-list>
+				</entity-condition>
+            </actions>
+            <widgets>
+             <decorator-screen name="main-decorator" location="${parameters.mainDecoratorLocation}">
+                    <decorator-section name="body">
+                        <decorator-screen name="FindScreenDecorator" location="component://common/widget/CommonScreens.xml">
+                            <decorator-section name="search-options">
+                                <include-form name="FindInvoices" location="component://accounting/widget/InvoiceForms.xml"/>
+                            </decorator-section>
+                            <decorator-section name="search-results">
+                                <include-form name="ListInvoices"  location="component://accounting/widget/InvoiceForms.xml"/>
+                            </decorator-section>
+                        </decorator-screen>
+                    </decorator-section>
+             </decorator-screen>
+            </widgets>
+        </section>
+    </screen>
+
+  <screen name="NewInvoice">
+    <section>
+          <actions>
+            <set field="layoutSettings.styleSheets[+0]" value="/images/prototypejs/scriptaculouscontrols.css" global="true"/>
+            <set field="layoutSettings.javaScripts[]" value="/images/AccountingInvoiceDatevalidation.js" global="true"/>
+                <entity-one entity-name="Invoice" value-field="invoice"/>
+                 <set field="invoiceOverViewTarget" value="newInvoice"/>
+                <set field="invoiceTypeId" value="PURCHASE_INVOICE"/>
+                <set field="titleProperty" value="PageTitleListInvoices"/>
+                <set field="tabButtonItem" value="listInvoiceItems"/>
+                <set field="invoiceId" from-field="parameters.invoiceId"/> 
+                <set field="invoiceItemSeqd" from-field="parameters.invoiceItemSeqId"/>
+                <set field="partyId" from-field="parameters.organizationPartyId"/>
+                <property-to-field field="defaultCurrencyUomId" resource="general" property="currency.uom.id.default" default="USD"/>
+                <entity-one entity-name="Invoice" value-field="invoice"/>
+                <entity-one entity-name="InvoiceItem" value-field="invoiceItem"/>
+                <entity-and entity-name="InvoiceItem" list="invoiceItems">
+                    <field-map field-name="invoiceId" from-field="parameters.invoiceId"/>
+                    <order-by field-name="invoiceItemSeqId"/>
+                </entity-and>
+                <script location="component://accounting/webapp/accounting/WEB-INF/actions/invoice/GetInvoiceItemTypes.groovy"/>
+                <entity-condition list="uomMeasure" entity-name="Uom">
+                    <condition-list>
+                        <condition-expr field-name="uomTypeId" operator="not-equals" value="CURRENCY_MEASURE"/>
+                    </condition-list>
+                    <order-by field-name="description"/>
+                </entity-condition>
+                <script location="component://accounting/webapp/accounting/WEB-INF/actions/invoice/ShippingAddress.groovy"/>
+                <entity-condition list="invoiceProjectList" entity-name="WorkEffort">
+                <condition-list combine="and">
+                        <condition-expr field-name="workEffortTypeId" operator="equals" value="PROJECT" />
+                    </condition-list>
+                </entity-condition> 
+            </actions>
+            <widgets>
+               <!--  <decorator-screen name="CommonInvoiceDecorator" location="${parameters.invoiceDecoratorLocation}"> -->
+               <decorator-screen name="main-decorator" location="${parameters.mainDecoratorLocation}">
+                    <decorator-section name="body">
+                 <section>
+                       <condition>
+                         <if-compare operator="equals" value="new" field="parameters.actionType"/>
+                        </condition> 
+                       
+                           <widgets>
+                          <screenlet title="${uiLabelMap.AccountingCreateNewPurchaseInvoice}">
+                                    <include-form name="NewPurchaseInvoice" location="component://accounting/widget/InvoiceForms.xml"/>
+                                </screenlet>
+                           </widgets>
+                         <fail-widgets>
+                            <section>
+                                <condition>
+                                    <if-compare operator="not-equals" value="false" field="${parameters.show}"/>
+                                </condition>
+                                <widgets>
+                                  <platform-specific>
+                                  <html>
+                                    <html-template location="component://accounting/webapp/accounting/invoice/invoiceDocuments.ftl" />
+                                  </html>
+                               </platform-specific>
+                             <screenlet title="Invoice Header" >
+                               <include-form name="NewPurchaseInvoice" location="component://accounting/widget/InvoiceForms.xml"/>
+                             </screenlet> 
+                             <include-menu name="statusMenu" location="component://accounting/widget/StatusMenu.xml"/>
+                             <section>
+                                <condition>
+                                    <and>
+                                        <not><if-compare operator="equals" value="INVOICE_READY" field="invoice.statusId"/></not>
+                                        <not><if-compare operator="equals" value="INVOICE_APPROVED" field="invoice.statusId"/></not>
+                                        <not><if-compare operator="equals" value="INVOICE_PAID" field="invoice.statusId"/></not>
+                                        <not><if-compare operator="equals" value="INVOICE_SENT" field="invoice.statusId"/></not>
+                                        <not><if-compare operator="equals" value="INVOICE_WRITEOFF" field="invoice.statusId"/></not>
+                                        <not><if-compare operator="equals" value="INVOICE_CANCELLED" field="invoice.statusId"/></not>
+                                    </and>
+                                </condition>
+                               <widgets>
+                             <platform-specific>
+                                  <html>
+                                  <html-template location="component://accounting/webapp/accounting/invoice/invoiceAddItems.ftl" />
+                                  </html>
+                             </platform-specific>
+                             <screenlet title="${uiLabelMap.AccountingInvoiceItems}">
+                              <container id="EditInvoiceItemsId">
+                               <include-form name="EditInvoiceItems" location="component://accounting/widget/InvoiceForms.xml"/>
+                              </container>
+                            </screenlet>
+                            </widgets>
+                            </section>
+                                </widgets>
+                            <fail-widgets>
+                              
+                               <include-menu name="InvoiceTabBar" location="component://accounting/widget/AccountingMenus.xml"/>
+                               <platform-specific>
+                                  <html>
+                                  <html-template location="component://accounting/webapp/accounting/invoice/invoiceDocuments.ftl" />
+                                  </html>
+                               </platform-specific>
+                             <screenlet title="Invoice Header">
+                               <include-form name="NewPurchaseInvoice" location="component://accounting/widget/InvoiceForms.xml"/>
+                             </screenlet> 
+                           
+                            <screenlet title="" navigation-menu-name="statusMenu" >
+                               <include-menu name="statusMenu" location="component://accounting/widget/StatusMenu.xml"/>
+                               <platform-specific>
+                                    <html>
+                                    <html-template location="component://accounting/webapp/accounting/invoice/invoiceAddItems.ftl" />
+                                    </html>
+                               </platform-specific>
+                            </screenlet> 
+                             
+                             <screenlet title="${uiLabelMap.AccountingInvoiceItems}">
+                              <container id="EditInvoiceItemsId">
+                               <include-form name="EditInvoiceItems" location="component://accounting/widget/InvoiceForms.xml"/>
+                              </container>
+                            </screenlet>
+                             
+                            <screenlet title="${uiLabelMap.AccountingInvoiceItemAdd}">
+                            <section>
+                                <condition>
+                                    <not><if-compare field="invoice.invoiceTypeId" operator="equals" value="PAYROL_INVOICE"/></not>
+                                </condition>
+                                <widgets>
+                                <container id="CreateInvoiceItemId">
+                                    <include-form name="CreateInvoiceItem" location="component://accounting/widget/InvoiceForms.xml"/>
+                                </container>
+                                </widgets>
+                                    <fail-widgets>
+                                       <platform-specific><html><html-template location="component://accounting/webapp/accounting/invoice/InvoiceItemsPayrol.ftl"/></html></platform-specific>
+                                    </fail-widgets>
+                            </section>
+                           </screenlet>
+                            </fail-widgets>
+                            </section>
+                </fail-widgets>
+          </section>
+                    </decorator-section>
+                </decorator-screen>
+            </widgets>
+        </section>
+     </screen>
+    <screen name="NewReceivableInvoice">
+        <section>
+          <actions>
+            <set field="layoutSettings.styleSheets[+0]" value="/images/prototypejs/scriptaculouscontrols.css" global="true"/>
+             <set field="layoutSettings.javaScripts[]" value="/images/AccountingInvoiceDatevalidation.js" global="true"/>
+                <entity-one entity-name="Invoice" value-field="invoice"/>
+                <set field="titleProperty" value="PageTitleListInvoices"/>
+                <set field="tabButtonItem" value="listInvoiceItems"/>
+                <set field="invoiceId" from-field="parameters.invoiceId"/> 
+                <set field="invoiceItemSeqd" from-field="parameters.invoiceItemSeqId"/>
+                <property-to-field field="defaultCurrencyUomId" resource="general" property="currency.uom.id.default" default="USD"/>
+                <entity-one entity-name="Invoice" value-field="invoice"/>
+                <entity-one entity-name="InvoiceItem" value-field="invoiceItem"/>
+                <entity-and entity-name="InvoiceItem" list="invoiceItems">
+                    <field-map field-name="invoiceId" from-field="parameters.invoiceId"/>
+                    <order-by field-name="invoiceItemSeqId"/>
+                </entity-and>
+                <script location="component://accounting/webapp/accounting/WEB-INF/actions/invoice/GetInvoiceItemTypes.groovy"/>
+                <entity-condition entity-name="InvoiceItemType" list="PayrolGroup">
+                    <condition-expr field-name="parentTypeId" value="PAYROL"/>
+                </entity-condition>
+                <entity-condition list="uomMeasure" entity-name="Uom">
+                    <condition-list>
+                        <condition-expr field-name="uomTypeId" operator="not-equals" value="CURRENCY_MEASURE"/>
+                    </condition-list>
+                    <order-by field-name="description"/>
+                </entity-condition>
+                <entity-condition entity-name="InvoiceItemType" list="PayrolList"></entity-condition>
+                <script location="component://accounting/webapp/accounting/WEB-INF/actions/invoice/ShippingAddress.groovy"/> 
+                <entity-condition list="invoiceProjectList" entity-name="WorkEffort">
+                    <condition-list combine="and">
+                        <condition-expr field-name="workEffortTypeId" operator="equals" value="PROJECT" />
+                    </condition-list>
+                </entity-condition>
+            </actions>
+            <widgets>
+               <decorator-screen name="main-decorator" location="${parameters.mainDecoratorLocation}">
+                    <decorator-section name="body">
+              <section>
+                       <condition>
+                         <if-compare operator="equals" value="new" field="parameters.actionType"/>
+                        </condition> 
+                       
+                           <widgets>
+                            <screenlet title="Invoice">
+                             <include-form name="NewSalesInvoice" location="component://accounting/widget/InvoiceForms.xml"/>
+                            </screenlet> 
+                           </widgets>
+                           <fail-widgets>
+                            <section>
+                                <condition>
+                                <if-compare operator="not-equals" value="false" field="${parameters.show}"/>
+                                </condition>
+                                <widgets>
+                                  <platform-specific>
+                                  <html>
+                                  <html-template location="component://accounting/webapp/accounting/invoice/invoiceDocuments.ftl" />
+                                  </html>
+                               </platform-specific>
+                             <screenlet title="Invoice" >
+                               <include-form name="NewSalesInvoice" location="component://accounting/widget/InvoiceForms.xml"/>
+                             </screenlet>
+                             <include-menu name="statusMenu" location="component://accounting/widget/StatusMenu.xml"/>
+                             <section>
+                                <condition>
+                                    <and>
+                                        <not><if-compare operator="equals" value="INVOICE_READY" field="invoice.statusId"/></not>
+                                        <not><if-compare operator="equals" value="INVOICE_APPROVED" field="invoice.statusId"/></not>
+                                        <not><if-compare operator="equals" value="INVOICE_PAID" field="invoice.statusId"/></not>
+                                        <not><if-compare operator="equals" value="INVOICE_SENT" field="invoice.statusId"/></not>
+                                        <not><if-compare operator="equals" value="INVOICE_WRITEOFF" field="invoice.statusId"/></not>
+                                        <not><if-compare operator="equals" value="INVOICE_CANCELLED" field="invoice.statusId"/></not>
+                                    </and>
+                                </condition>
+                               <widgets>
+                             <platform-specific>
+                                  <html>
+                                  <html-template location="component://accounting/webapp/accounting/invoice/invoiceAddItems.ftl" />
+                                  </html>
+                               </platform-specific>
+                             <!--  <platform-specific>
+                                  <html>
+                                  <html-template location="component://accounting/webapp/accounting/invoice/StatusChangeForInvoice.ftl" />
+                                  </html>
+                               </platform-specific> -->
+                             
+                             <screenlet title="${uiLabelMap.AccountingInvoiceItems}">
+                              <container id="EditInvoiceItemsId">
+                               <include-form name="EditInvoiceItems" location="component://accounting/widget/InvoiceForms.xml"/>
+                              </container>
+                            </screenlet>
+                            </widgets>
+                            </section>
+                                </widgets>
+                            <fail-widgets>
+                               <platform-specific>
+                                  <html>
+                                  <html-template location="component://accounting/webapp/accounting/invoice/invoiceDocuments.ftl" />
+                                  </html>
+                               </platform-specific>
+                             <screenlet title="Invoice">
+                               <include-form name="NewSalesInvoice" location="component://accounting/widget/InvoiceForms.xml"/>
+                             </screenlet> 
+                             <include-menu name="statusMenu" location="component://accounting/widget/StatusMenu.xml"/>
+                             <platform-specific>
+                                  <html>
+                                  <html-template location="component://accounting/webapp/accounting/invoice/invoiceAddItems.ftl" />
+                                  </html>
+                               </platform-specific>
+                             <!--  <platform-specific>
+                                  <html>
+                                  <html-template location="component://accounting/webapp/accounting/invoice/StatusChangeForInvoice.ftl" />
+                                  </html>
+                               </platform-specific> -->
+                             
+                             
+                             <screenlet title="${uiLabelMap.AccountingInvoiceItems}" initially-collapsed="true" id="addInvoiceItems">
+                              <container id="EditInvoiceItemsId">
+                               <include-form name="EditInvoiceItems" location="component://accounting/widget/InvoiceForms.xml"/>
+                              </container>
+                            </screenlet>
+                             
+                           <screenlet title="${uiLabelMap.AccountingInvoiceItemAdd}">
+                            <section>
+                                <condition>
+                                    <not><if-compare field="invoice.invoiceTypeId" operator="equals" value="PAYROL_INVOICE"/></not>
+                                </condition>
+                                <widgets>
+                                <container id="CreateInvoiceItemId">
+                              
+                                    <include-form name="CreateInvoiceItem" location="component://accounting/widget/InvoiceForms.xml"/>
+                                </container>
+                                </widgets>
+                                    <fail-widgets>
+                                       <platform-specific><html><html-template location="component://accounting/webapp/accounting/invoice/InvoiceItemsPayrol.ftl"/></html></platform-specific>
+                                    </fail-widgets>
+                            </section>
+                          </screenlet>
+                               
+                            </fail-widgets>
+                            </section>
+                </fail-widgets>
+          </section>
+                    </decorator-section>
+                </decorator-screen>
+            </widgets>
+        </section>
+    </screen>
+
+    <screen name="CreateInvoiceItem">
+       <section>
+          <actions>
+                <set field="invoiceId" from-field="parameters.invoiceId"/>
+                <set field="invoiceItemSeqd" from-field="parameters.invoiceItemSeqId"/>
+                <set field="layoutSettings.styleSheets[+0]" value="/images/prototypejs/scriptaculouscontrols.css" global="true"/>
+                <!--  <set field="titleProperty" value="AccountingCreateNewInvoice"/> -->
+                <entity-one entity-name="Invoice" value-field="invoice"/>
+                <set field="titleProperty" value="PageTitleListInvoices"/>
+                <set field="tabButtonItem" value="listInvoiceItems"/>
+                <set field="invoiceId" from-field="parameters.invoiceId"/>
+                <set field="invoiceItemSeqd" from-field="parameters.invoiceItemSeqId"/>
+                   <set field="projectName" from-field="parameters.projectName"/>
+                <property-to-field field="defaultCurrencyUomId" resource="general" property="currency.uom.id.default" default="USD"/>
+                <entity-one entity-name="Invoice" value-field="invoice"/>
+                <entity-one entity-name="InvoiceItem" value-field="invoiceItem"/>
+                <entity-and entity-name="InvoiceItem" list="invoiceItems">
+                    <field-map field-name="invoiceId" from-field="parameters.invoiceId"/>
+                    <order-by field-name="invoiceItemSeqId"/>
+                </entity-and>
+                <script location="component://accounting/webapp/accounting/WEB-INF/actions/invoice/GetInvoiceItemTypes.groovy"/>
+                <entity-condition entity-name="InvoiceItemType" list="PayrolGroup">
+                    <condition-expr field-name="parentTypeId" value="PAYROL"/>
+                </entity-condition>
+                <entity-condition entity-name="InvoiceItemType" list="PayrolList"></entity-condition>
+               
+            </actions>
+            <widgets>
+                <include-form name="CreateInvoiceItem" location="component://accounting/widget/InvoiceForms.xml"/>
+            </widgets>
+        </section>
+    </screen>
+
+    <screen name="EditInvoice">
+        <section>
+            <actions>
+                <set field="titleProperty" value="PageTitleEditInvoice"/>
+                <set field="tabButtonItem" value="editInvoice"/>
+                <set field="invoiceId" from-field="parameters.invoiceId"/>
+                <entity-one entity-name="Invoice" value-field="invoice"/>
+                <entity-one entity-name="InvoiceType" value-field="invoiceType">
+                    <field-map field-name="invoiceTypeId" from-field="invoice.invoiceTypeId"/>
+                </entity-one>
+              	<script location="component://accounting/webapp/accounting/WEB-INF/actions/invoice/ShippingAddress.groovy"/>
+            </actions>
+            <widgets>
+              <!--   <decorator-screen name="CommonInvoiceDecorator" location="${parameters.invoiceDecoratorLocation}"> -->
+              <decorator-screen name="main-decorator" location="${parameters.mainDecoratorLocation}">
+                    <decorator-section name="body">
+                        <section>
+                            <condition>
+                                <if-compare field="invoice.statusId" operator="equals" value="INVOICE_IN_PROCESS"/>
+                            </condition>
+                            <widgets>
+                                <screenlet title="${uiLabelMap.PageTitleEditInvoice}">
+                                    <include-form name="EditInvoice" location="component://accounting/widget/InvoiceForms.xml"/>
+                                </screenlet>
+                            </widgets>
+                            <fail-widgets>
+                                <screenlet title="${uiLabelMap.PageTitleEditInvoice}">
+                                    <include-form name="invoiceHeader" location="component://accounting/widget/InvoiceForms.xml"/>
+                                </screenlet>
+                            </fail-widgets>
+                        </section>
+                    </decorator-section>
+                </decorator-screen>
+            </widgets>
+        </section>
+    </screen>
+
+    <screen name="invoiceOverview">
+        <section>
+            <actions>
+                <property-map resource="PartyUiLabels" map-name="uiLabelMap" global="true"/>
+                <set field="titleProperty" value="PageTitleInvoiceOverview"/>
+                <set field="tabButtonItem" value="invoiceOverview"/>
+                <set field="invoiceId" from-field="parameters.invoiceId"/>
+                <entity-one entity-name="Invoice" value-field="invoice"/>
+                <entity-and entity-name="InvoiceRole" list="invoiceRoles">
+                    <field-map from-field="parameters.invoiceId" field-name="invoiceId"/>
+                    <order-by field-name="partyId"/>
+                </entity-and>
+                <entity-and entity-name="InvoiceStatus" list="invoiceStatus">
+                    <field-map from-field="parameters.invoiceId" field-name="invoiceId"/>
+                    <order-by field-name="statusDate"/>
+                </entity-and>
+                <entity-and entity-name="InvoiceTerm" list="invoiceTerms">
+                    <field-map from-field="parameters.invoiceId" field-name="invoiceId"/>
+                    <order-by field-name="invoiceTermId"/>
+                </entity-and>
+                <entity-and entity-name="TimeEntry" list="timeEntries">
+                    <field-map from-field="parameters.invoiceId" field-name="invoiceId"/>
+                    <order-by field-name="invoiceItemSeqId"/>
+                </entity-and>
+                <script location="component://accounting/webapp/accounting/WEB-INF/actions/invoice/CreateApplicationList.groovy"/>
+                <script location="component://accounting/webapp/accounting/WEB-INF/actions/invoice/OrderListInvoiceItem.groovy"/>
+                <set field="invoiceAmount" value="${bsh:org.ofbiz.accounting.invoice.InvoiceWorker.getInvoiceTotal(invoice)}" type="BigDecimal"/>
+                <set field="notAppliedAmount" value="${bsh:org.ofbiz.accounting.invoice.InvoiceWorker.getInvoiceNotApplied(invoice)}" type="BigDecimal"/>
+                <set field="appliedAmount" value="${bsh:org.ofbiz.accounting.invoice.InvoiceWorker.getInvoiceApplied(invoice)}" type="BigDecimal"/>
+                <entity-condition entity-name="AcctgTransAndEntries" list="AcctgTransAndEntries">
+                    <condition-expr field-name="invoiceId"  operator="equals" from-field="invoiceId"/>
+                    <order-by field-name="acctgTransId"/>
+                    <order-by field-name="acctgTransEntrySeqId"/>
+                </entity-condition>
+            </actions>
+            <widgets>
+                <decorator-screen name="CommonInvoiceDecorator" location="${parameters.invoiceDecoratorLocation}">
+                    <decorator-section name="body">
+                        <section>
+                            <condition>
+                                <if-compare field="invoice.statusId" operator="equals" value="INVOICE_IN_PROCESS"/>
+                            </condition>
+                            <widgets>
+                                <screenlet title="${uiLabelMap.AccountingInvoiceHeader}">
+                                    <link target="editInvoice" text="${uiLabelMap.CommonUpdate}" style="btn btn-link">
+                                        <parameter param-name="invoiceId"/>
+                                    </link>
+                                    <include-form name="invoiceHeader" location="component://accounting/widget/InvoiceForms.xml"/>
+                                </screenlet>
+                                <container style="lefthalf">
+                                    <screenlet title="${uiLabelMap.CommonStatus}" navigation-form-name="ListInvoiceStatus">
+                                        <include-form name="ListInvoiceStatus" location="component://accounting/widget/InvoiceForms.xml"/>
+                                    </screenlet>
+                                    <screenlet title="${uiLabelMap.AccountingAppliedPayments} ${appliedAmount?currency(${invoice.currencyUomId})} ${uiLabelMap.AccountingOpenPayments} ${notAppliedAmount?currency(${invoice.currencyUomId})}"
+                                        navigation-form-name="ListInvoiceApplications">
+                                        <link target="editInvoiceApplications" text="${uiLabelMap.CommonUpdate}" style="btn btn-link">
+                                            <parameter param-name="invoiceId"/>
+                                        </link>
+                                        <include-form name="ListInvoiceApplications" location="component://accounting/widget/InvoiceForms.xml"/>
+                                    </screenlet>
+                                </container>
+                                <container style="righthalf">
+                                    <screenlet title="${uiLabelMap.AccountingInvoiceRoles}" navigation-form-name="invoiceRoles">
+                                        <container>
+                                            <link target="invoiceRoles" text="${uiLabelMap.CommonUpdate}" style="btn btn-link">
+                                                <parameter param-name="invoiceId"/>
+                                            </link>
+                                        </container>
+                                        <include-form name="invoiceRoles" location="component://accounting/widget/InvoiceForms.xml"/>
+                                    </screenlet>
+                                    <screenlet title="${uiLabelMap.PartyTerms}">
+                                        <!-- <include-form name="ListInvoiceTerms" location="component://accounting/widget/InvoiceForms.xml"/> -->
+                                        <include-form name="ListInvoicePaymentInfo" location="component://accounting/widget/InvoiceForms.xml"/>
+                                    </screenlet>
+                                </container>
+                                <container style="clear"/>
+                                <screenlet title="${uiLabelMap.AccountingInvoiceItems}" navigation-form-name="invoiceItems">
+                                    <link target="listInvoiceItems" text="${uiLabelMap.CommonUpdate}" style="btn btn-link">
+                                        <parameter param-name="invoiceId"/>
+                                    </link>
+                                    <include-form name="invoiceItems" location="component://accounting/widget/InvoiceForms.xml"/>
+                                </screenlet>
+                                <section>
+                                    <condition>
+                                        <not><if-empty field="timeEntries"/></not>
+                                    </condition>
+                                    <widgets>
+                                        <screenlet title="${uiLabelMap.AccountingInvoiceTimeEntries}" navigation-form-name="ListTimeEntries">
+                                            <link target="editInvoiceTimeEntries" text="${uiLabelMap.CommonUpdate}" style="btn btn-link">
+                                                <parameter param-name="invoiceId"/>
+                                            </link>
+                                            <include-form name="ListTimeEntries" location="component://accounting/widget/InvoiceForms.xml"/>
+                                        </screenlet>
+                                    </widgets>
+                                </section>
+                                <screenlet title="${uiLabelMap.AccountingTransactions}" navigation-form-name="AcctgTransAndEntries">
+                                    <include-form name="AcctgTransAndEntries" location="component://accounting/widget/InvoiceForms.xml"/>
+                                </screenlet>
+                            </widgets>
+                            <fail-widgets>
+                                <screenlet title="${uiLabelMap.AccountingInvoiceHeader}">
+                                    <include-form name="invoiceHeader" location="component://accounting/widget/InvoiceForms.xml"/>
+                                </screenlet>
+                                <container style="lefthalf">
+                                    <screenlet title="${uiLabelMap.CommonStatus}" navigation-form-name="ListInvoiceStatus">
+                                        <include-form name="ListInvoiceStatus" location="component://accounting/widget/InvoiceForms.xml"/>
+                                    </screenlet>
+                                    <screenlet title="${uiLabelMap.AccountingAppliedPayments} ${appliedAmount?currency(${invoice.currencyUomId})} ${uiLabelMap.AccountingOpenPayments} ${notAppliedAmount?currency(${invoice.currencyUomId})}"
+                                        navigation-form-name="ListInvoiceApplications">
+                                        <include-form name="ListInvoiceApplications" location="component://accounting/widget/InvoiceForms.xml"/>
+                                    </screenlet>
+                                </container>
+                                <container style="righthalf">
+                                    <screenlet title="${uiLabelMap.AccountingInvoiceRoles}" navigation-form-name="invoiceRoles">
+                                        <include-form name="invoiceRoles" location="component://accounting/widget/InvoiceForms.xml"/>
+                                    </screenlet>
+                                    <screenlet title="${uiLabelMap.PartyTerms}">
+                                        <!-- <include-form name="ListInvoiceTerms" location="component://accounting/widget/InvoiceForms.xml"/> -->
+                                        <include-form name="ListInvoicePaymentInfo" location="component://accounting/widget/InvoiceForms.xml"/>
+                                    </screenlet>
+                                </container>
+                                <container style="clear"/>
+                                <screenlet title="${uiLabelMap.AccountingInvoiceItems}" navigation-form-name="invoiceItems">
+                                    <include-form name="invoiceItems" location="component://accounting/widget/InvoiceForms.xml"/>
+                                </screenlet>
+                                <section>
+                                    <condition>
+                                        <not><if-empty field="timeEntries"/></not>
+                                    </condition>
+                                    <widgets>
+                                        <screenlet title="${uiLabelMap.AccountingInvoiceTimeEntries}" navigation-form-name="ListTimeEntries">
+                                            <include-form name="ListTimeEntries" location="component://accounting/widget/InvoiceForms.xml"/>
+                                        </screenlet>
+                                    </widgets>
+                                </section>
+                                <screenlet title="${uiLabelMap.AccountingTransactions}" navigation-form-name="AcctgTransAndEntries">
+                                    <include-form name="AcctgTransAndEntries" location="component://accounting/widget/InvoiceForms.xml"/>
+                                </screenlet>
+                            </fail-widgets>
+                        </section>
+                    </decorator-section>
+                </decorator-screen>
+            </widgets>
+        </section>
+    </screen>
+
+    <screen name="InvoiceStatus">
+        <section>
+            <actions>
+                <set field="titleProperty" value="PageTitleListInvoices"/>
+                <set field="tabButtonItem" value="invoiceStatus"/>
+                <set field="invoiceId" from-field="parameters.invoiceId"/>
+                <entity-one entity-name="Invoice" value-field="invoice" auto-field-map="true"/>
+                <entity-and entity-name="InvoiceStatus" list="invoiceStatus">
+                    <field-map from-field="invoice.invoiceId" field-name="invoiceId"/>
+                    <order-by field-name="statusDate"/>
+                </entity-and>
+            </actions>
+            <widgets>
+                <decorator-screen name="CommonInvoiceDecorator" location="${parameters.invoiceDecoratorLocation}">
+                    <decorator-section name="body">
+                        <screenlet title="${uiLabelMap.AccountingInvoiceStatusHistory}">
+                            <include-form name="ListInvoiceStatus" location="component://accounting/widget/InvoiceForms.xml"/>
+                        </screenlet>
+                    </decorator-section>
+                </decorator-screen>
+            </widgets>
+        </section>
+    </screen>
+
+    <screen name="EditInvoiceApplications">
+        <section>
+            <actions>
+                <set field="titleProperty" value="PageTitleListEditInvoiceApplications"/>
+                <set field="tabButtonItem" value="editInvoiceApplications"/>
+
+                <set field="invoiceId" from-field="parameters.invoiceId"/>
+                <entity-one entity-name="Invoice" value-field="invoice"/>
+                <script location="component://accounting/webapp/accounting/WEB-INF/actions/invoice/CreateApplicationList.groovy"/>
+                <script location="component://accounting/webapp/accounting/WEB-INF/actions/invoice/ListNotAppliedPayments.groovy"/>
+                <set field="invoiceAmount" value="${bsh:org.ofbiz.accounting.invoice.InvoiceWorker.getInvoiceTotal(invoice)}" type="BigDecimal"/>
+                <set field="notAppliedAmount" value="${bsh:org.ofbiz.accounting.invoice.InvoiceWorker.getInvoiceNotApplied(invoice)}" type="BigDecimal"/>
+                <set field="appliedAmount" value="${bsh:org.ofbiz.accounting.invoice.InvoiceWorker.getInvoiceApplied(invoice)}" type="BigDecimal"/>
+            </actions>
+            <widgets>
+                <decorator-screen name="CommonInvoiceDecorator" location="${parameters.invoiceDecoratorLocation}">
+                    <decorator-section name="body">
+                        <section>
+                            <condition>
+                                <if-compare field="notAppliedAmount" operator="greater" value="0"/>
+                            </condition>
+                            <widgets>
+                                <screenlet title="${uiLabelMap.AccountingPaymentsApplied} ${appliedAmount?currency(${invoice.currencyUomId})} ${uiLabelMap.AccountingOpenPayments} ${notAppliedAmount?currency(${invoice.currencyUomId})}">
+                                   <include-form name="EditInvoiceApplications" location="component://accounting/widget/InvoiceForms.xml"/>
+                                </screenlet>
+                                <section>
+                                    <condition>
+                                        <if-empty field="invoiceApplications"/>
+                                    </condition>
+                                    <widgets>
+                                        <container><label style="h3" text="${uiLabelMap.AccountingNoPaymentsApplicationsfound}"></label></container>
+                                    </widgets>
+                                </section>
+                                <section>
+                                    <condition>
+                                        <or>
+                                            <not><if-empty field="payments"/></not>
+                                            <not><if-empty field="paymentsActualCurrency"/></not>
+                                        </or>
+                                    </condition>
+                                    <widgets>
+                                        <screenlet title="${uiLabelMap.AccountingListPaymentsNotYetApplied} [${invoice.partyIdFrom}] ${uiLabelMap.AccountingPaymentSentForm} [${invoice.partyId}]">
+                                        <section>
+                                            <condition>
+                                                <not><if-empty field="payments"/></not>
+                                            </condition>
+                                            <widgets>
+                                                <include-form name="ListPaymentsNotApplied" location="component://accounting/widget/InvoiceForms.xml"/>
+                                            </widgets>
+                                        </section>
+                                        <section>
+                                            <condition>
+                                                <not><if-empty field="paymentsActualCurrency"/></not>
+                                            </condition>
+                                            <widgets>
+                                                <include-form name="ListPaymentsNotAppliedForeignCurrency" location="component://accounting/widget/InvoiceForms.xml"/>
+                                            </widgets>
+                                        </section>
+                                        </screenlet>
+                                    </widgets>
+                                </section>
+                                <screenlet title="${uiLabelMap.AccountingAssignPaymentToInvoice}">
+                                    <include-form name="AddPayment" location="component://accounting/widget/InvoiceForms.xml"/>
+                                </screenlet>
+                            </widgets>
+                            <fail-widgets>
+                                <screenlet title="${uiLabelMap.AccountingPaymentsApplied} ${appliedAmount?currency(${invoice.currencyUomId})}  ${uiLabelMap.AccountingOpenPayments} ${notAppliedAmount?currency(${invoice.currencyUomId})}">
+                                    <include-form name="EditInvoiceApplications" location="component://accounting/widget/InvoiceForms.xml"/>
+                                </screenlet>
+                                <section>
+                                    <condition>
+                                        <if-empty field="invoiceApplications"/>
+                                    </condition>
+                                    <widgets>
+                                        <container><label style="h3" text="${uiLabelMap.AccountingNoPaymentsApplicationsfound}"></label></container>
+                                    </widgets>
+                                </section>
+                            </fail-widgets>
+                        </section>
+                    </decorator-section>
+                </decorator-screen>
+            </widgets>
+        </section>
+    </screen>
+
+    <screen name="EditInvoiceItems">
+        <section>
+            <actions>
+                <set field="titleProperty" value="PageTitleListInvoices"/>
+                <set field="tabButtonItem" value="listInvoiceItems"/>
+                <set field="invoiceId" from-field="parameters.invoiceId"/>
+                <set field="invoiceItemSeqd" from-field="parameters.invoiceItemSeqId"/>
+                <property-to-field field="defaultCurrencyUomId" resource="general" property="currency.uom.id.default" default="USD"/>
+                <entity-one entity-name="Invoice" value-field="invoice"/>
+                <entity-one entity-name="InvoiceItem" value-field="invoiceItem"/>
+                <entity-and entity-name="InvoiceItem" list="invoiceItems">
+                    <field-map field-name="invoiceId" from-field="parameters.invoiceId"/>
+                    <order-by field-name="invoiceItemSeqId"/>
+                </entity-and>
+                <script location="component://accounting/webapp/accounting/WEB-INF/actions/invoice/GetInvoiceItemTypes.groovy"/>
+                <entity-condition entity-name="InvoiceItemType" list="PayrolGroup">
+                    <condition-expr field-name="parentTypeId" value="PAYROL"/>
+                </entity-condition>
+                <entity-condition entity-name="InvoiceItemType" list="PayrolList"></entity-condition>
+            </actions>
+            <widgets>
+                <screenlet title="${uiLabelMap.AccountingInvoiceItemAdd}">
+                    <section>
+                        <condition>
+                            <not><if-compare field="invoice.invoiceTypeId" operator="equals" value="PAYROL_INVOICE"/></not>
+                        </condition>
+                        <widgets>
+                            <container id="EditInvoiceItems">
+                                <include-form name="EditInvoiceItems" location="component://accounting/widget/InvoiceForms.xml"/>
+                            </container>
+                        </widgets>
+                        <fail-widgets>
+                            <platform-specific><html><html-template location="component://accounting/webapp/accounting/invoice/InvoiceItemsPayrol.ftl"/></html></platform-specific>
+                        </fail-widgets>
+                    </section>
+                </screenlet>
+            </widgets>
+        </section>
+    </screen>
+    
+    <screen name="UpdateInvoiceItems">
+        <section>
+            <actions>
+                <set field="viewIndex" from-field="parameters.viewIndex"/>
+                <set field="viewSize" from-field="parameters.viewSize"/>
+                <set field="titleProperty" value="PageTitleListInvoices"/>
+                <set field="tabButtonItem" value="listInvoiceItems"/>
+                <set field="invoiceId" from-field="parameters.invoiceId"/>
+                <set field="invoiceItemSeqd" from-field="parameters.invoiceItemSeqId"/>
+                <property-to-field field="defaultCurrencyUomId" resource="general" property="currency.uom.id.default" default="USD"/>
+                <entity-one entity-name="Invoice" value-field="invoice"/>
+                <entity-one entity-name="InvoiceItem" value-field="invoiceItem"/>
+                <entity-and entity-name="InvoiceItem" list="invoiceItems">
+                    <field-map field-name="invoiceId" from-field="parameters.invoiceId"/>
+                    <order-by field-name="invoiceItemSeqId"/>
+                </entity-and>
+                <script location="component://accounting/webapp/accounting/WEB-INF/actions/invoice/GetInvoiceItemTypes.groovy"/>
+                <entity-condition entity-name="InvoiceItemType" list="PayrolGroup">
+                    <condition-expr field-name="parentTypeId" value="PAYROL"/>
+                </entity-condition>
+                <entity-condition entity-name="InvoiceItemType" list="PayrolList"></entity-condition>
+            </actions>
+            <widgets>
+                <decorator-screen name="CommonInvoiceDecorator" location="${parameters.invoiceDecoratorLocation}">
+                    <decorator-section name="body">
+                        <screenlet title="${uiLabelMap.AccountingInvoiceItems}">
+                            <include-form name="UpdateInvoiceItems" location="component://accounting/widget/InvoiceForms.xml"/>
+                        </screenlet>
+                        <screenlet title="${uiLabelMap.AccountingInvoiceItemAdd}">
+                            <section>
+                                <condition>
+                                    <not><if-compare field="invoice.invoiceTypeId" operator="equals" value="PAYROL_INVOICE"/></not>
+                                </condition>
+                                <widgets>
+                                    <include-form name="EditInvoiceItem" location="component://accounting/widget/InvoiceForms.xml"/>
+                                </widgets>
+                                <fail-widgets>
+                                    <platform-specific><html><html-template location="component://accounting/webapp/accounting/invoice/InvoiceItemsPayrol.ftl"/></html></platform-specific>
+                                </fail-widgets>
+                            </section>
+                        </screenlet>
+                    </decorator-section>
+                </decorator-screen>
+            </widgets>
+        </section>
+    </screen>
+
+    <screen name="EditInvoiceTimeEntries">
+        <section>
+            <actions>
+                <set field="titleProperty" value="PageTitleListInvoiceTimeEntries"/>
+                <set field="tabButtonItem" value="EditInvoiceTimeEntries"/>
+                <set field="invoiceId" from-field="parameters.invoiceId"/>
+                <entity-one entity-name="Invoice" value-field="invoice"/>
+                <entity-and entity-name="TimeEntry" list="timeEntries">
+                    <field-map field-name="invoiceId" from-field="parameters.invoiceId"/>
+                    <order-by field-name="timeEntryId"/>
+                </entity-and>
+            </actions>
+            <widgets>
+                <decorator-screen name="CommonInvoiceDecorator" location="${parameters.invoiceDecoratorLocation}">
+                    <decorator-section name="body">
+                        <screenlet title="${uiLabelMap.AccountingInvoiceTimeEntries}">
+                            <include-form name="EditTimeEntries" location="component://accounting/widget/InvoiceForms.xml"/>
+                        </screenlet>
+                    </decorator-section>
+                </decorator-screen>
+            </widgets>
+        </section>
+    </screen>
+
+    <screen name="InvoiceRoles">
+        <section>
+            <actions>
+                <set field="titleProperty" value="PageTitleListInvoiceRoles"/>
+                <set field="tabButtonItem" value="invoiceRoles"/>
+                <set field="invoiceId" from-field="parameters.invoiceId"/>
+                <entity-one entity-name="Invoice" value-field="invoice"/>
+                <entity-and entity-name="InvoiceRole" list="invoiceRoles">
+                    <field-map from-field="invoiceId" field-name="invoiceId"/>
+                    <order-by field-name="partyId"/>
+                </entity-and>
+            </actions>
+            <widgets>
+                <decorator-screen name="CommonInvoiceDecorator" location="${parameters.invoiceDecoratorLocation}">
+                    <decorator-section name="body">
+                        <screenlet id="PartyInvoiceRolePanel" title="${uiLabelMap.AccountingPartyRoleAdd}" collapsible="true">
+                            <include-form name="EditInvoiceRole" location="component://accounting/widget/InvoiceForms.xml"/>
+                        </screenlet>
+                        <include-form name="ListInvoiceRoles" location="component://accounting/widget/InvoiceForms.xml"/>
+                    </decorator-section>
+                </decorator-screen>
+            </widgets>
+        </section>
+    </screen>
+
+    <screen name="SendPerEmail">
+        <section>
+            <actions>
+                <set field="titleProperty" value="PageTitleSendInvoicePerEmail"/>
+                <set field="invoiceId" from-field="parameters.invoiceId"/>
+                <entity-one entity-name="Invoice" value-field="invoice"/>
+                <set field="tabButtonItem" value="sendPerEmail"/>
+            </actions>
+            <widgets>
+                <decorator-screen name="CommonInvoiceDecorator" location="${parameters.invoiceDecoratorLocation}">
+                    <decorator-section name="body">
+                        <screenlet title="${uiLabelMap.CommonSendPerEmail}">
+                            <include-form name="SendPerEmail" location="component://accounting/widget/InvoiceForms.xml"/>
+                        </screenlet>
+                    </decorator-section>
+                </decorator-screen>
+            </widgets>
+        </section>
+    </screen>
+
+    <screen name="sendPerEmailBody">
+        <section>
+            <widgets>
+                <platform-specific><html><html-template location="component://accounting/webapp/accounting/invoice/sendPerEmail.ftl"/></html></platform-specific>
+            </widgets>
+        </section>
+    </screen>
+
+    <screen name="ListCustomerInvoices">
+        <section>
+            <actions>
+                <script location="component://party/webapp/partymgr/WEB-INF/actions/party/GetMyCompany.groovy"/>
+                <entity-condition list="invoices" entity-name="Invoice">
+                    <condition-list combine="and">
+                        <condition-expr field-name="partyId" operator="equals" from-field="myCompanyId"/>
+                        <condition-list combine="or">
+                            <condition-expr field-name="statusId" operator="equals" value="INVOICE_APPROVED"/>
+                            <condition-expr field-name="statusId" operator="equals" value="INVOICE_SENT"/>
+                            <condition-expr field-name="statusId" operator="equals" value="INVOICE_READY"/>
+                            <condition-expr field-name="statusId" operator="equals" value="INVOICE_PAID"/>
+                        </condition-list>
+                    </condition-list>
+                    <order-by field-name="invoiceDate DESC"/>
+                </entity-condition>
+            </actions>
+            <widgets>
+                <screenlet title="${uiLabelMap.PageTitleListInvoices}" navigation-form-name="ListInvoices">
+                    <include-form name="ListCustomerInvoices"  location="component://accounting/widget/InvoiceForms.xml"/>
+                </screenlet>
+            </widgets>
+        </section>
+    </screen>
+
+    <screen name="ListSupplierInvoices">
+        <section>
+            <actions>
+                <set field="myCompanyId" from-field="userLogin.partyId"/>
+                <entity-condition list="invoiceslistexternal" entity-name="Invoice">
+                    <condition-list combine="and">
+                        <condition-expr field-name="partyIdFrom" operator="equals" from-field="myCompanyId"/>
+                        <condition-expr field-name="invoiceTypeId" operator="equals" value="PURCHASE_INVOICE"/>
+                        <condition-list combine="or">
+                            <condition-expr field-name="statusId" operator="equals" value="INVOICE_APPROVED"/>
+                            <condition-expr field-name="statusId" operator="equals" value="INVOICE_SENT"/>
+                            <condition-expr field-name="statusId" operator="equals" value="INVOICE_READY"/>
+                            <condition-expr field-name="statusId" operator="equals" value="INVOICE_PAID"/>
+                        </condition-list>
+                    </condition-list>
+                    <order-by field-name="invoiceDate DESC"/>
+                </entity-condition>
+            </actions>
+            <widgets>
+                <screenlet title="${uiLabelMap.PageTitleListInvoices}" navigation-form-name="ListInvoices">
+                    <include-form name="ListSupplierInvoices"  location="component://accounting/widget/InvoiceForms.xml"/>
+                </screenlet>
+            </widgets>
+        </section>
+    </screen>
+    
+    <screen name="Dashboard">
+		<section>
+			<actions>
+				<set field="layoutSettings.javaScripts[]" value="/images/accountingDashboard.js" global="true"/> 
+				<set field="headerItem" value="main" />
+				<set field="parameters.portalPageId" value="AccountingPortalPage" />
+				<set field="titleProperty" value="Accounting Dashboard"/>
+			</actions>
+			<widgets>
+				<decorator-screen name="main-decorator" location="${parameters.mainDecoratorLocation}">
+					<decorator-section name="body">
+						<include-screen name="PortalPageScreen" location="component://common/widget/CommonScreens.xml" />
+					</decorator-section>
+				</decorator-screen>
+			</widgets>
+		</section>
+	</screen>
+	
+	<screen name="ScreenOne">
+		<section>
+			<actions>
+                <set field="filterDate" type="Timestamp" value="${nowTimestamp}" />
+                
+				<!-- <entity-condition list="invoicelist" entity-name="InvoiceAndType">
+					<condition-list combine="and">
+						<condition-expr field-name="statusId" operator="equals" value="INVOICE_IN_PROCESS" />
+						<condition-expr field-name="invoiceDate" operator="greater-equals" value="${bsh:org.ofbiz.base.util.UtilDateTime.getDayStart(nowTimestamp)}" />
+						<condition-expr field-name="invoiceDate" operator="less-equals" value="${bsh:org.ofbiz.base.util.UtilDateTime.getDayEnd(nowTimestamp)}" />
+					</condition-list>
+				</entity-condition> -->
+				<entity-condition list="invoicelist" entity-name="InvoiceAndType">
+					<condition-list combine="or">
+								<condition-list combine="and">
+									<condition-expr field-name="statusId" operator="equals" value="INVOICE_IN_PROCESS" />
+									<!-- <condition-expr field-name="invoiceTypeId" operator="equals" value="SALES_INVOICE" /> -->
+									<condition-expr field-name="partyIdFrom" operator="equals" value="${parameters.organizationPartyId}" />
+									
+								</condition-list>
+								<condition-list combine="and">
+									<condition-expr field-name="statusId" operator="equals" value="INVOICE_IN_PROCESS" />
+									<!-- <condition-expr field-name="invoiceTypeId" operator="equals" value="PURCHASE_INVOICE" /> -->
+									<condition-expr field-name="partyId" operator="equals" value="${parameters.organizationPartyId}" />
+								</condition-list>
+					</condition-list>
+				</entity-condition>
+				<entity-condition entity-name="RoleTypeAndParty" list="listOfPartyRoles">
+					<condition-list combine="and">
+						<condition-expr field-name="partyId" operator="equals" value="${userLogin.partyId}" />
+						<condition-expr field-name="roleTypeId" operator="equals" value="INVOICE_MANAGER" />
+					</condition-list>
+				</entity-condition>
+			</actions>
+			<widgets>
+				<section>
+					<condition>
+						<not><if-empty field="listOfPartyRoles" /></not>
+					</condition>
+					<widgets>
+						<screenlet id="InvoicePendingApproval" title="Invoice Pending Approval" collapsible="true" initially-collapsed="false">
+							<include-form name="PendingInvoice" location="component://accounting/widget/InvoiceForms.xml" />
+						</screenlet>
+					</widgets>
+					<fail-widgets>
+						<screenlet id="InvoicePendingApproval" title="Invoice Pending Approval" collapsible="true" initially-collapsed="false">
+						</screenlet>
+					</fail-widgets>
+				</section>
+            </widgets>
+		</section>
+	</screen>
+	
+	 <screen name="ScreenTwo">
+		<section>
+			<actions>
+				<set field="filterDate" type="Timestamp" value="${nowTimestamp}" />
+				<property-to-field field="defaultCurrencyUomId" resource="general" property="currency.uom.id.default" default="INR"/>
+				<script location="component://accounting/webapp/accounting/WEB-INF/actions/dashboard/receivablePortlet.groovy"/>
+			</actions>
+			<widgets>
+				<section>
+				<widgets>
+				<screenlet id="Receivables" title="Receivables" collapsible="true" initially-collapsed="false">
+                    <section>
+                        <widgets>
+                           <platform-specific>
+									<html>
+									<html-template location="component://accounting/webapp/accounting/dashboard/receivablePortlet.ftl"/>
+									</html>
+							</platform-specific>
+                        </widgets>
+                    </section>
+                </screenlet>
+				</widgets>
+				</section>
+			</widgets>
+		</section>
+	</screen> 
+	<screen name="ScreenThree">
+		<section>
+			<actions>
+				<set field="filterDate" type="Timestamp" value="${nowTimestamp}" />
+				<property-to-field field="defaultCurrencyUomId" resource="general" property="currency.uom.id.default" default="INR"/>
+				<script location="component://accounting/webapp/accounting/WEB-INF/actions/dashboard/receivablePortlet.groovy"/>
+			</actions>
+			<widgets>
+				<section>
+				<widgets>
+				<screenlet id="Payables" title="Payables" collapsible="true" initially-collapsed="false">
+                     <section>
+                        <widgets>
+                           <platform-specific>
+									<html>
+									<html-template location="component://accounting/webapp/accounting/dashboard/payablePortlet.ftl"/>
+									</html>
+							</platform-specific>
+                        </widgets>
+                    </section>
+                </screenlet>
+				</widgets>
+				</section>
+			</widgets>
+		</section>
+	</screen>
+	<screen name="ScreenFour">
+		<section>
+			<actions>
+				<set field="filterDate" type="Timestamp" value="${nowTimestamp}" />
+			</actions>
+			<widgets>
+				<section>
+				<widgets>
+				<screenlet id="CashAndBankDetails" title="Cash and Bank Details" collapsible="true" initially-collapsed="false">
+                    <section>
+                        <widgets>
+                           <platform-specific>
+									<html>
+									<html-template location="component://accounting/webapp/accounting/dashboard/cashBankDetailPortlet.ftl"/>
+									</html>
+							</platform-specific>
+                        </widgets>
+                    </section>
+                </screenlet>
+				</widgets>
+				</section>
+			</widgets>
+		</section>
+	</screen>
+
+	<screen name="ScreenFive">
+		<section>
+			<actions>
+				<set field="filterDate" type="Timestamp" value="${nowTimestamp}" />
+				<entity-condition list="resultList" entity-name="PaymentAndTypeAndCreditCard">
+					<condition-list combine="or">
+								<condition-list combine="and">
+									<condition-expr field-name="statusId" operator="equals" value="PMNT_SENT" />
+									<condition-expr field-name="effectiveDate" operator="greater-equals" value="${bsh:org.ofbiz.base.util.UtilDateTime.getDayStart(nowTimestamp)}" />
+									<condition-expr field-name="paymentMethodTypeId" operator="not-equals" value="CASH"/>
+									<condition-expr field-name="paymentMethodTypeId" operator="not-equals" value="EXT_COD"/>
+									<condition-expr field-name="partyIdFrom" operator="equals" value="${parameters.organizationPartyId}"/>
+								</condition-list>
+								<condition-list combine="and">
+									<condition-expr field-name="statusId" operator="equals" value="PMNT_RECEIVED" />
+									<condition-expr field-name="effectiveDate" operator="greater-equals" value="${bsh:org.ofbiz.base.util.UtilDateTime.getDayStart(nowTimestamp)}" />
+									<condition-expr field-name="paymentMethodTypeId" operator="not-equals" value="CASH"/>
+									<condition-expr field-name="paymentMethodTypeId" operator="not-equals" value="EXT_COD"/>
+									<condition-expr field-name="partyIdTo" operator="equals" value="${parameters.organizationPartyId}"/>
+								</condition-list>
+					</condition-list>
+				</entity-condition>
+			</actions>
+				<widgets>
+				<screenlet id="PaymentsAlert" title="Payments Alert" collapsible="true" initially-collapsed="false">
+                    <section>
+                        <widgets>
+                            <include-form name="PaymentDash"  location="component://accounting/widget/InvoiceForms.xml"/>
+                        </widgets>
+                    </section>
+                </screenlet>
+				</widgets>
+		</section>
+	</screen>
+	
+	<screen name="ReportDashboard">
+		<section>
+			<actions>
+				<set field="headerItem" value="CustomReport" />
+				<set field="parameters.portalPageId" value="ActReportPortalPage" />
+			</actions>
+			<widgets>
+				<decorator-screen name="main-decorator" location="${parameters.mainDecoratorLocation}">
+					<decorator-section name="body">
+						<include-screen name="PortalPageScreen" location="component://common/widget/CommonScreens.xml" />
+					</decorator-section>
+				</decorator-screen>
+			</widgets>
+		</section>
+	</screen>
+	<screen name="ReportScreenTwo">
+        <section>
+            <condition>
+                <if-compare operator="not-equals" value="false" field="${parameters.show}"/>
+            </condition>
+            <actions>
+             <set field="fromInvoiceDate" from-field="parameters.fromInvoiceDate" type="Timestamp"/>
+                <set field="thruInvoiceDate" from-field="parameters.thruInvoiceDate" type="Timestamp"/> 
+                <set field="filterDate" type="Timestamp" value="${nowTimestamp}" />
+            </actions>
+            <widgets>
+                <screenlet title="Invoice Report">
+                   <include-form name="InvoiceReport" location="component://accounting/widget/InvoiceForms.xml"/> 
+                </screenlet>
+            </widgets>
+        </section>
+    </screen>
+    <screen name="InvoiceScreenTwoReportPDF">
+        <section>
+            <actions>
+               <set field="filterDate" type="Timestamp" value="${nowTimestamp}" />
+                <set field="fromInvoiceDate" from-field="parameters.fromInvoiceDate" type="Timestamp"/>
+                <set field="thruInvoiceDate" from-field="parameters.thruInvoiceDate" type="Timestamp"/> 
+               <script location="component://accounting/webapp/accounting/WEB-INF/actions/invoice/InvoiceReportDetails.groovy"/>
+            </actions>
+            <widgets>
+                <decorator-screen name="FoReportDecorator" location="component://common/widget/CommonScreens.xml">
+                    <!-- at the top of every page we put the logo and company information -->
+                    <decorator-section name="header">
+                        <section>
+                            <widgets>
+                                <include-screen name="ZPCHeader" location="component://accounting/widget/InvoiceScreens.xml"/>
+                            </widgets>
+                        </section>
+                    </decorator-section>
+                    <decorator-section name="body">
+                        <section>
+                            <widgets>
+                                <platform-specific>
+                                    <xsl-fo><html-template location="component://accounting/webapp/accounting/invoice/InvoiceReportScreenTwo.fo.ftl"/></xsl-fo>
+                                </platform-specific>
+                            </widgets>
+                        </section>
+                    </decorator-section>
+                </decorator-screen>
+            </widgets>
+        </section>
+    </screen> 
+    <screen name="InvoiceScreenTwoReportExcel">
+        <section>
+            <actions>
+                <set field="filterDate" type="Timestamp" value="${nowTimestamp}" />
+                <set field="fromInvoiceDate" from-field="parameters.fromInvoiceDate" type="Timestamp"/>
+                <set field="thruInvoiceDate" from-field="parameters.thruInvoiceDate" type="Timestamp"/> 
+                <script location="component://accounting/webapp/accounting/WEB-INF/actions/invoice/InvoiceReportDetails.groovy"/> 
+		</actions>
+	 <widgets>
+	 	<include-form name="InvoiceReportExcel" location="component://accounting/widget/InvoiceForms.xml"/> 
+	</widgets>
+        </section>
+    </screen>
+	
+	<screen name="ReportScreenThree">
+		<section>
+            <condition>
+                <if-compare operator="not-equals" value="false" field="${parameters.show}"/>
+            </condition>
+			<actions>
+				<set field="filterDate" type="Timestamp" value="${nowTimestamp}" />
+			</actions>
+			<widgets>
+				<section>
+				<widgets>
+				<screenlet title="Payment Report">
+                    <section>
+                        <widgets>
+                            <include-form name="PaymentReport"  location="component://accounting/widget/InvoiceForms.xml"/>
+                        </widgets>
+                    </section>
+                </screenlet>
+				</widgets>
+				</section>
+			</widgets>
+		</section>
+	</screen>
+	
+	<screen name="ReportScreenFour">
+		<section>
+			<actions>
+				<set field="filterDate" type="Timestamp" value="${nowTimestamp}" />
+			</actions>
+			<widgets>
+				<!-- <section>
+				<widgets>
+				<screenlet title="Screen Four">
+                    <section>
+                        <widgets>
+                           <platform-specific>
+									<html>
+										
+									</html>
+							</platform-specific>
+                        </widgets>
+                    </section>
+                </screenlet>
+				</widgets>
+				</section> -->
+			</widgets>
+		</section>
+	</screen>
+	<screen name="PaymentReportPDF">
+		<section>
+			<actions>
+					<script location="component://accounting/webapp/accounting/WEB-INF/actions/invoice/PaymentsReport.groovy"/>
+			</actions>
+			<widgets>
+				<decorator-screen name="FoReportDecorator" location="component://common/widget/CommonScreens.xml">
+					<!-- at the top of every page we put the logo and company information -->
+					<decorator-section name="header">
+						<section>
+							<widgets>
+								<include-screen name="ZPCHeader" location="component://accounting/widget/InvoiceScreens.xml"/>
+							</widgets>
+						</section>
+					</decorator-section>
+					<decorator-section name="body">
+						<section>
+							<widgets>
+								<platform-specific>
+									<xsl-fo><html-template location="component://accounting/webapp/accounting/reports/PaymentsReport.fo.ftl"/></xsl-fo>
+								</platform-specific>
+							</widgets>
+						</section>
+					</decorator-section>
+				</decorator-screen>
+			</widgets>
+		</section>
+	</screen>
+	<screen name="PaymentReportXls">
+		<section>
+			<actions>
+				  <script location="component://accounting/webapp/accounting/WEB-INF/actions/invoice/PaymentsReport.groovy"/>
+			</actions>
+			<widgets>
+				 <section>
+                        <widgets>
+                            <include-form name="PaymentReportXls"  location="component://accounting/widget/InvoiceForms.xml"/>
+                        </widgets>
+                    </section>
+			</widgets>
+		</section>
+	</screen>
+
+	<screen name="ZPCHeader">
+		<section>
+			<actions>
+				<script location="component://order/webapp/ordermgr/WEB-INF/actions/order/CompanyHeader.groovy"/>
+			</actions>
+			<widgets>
+				<platform-specific><xsl-fo><html-template location="component://order/webapp/ordermgr/order/companyHeaderInfo.fo.ftl"/></xsl-fo></platform-specific>
+			</widgets>
+		</section>
+	</screen>
+
+	<screen name="accountingHelp">
+		<section>
+			<widgets>
+				<decorator-screen name="main-decorator" location="${parameters.mainDecoratorLocation}">
+					<decorator-section name="body">
+						<platform-specific>
+							<html><html-template location="component://accounting/webapp/accounting/help/helpVideo.ftl"/></html>
+						</platform-specific>
+					</decorator-section>
+				</decorator-screen>
+			</widgets>
+		</section>
+	</screen>
+
+</screens>

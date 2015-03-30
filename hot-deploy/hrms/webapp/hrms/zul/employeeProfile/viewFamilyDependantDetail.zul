@@ -1,0 +1,60 @@
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<?init class="org.zkoss.zkplus.databind.AnnotateDataBinderInit" root="./viewEmployeeDependantDetailWindow"?>
+<?component name="profileField" macroURI="../macros/profileField.zul" id="profileMacro"?>
+<?xel-method prefix="format" name="formatDate" class="org.ofbiz.base.util.UtilDateTime" signature="String formatDate(java.util.Date)"?>
+<zk xmlns="http://www.zkoss.org/2005/zul"
+    xmlns:h="http://www.w3.org/1999/xhtml"
+    xmlns:w="http://www.zkoss.org/2005/zk/client"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:n="http://www.zkoss.org/2005/zk/native"
+    xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
+    <zscript>
+        import org.zkoss.zk.ui.Component;
+        import org.zkoss.zk.ui.Executions;
+        import org.ofbiz.entity.GenericValue;
+        import org.ofbiz.entity.GenericDelegator;
+        Component familyDependantLink = (Component) Executions.getCurrent().getArg().get("familyDependantBtn");
+        String employeeId = (String) Executions.getCurrent().getArg().get("partyId");
+        GenericValue userLogin = (GenericValue)Executions.getCurrent().getDesktop().getSession().getAttribute("userLogin");
+        GenericDelegator delegator = userLogin.getDelegator();
+        List familyDependants = delegator.findByAnd("EmployeeDependantPartyRelationshipTypeView",UtilMisc.toMap("employeeId",employeeId));
+        boolean isAdmin = (Boolean)Executions.getCurrent().getArg().get("isAdmin");
+    </zscript>
+    <window id="viewEmployeeDependantDetailWindow">
+        <listbox>
+            <listhead>
+                <listheader label="${c:l('HRMS_MEMBER_NAME') }"/>
+                <listheader label="${c:l('HRMS_RELATONSHIP') }"/>
+                <listheader label="${c:l('HRMS_DOB') }"/>
+                <listheader label="${c:l('HRMS_Gender') }"/>
+                <listheader label="Father Name"/>
+                <listheader label="Mother Name"/>
+                <listheader label="Place of Birth"/>
+                <listheader label="NRC No"/>
+                <listheader label="${c:l('HRMS_FROMDATE') }"/>
+                <listheader label="${c:l('HRMS_THRUDATE') }"/>
+                <listheader label="${c:l('HRMS_ACTION') }"/>
+            </listhead>
+            <listitem forEach="${familyDependants}" value="${each.dependantId}">
+                <listcell label="${each.dependantName}"/>
+                <listcell label="${each.partyRelationshipName}"/>
+                <listcell label="${format:formatDate(each.dateOfBirth)}"/>
+                <listcell label="${each.gender}"/>
+                <listcell label="${each.fatherName}"/>
+                <listcell label="${each.motherName}"/>
+                <listcell label="${each.placeOfBirth}"/>
+                <listcell label="${each.nrcNo}"/>
+                <listcell label="${format:formatDate(each.fromDate)}"/>
+                <listcell label="${format:formatDate(each.thruDate)}"/>
+                <listcell>
+                    <button label="${c:l('HRMS_EDIT') }" visible="${isAdmin}">
+                        <attribute name="onClick">
+                            Executions.createComponents("/zul/employeeProfile/addEditFamilyDependant.zul",null,
+                                UtilMisc.toMap("dependantId",self.getParent().getParent().getValue(),"partyId",employeeId,"familyDependantBtn",familyDependantLink));
+                        </attribute>
+                    </button>
+                </listcell>
+            </listitem>
+        </listbox>
+    </window>
+</zk>

@@ -1,0 +1,102 @@
+<?component name="positionTypebox" macroURI="../macros/textfindMacro.zul" id="macro2"?>
+<zk xmlns:n="http://www.zkoss.org/2005/zk/native">
+	<window width="45%" height="55%" border="normal" closable="true" id="applyTerminationWindow" maximizable="true">
+		<caption label="Apply Termination Application"></caption>
+		<separator height="20px" />
+		<hbox>
+			<div align="right" width="150px">
+				<label value="Employee Id" style="font-weight:bold" />
+				<label value="*" style="color:red" />
+			</div>
+			<employeebox id="searchPanel" constraint="no empty:Employee Id Required"/>
+		</hbox>
+
+		<separator />
+		<hbox>
+			<div align="right" width="153px">
+				<label value="Application Date" style="font-weight:bold" />
+				<label value="*" style="color:red" />
+			</div>
+
+			<div align="left">
+				<datebox id="applicationDate" constraint="no past:Application Date Cannot be Past"></datebox>
+
+			</div>
+		</hbox>
+		<separator />
+		<hbox>
+			<div align="right" width="153px">
+				<label value="Notice Period" style="font-weight:bold" />
+				<label value="*" style="color:red" />
+			</div>
+			<div align="left">
+				<intbox id="noticePeriod" constraint="no empty:Notice Period Required" onChange="show()" />
+				<label value="in Days" style="font-weight:bold"></label>
+			</div>
+		</hbox>
+
+		<separator />
+		<hbox>
+			<div align="right" width="153px">
+				<label value="Termination Date" style="font-weight:bold" />
+			</div>
+
+			<div align="left">
+				<datebox id="terminationDate" readonly="true" constraint="no empty:Field Cannot Be Left Blank" buttonVisible="false" disabled="true" ></datebox>
+
+
+			</div>
+		</hbox>
+		<zscript>
+		
+		<![CDATA[
+	void show() {
+		Object applicationDateObj = ((Datebox) applyTerminationWindow.getFellow("applicationDate")).getRawValue();
+		if(org.ofbiz.base.util.UtilValidate.isEmpty(applicationDateObj))
+			throw new WrongValueException(applicationDate,"Application Date Required");
+		java.util.Date applicationDate = (java.util.Date) applicationDateObj;
+		java.sql.Timestamp appDate = new java.sql.Timestamp(applicationDate.getTime());
+		appDate = org.ofbiz.base.util.UtilDateTime.addDaysToTimestamp(appDate, noticePeriod.getValue().intValue());
+		terminationDate.setValue(new java.util.Date(appDate.getTime()));
+	}
+]]>
+		</zscript>
+
+		<separator />
+		<hbox>
+			<div align="right" width="153px">
+				<label value="Termination Reason" style="font-weight:bold" />
+				<label value="*" style="color:red" />
+			</div>
+			<div width="100px" align="left">
+				<textbox id="reasonForTermination" rows="3" cols="45" constraint="no empty : Termination Reason Required" />
+			</div>
+		</hbox>
+		<zscript>
+		<![CDATA[
+	import org.ofbiz.entity.*;
+	void validateForm() {
+		searchPanel.getValue();
+		if (applicationDate.getValue() == null) {
+			throw new WrongValueException(applicationDate, "Appllication Date Required");
+		}
+		applicationDate.getValue();
+		noticePeriod.getValue();
+		if (org.ofbiz.base.util.UtilValidate.isNegativeInteger(noticePeriod.getValue().toString())) {
+			throw new WrongValueException(noticePeriod, "Notice Period Cannot be Negative");
+		}
+		terminationDate.getValue();
+		reasonForTermination.getValue();
+	}
+]]>
+		</zscript>
+		<separator />
+		<hbox>
+			<div align="right" width="275px">
+				<button id="applyTerminationButton" label="Submit"
+					onClick="validateForm();com.ndz.controller.EmployeeTerminationManagementController.applyTerminationApplicationFor(event,applyTerminationWindow)" />
+				<button id="applyTerminationCancelButton" label="${c:l('ButtonCancel') }" onClick="applyTerminationWindow.detach()" />
+			</div>
+		</hbox>
+	</window>
+</zk>

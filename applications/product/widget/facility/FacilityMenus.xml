@@ -1,0 +1,977 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+Licensed to the Apache Software Foundation (ASF) under one
+or more contributor license agreements.  See the NOTICE file
+distributed with this work for additional information
+regarding copyright ownership.  The ASF licenses this file
+to you under the Apache License, Version 2.0 (the
+"License"); you may not use this file except in compliance
+with the License.  You may obtain a copy of the License at
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing,
+software distributed under the License is distributed on an
+"AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+KIND, either express or implied.  See the License for the
+specific language governing permissions and limitations
+under the License.
+-->
+
+<menus xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="http://ofbiz.apache.org/dtds/widget-menu.xsd">
+
+    <menu name="FacilityAppBar" title="${uiLabelMap.ProductFacilityManager}" extends="CommonAppBarMenu"
+          extends-resource="component://common/widget/CommonMenus.xml">
+        <actions>
+            <script location="component://product/webapp/facility/WEB-INF/actions/facility/CheckGeneralManager.groovy" />
+            <set field="isGeneralManager" default-value="${isDisplay}" />
+        </actions>
+        <!--<menu-item name="facility" title="${uiLabelMap.ProductFacilities}"><link target="FindFacility"/></menu-item>
+               <menu-item name="facilityGroup" title="${uiLabelMap.ProductFacilityGroups}"><link target="FindFacilityGroup"/></menu-item>
+             <menu-item name="inventoryItemLabel" title="${uiLabelMap.ProductInventoryItemLabels}"><link target="FindInventoryItemLabels"/></menu-item>
+             <menu-item name="ShipmentGatewayConfig" title="${uiLabelMap.FacilityShipmentGatewayConfig}">
+                 <condition>
+                     <if-has-permission permission="PAYPROC" action="_ADMIN"/>
+                 </condition>
+                 <link target="FindShipmentGatewayConfig"/>
+             </menu-item> -->
+
+        <!--  <menu-item name="newFacility" title="Facility"><link target="newFacility"/></menu-item> -->
+
+        <menu-item name="newFacility" title="Facility">
+            <condition>
+                <not>
+                    <if-empty field="parameters.facilityId"/>
+                </not>
+            </condition>
+            <actions>
+                <script location="component://facilityext/webapp/facilityext/WEB-INF/actions/transormation/CheckReserveInventory.groovy"/>
+                <set field="reserveInventory" default-value="${reserveInventory}"/>
+            </actions>
+            <link target="EditFacility?facilityId=${parameters.facilityId}"/>
+            <menu-item name="EditFacility" title="${uiLabelMap.ProductEditFacility}">
+                <link target="EditFacility">
+                    <parameter param-name="facilityId"/>
+                </link>
+            </menu-item>
+            <menu-item name="ViewContactMechs" title="${uiLabelMap.PartyContactMechs}">
+                <link target="ViewContactMechs">
+                    <parameter param-name="facilityId"/>
+                </link>
+                <menu-item name="ViewContactMech" title="View Contact Mech">
+                    <link target="ViewContactMechs">
+                        <parameter param-name="facilityId"/>
+                    </link>
+                </menu-item>
+                <menu-item name="EditContactMech" title="Create Contact Mech">
+                    <condition>
+                        <if-service-permission service-name="facilityGenericPermission" main-action="CREATE"/>
+                    </condition>
+                    <link target="EditContactMech">
+                        <parameter param-name="facilityId"/>
+                    </link>
+                </menu-item>
+            </menu-item>
+            <menu-item name="FacilityLocation" title="${uiLabelMap.ProductLocations}">
+                <link target="FindFacilityLocation">
+                    <parameter param-name="facilityId"/>
+                </link>
+                <menu-item name="SearchFacilityLocation" title="Find Facility Location">
+                    <link target="FindFacilityLocation">
+                        <parameter param-name="facilityId"/>
+                    </link>
+                </menu-item>
+                <menu-item name="EditFacilityLocation" title="Create Facility Location">
+                    <link target="EditFacilityLocation">
+                        <parameter param-name="facilityId" value="${parameters.facilityId}"/>
+                    </link>
+                </menu-item>
+            </menu-item>
+        </menu-item>
+
+        <menu-item name="FacilityInventory" title="${uiLabelMap.ProductInventory}">
+            <condition>
+                <not>
+                    <if-empty field="parameters.facilityId"/>
+                </not>
+            </condition>
+            <actions>
+                <script location="component://facilityext/webapp/facilityext/WEB-INF/actions/transormation/CheckReserveInventory.groovy"/>
+                <set field="reserveInventory" default-value="${reserveInventory}"/>
+            </actions>
+            <link target="ViewFacilityInventoryByProduct">
+                <parameter param-name="facilityId"/>
+            </link>
+            <menu-item name="ViewFacilityInventoryByProduct" title="Find Inventory">
+                <condition>
+                    <or>
+                        <if-has-permission permission="FACILITY_INVENTORY_EDIT"/>
+                        <if-has-permission permission="FACILITY_INVENTORY_VIEW"/>
+                    </or>
+                </condition>
+                <link target="ViewFacilityInventoryByProduct">
+                    <parameter param-name="facilityId"/>
+                </link>
+            </menu-item>
+            <menu-item name="EditFacilityInventoryItems" title="${uiLabelMap.ProductInventoryItems}">
+                <link target="EditFacilityInventoryItems">
+                    <parameter param-name="facilityId"/>
+                </link>
+                <menu-item name="FindInventoryItem" title="Find Inventory Items">
+                    <link target="EditFacilityInventoryItems">
+                        <parameter param-name="facilityId"/>
+                    </link>
+                </menu-item>
+                <!--<menu-item name="CreateInventoryItem" title="Create Inventory Items">
+                    <link target="EditInventoryItem">
+                        <parameter param-name="facilityId"/>
+                    </link>
+                </menu-item>-->
+            </menu-item>
+            <menu-item name="issuanceItems" title="Issue Inventory">
+                <condition>
+                    <if-has-permission permission="FACILITY_INVENTORY_ISSUANCE"/>
+                </condition>
+                <link target="issuanceItems">
+                    <parameter param-name="facilityId"/>
+                </link>
+                <!--<menu-item name="Default" title="Default">
+                    <link target="issuanceItems">
+                        <parameter param-name="facilityId"/>
+                        <parameter param-name="issueMode" value="Default"/>
+                    </link>
+                </menu-item>-->
+                <!--<menu-item name="SampleToCustomer" title="Sample To Customer">
+                    <link target="FindSampleToCustomer">
+                        <parameter param-name="facilityId"/>
+                        <parameter param-name="issueMode" value="SC"/>
+                    </link>
+                </menu-item>-->
+                <!--<menu-item name="IssueToSubContract" title="Issue To Sub Contract">
+                    <link target="FindIssueToSubContract">
+                        <parameter param-name="facilityId"/>
+                        <parameter param-name="issueMode" value="ISC"/>
+                    </link>
+                </menu-item>-->
+                <menu-item name="IssueToEmployee" title="Issue To Employee">
+                    <link target="FindIssueToEmployee">
+                        <parameter param-name="facilityId"/>
+                        <parameter param-name="issueMode" value="ISC"/>
+                    </link>
+                </menu-item>
+            </menu-item>
+            <menu-item name="ViewFacilityInventoryItemsDetails" title="${uiLabelMap.ProductInventoryItemsDetails}">
+                <link target="ViewFacilityInventoryItemsDetails">
+                    <parameter param-name="facilityId"/>
+                </link>
+            </menu-item>
+            <menu-item name="ReceiveInventory" title="${uiLabelMap.ProductInventoryReceive}">
+                <condition>
+                    <if-has-permission permission="FACILITY_INVENTORY_EDIT"/>
+                </condition>
+                <link target="ReceiveInventory">
+                    <parameter param-name="facilityId"/>
+                </link>
+            </menu-item>
+            <menu-item name="PhysicalInventory" title="${uiLabelMap.ProductPhysicalInventory}">
+                <condition>
+                    <if-has-permission permission="FACILITY_INVENTORY_EDIT"/>
+                </condition>
+                <link target="FindPhysicalInvNew">
+                    <parameter param-name="facilityId"/>
+                </link>
+            </menu-item>
+            <menu-item name="FindFacilityTransfers" title="Inventory Transfers">
+                <condition>
+                    <if-has-permission permission="FACILITY_INVENTORY_EDIT"/>
+                </condition>
+                <link target="FindFacilityTransfers">
+                    <parameter param-name="facilityId"/>
+                </link>
+            </menu-item>
+            <menu-item name="ReceiveReturn" title="${uiLabelMap.ProductReceiveReturn}">
+                <condition>
+                    <if-has-permission permission="FACILITY_INVENTORY_EDIT"/>
+                </condition>
+                <link target="ReceiveReturn">
+                    <parameter param-name="facilityId" value="${parameters.facilityId}"/>
+                </link>
+            </menu-item>
+            <menu-item name="FindInventoryRequisition" title="Inventory Requisition">
+                <link target="FindInventoryRequisition">
+                    <parameter param-name="facilityId" value="${parameters.facilityId}"/>
+                </link>
+                <menu-item name="FindInventoryRequisition" title="Find Inventory Requisition">
+                    <link target="FindInventoryRequisition">
+                        <parameter param-name="facilityId" value="${parameters.facilityId}"/>
+                    </link>
+                </menu-item>
+                <menu-item name="CreateReqInventoryTransfer" title="Create Inventory Requisition">
+                    <condition>
+                        <if-service-permission service-name="inventoryRequisitionRoleCheck"/>
+                    </condition>
+                    <link target="CreateReqInventoryTransfer">
+                        <parameter param-name="facilityId" value="${parameters.facilityId}"/>
+                    </link>
+                </menu-item>
+
+            </menu-item>
+        </menu-item>
+
+        <menu-item name="shipment" title="${uiLabelMap.ProductShipments}">
+            <!-- <link target="FindShipment?show=false"/> -->
+            <link target="FindShipment"/>
+            <menu-item name="shipment" title="Shipments">
+                <link target="FindShipment"/>
+                <menu-item name="findShipment" title="Find Shipments">
+                    <link target="FindShipment"/>
+                </menu-item>
+                <menu-item name="createShipment" title="Create Shipment">
+                    <condition>
+                        <if-has-permission permission="FACILITY_SHIPMENT_ADMIN"/>
+                    </condition>
+                    <link target="EditShipment"/>
+                </menu-item>
+            </menu-item>
+            <!-- <menu-item name="route" title="Routes">
+                 <link target="Route"/>
+                 <menu-item name="findRoutes" title="Find Routes">
+                     <link target="Route"/>
+                 </menu-item>
+                 <menu-item name="createRoutes" title="Create Route">
+                     <link target="NewRoute"/>
+                 </menu-item>
+             </menu-item>-->
+            <menu-item name="shipmentReports" title="Reports">
+                <link target="ShipmentReceivedReport"/>
+
+                <menu-item name="ShipmentReceivedReport" title="Shipment Receipt">
+                    <link target="ShipmentReceivedReport">
+                    </link>
+                </menu-item>
+
+                <menu-item name="ShipmentInspectionReport" title="Shipment Inspection">
+                    <link target="ShipmentInspectionReport">
+                    </link>
+                </menu-item>
+            </menu-item>
+            <menu-item name="shipmentRequisitionInventory" title="Inventory Requisition Search">
+                <condition>
+                        <if-compare field="isGeneralManager" operator="equals" value="true"/>
+                </condition>
+                <link target="FindInvRequisition">
+                    <parameter param-name="facilityId" value="${parameters.facilityId}"/>
+                </link>
+            </menu-item>
+            <!-- <menu-item name="PicklistOptions" title="${uiLabelMap.ProductPicking}">
+                 <condition>
+                     <not>
+                         <if-empty field="parameters.facilityId"/>
+                     </not>
+                 </condition>
+                 <actions>
+                     <script location="component://facilityext/webapp/facilityext/WEB-INF/actions/transormation/CheckReserveInventory.groovy"/>
+                     <set field="reserveInventory" default-value="${reserveInventory}"/>
+                 </actions>
+                 <link target="PicklistOptions">
+                     <parameter param-name="facilityId"/>
+                     <parameter param-name="mode" value="Auto"/>
+                 </link>
+                 <menu-item name="PicklistOptions" title="Auto Shipment">
+                     <link target="PicklistOptions">
+                         <parameter param-name="facilityId"/>
+                         <parameter param-name="mode" value="Auto"/>
+                     </link>
+                 </menu-item>
+                 <menu-item name="FindOrdersFromShipment" title="Manual Shipment">
+                     <link target="FindOrdersFromShipment">
+                         <parameter param-name="facilityId"/>
+                         <parameter param-name="mode" value="Manual"/>
+                     </link>
+                 </menu-item>
+             </menu-item>
+             <menu-item name="PickMoveStock" title="${uiLabelMap.ProductStockMoves}">
+                 <condition>
+                     <not>
+                         <if-empty field="parameters.facilityId"/>
+                     </not>
+                 </condition>
+                 <actions>
+                     <script location="component://facilityext/webapp/facilityext/WEB-INF/actions/transormation/CheckReserveInventory.groovy"/>
+                     <set field="reserveInventory" default-value="${reserveInventory}"/>
+                 </actions>
+                 <link target="PickMoveStock">
+                     <parameter param-name="facilityId"/>
+                 </link>
+             </menu-item>
+             <menu-item name="PicklistManage" title="${uiLabelMap.ProductPicklistManage}">
+                 <condition>
+                     <not>
+                         <if-empty field="parameters.facilityId"/>
+                     </not>
+                 </condition>
+                 <actions>
+                     <script location="component://facilityext/webapp/facilityext/WEB-INF/actions/transormation/CheckReserveInventory.groovy"/>
+                     <set field="reserveInventory" default-value="${reserveInventory}"/>
+                 </actions>
+                 <link target="PicklistManage">
+                     <parameter param-name="facilityId"/>
+                 </link>
+             </menu-item>
+             <menu-item name="VerifyPick" title="${uiLabelMap.ProductVerifyPick}">
+                 <condition>
+                     <not>
+                         <if-empty field="parameters.facilityId"/>
+                     </not>
+                 </condition>
+                 <actions>
+                     <script location="component://facilityext/webapp/facilityext/WEB-INF/actions/transormation/CheckReserveInventory.groovy"/>
+                     <set field="reserveInventory" default-value="${reserveInventory}"/>
+                 </actions>
+                 <link target="VerifyPick">
+                     <parameter param-name="facilityId"/>
+                     <parameter param-name="mode" value="Auto"/>
+                 </link>
+                 <menu-item name="VerifyPick" title="Auto Shipment">
+                     <link target="VerifyPick">
+                         <parameter param-name="facilityId"/>
+                         <parameter param-name="mode" value="Auto"/>
+                     </link>
+                 </menu-item>
+                 <menu-item name="VerifyPickInShipment" title="Manual Shipment">
+                     <link target="VerifyPickInShipment">
+                         <parameter param-name="facilityId"/>
+                         <parameter param-name="mode" value="Manual"/>
+                     </link>
+                 </menu-item>
+             </menu-item>
+             <menu-item name="PackOrder" title="${uiLabelMap.ProductPacking}">
+                 <condition>
+                     <not>
+                         <if-empty field="parameters.facilityId"/>
+                     </not>
+                 </condition>
+                 <actions>
+                     <script location="component://facilityext/webapp/facilityext/WEB-INF/actions/transormation/CheckReserveInventory.groovy"/>
+                     <set field="reserveInventory" default-value="${reserveInventory}"/>
+                 </actions>
+                 <link target="PackOrder">
+                     <parameter param-name="facilityId"/>
+                     <parameter param-name="mode" value="Auto"/>
+                 </link>
+                 <menu-item name="PackOrder" title="Auto Shipment">
+                     <link target="PackOrder">
+                         <parameter param-name="facilityId"/>
+                         <parameter param-name="mode" value="Auto"/>
+                     </link>
+                 </menu-item>
+                 <menu-item name="PackInShipment" title="Manual Shipment">
+                     <link target="PackInShipment">
+                         <parameter param-name="facilityId"/>
+                         <parameter param-name="mode" value="Manual"/>
+                     </link>
+                 </menu-item>
+             </menu-item>-->
+        </menu-item>
+
+        <menu-item name="help" title="Help">
+            <condition>
+                <if-empty field="parameters.facilityId"/>
+            </condition>
+            <!-- <link target="#"></link> -->
+            <link target="main"></link>
+            <menu-item name="grn" title="GRN">
+                <link target="facilityHelp" target-window="_BLANK">
+                    <parameter param-name="helpFileName" value="GRN.swf"/>
+                </link>
+            </menu-item>
+            <menu-item name="inventory" title="Inventory">
+                <link target="facilityHelp" target-window="_BLANK">
+                    <parameter param-name="helpFileName" value="Inventory.swf"/>
+                </link>
+            </menu-item>
+            <menu-item name="inventoryRequisition" title="Inventory Requisition">
+                <link target="facilityHelp" target-window="_BLANK">
+                    <parameter param-name="helpFileName" value="InventoryRequisition.swf"/>
+                </link>
+            </menu-item>
+            <menu-item name="issueToEmployee" title="Issue To Employee">
+                <link target="facilityHelp" target-window="_BLANK">
+                    <parameter param-name="helpFileName" value="IssueToEmployee.swf"/>
+                </link>
+            </menu-item>
+            <menu-item name="issueToFixedAssets" title="Issue To Fixed Assets">
+                <link target="facilityHelp" target-window="_BLANK">
+                    <parameter param-name="helpFileName" value="IssueToFixedAssets.swf"/>
+                </link>
+            </menu-item>
+            <menu-item name="qulaityAttributes" title="Quality Attributes">
+                <link target="facilityHelp" target-window="_BLANK">
+                    <parameter param-name="helpFileName" value="QualityAttributes.swf"/>
+                </link>
+            </menu-item>
+            <menu-item name="quarryInventoryReceive" title="Quarry Inventory Receive">
+                <link target="facilityHelp" target-window="_BLANK">
+                    <parameter param-name="helpFileName" value="QuarryInventoryReceive.swf"/>
+                </link>
+            </menu-item>
+            <menu-item name="returnables" title="Returnables">
+                <link target="facilityHelp" target-window="_BLANK">
+                    <parameter param-name="helpFileName" value="Returnables.swf"/>
+                </link>
+            </menu-item>
+            <menu-item name="transferShipment" title="Transfer Shipment">
+                <link target="facilityHelp" target-window="_BLANK">
+                    <parameter param-name="helpFileName" value="TransferShipment.swf"/>
+                </link>
+            </menu-item>
+        </menu-item>
+
+        <!--  <menu-item name="stockReserve" title="Stock Reservations">
+              <condition>
+                  <or>
+                      <not>
+                          <if-empty field="parameters.facilityId"/>
+                      </not>
+                      <if-compare operator="equals" value="N" field="reserveInventory"/>
+                  </or>
+              </condition>
+              <link target="StockReservations">
+                  <parameter param-name="facilityId"/>
+              </link>
+              <menu-item name="ReserveInventoryItem" title="Reserve Inventory Item">
+                  <link target="StockReservations">
+                      <parameter param-name="facilityId" value="${parameters.facilityId}"/>
+                  </link>
+              </menu-item>
+              <menu-item name="ReserveOrders" title="Reserve Sales Orders">
+                  <link target="FindOrderToReserve">
+                      <parameter param-name="facilityId" value="${parameters.facilityId}"/>
+                  </link>
+              </menu-item>
+              <menu-item name="FindReserveOrders" title="Reserve Order">
+                  <link target="findReserveOrders">
+                      <parameter param-name="facilityId" value="${parameters.facilityId}"/>
+                  </link>
+                  <menu-item name="searchReserveOrder" title="Find Reserve Orders">
+                      <link target="findReserveOrders">
+                          <parameter param-name="facilityId" value="${parameters.facilityId}"/>
+                      </link>
+                  </menu-item>
+                  <menu-item name="reserveOrderEntry" title="Create Reserve Order">
+                      <link target="reserveOrderEntry">
+                          <parameter param-name="facilityId" value="${parameters.facilityId}"/>
+                      </link>
+                  </menu-item>
+              </menu-item>
+          </menu-item>-->
+
+         <menu-item name="transformations" title="Transformation">
+              <condition>
+                  <not>
+                      <if-empty field="parameters.facilityId"/>
+                  </not>
+              </condition>
+              <actions>
+                  <script location="component://facilityext/webapp/facilityext/WEB-INF/actions/transormation/CheckReserveInventory.groovy"/>
+                  <set field="reserveInventory" default-value="${reserveInventory}"/>
+              </actions>
+              <link target="NewTransformation">
+                  <parameter param-name="facilityId" value="${parameters.facilityId}"/>
+              </link>
+              <menu-item name="splits" title="Splitting">
+                  <link target="SearchTransformation">
+                      <parameter param-name="facilityId" value="${parameters.facilityId}"/>
+                  </link>
+                  <menu-item name="FindTransformation" title="Find Transformations">
+                      <link target="SearchTransformation">
+                          <parameter param-name="facilityId" value="${parameters.facilityId}"/>
+                      </link>
+                  </menu-item>
+                  <menu-item name="NewTransformation" title="Create Transformation">
+                      <link target="NewTransformation">
+                          <parameter param-name="facilityId" value="${parameters.facilityId}"/>
+                      </link>
+                  </menu-item>
+              </menu-item>
+              <!-- <menu-item name="bundling" title="Bundling">
+                  <link target="SearchProductBundle">
+                      <parameter param-name="facilityId" value="${parameters.facilityId}"/>
+                  </link>
+                  <menu-item name="SearchProductBundle" title="Find Bundling">
+                      <link target="SearchProductBundle">
+                          <parameter param-name="facilityId" value="${parameters.facilityId}"/>
+                      </link>
+                  </menu-item>
+                  <menu-item name="CreateProductBundle" title="Create Bundling">
+                      <link target="CreateProductBundle">
+                          <parameter param-name="facilityId" value="${parameters.facilityId}"/>
+                      </link>
+                  </menu-item>
+              </menu-item>
+              <menu-item name="merge" title="Merge">
+                  <link target="mergeInv">
+                      <parameter param-name="facilityId" value="${parameters.facilityId}"/>
+                  </link>
+              </menu-item> -->
+          </menu-item>
+
+        <menu-item name="Reports" title="Reports">
+            <condition>
+                <and>
+                    <not>
+                        <if-empty field="parameters.facilityId"/>
+                    </not>
+                    <if-has-permission permission="FACILITY_REPORT_VIEW"/>
+                </and>
+            </condition>
+            <!-- <link target="ShipmentReports">
+                <parameter param-name="facilityId"/>
+            </link> -->
+            <link target="DepartmentIssueReport">
+                <parameter param-name="facilityId" from-field="parameters.facilityId"/>
+            </link>
+            <menu-item name="PurchaseInboundReport" title="Purchase Inbound">
+                <link target="PurchaseInboundReport.xls?ename=PurchaseOrderItemFact">
+                    <parameter param-name="facilityId"/>
+                </link>
+            </menu-item>
+            <menu-item name="ShipmentArrivalsReport" title="Shipment Arrivals">
+                <link target="ShipmentArrivalsReport.xls?ename=PurchaseOrderItemFact">
+                    <parameter param-name="facilityId"/>
+                </link>
+            </menu-item>
+            <menu-item name="SalesOutboundReport" title="Sales Outbound">
+                <link target="SalesOutboundReport.xls?ename=SalesOrderItemFact">
+                    <parameter param-name="facilityId"/>
+                </link>
+            </menu-item>
+            <menu-item name="ManufecIssuance" title="Manufacturing Issuance">
+                <link target="manufecIssuance">
+                    <parameter param-name="facilityId"/>
+                </link>
+            </menu-item>
+            <menu-item name="ProductInventoryPositionReports" title="Product Inventory Position">
+                <link target="ProductInventoryPositionReports">
+                    <parameter param-name="facilityId"/>
+                </link>
+            </menu-item>
+            <menu-item name="InventorySummaryReport" title="Inventory Summary">
+                <link target="InventorySummaryReport">
+                    <parameter param-name="facilityId"/>
+                </link>
+            </menu-item>
+            <menu-item name="PhysicalInventorySummaryReport" title="Physical Inventory Summary">
+                <link target="PhysicalInventorySummaryReport.xls">
+                    <parameter param-name="facilityId"/>
+                </link>
+            </menu-item>
+            <!-- <menu-item name="ABCAnalysis" title="ABC Analysis">
+                 <link target="ABCAnalysis">
+                     <parameter param-name="facilityId"/>
+                 </link>
+             </menu-item>-->
+
+            <menu-item name="DepartmentIssueReport" title="Department Issuance">
+                <link target="DepartmentIssueReport">
+                    <parameter param-name="facilityId" from-field="parameters.facilityId"/>
+                </link>
+            </menu-item>
+
+            <menu-item name="IndividualPpeRecord" title="Employee Issuance">
+                <link target="IndividualPpeRecord">
+                    <parameter param-name="facilityId" from-field="parameters.facilityId"/>
+                </link>
+            </menu-item>
+
+            <menu-item name="OpenRequest" title="Open Request">
+                <link target="openRequest">
+                    <parameter param-name="facilityId"/>
+                </link>
+            </menu-item>
+
+            <menu-item name="StoreIssuanceNoteReport" title="Stores Issuance">
+                <link target="StoreIssuanceNote">
+                    <parameter param-name="facilityId"/>
+                </link>
+            </menu-item>
+
+            <menu-item name="StockVarianceReport" title="Stock Variance">
+                <link target="StockVariance">
+                    <parameter param-name="facilityId"/>
+                </link>
+            </menu-item>
+
+            <menu-item name="ReturnableReport" title="Returnables">
+                <link target="Returnable">
+                    <parameter param-name="facilityId"/>
+                </link>
+            </menu-item>
+
+            <menu-item name="QualityMaterialsReceivedReport" title="Quality Materials Received">
+                <link target="QualityMaterialsReceived">
+                    <parameter param-name="facilityId"/>
+                </link>
+            </menu-item>
+
+            <menu-item name="InventoryReceiptReport" title="Inventory Receipt">
+                <link target="StoresMaterialReceived">
+                    <parameter param-name="facilityId"/>
+                </link>
+            </menu-item>
+
+            <menu-item name="StoppageAnalysisReport" title="Stoppage Analysis">
+                <link target="StoppageAnalysis">
+                    <parameter param-name="facilityId"/>
+                </link>
+            </menu-item>
+
+            <!-- <menu-item name="shipmentReceiptReport" title="Shipment Receipt">
+                <link target="shipmentReceiptReport">
+                    <parameter param-name="facilityId"/>
+                </link>
+            </menu-item> -->
+            <menu-item name="FastSlowNonMoving" title="Fast Slow Non Moving">
+                <link target="fastSlowNonMoving">
+                    <parameter param-name="facilityId"/>
+                </link>
+            </menu-item>
+        </menu-item>
+        <!-- <menu-item name="reports" title="${uiLabelMap.CommonReports}">
+           <condition>
+                <not><if-empty field="facilityId"/></not>
+            </condition>
+            <link target="ReportFacility">
+                <parameter param-name="facilityId"/>
+            </link>
+        </menu-item> -->
+        <!-- <menu-item name="route" title="Routes"><link target="Route"/></menu-item> -->
+    </menu>
+
+    <menu name="FacilityTabBar" extends="CommonTabBarMenu" extends-resource="component://common/widget/CommonMenus.xml"
+          default-menu-item-name="EditFacility">
+        <actions>
+            <script location="component://facilityext/webapp/facilityext/WEB-INF/actions/transormation/CheckReserveInventory.groovy"/>
+            <set field="reserveInventory" default-value="${reserveInventory}"/>
+        </actions>
+
+        <!-- <menu-item name="EditFacility" title="${uiLabelMap.ProductFacility}">
+            <link target="EditFacility">
+                <parameter param-name="facilityId"/>
+            </link>
+        </menu-item> -->
+        <menu-item name="FacilityChildren" title="${uiLabelMap.CommonEntityChildren}">
+            <link target="FacilityChildren">
+                <parameter param-name="facilityId"/>
+            </link>
+        </menu-item>
+        <!-- <menu-item name="ListFixedAssets" title="Fixed Assets">
+            <link target="ViewFixedAssets">
+                <parameter param-name="facilityId"/>
+            </link>
+        </menu-item> -->
+        <!-- <menu-item name="ViewContactMechs" title="${uiLabelMap.PartyContactMechs}">
+            <link target="ViewContactMechs">
+                <parameter param-name="facilityId"/>
+            </link>
+            <menu-item name="ViewContactMech" title="View Contact Mech">
+                <link target="ViewContactMechs">
+                    <parameter param-name="facilityId"/>
+                </link>
+            </menu-item>
+            <menu-item name="EditContactMech" title="Create Contact Mech">
+                <condition>
+                    <if-service-permission service-name="facilityGenericPermission" main-action="CREATE" />
+                </condition>
+                <link target="EditContactMech">
+                    <parameter param-name="facilityId"/>
+                </link>
+            </menu-item>
+        </menu-item> -->
+        <menu-item name="EditFacilityGroups" title="${uiLabelMap.ProductGroups}">
+            <link target="EditFacilityGroups">
+                <parameter param-name="facilityId"/>
+            </link>
+        </menu-item>
+        <!-- <menu-item name="FacilityLocation" title="${uiLabelMap.ProductLocations}">
+            <link target="FindFacilityLocation">
+                <parameter param-name="facilityId"/>
+            </link>
+            <menu-item name="SearchFacilityLocation" title="Find Facility Location">
+                <link target="FindFacilityLocation">
+                    <parameter param-name="facilityId"/>
+                </link>
+            </menu-item>
+            <menu-item name="EditFacilityLocation" title="Create Facility Location">
+                <link target="EditFacilityLocation">
+                    <parameter param-name="facilityId"/>
+                </link>
+            </menu-item>
+        </menu-item> -->
+        <menu-item name="EditFacilityParties" title="${uiLabelMap.PartyRoles}">
+            <link target="EditFacilityParties">
+                <parameter param-name="facilityId"/>
+            </link>
+        </menu-item>
+        <!-- <menu-item name="ViewFacilityInventoryByProduct" title="${uiLabelMap.ProductInventory}">
+            <link target="ViewFacilityInventoryByProduct">
+                <parameter param-name="facilityId"/>
+            </link>
+        </menu-item>
+        <menu-item name="EditFacilityInventoryItems" title="${uiLabelMap.ProductInventoryItems}">
+            <link target="EditFacilityInventoryItems">
+                <parameter param-name="facilityId"/>
+            </link>
+            <menu-item name="FindInventoryItem" title="Find Inventory Items">
+                <link target="EditFacilityInventoryItems">
+                    <parameter param-name="facilityId"/>
+                </link>
+            </menu-item>
+            <menu-item name="CreateInventoryItem" title="Create Inventory Items">
+                <link target="EditInventoryItem">
+                    <parameter param-name="facilityId"/>
+                </link>
+            </menu-item>
+        </menu-item>
+        <menu-item name="issuanceItems" title="Issue Inventory">
+            <link target="issuanceItems">
+                <parameter param-name="facilityId"/>
+            </link>
+        </menu-item>
+        <menu-item name="ViewFacilityInventoryItemsDetails" title="${uiLabelMap.ProductInventoryItemsDetails}">
+            <link target="ViewFacilityInventoryItemsDetails">
+                <parameter param-name="facilityId"/>
+            </link>
+        </menu-item>
+        <menu-item name="ReceiveInventory" title="${uiLabelMap.ProductInventoryReceive}">
+            <link target="ReceiveInventory">
+                <parameter param-name="facilityId"/>
+            </link>
+        </menu-item>
+        <menu-item name="PhysicalInventory" title="${uiLabelMap.ProductPhysicalInventory}">
+            <link target="FindPhysicalInvNew">
+                <parameter param-name="facilityId"/>
+            </link>
+        </menu-item>
+        <menu-item name="FindFacilityTransfers" title="Inventory Transfers">
+            <link target="FindFacilityTransfers">
+                <parameter param-name="facilityId"/>
+            </link>
+        </menu-item>
+        <menu-item name="ReceiveReturn" title="${uiLabelMap.ProductReceiveReturn}">
+            <link target="ReceiveReturn">
+                <parameter param-name="facilityId"/>
+            </link>
+        </menu-item> -->
+        <!-- <menu-item name="PicklistOptions" title="${uiLabelMap.ProductPicking}" >
+            <link target="PicklistOptions">
+                <parameter param-name="facilityId"/>
+                <parameter param-name="mode" value="Auto"/>
+            </link>
+        </menu-item>
+        <menu-item name="PickMoveStock" title="${uiLabelMap.ProductStockMoves}">
+            <link target="PickMoveStock">
+                <parameter param-name="facilityId"/>
+            </link>
+        </menu-item>
+        <menu-item name="PicklistManage" title="${uiLabelMap.ProductPicklistManage}">
+            <link target="PicklistManage">
+                <parameter param-name="facilityId"/>
+            </link>
+        </menu-item>
+        <menu-item name="VerifyPick" title="${uiLabelMap.ProductVerifyPick}">
+            <link target="VerifyPick">
+                <parameter param-name="facilityId"/>
+                <parameter param-name="mode" value="Auto"/>
+            </link>
+        </menu-item>
+        <menu-item name="PackOrder" title="${uiLabelMap.ProductPacking}">
+            <link target="PackOrder">
+                <parameter param-name="facilityId"/>
+                <parameter param-name="mode" value="Auto"/>
+            </link>
+        </menu-item> -->
+        <!--<menu-item name="Scheduling" title="${uiLabelMap.ProductScheduling}">
+            <link target="Scheduling">
+                <parameter param-name="facilityId"/>
+            </link>
+        </menu-item>-->
+        <!--<menu-item name="EditFacilityContent" title="${uiLabelMap.ProductContent}">
+            <link target="EditFacilityContent">
+                <parameter param-name="facilityId"/>
+            </link>
+        </menu-item>-->
+        <!-- <menu-item name="EditFacilityGeoPoint" title="${uiLabelMap.CommonGeoLocation}">
+             <link target="EditFacilityGeoPoint">
+                 <parameter param-name="facilityId"/>
+             </link>
+         </menu-item>-->
+        <!-- <menu-item name="transformations" title="Transformation">
+            <link target="SearchTransformation">
+                <parameter param-name="facilityId"/>
+            </link>
+        </menu-item>
+        
+        <menu-item name="stockReserve" title="Stock Reservations">
+            <condition>   <if-compare operator="equals" value="N" field="reserveInventory"/>   </condition>
+            <link target="StockReservations">
+                <parameter param-name="facilityId"/>
+            </link>
+        </menu-item>
+        
+        <menu-item name="Reports" title="Reports">
+            <link target="ShipmentReports">
+                <parameter param-name="facilityId"/>
+            </link>
+        </menu-item> -->
+        <!-- <menu-item name="viewCalender" title="View Calender">
+            <link target="/workeffort/control/calendar" text="${uiLabelMap.CommonViewCalendar}" style="buttontext" url-mode="inter-app">
+                <parameter param-name="facilityId" />
+                <parameter param-name="externalLoginKey" from-field="parameters.externalLoginKey" />
+            </link>
+        </menu-item> -->
+    </menu>
+    <menu name="InventoryItemLabelsTabBar" extends="CommonTabBarMenu"
+          extends-resource="component://common/widget/CommonMenus.xml"
+          default-menu-item-name="FindInventoryItemLabels">
+        <menu-item name="FindInventoryItemLabels" title="${uiLabelMap.ProductInventoryItemLabels}">
+            <link target="FindInventoryItemLabels"/>
+        </menu-item>
+        <menu-item name="EditInventoryItemLabelTypes" title="${uiLabelMap.ProductInventoryItemLabelTypes}">
+            <link target="EditInventoryItemLabelTypes"/>
+        </menu-item>
+    </menu>
+    <menu name="InventoryItemLabelTabBar" extends="CommonTabBarMenu"
+          extends-resource="component://common/widget/CommonMenus.xml"
+          default-menu-item-name="EditInventoryItemLabel" selected-menuitem-context-field-name="subTabButtonItem">
+        <menu-item name="EditInventoryItemLabel" title="${uiLabelMap.ProductInventoryItemLabel}">
+            <link target="EditInventoryItemLabel">
+                <parameter param-name="inventoryItemLabelId"/>
+            </link>
+        </menu-item>
+        <menu-item name="EditInventoryItemLabelAppls" title="${uiLabelMap.ProductInventoryItemLabelAppl}">
+            <link target="EditInventoryItemLabelAppls">
+                <parameter param-name="inventoryItemLabelId"/>
+            </link>
+        </menu-item>
+    </menu>
+    <menu name="InventoryItemTabBar" extends="CommonTabBarMenu"
+          extends-resource="component://common/widget/CommonMenus.xml"
+          default-menu-item-name="EditInventoryItem" selected-menuitem-context-field-name="subTabButtonItem">
+        <menu-item name="EditInventoryItem" title="${uiLabelMap.ProductInventoryItem}">
+            <link target="EditInventoryItem">
+                <parameter param-name="inventoryItemId"/>
+                <parameter param-name="facilityId"/>
+            </link>
+        </menu-item>
+        <menu-item name="ViewInventoryItemDetail" title="${uiLabelMap.ProductInventoryDetails}">
+            <link target="ViewInventoryItemDetail">
+                <parameter param-name="inventoryItemId"/>
+                <parameter param-name="facilityId"/>
+            </link>
+        </menu-item>
+        <menu-item name="ViewAtrributes" title="Attributes">
+            <link target="ViewAtrributes">
+                <parameter param-name="inventoryItemId"/>
+                <parameter param-name="facilityId"/>
+            </link>
+        </menu-item>
+        <!-- <menu-item name="EditInventoryItemLabels" title="${uiLabelMap.ProductInventoryItemLabelAppl}">
+            <link target="EditInventoryItemLabels">
+                <parameter param-name="inventoryItemId"/>
+                <parameter param-name="facilityId"/>
+            </link>
+        </menu-item> -->
+    </menu>
+
+    <menu name="ShipmentGatewayConfigTabBar" extends="CommonTabBarMenu"
+          extends-resource="component://common/widget/CommonMenus.xml">
+        <menu-item name="shipmentGatewayConfigTab" title="${uiLabelMap.FacilityShipmentGatewayConfig}">
+            <link target="FindShipmentGatewayConfig"/>
+        </menu-item>
+        <menu-item name="shipmentGatewayConfigTypesTab" title="${uiLabelMap.FacilityShipmentGatewayConfigTypes}">
+            <link target="FindShipmentGatewayConfigTypes"/>
+        </menu-item>
+    </menu>
+
+    <menu name="ViewFacilityInventoryByProductTabBar" extends="CommonTabBarMenu"
+          extends-resource="component://common/widget/CommonMenus.xml"
+          selected-menuitem-context-field-name="tabButtonItem2" menu-container-style="nav nav-pills">
+        <!--<menu-item name="ViewFacilityInventoryByProductSimpleTab" title="${uiLabelMap.CommonPrint}">
+            <link target="ViewFacilityInventoryByProductSimple">
+                <parameter param-name="facilityId" from-field="facilityId"/>
+            </link>
+        </menu-item> -->
+
+        <menu-item name="ViewFacilityInventoryByProductReportTab" title="Generate PDF">
+            <link target="MaterialStatusReport.pdf?${searchParameterString}" target-window="new"/>
+        </menu-item>
+
+        <menu-item name="ViewFacilityInventoryByProductExcelReportTab" title="Generate Excel">
+            <link target="ViewFacilityInventoryByProductReportExcel?${searchParameterString}" target-window="new"/>
+        </menu-item>
+
+        <!--  <menu-item name="ViewFacilityInventoryByProductExportTab" title="${uiLabelMap.CommonExport}">
+             <link target="ViewFacilityInventoryByProductExport?${searchParameterString}"/>
+         </menu-item> -->
+        <!-- <menu-item name="InventoryItemTotalsTab" title="${uiLabelMap.ProductInventoryItemTotals}">
+            <link target="InventoryItemTotals">
+                <parameter param-name="facilityId" from-field="facilityId"/>
+                <parameter param-name="action" value="Y"/>
+            </link>
+        </menu-item> -->
+        <!--  <menu-item name="InventoryItemGrandTotalsTab" title="${uiLabelMap.ProductInventoryItemGrandTotals}">
+             <link target="InventoryItemGrandTotals">
+                 <parameter param-name="facilityId" from-field="facilityId"/>
+                 <parameter param-name="action" value="Y"/>
+             </link>
+         </menu-item> -->
+        <!-- <menu-item name="InventoryItemTotalsExportTab" title="${uiLabelMap.ProductInventoryItemTotalsExport}">
+            <link target="InventoryItemTotalsExport.csv">
+                <parameter param-name="facilityId" from-field="facilityId"/>
+                <parameter param-name="action" value="Y"/>
+            </link>
+        </menu-item> -->
+        <menu-item name="InventoryAverageCostsTab" title="${uiLabelMap.ProductInventoryAverageCosts}">
+            <link target="InventoryAverageCosts">
+                <parameter param-name="facilityId" from-field="facilityId"/>
+            </link>
+        </menu-item>
+    </menu>
+
+    <menu name="ReservationMenu" extends="CommonTabBarMenu" selected-menuitem-context-field-name="buttonItem"
+          extends-resource="component://common/widget/CommonMenus.xml">
+        <menu-item name="ReserveInventoryItem" title="Reserve Inventory Item">
+            <link target="StockReservations">
+                <parameter param-name="facilityId" value="${parameters.facilityId}"/>
+            </link>
+        </menu-item>
+        <menu-item name="ReserveOrders" title="Reserve Sales Orders">
+            <link target="FindOrderToReserve">
+                <parameter param-name="facilityId" value="${parameters.facilityId}"/>
+            </link>
+        </menu-item>
+        <menu-item name="FindReserveOrders" title="Reserve Order">
+            <link target="findReserveOrders">
+                <parameter param-name="facilityId" value="${parameters.facilityId}"/>
+            </link>
+        </menu-item>
+    </menu>
+
+    <menu name="ReserveOrderMenu" selected-menuitem-context-field-name="reserveButtonItem" type="simple"
+          menu-container-style="nav nav-pills" default-selected-style="selected">
+        <menu-item name="AddOrderItems" title="Add Product">
+            <link target="orderItemEntry">
+                <parameter param-name="orderId" from-field="parameters.orderId"/>
+                <parameter param-name="facilityId" value="${parameters.facilityId}"/>
+            </link>
+        </menu-item>
+        <menu-item name="reservations" title="View Reservation">
+            <link target="inventoriesReserved">
+                <parameter param-name="orderId" from-field="parameters.orderId"/>
+                <parameter param-name="facilityId" value="${parameters.facilityId}"/>
+            </link>
+        </menu-item>
+    </menu>
+</menus>

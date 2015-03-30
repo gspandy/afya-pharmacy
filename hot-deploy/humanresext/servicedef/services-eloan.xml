@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<services xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="http://ofbiz.apache.org/dtds/services.xsd">
+	<description>Employee Loan Services</description>
+	<vendor>NthDimenzion</vendor>
+	<version>1.0</version>
+	<service name="eloanInterface" engine="interface">
+		<description>Interface to describe base parameters for Employee Loan Services</description>
+		<attribute name="userLogin" mode="IN"
+			type="org.ofbiz.entity.GenericValue" optional="false" />
+		<attribute name="loanType" mode="IN" type="String" optional="false" />
+		<attribute name="applicationDate" mode="INOUT" type="java.sql.Date"
+			optional="true" />
+		<attribute name="fromDate" mode="IN" type="java.sql.Date"
+			optional="false" />
+		<attribute name="thruDate" mode="IN" type="java.sql.Date"
+			optional="true" />
+		<attribute name="loanAmount" mode="IN" type="Double"
+			optional="false" />
+		<attribute name="hr_period" mode="IN" type="Double" optional="true" />
+		<attribute name="currencyUomId" mode="IN" type="String"
+			optional="false" />
+		<attribute name="emi" mode="IN" type="Double" optional="true" />
+		<attribute name="mgrPositionId" mode="IN" type="String"
+			optional="true" />
+		<attribute name="loanId" mode="INOUT" type="String"
+			optional="true" />
+	</service>
+	<service name="eloanLimitInterface" engine="interface">
+		<description>Interface with base parameters for Loan Limit Services</description>
+		<attribute name="userLogin" mode="IN"
+			type="org.ofbiz.entity.GenericValue" optional="false" />
+		<attribute name="loanType" mode="IN" type="String" optional="false" />
+		<attribute name="emplPositionTypeId" mode="IN" type="String"
+			optional="true" />
+		<attribute name="interest" mode="IN" type="Double" optional="false" />
+		<attribute name="hr_period" mode="IN" type="Double"
+			optional="false" />
+		<attribute name="fromDate" mode="IN" type="java.sql.Date"
+			optional="true" />
+		<attribute name="thruDate" mode="IN" type="java.sql.Date"
+			optional="true" />
+		<attribute name="loanAmount" mode="IN" type="Double"
+			optional="false" />
+		<attribute name="currencyUomId" mode="IN" type="String"
+			optional="false" />
+		<attribute name="expYrs" mode="IN" type="Double" optional="false" />
+		<attribute name="hr_comment" mode="IN" type="String"
+			optional="true" />
+		<attribute name="limitId" mode="INOUT" type="String"
+			optional="true" />
+		
+		  <!--added newly-->
+        <attribute name="employeeType" mode="IN" type="String" optional="true"></attribute>
+        <attribute name="positionCategory" mode="IN" type="String" optional="true"></attribute>	
+			
+	</service>
+	<!--  New ELoan Section 
+  -->
+	<service name="createELoanService" engine="java"
+		location="com.smebiz.eloan.ELoanService" invoke="createELoan" auth="true">
+		<description>Create Employee ELoan</description>
+		<required-permissions join-type="OR">
+			<check-permission permission="HUMANRES" action="_USER" />
+			<check-permission permission="HUMANRES" action="_MGR" />
+		</required-permissions>
+		<implements service="eloanInterface" />
+		<attribute name="hr_comment" mode="IN" type="String"
+			optional="true" />
+		<attribute name="employeeComment" mode="IN" type="String"
+			optional="true" />
+		<attribute name="lsId" mode="OUT" type="String" optional="true" />
+		<attribute name="partyId" mode="IN" type="String" optional="false"></attribute>
+	</service>
+	<service name="createELoanStatusService" engine="java"
+		location="com.smebiz.eloan.ELoanService" invoke="createELoanStatus"
+		auth="false">
+		<description>Create Employee ELoan Status</description>
+		<attribute name="loanId" mode="INOUT" type="String"
+			optional="false" />
+		<attribute name="statusId" mode="IN" type="String" optional="false" />
+		<attribute name="statusType" mode="IN" type="String"
+			optional="true" />
+		<attribute name="adminStatusType" mode="IN" type="String"
+			optional="true" />
+		<attribute name="hr_comment" mode="IN" type="String"
+			optional="true" />
+		<attribute name="adminComment" mode="IN" type="String"
+			optional="true" />
+		<attribute name="employeeComment" mode="IN" type="String"
+			optional="true" />
+		<attribute name="updatedBy" mode="IN" type="String"
+			optional="false" />
+		<attribute name="lsId" mode="OUT" type="String" optional="true" />
+	</service>
+	<service name="updateELoanService" engine="java"
+		location="com.smebiz.eloan.ELoanService" invoke="updateELoan" auth="true">
+		<description>Update Employee ELoan</description>
+
+		<implements service="eloanInterface" />
+	</service>
+	<service name="submitELoanService" engine="java"
+		location="com.smebiz.eloan.ELoanService" invoke="submitELoan" auth="true">
+		<description>Submit Employee ELoan</description>
+
+		<attribute name="loanId" mode="IN" type="String" optional="true" />
+		<attribute name="statusType" mode="IN" type="String"
+			optional="true" />
+		<attribute name="hr_comment" mode="IN" type="String"
+			optional="true" />
+		<attribute name="employeeComment" mode="IN" type="String"
+			optional="true" />
+		<attribute name="lsId" mode="OUT" type="String" optional="true" />
+		<attribute name="mgrPositionId" mode="IN" type="String"
+			optional="true" />
+		<attribute name="partyId" mode="IN" type="String"
+			optional="true" />
+		
+	</service>
+	<service name="processELoanService" engine="java"
+		location="com.smebiz.eloan.ELoanService" invoke="processELoan" auth="true">
+		<description>Process Employee ELoan</description>
+		<required-permissions join-type="OR">
+			<check-permission permission="HUMANRES_" action="MGR" />
+			<check-permission permission="HUMANRES_" action="ADMIN" />
+		</required-permissions>
+		<attribute name="loanAmount" mode="IN" type="Double"
+			optional="false" />
+		<attribute name="acceptedAmount" mode="IN" type="Double"
+			optional="false" />
+		<attribute name="rejectedAmount" mode="IN" type="Double"
+			optional="false" />
+		<attribute name="interest" mode="IN" type="Double" optional="true" />
+		<attribute name="expYrs" mode="IN" type="Double" optional="true" />
+		<attribute name="hr_period" mode="IN" type="Double"
+			optional="true" />
+		<attribute name="emi" mode="INOUT" type="Double" optional="true" />
+		<attribute name="statusId" mode="IN" type="String" optional="true" />
+		<attribute name="statusType" mode="IN" type="String"
+			optional="true" />
+		<attribute name="adminStatusType" mode="IN" type="String"
+			optional="true" />
+		<attribute name="fromDate" mode="IN" type="java.sql.Date"
+			optional="true" />
+		<attribute name="thruDate" mode="IN" type="java.sql.Date"
+			optional="true" />
+		<attribute name="hr_comment" mode="IN" type="String"
+			optional="true" />
+		<attribute name="adminComment" mode="IN" type="String"
+			optional="true" />
+		<attribute name="employeeComment" mode="IN" type="String"
+			optional="true" />
+		<attribute name="loanId" mode="INOUT" type="String"
+			optional="true" />
+		<attribute name="lsId" mode="OUT" type="String" optional="true" />
+		<attribute name="currencyUomId" mode="IN" type="String" optional="true" />
+	</service>
+	<service name="createELoanLimitService" engine="java"
+		location="com.smebiz.eloan.ELoanService" invoke="createELoanLimit"
+		auth="true">
+		<description>Create ELoan Limit</description>
+		<required-permissions join-type="OR">
+			<check-permission permission="HUMANRES_" action="ADMIN" />
+		</required-permissions>
+		<implements service="eloanLimitInterface" />
+	</service>
+	<service name="updateELoanLimitService" engine="java"
+		location="com.smebiz.eloan.ELoanService" invoke="updateELoanLimit"
+		auth="true">
+		<description>Update ELoan Limit</description>
+		<required-permissions join-type="OR">
+			<check-permission permission="HUMANRES_" action="ADMIN" />
+		</required-permissions>
+		<implements service="eloanLimitInterface" />
+		<attribute name="partyId" mode="IN" type="String" optional="true" />
+	</service>
+	<service name="fetchELoanComment" engine="java"
+		location="com.smebiz.eloan.ELoanService" invoke="getELoanComment"
+		auth="false">
+		<description>Fetch Employee ELoan Comment</description>
+		<attribute name="loanId" mode="IN" type="String" optional="true" />
+		<attribute name="statusId" mode="INOUT" type="String"
+			optional="true" />
+		<attribute name="hr_comment" mode="INOUT" type="String"
+			optional="true" />
+		<attribute name="lsId" mode="OUT" type="String" optional="true" />
+		<attribute name="updatedBy" mode="OUT" type="String"
+			optional="true" />
+	</service>
+</services>

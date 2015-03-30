@@ -1,0 +1,280 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+Licensed to the Apache Software Foundation (ASF) under one
+or more contributor license agreements.  See the NOTICE file
+distributed with this work for additional information
+regarding copyright ownership.  The ASF licenses this file
+to you under the Apache License, Version 2.0 (the
+"License"); you may not use this file except in compliance
+with the License.  You may obtain a copy of the License at
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing,
+software distributed under the License is distributed on an
+"AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+KIND, either express or implied.  See the License for the
+specific language governing permissions and limitations
+under the License.
+-->
+<simple-methods xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://ofbiz.apache.org/dtds/simple-methods-v2.xsd">
+
+    <simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_" event-event-message-name="_event_message_" event-request-object-name="request" event-response-code-name="_response_code_" event-response-object-name="response" login-required="true" method-name="createSystemInfoNote" service-error-message-list-name="errorMessageList" service-error-message-map-name="errorMessageMap" service-error-message-name="errorMessage" service-response-message-name="responseMessage" service-success-message-list-name="successMessageList" service-success-message-name="successMessage" short-description="Create a system to to a specific party" use-transaction="true">
+        <set default="userLogin.partyId" field="partyId" from="parameters.partyId" set-if-empty="true" set-if-null="false"/>
+        <!-- new communication events -->
+        <if-compare field="parameters.entityName" operator="equals" type="String" value="CommunicationEvent">
+            <entity-one auto-field-map="true" entity-name="CommunicationEvent" use-cache="false" value-field="comm">
+                <field-map field-name="communicationEventId" from-field="parameters.entityNameId"/>
+            </entity-one>
+            <entity-and entity-name="CommunicationEventRole" filter-by-date="false" list="roles" use-cache="false">
+                <field-map field-name="communicationEventId" from-field="parameters.entityNameId"/>
+            </entity-and>
+            <if-not-empty field="roles">
+                <make-value entity-name="NoteData" value-field="noteData"/>
+                <now-timestamp field="noteData.noteDateTime"/>
+                <set field="noteData.noteName" set-if-empty="true" set-if-null="false" value="SYSTEMNOTE"/>
+                <set field="noteData.noteInfo" set-if-empty="true" set-if-null="false" value="New incoming communication event: ${comm.subject} from ${comm.partyIdFrom}"/>
+                <set field="noteData.moreInfoPortletId" set-if-empty="true" set-if-null="false" value="MyCommunications"/>
+                <iterate entry="role" list="roles">
+                    <if-compare field="role.statusId" operator="equals" type="String" value="COM_ROLE_CREATED">
+                        <set field="partyId" from="role.partyId" set-if-empty="true" set-if-null="false"/>
+                        <call-simple-method method-name="getPortletAttributeMap"/>
+                        <if>
+                            <condition>
+                                <and>
+                                    <!-- check for 'all' notifications flag off -->
+                                    <if-compare field="haveUserLogin" operator="equals" type="String" value="true"/>
+                                    <if-compare field="attributeMap.allNotifications" operator="not-equals" type="String" value="Y"/>
+                                    <or>
+                                        <and>
+                                            <!-- incoming email for known parties, no notifications for unknown parties -->
+                                            <if-compare field="attributeMap.incomingEmail" operator="not-equals" type="String" value="Y"/>
+                                            <if-compare field="comm.communicationEventTypeId" operator="equals" type="String" value="AUTO_EMAIL_COM"/>
+                                        </and>
+                                        <and>
+                                            <!-- internal sent email -->
+                                            <if-compare field="attributeMap.email" operator="not-equals" type="String" value="Y"/>
+                                            <or>
+                                                <if-compare field="comm.communicationEventTypeId" operator="equals" type="String" value="AUTO_EMAIL_COMM"/>
+                                                <if-compare field="comm.communicationEventTypeId" operator="equals" type="String" value="EMAIL_COMMUNICATION"/>
+                                            </or>
+                                        </and>
+                                        <and>
+                                            <!-- internal notes -->
+                                            <if-compare field="attributeMap.internalNotes" operator="not-equals" type="String" value="Y"/>
+                                            <if-compare field="comm.communicationEventTypeId" operator="equals" type="String" value="COMMENT_NOTE"/>
+                                        </and>
+                                    </or>
+                                </and>
+                            </condition>
+                            <then>
+                                <sequenced-id field="noteData.noteId" get-long-only="false" sequence-name="NoteData"/>
+                                <set field="noteData.noteParty" from="role.partyId" set-if-empty="true" set-if-null="false"/>
+                                <create-value do-cache-clear="true" or-store="false" value-field="noteData"/>
+                            </then>
+                        </if>
+                    </if-compare>
+                </iterate>
+            </if-not-empty>
+        </if-compare>
+        <!-- new task assignments for the logged on user -->
+        <if-compare field="parameters.entityName" operator="equals" type="String" value="WorkEffortPartyAssignment">
+            <entity-one auto-field-map="true" entity-name="WorkEffort" use-cache="false" value-field="workEffort">
+                <field-map field-name="workEffortId" from-field="parameters.entityNameId"/>
+            </entity-one>
+            <if-compare field="workEffort.workEffortTypeId" operator="equals" type="String" value="TASK">
+                <call-simple-method method-name="getPortletAttributeMap"/>
+                <if-compare field="haveUserLogin" operator="equals" type="String" value="true">
+                    <if-compare field="attributeMap.taskAssignment" operator="not-equals" type="String" value="Y">
+                        <entity-and entity-name="WorkEffortPartyAssignment" filter-by-date="true" list="assigns" use-cache="false">
+                            <field-map field-name="workEffortId" from-field="parameters.entityNameId"/>
+                            <order-by field-name="-fromDate"/>
+                        </entity-and>
+                        <first-from-list entry="assign" list="assigns"/>
+                        <make-value entity-name="NoteData" value-field="noteData"/>
+                        <now-timestamp field="noteData.noteDateTime"/>
+                        <sequenced-id field="noteData.noteId" get-long-only="false" sequence-name="NoteData"/>
+                        <set field="noteData.noteParty" from="assign.partyId" set-if-empty="true" set-if-null="false"/>
+                        <set field="noteData.noteName" set-if-empty="true" set-if-null="false" value="SYSTEMNOTE"/>
+                        <set field="noteData.noteInfo" set-if-empty="true" set-if-null="false" value="New task assignment '${workEffort.workEffortName}' [${workEffort.workEffortId}]"/>
+                        <set field="noteData.moreInfoPortletId" set-if-empty="true" set-if-null="false" value="ViewProjectTask"/>
+                        <set field="noteData.moreInfoItemId" from="workEffort.workEffortId" set-if-empty="true" set-if-null="false"/>
+                        <create-value do-cache-clear="true" or-store="false" value-field="noteData"/>
+                    </if-compare>
+                </if-compare>
+            </if-compare>
+        </if-compare>
+        <!-- Create a system info note to all customer request participants if a note was added to the customer request
+            the originator of the customer request will get already a email so does not need to be notified-->
+        <if-compare field="parameters.entityName" operator="equals" type="String" value="CustRequestItemNote">
+            <!-- find related customer request originator -->
+            <entity-and entity-name="CustRequestItemNoteView" filter-by-date="false" list="custRequesItems" use-cache="false">
+                <field-map field-name="noteId" from-field="parameters.entityNameId"/>
+            </entity-and>
+            <first-from-list entry="custRequesItem" list="custRequesItems"/>
+            <entity-one auto-field-map="true" entity-name="CustRequest" use-cache="false" value-field="custRequest">
+                <field-map field-name="custRequestId" from-field="custRequesItem.custRequestId"/>
+                <select-field field-name="fromPartyId"/>
+                <select-field field-name="custRequestName"/>
+            </entity-one>
+            <!-- find all parties who have added a note to this request item excluding the originator (he already gets email)-->
+            <entity-condition distinct="true" entity-name="CustRequestItemNoteView" filter-by-date="false" list="custRequestParties" use-cache="false">
+                <condition-list combine="and">
+                    <condition-expr field-name="partyId" from-field="custRequest.fromPartyId" ignore="false" ignore-case="false" ignore-if-empty="false" ignore-if-null="false" operator="not-equals"/>
+                    <condition-expr field-name="custRequestId" from-field="custRequesItem.custRequestId" ignore="false" ignore-case="false" ignore-if-empty="false" ignore-if-null="false" operator="equals"/>
+                    <condition-expr field-name="custRequestItemSeqId" from-field="custRequesItem.custRequestItemSeqId" ignore="false" ignore-case="false" ignore-if-empty="false" ignore-if-null="false" operator="equals"/>
+                </condition-list>
+                <select-field field-name="partyId"/>
+                <select-field field-name="custRequestId"/>
+                <select-field field-name="custRequestItemSeqId"/>
+            </entity-condition>
+            <make-value entity-name="NoteData" value-field="noteData"/>
+            <now-timestamp field="noteData.noteDateTime"/>
+            <set field="noteData.noteName" set-if-empty="true" set-if-null="false" value="SYSTEMNOTE"/>
+            <set field="noteData.moreInfoPortletId" set-if-empty="true" set-if-null="false" value="ViewCustRequest"/>
+            <set field="noteData.moreInfoItemId" from="custRequest.custRequestId" set-if-empty="true" set-if-null="false"/>
+            <set field="noteData.noteInfo" set-if-empty="true" set-if-null="false" value="A note has been added to customer request ${custRequest.custRequestName} [${custRequest.custRequestId}]"/>
+            <iterate entry="custRequestParty" list="custRequestParties">
+                <sequenced-id field="noteData.noteId" get-long-only="false" sequence-name="NoteData"/>
+                <set field="noteData.noteParty" from="custRequestParty.partyId" set-if-empty="true" set-if-null="false"/>
+                <create-value do-cache-clear="true" or-store="false" value-field="noteData"/>
+            </iterate>
+        </if-compare>
+        <!-- public message -->
+        <if-compare field="parameters.entityName" operator="equals" type="String" value="PublicMessage">
+            <if-has-permission permission="COMMONEXT_PUBLMSG">
+                <!-- get all recent visitors logged on the last 3 weeks -->
+                <set field="lastDate" from="groovy:org.ofbiz.base.util.UtilDateTime.addDaysToTimestamp(org.ofbiz.base.util.UtilDateTime.nowTimestamp(), -21)" set-if-empty="true" set-if-null="false" type="Timestamp"/>
+                <entity-condition distinct="true" entity-name="PartyNameVisitView" filter-by-date="false" list="parties" use-cache="false">
+                    <condition-expr field-name="fromDate" from-field="lastDate" ignore="false" ignore-case="false" ignore-if-empty="false" ignore-if-null="false" operator="greater"/>
+                    <select-field field-name="partyId"/>
+                </entity-condition>
+                <iterate entry="party" list="parties">
+                    <make-value entity-name="NoteData" value-field="noteData"/>
+                    <now-timestamp field="noteData.noteDateTime"/>
+                    <sequenced-id field="noteData.noteId" get-long-only="false" sequence-name="NoteData"/>
+                    <set field="noteData.noteParty" from="party.partyId" set-if-empty="true" set-if-null="false"/>
+                    <set field="noteData.noteName" set-if-empty="true" set-if-null="false" value="SYSTEMNOTE"/>
+                    <set field="noteData.noteInfo" from="parameters.noteInfo" set-if-empty="true" set-if-null="false"/>
+                    <create-value do-cache-clear="true" or-store="false" value-field="noteData"/>
+                </iterate>
+                <set field="noteData.noteParty" set-if-empty="true" set-if-null="false" value="_NA_"/>
+                <!-- message for not logged in users -->
+                <sequenced-id field="noteData.noteId" get-long-only="false" sequence-name="NoteData"/>
+                <create-value do-cache-clear="true" or-store="false" value-field="noteData"/>
+            </if-has-permission>
+        </if-compare>
+    </simple-method>
+
+    <simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_" event-event-message-name="_event_message_" event-request-object-name="request" event-response-code-name="_response_code_" event-response-object-name="response" login-required="true" method-name="getPortletAttributeMap" service-error-message-list-name="errorMessageList" service-error-message-map-name="errorMessageMap" service-error-message-name="errorMessage" service-response-message-name="responseMessage" service-success-message-list-name="successMessageList" service-success-message-name="successMessage" short-description="get the attributes of the SystemInfoNotes portlet for a userlogin" use-transaction="true">
+        <!-- get the portlet settings: works only if portlet is used only one time and the user only has a single userLogin -->
+        <entity-and entity-name="UserLogin" filter-by-date="false" list="ulList" use-cache="false">
+            <field-map field-name="partyId" from-field="partyId"/>
+        </entity-and>
+        <if-not-empty field="ulList">
+            <set field="haveUserLogin" set-if-empty="true" set-if-null="false" value="true"/>
+            <first-from-list entry="userLogin" list="ulList"/>
+            <set field="paMap.ownerUserLoginId" from="userLogin.userLoginId" set-if-empty="true" set-if-null="false"/>
+            <set field="paMap.portalPortletId" set-if-empty="true" set-if-null="false" value="SystemInfoNotes"/>
+            <call-service break-on-error="true" error-code="error" in-map-name="paMap" include-user-login="true" require-new-transaction="false" service-name="getPortletAttributes" success-code="success">
+                <result-to-field field="attributeMap" result-name="attributeMap"/>
+            </call-service>
+        </if-not-empty>
+    </simple-method>
+
+    <simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_" event-event-message-name="_event_message_" event-request-object-name="request" event-response-code-name="_response_code_" event-response-object-name="response" login-required="true" method-name="deleteAllSystemNotes" service-error-message-list-name="errorMessageList" service-error-message-map-name="errorMessageMap" service-error-message-name="errorMessage" service-response-message-name="responseMessage" service-success-message-list-name="successMessageList" service-success-message-name="successMessage" short-description="delete all system notes from a particular user" use-transaction="true">
+        <set field="removeData.noteParty" from="parameters.userLogin.partyId" set-if-empty="true" set-if-null="false"/>
+        <set field="removeData.noteName" set-if-empty="true" set-if-null="false" value="SYSTEMNOTE"/>
+        <remove-by-and do-cache-clear="true" entity-name="NoteData" map="removeData"/>
+    </simple-method>
+
+    <simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_" event-event-message-name="_event_message_" event-request-object-name="request" event-response-code-name="_response_code_" event-response-object-name="response" login-required="true" method-name="getSystemInfoStatus" service-error-message-list-name="errorMessageList" service-error-message-map-name="errorMessageMap" service-error-message-name="errorMessage" service-response-message-name="responseMessage" service-success-message-list-name="successMessageList" service-success-message-name="successMessage" short-description="" use-transaction="true">
+        <!-- communication events -->
+        <entity-count count-field="comCount" entity-name="CommunicationEventRole">
+            <condition-list combine="and">
+                <condition-expr field-name="partyId" from-field="userLogin.partyId" ignore="false" ignore-case="false" ignore-if-empty="false" ignore-if-null="false" operator="equals"/>
+                <condition-expr field-name="statusId" ignore="false" ignore-case="false" ignore-if-empty="false" ignore-if-null="false" operator="not-equals" value="COM_ROLE_COMPLETED"/>
+            </condition-list>
+        </entity-count>
+        <entity-condition distinct="false" entity-name="CommunicationEventAndRole" filter-by-date="false" list="comms" use-cache="false">
+            <condition-list combine="and">
+                <condition-expr field-name="partyId" from-field="userLogin.partyId" ignore="false" ignore-case="false" ignore-if-empty="false" ignore-if-null="false" operator="equals"/>
+                <condition-expr field-name="statusId" ignore="false" ignore-case="false" ignore-if-empty="false" ignore-if-null="false" operator="not-equals" value="COM_ROLE_COMPLETED"/>
+            </condition-list>
+            <order-by field-name="-entryDate"/>
+        </entity-condition>
+        <if-compare field="comCount" operator="greater" type="String" value="0">
+            <set field="status.noteInfo" set-if-empty="true" set-if-null="false" value="Open communication events: ${comCount}"/>
+            <first-from-list entry="comm" list="comms"/>
+            <set field="status.noteDateTime" from="comm.entryDate" set-if-empty="true" set-if-null="false"/>
+            <set field="status.moreInfoPortletId" set-if-empty="true" set-if-null="false" value="MyCommunications"/>
+            <field-to-list field="status" list="systemInfoStatus"/>
+            <clear-field field="status"/>
+        </if-compare>
+        <!-- assigned tasks -->
+        <entity-and entity-name="WorkEffortAndPartyAssign" filter-by-date="true" list="assigns" use-cache="false">
+            <field-map field-name="partyId" from-field="parameters.userLogin.partyId"/>
+            <field-map field-name="statusId" value="PAS_ASSIGNED"/>
+            <field-map field-name="workEffortTypeId" value="TASK"/>
+            <order-by field-name="-fromDate"/>
+        </entity-and>
+        <entity-count count-field="assignCount" entity-name="WorkEffortAndPartyAssign">
+            <condition-list combine="and">
+                <condition-expr field-name="partyId" from-field="parameters.userLogin.partyId" ignore="false" ignore-case="false" ignore-if-empty="false" ignore-if-null="false" operator="equals"/>
+                <condition-expr field-name="statusId" ignore="false" ignore-case="false" ignore-if-empty="false" ignore-if-null="false" operator="equals" value="PAS_ASSIGNED"/>
+                <condition-expr field-name="workEffortTypeId" ignore="false" ignore-case="false" ignore-if-empty="false" ignore-if-null="false" operator="equals" value="TASK"/>
+            </condition-list>
+        </entity-count>
+        <if-compare field="assignCount" operator="greater" type="String" value="0">
+            <set field="status.noteInfo" set-if-empty="true" set-if-null="false" value="Assigned and not completed tasks: ${assignCount}"/>
+            <first-from-list entry="assign" list="assigns"/>
+            <set field="status.noteDateTime" from="assign.fromDate" set-if-empty="true" set-if-null="false"/>
+            <set field="status.moreInfoPortletId" set-if-empty="true" set-if-null="false" value="mytasks"/>
+            <field-to-list field="status" list="systemInfoStatus"/>
+        </if-compare>
+        <!-- return result -->
+        <if-not-empty field="systemInfoStatus">
+            <field-to-result field="systemInfoStatus"/>
+        </if-not-empty>
+    </simple-method>
+
+    <simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_" event-event-message-name="_event_message_" event-request-object-name="request" event-response-code-name="_response_code_" event-response-object-name="response" login-required="true" method-name="getSystemInfoNotes" service-error-message-list-name="errorMessageList" service-error-message-map-name="errorMessageMap" service-error-message-name="errorMessage" service-response-message-name="responseMessage" service-success-message-list-name="successMessageList" service-success-message-name="successMessage" short-description="" use-transaction="true">
+        <entity-and entity-name="NoteData" filter-by-date="false" list="systemInfoNotes" use-cache="false">
+            <field-map field-name="noteParty" from-field="parameters.userLogin.partyId"/>
+            <field-map field-name="noteName" value="SYSTEMNOTE"/>
+            <order-by field-name="-noteDateTime"/>
+        </entity-and>
+        <if-not-empty field="systemInfoNotes">
+            <field-to-result field="systemInfoNotes"/>
+        </if-not-empty>
+    </simple-method>
+
+    <simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_" event-event-message-name="_event_message_" event-request-object-name="request" event-response-code-name="_response_code_" event-response-object-name="response" login-required="false" method-name="getLastSystemInfoNote" service-error-message-list-name="errorMessageList" service-error-message-map-name="errorMessageMap" service-error-message-name="errorMessage" service-response-message-name="responseMessage" service-success-message-list-name="successMessageList" service-success-message-name="successMessage" short-description="Get the last 3 system info notes" use-transaction="true">
+        <if-not-empty field="parameters.userLogin">
+            <entity-and entity-name="NoteData" filter-by-date="false" list="systemInfoNotes" use-cache="false">
+                <field-map field-name="noteParty" from-field="parameters.userLogin.partyId"/>
+                <field-map field-name="noteName" value="SYSTEMNOTE"/>
+                <order-by field-name="-noteDateTime"/>
+            </entity-and>
+            <else>
+                <entity-and entity-name="NoteData" filter-by-date="false" list="systemInfoNotes" use-cache="false">
+                    <field-map field-name="noteParty" value="_NA_"/>
+                    <field-map field-name="noteName" value="SYSTEMNOTE"/>
+                    <order-by field-name="-noteDateTime"/>
+                </entity-and>
+            </else>
+        </if-not-empty>
+        <if-not-empty field="systemInfoNotes">
+            <set field="lastSystemInfoNote1" from="systemInfoNotes[0]" set-if-empty="true" set-if-null="false"/>
+            <field-to-result field="lastSystemInfoNote1"/>
+            <if-not-empty field="systemInfoNotes[2]">
+                <set field="lastSystemInfoNote2" from="systemInfoNotes[1]" set-if-empty="true" set-if-null="false"/>
+                <field-to-result field="lastSystemInfoNote2"/>
+            </if-not-empty>
+            <if-not-empty field="systemInfoNotes[3]">
+                <set field="lastSystemInfoNote3" from="systemInfoNotes[2]" set-if-empty="true" set-if-null="false"/>
+                <field-to-result field="lastSystemInfoNote3"/>
+            </if-not-empty>
+        </if-not-empty>
+    </simple-method>
+</simple-methods>

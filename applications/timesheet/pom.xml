@@ -1,0 +1,626 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>org.nthdimenzion</groupId>
+    <artifactId>timesheet</artifactId>
+    <version>1.0-SNAPSHOT</version>
+    <packaging>war</packaging>
+    <properties>
+        <zk.version>7.0.1</zk.version>
+        <axon.version>2.1.1</axon.version>
+        <spring.version>4.0.5.RELEASE</spring.version>
+        <org.springsecurity.version>3.2.4.RELEASE</org.springsecurity.version>
+        <hibernate-core-version>4.3.6.Final</hibernate-core-version>
+        <cxf.version>2.6.0</cxf.version>
+        <application.url>http://localhost:8083</application.url>
+        <zss.version>3.5.0</zss.version>
+
+
+        <mail.smtp.auth>mail.smtp.auth</mail.smtp.auth>
+        <mail.debug>mail.debug</mail.debug>
+        <mail.debug.value>false</mail.debug.value>
+        <mailhost>mail.smtp.host</mailhost>
+        <mailhost.value>mail.bootstrap.com</mailhost.value>
+        <mail.smtp.socketFactory.port>mail.smtp.socketFactory.port</mail.smtp.socketFactory.port>
+        <mail.smtp.socketFactory.class>mail.smtp.socketFactory.class</mail.smtp.socketFactory.class>
+        <mail.smtp.starttls.enable>mail.smtp.starttls.enable</mail.smtp.starttls.enable>
+        <mail.smtp.port>mail.smtp.port</mail.smtp.port>
+        <mail.smtp.timeout>mail.smtp.timeout</mail.smtp.timeout>
+    </properties>
+
+    <dependencies>
+
+        <!--<dependency>
+            <groupId>org.zkoss.zss</groupId>
+            <artifactId>zss</artifactId>
+            <version>${zss.version}</version>
+        </dependency>-->
+        <dependency>
+            <groupId>org.zkoss.zss</groupId>
+            <artifactId>zssex</artifactId>
+            <version>3.5.0.RC</version>
+        </dependency>
+
+     <!--   <dependency>
+            <groupId>org.zkoss.poi</groupId>
+            <artifactId>zpoiex</artifactId>
+            <version>3.8.1</version>
+        </dependency>
+-->
+        <!--
+                <dependency>
+                    <groupId>xmlbeans</groupId>
+                    <artifactId>xmlbeans</artifactId>
+                    <version>2.3.0</version>
+                </dependency>
+
+                <dependency>
+                    <groupId>org.apache.poi</groupId>
+                    <artifactId>ooxml-schemas</artifactId>
+                    <version>1.1</version>
+                </dependency>
+        -->
+
+
+        <dependency>
+            <groupId>org.ofbiz</groupId>
+            <artifactId>sme-service</artifactId>
+            <version>1.6.2</version>
+            <scope>system</scope>
+            <systemPath>${basedir}/sme-lib/sme-service.jar</systemPath>
+        </dependency>
+
+        <dependency>
+            <groupId>org.ofbiz</groupId>
+            <artifactId>sme-base</artifactId>
+            <version>1.6.2</version>
+            <scope>system</scope>
+            <systemPath>${basedir}/sme-lib/sme-base.jar</systemPath>
+        </dependency>
+
+        <dependency>
+            <groupId>org.ofbiz</groupId>
+            <artifactId>sme-entity</artifactId>
+            <version>1.6.2</version>
+            <scope>system</scope>
+            <systemPath>${basedir}/sme-lib/sme-entity.jar</systemPath>
+        </dependency>
+
+        <dependency>
+            <groupId>org.ofbiz</groupId>
+            <artifactId>sme-security</artifactId>
+            <version>1.6.2</version>
+            <scope>system</scope>
+            <systemPath>${basedir}/sme-lib/sme-security.jar</systemPath>
+        </dependency>
+
+        <dependency>
+            <groupId>org.javaolution</groupId>
+            <artifactId>javaolution</artifactId>
+            <version>5.4.3</version>
+            <scope>system</scope>
+            <systemPath>${basedir}/sme-lib/javolution-5.4.3.jar</systemPath>
+        </dependency>
+
+        <!-- ZKOSS Start -->
+
+        <dependency>
+            <groupId>org.zkoss.zk</groupId>
+            <artifactId>zkbind</artifactId>
+            <version>${zk.version}</version>
+        </dependency>
+
+
+        <dependency>
+            <groupId>org.zkoss.zk</groupId>
+            <artifactId>zkplus</artifactId>
+            <version>${zk.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.zkoss.zk</groupId>
+            <artifactId>zhtml</artifactId>
+            <version>${zk.version}</version>
+        </dependency>
+
+
+        <!-- ZKOSS End -->
+
+        <dependency>
+            <groupId>org.axonframework</groupId>
+            <artifactId>axon-core</artifactId>
+            <version>${axon.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.imgscalr</groupId>
+            <artifactId>imgscalr-lib</artifactId>
+            <version>4.2</version>
+        </dependency>
+        <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+            <version>5.1.10</version>
+        </dependency>
+
+        <!-- spring dependencies start -->
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-web</artifactId>
+            <version>${spring.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-webmvc</artifactId>
+            <version>${spring.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-orm</artifactId>
+            <version>${spring.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-jdbc</artifactId>
+            <version>${spring.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-context-support</artifactId>
+            <version>${spring.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-core</artifactId>
+            <version>${org.springsecurity.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-config</artifactId>
+            <version>${org.springsecurity.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-web</artifactId>
+            <version>${org.springsecurity.version}</version>
+        </dependency>
+
+        <!-- spring dependencies end -->
+
+        <dependency>
+            <groupId>javax.mail</groupId>
+            <artifactId>mail</artifactId>
+            <version>1.4.3</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.velocity</groupId>
+            <artifactId>velocity</artifactId>
+            <version>1.6.2</version>
+        </dependency>
+
+
+        <dependency>
+            <groupId>com.jolbox</groupId>
+            <artifactId>bonecp</artifactId>
+            <version>0.8.0.RELEASE</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-entitymanager</artifactId>
+            <version>${hibernate-core-version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-validator</artifactId>
+            <version>4.3.1.Final</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>15.0</version>
+        </dependency>
+
+        <!-- Logging dependecies start -->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>jcl-over-slf4j</artifactId>
+            <version>1.7.2</version>
+        </dependency>
+
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-core</artifactId>
+            <version>1.1.2</version>
+        </dependency>
+
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+            <version>1.1.2</version>
+        </dependency>
+
+        <!-- Logging dependencies end -->
+
+
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>1.14.2</version>
+            <!--<scope>provided</scope>-->
+        </dependency>
+
+
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-core</artifactId>
+            <version>2.2.2</version>
+        </dependency>
+
+
+        <dependency>
+            <groupId>com.fasterxml.jackson.datatype</groupId>
+            <artifactId>jackson-datatype-joda</artifactId>
+            <version>2.2.2</version>
+        </dependency>
+        <!--jackson -->
+
+        <dependency>
+            <groupId>net.sf.opencsv</groupId>
+            <artifactId>opencsv</artifactId>
+            <version>2.3</version>
+        </dependency>
+
+        <!-- Testing dependencies Start-->
+
+        <dependency>
+            <groupId>uk.co.jemos.podam</groupId>
+            <artifactId>podam</artifactId>
+            <version>3.6.0.RELEASE</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-test</artifactId>
+            <version>${spring.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.11</version>
+            
+            <exclusions>
+                <exclusion>
+                    <groupId>org.hamcrest</groupId>
+                    <artifactId>hamcrest-core</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+        <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <version>1.3.173</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.hamcrest</groupId>
+            <artifactId>hamcrest-all</artifactId>
+            <version>1.3</version>
+            
+        </dependency>
+
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-all</artifactId>
+            <version>1.9.5</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.dbunit</groupId>
+            <artifactId>dbunit</artifactId>
+            <version>2.4.8</version>
+            <type>jar</type>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>com.github.springtestdbunit</groupId>
+            <artifactId>spring-test-dbunit</artifactId>
+            <version>1.1.0</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.reflections</groupId>
+            <artifactId>reflections</artifactId>
+            <version>0.9.9-RC1</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>com.jayway.jsonpath</groupId>
+            <artifactId>json-path</artifactId>
+            <version>0.8.1</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.kubek2k</groupId>
+            <artifactId>springockito</artifactId>
+            <version>1.0.5</version>
+            <scope>test</scope>
+        </dependency>
+        <!-- Testing dependencies End-->
+
+        <!-- Joda  dependencies  start -->
+        <!--
+                <dependency>
+                    <groupId>org.joda</groupId>
+                    <artifactId>joda-money</artifactId>
+                    <version>0.6</version>
+                </dependency>
+        -->
+
+        <dependency>
+            <groupId>org.jadira.usertype</groupId>
+            <artifactId>usertype.core</artifactId>
+            <version>3.0.0.CR3</version>
+        </dependency>
+        <!-- Joda  dependencies  end -->
+
+        <!-- encryption start-->
+        <dependency>
+            <groupId>org.jasypt</groupId>
+            <artifactId>jasypt</artifactId>
+            <version>1.9.0</version>
+            <!--<scope>compile</scope>-->
+        </dependency>
+
+        <dependency>
+            <groupId>org.jasypt</groupId>
+            <artifactId>jasypt-spring31</artifactId>
+            <version>1.9.0</version>
+        </dependency>
+        <!-- encryption end-->
+
+        <dependency>
+            <groupId>commons-codec</groupId>
+            <artifactId>commons-codec</artifactId>
+            <version>1.6</version>
+        </dependency>
+
+        <!--view dependencies start -->
+
+
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>javax.servlet-api</artifactId>
+            <version>3.1.0</version>
+        </dependency>
+
+
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+            <version>3.0</version>
+        </dependency>
+
+
+        <dependency>
+            <groupId>com.google.code.gson</groupId>
+            <artifactId>gson</artifactId>
+            <version>2.2.2</version>
+        </dependency>
+
+        <dependency>
+            <groupId>commons-fileupload</groupId>
+            <artifactId>commons-fileupload</artifactId>
+            <version>1.3</version>
+        </dependency>
+        <!-- view dependencies end -->
+
+        <dependency>
+            <groupId>org.flywaydb</groupId>
+            <artifactId>flyway-core</artifactId>
+            <version>3.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>jstl</groupId>
+            <artifactId>jstl</artifactId>
+            <version>1.2</version>
+            <scope>runtime</scope>
+        </dependency>
+
+
+    </dependencies>
+
+
+    <build>
+        <defaultGoal>package</defaultGoal>
+        <finalName>timesheet</finalName>
+
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>true</filtering>
+            </resource>
+            <resource>
+                <directory>src/test/resources</directory>
+                <filtering>true</filtering>
+            </resource>
+            <resource>
+                <directory>src/integrationtest/resources</directory>
+                <filtering>true</filtering>
+            </resource>
+        </resources>
+
+        <plugins>
+
+            <!--  Ensures we are compiling at 1.7 level -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.1</version>
+                <configuration>
+                    <!-- False means true maven bug :) -->
+                    <useIncrementalCompilation>false</useIncrementalCompilation>
+                    <!--skip>true</skip-->
+                    <optimize>true</optimize>
+                    <source>1.7</source>
+                    <target>1.7</target>
+                    <compilerArguments>
+                    <processor>lombok.core.AnnotationProcessor</processor>
+                    </compilerArguments>
+                    <showWarnings>false</showWarnings>
+                    <showDeprecation>false</showDeprecation>
+                    <meminitial>512m</meminitial>
+                    <maxmem>512m</maxmem>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.mortbay.jetty</groupId>
+                <artifactId>maven-jetty-plugin</artifactId>
+                <version>6.1.10</version>
+                <configuration>
+                    <scanIntervalSeconds>0</scanIntervalSeconds>
+                    <stopKey>foo</stopKey>
+                    <stopPort>9999</stopPort>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>start-jetty</id>
+                        <phase>pre-integration-test</phase>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <configuration>
+                            <scanIntervalSeconds>0</scanIntervalSeconds>
+                            <daemon>true</daemon>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>stop-jetty</id>
+                        <phase>post-integration-test</phase>
+                        <goals>
+                            <goal>stop</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>2.11</version>
+                <configuration>
+                    <excludes>
+                        <exclude>**/*Acceptance*.java</exclude>
+                    </excludes>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>properties-maven-plugin</artifactId>
+                <version>1.0-alpha-2</version>
+                <executions>
+                    <execution>
+                        <phase>initialize</phase>
+                        <goals>
+                            <goal>read-project-properties</goal>
+                        </goals>
+                        <configuration>
+                            <files>
+                                <file>src/main/resources/mysql.database.properties</file>
+                            </files>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-war-plugin</artifactId>
+                <version>2.4</version>
+            </plugin>
+
+        </plugins>
+
+    </build>
+
+
+    <profiles>
+        <profile>
+            <id>AcceptanceTests</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        <configuration>
+                            <excludes>
+                                <exclude>**/*$*</exclude>
+                            </excludes>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+
+    <repositories>
+        <repository>
+            <id>central</id>
+            <name>Maven Repository Switchboard</name>
+            <layout>default</layout>
+            <url>http://repo.maven.apache.org/maven2</url>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </repository>
+
+        <repository>
+            <id>ZK CE</id>
+            <name>ZK CE Repository</name>
+            <url>http://mavensync.zkoss.org/maven2</url>
+        </repository>
+
+        <repository>
+            <id>ZK Spreadsheet EE Evaluation</id>
+            <url>http://mavensync.zkoss.org/eval/</url>
+        </repository>
+    </repositories>
+
+    <pluginRepositories>
+        <pluginRepository>
+            <id>spring-releases</id>
+            <name>Spring Releases</name>
+            <url>http://repo.spring.io/libs-release</url>
+        </pluginRepository>
+
+        <pluginRepository>
+            <id>zkmaven</id>
+            <name>ZK Maven Plugin Repository</name>
+            <url>http://mavensync.zkoss.org/maven2/</url>
+        </pluginRepository>
+    </pluginRepositories>
+
+</project>

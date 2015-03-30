@@ -1,0 +1,92 @@
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<zk>
+    <zscript>
+        <![CDATA[
+			import org.ofbiz.entity.*;
+			import org.ofbiz.entity.condition.*;
+			import org.ofbiz.base.util.*;
+			import java.util.*;
+			import org.zkoss.util.resource.Labels;
+			Map map = Executions.getCurrent().getArg();
+			String partyId = (String) map.get("partyId");
+			GenericValue userLogin = (GenericValue) Executions.getCurrent()
+					.getDesktop().getSession().getAttribute("userLogin");
+			GenericDelegator delegator = userLogin.getDelegator();
+			EntityCondition condition = EntityCondition.makeCondition("partyId",EntityOperator.EQUALS, partyId);
+			Set fieldToSelect = new HashSet();
+			fieldToSelect.add("roleTypeId");
+			fieldToSelect.add("partyId");
+			Div div1 = (Div)Executions.getCurrent().getArg().get("window");
+			List employeeRoles = null;
+			employeeRoles = delegator.findList("PartyRole", condition, fieldToSelect,
+					null, null, false);
+			class MyRowRenderer implements RowRenderer {
+		
+				MyRowRenderer() {
+				}
+		
+				public void render(Row row, Object data) {
+					org.ofbiz.entity.GenericValue gv = ((org.ofbiz.entity.GenericValue) data);
+					if(!(gv.getString("roleTypeId").equals("_NA_"))){
+					String roleTypeId=null;
+					List roleTypeList = null;
+					GenericValue roleTypeListGv = null;
+					String role = null;
+					roleTypeId = gv.getString("roleTypeId");
+					if(roleTypeId!=null){
+						roleTypeList = delegator.findByAnd("RoleType",UtilMisc.toMap("roleTypeId",roleTypeId));
+						if(roleTypeList.size()>0){
+						roleTypeListGv = org.ofbiz.entity.util.EntityUtil.getFirst(roleTypeList);
+						role = (String)roleTypeListGv.getString("description");
+						}
+					}
+					new Label(gv.getString("roleTypeId")).setParent(row);
+					if(role!=null){
+						new Label(role).setParent(row);
+					}else{
+						new Label("").setParent(row);
+					}
+					if (isAdmin) {
+						if(!(gv.getString("roleTypeId").equals("EMPLOYEE"))){
+						Button btn = new com.ndz.zkoss.HrmsButton();
+						btn.setLabel(Labels.getLabel("ButtonDelete"));
+						btn.setParent(row);
+						btn.setSclass("btnDelete");
+						btn.addEventListener("onClick",
+								new org.zkoss.zk.ui.event.EventListener() {
+		
+									public void onEvent(Event event) throws Exception {
+										com.ndz.controller.UpdateEmployeeProfileController
+												.deleteRole(event, gv,partyId,div1);
+									}
+								});
+						}
+					}
+					}else{
+						row.setVisible(false);
+					}
+				}
+			}
+			RowRenderer roleRenderer = new MyRowRenderer();
+			SimpleListModel modelRoles = new SimpleListModel(employeeRoles);
+			boolean sameUser = Executions.getCurrent().getArg().get("sameUser");
+			org.ofbiz.security.Security security = requestScope.get("security");
+			boolean isAdmin = security.hasPermission("HUMANRES_ADMIN", userLogin);
+			boolean isManager = security.hasPermission("HUMANRES_MGR", userLogin);
+			boolean anyOne = false;
+			if (isAdmin || isManager || sameUser) {
+				anyOne = true;
+			}
+		]]>
+    </zscript>
+    <window id="roleWindow">
+        <grid rowRenderer="${roleRenderer}"
+              model="${modelRoles}">
+            <columns menupopup="auto">
+                <column label="${c:l('HRMS_ROLE_TYPE_ID') }"/>
+                <column label="${c:l('HRMS_ROLE') }"/>
+                <column label="${c:l('HRMS_ACTION') }" if="${isAdmin }"/>
+            </columns>
+        </grid>
+    </window>
+</zk>

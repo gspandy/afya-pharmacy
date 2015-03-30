@@ -1,0 +1,97 @@
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<zk xmlns:n="http://www.zkoss.org/2005/zk/native">
+	<zscript>
+		<![CDATA[
+			import com.ndz.zkoss.*;
+			import com.hrms.composer.*;
+			import org.ofbiz.entity.*;
+			Button request = arg.get("request");
+			EmployeeRequestComposer assignComposer = new EmployeeRequestComposer();
+			String partyId = (String) Executions.getCurrent().getArg().get("partyId");
+			Component comp = (Component) Executions.getCurrent().getArg().get("toolbarBtn");
+			GenericValue userLogin = (GenericValue) Executions.getCurrent().getDesktop().getSession().getAttribute("userLogin");
+			org.ofbiz.security.Security security = (org.ofbiz.security.Security) requestScope.get("security");
+			boolean isAdmin = security.hasPermission("HUMANRES_ADMIN", userLogin);
+			GenericDelegator delegator = com.ndz.zkoss.util.HrmsInfrastructure.getDelegator();//GenericDelegator.getGenericDelegator("default");
+			List requestTypeList = null;
+			requestTypeList = delegator.findList("PartyRequestType",null,null,null,null,false);
+			requestTypeList.add(0, null);
+			SimpleListModel model = new SimpleListModel(requestTypeList);
+			ListitemRenderer renderer = new ListitemRenderer() {
+				public void render(Listitem li, Object data) {
+					if (data instanceof GenericValue) {
+						GenericValue val = (GenericValue) data;
+						li.setLabel(val.getString("description"));
+						li.setValue(val.getString("requestTypeId"));
+					}
+				}
+			};
+			Toolbarbutton toolbarButton = (Toolbarbutton)Executions.getCurrent().getArg().get("request");
+		]]>
+	</zscript>
+	<window id="asignWindow" apply="${assignComposer}">
+		<caption label="${c:l('HRMS_REQUEST') }">
+			<toolbarbutton label="${c:l('HRMS_POST_REQUEST') }" style="color:#FFF" image="/images/icon/update.png">
+				<attribute name="onClick">
+					Window window = (Window) Executions.createComponents("/zul/employeeRequest/appPostRequestType.zul", null, org.ofbiz.base.util.UtilMisc.toMap("toolbarButton",toolbarButton));
+					window.doModal();
+				</attribute>
+			</toolbarbutton>
+		</caption>
+		<separator height="10px" />
+		<div align="center">
+			<div style="margin-right:120px" >
+				<hbox>
+					<div align="left">
+						<label value="${c:l('HRMS_REQUEST_TYPE') }"></label>
+					</div>
+					<listbox id="requestTypeIdListBox" mold="select" itemRenderer="${renderer}" model="${model}"></listbox>
+				</hbox>
+			</div>
+		</div>
+		<separator height="10px" />
+		<box align="center" width="100%">
+			<hbox>
+				<button label="${c:l('HRMS_SearchButton') }" id="searchByRequestType"/>
+				<button label="${c:l('HRMS_ResetButton') }" id="Resetid" onClick='Events.postEvent("onClick",request,null)'/>
+			</hbox>
+		</box>
+		<separator height="10px" />
+		<div id="serachResult">
+			<n:table width="100%" style="border:0px" cellspacing="0px" cellpadding="0px">
+				<n:tr>
+					<n:td width="90%">
+						<label value="${c:l('HRMS_SEARCHRESULTS') }"></label>
+					</n:td>
+					<n:td>
+						<toolbarbutton label="${c:l('Hrms_Assign') }" id="assignButton" 
+							if="${isAdmin}" onClick="@{assignComposer.setToolbarButton(toolbarButton)}">
+						</toolbarbutton>
+					</n:td>
+					<n:td width="10%" style="text-align:right">
+						<paging id="pageRequest"></paging>
+					</n:td>
+				</n:tr>
+			</n:table>
+			<listbox id="requestTypeListbox" model="@{assignComposer.requestTypeList,load-after='searchByRequestType.onClick,Resetid.onClick'}" itemRenderer="${assignComposer.renderer}" checkmark="false"
+				multiple="false" mold="paging" paginal="${pageRequest}" pageSize="10">
+				<listhead>
+					<listheader label="${c:l('HRMS_REQUEST_ID') }" />
+					<listheader label="${c:l('HRMS_SUBMITTED_BY') }" />
+					<listheader label="${c:l('HRMS_REQUEST_TYPE') }" />
+					<listheader label="${c:l('HRMS_SUMMARY') }" />
+					<listheader label="${c:l('HRMS_DESCRIPTION') }" />
+					<listheader label="${c:l('HRMS_PRIORITY') }" />
+					<listheader label="${c:l('HRMS_ASSIGNED_TO') }" />
+					<listheader label="${c:l('HRMS_STATUS') }" />
+				</listhead>
+			</listbox>
+		</div>
+		<zscript>
+			if (isAdmin) {
+				requestTypeListbox.setCheckmark(true);
+				requestTypeListbox.setMultiple(true);
+			}
+		</zscript>
+	</window>
+</zk>

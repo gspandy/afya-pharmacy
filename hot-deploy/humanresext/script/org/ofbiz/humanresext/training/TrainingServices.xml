@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<simple-methods xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="http://ofbiz.apache.org/dtds/simple-methods.xsd">
+	
+	<simple-method method-name="addTraining" short-description="Creating A Training">
+		<log level="error"> 
+			<string> ADD TRAINING </string>
+		</log>
+		<make-value entity-name="Training" value-field="newEntity" />
+		<set-nonpk-fields map="parameters" value-field="newEntity" />
+		<sequenced-id sequence-name="Training"
+			field="newEntity.trainingId" />
+		<create-value value-field="newEntity" />
+		
+		<log  level="error" >
+		
+			<field field="currentStatusId" type="java.util.Map"/>
+		</log>
+		<make-value entity-name="WorkEffort" value-field="workEntity"/>
+		<sequenced-id sequence-name="WorkEffort" field="workEntity.workEffortId"/>
+		<set-nonpk-fields map="parameters" value-field="workEntity" />
+		
+		<set field="workEntity.description" from-field="parameters.trainingName"/> 
+		<set field="workEntity.trainingId" from-field="newEntity.trainingId"/>
+		<set field="workEntity.workEffortPurposeTypeId" value="WEPT_PROJECT"/>
+		<set field="workEntity.scopeEnumId" value="WES_PUBLIC"/>
+		<set field="workEntity.workEffortpriority" value="5"/>
+		<set field="workEntity.workEffortName" from-field="parameters.trainingName"/> 
+ 		<create-value value-field="workEntity"/>
+		
+	</simple-method>
+	
+</simple-methods>

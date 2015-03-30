@@ -1,0 +1,26 @@
+<table style="border:0px;width:95%">
+	<tr>
+		<td>
+			${sections.render("ListELoan")}
+		</td>
+		<td>
+			&nbsp;
+		</td>		
+	</tr>
+	<tr>
+		<td>
+			${sections.render("ELoanLimitsReport")}
+		</td>
+		<td>
+			&nbsp;
+		</td>
+	</tr>
+	<tr>
+		<td>
+			${sections.render("ELoanSlipReport")}
+		</td>
+		<td>
+			&nbsp;
+		</td>
+	</tr>
+</table>

@@ -1,0 +1,97 @@
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<zk>
+<zscript>
+<![CDATA[
+	import com.ndz.controller.*;
+	import org.ofbiz.entity.GenericValue;
+	import javax.servlet.http.HttpServletRequest;
+	import org.ofbiz.entity.condition.EntityCondition;
+	import org.ofbiz.entity.condition.EntityOperator;
+	import org.ofbiz.humanresext.util.HumanResUtil;
+	import org.ofbiz.entity.GenericValue;
+	import org.ofbiz.base.util.UtilMisc;
+	import java.util.*;
+	import org.ofbiz.service.DispatchContext;
+	import org.ofbiz.security.Security;
+	import org.ofbiz.entity.GenericDelegator;
+	import org.ofbiz.entity.condition.EntityExpr;
+	SearchController controller = new SearchController();
+	GenericValue userLogin = (GenericValue) Executions.getCurrent()
+			.getDesktop().getSession().getAttribute("userLogin");
+	GenericDelegator delegator = com.ndz.zkoss.util.HrmsInfrastructure.getDelegator();//GenericDelegator.getGenericDelegator("default");
+	EntityCondition condition = EntityCondition.makeCondition("userLoginId",
+			EntityOperator.EQUALS, userLogin.getString("userLoginId"));
+	List SecurityList = delegator.findList("UserLoginSecurityGroup", condition,null, null, null, false);
+	String securityGroupId = "";
+	boolean hasPermission = false;
+	boolean noPermission = false;
+	boolean showApprove = false;
+	boolean doNotShowApprove = false;
+	for (GenericValue Security : SecurityList) {
+
+		securityGroupId = Security.getString("groupId");
+		if (securityGroupId != null) {
+			if (securityGroupId.equals("HUMANRES_MGR")
+					|| securityGroupId.equals("HUMANRES_ADMIN")
+					|| securityGroupId.equals("FULLADMIN")) {
+				hasPermission = true;
+				break;
+			}
+		}
+	}
+]]>
+
+</zscript>
+	<div id="taxCatagoryDiv">
+		<tabbox>
+			<tabs>
+				<tab label="${c:l('HRMS_TAX_DECLARATION') }" style="font-weight:bold"
+					selected="true" id="taxCatagoryTab" visible="false">
+					<attribute name="onClick">
+	Div div = (Div) taxCatagoryDiv.getFellow("appendWindow");
+	Component firstChild = div.getFirstChild();
+	if (firstChild != null) {
+		div.removeChild(firstChild);
+	}
+	Window win1 = (Window) Executions.createComponents(
+			"/zul/payRollManagement/employeetaxDeclaration.zul", null, null);
+	div.appendChild(win1);
+</attribute>
+				</tab>
+				
+				
+				<tab label="${c:l('HRMS_APPROVE_TAX_DECLARATION') }" style="font-weight:bold" if="${hasPermission}" visible="false">
+					<attribute name="onClick">
+	Div div = (Div) taxCatagoryDiv.getFellow("appendWindow");
+	Component firstChild = div.getFirstChild();
+	if (firstChild != null) {
+		div.removeChild(firstChild);
+	}
+	Window win2 = (Window) Executions.createComponents(
+			"/zul/payRollManagement/ApproveemployeetaxDeclaration.zul", null, null);
+	div.appendChild(win2);
+	
+</attribute>
+				</tab>
+				
+				<tab label="${c:l('HRMS_STATUTORY_FORMS') }" style="font-weight:bold" visible="false">
+					<attribute name="onClick">
+	Div div = (Div) taxCatagoryDiv.getFellow("appendWindow");
+	Component firstChild = div.getFirstChild();
+	if (firstChild != null) {
+		div.removeChild(firstChild);
+	}
+	Window win3 = (Window) Executions.createComponents(
+			"/zul/payRollManagement/EmployeeStatuatoryForms.zul", null, null);
+	div.appendChild(win3);
+</attribute>
+				</tab>
+
+			</tabs>
+		</tabbox>
+		<div id="appendWindow"> 
+		<div onCreate='Events.postEvent("onClick",taxCatagoryTab,null)'/>
+
+		</div>
+	</div>
+</zk>

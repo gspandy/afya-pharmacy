@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+Licensed to the Apache Software Foundation (ASF) under one
+or more contributor license agreements.  See the NOTICE file
+distributed with this work for additional information
+regarding copyright ownership.  The ASF licenses this file
+to you under the Apache License, Version 2.0 (the
+"License"); you may not use this file except in compliance
+with the License.  You may obtain a copy of the License at
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing,
+software distributed under the License is distributed on an
+"AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+KIND, either express or implied.  See the License for the
+specific language governing permissions and limitations
+under the License.
+-->
+
+<entity-engine-xml>
+    <!--
+      NOTE: All UomConversion conversionFactors are multipliers to change from uomId to uomIdTo.
+      In other words there is 1 uomId for conversionFactor uomIdTos, for instance 1 minute for 60 seconds.
+    -->
+    <!-- =============== TIME_FREQ_MEASURE =============== -->
+    <!-- =============== LENGTH_MEASURE =============== -->
+    <Uom abbreviation="cm" description="Centimeter" uomId="LEN_cm" uomTypeId="LENGTH_MEASURE"/>
+    <Uom abbreviation="in" description="Inch" uomId="LEN_in" uomTypeId="LENGTH_MEASURE"/>
+    <Uom abbreviation="m" description="Meter" uomId="LEN_m" uomTypeId="LENGTH_MEASURE"/>
+    <UomConversion uomId="LEN_cm" uomIdTo="LEN_m" conversionFactor="0.01"/>
+    <!-- =============== AREA_MEASURE =============== -->
+    <Uom abbreviation="A" description="Acre" uomId="AREA_A" uomTypeId="AREA_MEASURE"/>
+
+    <!-- =============== VOLUME_LIQ_MEASURE =============== -->
+    <Uom abbreviation="bbl" description="Barrel (US)" uomId="VLIQ_bbl" uomTypeId="VOLUME_LIQ_MEASURE"/>
+    <Uom abbreviation="L" description="Liter" uomId="VLIQ_L" uomTypeId="VOLUME_LIQ_MEASURE"/>
+    <Uom abbreviation="dr" description="Dram (US)" uomId="VLIQ_dr" uomTypeId="VOLUME_LIQ_MEASURE"/>
+
+    <Uom abbreviation="drum" description="Drum" uomId="VLIQ_drum" uomTypeId="VOLUME_LIQ_MEASURE"/>
+    <Uom abbreviation="milliliter" description="Milliliter" uomId="VLIQ_milli" uomTypeId="VOLUME_LIQ_MEASURE"/>
+    <Uom abbreviation="5ltrs" description="5ltrs" uomId="VLIQ_5ltrs" uomTypeId="VOLUME_LIQ_MEASURE"/>
+    <Uom abbreviation="200mts" description="200 mts" uomId="AREA_200mts" uomTypeId="AREA_MEASURE"/>
+    <Uom abbreviation="dozen" description="Dozen" uomId="AREA_dozen" uomTypeId="AREA_MEASURE"/>
+
+    <Uom abbreviation="gal" description="Gallon (UK)" uomId="VLIQ_galUK" uomTypeId="VOLUME_LIQ_MEASURE"/>
+    <!-- =============== VOLUME_DRY_MEASURE =============== -->
+    <!-- =============== WEIGHT_MEASURE =============== -->
+    <Uom abbreviation="lt" description="Ton (long or British)" uomId="WT_lt" uomTypeId="WEIGHT_MEASURE"/>
+    <Uom abbreviation="mt" description="Ton (metric)" uomId="WT_mt" uomTypeId="WEIGHT_MEASURE"/>
+    <Uom abbreviation="kg" description="Kilogram" uomId="WT_kg" uomTypeId="WEIGHT_MEASURE"/>
+    <Uom abbreviation="g" description="Gram" uomId="WT_g" uomTypeId="WEIGHT_MEASURE"/>
+    <UomConversion uomId="WT_kg" uomIdTo="WT_g" conversionFactor="1000"/>
+    <!-- =============== ENERGY_MEASURE =============== -->
+    <Uom abbreviation="Kw" description="Kilowatt" uomId="EN_Kw" uomTypeId="ENERGY_MEASURE"/>
+    <Uom abbreviation="w" description="Watt" uomId="EN_w" uomTypeId="ENERGY_MEASURE"/>
+    <UomConversion uomId="EN_Kw" uomIdTo="EN_w" conversionFactor="1000"/>
+    <Uom abbreviation="hr" description="Time in Hours" uomId="TF_hr" uomTypeId="TIME_FREQ_MEASURE"/>
+    <Uom abbreviation="wk" description="Time in Weeks" uomId="TF_wk" uomTypeId="TIME_FREQ_MEASURE"/>
+    <Uom abbreviation="mon" description="Time in Months" uomId="TF_mon" uomTypeId="TIME_FREQ_MEASURE"/>
+    <Uom abbreviation="mg" description="Milligram" uomId="WT_mg" uomTypeId="WEIGHT_MEASURE"/>
+    <Uom abbreviation="g" description="Gram" uomId="WT_g" uomTypeId="WEIGHT_MEASURE"/>
+    <Uom abbreviation="L" description="Liter" uomId="VLIQ_L" uomTypeId="VOLUME_LIQ_MEASURE"/>
+
+
+    <!-- How to express these?
+      1 Btu = 0.0002829 Kw/hour
+      1 J = 0.7376 ft/lbs
+    -->
+
+    <!-- =============== TEMP_MEASURE =============== -->
+    <!-- How to express these?
+      1 F = 1.8C + 32
+      1 C = (F-32)/1.8
+    -->
+
+    <!-- =============== OTHER_MEASURE =============== -->
+    <Uom abbreviation="ea" description="Each" uomId="OTH_ea" uomTypeId="OTHER_MEASURE"/>
+    <Uom abbreviation="bx" description="Box" uomId="OTH_box" uomTypeId="OTHER_MEASURE"/>
+    <Uom abbreviation="pk" description="Package" uomId="OTH_pk" uomTypeId="OTHER_MEASURE"/>
+    
+    <!-- =============== POWER_MEASURE =============== -->
+    <Uom abbreviation="kWh" description="Kilowatt-hour" uomId="PWR_kWh" uomTypeId="POWER_MEASURE"/>
+    
+    <!-- =============== SHUTDOWN_MEASURE =============== -->
+    <Uom abbreviation="min" description="Stoppage Time in Minutes" uomId="SHT_DWN_min" uomTypeId="SHUTDOWN_MEASURE"/>
+    <Uom abbreviation="hr" description="Stoppage Time in Hours" uomId="SHT_DWN_hr" uomTypeId="SHUTDOWN_MEASURE"/>
+    <UomConversion uomId="SHT_DWN_hr" uomIdTo="SHT_DWN_min" conversionFactor="60"/>
+</entity-engine-xml>

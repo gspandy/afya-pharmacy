@@ -1,0 +1,37 @@
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<?xel-method prefix="custom" name="getFullName"
+class="org.ofbiz.humanresext.util.HumanResUtil"
+signature="String getFullName(org.ofbiz.entity.GenericDelegator,java.lang.String,java.lang.String)"?>
+<zk>
+	<zscript>
+<![CDATA[
+	import org.ofbiz.entity.*;
+	GenericDelegator delegator = com.ndz.zkoss.util.HrmsInfrastructure.getDelegator();//GenericDelegator.getGenericDelegator("default");
+	GenericValue gv = (GenericValue) Executions.getCurrent().getArg().get("gv");
+	Set employeeSet = (Set) gv.get("employeeIdList");
+	Iterator itr = employeeSet.iterator();
+	List employeeList = new ArrayList();
+	int i = 0;
+	while (itr.hasNext()) {
+		employeeList.add(i, itr.next());
+		i++;
+	}
+]]>
+</zscript>
+	<window title="${c:l('HRMS_SCHEDULED') }" width="60%" height="60%" contentStyle="overflow:auto" closable="true" border="normal" maximizable="true">
+		<listbox>
+			<listhead>
+				<listheader label="${c:l('HRMS_EMPLOYEE_ID') }"></listheader>
+				<listheader label="${c:l('HRMS_EMPLOYEENAME') }"></listheader>
+			</listhead>
+			<listitem>
+				<listcell forEach="${employeeList}">
+					<label value="${each}"></label>
+				</listcell>
+				<listcell forEach="${employeeList}">
+							<label value='${custom:getFullName(delegator,each," ")}'></label>
+						</listcell>
+			</listitem>
+		</listbox>
+	</window>
+</zk>

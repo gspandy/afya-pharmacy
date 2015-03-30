@@ -1,0 +1,141 @@
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<?component name="findbox" macroURI="../macros/textfindMacro.zul" id="macro4"?>
+<?component name="findbox1" macroURI="../macros/textfindMacro.zul" id="macro3"?>
+<?component name="findbox2" macroURI="../macros/textfindMacro.zul" id="macro5"?>
+<?component name="fromDatebox" macroURI="../macros/datefindMacro.zul" id="macro2"?>
+<?component name="thruDatebox" macroURI="../macros/datefindMacro.zul" id="macro1"?>
+<zk xmlns:n="http://www.zkoss.org/2005/zk/native">
+	<zscript>
+	org.ofbiz.entity.GenericValue userLogin = (org.ofbiz.entity.GenericValue) Executions.getCurrent().getDesktop().getSession().getAttribute("userLogin");
+	org.ofbiz.security.Security security = requestScope.get("security");
+	boolean isAdmin = security.hasPermission("HUMANRES_ADMIN", userLogin);
+	boolean isManager = security.hasPermission("HUMANRES_MGR", userLogin);
+	Button searchAppraisalBtn = arg.get("searchAppraisalBtn");
+</zscript>
+	<window id="searchAppraisal" border="normal"
+		apply="com.ndz.controller.SearchAppraisal">
+		<caption label="${c:l('HRMS_SEARCH_APPRAISAL') }" >
+		</caption>
+		<div width="80%" align="center">
+		<vbox>
+		<div style="margin:4px;">
+		 <div width="150px">
+			<label value="${c:l('Hrms_EmployeeId') }" visible="${isManager}"/>
+		 </div>
+			<employeebox id="partyId" visible="${isManager}" />
+		</div>
+		<hbox>
+			<div style="margin:4px;">
+			 <div width="150px">
+				<label value="${c:l('HumanResLeaveSummaryFromDate') }" />
+			</div>
+				<datebox width="150px" id="fromDate" format="dd-MMM-yyyy" />
+			</div>
+			<div style="margin:4px;">
+			 <div width="150px">
+				<label value="${c:l('HumanResLeaveSummaryThruDate') }" />
+			 </div>
+				<datebox width="150px" id="thruDate" format="dd-MMM-yyyy" />
+			</div>
+		</hbox>
+		<div align="center" style="margin:4px;">
+			<button label="${c:l('HRMS_SearchButton') }" id="searchAppraisalButton">
+				<attribute name="onClick">
+					date();
+					results.setVisible(true);
+					SearchAppraisal.searchAppraisalButton(event,isAdmin,isManager);
+				</attribute>
+			</button>
+			<button label="${c:l('HRMS_ResetButton') }">
+				<attribute name="onClick">
+					Events.postEvent("onClick",searchAppraisalBtn,null);
+				</attribute>
+			</button>
+		</div>
+		</vbox>
+		
+		
+				<zscript>
+					void date() {
+						if (fromDate.getValue() != null) {
+							if (thruDate.getValue() == null) {
+								throw new WrongValueException(thruDate, org.zkoss.util.resource.Labels.getLabel("SA_THRU_DATE_CAN_NOT_BE_LEFT_BLANK"));
+				
+							}
+						}
+					}
+				</zscript>
+	</div>
+		<zscript>
+		<![CDATA[
+	import org.ofbiz.base.util.*;
+	import com.ndz.controller.SearchAppraisal;
+	import org.zkoss.util.resource.Labels;
+	import org.ofbiz.entity.condition.EntityCondition;
+	SearchAppraisal SearchAppraisal = new SearchAppraisal();
+	class MyRowRenderer implements RowRenderer {
+
+		MyRowRenderer() {
+		}
+
+		public void render(Row row, Object data) {
+			org.ofbiz.entity.GenericValue gv = ((org.ofbiz.entity.GenericValue) data);
+			String[] managerIdArray = org.ofbiz.humanresext.util.HumanResUtil.getAllReportingMangerForParty(gv.getString("partyId"), delegator);
+
+			new Label(gv.getString("emplPerfReviewId")).setParent(row);
+			new Label(gv.getString("partyId")).setParent(row);
+
+			EntityCondition condition = EntityCondition.makeCondition("partyId", org.ofbiz.entity.condition.EntityOperator.EQUALS, gv
+					.getString("partyId"));
+			List findName = delegator.findList("Person", condition, null, null, null, false);
+			org.ofbiz.entity.GenericValue nameGV = (org.ofbiz.entity.GenericValue) findName.get(0);
+			String name = nameGV.getString("firstName") + " " + nameGV.getString("lastName");
+			new Label(name).setParent(row);
+			new Label(com.ndz.zkoss.HrmsUtil.getStatusItemDescription(gv.getString("statusId"))).setParent(row);
+			new Label(gv.getString("overallRating")).setParent(row);
+			Map map = com.ndz.controller.PerfReviewUtil.getAppraisalTimePeriod(gv.getString("emplPerfReviewId"));
+			new Label(map.get("fromDate").toString()).setParent(row);
+			new Label(map.get("thruDate").toString()).setParent(row);
+			row.setTooltiptext("Double Click to view");
+
+			row.addEventListener("onDoubleClick", new org.zkoss.zk.ui.event.EventListener() {
+				public void onEvent(Event event) throws Exception {
+					SearchAppraisal.employeeReports(event, gv);
+				}
+			});
+		}
+	}
+	RowRenderer tableRenderer = new MyRowRenderer();
+	]]>
+</zscript>
+		<separator height="20px"></separator>
+		<div id="results" visible="false">
+			<n:table width="100%" style="border:0px" cellspacing="0px"
+				cellpadding="0px">
+				<n:tr>
+					<n:td width="90%">
+						<label value="${c:l('HRMS_SEARCHRESULTS') }"></label>
+					</n:td>
+					<n:td width="10%" style="text-align:right">
+						<paging id="paging" />
+					</n:td>
+				</n:tr>
+			</n:table>
+			<grid width="100%" id="dataGrid"
+				rowRenderer="${tableRenderer}">
+				<columns menupopup="auto">
+					<column label="${c:l('HRMS_REVIEW_ID') }" width="100px" />
+					<column label="${c:l('Hrms_EmployeeId') }" width="100px" />
+					<column label="${c:l('Hrms_EmployeeName') }" />
+					<column label="${c:l('FormFieldTitle_status') }" />
+					<column label="${c:l('HRMS_OVER_ALL_RATING') }" />
+					<column label="${c:l('HumanResLeaveSummaryFromDate') }" />
+					<column label="${c:l('HumanResLeaveSummaryThruDate') }" />
+				</columns>
+			</grid>
+		</div>
+		<zscript><![CDATA[
+	Events.postEvent("onClick", searchAppraisalButton, null);
+]]></zscript>
+	</window>
+</zk>

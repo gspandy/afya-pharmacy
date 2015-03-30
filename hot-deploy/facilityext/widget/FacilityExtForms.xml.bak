@@ -1,0 +1,1275 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<forms xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="http://ofbiz.apache.org/dtds/widget-form.xsd">
+	<form name="SearchTransformation" type="single" target="SearchTransformation"
+		separate-columns="true">
+		<auto-fields-entity entity-name="ProductTransfer"
+			default-field-type="find" />
+		<field name="productTransferId" title="SKU Transfer Id">
+			<text />
+		</field>
+		<field name="quantityRequired">
+			<text />
+		</field>
+		<field name="fromProductId" title="From SKU Id"></field>
+		<field name="toProductId" title="To SKU Id"></field>
+
+		<field name="status">
+			<drop-down allow-empty="true">
+				<option key="REQUESTED" />
+				<option key="SCHEDULED" />
+				<option key="COMPLETED" />
+			</drop-down>
+		</field>
+		<field name="noConditionFind">
+			<hidden value="Y" />
+		</field>
+		<field name="submitButton" title="${uiLabelMap.CommonSearch}">
+			<submit button-type="button" />
+		</field>
+	</form>
+
+	<form name="ListTransformation" type="list" separate-columns="true"
+		list-name="listIt" paginate-target="iSearchTransformationsueSeach"
+		paginate="true" odd-row-style="alternate-row" header-row-style="header-row-2"
+		default-table-style="basic-table hover-bar">
+		<actions>
+			<service service-name="performFind">
+				<field-map field-name="inputFields" from-field="parameters" />
+				<field-map field-name="entityName" value="ProductTransfer" />
+				<field-map field-name="noConditionFind" value="Y" />
+			</service>
+		</actions>
+		<auto-fields-entity entity-name="ProductTransfer"
+			default-field-type="display" />
+		<field name="productTransferId" title="SKU Transfer Id">
+			<hyperlink
+				target="ViewTransformation?productTransferId=${productTransferId}"
+				description="${productTransferId}" />
+		</field>
+		<field name="fromProductId" title="From SKU Id"></field>
+		<field name="toProductId" title="To SKU Id"></field>
+	</form>
+	<form name="SearchProductBundle" type="single" target=""
+		default-entity-name="ProductBundle">
+		<auto-fields-entity entity-name="ProductBundle"
+			default-field-type="find" />
+
+		<field name="SearchBlank">
+			<hidden value="yes" />
+		</field>
+
+		<field name="productBundleId" title="SKU Bundle Id"></field>
+		<field name="search">
+			<submit />
+		</field>
+	</form>
+
+	<form name="ListProductBundle" target="" type="list"
+		odd-row-style="alternate-row" list-name="list" default-table-style="basic-table hover-bar"
+		separate-columns="true" override-list-size="${listSize}">
+		<actions>
+			<service service-name="performFindList">
+				<field-map field-name="inputFields" from-field="parameters" />
+				<field-map field-name="entityName" value="ProductBundle" />
+
+				<field-map field-name="noConditionFind" value="Y" />
+			</service>
+		</actions>
+
+		<auto-fields-entity entity-name="ProductBundle"
+			default-field-type="display" />
+		<field name="productBundleId">
+			<hyperlink target="NewBundlingTxn1" description="${productBundleId}"
+				also-hidden="true">
+				<parameter param-name="productBundleId" value="${productBundleId}" />
+			</hyperlink>
+
+		</field>
+		<field name="productBundleId" title="SKU Bundle Id"></field>
+
+	</form>
+	<form name="MergeForm" target="merge" type="single">
+
+		<field name="fromInventoryItemId">
+			<lookup target-form-name="LookupInventoryItems"></lookup>
+		</field>
+		<field name="toInventoryItemId">
+			<lookup target-form-name="LookupInventoryItems"></lookup>
+		</field>
+
+		<field name="locationSeqIdTo">
+			<lookup target-form-name="LookupFacilityLocation?storageId=CASE"></lookup>
+		</field>
+		<field name="merge">
+			<submit />
+		</field>
+	</form>
+	<form name="TransformationTxn" type="single" target="SaveTransferTxn"
+		default-map-name="transferTxn" default-entity-name="ProductTransferTxn">
+		<field name="productTransferId">
+			<hidden value="${productTransferId}" />
+		</field>
+		<field name="fromInventoryItemId">
+			<drop-down current="selected">
+				<entity-options description="${inventoryItemId}"
+					entity-name="ProductTransferLocation" key-field-name="inventoryItemId">
+					<entity-constraint name="productTransferId"
+						value="${productTransferId}" />
+					<entity-constraint name="type" value="SRC" />
+				</entity-options>
+			</drop-down>
+		</field>
+		<field name="toLocationId">
+			<drop-down current="selected">
+				<entity-options description="${locationId}"
+					entity-name="ProductTransferLocation" key-field-name="locationId">
+					<entity-constraint name="productTransferId"
+						value="${productTransferId}" />
+					<entity-constraint name="type" value="DEST" />
+				</entity-options>
+			</drop-down>
+		</field>
+		<field name="quantityDone">
+			<text />
+		</field>
+
+
+		<field name="palletizeSource">
+			<hidden value="SPLITTING" />
+		</field>
+		<field name="submit" title="Add Transformation Txn"
+			use-when="${productTransfer.status != 'COMPLETED'}" event="onclick"
+			action="javascript:return validateQtyDone();">
+			<submit />
+		</field>
+	</form>
+
+	<form name="ListTransformationTxn" type="list" list-name="transferTxns"
+		separate-columns="true" odd-row-style="alternate-row"
+		header-row-style="header-row-2" default-table-style="basic-table hover-bar">
+		<actions>
+			<service service-name="performFind" result-map="result"
+				result-map-list="listIt">
+				<field-map field-name="inputFields" from-field="parameters" />
+				<field-map field-name="entityName" value="ProductTransferTxn" />
+				<field-map field-name="noConditionFind" value="Y" />
+			</service>
+		</actions>
+
+		<field name="txnId">
+			<display also-hidden="true" />
+		</field>
+		<field name="quantityDone">
+			<display />
+		</field>
+		<field name="productTransferId">
+			<hidden value="${parameters.productTransferId}" />
+		</field>
+		<field name="fromInventoryItemId" title="From Inventory">
+			<display />
+		</field>
+		<field name="toLocationId" title="To Location">
+			<display />
+		</field>
+		<field name="createdStamp" title="Date">
+			<display />
+		</field>
+		<field name="status">
+			<hyperlink
+				target="TransformationTxnStatusChange?txnId=${txnId}&amp;fromInventoryItemId=${fromInventoryItemId}&amp;productTransferId=${productTransferId}&amp;toLocationId=${toLocationId}&amp;quantityDone=${quantityDone}"
+				description="Close Txn"></hyperlink>
+		</field>
+	</form>
+
+	<form name="ProductBundleForm" type="single" target="ProductBundle">
+		<!-- This form is to create Primary Product Bundle Information -->
+		<field name="facilityId">
+			<hidden value="${parameters.facilityId}" />
+		</field>
+		<field name="makeSku" title="Make Sku">
+			<lookup target-form-name="LookupProduct" />
+		</field>
+		<field name="tagCode">
+			<text />
+		</field>
+		<field name="quantityRequired">
+			<text />
+		</field>
+		<field name="submit" title="Create">
+			<submit />
+		</field>
+	</form>
+	<form name="BundlesForm" type="single" target="CompleteBundling">
+		<field name="makeSku" title="Make Sku">
+			<display also-hidden="true" />
+		</field>
+		<field name="productId" title="Bundling Product">
+			<lookup target-form-name="LookupProduct" />
+		</field>
+		<field name="buildingFactor">
+			<text />
+		</field>
+		<field name="submit" title="Create">
+			<submit />
+		</field>
+	</form>
+
+	<form name="BundlesListForm" type="list" target="" list-name="listIt"
+		header-row-style="header-row-2" paginate-target="" odd-row-style="alternate-row"
+		default-table-style="basic-table hover-bar">
+		<actions>
+			<entity-condition entity-name="ProductAssoc" list="listIt">
+				<condition-expr field-name="productId" operator="equals"
+					value="${parameters.makeSku}" />
+			</entity-condition>
+		</actions>
+		<field name="productIdTo">
+			<display />
+		</field>
+		<field name="scrapFactor" title="Conversion Factor">
+			<display />
+		</field>
+	</form>
+	<!-- Stock Reservation Forms -->
+	<form name="FindInventoryByProductForm" type="single" target="StockReservations"
+		title="" header-row-style="header-row" default-table-style="basic-table">
+		<field name="productId" title="${uiLabelMap.ProductProductId}"
+			position="1">
+			<lookup target-form-name="LookupProduct"></lookup>
+		</field>
+		<field name="datetimeManufactured" title="Production Date"
+			position="2">
+			<date-find />
+		</field>
+		<field name="inventoryItemId" position="1">
+			<text-find></text-find>
+		</field>
+		<field name="expireDate" position="2" title="Expiry Date">
+			<date-find />
+		</field>
+		<field name="availableToPromiseTotal_fld0_value">
+			<hidden value="0" />
+		</field>
+		<field name="availableToPromiseTotal_fld0_op">
+			<hidden value="greaterThan" />
+		</field>
+		<field name="statusId">
+			<hidden />
+		</field>
+		<field name="submitButton" title="${uiLabelMap.CommonFind}"
+			widget-style="smallSubmit">
+			<submit button-type="button" />
+		</field>
+	</form>
+
+	<form name="ListInventoryByProduct" type="list" target="stockReserve"
+		list-name="resultList" odd-row-style="alternate-row" header-row-style="header-row-2"
+		default-table-style="basic-table hover-bar" paginate-target="StockReservations"
+		paginate="true">
+
+		<actions>
+
+			<script
+				location="component://facilityext/webapp/facilityext/WEB-INF/actions/transormation//ListInventoryByProduct.groovy" />
+
+		</actions>
+
+		<field name="inventoryItemId" widget-style="buttontext">
+			<hyperlink target="EditInventoryItem" description="${inventoryItemId}">
+				<parameter param-name="inventoryItemId" />
+				<parameter param-name="facilityId" />
+			</hyperlink>
+		</field>
+		<field name="items" title="${uiLabelMap.ProductProductId}"
+			widget-style="buttontext">
+			<hyperlink
+				target="EditProductInventoryItems?productId=${items}&amp;showAllFacilities=Y"
+				description="${items}">
+
+			</hyperlink>
+		</field>
+		<field name="productId" title="${uiLabelMap.CommonDescription}">
+			<hidden value="${items}" />
+		</field>
+		<field name="expireDate" title="Expiry Date">
+			<display type="date"></display>
+		</field>
+		<field name="datetimeManufactured" title="Production Date">
+			<display type="date"></display>
+		</field>
+		<field name="availableToPromiseTotal" title="${uiLabelMap.ProductAtp}">
+			<display />
+		</field>
+		<field name="quantityOnHandTotal" title="${uiLabelMap.ProductQoh}">
+			<display />
+		</field>
+		<field name="locationSeqId" title="Location">
+			<display></display>
+		</field>
+		<field name="orderId">
+			<lookup target-form-name="LookupOrderHeader"></lookup>
+		</field>
+		<field name="reserve"  title="">
+			<submit />
+		</field>
+		<field name="ViewReservation" title="" widget-style="buttontext">
+			<hyperlink target="ViewInventoryReservation" description="View Reservation">
+				<parameter param-name="inventoryItemId" from-field="inventoryItemId" />
+				<parameter param-name="productId" from-field="priductId" />
+			</hyperlink>
+		</field>
+	</form>
+	<form name="ReserveInventoryForm" type="single" title=""
+		odd-row-style="alternate-row" header-row-style="header-row-2"
+		default-table-style="basic-table hover-bar" paginate-target="findInventoryItems"
+		use-row-submit="false" separate-columns="true">
+		<actions>
+			<entity-one entity-name="InventoryItem">
+				<field-map field-name="inventoryItemId" value="${inventoryItemId}" />
+			</entity-one>
+		</actions>
+		<field name="inventoryItemId">
+			<display></display>
+		</field>
+		<field name="productId">
+			<hyperlink target="/catalog/control/EditProduct"
+				target-type="inter-app" description="${productId}">
+				<parameter param-name="productId" />
+			</hyperlink>
+		</field>
+		<field name="expireDate" title="Expiry Date">
+			<display type="date"></display>
+		</field>
+		<field name="datetimeManufactured" title="Production Date">
+			<display type="date"></display>
+		</field>
+		<field name="availableToPromiseTotal" title="${uiLabelMap.ProductAtp}">
+			<display />
+		</field>
+		<field name="quantityOnHandTotal" title="${uiLabelMap.ProductQoh}">
+			<display />
+		</field>
+		<field name="locationSeqId" title="Location">
+			<display></display>
+		</field>
+	</form>
+	<form name="InventoryItemReservations" type="list"
+		target="UnReserveInventoryItem" title="" list-name="inventoryItemReservations"
+		header-row-style="header-row-2" odd-row-style="alternate-row"
+		default-table-style="basic-table hover-bar" use-row-submit="true"
+		separate-columns="true">
+		<!--			<row-actions> -->
+		<!--			<script-->
+		<!--
+			location="component://whm/webapp/whm/WEB-INF/actions/transformation/GetQtyOrdered.groovy"
+			/>
+		-->
+		<!--		</row-actions>-->
+		<field name="orderId" widget-style="buttontext">
+			<hyperlink target="/ordermgr/control/orderview"
+				target-type="inter-app" description="${orderId}">
+				<parameter param-name="orderId" />
+			</hyperlink>
+		</field>
+
+
+		<field name="customer">
+			<display description="${partyGroup.groupName}"></display>
+		</field>
+		<field name="qtyOrdered">
+			<display></display>
+		</field>
+
+		<field name="keyCustomer">
+			<display description="${partyGroup.keyCustomer}"></display>
+		</field>
+		<field name="inventoryItemId">
+			<hidden />
+		</field>
+		<field name="quantity" title="Quantity Reserved">
+			<display also-hidden="true"></display>
+		</field>
+		<field name="quantityToCancel" title="Cancel Quantity">
+			<text></text>
+		</field>
+
+		<field name="reservedDatetime">
+			<display></display>
+		</field>
+		<field name="orderItemSeqId">
+			<hidden />
+		</field>
+		<field name="shipGroupSeqId">
+			<hidden />
+		</field>
+		<field name="update" event="onclick"
+			action="javascript:return updateQuantityForInventoryRes(this.form);">
+			<submit />
+		</field>
+	</form>
+	<form name="FindOrders" target="SearchSOForSwapTar" type="single">
+
+		<field name="orderId">
+			<lookup target-form-name="LookupOrderHeader"></lookup>
+		</field>
+		<field name="orderDate">
+			<date-find type="timestamp" />
+		</field>
+		<field name="routeId_op">
+			<hidden value="like" />
+		</field>
+		<field name="routeId" title="Route Id"
+			tooltip="Shipment Route is ${route.routeName}">
+			<drop-down current-description="${route.routeName}"
+				current="first-in-list">
+				<entity-options description="${routeName}"
+					entity-name="ShipmentRoute" key-field-name="routeId">
+				</entity-options>
+			</drop-down>
+
+		</field>
+
+		<field name="partyId" title="Customer Id">
+			<lookup target-form-name="LookupCustomerName"></lookup>
+		</field>
+		<field name="submitButton" title="${uiLabelMap.CommonFind}">
+			<submit button-type="button" />
+		</field>
+	</form>
+	<form name="OrderSearchResults" type="list" target="ViewSalesOrderReservation"
+		title="" list-name="resultList" odd-row-style="alternate-row"
+		header-row-style="header-row-2" default-table-style="basic-table hover-bar"
+		paginate-target="FindOrderToReserve" use-row-submit="true"
+		override-list-size="${size}" separate-columns="true" view-size="10">
+		<actions>
+			<script
+				location="component://facilityext/webapp/facilityext/WEB-INF/actions/ListSalesOrder.groovy" />
+		</actions>
+
+		<field name="orderId" widget-style="buttontext">
+			<hyperlink target="/ordermgr/control/orderview"
+				also-hidden="true" description="${orderId}" target-type="inter-app"
+				target-window="_new">
+				<parameter param-name="orderId" from-field="orderId" />
+			</hyperlink>
+		</field>
+		<field name="roleTypeId">
+			<display></display>
+		</field>
+		<field name="partyId" title="Customer">
+			<display-entity entity-name="PartyGroup" description="${groupName}"
+				key-field-name="partyId">
+			</display-entity>
+		</field>
+		<field name="priority">
+			<display />
+		</field>
+		<field name="entryDate">
+			<display />
+		</field>
+		<field name="orderDate" title="Due Date">
+			<display />
+		</field>
+		<field name="statusId">
+			<display />
+		</field>
+		<field name="Reserve" title="" widget-style="buttontext">
+			<hyperlink target="ReserveSalesOrder" description="Reserve">
+				<parameter param-name="orderId" from-field="orderId" />
+				<parameter param-name="reserveOrderEnumId" from-field="reserveOrderEnumId" />
+				<parameter param-name="action" value="Reserve" />
+			</hyperlink>
+		</field>
+		<field name="reserveOrderEnumId">
+			
+			<drop-down current="selected">
+				<entity-options description="${description}"
+					entity-name="Enumeration" key-field-name="enumId">
+					<entity-constraint name="enumTypeId"
+						value="INV_RES_ORDER" />
+					
+				</entity-options>
+			</drop-down>
+
+		</field>
+		<field name="transactionId">
+			<hidden />
+		</field>
+		<field name="submit" title="View Reservations">
+			<submit />
+		</field>
+	</form>
+	<form name="SalesOrderReservationForm" type="list"
+		target="updateOrderItemInventory" list-name="listIt" header-row-style="header-row-2"
+		odd-row-style="alternate-row" default-table-style="basic-table hover-bar"
+		use-row-submit="true">
+		<actions>
+			<entity-condition entity-name="OrderItemShipGrpInvRes"
+				list="listIt">
+				<condition-expr field-name="orderId" value="${parameters.orderId}" />
+			</entity-condition>
+		</actions>
+
+		<row-actions>
+			<entity-one entity-name="OrderItem" value-field="oi">
+				<field-map field-name="orderId" />
+				<field-map field-name="orderItemSeqId" />
+			</entity-one>
+
+			<entity-one entity-name="Product" value-field="product">
+				<field-map field-name="productId" value="${oi.productId}" />
+			</entity-one>
+		</row-actions>
+
+		<field name="orderId">
+			<display></display>
+		</field>
+		<field name="shipGroupSeqId">
+			<hidden />
+		</field>
+		<field name="orderItemSeqId">
+			<hidden />
+		</field>
+		<field name="inventoryItemId">
+			<display></display>
+		</field>
+		<field name="productId">
+			<display description="${oi.productId}"></display>
+		</field>
+		<field name="primaryProductCategoryId">
+			<display description="${product.primaryProductCategoryId}"></display>
+		</field>
+		<field name="description">
+			<display description="${product.description}"></display>
+		</field>
+		<field name="quantity" title="Reserved Quantity">
+			<display also-hidden="true"></display>
+		</field>
+		<field name="quantityToCancel" title="Cancel Quantity">
+			<text />
+		</field>
+		<field name="quantityNotAvailable">
+			<display></display>
+		</field>
+		<field name="reservedDatetime">
+			<display></display>
+		</field>
+
+		<field name="update"
+			action="javascript:return updateQuantityForInventoryRes(this.form);"
+			event="onclick">
+			<submit />
+		</field>
+	</form>
+	<form name="OrderReservationResults" type="list"
+		target="updateOrderItemInventory" list-name="listIt" header-row-style="header-row-2"
+		odd-row-style="alternate-row" default-table-style="basic-table hover-bar"
+		use-row-submit="true">
+		<actions>
+			<entity-condition entity-name="OrderItemShipGrpInvRes"
+				list="listIt">
+				<condition-expr field-name="orderId" value="${parameters.orderId}" />
+			</entity-condition>
+		</actions>
+
+		<row-actions>
+			<entity-one entity-name="OrderItem" value-field="oi">
+				<field-map field-name="orderId" />
+				<field-map field-name="orderItemSeqId" />
+			</entity-one>
+
+			<entity-one entity-name="Product" value-field="product">
+				<field-map field-name="productId" value="${oi.productId}" />
+			</entity-one>
+		</row-actions>
+
+		<field name="orderId">
+			<display></display>
+		</field>
+		<field name="shipGroupSeqId">
+			<hidden />
+		</field>
+		<field name="orderItemSeqId">
+			<display></display>
+		</field>
+		<field name="inventoryItemId">
+			<display></display>
+		</field>
+		<field name="productId">
+			<display description="${product.productId}"></display>
+		</field>
+		<field name="primaryProductCategoryId">
+			<display description="${product.primaryProductCategoryId}"></display>
+		</field>
+		<field name="description">
+			<display description="${product.description}"></display>
+		</field>
+		<field name="quantity" title="Reserved Quantity">
+			<display also-hidden="true"></display>
+		</field>
+		<field name="quantityToCancel" title="Cancel Quantity">
+			<text />
+		</field>
+		<field name="quantityNotAvailable">
+			<display></display>
+		</field>
+
+		<field name="reservedDatetime">
+			<display></display>
+		</field>
+		<field name="update">
+			<submit />
+		</field>
+	</form>
+	<form name="FindReserveOrders" target="" type="single">
+		<field name="orderId" title="Reserve Order Id">
+			<text-find></text-find>
+		</field>
+		<field name="orderName" title="Reserve Order Name">
+			<text-find></text-find>
+		</field>
+		<field name="productId">
+			<text-find></text-find>
+		</field>
+		<field name="orderTypeId">
+			<hidden value="RESERVE_ORDER" />
+		</field>
+		<field name="orderDate" title="Reservation Date">
+			<date-find />
+		</field>
+		<field name="submitButton" title="${uiLabelMap.CommonSearch}"
+			widget-style="smallSubmit">
+			<submit button-type="button" />
+		</field>
+	</form>
+
+	<form name="ListReserveOrders" target="searchSOForSwapTar" type="list"
+		list-name="listIt" odd-row-style="alternate-row" header-row-style="header-row-2"
+		default-table-style="basic-table hover-bar" paginate-target=""
+		use-row-submit="true" separate-columns="true">
+		<actions>
+			<set field="orderTypeId" value="RESERVE_ORDER" />
+			<service service-name="performFind" result-map="result"
+				result-map-list="listIt">
+				<field-map field-name="inputFields" from-field="parameters" />
+				<field-map field-name="entityName" value="ReserveOrderHeader" />
+				<field-map field-name="noConditionFind" value="Y" />
+			</service>
+		</actions>
+		<field name="orderId" widget-style="buttontext" title="Reserve Order ID">
+			<hyperlink target="orderItemEntry" description="${orderId}"
+				also-hidden="true">
+				<parameter param-name="orderId" from-field="orderId" />
+			</hyperlink>
+		</field>
+
+		<field name="orderName">
+			<display></display>
+		</field>
+		<field name="swap" widget-style="buttontext">
+			<hyperlink target="searchSOForSwap" description="Swap"
+				also-hidden="true">
+				<parameter param-name="reserveOrderId" from-field="orderId" />
+			</hyperlink>
+		</field>
+	</form>
+	<form name="EditReserveOrderHeader" target="createResvOrderHeader"
+		type="single">
+		<actions>
+			<entity-one entity-name="StatusItem" value-field="currentStatus"
+				auto-field-map="false">
+				<field-map field-name="statusId" from-field="orderHeader.statusId" />
+			</entity-one>
+		</actions>
+
+		<field name="orderName">
+			<text></text>
+		</field>
+
+		<field name="orderTypeId">
+			<hidden value="RESERVE_ORDER" />
+		</field>
+
+		<field name="statusId" use-when="orderHeader==null" title="${uiLabelMap.CommonStatus}">
+			<hidden value="ORDER_CREATED" />
+		</field>
+		<field name="create" title="${uiLabelMap.CommonCreate}"
+			widget-style="smallSubmit">
+			<submit button-type="button" />
+		</field>
+
+	</form>
+	<form name="ReserveOrderHeaderView" target="" type="single"
+		default-map-name="reserveOrderHeader">
+		<field name="orderId" position="1" title="Reserve Order Id">
+			<display></display>
+		</field>
+		<field name="orderName" position="2" title="Reserve Order Name">
+			<display></display>
+		</field>
+		<field name="statusId" position="1">
+			<display></display>
+		</field>
+	</form>
+	<form name="AddOrderItemForm" target="addOrderItem" type="single">
+		<field name="orderId" title="Reserve Order Id">
+			<display also-hidden="true" />
+		</field>
+		<field name="productId" title="SKU Id">
+			<lookup target-form-name="LookupProduct"></lookup>
+		</field>
+		<field name="quantity">
+			<text></text>
+		</field>
+		<field name="submitButton" title="${uiLabelMap.CommonAdd}"
+			widget-style="smallSubmit" use-when="isNotComplete">
+			<submit button-type="button" />
+		</field>
+		<field name="info"
+			tooltip="Cannot add any more Product as it is in Complete State."
+			use-when="!isNotComplete">
+			<display></display>
+		</field>
+	</form>
+	<form name="ListOrderItemForm" target="updateOrderItem" type="multi"
+		odd-row-style="alternate-row" header-row-style="header-row-2"
+		default-table-style="basic-table hover-bar" paginate-target=""
+		use-row-submit="true" separate-columns="true">
+		<actions>
+			<entity-condition entity-name="ReserveOrderItem">
+				<condition-expr field-name="orderId" from-field="parameters.orderId" />
+			</entity-condition>
+		</actions>
+		<field name="orderId" title="Reserve Order Id">
+			<display also-hidden="true"></display>
+		</field>
+		<field name="orderItemSeqId">
+			<hidden />
+		</field>
+		<field name="quantityReleased">
+			<display></display>
+		</field>
+		<field name="statusId">
+			<display></display>
+		</field>
+		<field name="productId" use-when="isNotComplete">
+			<lookup target-form-name="LookupProduct"></lookup>
+		</field>
+		<field name="quantity" use-when="isNotComplete">
+			<text></text>
+		</field>
+		<field name="_rowSubmit" title="Select All">
+			<check></check>
+		</field>
+		<field name="submitButton" title="${uiLabelMap.CommonUpdate}"
+			widget-style="smallSubmit" use-when="isNotComplete">
+			<submit button-type="button" />
+		</field>
+		<field name="removeButton" title="${uiLabelMap.CommonRemove}"
+			widget-style="smallSubmit" use-when="isNotComplete">
+			<hyperlink target="removeOrderItem" description="Remove"
+				confirmation-message="Do you want to remove it?">
+				<parameter param-name="orderItemSeqId" from-field="orderItemSeqId" />
+				<parameter param-name="orderId" from-field="orderId" />
+			</hyperlink>
+		</field>
+	</form>
+	<form name="ListSalesOrders" type="list" target="checkForRelease"
+		title="" list-name="listIt" odd-row-style="alternate-row"
+		use-row-submit="true" header-row-style="header-row-2"
+		default-table-style="basic-table hover-bar" paginate-target=""
+		separate-columns="true">
+		<actions>
+			<set field="parameters.roleTypeId" value="END_USER_CUSTOMER" />
+			<set field="parameters.statusId" value="ORDER_APPROVED" type="String" />
+			<set field="parameters.orderTypeId" value="SALES_ORDER" type="String" />
+			<set field="parameters.divisionId" value="${divisionId}" />
+			<service service-name="performFind" result-map="result"
+				result-map-list="listIt">
+				<field-map field-name="inputFields" from-field="parameters" />
+				<field-map field-name="entityName" value="OrderHeaderAndRoles" />
+				<field-map field-name="viewIndex" from-field="viewIndex" />
+				<field-map field-name="viewSize" from-field="viewSize" />
+				<field-map field-name="noConditionFind" value="Y" />
+			</service>
+		</actions>
+		<field name="partyId" title="Customer">
+			<display-entity entity-name="PartyGroup" description="${groupName}"
+				key-field-name="partyId">
+			</display-entity>
+		</field>
+		<field name="orderId" widget-style="buttontext">
+			<hyperlink target="/ordermgr/control/orderview"
+				also-hidden="true" description="${orderId}" target-type="inter-app"
+				target-window="_new">
+				<parameter param-name="orderId" from-field="orderId" />
+			</hyperlink>
+		</field>
+		<field name="reserveOrderId">
+			<hidden value="${parameters.reserveOrderId}" />
+		</field>
+		<field name="priority">
+			<display />
+		</field>
+		<field name="entryDate">
+			<display />
+		</field>
+		<field name="orderDate" title="Due Date">
+			<display />
+		</field>
+		<field name="locCodeId">
+			<display />
+		</field>
+		<field name="shipmentId">
+			<hidden value="${parameters.shipmentId}" />
+		</field>
+		<field name="submitButton" title="Check To Release">
+			<submit button-type="button" />
+		</field>
+	</form>
+	<form name="ViewReserveOrder" type="list" target=""
+		use-row-submit="true" header-row-style="header-row-2"
+		default-table-style="basic-table hover-bar" paginate-target=""
+		separate-columns="true">
+		<actions>
+			<entity-condition entity-name="ReserveOrderItem">
+				<condition-expr field-name="orderId"
+					from-field="parameters.reserveOrderId" />
+			</entity-condition>
+		</actions>
+		<field name="orderId" title="Reserve Order Id">
+			<display></display>
+		</field>
+
+		<field name="productId" title="SKU Id">
+			<display></display>
+		</field>
+
+		<field name="quantity" title="Quantity Reserved">
+			<display></display>
+		</field>
+		<field name="quantityReleased" title="Quantity Released">
+			<display></display>
+		</field>
+	</form>
+	<form name="ConfirmRelease" target="releaseInventories" type="multi"
+		title="" odd-row-style="alternate-row" use-row-submit="true"
+		header-row-style="header-row-2" default-table-style="basic-table hover-bar"
+		paginate-target="" separate-columns="true">
+		<actions>
+			<entity-condition entity-name="OrderItem">
+				<condition-expr field-name="orderId" from-field="parameters.orderId" />
+			</entity-condition>
+		</actions>
+		<row-actions>
+			<set field="reserveOrderId" from-field="parameters.reserveOrderId" />
+			<service service-name="getReserveOrderItemDetails"></service>
+			<service service-name="getReserveOrderItemBalQty"></service>
+		</row-actions>
+
+		<field name="_rowSubmit" title="Select All">
+			<check></check>
+		</field>
+		<field name="reserveOrderId">
+			<display also-hidden="true" description="${parameters.reserveOrderId}"></display>
+		</field>
+		<field name="orderId">
+			<hyperlink target="/ordermgr/control/orderview"
+				also-hidden="true" description="${orderId}" target-type="inter-app"
+				target-window="_new">
+				<parameter param-name="orderId" from-field="orderId" />
+			</hyperlink>
+		</field>
+
+		<field name="productId">
+			<display also-hidden="true"></display>
+		</field>
+		<field name="quantity" title="Quantity To Reserve">
+			<display also-hidden="true" description="${quantityToReserve}"></display>
+		</field>
+		<field name="atp" title="Available To Reserve">
+			<display></display>
+		</field>
+		<field name="confirm">
+			<submit />
+		</field>
+		<field name="reserveOrderItemSeqId">
+			<hidden />
+		</field>
+		<field name="orderItemSeqId">
+			<hidden />
+		</field>
+	</form>
+	<form name="ReserveOrderItemInvResList" target="" type="list"
+		title="" odd-row-style="alternate-row" use-row-submit="true"
+		header-row-style="header-row-2" default-table-style="basic-table hover-bar"
+		paginate-target="" separate-columns="true" list-name="listIt">
+		<actions>
+			<set field="reserveOrderId" value="${parameters.orderId}"></set>
+			<service service-name="performFind">
+				<field-map field-name="inputFields" from-field="parameters" />
+				<field-map field-name="entityName" value="ReserveOrderItemInvRes" />
+				<field-map field-name="noConditionFind" value="N" />
+			</service>
+		</actions>
+		<field name="reserveOrderId">
+			<display></display>
+		</field>
+
+		<field name="reserveOrderItemSeqId">
+			<display></display>
+		</field>
+		<field name="inventoryItemId">
+			<display></display>
+		</field>
+		<field name="quantity" title="Quantity Reserved">
+			<display></display>
+		</field>
+	</form>
+
+	<form name="ReserveOrderDetailList" type="list" target=""
+		odd-row-style="alternate-row" use-row-submit="true" header-row-style="header-row-2"
+		default-table-style="basic-table hover-bar" paginate-target=""
+		separate-columns="true">
+		<actions>
+			<!--
+				<entity-condition
+				entity-name="ReserveOrderDetails">ReserveOrderItemInvRes
+			-->
+			<entity-condition entity-name="ReserveOrderDetails">
+				<condition-expr field-name="reserveOrderId"
+					from-field="parameters.orderId" />
+			</entity-condition>
+		</actions>
+
+		<field name="reserveOrderId">
+			<display also-hidden="true" />
+		</field>
+		<field name="reserveOrderItemSeqId">
+			<hidden />
+		</field>
+		<field name="orderId">
+			<hyperlink target="/ordermgr/control/orderview"
+				also-hidden="true" description="${orderId}" target-type="inter-app"
+				target-window="_new">
+				<parameter param-name="orderId" from-field="orderId" />
+			</hyperlink>
+		</field>
+		<field name="orderItemSeqId">
+			<hidden />
+		</field>
+		<field name="productId" title="SKU Id">
+			<display />
+		</field>
+		<field name="quantity" title="Quantity Allocated">
+			<text />
+		</field>
+	</form>
+	<form name="OISGIRForm" target="updateReserveOrderInvRes" type="list"
+		title="" odd-row-style="alternate-row" use-row-submit="true"
+		header-row-style="header-row-2" default-table-style="basic-table hover-bar"
+		paginate-target="" separate-columns="true">
+		<actions>
+			<entity-condition entity-name="OrderItemShipGrpInvRes">
+				<condition-expr field-name="orderId" from-field="parameters.orderId" />
+			</entity-condition>
+		</actions>
+
+		<row-actions>
+			<entity-one entity-name="InventoryItem">
+				<field-map field-name="inventoryItemId" />
+			</entity-one>
+		</row-actions>
+		<field name="orderId">
+			<hyperlink target="/ordermgr/control/orderview"
+				also-hidden="true" description="${orderId}" target-type="inter-app"
+				target-window="_new">
+				<parameter param-name="orderId" from-field="orderId" />
+			</hyperlink>
+		</field>
+		<field name="shipGroupSeqId">
+			<hidden />
+		</field>
+		<field name="orderItemSeqId">
+			<hidden />
+		</field>
+		<field name="inventoryItemId">
+			<hidden />
+		</field>
+		<field name="reservedDatetime">
+			<display />
+		</field>
+		<field name="productId">
+			<display></display>
+		</field>
+		<field name="quantity">
+			<display />
+		</field>
+	</form>
+	<form name="NewBundlingTxn1" target="createProductBundleTxn" type="single">
+
+		<actions>
+			<entity-one entity-name="ProductBundle"></entity-one>
+		</actions>
+		<field name="productBundleId">
+			<display also-hidden="true"></display>
+		</field>
+		<field name="makeSku" title="Make Sku">
+			<display also-hidden="true"></display>
+		</field>
+		<field name="productId" title="SKU Id">
+			<hidden value="${makeSku}" />
+		</field>
+		<field name="quantityRequired" title="Quantity To Make">
+			<display></display>
+		</field>
+		<field name="pendingQuantity" title="Pending Quantity">
+			<display></display>
+		</field>
+
+		<field name="toLocationId" title="Putaway Location">
+			<lookup target-form-name="LookUpLocation"></lookup>
+		</field>
+		<field name="tagCode">
+			<display also-hidden="true"></display>
+		</field>
+		<field name="quantityToBundle" title="Quantity Now"
+			tooltip="Quantity that is required in this transaction.">
+			<text default-value="0"></text>
+		</field>
+		<field name="palletize">
+			<check></check>
+		</field>
+		<field name="Continue" event="onclick"
+			action="javascript:
+			   var qtyBundle= parseInt(document.NewBundlingTxn1.quantityToBundle.value);
+			   var qtyBundleRaw = document.NewBundlingTxn1.pendingQuantity.value;
+			   var bundle = true;
+			   var qtyPending = 0;
+
+			   if (qtyBundleRaw.indexOf(',') != -1)
+			   {
+					qtyBundleRaw = qtyBundleRaw.replace(/,/g,'');
+					qtyPending= parseInt(qtyBundleRaw);
+			   }
+			   else 
+			   {
+			   	qtyPending = parseInt(qtyBundleRaw);
+			   }
+
+			   if (isNaN(qtyBundle))
+			    {
+				alert('Invalid Value Specified. Only numeric value is allowed.');
+				bundle = false;
+				document.NewBundlingTxn1.quantityToBundle.focus();
+			    }
+
+			    if( qtyBundle &gt; qtyPending)
+				{
+					alert('The Quantity to be Bundled should be less than Quantity to make or there is no pending quantity left to bundle.');
+					bundle= false;
+					document.NewBundlingTxn1.quantityToBundle.focus();
+				}
+				return bundle;">
+
+			<submit />
+		</field>
+	</form>
+	<form name="FinalizeForm" target="SaveBundlingTxn" type="single">
+
+
+		<field name="productBundleTxnId">
+			<text default-value="${productTxn.productBundleTxnId}"></text>
+		</field>
+		<field name="palletize">
+			<hidden value="${productTxn.palletize}" />
+		</field>
+		<field name="toLocationId">
+			<hidden value="${productTxn.toLocationId}" />
+		</field>
+		<field name="palletizeSource">
+			<hidden value="BUNDLING" />
+		</field>
+		<field name="quantityToBundle">
+			<text default-value="${productTxn.quantityToBundle}"></text>
+		</field>
+		<field name="submit" title="Finalize Bundling ">
+			<submit />
+		</field>
+
+	</form>
+
+	<form name="ListProductAssoc" target="createProductBundleTxnDetail"
+		type="list" odd-row-style="alternate-row" list-name="listIt"
+		default-table-style="basic-table hover-bar" separate-columns="true">
+		<actions>
+			<entity-condition entity-name="ProductAssoc" list="listIt">
+				<condition-expr field-name="productId" from-field="bundle.makeSku" />
+			</entity-condition>
+			<set field="productBundleTxnId" from-field="productTxn.productBundleTxnId" />
+		</actions>
+		<row-actions>
+			<set field="quantityToBundle" value="${productTxn.quantityToBundle}"
+				type="BigDecimal" />
+			<set field="quantityToBundle" value="${bsh:quantityToBundle.multiply(scrapFactor);}" />
+		</row-actions>
+		<field name="productBundleTxnId" field-name="productBundleTxnId">
+			<display also-hidden="true" description="${productTxn.productBundleTxnId}"></display>
+		</field>
+		<field name="productId" title="SKU Id">
+			<display></display>
+		</field>
+		<field name="productIdTo" title="SKU Id To">
+			<display></display>
+		</field>
+		<field name="quantityToBundle">
+			<display></display>
+		</field>
+		<field name="inventoryItemId">
+
+			<lookup target-form-name="LookupInventoryItem?productId=${productIdTo}"></lookup>
+		</field>
+		<field name="add">
+			<submit />
+		</field>
+	</form>
+
+	<form name="ListProductBundleTxnDetail" target="" type="list"
+		default-entity-name="ProductBundleTxnDetail" odd-row-style="alternate-row"
+		list-name="listIt" default-table-style="basic-table hover-bar"
+		separate-columns="true">
+		<actions>
+			<entity-condition entity-name="ProductBundleTxnDetail">
+				<condition-expr field-name="productBundleTxnId"
+					from-field="parameters.productBundleTxnId" />
+			</entity-condition>
+		</actions>
+
+		<auto-fields-entity entity-name="ProductBundleTxnDetail"
+			default-field-type="display" />
+	</form>
+	<form name="LookupLocationForm" target="LookUpLocation" title=""
+		type="single" header-row-style="header-row" default-table-style="basic-table">
+		<field name="locationSeqId" title="Location">
+			<text-find />
+		</field>
+		<field name="locationEnumTypeId" title="Location">
+			<hidden value="${parameters.locationTypeEnumId}" />
+		</field>
+		<field name="buildingId" title="Building ID">
+			<text-find />
+		</field>
+		<field name="areaId" title="Depot ID">
+			<text-find />
+		</field>
+		<field name="zoneId" title="Zone ID">
+			<text-find />
+		</field>
+		<field name="storageId" title="Storage Id">
+			<text-find />
+		</field>
+		<field name="submit">
+			<submit />
+		</field>
+	</form>
+	<form name="LookupLocationListForm" list-name="list" title=""
+		type="list" paginate-target="" odd-row-style="alternate-row"
+		default-table-style="basic-table" view-size="20" override-list-size="${listSize}">
+		<actions>
+			<service service-name="performFindList">
+				<field-map field-name="inputFields" from-field="parameters" />
+				<field-map field-name="entityName" value="FacilityLocation" />
+				<field-map field-name="viewIndex" from-field="viewIndex" />
+				<field-map field-name="viewSize" from-field="viewSize" />
+				<field-map field-name="noConditionFind" value="Y" />
+			</service>
+		</actions>
+		<field name="locationSeqId" title="Location">
+			<hyperlink also-hidden="false" target-type="plain"
+				description="${locationSeqId}" target="javascript:set_value('${locationSeqId}')" />
+		</field>
+		<field name="buildingId" title="Building ID">
+			<display />
+		</field>
+		<field name="areaId" title="Depot ID">
+			<display />
+		</field>
+		<field name="zoneId" title="Zone ID">
+			<display />
+		</field>
+		<field name="storageId" title="Storage ID">
+			<display />
+		</field>
+	</form>
+	<form name="LookupInventoryForm" target="LookupInventory" title=""
+		type="single">
+		<field name="inventoryItemId" title="Inventory Item ID">
+			<text-find />
+		</field>
+		<field name="productId" title="Product ID">
+			<text-find />
+		</field>
+		<field name="partyId" title="Party ID">
+			<text-find />
+		</field>
+		<field name="expireDate" title="Expiry Date">
+			<date-find />
+		</field>
+		<field name="locationSeqId" title="Location">
+			<text-find />
+		</field>
+		<field name="availableToPromiseTotal_fld0_value">
+			<hidden value="0" />
+		</field>
+		<field name="availableToPromiseTotal_fld0_op">
+			<hidden value="greaterThan" />
+		</field>
+		<field name="quantityOnHandTotal_fld0_value">
+			<hidden value="0" />
+		</field>
+		<field name="quantityOnHandTotal_fld0_op">
+			<hidden value="greaterThan" />
+		</field>
+		<field name="noConditionFind">
+			<hidden value="Y" />
+		</field>
+		<field name="submitButton" title="${uiLabelMap.CommonLookup}"
+			widget-style="smallSubmit">
+			<submit button-type="button" />
+		</field>
+	</form>
+<form name="LookupInventoryListForm" list-name="list" target="" title="" type="list" paginate-target="LookupInventory"
+		odd-row-style="alternate-row" header-row-style="header-row-2" default-table-style="basic-table hover-bar"
+		override-list-size="${listSize}">
+		<actions>
+			<service service-name="performFindList">
+				<field-map field-name="inputFields" from-field="parameters" />
+				<field-map field-name="entityName" value="InventoryItem" />
+				<field-map field-name="noConditionFind" value="Y" />
+			</service>
+		</actions>
+		<field name="inventoryItemId" title="Inventory Item ID">
+			<hyperlink also-hidden="false" target-type="plain" description="${inventoryItemId}"
+				target="javascript:set_value('${inventoryItemId}')" />
+		</field>
+		<field name="productId" title="Product ID">
+			<display />
+		</field>
+		<field name="partyId" title="Party ID">
+			<display />
+		</field>
+		<field name="expireDate" title="Expiry Date">
+			<display />
+		</field>
+		<field name="quantityOnHandTotal" title=" Quantity Remaining ">
+			<display />
+		</field>
+		<field name="locationSeqId" title="Location">
+			<display />
+		</field>
+	</form>
+
+	<!-- End Stock reservations forms -->
+
+</forms>

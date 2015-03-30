@@ -1,0 +1,393 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<entitymodel xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="http://ofbiz.apache.org/dtds/entitymodel.xsd">
+	<author>Pradyumna</author>
+	<version>1.0</version>
+
+	<view-entity entity-name="PerfReviewTemplateToSectionView"
+		package-name="org.ofbiz.humanresext.appraisal" never-cache="true"
+		title="Performance Review Template With Section Details">
+		<member-entity entity-alias="PerfReviewTemplate"
+			entity-name="PerfReviewTemplate" />
+		<member-entity entity-alias="PerfTemplateSection"
+			entity-name="PerfTemplateSection" />
+		<member-entity entity-alias="PerfReviewSection"
+			entity-name="PerfReviewSection" />
+		<alias-all entity-alias="PerfReviewTemplate" />
+		<alias-all entity-alias="PerfTemplateSection">
+			<exclude field="fromDate" />
+			<exclude field="toDate" />
+		</alias-all>
+		<alias-all entity-alias="PerfReviewSection" />
+		<view-link entity-alias="PerfReviewTemplate"
+			rel-entity-alias="PerfTemplateSection" rel-optional="true">
+			<key-map field-name="perfTemplateId" rel-field-name="perfTemplateId" />
+			<key-map field-name="perfTemplateId" rel-field-name="perfTemplateId" />
+		</view-link>
+		<view-link entity-alias="PerfTemplateSection"
+			rel-entity-alias="PerfReviewSection" rel-optional="true">
+			<key-map field-name="perfReviewSectionId" rel-field-name="perfReviewSectionId" />
+			<key-map field-name="perfReviewSectionId" rel-field-name="perfReviewSectionId" />
+		</view-link>
+	</view-entity>
+
+	<view-entity entity-name="LeaveTypeCountView" package-name="org.ofbiz.humanresext.leave">
+		<member-entity entity-alias="EL" entity-name="EmplLeave" />
+		<alias entity-alias="EL" name="partyId" field="partyId"
+			group-by="true" />
+		<alias entity-alias="EL" name="mgrPositionId" field="mgrPositionId" />
+		<alias entity-alias="EL" name="leaveTypeId" field="leaveTypeId"
+			group-by="true" />
+		<alias entity-alias="EL" name="leaveStatusId" field="leaveStatusId" />
+		<alias entity-alias="EL" name="sum" field="paidDays" function="sum" />
+	</view-entity>
+
+	<view-entity entity-name="PositionFulfillmentView"
+		package-name="org.ofbiz.humanresext">
+		<description>
+			This for showing a aggregated view of a position its fulfilment data and the position
+			type
+		</description>
+		<member-entity entity-alias="EP" entity-name="EmplPosition"></member-entity>
+		<member-entity entity-alias="EPF" entity-name="EmplPositionFulfillment"></member-entity>
+		<member-entity entity-alias="EPT" entity-name="EmplPositionType"></member-entity>
+		<alias name="departmentId" field="partyId" entity-alias="EPF" />
+		<alias name="statusId" field="statusId" entity-alias="EP" />
+		<alias name="emplPositionId" field="emplPositionId"
+			entity-alias="EPF" />
+		<alias name="partyId" field="partyId" entity-alias="EP" />
+		<alias name="positionType" field="emplPositionTypeId"
+			entity-alias="EPT" />
+		<alias name="positionDesc" field="description" entity-alias="EPT" />
+		<view-link rel-entity-alias="EPF" entity-alias="EP">
+			<key-map field-name="emplPositionId" />
+		</view-link>
+		<view-link rel-entity-alias="EPT" entity-alias="EP">
+			<key-map field-name="emplPositionTypeId" />
+		</view-link>
+	</view-entity>
+
+	<view-entity entity-name="PerfPositionAndDepartmentView"
+		package-name="org.ofbiz.humanresext">
+		<member-entity entity-alias="EPR" entity-name="EmplPerfReview">
+			<description>Employee Performance Review Entity</description>
+		</member-entity>
+		<member-entity entity-alias="PFV" entity-name="PositionFulfillmentView"></member-entity>
+		<alias-all entity-alias="EPR"></alias-all>
+		<alias-all entity-alias="PFV"></alias-all>
+		<view-link rel-entity-alias="PFV" entity-alias="EPR">
+			<key-map field-name="partyId" />
+		</view-link>
+	</view-entity>
+
+	<view-entity entity-name="PerfSectionAndAttribute"
+		package-name="org.ofbiz.humanresext">
+
+		<member-entity entity-alias="EP" entity-name="EmplPerfReview" />
+		<member-entity entity-alias="EPRA" entity-name="EmplPerfReviewAttribute" />
+		<member-entity entity-alias="PRS" entity-name="PerfReviewSection" />
+		<member-entity entity-alias="PRSA" entity-name="PerfReviewSectionAttribute" />
+		<member-entity entity-alias="PTS" entity-name="PerfTemplateSection" />
+
+		<alias name="statusType" field="statusType" entity-alias="EP" />
+		<alias name="emplPerfReviewId" entity-alias="EP" group-by="true" />
+		<alias name="perfReviewId" entity-alias="EP" group-by="true" />
+		<alias name="partyId" entity-alias="EP" group-by="true" />
+		<alias name="perfReviewSectionId" entity-alias="EPRA" group-by="true" />
+		<alias name="attributeId" entity-alias="EPRA" group-by="true" />
+		<alias name="selfRating" entity-alias="EPRA" field="selfRating"></alias>
+		<alias name="selfComment" entity-alias="EPRA" field="selfComment"></alias>
+		<alias name="attributeName" entity-alias="PRSA" field="attributeName"></alias>
+		<alias name="attributeDesc" entity-alias="PRSA" field="description"></alias>
+		<alias name="sectionName" entity-alias="PRS" field="sectionName"></alias>
+		<alias name="sectionDesc" entity-alias="PRS" field="description"></alias>
+		<alias name="weightage" entity-alias="PTS" field="weightage"></alias>
+
+		<view-link rel-entity-alias="EPRA" entity-alias="EP">
+			<key-map field-name="emplPerfReviewId" />
+		</view-link>
+
+		<view-link rel-entity-alias="PRS" entity-alias="EPRA">
+			<key-map field-name="perfReviewSectionId" />
+		</view-link>
+
+		<view-link rel-entity-alias="PRSA" entity-alias="EPRA"
+			rel-optional="true">
+			<key-map field-name="perfReviewSectionId" />
+			<key-map field-name="attributeId" />
+		</view-link>
+
+		<view-link rel-entity-alias="PTS" entity-alias="PRS">
+			<key-map field-name="perfReviewSectionId" />
+		</view-link>
+	</view-entity>
+
+	<view-entity entity-name="PerfSectionAndAttributeForReviewer"
+		package-name="">
+
+		<member-entity entity-alias="EP" entity-name="EmplPerfReview" />
+		<member-entity entity-alias="EPRA" entity-name="EmplPerfReviewAttribute" />
+		<member-entity entity-alias="EPR" entity-name="EmplPerfReviewers" />
+		
+		<member-entity entity-alias="PRS" entity-name="PerfReviewSection" />
+		<member-entity entity-alias="PRSA" entity-name="PerfReviewSectionAttribute" />
+		<member-entity entity-alias="PTS" entity-name="PerfTemplateSection" />
+
+		<alias name="emplPerfReviewId" entity-alias="EP"/>
+		<alias name="partyId" entity-alias="EP"  />
+		<alias name="comments" entity-alias="EP"  />
+		<alias name="feedback" entity-alias="EP" />
+		<alias name="overallRating" entity-alias="EP"  />
+		<alias name="perfReviewSectionId" entity-alias="EPRA" />
+		<alias name="attributeId" entity-alias="EPRA" />
+		<alias name="selfRating" entity-alias="EPRA" field="selfRating"></alias>
+		<alias name="selfComment" entity-alias="EPRA" field="selfComment"></alias>
+		<alias name="attributeName" entity-alias="PRSA" field="attributeName"></alias>
+		<alias name="attributeDesc" entity-alias="PRSA" field="description"></alias>
+		<alias name="sectionName" entity-alias="PRS" field="sectionName"></alias>
+		<alias name="sectionDesc" entity-alias="PRS" field="description"></alias>
+		<alias name="weightage" entity-alias="PTS" field="weightage"></alias>
+		<alias name="reviewerId" entity-alias="EPR" field="reviewerId"  />
+		<alias name="rating" entity-alias="EPR" field="rating"></alias>
+		<alias name="reviewerComment" entity-alias="EPR" field="reviewerComment"></alias>
+		
+		<view-link rel-entity-alias="EPR" entity-alias="EP" rel-optional="false">
+			<key-map field-name="emplPerfReviewId" />
+		</view-link>
+		
+		<!-- <view-link rel-entity-alias="EPRA" entity-alias="EP" rel-optional="false">
+			<key-map field-name="emplPerfReviewId" />
+		</view-link> -->
+		
+		<view-link rel-entity-alias="EPRA" entity-alias="EPR" rel-optional="false"> 
+			<key-map field-name="perfReviewSectionId" /> 
+			<key-map field-name="attributeId" />
+			<!-- <key-map field-name="emplPerfReviewId" /> -->
+		</view-link>
+
+		<view-link rel-entity-alias="PRS" entity-alias="EPRA" rel-optional="false">
+			<key-map field-name="perfReviewSectionId" />
+		</view-link>
+
+		<view-link rel-entity-alias="PRSA" entity-alias="EPRA" rel-optional="false" >
+			<key-map field-name="perfReviewSectionId" />
+			<key-map field-name="attributeId" />
+		</view-link>
+
+		<view-link rel-entity-alias="PTS" entity-alias="PRS" rel-optional="false">
+			<key-map field-name="perfReviewSectionId" />
+		</view-link>
+
+	</view-entity>
+
+	<view-entity entity-name="SectionWeightageRating"
+		package-name="">
+
+		<member-entity entity-alias="EP" entity-name="EmplPerfReview" />
+		<member-entity entity-alias="EPRA" entity-name="EmplPerfReviewAttribute" />
+		<member-entity entity-alias="PRS" entity-name="PerfReviewSection" />
+		<member-entity entity-alias="PTS" entity-name="PerfTemplateSection" />
+		<member-entity entity-alias="EPR" entity-name="EmplPerfReviewers" />
+
+		<alias name="emplPerfReviewId" entity-alias="EP" group-by="true" />
+		<alias name="partyId" entity-alias="EP" group-by="true" />
+		<alias name="reviewerId" entity-alias="EPR" field="reviewerId"
+			group-by="true" />
+		<alias name="perfReviewSectionId" entity-alias="EPRA" group-by="true" />
+		<alias name="selfRating" entity-alias="EPRA" field="selfRating"
+			function="sum"></alias>
+		<alias name="weightage" entity-alias="PTS" field="weightage"></alias>
+		<alias name="mgrRating" entity-alias="EPR" field="rating"
+			function="sum"></alias>
+		<view-link rel-entity-alias="EPRA" entity-alias="EP">
+			<key-map field-name="emplPerfReviewId" />
+		</view-link>
+
+		<view-link rel-entity-alias="PRS" entity-alias="EPRA">
+			<key-map field-name="perfReviewSectionId" />
+		</view-link>
+
+		<view-link rel-entity-alias="PTS" entity-alias="PRS">
+			<key-map field-name="perfReviewSectionId" />
+		</view-link>
+
+		<view-link rel-entity-alias="EPR" entity-alias="EPRA"
+			rel-optional="true">
+			<key-map field-name="perfReviewSectionId" />
+		</view-link>
+
+	</view-entity>
+
+	<view-entity entity-name="EmplPerfReviewManagerView"
+		package-name="com.ofbiz.humanresext">
+		<description> This is for joining the Reviewer data with the Employee Performance Review</description>
+
+		<member-entity entity-alias="EPRS" entity-name="EmplPerfReviewers"></member-entity>
+		<member-entity entity-alias="EPR" entity-name="EmplPerfReview"></member-entity>
+
+		<alias name="emplPerfReviewId" field="emplPerfReviewId"
+			entity-alias="EPR" group-by="true" />
+		<alias name="reviewerId" field="reviewerId" entity-alias="EPRS"
+			group-by="true" />
+		<alias name="statusType" field="statusType" entity-alias="EPRS" />
+		<alias name="perfReviewId" field="perfReviewId" entity-alias="EPR" />
+		<alias name="partyId" field="partyId" entity-alias="EPR" />
+		<alias name="lastUpdatedStamp" field="lastUpdatedStamp"
+			entity-alias="EPRS" />
+		<view-link rel-entity-alias="EPRS" entity-alias="EPR">
+			<key-map field-name="emplPerfReviewId" />
+		</view-link>
+	</view-entity>
+	
+	<view-entity entity-name="StatusItemView" package-name="com.ofbiz.humanresext">
+		<member-entity entity-alias="SI" entity-name="StatusItem"></member-entity>
+		
+		<alias name="statusType" field="statusId" entity-alias="SI"></alias>
+		
+		<alias name="statusDescription" field="description" entity-alias="SI"></alias>
+	</view-entity>
+
+	<view-entity entity-name="EmplPerfReviewerView"
+		package-name="com.ofbiz.humanresext">
+		<description> This is for joining the Reviewer data with the Employee Performance Review</description>
+
+		<member-entity entity-alias="EPR" entity-name="EmplPerfReview"></member-entity>
+		<member-entity entity-alias="EPRS" entity-name="EmplPerfReviewers"></member-entity>
+		<member-entity entity-alias="SI" entity-name="StatusItemView"></member-entity>
+		
+
+		<alias name="emplPerfReviewId" field="emplPerfReviewId" entity-alias="EPR" group-by="true" />
+		
+		<alias name="reviewerId" field="reviewerId" entity-alias="EPRS" group-by="true" />
+		<alias name="statusType" field="statusType" entity-alias="EPR" />
+		<alias name="overallRating" field="overallRating" entity-alias="EPR" />
+		<alias name="perfReviewId" field="perfReviewId" entity-alias="EPR" group-by="true" />
+		<alias name="partyId" field="partyId" entity-alias="EPR" group-by="true"/>
+		<alias name="statusDescription" field="statusDescription" entity-alias="SI" />
+		
+		<view-link rel-entity-alias="EPRS" entity-alias="EPR">
+			<key-map field-name="emplPerfReviewId" />
+		</view-link>
+		
+		<view-link rel-entity-alias="SI" entity-alias="EPR">
+			<key-map field-name="statusType"/>
+		</view-link>
+		
+	</view-entity>
+	
+	<view-entity entity-name="EmplPerfReviewView" package-name="com.ofbiz.humanresext">
+		<member-entity entity-alias="EPR" entity-name="EmplPerfReview"></member-entity>
+		
+		<alias name="emplPerfReviewId" field="emplPerfReviewId" entity-alias="EPR"></alias>
+		<alias name="partyId" field="partyId" entity-alias="EPR"></alias>
+		<alias name="perfReviewId" field="perfReviewId" entity-alias="EPR"></alias>
+		
+		<alias name="statusId" field="statusType" entity-alias="EPR"></alias>
+		
+		<alias name="overallRating" field="overallRating" entity-alias="EPR"></alias>
+		<alias name="comments" field="comments" entity-alias="EPR"></alias>
+		<alias name="feedback" field="feedback" entity-alias="EPR"></alias>
+	</view-entity>
+	
+	<view-entity entity-name="SearchEmplPerfReviewerView"
+		package-name="com.ofbiz.humanresext">
+
+		<member-entity entity-alias="EPR" entity-name="EmplPerfReviewView"></member-entity>
+		<member-entity entity-alias="PR" entity-name="PerfReviews"></member-entity>
+		<member-entity entity-alias="SI" entity-name="StatusItem"></member-entity>
+		
+		<alias-all entity-alias="EPR"/>
+		<alias-all entity-alias="PR"/>
+		<alias-all entity-alias="SI"/>
+		
+		<view-link rel-entity-alias="EPR" entity-alias="PR">
+			<key-map field-name="perfReviewId" />
+		</view-link>
+		<view-link rel-entity-alias="SI" entity-alias="EPR">
+			<key-map field-name="statusId"/>
+		</view-link>
+	</view-entity>
+
+	<view-entity entity-name="EmplPerfRevieweByDepartment"
+		package-name="com.ofbiz.humanresext">
+		<member-entity entity-alias="EPR" entity-name="EmplPerfReview"></member-entity>
+		<member-entity entity-alias="EPRS" entity-name="EmplPerfReviewers"></member-entity>
+		<member-entity entity-alias="EPRA" entity-name="EmplPerfReviewAttribute"></member-entity>
+		
+		<member-entity entity-alias="EP" entity-name="EmplPosition"></member-entity>
+		<member-entity entity-alias="EPF" entity-name="EmplPositionFulfillment"></member-entity>
+		<member-entity entity-alias="PR" entity-name="Person"></member-entity>
+
+		<alias name="emplPerfReviewId" field="emplPerfReviewId" entity-alias="EPR" />
+		<alias name="partyId" field="partyId" entity-alias="EPR" group-by="true" />
+		<alias name="perfReviewId" field="perfReviewId" entity-alias="EPR" />
+		<alias name="overallRating" field="overallRating" entity-alias="EPR" />
+		<alias name="statusType" field="statusType" entity-alias="EPR" />
+		<alias name="selfRating" field="selfRating" entity-alias="EPRA" />
+		<alias name="managerRating" field="rating" entity-alias="EPRS" />
+		<alias name="managerId" field="reviewerId" entity-alias="EPRS" group-by="true" />
+		<alias name="firstName" field="firstName" entity-alias="PR" />
+		<alias name="lastName" field="lastName" entity-alias="PR" />
+		<alias name="fullfillmentPartyId" field="partyId" entity-alias="EPF" />
+		<alias name="fullfillmentEmplPositionId" field="emplPositionId" entity-alias="EPF" />
+		<alias name="emplPositionId" field="emplPositionId" entity-alias="EP" />
+		<alias name="departmentId" field="partyId" entity-alias="EP" />
+		
+		<view-link rel-entity-alias="EPR" entity-alias="PR">
+			<key-map field-name="partyId" />
+		</view-link>
+	</view-entity>
+	
+	<view-entity entity-name="EmplPerfRevieweByPosition" package-name="com.ofbiz.humanresext">
+	
+		<member-entity entity-alias="PR" entity-name="PerfReviews"></member-entity>
+		<member-entity entity-alias="EPRV" entity-name="EmplPerfReviewerView"></member-entity>
+		
+		<member-entity entity-alias="EPT" entity-name="EmplPositionType"></member-entity>
+		
+		<member-entity entity-alias="EP" entity-name="EmplPosition"></member-entity>
+		<member-entity entity-alias="EPF" entity-name="EmplPositionFulfillment"></member-entity>
+		
+		<alias-all entity-alias="PR"></alias-all>
+		<alias-all entity-alias="EPT"></alias-all>
+		<alias-all entity-alias="EPRV" group-by="true"></alias-all>
+		
+		<view-link rel-entity-alias="PR" entity-alias="EPRV">
+			<key-map field-name="perfReviewId" />
+		</view-link>
+		
+		<view-link rel-entity-alias="EPF" entity-alias="EPRV">
+			<key-map field-name="partyId" />
+		</view-link>
+		
+		<view-link rel-entity-alias="EP" entity-alias="EPF">
+			<key-map field-name="emplPositionId" />
+		</view-link>
+		
+		<view-link rel-entity-alias="EPT" entity-alias="EP">
+			<key-map field-name="emplPositionTypeId" />
+		</view-link>
+		
+		
+	</view-entity>
+	
+	<view-entity entity-name="PerfReviewTemplateAndPerfTemplateSection"
+		package-name="com.ofbiz.humanresext">
+		<member-entity entity-alias="PRT" entity-name="PerfReviewTemplate"></member-entity>
+		<member-entity entity-alias="PTS" entity-name="PerfTemplateSection"></member-entity>
+		<alias name="perfTemplateId" field="perfTemplateId"
+			entity-alias="PRT" />
+		<alias name="emplPositionTypeId" field="emplPositionTypeId"
+			entity-alias="PRT" />
+		<alias name="perfReviewSectionId" field="perfReviewSectionId"
+			entity-alias="PTS" />
+		<alias name="weightage" field="weightage" entity-alias="PTS" />
+		<alias name="fromDate" field="fromDate" entity-alias="PTS" />
+		<alias name="thruDate" field="thruDate" entity-alias="PTS" />
+		<alias name="comments" field="comments" entity-alias="PTS" />
+		<view-link rel-entity-alias="PRT" entity-alias="PTS">
+			<key-map field-name="perfTemplateId" />
+		</view-link>
+	</view-entity>
+
+</entitymodel>

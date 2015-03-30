@@ -1,0 +1,98 @@
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<?init class="org.zkoss.zkplus.databind.AnnotateDataBinderInit" arg0="./editSalaryStructure"?>
+<?page title="new page title" contentType="text/html;charset=UTF-8"?>
+
+<zk xmlns:h="http://www.zkoss.org/2005/zk/native">
+
+	<zscript>
+		import com.hrms.payroll.composer.*;
+		EditSalaryStructureComposer salaryStructureComposer = new EditSalaryStructureComposer();
+		String salaryStructureId = (String)Executions.getCurrent().getArg().get("salaryStructureId");
+		salaryStructureComposer.setSalaryStructureId(salaryStructureId)
+		
+	</zscript>
+
+	<window title="${c:l('HRMS_SALARY_STRUCTURE') }" border="normal" apply="${salaryStructureComposer}" id="editSalaryStructure">
+		<groupbox>
+			<h:table width="100%">
+				<h:tr>
+					<h:td style="text-align:right">
+						<label value="${c:l('HRMS_STRUTURE_ID') }"></label>
+					</h:td>
+					<h:td>
+						<label value="@{salaryStructureComposer.salaryStructure.salaryStructureId}" />
+					</h:td>
+					<h:td style="text-align:right">
+						<label value="${c:l('Hrms_PositionType') }"></label>
+					</h:td>
+					<h:td>
+						<label value="@{salaryStructureComposer.salaryStructure.positionId}" />
+					</h:td>
+				</h:tr>
+				<h:tr>
+					<h:td style="text-align:right">
+						<label value="${c:l('HRMS_STRUCTURE_NAME') }"></label>
+					</h:td>
+					<h:td>
+						<textbox value="@{salaryStructureComposer.salaryStructure.hrName}" />
+					</h:td>
+				</h:tr>
+			</h:table>
+		</groupbox>
+		<separator></separator>
+		<hbox>
+			<panel>
+				<caption label="${c:l('HRMS_AVAILABLE_SALARY_HEADS') }"></caption>
+				<panelchildren>
+					<listbox checkmark="true" multiple="true" height="250px" model="@{salaryStructureComposer.availableSalaryHeads}"
+						id="availableSHListbox">
+						<listhead>
+							<listheader label="${c:l('HRMS_HEAD_NAME') }"></listheader>
+							<listheader label="${c:l('HRMS_HEAD_TYPE') }"></listheader>
+						</listhead>
+						<listitem self="@{each='zk1'}" value="@{zk1}">
+							<listcell>
+								<label value="@{zk1.hrName}"></label>
+							</listcell>
+							<listcell>
+								<label value="@{zk1.salaryHeadTypeId}"></label>
+							</listcell>
+						</listitem>
+					</listbox>
+				</panelchildren>
+			</panel>
+			<separator></separator>
+			<vbox style="margin-top:110px">
+				<button label="${c:l('HRMS_REMOVE') }" id="removeSH"></button>
+				<button label="${c:l('HRMS_ADD') }" id="addSH" width="70px"></button>
+			</vbox>
+			<separator></separator>
+			<panel>
+				<caption label="${c:l('HRMS_ASSOCIATED_SALARY_HEADS') }"></caption>
+				<panelchildren>
+					<listbox checkmark="true" multiple="true" height="250px" model="@{salaryStructureComposer.attachedSalaryHeads}"
+						id="attachedSHListbox">
+						<listhead>
+							<listheader label="${c:l('HRMS_HEAD_NAME') }"></listheader>
+							<listheader label="${c:l('HRMS_HEAD_TYPE') }"></listheader>
+						</listhead>
+						<listitem self="@{each='zk'}" value="@{zk}">
+							<listcell>
+								<label value="@{zk.hrName}"></label>
+							</listcell>
+							<listcell>
+								<label value="@{zk.salaryHeadTypeId}"></label>
+							</listcell>
+						</listitem>
+					</listbox>
+				</panelchildren>
+			</panel>
+		</hbox>
+		<separator></separator>
+		<box width="100%" align="center">
+			<button id="saveAndContinue" label="${c:l('HRMS_SAVE_CONTINUE') }"></button>
+		</box>
+		<separator></separator>
+	</window>
+
+</zk>

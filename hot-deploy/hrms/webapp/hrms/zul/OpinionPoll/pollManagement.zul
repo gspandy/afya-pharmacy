@@ -1,0 +1,81 @@
+<?init class="org.zkoss.zk.ui.util.Composition" arg0="/WEB-INF/layout/templateWestCollapsible.zul"?>
+<?page title="HRMS-Opinionpoll" id="pollmgmt"?>
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<?link rel="icon" type="image/x-icon" href="/images/companyLogo.png"?>
+<zk>
+	<zscript>
+	import org.zkoss.zk.ui.event.EventListener;
+	import org.ofbiz.entity.*;
+<![CDATA[
+	org.ofbiz.security.Security security = requestScope.get("security");
+	GenericValue userLogin = (GenericValue) Executions.getCurrent().getDesktop().getSession().getAttribute("userLogin");
+	boolean isAdmin = security.hasPermission("HUMANRES_ADMIN", userLogin);
+	boolean isManager = security.hasPermission("HUMANRES_MGR", userLogin);
+	boolean bothAccess = false;
+	if (isAdmin || isManager) {
+		bothAccess = true;
+	}
+]]>
+</zscript>
+	<div width="100%" self="@{define(westContent)}"
+		id="leaveMgmtTemplateDiv">
+		<cell width="18%">
+			<groupbox mold="3d" closable="false">
+				<caption label="${c:l('HRMS_OPINION_POLL') }"></caption>
+				<toolbarbutton label="${c:l('HRMS_POLL') }"
+					style="font-weight:bold" id="myLeaveBtn">
+					<attribute name="onClick">
+						<![CDATA[
+grpBoxCaption.setVisible(true);
+String tlBarBtnLabel = ((Toolbarbutton) leaveMgmtTemplateDiv
+			.getFellow("myLeaveBtn")).getLabel();
+	Toolbarbutton tlBarBtn = ((Toolbarbutton) leaveMgmtTemplateDiv
+			.getFellow("myLeaveBtn"));
+	Caption caption = (Caption) leaveMgmtTemplateDiv.getFellow("grpBoxCaption");
+	Component cmp1 = caption.getFellowIfAny("new");
+	Component cmp2 = caption.getFellowIfAny("apply");
+	Component cmp3 = caption.getFellowIfAny("leaveInfo");
+	if (cmp1 != null)
+		cmp1.detach();
+	if (cmp2 != null)
+		cmp2.detach();
+	if(cmp3!=null)
+		cmp3.detach();
+	caption.setLabel(tlBarBtnLabel);
+	Toolbarbutton leaveInfoToolBarBtn = new Toolbarbutton();
+	leaveInfoToolBarBtn.setLabel("New");
+	leaveInfoToolBarBtn.setId("leaveInfo");
+	leaveInfoToolBarBtn.setImage("/images/icon/update.png");
+	leaveInfoToolBarBtn.setParent(caption);
+	leaveInfoToolBarBtn.setStyle("color:#FFFFFF!important;font-weight:bold");
+	leaveInfoToolBarBtn.addEventListener("onClick", new EventListener() {
+	public void onEvent(Event event) throws Exception {
+		Window applyWin = (Window) Executions.createComponents(
+				"/zul/OpinionPoll/createNewPoll.zul", null, null);
+		applyWin.doModal();
+	}
+});
+	Div div = (Div) leaveMgmtTemplateDiv.getFellow("appendWindow");
+	Component cmp = div.getFirstChild();
+	if (cmp != null)
+		cmp.detach();
+	Window win = (Window) Executions.createComponents(
+			"/zul/OpinionPoll/searchOpinionPoll.zul", null, org.ofbiz.base.util.UtilMisc.toMap("myLeaveBtn",myLeaveBtn));
+	div.appendChild(win);
+	unselectedToolbarbuttonColor(self);
+	selectedToolbarbuttonColor(self);
+]]>
+</attribute>
+				</toolbarbutton>
+				
+			</groupbox>
+		</cell>
+	</div>
+	<div self="@{define(content)}">
+		<groupbox mold="3d" width="100%" closable="false">
+			<caption id="grpBoxCaption"></caption>
+			<div id="appendWindow"></div>
+		</groupbox>
+	</div>
+	<div onCreate='Events.postEvent("onClick",myLeaveBtn,null)'></div>
+</zk>

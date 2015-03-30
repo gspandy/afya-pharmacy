@@ -1,0 +1,614 @@
+<?init class="org.zkoss.zk.ui.util.Composition" arg0="/WEB-INF/layout/templateWestCollapsible.zul"?>
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<?component name="positionTypebox" macroURI="../macros/textfindMacro.zul" id="macro2"?>
+<?component name="findbox1" macroURI="../macros/textfindMacro.zul" id="macro6"?>
+<zk xmlns:n="http://www.zkoss.org/2005/zk/native">
+	<zscript>
+		<![CDATA[
+	import java.util.List;
+	import javax.servlet.http.HttpServletRequest;
+	import javax.servlet.http.HttpServletResponse;
+	import org.ofbiz.entity.GenericEntityException;
+	import org.zkoss.zk.ui.util.GenericForwardComposer;
+	import com.nthdimenzion.humanres.payroll.SalaryBean;
+	import com.ndz.controller.*;
+	import org.ofbiz.entity.GenericValue;
+	import javax.servlet.http.HttpServletRequest;
+	import org.ofbiz.entity.condition.EntityCondition;
+	import org.ofbiz.entity.condition.EntityOperator;
+	import org.ofbiz.humanresext.util.HumanResUtil;
+	import org.ofbiz.entity.GenericValue;
+	import org.ofbiz.base.util.UtilMisc;
+	import org.ofbiz.base.util.UtilHttp;
+	import org.ofbiz.service.DispatchContext;
+	import org.ofbiz.security.Security;
+	import org.ofbiz.entity.GenericDelegator;
+	import org.ofbiz.entity.condition.EntityExpr;
+	import javax.servlet.http.HttpServletRequest;
+	HttpServletRequest request = (HttpServletRequest) Executions.getCurrent()
+			.getNativeRequest();
+	String salaryStructureId = request.getParameter("salaryStructureId");
+	String paramSal=request.getParameter("salary");
+	
+	boolean showCreateOffer=false;
+	boolean readOnlyFeature=true;
+	if (paramSal!=null && paramSal.equals(true))
+	{
+		showCreateOffer=false;
+		readOnlyFeature=true;
+	}
+	 if (paramSal==null)
+	{
+		showCreateOffer=true;
+		readOnlyFeature=false;
+	}
+	GenericDelegator delegator = com.ndz.zkoss.util.HrmsInfrastructure.getDelegator();//GenericDelegator.getGenericDelegator("default");
+	GenericValue salaryStGV = null;
+	salaryStGV = delegator.findByPrimaryKey("SalaryStructure", UtilMisc.toMap("salaryStructureId", salaryStructureId));
+	String currencyUomId = null;
+	currencyUomId = salaryStGV.getString("currencyUomId");
+	String partyId = request.getParameter("partyId");
+	String mode = "";
+	//request.getParameter("mode");
+	String fromDate = (String) request.getParameter("fromDate");
+	java.text.DateFormat df = new java.text.SimpleDateFormat("dd-MM-yyyy");
+	Object fromDateObj = null;
+	fromDateObj = df.parse(fromDate);
+	java.util.Date offerFromDate = (java.util.Date) fromDateObj;
+	String offerQ = request.getParameter("offerQ");
+	String lofferId = request.getParameter("offerId");
+	String payGradeId = request.getParameter("payGradeId");
+	boolean isAnOffer = false;
+	if (lofferId != "") {
+		isAnOffer = true;
+	}
+	boolean expression = ("edit".equals(mode));
+	SalaryBean salary = (SalaryBean) request.getAttribute("salary");
+	List salaryComponent = salary.getAllComponents();
+	List exemption = salary.getExemptionComponents();
+	Double grossAmount = salary.getGrossAmount();
+	Double exemptionAmount = salary.getExemptionAmount();
+	Double netAmount = salary.getNetAmount();
+	Double taxDeductionAmount = salary.getTaxDeductionAmount();
+	Double taxableAmount = salary.getTaxableAmount();
+	Double taxAmount = salary.getTaxAmount();
+	Double professionalTax = salary.getProfessionalTax() * 12;
+	Double totalTax = salary.getTaxAmount() + professionalTax;
+]]>
+</zscript>
+
+
+
+
+
+<groupbox mold="3d" self="@{define(westContent) }" id="groupBoxMain" if="${isAnOffer}">
+		<caption label="${c:l('HRMS_PAYROLL') }" />
+		<vbox>
+		<toolbarbutton label="Payslips" id="paySlips" >
+			<attribute name="onClick">
+			Executions.sendRedirect("/control/MyPayRoll" + "?id=" + "paySlips");
+			unselectedToolbarbuttonColor(self);
+			selectedToolbarbuttonColor(self);
+		</attribute>
+		</toolbarbutton>
+		
+		<toolbarbutton label="${c:l('HRMS_SALARY') }" visible="false">
+			<attribute name="onClick">
+			Executions.sendRedirect("/control/MyPayRoll" + "?id=" + "salary");
+			unselectedToolbarbuttonColor(self);
+			selectedToolbarbuttonColor(self);
+		</attribute>
+		</toolbarbutton>
+		
+		<toolbarbutton label=" ${c:l('HRMS_SALARY') }">
+			<attribute name="onClick">
+			Executions.sendRedirect("/control/MyPayRoll" + "?id=" + "teamSalary");
+			unselectedToolbarbuttonColor(self);
+			selectedToolbarbuttonColor(self);
+		</attribute>
+		</toolbarbutton>
+		
+		<toolbarbutton label="${c:l('HRMS_UPDATE_CTC') }" visible="false" >
+			<attribute name="onClick" >
+			Executions.sendRedirect("/control/MyPayRoll" + "?id=" + "updateCTC");
+			unselectedToolbarbuttonColor(self);
+			selectedToolbarbuttonColor(self);
+		</attribute>
+		</toolbarbutton>
+		
+		<toolbarbutton label="${c:l('HRMS_PREFERENCES') }">
+			<attribute name="onClick">
+			Executions.sendRedirect("/control/MyPayRoll" + "?id=" + "preferences");
+			unselectedToolbarbuttonColor(self);
+			selectedToolbarbuttonColor(self);
+		</attribute>
+		</toolbarbutton>
+		
+		<toolbarbutton label="${c:l('HRMS_GET_PREFERENCES') }" visible="false" id="getPreferences">
+			<attribute name="onClick">
+			Executions.sendRedirect("/control/MyPayRoll" + "?id=" + "getPreferences");
+			unselectedToolbarbuttonColor(self);
+			selectedToolbarbuttonColor(self);
+		</attribute>
+		</toolbarbutton>
+		
+		<toolbarbutton label="${c:l('HRMS_VIEW_TDS') }" visible="false">
+			<attribute name="onClick">
+			Executions.sendRedirect("/control/MyPayRoll" + "?id=" + "viewTDS");
+			unselectedToolbarbuttonColor(self);
+			selectedToolbarbuttonColor(self);
+		</attribute>
+		</toolbarbutton>
+		
+		<toolbarbutton label="${c:l('HRMS_TDS_REPORT') }" visible="false">
+			<attribute name="onClick">
+				Executions.sendRedirect("/control/MyPayRoll" + "?id=" + "tdsReport");
+				unselectedToolbarbuttonColor(self);
+				selectedToolbarbuttonColor(self);
+			</attribute>
+		</toolbarbutton>
+		
+		<toolbarbutton label="${c:l('HRMS_PF_REPORT') }" visible="false">
+			<attribute name="onClick">
+				Executions.sendRedirect("/control/MyPayRoll" + "?id=" + "pfReport");
+				unselectedToolbarbuttonColor(self);
+				selectedToolbarbuttonColor(self);
+		</attribute>
+		</toolbarbutton>
+		
+		
+		<toolbarbutton label="${c:l('HRMS_TAX') }" >
+			<attribute name="onClick">
+				Executions.sendRedirect("/control/MyPayRoll");
+				unselectedToolbarbuttonColor(self);
+				selectedToolbarbuttonColor(self);
+		</attribute>
+		</toolbarbutton>
+		
+		
+		
+		<toolbarbutton label="${c:l('HRMS_INITIATE_PAYROLL') }" id="initiatePayroll">
+			<attribute name="onClick">
+				Executions.sendRedirect("/control/MyPayRoll" + "?id=" + "initiatePayroll");
+				unselectedToolbarbuttonColor(self);
+				selectedToolbarbuttonColor(self);
+		</attribute>
+		</toolbarbutton>
+		
+		</vbox>
+		
+	</groupbox>
+
+
+
+<groupbox self="@{define(westContent)}" mold="3d" id="payrollMain" if="${!isAnOffer}">
+		<caption label="${c:l('FormFieldTitle_payroll') }" />
+		<vbox>
+			<toolbarbutton label="${c:l('HRMS_SALARY_HEAD') }" id="salaryHead">
+				<attribute name="onClick">
+					Executions.sendRedirect("/control/PayRoll?id=salaryHead");
+					unselectedToolbarbuttonColor(self);
+					selectedToolbarbuttonColor(self);
+				</attribute>
+			</toolbarbutton>
+			<toolbarbutton label="${c:l('HRMS_EXEMPTION_FOR_SALARY_HEAD') }" id="exemtionForSalaryHead">
+				<attribute name="onClick">
+	Executions.sendRedirect("/control/PayRoll?id=exemtionForSalaryHead");
+	unselectedToolbarbuttonColor(self);
+	selectedToolbarbuttonColor(self);
+</attribute>
+			</toolbarbutton>
+
+			<toolbarbutton label="${c:l('HRMS_CONDITIONS') }" id="condition">
+				<attribute name="onClick">
+	Executions.sendRedirect("/control/PayRoll?id=condition");
+	unselectedToolbarbuttonColor(self);
+	selectedToolbarbuttonColor(self);
+</attribute>
+			</toolbarbutton>
+<toolbarbutton label="${c:l('FormFieldTitle_Action') }" id="action">
+				<attribute name="onClick">
+				Executions.sendRedirect("/control/PayRoll?id=action");
+	unselectedToolbarbuttonColor(self);
+	selectedToolbarbuttonColor(self);
+</attribute>
+			</toolbarbutton>
+			<toolbarbutton label="${c:l('HRMS_RULES') }" id="rules">
+				<attribute name="onClick">
+				Executions.sendRedirect("/control/PayRoll?id=rules");
+	unselectedToolbarbuttonColor(self);
+	selectedToolbarbuttonColor(self);
+</attribute>
+			</toolbarbutton>
+
+			<toolbarbutton label="${c:l('HRMS_SALARY_STRUCTURE') }" id="salaryStructure">
+				<attribute name="onClick">
+				Executions.sendRedirect("/control/PayRoll?id=salaryStructure");
+	unselectedToolbarbuttonColor(self);
+	selectedToolbarbuttonColor(self);
+</attribute>
+			</toolbarbutton>
+			<toolbarbutton label="${c:l('HRMS_TAX') }" id="tax">
+				<attribute name="onClick">
+				Executions.sendRedirect("/control/PayRoll?id=tax");
+	unselectedToolbarbuttonColor(self);
+	selectedToolbarbuttonColor(self);
+</attribute>
+			</toolbarbutton>
+			<toolbarbutton label="${c:l('HRMS_EMPLOYEE_SALARY_STRUCTURE') }" id="empSalaryStructure">
+				<attribute name="onClick">
+				Executions.sendRedirect("/control/PayRoll?id=empSalaryStructure");
+	unselectedToolbarbuttonColor(self);
+	selectedToolbarbuttonColor(self);
+</attribute>
+			</toolbarbutton>
+			
+			
+		</vbox>
+	</groupbox>
+
+
+	<window title="${c:l('HRMS_SALARY_STRUCTURE') }" border="normal"
+		id="addEmplSalStructure" self="@{define(content)}"
+		onCreate="closeWest();">
+		<separator height="10px"></separator>
+<zscript>
+	void closeWest() {
+		West west = (West) addEmplSalStructure.getParent().getFellow(
+				"westCollapsible");
+		west.setOpen(false);
+	}
+</zscript>
+		
+		<n:form method="post" name="personal"
+			action="/hrms/control/HRMSCreateEmplSal?id=salaryStructure" id="updateForm">
+			<separator height="20px"></separator>
+			<div>
+				<box width="100%" height="20px">
+					<label value="${c:l('HRMS_SALARY_COMPONENTS') }"
+						style="margin:10px;font-weight:bold">
+					</label>
+				</box>
+				<div align="right" width="50px"
+					style="margin-right:5px">
+				</div>
+				<separator height="10px"></separator>
+				<hbox align="center" visible="true">
+					<separator height="25px"></separator>
+					<div align="left" width="400px">
+						<label value="${c:l('HRMS_COMPONENTS') }"
+							style="float:right;text-align:right;display: block;font-weight:bold" />
+					</div>
+					<div align="left" width="30px"></div>
+					<div>
+						<label value="${c:l('FormFieldTitle_amount') }" width="150px"
+							style="margin:10px;font-weight:bold">
+						</label>
+					</div>
+				</hbox>
+				<separator height="10px"/>
+				<hbox align="center" forEach="${salaryComponent}"
+					visible="true">
+					<separator height="25px"/>
+					<div align="left" width="400px">
+						<label value="${each.salaryHeadName}"
+							style="float:right;text-align:right;display: block" />
+					</div>
+					<div align="left" width="30px"/>
+					<div>
+						<decimalbox value="${each.amount}" width="150px"
+							style="margin:10px;text-align: center;" format="#,#00.00#" readonly="true" >
+						</decimalbox>
+					</div>
+					<div>
+						<label value="${currencyUomId}" width="150px">
+						</label>
+					</div>
+				</hbox>
+				<separator height="10px"/>
+				<hbox align="center" visible="true">
+					<separator height="25px"></separator>
+					<div align="left" width="400px">
+						<label value="${c:l('HRMS_CTC') }"
+							style="float:right;text-align:right;display: block;font-weight:bold" />
+					</div>
+					<div align="left" width="30px"></div>
+					<div>
+						<decimalbox value="${grossAmount}" width="150px"
+							style="margin:10px;font-weight:bold;text-align: center;" format="#,#00.00#" readonly="true">
+						</decimalbox>
+					</div>
+					<div>
+						<label value="${currencyUomId}" width="150px">
+						</label>
+					</div>
+				</hbox>
+			</div>
+			<separator height="10px"/>
+			<div>
+				<box width="100%" height="20px">
+					<label value="${c:l('HRMS_SALARY_EXCEMPTIONS') }"
+						style="margin:10px;font-weight:bold">
+					</label>
+				</box>
+				<div align="right" width="50px"
+					style="margin-right:5px">
+				</div>
+				<separator height="10px"/>
+				<hbox align="center" forEach="${exemption}"
+					visible="true">
+					<separator height="25px"/>
+					<div align="left" width="400px">
+						<label value="${each.salaryHeadName}"
+							style="float:right;text-align:right;display: block" />
+					</div>
+					<div align="left" width="30px"/>
+					<div>
+						<decimalbox value="${each.amount}" width="150px"
+							style="margin:10px;text-align: center;" format="#,#00.00#" readonly="true">
+						</decimalbox>
+					</div>
+					<div>
+						<label value="${currencyUomId}" width="150px">
+						</label>
+					</div>
+				</hbox>
+				<separator height="10px"/>
+				<hbox align="center" visible="true">
+					<separator height="25px"></separator>
+					<div align="left" width="400px">
+						<label value="${c:l('HRMS_TOTAL_EXCEMPTION') }"
+							style="float:right;text-align:right;display: block;font-weight:bold" />
+					</div>
+					<div align="left" width="30px"></div>
+					<div>
+						<decimalbox value="${exemptionAmount}" width="150px"
+							style="margin:10px;font-weight:bold;text-align: center;" format="#,#00.00#" readonly="true">
+						</decimalbox>
+					</div>
+					<div>
+						<label value="${currencyUomId}" width="150px">
+						</label>
+					</div>
+				</hbox>
+			</div>
+			<separator height="10px"/>
+			<div>
+				<box width="100%" height="20px">
+					<label value="${c:l('HRMS_INCOME') }"
+						style="margin:10px;font-weight:bold">
+					</label>
+				</box>
+				<div align="right" width="50px"
+					style="margin-right:5px">
+				</div>
+				<separator height="10px"/>
+				<hbox align="center" visible="true">
+					<separator height="25px"></separator>
+					<div align="left" width="400px">
+						<label value="${c:l('HRMS_NET_INCOME') }"
+							style="float:right;text-align:right;display: block;font-weight:bold" />
+					</div>
+					<div align="left" width="30px"></div>
+					<div>
+						<decimalbox value="${netAmount}" width="150px"
+							style="margin:10px;font-weight:bold;text-align: center;" format="#,#00.00#" readonly="true">
+						</decimalbox>
+					</div>
+					<div>
+						<label value="${currencyUomId}" width="150px">
+						</label>
+					</div>
+				</hbox>
+			</div>
+			<separator height="10px"/>
+			<div>
+				<box width="100%" height="20px">
+					<label value="${c:l('HRMS_DEDUCTION_AMOUNT') }"
+						style="margin:10px;font-weight:bold">
+					</label>
+				</box>
+				<div align="right" width="50px"
+					style="margin-right:5px">
+				</div>
+				<separator height="10px"/>
+				<hbox align="center" visible="true">
+					<separator height="25px"></separator>
+					<div align="left" width="400px">
+						<label value="${c:l('HRMS_DEDUCTIONS') }"
+							style="float:right;text-align:right;display: block;font-weight:bold" />
+					</div>
+					<div align="left" width="30px"></div>
+					<div>
+						<decimalbox value="${taxDeductionAmount}"
+							width="150px" style="margin:10px;font-weight:bold;text-align: center;" format="#,#00.00#" readonly="true">
+						</decimalbox>
+					</div>
+					<div>
+						<label value="${currencyUomId}" width="150px">
+						</label>
+					</div>
+				</hbox>
+			</div>
+			<separator height="10px"/>
+			<div>
+				<box width="100%" height="20px">
+					<label value="${c:l('HRMS_TAXABLE_INCOME') }"
+						style="margin:10px;font-weight:bold">
+					</label>
+				</box>
+				<div align="right" width="50px"
+					style="margin-right:5px">
+				</div>
+				<separator height="10px"/>
+				<hbox align="center" visible="true">
+					<separator height="25px"></separator>
+					<div align="left" width="400px">
+						<label value="${c:l('HRMS_TAXABLE_INCOME') }"
+							style="float:right;text-align:right;display: block;font-weight:bold" />
+					</div>
+					<div align="left" width="30px"></div>
+					<div>
+						<decimalbox value="${taxableAmount}" width="150px"
+							style="margin:10px;font-weight:bold;text-align: center;" format="#,#00.00#" readonly="true">
+						</decimalbox>
+					</div>
+					<div>
+						<label value="${currencyUomId}" width="150px">
+						</label>
+					</div>
+				</hbox>
+			</div>
+			<separator height="10px"/>
+			<div>
+				<box width="100%" height="20px">
+					<label value="${c:l('HRMS_TAXES') }"
+						style="margin:10px;font-weight:bold">
+					</label>
+				</box>
+				<div align="right" width="50px"
+					style="margin-right:5px">
+				</div>
+				<separator height="10px"/>
+				<hbox align="center" visible="true">
+					<div align="left" width="400px">
+						<label value="${c:l('HRMS_ACTUAL_TAX_AMOUNT') }"
+							style="float:right;text-align:right;display: block;font-weight:bold" />
+					</div>
+					<div align="left" width="30px"/>
+					<div>
+						<decimalbox value="${taxAmount}" width="150px"
+							style="margin:10px;font-weight:bold;text-align: center;" format="#,#00.00#" readonly="true">
+						</decimalbox>
+					</div>
+					<div>
+						<label value="${currencyUomId}" width="150px"/>
+					</div>
+				</hbox>
+				<separator height="10px"/>
+				<hbox align="center" visible="true">
+					<separator height="25px"/>
+					<div align="left" width="400px">
+						<label value="${c:l('HRMS_PROFESSIONAL_TAX') }"
+							style="float:right;text-align:right;display: block;font-weight:bold" />
+					</div>
+					<div align="left" width="30px"/>
+					<div>
+						<decimalbox value="${professionalTax}" width="150px"
+							style="margin:10px;font-weight:bold;text-align: center;" format="#,#00.00#" readonly="true">
+						</decimalbox>
+					</div>
+					<div>
+						<label value="${currencyUomId}" width="150px">
+						</label>
+					</div>
+				</hbox>
+				<separator height="10px"/>
+				<hbox align="center" visible="true">
+					<separator height="25px"/>
+					<div align="left" width="400px">
+						<label value="${c:l('HRMS_TOTAL_TAX') }"
+							style="float:right;text-align:right;display: block;font-weight:bold" />
+					</div>
+					<div align="left" width="30px"/>
+					<div>
+						<decimalbox value="${totalTax}" width="150px"
+							style="margin:10px;font-weight:bold;text-align: center;" format="#,#00.00#" readonly="true">
+						</decimalbox>
+					</div>
+					<div>
+						<label value="${currencyUomId}" width="150px"/>
+					</div>
+				</hbox>
+			</div>
+			<separator height="10px"/>
+			<div>
+				<box width="100%" height="20px"
+					style="background-color:#FFE87C;color:#25587E;" visible="false">
+					<label value="${c:l('HRMS_OTHER_INFORMATIONS') }"
+						style="margin:10px;font-weight:bold">
+					</label>
+				</box>
+				<div align="right" width="50px"
+					style="margin-right:5px">
+				</div>
+				<separator height="10px"/>
+				<hbox align="center" visible="false">
+					<separator height="25px"></separator>
+					<div align="left" width="400px">
+						<label value="${c:l('HumanResLeaveSummaryFromDate') }"
+							style="float:right;text-align:right;display: block" />
+					</div>
+					<div align="left" width="30px"/>
+					<div>
+						<label value="${fromDate}" width="150px"
+							style="margin:10px" >
+						</label>
+						<textbox name="fromDate" value="${fromDate}"
+							visible="false">
+						</textbox>
+					</div>
+				</hbox>
+				<separator height="10px"/>
+				<n:form id="createOffer"
+					action="/hrms/control/createOfferCTC" method="POST">
+					<hbox visible="false">
+						<textbox name="offerId" value="${lofferId}"
+							id="offerId">
+						</textbox>
+						<textbox name="partyId" value="${partyId}"
+							id="partyId">
+						</textbox>
+						<textbox name="payGradeId"
+							value="${payGradeId}">
+						</textbox>
+						<datebox id="fromDate"
+							value="${offerFromDate}">
+						</datebox>
+						<textbox name="salaryBean" id="salaryBean"
+							value="${salary}">
+						</textbox>
+						<textbox name="salaryStepSeqId"
+							value="${salaryStepSeqId}">
+						</textbox>
+						<textbox name="salaryStructureId"
+							value="${salaryStructureId}">
+						</textbox>
+						<textbox name="offerQ" value="${offerQ}"/>
+					</hbox>
+				</n:form>
+			</div>
+			<separator height="20px"/>
+			<box width="100%" height="30px" align="center">
+				<hbox style="margin-top:10px;margin-bottom:10px">
+					<div if="${!isAnOffer}">
+						<button id="CreateAttachEmployee" label="${c:l('HRMS_ATTACH') }"
+							width="100px" height="25px" mold="os"
+							onClick='Clients.submitForm("updateForm");'>
+						</button>
+						<button id="cancelAttachEmployee" label="${c:l('ButtonCancel') }"
+							width="100px" height="25px" mold="os" if="${!isAnOffer}">
+							<attribute name="onClick" >
+							<![CDATA[
+								Executions.sendRedirect("addEmployeeSalaryStructure?salaryStructureId="	+ salaryStructureId);
+							]]>
+							</attribute>
+						</button>
+					</div>
+					<button label="${c:l('HRMS_CREATE_OFFER') }" if="${isAnOffer}"
+						 visible="${showCreateOffer}">
+						<attribute name="onClick" >
+						<![CDATA[
+							com.ndz.controller.OfferManagementController.createOfferCTC(event);
+							Executions.sendRedirect("/control/PayRoll?id=salaryStructure");
+						]]>
+						</attribute>
+					</button>
+									
+				</hbox>
+			</box>
+
+		</n:form>
+	</window>
+
+</zk>

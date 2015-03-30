@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<services xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="http://ofbiz.apache.org/dtds/services.xsd">
+	<description>Offer Services</description>
+	<vendor>NthDimenzion</vendor>
+	<version>1.0</version>
+
+ 	<service name="offerInterface" engine="interface">
+    	<description>Interface to describe base parameters for Offer Services</description>
+    	<attribute name="partyId" mode="IN" type="String" optional="false"></attribute>
+		<attribute name="applicationId" mode="IN" type="String" optional="false"></attribute>
+		<attribute name="offerDate" mode="IN" type="java.sql.Date" optional="false"></attribute>
+		<attribute name="joiningDate" mode="IN" type="java.sql.Date" optional="false"></attribute>
+		<attribute name="mgrPositionId" mode="IN" type="String" optional="true"></attribute>
+		<attribute name="actualJoiningDate" mode="IN" type="java.sql.Date" optional="true"></attribute>
+		<attribute name="hr_comment" mode="IN" type="String" optional="true"></attribute>
+		<attribute name="offerId" mode="INOUT" type="String" optional="true"></attribute>
+		<attribute name="osId" mode="INOUT" type="String" optional="true"></attribute>
+		<attribute name="requisitionId" mode="IN" type="String" optional="true"></attribute>
+    </service>
+   
+	<!-- New Offer Section -->
+	<service name="createOfferService"  engine="java"
+		location="com.smebiz.offer.OfferService" invoke="createOffer" auth="true">
+		<description>Generate Offer</description>
+		<required-permissions join-type="OR">
+    		<check-permission permission="HUMANRES" action="_ADMIN"  /> 
+    		<check-permission permission="HUMANRES" action="_MGR"  /> 
+    	</required-permissions>
+    	<implements service="offerInterface"/>
+	</service>
+	<service name="createOfferStatusService"  engine="java"
+		location="com.smebiz.offer.OfferService" invoke="createOfferStatus"
+		auth="false">
+		<description>Create Offer Status</description>
+		<attribute name="offerId" mode="IN" type="String" optional="false"></attribute>
+		<attribute name="statusId" mode="IN" type="String" optional="false"></attribute>
+		<attribute name="hr_comment" mode="IN" type="String" optional="true"></attribute>
+		<attribute name="updatedBy" mode="IN" type="String" optional="false"></attribute>
+		<attribute name="osId" mode="OUT" type="String" optional="true"></attribute>
+		<attribute name="requisitionId" mode="IN" type="String" optional="true"></attribute>
+		
+	</service>
+	
+	<service name="updateOfferService"  engine="java"
+		location="com.smebiz.offer.OfferService" invoke="updateOffer"
+		auth="true">
+		<description>Update Offer</description>
+		<required-permissions join-type="OR">
+    		<check-permission permission="HUMANRES_" action="ADMIN" />
+    		<check-permission permission="HUMANRES_" action="MGR" />  
+    	</required-permissions>
+		<implements service="offerInterface"/>
+		<attribute name="statusId" mode="IN" type="String" optional="false"></attribute>
+	</service>
+
+	<service name="processOfferService"  engine="java"
+		location="com.smebiz.offer.OfferService" invoke="processOffer"
+		auth="true">
+		<description>Process Offer</description>
+		<required-permissions join-type="OR">
+    		<check-permission permission="HUMANRES_" action="MGR"  /> 
+    		<check-permission permission="HUMANRES_" action="ADMIN"  /> 
+    	</required-permissions>
+    	<attribute name="offerId" mode="IN" type="String" optional="false"></attribute>
+		<attribute name="statusId" mode="IN" type="String" optional="false"></attribute>
+		<attribute name="hr_comment" mode="IN" type="String" optional="true"></attribute>
+		<attribute name="joiningDate" mode="IN" type="java.util.Date" optional="true"></attribute>
+	    <attribute name="osId" mode="INOUT" type="String" optional="true"></attribute>
+		
+	</service>
+	
+	<service name="fetchOfferComment"  engine="java"
+		location="com.smebiz.offer.OfferService" invoke="getEmplTerminationComment"
+		auth="false">
+		<description>Fetch Offer Comment</description>
+		<attribute name="offerId" mode="IN" type="String" optional="true"></attribute>
+		<attribute name="statusId" mode="INOUT" type="String" optional="true"></attribute>
+		<attribute name="hr_comment" mode="INOUT" type="String" optional="true"></attribute>
+		<attribute name="osId" mode="OUT" type="String" optional="true"></attribute>
+		<attribute name="updatedBy" mode="OUT" type="String" optional="true"></attribute>
+	</service>
+	
+	<service name="notifyOfferService"  engine="java"
+		location="com.smebiz.offer.OfferService" invoke="notifyOffer"
+		auth="false">
+		<description>Email manager about offer initiation</description>
+		<attribute name="offerId" mode="IN" type="String" optional="false"></attribute>
+	</service>
+	
+	<service name="createOfferCTCService" engine="java" 
+		location="com.smebiz.offer.OfferService" invoke="createOfferCTC" >
+		<attribute name="partyId" mode="IN" type="String" optional="false"/>
+		<attribute name="offerId" mode="IN" type="String" optional="false"/>
+		<attribute name="fromDate" mode="IN" type="java.sql.Date" optional="true" />
+		<attribute name="salary" mode="IN" type="com.nthdimenzion.humanres.payroll.SalaryBean" optional="true"></attribute>
+	</service>
+	
+</services>

@@ -1,0 +1,132 @@
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<zk>
+	<zscript>
+		import org.ofbiz.base.util.*;
+	import java.util.*;
+	import java.text.ParseException;
+	import java.text.SimpleDateFormat;
+	import org.ofbiz.entity.*;
+	import org.zkoss.zul.*;
+	import org.ofbiz.entity.condition.*;
+	delegator = com.ndz.zkoss.util.HrmsInfrastructure.getDelegator();//GenericDelegator.getGenericDelegator("default");
+	Set fieldToSelect = new HashSet();
+	fieldToSelect.add("trainingClassTypeId");
+	fieldToSelect.add("description");
+	Set statusToSelect = new HashSet();
+	statusToSelect.add("statusId");
+	statusToSelect.add("description");
+	EntityCondition statusCondition = EntityCondition.makeCondition("statusTypeId",
+			EntityComparisonOperator.EQUALS, "EVENT_STATUS");
+	List trainings = delegator.findList("TrainingClassType", null,
+			fieldToSelect, null, null, false);
+	trainings.add(0, null);
+	List status = delegator.findList("StatusItem", statusCondition,
+			statusToSelect, null, null, false);
+	status.add(0, null);
+	trainingsArray = trainings.toArray(new GenericValue[trainings.size()]);
+	SimpleListModel trainingList = new SimpleListModel(trainingsArray);
+	statusArray = status.toArray(new GenericValue[status.size()]);
+	SimpleListModel statusList = new SimpleListModel(statusArray);
+	public class TrainingItemRenderer implements ListitemRenderer {
+
+		public TrainingItemRenderer() {
+		}
+
+		public void render(Listitem li, Object data) {
+			if (data instanceof GenericValue) {
+				GenericValue val = (GenericValue) data;
+				li.setLabel(val.getString("description"));
+				li.setValue(val.getString("trainingClassTypeId"));
+			}
+		}
+	}
+	ListitemRenderer trainingItemRenderer = new TrainingItemRenderer();
+	public class StatusItemRenderer implements ListitemRenderer {
+
+		public StatusItemRenderer() {
+		}
+
+		public void render(Listitem li, Object data) {
+			if (data instanceof GenericValue) {
+				GenericValue val = (GenericValue) data;
+				li.setLabel(val.getString("description"));
+				li.setValue(val.getString("statusId"));
+			}
+		}
+	}
+	ListitemRenderer statusItemRenderer = new StatusItemRenderer();
+	String workEffortTypeId = Executions.getCurrent().getParameter(
+			"workEffortTypeId");
+</zscript>
+	<window title="${c:l('HRMS_ADDTRAINING') }" id="addCompanyTrainingWindow"
+		height="400px" width="100%" contentStyle="overflow:auto"
+		self="@{define(content)}">
+		<textbox id="workEffortTypeId" value="${workEffortTypeId}"
+			visible="false" />
+		<separator height="30px" />
+		<hbox>
+			<div align="right" width="130px" style="margin-right:5px">
+				<label value="${c:l('FormFieldTitle_trainingName') }:" style="font-weight:bold" />
+			</div>
+			<div align="left" width="150px" style="margin-right:5px">
+				<textbox id="trainingName" />
+			</div>
+		</hbox>
+		<separator />
+		<hbox>
+			<div align="right" width="130px" style="margin-right:5px">
+				<label value="${c:l('FormFieldTitle_trainingType') }:" style="font-weight:bold" />
+			</div>
+			<div align="left" width="150px" style="margin-right:5px">
+				<listbox id="trainingClassTypeId" mold="select"
+					itemRenderer="${trainingItemRenderer}" model="${trainingList}" />
+			</div>
+		</hbox>
+		<separator />
+		<hbox>
+			<div align="right" width="130px" style="margin-right:5px">
+				<label value="${c:l('FormFieldTitle_status') }:" style="font-weight:bold" />
+			</div>
+			<div align="left" width="150px" style="margin-right:5px">
+				<listbox id="currentStatusId" mold="select"
+					itemRenderer="${statusItemRenderer}" model="${statusList}" />
+			</div>
+		</hbox>
+		<separator />
+		<hbox>
+			<div align="right" width="130px" style="margin-right:5px">
+				<label value="${c:l('FormFieldTitle_description') }:" style="font-weight:bold" />
+			</div>
+			<div align="left" width="150px" style="margin-right:5px">
+				<textbox id="description" cols="47" rows="7" />
+			</div>
+		</hbox>
+		<separator />
+		<hbox>
+			<div align="right" width="130px" style="margin-right:5px">
+				<label value="${c:l('HRMS_FROMDATE') }:" style="font-weight:bold" />
+			</div>
+			<div align="left" style="margin-right:5px">
+				<datebox id="estimatedStartDate"
+					format="yyyy/MM/dd a hh:mm:ss" />
+			</div>
+			<div align="right" width="100px" style="margin-right:5px">
+				<label value="${c:l('HRMS_THRUDATE') }:" style="font-weight:bold" />
+			</div>
+			<div align="left" style="margin-right:5px">
+				<datebox id="estimatedCompletionDate"
+					format="yyyy/MM/dd a hh:mm:ss" />
+			</div>
+		</hbox>
+		<separator />
+		<hbox>
+			<div align="right" width="252px">
+				<button label="${c:l('btnSave') }" id="saveCompanyTraining"
+					onClick='com.ndz.controller.UpdateEmployeeProfileController 
+				.addCompanyTraining(event);Executions.getCurrent().sendRedirect("/control/day");'>
+				</button>
+				<button label="${c:l('ButtonCancel') }" href="/control/day" />
+			</div>
+		</hbox>
+	</window>
+</zk>

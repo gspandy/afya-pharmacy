@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<simple-methods xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="http://ofbiz.apache.org/dtds/simple-methods.xsd">
+	<simple-method method-name="createCustomForm"
+		short-description="Create Custom Form">
+		<make-value entity-name="CustomForms" value-field="newEntity" />
+		<set-nonpk-fields map="parameters" value-field="newEntity" />
+		<sequenced-id sequence-name="CustomForms" field="newEntity.formId" />
+		<field-to-result field="newEntity.formId" result-name="formId" />
+		<create-value value-field="newEntity" />
+	</simple-method>
+
+
+	<simple-method method-name="UpdateCustomForm"
+		short-description="Update Custom Form">
+		<entity-one entity-name="CustomForms" value-field="lookedUpValue" />
+		<log level="verbose">
+			<string value="${lookedpValue}"></string>
+		</log>
+		<set-nonpk-fields value-field="lookedUpValue" map="parameters" />
+		<store-value value-field="lookedUpValue" />
+	</simple-method>
+
+	<simple-method method-name="addComponent"
+		short-description="Create Custom Form">
+		<make-value value-field="newEntity" entity-name="CustomFormComponents" />
+		<set-nonpk-fields value-field="newEntity" map="parameters" />
+		<sequenced-id sequence-name="CustomFormComponents" field="newEntity.compId" />
+		<field-to-result field="parameters.formId"
+			result-name="formId" />
+		<create-value value-field="newEntity" />
+	</simple-method>
+
+	<simple-method method-name="updateComponent"
+		short-description="Update Component">
+		<entity-one entity-name="CustomFormComponents" value-field="lookedUpValue">
+		</entity-one>
+		<log level="verbose">
+			<string value="${parameters.dynamicRuleId}"></string>
+		</log>
+		<set-nonpk-fields value-field="lookedUpValue" map="parameters" />
+		<store-value value-field="lookedUpValue" />
+	</simple-method>
+
+
+	<simple-method method-name="deleteComponent"
+		short-description="Create Custom Form">
+		<entity-one entity-name="CustomFormComponents" value-field="lookedUpValue" />
+		<entity-and list="childElements" entity-name="CustomFormComponents">
+			<field-map field-name="parentCompId" from-field="lookedUpValue.compId" />
+		</entity-and>
+		<remove-list list="childElements" />
+		<remove-value value-field="lookedUpValue" />
+	</simple-method>
+
+
+</simple-methods>
+ 

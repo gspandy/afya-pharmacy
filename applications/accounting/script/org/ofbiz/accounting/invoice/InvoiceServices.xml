@@ -1,0 +1,1513 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Licensed to the Apache Software Foundation (ASF) under one or more contributor license agreements. See the NOTICE file distributed with this work for additional 
+	information regarding copyright ownership. The ASF licenses this file to you under the Apache License, Version 2.0 (the "License"); you may not use this file except 
+	in compliance with the License. You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0 Unless required by applicable law or agreed to 
+	in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See 
+	the License for the specific language governing permissions and limitations under the License. -->
+<simple-methods xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                xsi:noNamespaceSchemaLocation="http://ofbiz.apache.org/dtds/simple-methods-v2.xsd">
+
+    <simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_"
+                   event-event-message-name="_event_message_" event-request-object-name="request"
+                   event-response-code-name="_response_code_" event-response-object-name="response"
+                   login-required="true" method-name="getNextInvoiceId"
+                   service-error-message-list-name="errorMessageList" service-error-message-map-name="errorMessageMap"
+                   service-error-message-name="errorMessage" service-response-message-name="responseMessage"
+                   service-success-message-list-name="successMessageList" service-success-message-name="successMessage"
+                   short-description="Get Next invoiceId" use-transaction="true">
+        <!-- try to find PartyAcctgPreference for parameters.partyId, see if we need any special invoice number sequencing -->
+        <entity-one auto-field-map="false" entity-name="PartyAcctgPreference" use-cache="false"
+                    value-field="partyAcctgPreference">
+            <field-map field-name="partyId" from-field="parameters.partyId"/>
+        </entity-one>
+        <log level="info"
+             message="In getNextInvoiceId partyId is [${parameters.partyId}], partyAcctgPreference: ${partyAcctgPreference}"/>
+        <if>
+            <condition>
+                <if-compare field="partyAcctgPreference.invoiceSequenceEnumId" operator="equals" type="String"
+                            value="INVSQ_ENF_SEQ"/>
+            </condition>
+            <then>
+                <log level="info" message="In createInvoice sequence enum INVSQ_ENF_SEQ"/>
+                <!-- this is sequential sequencing, we can't skip a number, also it must be a unique sequence per partyIdFrom -->
+                <if-not-empty field="partyAcctgPreference.lastInvoiceNumber">
+                    <calculate decimal-scale="2" field="partyAcctgPreference.lastInvoiceNumber" rounding-mode="HalfEven"
+                               type="Long">
+                        <calcop field="partyAcctgPreference.lastInvoiceNumber" operator="add"/>
+                        <number value="1"/>
+                    </calculate>
+                    <else>
+                        <calculate decimal-scale="2" field="partyAcctgPreference.lastInvoiceNumber"
+                                   rounding-mode="HalfEven" type="Long">
+                            <number value="1"/>
+                        </calculate>
+                    </else>
+                </if-not-empty>
+                <store-value do-cache-clear="true" value-field="partyAcctgPreference"/>
+                <set field="invoiceIdTemp" from="partyAcctgPreference.lastInvoiceNumber" set-if-empty="true"
+                     set-if-null="false"/>
+            </then>
+            <else-if>
+                <condition>
+                    <if-compare field="partyAcctgPreference.invoiceSequenceEnumId" operator="equals" type="String"
+                                value="INVSQ_RESTARTYR"/>
+                </condition>
+                <then>
+                    <log level="info" message="In createInvoice sequence enum INVSQ_RESTARTYR"/>
+                    <!-- this is sequential sequencing, we can't skip a number; except that it is restarted each fiscal year -->
+                    <now-timestamp field="nowTimestamp"/>
+                    <if-empty field="partyAcctgPreference.lastInvoiceRestartDate">
+                        <!-- if no lastInvoiceRestartDate then it's easy, just start now with 1 -->
+                        <calculate decimal-scale="2" field="partyAcctgPreference.lastInvoiceNumber"
+                                   rounding-mode="HalfEven" type="Long">
+                            <number value="1"/>
+                        </calculate>
+                        <set field="partyAcctgPreference.lastInvoiceRestartDate" from="nowTimestamp" set-if-empty="true"
+                             set-if-null="false"/>
+                        <else>
+                            <!-- first figure out if we need to reset the lastInvoiceNumber; is the lastInvoiceRestartDate after the fiscalYearStartMonth/Day for this year? -->
+                            <calculate decimal-scale="2" field="zeroLong" rounding-mode="HalfEven" type="Long">
+                                <number value="0"/>
+                            </calculate>
+                            <call-class-method class-name="org.ofbiz.base.util.UtilDateTime" method-name="getYearStart"
+                                               ret-field="curYearFiscalStartDate">
+                                <field field="nowTimestamp" type="java.sql.Timestamp"/>
+                                <field field="partyAcctgPreference.fiscalYearStartDay" type="java.lang.Number"/>
+                                <field field="partyAcctgPreference.fiscalYearStartMonth" type="java.lang.Number"/>
+                                <field field="zeroLong" type="java.lang.Number"/>
+                            </call-class-method>
+                            <if>
+                                <condition>
+                                    <and>
+                                        <if-compare-field field="partyAcctgPreference.lastInvoiceRestartDate"
+                                                          operator="less" to-field="curYearFiscalStartDate"
+                                                          type="Timestamp"/>
+                                        <if-compare-field field="nowTimestamp" operator="greater-equals"
+                                                          to-field="curYearFiscalStartDate" type="Timestamp"/>
+                                    </and>
+                                </condition>
+                                <then>
+                                    <!-- less than fiscal year start, we need to reset it -->
+                                    <calculate decimal-scale="2" field="partyAcctgPreference.lastInvoiceNumber"
+                                               rounding-mode="HalfEven" type="Long">
+                                        <number value="1"/>
+                                    </calculate>
+                                    <set field="partyAcctgPreference.lastInvoiceRestartDate" from="nowTimestamp"
+                                         set-if-empty="true" set-if-null="false"/>
+                                </then>
+                                <else>
+                                    <!-- greater than or equal to fiscal year start or nowTimestamp hasn't yet hit the current year fiscal start date, we're okay, just increment -->
+                                    <calculate decimal-scale="2" field="partyAcctgPreference.lastInvoiceNumber"
+                                               rounding-mode="HalfEven" type="Long">
+                                        <calcop field="partyAcctgPreference.lastInvoiceNumber" operator="add"/>
+                                        <number value="1"/>
+                                    </calculate>
+                                </else>
+                            </if>
+                        </else>
+                    </if-empty>
+                    <store-value do-cache-clear="true" value-field="partyAcctgPreference"/>
+                    <!-- get the current year string for prefix, etc; simple 4 digit year date string (using system defaults) -->
+                    <set field="curYearString"
+                         from="str:toString(date:year(partyAcctgPreference.lastInvoiceRestartDate, util:defaultTimeZone(), util:defaultLocale()))"
+                         set-if-empty="true" set-if-null="false"/>
+                    <set field="invoiceIdTemp" set-if-empty="true" set-if-null="false"
+                         value="${curYearString}-${str:toString(partyAcctgPreference.lastInvoiceNumber)}"/>
+                </then>
+            </else-if>
+            <else>
+                <log level="info" message="In createInvoice sequence enum INVSQ_STANDARD"/>
+                <!-- default to the default sequencing: INVSQ_STANDARD -->
+                <set field="invoiceIdTemp" from="parameters.invoiceId" set-if-empty="true" set-if-null="false"/>
+                <if-empty field="invoiceIdTemp">
+                    <sequenced-id field="invoiceIdTemp" get-long-only="false" sequence-name="Invoice"/>
+                    <else>
+                        <!-- check the provided ID -->
+                        <check-id error-list-name="error_list" field="invoiceIdTemp"/>
+                        <check-errors error-code="error" error-list-name="error_list"/>
+                    </else>
+                </if-empty>
+            </else>
+        </if>
+        <!-- use invoiceIdTemp along with the invoiceIdPrefix to create the real ID -->
+        <set field="invoiceId" set-if-empty="true" set-if-null="false"
+             value="${partyAcctgPreference.invoiceIdPrefix}${str:toString(invoiceIdTemp)}"/>
+        <field-to-result field="invoiceId" result-name="invoiceId"/>
+    </simple-method>
+
+    <simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_"
+                   event-event-message-name="_event_message_" event-request-object-name="request"
+                   event-response-code-name="_response_code_" event-response-object-name="response"
+                   login-required="true" method-name="createInvoice" service-error-message-list-name="errorMessageList"
+                   service-error-message-map-name="errorMessageMap" service-error-message-name="errorMessage"
+                   service-response-message-name="responseMessage"
+                   service-success-message-list-name="successMessageList" service-success-message-name="successMessage"
+                   short-description="Create a new Invoice" use-transaction="true">
+        <now-timestamp field="nowTimestamp"/>
+        <make-value entity-name="Invoice" value-field="newEntity"/>
+        <!-- call getNextInvoiceId service with the parameters.partyIdFrom when invoice Id is not suplied else use it from the input -->
+        <if-empty field="parameters.invoiceId">
+            <set field="getNextInvoiceIdMap.partyId" from="parameters.partyIdFrom" set-if-empty="true"
+                 set-if-null="false"/>
+            <call-service break-on-error="true" error-code="error" in-map-name="getNextInvoiceIdMap"
+                          include-user-login="true" require-new-transaction="false" service-name="getNextInvoiceId"
+                          success-code="success">
+                <result-to-field field="parameters.invoiceId" result-name="invoiceId"/>
+            </call-service>
+        </if-empty>
+        <field-to-result field="parameters.invoiceId" result-name="invoiceId"/>
+        <!-- set the invoice date if not provided -->
+        <if-empty field="parameters.invoiceDate">
+            <set field="parameters.invoiceDate" from="nowTimestamp" set-if-empty="true" set-if-null="false"/>
+        </if-empty>
+        <!-- use currency of receiving company -->
+        <if>
+            <condition>
+                <or>
+                    <if-compare field="parameters.invoiceTypeId" operator="equals" type="String"
+                                value="INTEREST_INVOICE"/>
+                    <if-compare field="parameters.invoiceTypeId" operator="equals" type="String" value="SALES_INVOICE"/>
+                    <if-compare field="parameters.invoiceTypeId" operator="equals" type="String"
+                                value="PURC_RTN_INVOICE"/>
+                </or>
+            </condition>
+            <then>
+                <entity-one auto-field-map="true" entity-name="Party" use-cache="false" value-field="party"/>
+                <if-not-empty field="party.preferredCurrencyUomId">
+                    <set field="parameters.currencyUomId" from="party.preferredCurrencyUomId" set-if-empty="true"
+                         set-if-null="false"/>
+                </if-not-empty>
+            </then>
+        </if>
+        <!-- Adds up the corresponding supplierId in linkedSupplierId field -->
+        <if-not-empty field="parameters.linkedInvoiceId">
+            <entity-condition distinct="false" entity-name="Invoice" filter-by-date="false" list="invoiceList" use-cache="false">
+                <condition-expr field-name="invoiceId" from-field="parameters.linkedInvoiceId" ignore="false" ignore-case="false"
+                            ignore-if-empty="false" ignore-if-null="false" operator="equals"/>
+            </entity-condition>
+            <set field="newEntity.linkedSupplierId" value="${groovy:if(invoiceList != null) {
+                                                                            if('PURCHASE_INVOICE'.equals(invoiceList.get(0).getString(&quot;invoiceTypeId&quot;)))
+                                                                                invoiceList.get(0).getString(&quot;partyIdFrom&quot;);
+                                                                            else
+                                                                                invoiceList.get(0).getString(&quot;partyId&quot;);
+                                                                        }}"/>
+            <else>
+                <set field="newEntity.linkedSupplierId" set-if-null="true" value=""/>
+            </else>
+        </if-not-empty>
+        <set-nonpk-fields map="parameters" set-if-null="true" value-field="newEntity"/>
+        <set-pk-fields map="parameters" set-if-null="true" value-field="newEntity"/>
+        <create-value do-cache-clear="true" or-store="false" value-field="newEntity"/>
+        <!-- create new status entry, and set lastStatusUpdate date -->
+        <make-value entity-name="InvoiceStatus" value-field="newInvoiceStatus"/>
+        <set field="newInvoiceStatus.invoiceId" from="newEntity.invoiceId" set-if-empty="true" set-if-null="false"/>
+        <set field="newInvoiceStatus.statusId" from="newEntity.statusId" set-if-empty="true" set-if-null="false"/>
+        <set field="newInvoiceStatus.statusDate" from="nowTimestamp" set-if-empty="true" set-if-null="false"/>
+        <property-to-field field="successMessage" no-locale="false" property="AccountingCreateInvoiceHeader"
+                           resource="AccountingUiLabels"/>
+        <create-value do-cache-clear="true" or-store="false" value-field="newInvoiceStatus"/>
+    </simple-method>
+
+    <simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_"
+                   event-event-message-name="_event_message_" event-request-object-name="request"
+                   event-response-code-name="_response_code_" event-response-object-name="response"
+                   login-required="true" method-name="copyInvoice" service-error-message-list-name="errorMessageList"
+                   service-error-message-map-name="errorMessageMap" service-error-message-name="errorMessage"
+                   service-response-message-name="responseMessage"
+                   service-success-message-list-name="successMessageList" service-success-message-name="successMessage"
+                   short-description="Create a new Invoice from an existing invoice" use-transaction="true">
+        <set field="invoiceLookup.invoiceId" from="parameters.invoiceIdToCopyFrom" set-if-empty="true"
+             set-if-null="false"/>
+        <call-service break-on-error="true" error-code="error" in-map-name="invoiceLookup" include-user-login="true"
+                      require-new-transaction="false" service-name="getInvoice" success-code="success">
+            <result-to-field field="invoice" result-name="invoice"/>
+            <result-to-field field="invoiceItems" result-name="invoiceItems"/>
+        </call-service>
+        <set field="invoice.invoiceId" from="parameters.invoiceId" set-if-empty="true" set-if-null="false"/>
+        <now-timestamp field="nowTimestamp"/>
+        <set field="invoice.invoiceDate" from="nowTimestamp" set-if-empty="true" set-if-null="false"/>
+        <set field="invoice.statusId" set-if-empty="true" set-if-null="false" value="INVOICE_IN_PROCESS"/>
+        <if-not-empty field="parameters.invoiceTypeId">
+            <set field="invoice.invoiceTypeId" from="parameters.invoiceTypeId" set-if-empty="true" set-if-null="false"/>
+        </if-not-empty>
+        <set-service-fields map="invoice" service-name="createInvoice" to-map="newInvoice"/>
+        <clear-field field="newInvoice.invoiceId"/>
+        <call-service break-on-error="true" error-code="error" in-map-name="newInvoice" include-user-login="true"
+                      require-new-transaction="false" service-name="createInvoice" success-code="success">
+            <result-to-field field="invoiceId" result-name="invoiceId"/>
+        </call-service>
+        <field-to-result field="invoiceId" result-name="invoiceId"/>
+        <field-to-request field="invoiceId" request-name="invoiceId"/>
+        <iterate entry="invoiceItem" list="invoiceItems">
+            <set-service-fields map="invoiceItem" service-name="createInvoiceItem" to-map="createInvoiceItem"/>
+            <set field="createInvoiceItem.invoiceId" from="invoiceId" set-if-empty="true" set-if-null="false"/>
+            <call-service break-on-error="true" error-code="error" in-map-name="createInvoiceItem"
+                          include-user-login="true" require-new-transaction="false" service-name="createInvoiceItem"
+                          success-code="success"/>
+        </iterate>
+    </simple-method>
+
+    <simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_"
+                   event-event-message-name="_event_message_" event-request-object-name="request"
+                   event-response-code-name="_response_code_" event-response-object-name="response"
+                   login-required="true" method-name="getInvoice" service-error-message-list-name="errorMessageList"
+                   service-error-message-map-name="errorMessageMap" service-error-message-name="errorMessage"
+                   service-response-message-name="responseMessage"
+                   service-success-message-list-name="successMessageList" service-success-message-name="successMessage"
+                   short-description="Retrieve an invoice and the items" use-transaction="true">
+        <!-- find the invoice record -->
+        <make-value entity-name="Invoice" value-field="lookupPKMap"/>
+        <set-pk-fields map="parameters" set-if-null="true" value-field="lookupPKMap"/>
+        <find-by-primary-key entity-name="Invoice" map="lookupPKMap" use-cache="false" value-field="invoiceValue"/>
+        <field-to-result field="invoiceValue" result-name="invoice"/>
+        <!-- and the items -->
+        <get-related list="invoiceItemValues" relation-name="InvoiceItem" use-cache="false" value-field="invoiceValue"/>
+        <field-to-result field="invoiceItemValues" result-name="invoiceItems"/>
+    </simple-method>
+
+    <simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_"
+                   event-event-message-name="_event_message_" event-request-object-name="request"
+                   event-response-code-name="_response_code_" event-response-object-name="response"
+                   login-required="true" method-name="updateInvoice" service-error-message-list-name="errorMessageList"
+                   service-error-message-map-name="errorMessageMap" service-error-message-name="errorMessage"
+                   service-response-message-name="responseMessage"
+                   service-success-message-list-name="successMessageList" service-success-message-name="successMessage"
+                   short-description="Update the header of an existing Invoice" use-transaction="true">
+        <call-simple-method method-name="InvoiceStatusInProgress"/>
+        <!-- find the current record -->
+        <make-value entity-name="Invoice" value-field="lookupPKMap"/>
+        <set-pk-fields map="parameters" set-if-null="true" value-field="lookupPKMap"/>
+        <find-by-primary-key entity-name="Invoice" map="lookupPKMap" use-cache="false" value-field="lookedUpValue"/>
+        <!-- only try to update content if the status is in process.... -->
+        <!-- <if-compare field="lookedUpValue.statusId" operator="equals" value="INVOICE_IN_PROCESS"> -->
+        <clone-value new-value-field="savedValue" value-field="lookedUpValue"/>
+        <!-- Adds up the corresponding supplierId in linkedSupplierId field -->
+        <if-not-empty field="parameters.linkedInvoiceId">
+            <entity-condition distinct="false" entity-name="Invoice" filter-by-date="false" list="invoiceList" use-cache="false">
+                <condition-expr field-name="invoiceId" from-field="parameters.linkedInvoiceId" ignore="false" ignore-case="false"
+                            ignore-if-empty="false" ignore-if-null="false" operator="equals"/>
+            </entity-condition>
+            <set field="lookedUpValue.linkedSupplierId" value="${groovy:if(invoiceList != null) {
+                                                                            if('PURCHASE_INVOICE'.equals(invoiceList.get(0).getString(&quot;invoiceTypeId&quot;)))
+                                                                                invoiceList.get(0).getString(&quot;partyIdFrom&quot;);
+                                                                            else
+                                                                                invoiceList.get(0).getString(&quot;partyId&quot;);
+                                                                        }}"/>
+            <else>
+                <set field="lookedUpValue.linkedSupplierId" set-if-null="true" value=""/>
+            </else>
+        </if-not-empty>
+        <set-nonpk-fields map="parameters" set-if-null="true" value-field="lookedUpValue"/>
+        <!-- only save if something has changed, do not update status here -->
+        <set field="lookedUpValue.statusId" from="savedValue.statusId" set-if-empty="true" set-if-null="false"/>
+        <!-- get old status back -->
+        <if-compare-field field="lookedUpValue" operator="not-equals" to-field="savedValue" type="Object">
+            <store-value do-cache-clear="true" value-field="lookedUpValue"/>
+            <!-- update all non status and key fields -->
+        </if-compare-field>
+        <!-- <else> <add-error><fail-message message="Can only update Invoice, when status is in-process...current status: ${lookedUpValue.statusId}"/></add-error> <log 
+			level="error" message="Can only update Invoice, when status is in-process...current Status: ${lookedUpValue.statusId}"/> <check-errors/> </else> -->
+        <!-- </if-compare> -->
+        <!-- check if there is a requested status change if yes call invoice status update service -->
+        <if-not-empty field="parameters.statusId">
+            <if-compare-field field="parameters.statusId" operator="not-equals" to-field="savedValue.statusId"
+                              type="String">
+                <set field="inputMap.invoiceId" from="parameters.invoiceId" set-if-empty="true" set-if-null="false"/>
+                <set field="inputMap.statusId" from="parameters.statusId" set-if-empty="true" set-if-null="false"/>
+                <now-timestamp field="inputMap.statusDate"/>
+                <call-service break-on-error="true" error-code="error" in-map-name="inputMap" include-user-login="true"
+                              require-new-transaction="false" service-name="setInvoiceStatus" success-code="success"/>
+            </if-compare-field>
+        </if-not-empty>
+        <property-to-field field="successMessage" no-locale="false" property="AccountingUpdateInvoiceHeader"
+                           resource="AccountingUiLabels"/>
+    </simple-method>
+
+    <simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_"
+                   event-event-message-name="_event_message_" event-request-object-name="request"
+                   event-response-code-name="_response_code_" event-response-object-name="response"
+                   login-required="true" method-name="sendInvoicePerEmail"
+                   service-error-message-list-name="errorMessageList" service-error-message-map-name="errorMessageMap"
+                   service-error-message-name="errorMessage" service-response-message-name="responseMessage"
+                   service-success-message-list-name="successMessageList" service-success-message-name="successMessage"
+                   short-description="Send an invoice per Email" use-transaction="true">
+        <set-service-fields map="parameters" service-name="sendMailFromScreen" to-map="emailParams"/>
+        <set field="emailParams.xslfoAttachScreenLocation" set-if-empty="true" set-if-null="false"
+             value="component://accounting/widget/AccountingPrintScreens.xml#InvoicePDF"/>
+        <set field="emailParams.bodyParameters.invoiceId" from="parameters.invoiceId" set-if-empty="true"
+             set-if-null="false"/>
+        <set field="emailParams.bodyParameters.userLogin" from="parameters.userLogin" set-if-empty="true"
+             set-if-null="false"/>
+        <set field="emailParams.bodyParameters.other" from="parameters.other" set-if-empty="true" set-if-null="false"/>
+        <!-- to to print in 'other currency' -->
+        <call-service-asynch in-map-name="emailParams" include-user-login="true" service-name="sendMailFromScreen"/>
+        <property-to-field field="successMessage" no-locale="false" property="AccountingEmailScheduledToSend"
+                           resource="AccountingUiLabels"/>
+    </simple-method>
+
+    <simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_"
+                   event-event-message-name="_event_message_" event-request-object-name="request"
+                   event-response-code-name="_response_code_" event-response-object-name="response"
+                   login-required="true" method-name="createInvoiceItem"
+                   service-error-message-list-name="errorMessageList" service-error-message-map-name="errorMessageMap"
+                   service-error-message-name="errorMessage" service-response-message-name="responseMessage"
+                   service-success-message-list-name="successMessageList" service-success-message-name="successMessage"
+                   short-description="Create a new Invoice Item" use-transaction="true">
+        <set field="invoiceId" from="parameters.invoiceId" set-if-empty="true" set-if-null="false"/>
+        <call-simple-method method-name="InvoiceStatusInProgress"/>
+        <make-value entity-name="InvoiceItem" value-field="newEntity"/>
+        <set-pk-fields map="parameters" set-if-null="true" value-field="newEntity"/>
+        <set-nonpk-fields map="parameters" set-if-null="true" value-field="newEntity"/>
+        <if-empty field="newEntity.invoiceItemSeqId">
+            <make-next-seq-id increment-by="1" numeric-padding="5" seq-field-name="invoiceItemSeqId"
+                              value-field="newEntity"/>
+            <!-- this finds the next sub-sequence ID -->
+            <field-to-result field="newEntity.invoiceItemSeqId" result-name="invoiceItemSeqId"/>
+        </if-empty>
+        <!-- if there is no amount and a productItem is supplied fill the amount(price) and description from the product record TODO: there are return adjustments now 
+			that make this code very broken. The check for price was added as a quick fix. -->
+        <if-empty field="parameters.amount">
+            <if-not-empty field="parameters.productId">
+                <entity-one auto-field-map="true" entity-name="Product" use-cache="false" value-field="product"/>
+                <set field="newEntity.description" from="product.description" set-if-empty="true" set-if-null="false"/>
+                <set field="calculateProductPriceMap.product" from="product" set-if-empty="true" set-if-null="false"/>
+                <call-service break-on-error="true" error-code="error" in-map-name="calculateProductPriceMap"
+                              include-user-login="true" require-new-transaction="false"
+                              service-name="calculateProductPrice" success-code="success">
+                    <result-to-field field="newEntity.amount" result-name="price"/>
+                </call-service>
+            </if-not-empty>
+        </if-empty>
+        <if-not-empty field="parameters.productId">
+            <if-empty field="parameters.quantity">
+                <set field="newEntity.quantity" set-if-empty="true" set-if-null="false" type="BigDecimal" value="1.0"/>
+            </if-empty>
+        </if-not-empty>
+
+        <set field="newEntity.projectName" value="${parameters.projectName}"/>
+        <if-empty field="newEntity.amount">
+            <add-error error-list-name="error_list">
+                <fail-message message="The amount value is mandatory"/>
+            </add-error>
+        </if-empty>
+        <create-value do-cache-clear="true" or-store="false" value-field="newEntity"/>
+    </simple-method>
+
+    <simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_"
+                   event-event-message-name="_event_message_" event-request-object-name="request"
+                   event-response-code-name="_response_code_" event-response-object-name="response"
+                   login-required="true" method-name="updateInvoiceItem"
+                   service-error-message-list-name="errorMessageList" service-error-message-map-name="errorMessageMap"
+                   service-error-message-name="errorMessage" service-response-message-name="responseMessage"
+                   service-success-message-list-name="successMessageList" service-success-message-name="successMessage"
+                   short-description="Update an existing Invoice Item" use-transaction="true">
+
+        <call-simple-method method-name="InvoiceStatusInProgress"/>
+        <make-value entity-name="InvoiceItem" value-field="lookupPKMap"/>
+        <set-pk-fields map="parameters" set-if-null="true" value-field="lookupPKMap"/>
+        <find-by-primary-key entity-name="InvoiceItem" map="lookupPKMap" use-cache="false" value-field="lookedUpValue"/>
+        <clone-value new-value-field="savedValue" value-field="lookedUpValue"/>
+        <!-- set all parameters -->
+        <set-nonpk-fields map="parameters" set-if-null="true" value-field="lookedUpValue"/>
+        <!-- check if the productNumber is updated, when yes retrieve product description and price -->
+        <if-not-empty field="productId">
+            <if-compare-field field="savedValue.productId" operator="not-equals" to-field="lookedUpValue.productId"
+                              type="String">
+                <entity-one auto-field-map="true" entity-name="Product" use-cache="false" value-field="product"/>
+                <set field="lookedUpValue.description" from="product.description" set-if-empty="true"
+                     set-if-null="false"/>
+                <set field="calculateProductPriceMap.product" from="product" set-if-empty="true" set-if-null="false"/>
+                <call-service break-on-error="true" error-code="error" in-map-name="calculateProductPriceMap"
+                              include-user-login="true" require-new-transaction="false"
+                              service-name="calculateProductPrice" success-code="success">
+                    <result-to-field field="lookedUpValue.amount" result-name="price"/>
+                </call-service>
+            </if-compare-field>
+        </if-not-empty>
+        <if-empty field="newEntity.amount">
+            <add-error error-list-name="error_list">
+                <fail-message message="The amount value is mandatory"/>
+            </add-error>
+        </if-empty>
+        <if-compare-field field="lookedUpValue" operator="not-equals" to-field="savedValue" type="Object">
+            <store-value do-cache-clear="true" value-field="lookedUpValue"/>
+        </if-compare-field>
+    </simple-method>
+
+    <simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_"
+                   event-event-message-name="_event_message_" event-request-object-name="request"
+                   event-response-code-name="_response_code_" event-response-object-name="response"
+                   login-required="true" method-name="removeInvoiceItem"
+                   service-error-message-list-name="errorMessageList" service-error-message-map-name="errorMessageMap"
+                   service-error-message-name="errorMessage" service-response-message-name="responseMessage"
+                   service-success-message-list-name="successMessageList" service-success-message-name="successMessage"
+                   short-description="Remove an existing Invoice Item" use-transaction="true">
+        <call-simple-method method-name="InvoiceStatusInProgress"/>
+        <set field="invoiceId" from="parameters.invoiceId" set-if-empty="true" set-if-null="false"/>
+        <call-simple-method method-name="InvoiceStatusInProgress"/>
+        <set field="paymentApplicationMap.invoiceId" from="parameters.invoiceId" set-if-empty="true"
+             set-if-null="false"/>
+        <set field="paymentApplicationMap.invoiceItemSeqId" from="parameters.invoiceItemSeqId" set-if-empty="true"
+             set-if-null="false"/>
+        <if-not-empty field="parameters.invoiceItemSeqId">
+            <!-- check if there are specific item paymentApplications when yes remove those -->
+            <remove-by-and do-cache-clear="true" entity-name="PaymentApplication" map="paymentApplicationMap"/>
+            <else>
+                <!-- update global application with a null sequence number -->
+                <!-- TODO: reduce amount on global paymentApplication record -->
+            </else>
+        </if-not-empty>
+        <entity-one auto-field-map="true" entity-name="InvoiceItem" use-cache="false" value-field="lookedUpValue"/>
+        <remove-value do-cache-clear="true" value-field="lookedUpValue"/>
+    </simple-method>
+
+    <simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_"
+                   event-event-message-name="_event_message_" event-request-object-name="request"
+                   event-response-code-name="_response_code_" event-response-object-name="response"
+                   login-required="true" method-name="removePaymentApplication"
+                   service-error-message-list-name="errorMessageList" service-error-message-map-name="errorMessageMap"
+                   service-error-message-name="errorMessage" service-response-message-name="responseMessage"
+                   service-success-message-list-name="successMessageList" service-success-message-name="successMessage"
+                   short-description="Remove an existing payment application" use-transaction="true">
+        <entity-one auto-field-map="true" entity-name="PaymentApplication" use-cache="false"
+                    value-field="paymentApplication">
+            <field-map field-name="paymentApplicationId" value="${parameters.paymentApplicationId}"/>
+        </entity-one>
+        <if-empty field="paymentApplication">
+            <add-error error-list-name="error_list">
+                <fail-message message="Cannot find payment application record [${parameters.paymentApplicationId}]"/>
+            </add-error>
+            <check-errors error-code="error" error-list-name="error_list"/>
+        </if-empty>
+        <!-- payment -->
+        <set field="currencyUomId" set-if-empty="true" set-if-null="false" value=""/>
+        <!-- currency of the paymentApplication -->
+        <if-not-empty field="paymentApplication.paymentId">
+            <entity-one auto-field-map="true" entity-name="Payment" use-cache="false" value-field="payment">
+                <field-map field-name="paymentId" value="${paymentApplication.paymentId}"/>
+            </entity-one>
+            <if-not-empty field="payment">
+                <if-compare field="payment.statusId" operator="equals" type="String" value="PMNT_CONFIRMED">
+                    <add-error error-list-name="error_list">
+                        <fail-message
+                                message="PaymentID [${payment.paymentId}] has status 'confirmed', cannot remove application."/>
+                    </add-error>
+                </if-compare>
+                <check-errors error-code="error" error-list-name="error_list"/>
+            </if-not-empty>
+            <field-to-result field="paymentApplication.paymentId" result-name="paymentId"/>
+            <set field="currencyUomId" from="paymentId.currencyUomId" set-if-empty="true" set-if-null="false"/>
+        </if-not-empty>
+        <!-- check invoice -->
+        <if-not-empty field="paymentApplication.invoiceId">
+            <entity-one auto-field-map="true" entity-name="Invoice" use-cache="false" value-field="invoice">
+                <field-map field-name="invoiceId" value="${paymentApplication.invoiceId}"/>
+            </entity-one>
+            <if-empty field="invoice">
+                <add-error error-list-name="error_list">
+                    <fail-message message="Invoice not found, invoice Id: ${paymentApplication.invoiceId}"/>
+                </add-error>
+                <log level="info" message="Invoice not found, invoice Id: ${invoiceId}"/>
+                <check-errors error-code="error" error-list-name="error_list"/>
+            </if-empty>
+            <set field="currencyUomId" from="invoice.currencyUomId" set-if-empty="true" set-if-null="false"/>
+            <!-- if the invoice is already PAID, then set it back to READY and clear out the paidDate -->
+            <if-compare field="invoice.statusId" operator="equals" type="String" value="INVOICE_PAID">
+                <set field="invoiceStatusMap.invoiceId" from="paymentApplication.invoiceId" set-if-empty="true"
+                     set-if-null="false"/>
+                <set field="invoiceStatusMap.statusId" set-if-empty="true" set-if-null="false" value="INVOICE_READY"/>
+                <now-timestamp field="nowTimestamp"/>
+                <set field="invoiceStatusMap.statusDate" from="nowTimestamp" set-if-empty="true" set-if-null="false"/>
+                <call-service break-on-error="true" error-code="error" in-map-name="invoiceStatusMap"
+                              include-user-login="true" require-new-transaction="false" service-name="setInvoiceStatus"
+                              success-code="success"/>
+            </if-compare>
+            <check-errors error-code="error" error-list-name="error_list"/>
+            <field-to-result field="paymentApplication.invoiceId" result-name="invoiceId"/>
+            <property-to-field field="toMessage" no-locale="false" property="AccountingPaymentApplToInvoice"
+                               resource="AccountingUiLabels"/>
+        </if-not-empty>
+        <!-- invoice item -->
+        <if-not-empty field="paymentApplication.invoiceItemSeqId">
+            <field-to-result field="paymentApplication.invoiceItemSeqId" result-name="invoiceItemSeqId"/>
+            <property-to-field field="toMessage" no-locale="false" property="AccountingApplicationToInvoiceItem"
+                               resource="AccountingUiLabels"/>
+        </if-not-empty>
+        <!-- toPayment -->
+        <if-not-empty field="paymentApplication.toPaymentId">
+            <entity-one auto-field-map="true" entity-name="Payment" use-cache="false" value-field="toPayment">
+                <field-map field-name="paymentId" value="${paymentApplication.toPaymentId}"/>
+            </entity-one>
+            <if-not-empty field="toPayment">
+                <if-compare field="toPayment.statusId" operator="equals" type="String" value="PMNT_CONFIRMED">
+                    <add-error error-list-name="error_list">
+                        <fail-message
+                                message="Related payment [${toPayment.paymentId}] has status 'confirmed', cannot remove application."/>
+                    </add-error>
+                </if-compare>
+                <check-errors error-code="error" error-list-name="error_list"/>
+            </if-not-empty>
+            <property-to-field field="toMessage" no-locale="false" property="AccountingPaymentApplToPayment"
+                               resource="AccountingUiLabels"/>
+            <field-to-result field="paymentApplication.toPaymentId" result-name="toPaymentId"/>
+        </if-not-empty>
+        <!-- billing account -->
+        <if-not-empty field="paymentApplication.billingAccountId">
+            <field-to-result field="paymentApplication.billingAccountId" result-name="billingAccountId"/>
+            <property-to-field field="toMessage" no-locale="false" property="AccountingPaymentApplToBillingAccount"
+                               resource="AccountingUiLabels"/>
+            <entity-one auto-field-map="true" entity-name="BillingAccount" use-cache="false"
+                        value-field="billingAccount">
+                <field-map field-name="billingAccountId" from-field="paymentApplication.billingAccountId"/>
+            </entity-one>
+            <set field="currencyUomId" from="billingAccount.accountCurrencyUomId" set-if-empty="true"
+                 set-if-null="false"/>
+        </if-not-empty>
+        <!-- tax authority -->
+        <if-not-empty field="paymentApplication.taxAuthGeoId">
+            <field-to-result field="paymentApplication.taxAuthGeoId" result-name="taxAuthGeoId"/>
+            <property-to-field field="toMessage" no-locale="false" property="AccountingPaymentApplToTaxAuth"
+                               resource="AccountingUiLabels"/>
+        </if-not-empty>
+        <!-- finally delete application -->
+        <property-to-field field="successMessage" no-locale="false" property="AccountingPaymentApplRemoved"
+                           resource="AccountingUiLabels"/>
+        <string-append field="successMessage" string=" ${toMessage}"/>
+        <remove-value do-cache-clear="true" value-field="paymentApplication"/>
+    </simple-method>
+
+    <simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_"
+                   event-event-message-name="_event_message_" event-request-object-name="request"
+                   event-response-code-name="_response_code_" event-response-object-name="response"
+                   login-required="true" method-name="createInvoiceRole"
+                   service-error-message-list-name="errorMessageList" service-error-message-map-name="errorMessageMap"
+                   service-error-message-name="errorMessage" service-response-message-name="responseMessage"
+                   service-success-message-list-name="successMessageList" service-success-message-name="successMessage"
+                   short-description="Create a Invoice Role" use-transaction="true">
+        <call-simple-method method-name="InvoiceStatusInProgress"/>
+        <make-value entity-name="InvoiceRole" value-field="newEntity"/>
+        <set-nonpk-fields map="parameters" set-if-null="true" value-field="newEntity"/>
+        <set-pk-fields map="parameters" set-if-null="true" value-field="newEntity"/>
+        <if-empty field="newEntity.datetimePerformed">
+            <now-timestamp field="newEntity.datetimePerformed"/>
+        </if-empty>
+        <create-value do-cache-clear="true" or-store="false" value-field="newEntity"/>
+    </simple-method>
+
+    <simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_"
+                   event-event-message-name="_event_message_" event-request-object-name="request"
+                   event-response-code-name="_response_code_" event-response-object-name="response"
+                   login-required="true" method-name="removeInvoiceRole"
+                   service-error-message-list-name="errorMessageList" service-error-message-map-name="errorMessageMap"
+                   service-error-message-name="errorMessage" service-response-message-name="responseMessage"
+                   service-success-message-list-name="successMessageList" service-success-message-name="successMessage"
+                   short-description="Remove existing Invoice Role" use-transaction="true">
+        <call-simple-method method-name="InvoiceStatusInProgress"/>
+        <entity-one auto-field-map="true" entity-name="InvoiceRole" use-cache="false" value-field="lookedUpValue"/>
+        <remove-value do-cache-clear="true" value-field="lookedUpValue"/>
+    </simple-method>
+
+    <simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_"
+                   event-event-message-name="_event_message_" event-request-object-name="request"
+                   event-response-code-name="_response_code_" event-response-object-name="response"
+                   login-required="true" method-name="setInvoiceStatus"
+                   service-error-message-list-name="errorMessageList" service-error-message-map-name="errorMessageMap"
+                   service-error-message-name="errorMessage" service-response-message-name="responseMessage"
+                   service-success-message-list-name="successMessageList" service-success-message-name="successMessage"
+                   short-description="Set The Invoice Status" use-transaction="true">
+        <entity-one auto-field-map="true" entity-name="Invoice" use-cache="false" value-field="invoice"/>
+        <field-to-result field="invoice.statusId" result-name="oldStatusId"/>
+        <field-to-result field="invoice.invoiceTypeId" result-name="invoiceTypeId"/>
+        <if-compare-field field="invoice.statusId" operator="not-equals" to-field="parameters.statusId" type="String">
+            <entity-one auto-field-map="false" entity-name="StatusValidChange" use-cache="false"
+                        value-field="statusChange">
+                <field-map field-name="statusId" from-field="invoice.statusId"/>
+                <field-map field-name="statusIdTo" from-field="parameters.statusId"/>
+            </entity-one>
+            <if-empty field="statusChange">
+                <add-error error-list-name="error_list">
+                    <fail-message message="Status is not a valid change"/>
+                </add-error>
+                <log level="error" message="Cannot change from ${invoice.statusId} to ${parameters.statusId}"/>
+                <check-errors error-code="error" error-list-name="error_list"/>
+                <else>
+                    <!-- if new status is paid check if the complete invoice is applied. -->
+                    <if-compare field="parameters.statusId" operator="equals" type="String" value="INVOICE_PAID">
+                        <set field="notApplied"
+                             from="bsh:org.ofbiz.accounting.invoice.InvoiceWorker.getInvoiceNotApplied(invoice)"
+                             set-if-empty="true" set-if-null="false" type="BigDecimal"/>
+                        <if-compare field="notApplied" operator="not-equals" type="BigDecimal" value="0.00">
+                            <add-error error-list-name="error_list">
+                                <fail-message
+                                        message="Cannot change status to 'paid', invoice ${invoice.invoiceId} has an unapplied balance of [${notApplied}]"/>
+                            </add-error>
+                            <check-errors error-code="error" error-list-name="error_list"/>
+                        </if-compare>
+                        <!-- if it's OK to mark invoice paid, use parameter for paidDate -->
+                        <if-empty field="parameters.paidDate">
+                            <now-timestamp field="nowTimestamp"/>
+                            <set field="invoice.paidDate" from="nowTimestamp" set-if-empty="true" set-if-null="false"/>
+                            <else>
+                                <set field="invoice.paidDate" from="parameters.paidDate" set-if-empty="true"
+                                     set-if-null="false"/>
+                            </else>
+                        </if-empty>
+                    </if-compare>
+                    <if-not-empty field="invoice.paidDate">
+                        <if-compare field="parameters.statusId" operator="equals" type="String" value="INVOICE_READY">
+                            <clear-field field="invoice.paidDate"/>
+                        </if-compare>
+                    </if-not-empty>
+                    <set field="invoice.statusId" from="parameters.statusId" set-if-empty="true" set-if-null="false"/>
+                    <store-value do-cache-clear="true" value-field="invoice"/>
+                    <make-value entity-name="InvoiceStatus" value-field="newEntity"/>
+                    <set-nonpk-fields map="parameters" set-if-null="true" value-field="newEntity"/>
+                    <set-pk-fields map="parameters" set-if-null="true" value-field="newEntity"/>
+                    <if-empty field="newEntity.statusDate">
+                        <now-timestamp field="newEntity.statusDate"/>
+                    </if-empty>
+                    <create-value do-cache-clear="true" or-store="false" value-field="newEntity"/>
+                    <if-compare field="invoice.invoiceTypeId" operator="equals" type="String" value="XFR_SHIP_INVOICE">
+                        <if>
+                            <condition>
+                                <or>
+                                    <if-compare field="parameters.statusId" operator="equals" type="String"
+                                                value="INVOICE_APPROVED"/>
+                                    <if-compare field="parameters.statusId" operator="equals" type="String"
+                                                value="INVOICE_READY"/>
+                                </or>
+                            </condition>
+                            <then>
+                                <if-empty field="shipmentId">
+                                    <add-error error-list-name="error_list">
+                                        <fail-message
+                                                message="Transfer Shipment Invoice does not have a Shipment: ${invoiceId}"/>
+                                    </add-error>
+                                    <log level="info"
+                                         message="Transfer Shipment Invoice does not have a Shipment ${invoiceId}"/>
+                                </if-empty>
+                            </then>
+                        </if>
+                    </if-compare>
+                    <check-errors error-code="error" error-list-name="error_list"/>
+
+                    <!-- if the invoice is a payrol invoice, create the payment in the not-paid status -->
+                    <if-compare field="invoice.invoiceTypeId" operator="equals" type="String" value="PAYROL_INVOICE">
+                        <if>
+                            <condition>
+                                <or>
+                                    <if-compare field="parameters.statusId" operator="equals" type="String"
+                                                value="INVOICE_APPROVED"/>
+                                    <if-compare field="parameters.statusId" operator="equals" type="String"
+                                                value="INVOICE_READY"/>
+                                </or>
+                            </condition>
+                            <then>
+                                <!-- only generate payment if no application exist yet -->
+                                <entity-and entity-name="PaymentApplication" filter-by-date="false"
+                                            list="paymentApplications" use-cache="false">
+                                    <field-map field-name="invoiceId" from-field="parameters.invoiceId"/>
+                                </entity-and>
+                                <if-empty field="paymentApplications">
+                                    <set field="newp.partyIdFrom" from="invoice.partyId" set-if-empty="true"
+                                         set-if-null="false"/>
+                                    <set field="newp.partyIdTo" from="invoice.partyIdFrom" set-if-empty="true"
+                                         set-if-null="false"/>
+                                    <set field="newp.paymentMethodTypeId" set-if-empty="true" set-if-null="false"
+                                         value="COMPANY_CHECK"/>
+                                    <set field="newp.paymentTypeId" set-if-empty="true" set-if-null="false"
+                                         value="PAYROL_PAYMENT"/>
+                                    <set field="newp.statusId" set-if-empty="true" set-if-null="false"
+                                         value="PMNT_NOT_PAID"/>
+                                    <set field="newp.currencyUomId" from="invoice.currencyUomId" set-if-empty="true"
+                                         set-if-null="false"/>
+                                    <call-class-method class-name="org.ofbiz.accounting.invoice.InvoiceWorker"
+                                                       method-name="getInvoiceTotal" ret-field="newp.amount">
+                                        <field field="invoice" type="GenericValue"/>
+                                    </call-class-method>
+                                    <call-service break-on-error="true" error-code="error" in-map-name="newp"
+                                                  include-user-login="true" require-new-transaction="false"
+                                                  service-name="createPayment" success-code="success">
+                                        <result-to-field field="payment.paymentId" result-name="paymentId"/>
+                                    </call-service>
+                                    <set field="payAppl.invoiceId" from="invoice.invoiceId" set-if-empty="true"
+                                         set-if-null="false"/>
+                                    <set field="payAppl.paymentId" from="payment.paymentId" set-if-empty="true"
+                                         set-if-null="false"/>
+                                    <set field="payAppl.amountApplied" from="newp.amount" set-if-empty="true"
+                                         set-if-null="false"/>
+                                    <call-service break-on-error="true" error-code="error" in-map-name="payAppl"
+                                                  include-user-login="true" require-new-transaction="false"
+                                                  service-name="createPaymentApplication" success-code="success"/>
+                                </if-empty>
+                            </then>
+                        </if>
+                    </if-compare>
+                </else>
+            </if-empty>
+        </if-compare-field>
+    </simple-method>
+
+    <simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_"
+                   event-event-message-name="_event_message_" event-request-object-name="request"
+                   event-response-code-name="_response_code_" event-response-object-name="response"
+                   login-required="true" method-name="createInvoiceTerm"
+                   service-error-message-list-name="errorMessageList" service-error-message-map-name="errorMessageMap"
+                   service-error-message-name="errorMessage" service-response-message-name="responseMessage"
+                   service-success-message-list-name="successMessageList" service-success-message-name="successMessage"
+                   short-description="Create a Invoice Term" use-transaction="true">
+        <call-simple-method method-name="InvoiceStatusInProgress"/>
+        <make-value entity-name="InvoiceTerm" value-field="newEntity"/>
+        <set-nonpk-fields map="parameters" set-if-null="true" value-field="newEntity"/>
+        <sequenced-id field="newEntity.invoiceTermId" get-long-only="false" sequence-name="InvoiceTerm"/>
+        <field-to-result field="newEntity.invoiceTermId" result-name="invoiceTermId"/>
+        <create-value do-cache-clear="true" or-store="false" value-field="newEntity"/>
+    </simple-method>
+
+    <simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_"
+                   event-event-message-name="_event_message_" event-request-object-name="request"
+                   event-response-code-name="_response_code_" event-response-object-name="response"
+                   login-required="true" method-name="copyInvoiceToTemplate"
+                   service-error-message-list-name="errorMessageList" service-error-message-map-name="errorMessageMap"
+                   service-error-message-name="errorMessage" service-response-message-name="responseMessage"
+                   service-success-message-list-name="successMessageList" service-success-message-name="successMessage"
+                   short-description="copy a invoice to a InvoiceType starting with 'template'" use-transaction="true">
+        <set field="parameters.invoiceIdToCopyFrom" from="parameters.invoiceId" set-if-empty="true"
+             set-if-null="false"/>
+        <if-compare field="parameters.invoiceTypeId" operator="equals" type="String" value="SALES_INVOICE">
+            <set field="parameters.invoiceTypeId" set-if-empty="true" set-if-null="false" value="SALES_INV_TEMPLATE"/>
+        </if-compare>
+        <if-compare field="parameters.invoiceTypeId" operator="equals" type="String" value="PURCHASE_INVOICE">
+            <set field="parameters.invoiceTypeId" set-if-empty="true" set-if-null="false" value="PUR_INV_TEMPLATE"/>
+        </if-compare>
+        <call-simple-method method-name="copyInvoice"/>
+    </simple-method>
+    <!-- ===============subroutine services ================= -->
+
+    <simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_"
+                   event-event-message-name="_event_message_" event-request-object-name="request"
+                   event-response-code-name="_response_code_" event-response-object-name="response"
+                   login-required="true" method-name="InvoiceStatusInProgress"
+                   service-error-message-list-name="errorMessageList" service-error-message-map-name="errorMessageMap"
+                   service-error-message-name="errorMessage" service-response-message-name="responseMessage"
+                   service-success-message-list-name="successMessageList" service-success-message-name="successMessage"
+                   short-description="Check if the invoiceStatus is in progress" use-transaction="true">
+        <!-- find the current header record -->
+        <entity-one auto-field-map="true" entity-name="Invoice" use-cache="false" value-field="headerValue"/>
+        <if-empty field="headerValue">
+            <add-error error-list-name="error_list">
+                <fail-message message="Invoice not found, invoice Id: ${invoiceId}"/>
+            </add-error>
+            <log level="info" message="Invoice not found, invoice Id: ${invoiceId}"/>
+            <check-errors error-code="error" error-list-name="error_list"/>
+        </if-empty>
+        <!-- check if the status is in progress... -->
+        <!-- <if-compare field="headerValue.statusId" operator="not-equals" value="INVOICE_IN_PROCESS"> <add-error><fail-message message="Can only update Invoice, when 
+			status is in-process...is now: ${headerValue.statusId}"/></add-error> <log level="info" message="Can only update Invoice, when status is in-process...is now: ${headerValue.statusId}"/> 
+			</if-compare> -->
+        <check-errors error-code="error" error-list-name="error_list"/>
+    </simple-method>
+
+    <simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_"
+                   event-event-message-name="_event_message_" event-request-object-name="request"
+                   event-response-code-name="_response_code_" event-response-object-name="response"
+                   login-required="true" method-name="createInvoiceContactMech"
+                   service-error-message-list-name="errorMessageList" service-error-message-map-name="errorMessageMap"
+                   service-error-message-name="errorMessage" service-response-message-name="responseMessage"
+                   service-success-message-list-name="successMessageList" service-success-message-name="successMessage"
+                   short-description="Create a ContactMech for an invoice" use-transaction="true">
+        <make-value entity-name="InvoiceContactMech" value-field="invoiceContactMech"/>
+        <set-pk-fields map="parameters" set-if-null="true" value-field="invoiceContactMech"/>
+        <create-value do-cache-clear="true" or-store="false" value-field="invoiceContactMech"/>
+        <field-to-result field="contactMechId" result-name="invoiceContactMech"/>
+    </simple-method>
+
+    <simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_"
+                   event-event-message-name="_event_message_" event-request-object-name="request"
+                   event-response-code-name="_response_code_" event-response-object-name="response"
+                   login-required="true" method-name="updateInvoiceItemType"
+                   service-error-message-list-name="errorMessageList" service-error-message-map-name="errorMessageMap"
+                   service-error-message-name="errorMessage" service-response-message-name="responseMessage"
+                   service-success-message-list-name="successMessageList" service-success-message-name="successMessage"
+                   short-description="Updates a InvoiceItemType Record" use-transaction="true">
+        <entity-one auto-field-map="true" entity-name="InvoiceItemType" use-cache="false" value-field="lookedUpValue"/>
+        <set-nonpk-fields map="parameters" set-if-null="true" value-field="lookedUpValue"/>
+        <store-value do-cache-clear="true" value-field="lookedUpValue"/>
+    </simple-method>
+
+    <simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_"
+                   event-event-message-name="_event_message_" event-request-object-name="request"
+                   event-response-code-name="_response_code_" event-response-object-name="response"
+                   login-required="true" method-name="autoGenerateInvoiceFromExistingInvoice"
+                   service-error-message-list-name="errorMessageList" service-error-message-map-name="errorMessageMap"
+                   service-error-message-name="errorMessage" service-response-message-name="responseMessage"
+                   service-success-message-list-name="successMessageList" service-success-message-name="successMessage"
+                   short-description="Scheduled service to generate Invoice from an existing Invoice"
+                   use-transaction="true">
+        <entity-and entity-name="Invoice" filter-by-date="false" list="invoices" use-cache="false">
+            <field-map field-name="recurrenceInfoId" from-field="parameters.recurrenceInfoId"/>
+        </entity-and>
+        <iterate entry="invoice" list="invoices">
+            <set-service-fields map="invoice" service-name="copyInvoice" to-map="copyInvoiceCtx"/>
+            <set field="copyInvoiceCtx.invoiceIdToCopyFrom" from="invoice.invoiceId" set-if-empty="true"
+                 set-if-null="false"/>
+            <call-service break-on-error="true" error-code="error" in-map-name="copyInvoiceCtx"
+                          include-user-login="true" require-new-transaction="false" service-name="copyInvoice"
+                          success-code="success">
+                <result-to-field field="invoiceId" result-name="invoiceId"/>
+            </call-service>
+            <set-service-fields map="invoice" service-name="updateInvoice" to-map="updateInvoiceCtx"/>
+            <set field="updateInvoiceCtx.invoiceId" from="invoiceId" set-if-empty="true" set-if-null="false"/>
+            <if-compare field="updateInvoiceCtx.invoiceTypeId" operator="equals" type="String"
+                        value="SALES_INV_TEMPLATE">
+                <set field="updateInvoiceCtx.invoiceTypeId" set-if-empty="true" set-if-null="false"
+                     value="SALES_INVOICE"/>
+            </if-compare>
+            <if-compare field="updateInvoiceCtx.invoiceTypeId" operator="equals" type="String" value="PUR_INV_TEMPLATE">
+                <set field="updateInvoiceCtx.invoiceTypeId" set-if-empty="true" set-if-null="false"
+                     value="PURCHASE_INVOICE"/>
+            </if-compare>
+            <clear-field field="invoice"/>
+            <clear-field field="parameters.invoiceIdToCopyFrom"/>
+            <clear-field field="updateInvoiceCtx.recurrenceInfoId"/>
+            <call-service break-on-error="true" error-code="error" in-map-name="updateInvoiceCtx"
+                          include-user-login="true" require-new-transaction="false" service-name="updateInvoice"
+                          success-code="success"/>
+        </iterate>
+    </simple-method>
+
+    <simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_"
+                   event-event-message-name="_event_message_" event-request-object-name="request"
+                   event-response-code-name="_response_code_" event-response-object-name="response"
+                   login-required="true" method-name="cancelInvoice" service-error-message-list-name="errorMessageList"
+                   service-error-message-map-name="errorMessageMap" service-error-message-name="errorMessage"
+                   service-response-message-name="responseMessage"
+                   service-success-message-list-name="successMessageList" service-success-message-name="successMessage"
+                   short-description="Service to cancel the Invoices" use-transaction="true">
+        <entity-one auto-field-map="true" entity-name="Invoice" use-cache="false" value-field="invoice"/>
+        <if-empty field="invoice">
+            <add-error error-list-name="error_list">
+                <fail-message message="${uiLabelMap.AccountingInvoiceNotFound}"/>
+            </add-error>
+            <check-errors error-code="error" error-list-name="error_list"/>
+        </if-empty>
+        <get-related list="paymentApplications" relation-name="PaymentApplication" use-cache="false"
+                     value-field="invoice"/>
+        <iterate entry="paymentApplication" list="paymentApplications">
+            <get-related-one relation-name="Payment" to-value-field="payment" use-cache="false"
+                             value-field="paymentApplication"/>
+            <if-compare field="payment.statusId" operator="equals" type="String" value="PMNT_CONFIRMED">
+                <set field="paymentStatusMap.paymentId" from="payment.paymentId" set-if-empty="true"
+                     set-if-null="false"/>
+                <set field="isReceipt" from="groovy:org.ofbiz.accounting.util.UtilAccounting.isReceipt(payment)"
+                     set-if-empty="true" set-if-null="false" type="Boolean"/>
+                <set field="isDisbursement"
+                     from="groovy:org.ofbiz.accounting.util.UtilAccounting.isDisbursement(payment)" set-if-empty="true"
+                     set-if-null="false" type="Boolean"/>
+                <if-compare field="isReceipt" operator="equals" type="Boolean" value="true">
+                    <set field="paymentStatusMap.statusId" set-if-empty="true" set-if-null="false"
+                         value="PMNT_RECEIVED"/>
+                    <else>
+                        <if-compare field="isDisbursement" operator="equals" type="Boolean" value="true">
+                            <set field="paymentStatusMap.statusId" set-if-empty="true" set-if-null="false"
+                                 value="PMNT_SENT"/>
+                        </if-compare>
+                    </else>
+                </if-compare>
+                <call-service break-on-error="true" error-code="error" in-map-name="paymentStatusMap"
+                              include-user-login="true" require-new-transaction="false" service-name="setPaymentStatus"
+                              success-code="success"/>
+            </if-compare>
+            <set field="removePaymentApplicationCtx.paymentApplicationId" from="paymentApplication.paymentApplicationId"
+                 set-if-empty="true" set-if-null="false"/>
+            <call-service break-on-error="true" error-code="error" in-map-name="removePaymentApplicationCtx"
+                          include-user-login="true" require-new-transaction="false"
+                          service-name="removePaymentApplication" success-code="success"/>
+        </iterate>
+        <field-to-result field="invoice.invoiceTypeId" result-name="invoiceTypeId"/>
+    </simple-method>
+
+    <simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_"
+                   event-event-message-name="_event_message_" event-request-object-name="request"
+                   event-response-code-name="_response_code_" event-response-object-name="response"
+                   login-required="true" method-name="getInvoiceRunningTotal"
+                   service-error-message-list-name="errorMessageList" service-error-message-map-name="errorMessageMap"
+                   service-error-message-name="errorMessage" service-response-message-name="responseMessage"
+                   service-success-message-list-name="successMessageList" service-success-message-name="successMessage"
+                   short-description="calculate running total for Invoices" use-transaction="true">
+        <set field="invoiceIds" from="parameters.invoiceIds" set-if-empty="true" set-if-null="false"/>
+        <set field="runningTotal" set-if-empty="true" set-if-null="false" type="BigDecimal" value="0"/>
+        <entity-condition distinct="false" entity-name="Invoice" filter-by-date="false" list="invoiceList"
+                          use-cache="false">
+            <condition-expr field-name="invoiceId" from-field="invoiceIds" ignore="false" ignore-case="false"
+                            ignore-if-empty="false" ignore-if-null="false" operator="in"/>
+        </entity-condition>
+        <iterate entry="invoice" list="invoiceList">
+            <set field="getInvoicePaymentInfoListCtx.invoiceId" from="invoice.invoiceId" set-if-empty="true"
+                 set-if-null="false"/>
+            <call-service break-on-error="true" error-code="error" in-map-name="getInvoicePaymentInfoListCtx"
+                          include-user-login="true" require-new-transaction="false"
+                          service-name="getInvoicePaymentInfoList" success-code="success">
+                <result-to-field result-name="invoicePaymentInfoList"/>
+            </call-service>
+            <first-from-list entry="invoicePaymentInfo" list="invoicePaymentInfoList"/>
+            <set field="runningTotal" from="runningTotal + invoicePaymentInfo.outstandingAmount" set-if-empty="true"
+                 set-if-null="false" type="BigDecimal"/>
+        </iterate>
+        <set-service-fields map="parameters" service-name="getPartyAccountingPreferences"
+                            to-map="getPartyAccountingPreferencesMap"/>
+        <call-service break-on-error="true" error-code="error" in-map-name="getPartyAccountingPreferencesMap"
+                      include-user-login="true" require-new-transaction="false"
+                      service-name="getPartyAccountingPreferences" success-code="success">
+            <result-to-field result-name="partyAccountingPreference"/>
+        </call-service>
+        <set field="currencyUomId" from="partyAccountingPreference.baseCurrencyUomId" set-if-empty="true"
+             set-if-null="false"/>
+        <if-empty field="currencyUomId">
+            <property-to-field field="currencyUomId" no-locale="false" property="currency.uom.id.default"
+                               resource="general"/>
+        </if-empty>
+        <set field="invoiceRunningTotal"
+             from="groovy:org.ofbiz.base.util.UtilFormatOut.formatCurrency(runningTotal, currencyUomId, parameters.locale)"
+             set-if-empty="true" set-if-null="false"/>
+        <field-to-result field="invoiceRunningTotal"/>
+    </simple-method>
+
+    <simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_"
+                   event-event-message-name="_event_message_" event-request-object-name="request"
+                   event-response-code-name="_response_code_" event-response-object-name="response"
+                   login-required="true" method-name="getInvoicesFilterByAssocType"
+                   service-error-message-list-name="errorMessageList" service-error-message-map-name="errorMessageMap"
+                   service-error-message-name="errorMessage" service-response-message-name="responseMessage"
+                   service-success-message-list-name="successMessageList" service-success-message-name="successMessage"
+                   short-description="Filter invoices by invoiceItemAssocTypeId" use-transaction="true">
+        <set field="invoiceList" from="parameters.invoiceList" set-if-empty="true" set-if-null="false"/>
+        <set field="invoiceItemAssocTypeId" from="parameters.invoiceItemAssocTypeId" set-if-empty="true"
+             set-if-null="false"/>
+        <iterate entry="invoice" list="invoiceList">
+            <entity-and entity-name="InvoiceItemAssoc" filter-by-date="true" list="invoiceItemAssocList"
+                        use-cache="false">
+                <field-map field-name="invoiceIdFrom" from-field="invoice.invoiceId"/>
+                <field-map field-name="invoiceItemAssocTypeId"/>
+            </entity-and>
+            <if-empty field="invoiceItemAssocList">
+                <field-to-list field="invoice" list="filteredInvoiceList"/>
+            </if-empty>
+        </iterate>
+        <field-to-result field="filteredInvoiceList"/>
+    </simple-method>
+
+    <simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_"
+                   event-event-message-name="_event_message_" event-request-object-name="request"
+                   event-response-code-name="_response_code_" event-response-object-name="response"
+                   login-required="true" method-name="removeInvoiceItemAssocOnCancelInvoice"
+                   service-error-message-list-name="errorMessageList" service-error-message-map-name="errorMessageMap"
+                   service-error-message-name="errorMessage" service-response-message-name="responseMessage"
+                   service-success-message-list-name="successMessageList" service-success-message-name="successMessage"
+                   short-description="Remove invoiceItemAssoc record on cancel invoice" use-transaction="true">
+        <entity-and entity-name="InvoiceItemAssoc" filter-by-date="false" list="invoiceItemAssocs" use-cache="false">
+            <field-map field-name="invoiceIdTo" from-field="parameters.invoiceId"/>
+        </entity-and>
+        <iterate entry="invoiceItemAssoc" list="invoiceItemAssocs">
+            <set-service-fields map="invoiceItemAssoc" service-name="deleteInvoiceItemAssoc"
+                                to-map="deleteInvoiceItemAssocMap"/>
+            <call-service break-on-error="true" error-code="error" in-map-name="deleteInvoiceItemAssocMap"
+                          include-user-login="true" require-new-transaction="false"
+                          service-name="deleteInvoiceItemAssoc" success-code="success"/>
+            <log level="info" message="Removed invoiceItemAssoc: ${invoiceItemAssoc}"/>
+        </iterate>
+    </simple-method>
+
+    <simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_"
+                   event-event-message-name="_event_message_" event-request-object-name="request"
+                   event-response-code-name="_response_code_" event-response-object-name="response"
+                   login-required="true" method-name="massChangeInvoiceStatus"
+                   service-error-message-list-name="errorMessageList" service-error-message-map-name="errorMessageMap"
+                   service-error-message-name="errorMessage" service-response-message-name="responseMessage"
+                   service-success-message-list-name="successMessageList" service-success-message-name="successMessage"
+                   short-description="Service set status of Invoices in bulk." use-transaction="true">
+        <iterate entry="invoiceId" list="parameters.invoiceIds">
+            <set field="setInvoiceStatusMap.invoiceId" from="invoiceId" set-if-empty="true" set-if-null="false"/>
+            <set field="setInvoiceStatusMap.statusId" from="parameters.statusId" set-if-empty="true"
+                 set-if-null="false"/>
+            <call-service break-on-error="true" error-code="error" in-map-name="setInvoiceStatusMap"
+                          include-user-login="true" require-new-transaction="false" service-name="setInvoiceStatus"
+                          success-code="success"/>
+            <clear-field field="setInvoiceStatusMap"/>
+        </iterate>
+    </simple-method>
+
+    <simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_"
+                   event-event-message-name="_event_message_"
+                   event-request-object-name="request" event-response-code-name="_response_code_"
+                   event-response-object-name="response" login-required="true"
+                   method-name="addtax" service-error-message-list-name="errorMessageList"
+                   service-error-message-map-name="errorMessageMap"
+                   service-error-message-name="errorMessage" service-response-message-name="responseMessage"
+                   service-success-message-list-name="successMessageList"
+                   service-success-message-name="successMessage"
+                   short-description="Set Parameter And Call Tax Calculate Service" use-transaction="true">
+        <entity-one auto-field-map="true" entity-name="Invoice" use-cache="false" value-field="invoice">
+            <field-map field-name="invoiceId" from-field="parameters.invoiceId"/>
+        </entity-one>
+        <entity-one value-field="shippingOriginAddress" entity-name="PostalAddress">
+            <field-map field-name="contactMechId" from-field="invoice.shippingOriginId"/>
+        </entity-one>
+
+        <entity-one value-field="shippingAddress" entity-name="PostalAddress">
+            <field-map field-name="contactMechId" from-field="invoice.shippingDestinationId"/>
+        </entity-one>
+        <if-empty field="shippingOriginAddress">
+            <add-error>
+                <fail-message message="Shipping Origin Address is Missing. "/>
+            </add-error>
+        </if-empty>
+        <if-empty field="shippingAddress">
+            <add-error>
+                <fail-message message="Shipping Destination Address is Missing. "/>
+            </add-error>
+        </if-empty>
+        <if-compare field="invoice.invoiceTypeId" operator="equals" type="String" value="PURCHASE_INVOICE">
+            <set field="addtaxMap.taxAuthorityType" set-if-empty="true" set-if-null="false" value="PURCHASES"/>
+        </if-compare>
+        <if-compare field="invoice.invoiceTypeId" operator="equals" type="String" value="SALES_INVOICE">
+            <set field="addtaxMap.taxAuthorityType" set-if-empty="true" set-if-null="false" value="SALES"/>
+        </if-compare>
+        <entity-and entity-name="InvoiceItem" filter-by-date="false" list="invoiceItems" use-cache="false">
+            <field-map field-name="invoiceId" from-field="invoice.invoiceId"/>
+        </entity-and>
+        <entity-and entity-name="PartyContactMechPurpose" filter-by-date="false" list="contacts" use-cache="false">
+            <field-map field-name="partyId" from-field="invoice.partyId"/>
+            <field-map field-name="contactMechPurposeTypeId" value="SHIPPING_LOCATION"/>
+        </entity-and>
+        <if-empty field="contacts">
+            <entity-and entity-name="PartyContactMechPurpose" filter-by-date="false" list="contacts" use-cache="false">
+                <field-map field-name="partyId" from-field="invoice.partyId"/>
+                <field-map field-name="contactMechPurposeTypeId" value="GENERAL_LOCATION"/>
+            </entity-and>
+        </if-empty>
+        <if-empty field="contacts">
+            <add-error error-list-name="error_list">
+                <fail-message message="cannot calculate tax, no shipping or......."/>
+            </add-error>
+        </if-empty>
+        <first-from-list entry="contactMech" list="contacts"/>
+        <entity-one auto-field-map="true" entity-name="PostalAddress" use-cache="false" value-field="postalAddress">
+            <field-map field-name="contactMechId" from-field="contactMech.contactMechId"/>
+        </entity-one>
+        <if-compare field="invoice.invoiceTypeId" operator="equals" type="String" value="SALES_INVOICE">
+            <set field="addtaxMap.billToPartyId" from="invoice.partyId" set-if-empty="true" set-if-null="false"/>
+        </if-compare>
+        <if-compare field="invoice.invoiceTypeId" operator="equals" type="String" value="PURCHASE_INVOICE">
+            <set field="addtaxMap.billToPartyId" from="invoice.partyIdFrom" set-if-empty="true" set-if-null="false"/>
+        </if-compare>
+        <set field="addtaxMap.payToPartyId" from="invoice.partyIdFrom" set-if-empty="true" set-if-null="false"/>
+        <iterate entry="invoiceItem" list="invoiceItems">
+            <entity-and entity-name="Product" filter-by-date="false" list="product" use-cache="false">
+                <field-map field-name="productId" from-field="invoiceItem.productId"/>
+            </entity-and>
+            <first-from-list entry="itemProduct" list="product"/>
+            <if-not-empty field="invoiceItem.productId">
+                <entity-and entity-name="InvoiceItem" filter-by-date="false" list="findinvoiceItems" use-cache="false">
+                    <field-map field-name="invoiceId" from-field="invoice.invoiceId"/>
+                    <field-map field-name="productId" from-field="invoiceItem.productId"/>
+                    <field-map field-name="invoiceItemTypeId" value="ITM_PROMOTION_ADJ"/>
+                </entity-and>
+                <if-not-empty field="findinvoiceItems">
+                    <calculate decimal-scale="${roundingDecimals}" field="total" rounding-mode="${roundingMode}"
+                               type="BigDecimal">
+                        <calcop operator="multiply">
+                            <calcop field="invoiceItem.quantity" operator="get"/>
+                            <calcop field="invoiceItem.amount" operator="get"/>
+                        </calcop>
+                    </calculate>
+                    <set field="totalAmount" from="total" set-if-empty="true" set-if-null="false" type="BigDecimal"/>
+                    <calculate decimal-scale="${roundingDecimals}" field="totalAmount" rounding-mode="${roundingMode}"
+                               type="BigDecimal">
+                        <calcop operator="subtract">
+                            <calcop field="totalAmount" operator="get"/>
+                            <calcop field="invoiceItem.amount" operator="get"/>
+                        </calcop>
+                    </calculate>
+                    <else>
+                        <calculate decimal-scale="${roundingDecimals}" field="total" rounding-mode="${roundingMode}"
+                                   type="BigDecimal">
+                            <calcop operator="multiply">
+                                <calcop field="invoiceItem.quantity" operator="get"/>
+                                <calcop field="invoiceItem.amount" operator="get"/>
+                            </calcop>
+                        </calculate>
+                        <set field="totalAmount" from="total" set-if-empty="true" set-if-null="false"
+                             type="BigDecimal"/>
+                    </else>
+                </if-not-empty>
+                <else>
+                    <set field="totalAmount" set-if-empty="true" set-if-null="false" type="BigDecimal" value="0"/>
+                </else>
+            </if-not-empty>
+            <set field="itemAmount" from="totalAmount" set-if-empty="true" set-if-null="false" type="BigDecimal"/>
+            <set field="itemPrice" from="invoiceItem.amount" set-if-empty="true" set-if-null="false"/>
+            <set field="addtaxMap.itemProductList[]" from="itemProduct" set-if-empty="true" set-if-null="false"/>
+            <set field="addtaxMap.itemAmountList[]" from="itemAmount" set-if-empty="true" set-if-null="false"
+                 type="BigDecimal"/>
+            <set field="addtaxMap.itemPriceList[]" from="itemPrice" set-if-empty="true" set-if-null="false"/>
+            <set field="addtaxMap.itemShippingList[]" set-if-empty="true" set-if-null="false" type="BigDecimal"
+                 value="0"/>
+        </iterate>
+        <set field="addtaxMap.orderShippingAmount" set-if-empty="true" set-if-null="false" type="BigDecimal" value="0"/>
+        <set field="addtaxMap.orderPromotionsAmount" set-if-empty="true" set-if-null="false" type="BigDecimal"
+             value="0"/>
+        <set field="addtaxMap.shippingAddress" from-field="shippingAddress" set-if-empty="true" set-if-null="false"/>
+        <set field="addtaxMap.shippingOriginAddress" from-field="shippingOriginAddress" set-if-empty="true"
+             set-if-null="false"/>
+        <set field="addtaxMap.productStoreId" from="invoice.productStoreId" set-if-empty="true" set-if-null="false"/>
+        <if>
+            <condition>
+                <not>
+                    <if-empty field="addtaxMap.itemProductList"/>
+                </not>
+            </condition>
+            <then>
+                <call-service break-on-error="true" error-code="error" in-map-name="addtaxMap" include-user-login="true"
+                              require-new-transaction="false" service-name="calcTax" success-code="success">
+                    <result-to-field field="itemAdjustments" result-name="itemAdjustments"/>
+                    <result-to-field field="orderAdjustments" result-name="orderAdjustments"/>
+                </call-service>
+                <iterate entry="findItem" list="invoiceItems">
+                    <if>
+                        <condition>
+                            <not>
+                                <if-empty field="findItem.productId"/>
+                            </not>
+                        </condition>
+                        <then>
+                            <set field="invoiceItemSeqId" from="findItem.invoiceItemSeqId" set-if-empty="true"
+                                 set-if-null="false"/>
+                            <set field="productId" from="findItem.productId" set-if-empty="true" set-if-null="false"/>
+                            <set field="itemMap.itemSeqIdList[]" from="invoiceItemSeqId" set-if-empty="true"
+                                 set-if-null="false"/>
+                            <set field="itemMap.productList[]" from="productId" set-if-empty="true"
+                                 set-if-null="false"/>
+                        </then>
+                    </if>
+                </iterate>
+                <set field="countItemId" set-if-empty="true" set-if-null="false" type="Long" value="-1"/>
+                <iterate entry="itemAdjustment" list="itemAdjustments">
+                    <calculate decimal-scale="2" field="countItemId" rounding-mode="HalfEven" type="BigDecimal">
+                        <calcop field="countItemId" operator="add">
+                            <number value="1"/>
+                        </calcop>
+                    </calculate>
+                    <if-not-empty field="itemAdjustment">
+                        <iterate entry="orderAdjustment" list="itemAdjustment">
+                            <set field="createInvoiceItemContext.invoiceId" from="invoice.invoiceId" set-if-empty="true"
+                                 set-if-null="false"/>
+                            <set field="createInvoiceItemContext.invoiceItemTypeId" set-if-empty="true"
+                                 set-if-null="false" value="ITM_SALES_TAX"/>
+                            <set field="createInvoiceItemContext.overrideGlAccountId"
+                                 from="orderAdjustment.overrideGlAccountId" set-if-empty="true" set-if-null="false"/>
+                            <set field="createInvoiceItemContext.productId" from="itemMap.productList[countItemId]"
+                                 set-if-empty="true" set-if-null="false"/>
+                            <set field="createInvoiceItemContext.taxAuthPartyId" from="orderAdjustment.taxAuthPartyId"
+                                 set-if-empty="true" set-if-null="false"/>
+                            <set field="createInvoiceItemContext.taxAuthGeoId" from="orderAdjustment.taxAuthGeoId"
+                                 set-if-empty="true" set-if-null="false"/>
+                            <set field="createInvoiceItemContext.amount" from="orderAdjustment.amount"
+                                 set-if-empty="true" set-if-null="false" type="BigDecimal"/>
+                            <set field="createInvoiceItemContext.quantity" set-if-empty="true" set-if-null="false"
+                                 value="1"/>
+                            <set field="createInvoiceItemContext.parentInvoiceItemSeqId"
+                                 from="itemMap.itemSeqIdList[countItemId]" set-if-empty="true" set-if-null="false"/>
+                            <set field="createInvoiceItemContext.taxAuthorityRateSeqId"
+                                 from="orderAdjustment.taxAuthorityRateSeqId" set-if-empty="true" set-if-null="false"/>
+                            <set field="createInvoiceItemContext.description" from="orderAdjustment.comments"
+                                 set-if-empty="true" set-if-null="false"/>
+                            <!--call createInvoiceItem service for every ItemAdjustment -->
+                            <call-service break-on-error="true" error-code="error"
+                                          in-map-name="createInvoiceItemContext" include-user-login="true"
+                                          require-new-transaction="false" service-name="createInvoiceItem"
+                                          success-code="success"/>
+                        </iterate>
+                    </if-not-empty>
+                </iterate>
+                <iterate entry="Adjustment" list="orderAdjustments">
+                    <if-not-empty field="Adjustment">
+                        <set field="InvoiceItemContext.invoiceId" from="invoice.invoiceId" set-if-empty="true"
+                             set-if-null="false"/>
+                        <set field="InvoiceItemContext.invoiceItemTypeId" set-if-empty="true" set-if-null="false"
+                             value="ITM_SALES_TAX"/>
+                        <set field="InvoiceItemContext.overrideGlAccountId" from="Adjustment.overrideGlAccountId"
+                             set-if-empty="true" set-if-null="false"/>
+                        <set field="InvoiceItemContext.taxAuthPartyId" from="Adjustment.taxAuthPartyId"
+                             set-if-empty="true" set-if-null="false"/>
+                        <set field="InvoiceItemContext.taxAuthGeoId" from="Adjustment.taxAuthGeoId" set-if-empty="true"
+                             set-if-null="false"/>
+                        <set field="InvoiceItemContext.amount" from="Adjustment.amount" set-if-empty="true"
+                             set-if-null="false" type="BigDecimal"/>
+                        <set field="InvoiceItemContext.quantity" set-if-empty="true" set-if-null="false" value="1"/>
+                        <set field="InvoiceItemContext.taxAuthorityRateSeqId" from="Adjustment.taxAuthorityRateSeqId"
+                             set-if-empty="true" set-if-null="false"/>
+                        <!-- call createInvoiceItem service for every orderAdjustment -->
+                        <call-service break-on-error="true" error-code="error" in-map-name="InvoiceItemContext"
+                                      include-user-login="true" require-new-transaction="false"
+                                      service-name="createInvoiceItem" success-code="success"/>
+                    </if-not-empty>
+                </iterate>
+            </then>
+            <else>
+                <add-error error-list-name="error_list">
+                    <fail-message message="productId don't have value, cannot call calcTax service."/>
+                </add-error>
+                <log level="error" message="Cannot call calcTax service, when don't have productId"/>
+                <check-errors error-code="error" error-list-name="error_list"/>
+            </else>
+        </if>
+    </simple-method>
+
+    <simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_"
+                   event-event-message-name="_event_message_" event-request-object-name="request"
+                   event-response-code-name="_response_code_" event-response-object-name="response"
+                   login-required="true" method-name="updatePaymentTds"
+                   service-error-message-list-name="errorMessageList" service-error-message-map-name="errorMessageMap"
+                   service-error-message-name="errorMessage" service-response-message-name="responseMessage"
+                   service-success-message-list-name="successMessageList" service-success-message-name="successMessage"
+                   short-description="" use-transaction="true">
+        <log level="always" message="${parameters}"/>
+        <entity-one auto-field-map="true" entity-name="PaymentTds" use-cache="false" value-field="lookedUpValue">
+            <field-map field-name="paymentId" from-field="parameters.paymentId"/>
+            <field-map field-name="tdsTypeId" from-field="parameters.tdsTypeId"/>
+        </entity-one>
+        <if-not-empty field="lookedUpValue.paymentId">
+            <set-nonpk-fields map="parameters" set-if-null="true" value-field="lookedUpValue"/>
+            <store-value do-cache-clear="true" value-field="lookedUpValue"/>
+            <else>
+                <make-value entity-name="PaymentTds" value-field="newEntity"/>
+                <set-nonpk-fields map="parameters" set-if-null="true" value-field="newEntity"/>
+                <set-pk-fields map="parameters" set-if-null="true" value-field="newEntity"/>
+                <create-value do-cache-clear="true" or-store="false" value-field="newEntity"/>
+            </else>
+        </if-not-empty>
+        <entity-condition distinct="false" entity-name="PaymentTds" filter-by-date="false" list="tdsList"
+                          use-cache="false">
+            <condition-expr field-name="paymentId" from-field="parameters.paymentId" ignore="false" ignore-case="false"
+                            ignore-if-empty="false" ignore-if-null="false" operator="equals"/>
+        </entity-condition>
+        <set default="0" field="tdsAmount" set-if-empty="true" set-if-null="false" type="BigDecimal"/>
+        <iterate entry="tds" list="tdsList">
+            <calculate decimal-scale="2" field="tdsAmount" rounding-mode="HalfEven" type="BigDecimal">
+                <calcop field="tdsAmount" operator="get"/>
+                <calcop field="tds.amount" operator="get"/>
+            </calculate>
+        </iterate>
+        <entity-one auto-field-map="true" entity-name="Payment" use-cache="false" value-field="payment">
+            <field-map field-name="paymentId" from-field="parameters.paymentId"/>
+        </entity-one>
+        <set field="payment.tdsAmount" from="tdsAmount" set-if-empty="true" set-if-null="false"/>
+        <store-value do-cache-clear="true" value-field="payment"/>
+    </simple-method>
+
+    <simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_"
+                   event-event-message-name="_event_message_" event-request-object-name="request"
+                   event-response-code-name="_response_code_" event-response-object-name="response"
+                   login-required="true" method-name="updatePaymentWithTdsAmount"
+                   service-error-message-list-name="errorMessageList" service-error-message-map-name="errorMessageMap"
+                   service-error-message-name="errorMessage" service-response-message-name="responseMessage"
+                   service-success-message-list-name="successMessageList" service-success-message-name="successMessage"
+                   short-description="" use-transaction="true">
+        <entity-one auto-field-map="true" entity-name="Payment" use-cache="false" value-field="lookedUpValue">
+            <field-map field-name="paymentId" from-field="parameters.paymentId"/>
+        </entity-one>
+        <set field="lookedUpValue.tdsAmount" from="parameters.tdsAmount" set-if-empty="true" set-if-null="false"/>
+        <store-value do-cache-clear="true" value-field="lookedUpValue"/>
+    </simple-method>
+
+
+    <simple-method default-error-code="error" default-success-code="success"
+                   event-error-message-name="_error_message_" event-event-message-name="_event_message_"
+                   event-request-object-name="request" event-response-code-name="_response_code_"
+                   event-response-object-name="response"
+                   login-required="true" method-name="importSalesInvoice"
+                   service-error-message-list-name="errorMessageList"
+                   service-error-message-map-name="errorMessageMap" service-error-message-name="errorMessage"
+                   service-response-message-name="responseMessage"
+                   service-success-message-list-name="successMessageList" service-success-message-name="successMessage"
+                   short-description="Import Sales invoice" use-transaction="true">
+        <log level="info" message="####################samir1111#######"/>
+        <set field="invoiceMap.invoiceTypeId" from-field="parameters.invoiceTypeId" set-if-empty="true"
+             set-if-null="false"/>
+        <set field="invoiceMap.statusId" value="INVOICE_IN_PROCESS"/>
+        <set field="invoiceMap.partyIdFrom" from-field="parameters.partyIdFrom" set-if-empty="true"
+             set-if-null="false"/>
+        <set field="invoiceMap.partyId" from-field="parameters.partyId" set-if-empty="true" set-if-null="false"/>
+        <set field="invoiceMap.productStoreId" from-field="parameters.productStoreId" set-if-empty="true"
+             set-if-null="false"/>
+        <set field="invoiceMap.invoiceDate" from-field="parameters.invoiceDate" set-if-empty="true"
+             set-if-null="false"/>
+        <call-service break-on-error="true" error-code="error" in-map-name="invoiceMap" include-user-login="true"
+                      require-new-transaction="false" service-name="createInvoice" success-code="success">
+            <result-to-field field="invoiceId" result-name="invoiceId"/>
+        </call-service>
+
+        <log level="info" message="####################samir####### ${invoiceId}"/>
+        <set field="invoiceItemMap.invoiceId" from="invoiceId" set-if-empty="true" set-if-null="false"/>
+        <set field="invoiceItemMap.amount" from="parameters.amountForProductId1" set-if-empty="true"
+             set-if-null="false"/>
+        <set field="invoiceItemMap.invoiceItemTypeId" value="INV_FPROD_ITEM"/>
+        <set field="invoiceItemMap.productId" from="parameters.productId1" set-if-empty="true" set-if-null="false"/>
+        <set field="invoiceItemMap.quantity" value="1"/>
+        <call-service break-on-error="true" error-code="error" in-map-name="invoiceItemMap" include-user-login="true"
+                      require-new-transaction="false" service-name="createInvoiceItem" success-code="success">
+        </call-service>
+
+        <clear-field field="invoiceItemMap"/>
+        <if-not-empty field="parameters.vatAmountForProductId1">
+            <set field="invoiceItemMap.invoiceItemTypeId" value="ITM_SALES_TAX"/>
+            <set field="invoiceItemMap.overrideGlAccountId" value="9500000"/>
+            <set field="invoiceItemMap.invoiceId" from="invoiceId" set-if-empty="true" set-if-null="false"/>
+            <set field="invoiceItemMap.amount" from="parameters.vatAmountForProductId1" set-if-empty="true"
+                 set-if-null="false"/>
+            <call-service break-on-error="true" error-code="error" in-map-name="invoiceItemMap"
+                          include-user-login="true"
+                          require-new-transaction="false" service-name="createInvoiceItem" success-code="success">
+            </call-service>
+        </if-not-empty>
+        <clear-field field="invoiceItemMap"/>
+        <if-not-empty field="parameters.productId2">
+            <set field="invoiceItemMap.invoiceId" from="invoiceId" set-if-empty="true" set-if-null="false"/>
+            <set field="invoiceItemMap.amount" from="parameters.amountForProductId2" set-if-empty="true"
+                 set-if-null="false"/>
+            <set field="invoiceItemMap.invoiceItemTypeId" value="INV_FPROD_ITEM"/>
+            <set field="invoiceItemMap.productId" from="parameters.productId2" set-if-empty="true" set-if-null="false"/>
+            <set field="invoiceItemMap.quantity" value="1"/>
+            <call-service break-on-error="true" error-code="error" in-map-name="invoiceItemMap"
+                          include-user-login="true" require-new-transaction="false" service-name="createInvoiceItem"
+                          success-code="success">
+            </call-service>
+            <clear-field field="invoiceItemMap"/>
+            <if-not-empty field="parameters.vatAmountForProductId2">
+                <set field="invoiceItemMap.invoiceItemTypeId" value="ITM_SALES_TAX"/>
+                <set field="invoiceItemMap.overrideGlAccountId" value="9500000"/>
+                <set field="invoiceItemMap.invoiceId" from="invoiceId" set-if-empty="true" set-if-null="false"/>
+                <set field="invoiceItemMap.amount" from="parameters.vatAmountForProductId2" set-if-empty="true"
+                     set-if-null="false"/>
+                <call-service break-on-error="true" error-code="error" in-map-name="invoiceItemMap"
+                              include-user-login="true" require-new-transaction="false" service-name="createInvoiceItem"
+                              success-code="success">
+                </call-service>
+            </if-not-empty>
+        </if-not-empty>
+        <clear-field field="invoiceItemMap"/>
+        <if-not-empty field="parameters.productId3">
+            <set field="invoiceItemMap.invoiceId" from="invoiceId" set-if-empty="true" set-if-null="false"/>
+            <set field="invoiceItemMap.amount" from="parameters.amountForProductId3" set-if-empty="true"
+                 set-if-null="false"/>
+            <set field="invoiceItemMap.invoiceItemTypeId" value="INV_FPROD_ITEM"/>
+            <set field="invoiceItemMap.productId" from="parameters.productId3" set-if-empty="true" set-if-null="false"/>
+            <set field="invoiceItemMap.quantity" value="1"/>
+            <call-service break-on-error="true" error-code="error" in-map-name="invoiceItemMap"
+                          include-user-login="true" require-new-transaction="false" service-name="createInvoiceItem"
+                          success-code="success">
+            </call-service>
+            <clear-field field="invoiceItemMap"/>
+            <if-not-empty field="parameters.vatAmountForProductId3">
+                <set field="invoiceItemMap.invoiceItemTypeId" value="ITM_SALES_TAX"/>
+                <set field="invoiceItemMap.invoiceId" from="invoiceId" set-if-empty="true" set-if-null="false"/>
+                <set field="invoiceItemMap.overrideGlAccountId" value="9500000"/>
+                <set field="invoiceItemMap.amount" from="parameters.vatAmountForProductId3" set-if-empty="true"
+                     set-if-null="false"/>
+            </if-not-empty>
+            <call-service break-on-error="true" error-code="error" in-map-name="invoiceItemMap"
+                          include-user-login="true" require-new-transaction="false" service-name="createInvoiceItem"
+                          success-code="success">
+            </call-service>
+        </if-not-empty>
+        <clear-field field="invoiceItemMap"/>
+        <if-not-empty field="parameters.transporterAmount">
+            <set field="invoiceItemMap.invoiceId" from="invoiceId" set-if-empty="true" set-if-null="false"/>
+            <set field="invoiceItemMap.amount" from="parameters.transporterAmount" set-if-empty="true"
+                 set-if-null="false"/>
+            <set field="invoiceItemMap.invoiceItemTypeId" value="SINVOICE_ITM_ADJ"/>
+            <set field="invoiceItemMap.overrideGlAccountId" value="1020101"/>
+            <set field="invoiceItemMap.quantity" value="1"/>
+            <call-service break-on-error="true" error-code="error" in-map-name="invoiceItemMap"
+                          include-user-login="true" require-new-transaction="false" service-name="createInvoiceItem"
+                          success-code="success">
+            </call-service>
+            <clear-field field="invoiceItemMap"/>
+            <set field="invoiceItemMap.invoiceItemTypeId" value="ITM_SALES_TAX"/>
+            <set field="invoiceItemMap.overrideGlAccountId" value="9500000"/>
+            <set field="invoiceItemMap.invoiceId" from="invoiceId" set-if-empty="true" set-if-null="false"/>
+            <set field="invoiceItemMap.amount" from="parameters.transporterVatAmount" set-if-empty="true"
+                 set-if-null="false"/>
+            <call-service break-on-error="true" error-code="error" in-map-name="invoiceItemMap"
+                          include-user-login="true" require-new-transaction="false" service-name="createInvoiceItem"
+                          success-code="success">
+            </call-service>
+        </if-not-empty>
+
+
+        <set field="invoiceStatus.invoiceId" from="invoiceId" set-if-empty="true" set-if-null="false"/>
+        <set field="invoiceStatus.statusId" value="INVOICE_READY"/>
+        <call-service break-on-error="true" error-code="error" in-map-name="invoiceStatus" include-user-login="true"
+                      require-new-transaction="false" service-name="setInvoiceStatus" success-code="success">
+        </call-service>
+    </simple-method>
+
+    <simple-method default-error-code="error" default-success-code="success"
+                   event-error-message-name="_error_message_" event-event-message-name="_event_message_"
+                   event-request-object-name="request" event-response-code-name="_response_code_"
+                   event-response-object-name="response"
+                   login-required="true" method-name="importPurchaseInvoice"
+                   service-error-message-list-name="errorMessageList"
+                   service-error-message-map-name="errorMessageMap" service-error-message-name="errorMessage"
+                   service-response-message-name="responseMessage"
+                   service-success-message-list-name="successMessageList" service-success-message-name="successMessage"
+                   short-description="Import Purchase invoice" use-transaction="true">
+
+        <set field="invoiceMap.invoiceTypeId" from-field="parameters.invoiceTypeId" set-if-empty="true"
+             set-if-null="false"/>
+        <set field="invoiceMap.statusId" value="INVOICE_IN_PROCESS"/>
+        <set field="invoiceMap.partyIdFrom" from-field="parameters.partyIdFrom" set-if-empty="true"
+             set-if-null="false"/>
+        <set field="invoiceMap.partyId" from-field="parameters.partyId" set-if-empty="true" set-if-null="false"/>
+        <set field="invoiceMap.invoiceDate" from-field="parameters.invoiceDate" set-if-empty="true"
+             set-if-null="false"/>
+        <set field="invoiceMap.currencyUomId" from-field="parameters.currencyUomId" set-if-empty="true"
+             set-if-null="false"/>
+        <call-service break-on-error="true" error-code="error" in-map-name="invoiceMap" include-user-login="true"
+                      require-new-transaction="false" service-name="createInvoice" success-code="success">
+            <result-to-field field="invoiceId" result-name="invoiceId"/>
+        </call-service>
+
+
+        <set field="invoiceItemMap.invoiceId" from="invoiceId" set-if-empty="true" set-if-null="false"/>
+        <set field="invoiceItemMap.amount" from="parameters.amountForGrnGl" set-if-empty="true" set-if-null="false"/>
+        <set field="invoiceItemMap.invoiceItemTypeId" value="PINV_FPROD_ITEM"/>
+        <set field="invoiceItemMap.quantity" value="1"/>
+        <set field="invoiceItemMap.overrideGlAccountId" value="7700100"/>
+        <call-service break-on-error="true" error-code="error" in-map-name="invoiceItemMap" include-user-login="true"
+                      require-new-transaction="false" service-name="createInvoiceItem" success-code="success">
+        </call-service>
+
+
+        <if-not-empty field="parameters.amountForVatGl">
+            <set field="invoiceItemMap.invoiceId" from="invoiceId" set-if-empty="true" set-if-null="false"/>
+            <set field="invoiceItemMap.amount" from="parameters.amountForVatGl" set-if-empty="true"
+                 set-if-null="false"/>
+            <set field="invoiceItemMap.invoiceItemTypeId" value="PITM_SALES_TAX"/>
+            <set field="invoiceItemMap.quantity" value="1"/>
+            <set field="invoiceItemMap.overrideGlAccountId" value="9500000"/>
+            <call-service break-on-error="true" error-code="error" in-map-name="invoiceItemMap"
+                          include-user-login="true" require-new-transaction="false" service-name="createInvoiceItem"
+                          success-code="success"/>
+        </if-not-empty>
+
+
+        <set field="invoiceStatus.invoiceId" from="invoiceId" set-if-empty="true" set-if-null="false"/>
+        <set field="invoiceStatus.statusId" value="INVOICE_READY"/>
+        <call-service break-on-error="true" error-code="error" in-map-name="invoiceStatus" include-user-login="true"
+                      require-new-transaction="false" service-name="setInvoiceStatus" success-code="success">
+        </call-service>
+    </simple-method>
+
+</simple-methods>

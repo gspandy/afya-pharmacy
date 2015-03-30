@@ -1,0 +1,77 @@
+<zk>
+	<zscript>
+<![CDATA[
+	import org.ofbiz.entity.*;
+	import org.ofbiz.base.util.*;
+	import org.ofbiz.humanresext.util.*;
+	GenericDelegator delegator = com.ndz.zkoss.util.HrmsInfrastructure.getDelegator();//GenericDelegator.getGenericDelegator("default");
+	GenericValue userLogin = (GenericValue) Executions.getCurrent()
+			.getDesktop().getSession().getAttribute("userLogin");
+	org.ofbiz.security.Security security = requestScope.get("security");
+	boolean isAdmin = security.hasPermission("HUMANRES_ADMIN", userLogin);
+	boolean isManager = security.hasPermission("HUMANRES_MGR", userLogin);
+	String partyId = (String) userLogin.getString("partyId");
+	GenericValue emplPosTypeIdOfPartyGv = null;
+	emplPosTypeIdOfPartyGv = HumanResUtil.getEmplPositionForParty(partyId,
+			delegator);
+	String emplPosTypeIdOfParty = null;
+	String emplPositionId = null;
+	if (emplPosTypeIdOfPartyGv != null) {
+		emplPosTypeIdOfParty = emplPosTypeIdOfPartyGv
+				.getString("emplPositionTypeId");
+		emplPositionId = emplPosTypeIdOfPartyGv.getString("emplPositionId");
+	}
+	List leaveInfoList = null;
+	List leaveLimitList = null;
+	if (isManager) {
+		leaveInfoList = delegator.findByAnd("EmployeeLoanDetail", UtilMisc
+				.toMap("managerId", emplPositionId));
+	} else {
+		leaveInfoList = delegator.findList("EmployeeLoanDetail", null, null,
+				null, null, false);
+	}
+	Object leaveInfoArray = leaveInfoList
+			.toArray(new GenericValue[leaveInfoList.size()]);
+	SimpleListModel model = new SimpleListModel(leaveInfoList);
+	leaveLimitList = delegator.findList("EmployeeLoanLimitDetail", null,null,null,null,false);
+	Object leaveLimitArray = leaveLimitList
+			.toArray(new GenericValue[leaveLimitList.size()]);
+	SimpleListModel leaveLimitLstboxModel = new SimpleListModel(leaveLimitList);
+	com.ndz.zkoss.GenericValueRenderer listItemRenderer = new com.ndz.zkoss.GenericValueRenderer(
+			new String[] { "description", "loanAmount" });
+	com.ndz.zkoss.GenericValueRenderer claimLimitItemRenderer = new com.ndz.zkoss.GenericValueRenderer(
+			new String[] { "partyId", "balanceAmount", "description" });
+]]>
+</zscript>
+	<window border="normal" id="loanInfoWindow" width="50%" height="50%" contentStyle="overflow:auto" closable="true">
+		<caption label="Loan Information" style="font-weight:bold"></caption>
+		<separator height="10px"></separator>
+		<listbox itemRenderer="${listItemRenderer}" id="leaveLimitListbox">
+			<listhead>
+				<listheader label="Loan Type" style="font-weight:bold" />
+				<listheader label="Loan Limit" style="font-weight:bold" />
+			</listhead>
+		</listbox>
+		<separator />
+		<listbox itemRenderer="${claimLimitItemRenderer}" id="leaveInfoListbox">
+			<listhead>
+				<listheader label="Employee Id" />
+				<listheader label="Loan Type" />
+				<listheader label="Balance Amount" />
+			</listhead>
+		</listbox>
+		<zscript>
+	import org.zkoss.zul.*;
+	Listbox lbox = (Listbox) loanInfoWindow.getFellow("leaveInfoListbox");
+	lbox.setModel(model);
+	import org.zkoss.zul.*;
+	Listbox leaveLimitLstbox = (Listbox) loanInfoWindow
+			.getFellow("leaveLimitListbox");
+	leaveLimitLstbox.setModel(leaveLimitLstboxModel);
+</zscript>
+		<separator />
+		<box align="center" width="100%">
+			<button label="Close" onClick="loanInfoWindow.detach();"></button>
+		</box>
+	</window>
+</zk>

@@ -1,0 +1,22 @@
+<!-- Employee Loan Seed Data -->
+<entity-engine-xml>
+    <StatusType description="Employee Loan Status Changes" hasTable="N" parentTypeId="" statusTypeId="ELOAN_STATUS"/>
+ 
+    <StatusItem statusId="EL_SAVED" statusTypeId="ELOAN_STATUS" statusCode="SAVED" sequenceId="01" description="Saved"/>
+    <StatusItem statusId="EL_SUBMITTED" statusTypeId="ELOAN_STATUS" statusCode="SUBMITTED" sequenceId="02" description="Submitted"/>
+    <StatusItem statusId="EL_MGR_APPROVED" statusTypeId="ELOAN_STATUS" statusCode="MGR_APPROVED" sequenceId="03" description="Manager Approved"/>
+    <StatusItem statusId="EL_MGR_REJECTED" statusTypeId="ELOAN_STATUS" statusCode="MGR_REJECTED" sequenceId="04" description="Manager Rejected"/> 
+	<StatusItem statusId="EL_ADM_APPROVED" statusTypeId="ELOAN_STATUS" statusCode="ADM_APPROVED" sequenceId="05" description="Admin Approved"/>
+	<StatusItem statusId="EL_ADM_REJECTED" statusTypeId="ELOAN_STATUS" statusCode="ADM_REJECTED" sequenceId="06" description="Admin Rejected"/>
+ 
+ 	<EnumerationType enumTypeId="ELOAN_TYPE" hasTable="N" description="Employee Loan Types" />
+ 	
+ 	<Enumeration enumId="EL_HOUSE_DEPOSIT" enumTypeId="ELOAN_TYPE" enumCode="HOUSE_DEPOSIT" sequenceId="01" description="House Deposit Loan"/>
+	<Enumeration enumId="EL_EDUCATION" enumTypeId="ELOAN_TYPE" enumCode="EDUCATION" sequenceId="02" description="Education Loan"/>
+	<Enumeration enumId="EL_CAR" enumTypeId="ELOAN_TYPE" enumCode="CAR" sequenceId="03" description="Car Loan"/>
+ 	<Enumeration enumId="EL_PERSONAL" enumTypeId="ELOAN_TYPE" enumCode="PERSONAL" sequenceId="04" description="Personal Loan"/>
+	<Enumeration enumId="EL_TRAVEL" enumTypeId="ELOAN_TYPE" enumCode="TRAVEL" sequenceId="05" description="Travel Loan"/>
+	
+	
+	
+ </entity-engine-xml>

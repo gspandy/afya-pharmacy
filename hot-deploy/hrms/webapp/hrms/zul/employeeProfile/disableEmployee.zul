@@ -1,0 +1,35 @@
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<zk xmlns:h="http://www.zkoss.org/2005/zk/native">
+    <zscript><![CDATA[
+	import org.ofbiz.base.util.*;
+	import java.util.*;
+	import org.ofbiz.entity.*;
+	import org.zkoss.zul.*;
+	GenericDelegator delegator = com.ndz.zkoss.util.HrmsInfrastructure.getDelegator();
+    String partyId = (String) Executions.getCurrent().getArg().get("partyId");
+
+	]]></zscript>
+    <window title="Disable Employee" id="disableEmployeeWindow" border="normal"
+            style="background-color:#B2A4F2; border:1px solid #8E83C1;"
+            height="20%" width="25%" closable="true"
+            contentStyle="overflow:auto" maximizable="true" >
+        <separator height="15px" />
+        <textbox  id="partyId" value="${partyId}" visible="false"/>
+        <hbox>
+            <div style="margin:5px">
+                <span>Are you sure to disable the employee?</span>
+            </div>
+        </hbox>
+        <separator />
+        <hbox>
+            <div align="center" width="276px">
+                <button label="Yes"
+                        onClick='com.ndz.controller.UpdateEmployeeProfileController.disableEmployee(event);
+                        disableEmployeeWindow.detach()'>
+                </button>
+                <button label="No"
+                        onClick="disableEmployeeWindow.detach()" />
+            </div>
+        </hbox>
+    </window>
+</zk>

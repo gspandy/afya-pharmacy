@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+Licensed to the Apache Software Foundation (ASF) under one
+or more contributor license agreements.  See the NOTICE file
+distributed with this work for additional information
+regarding copyright ownership.  The ASF licenses this file
+to you under the Apache License, Version 2.0 (the
+"License"); you may not use this file except in compliance
+with the License.  You may obtain a copy of the License at
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing,
+software distributed under the License is distributed on an
+"AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+KIND, either express or implied.  See the License for the
+specific language governing permissions and limitations
+under the License.
+-->
+
+<entity-engine-xml>
+
+    <Party partyId="Company" partyTypeId="PARTY_GROUP"/>
+    <PartyGroup partyId="Company" groupName="Your Company Name Here"/>
+    <PartyRole partyId="Company" roleTypeId="BILL_FROM_VENDOR"/>
+    <PartyRole partyId="Company" roleTypeId="BILL_TO_CUSTOMER"/>
+    <PartyRole partyId="Company" roleTypeId="INTERNAL_ORGANIZATIO"/>
+    <PartyRole partyId="Company" roleTypeId="_NA_"/>
+
+    <ContactMech contactMechId="9000" contactMechTypeId="POSTAL_ADDRESS"/>
+    <PartyContactMech partyId="Company" contactMechId="9000" fromDate="2000-01-01 00:00:00.000" allowSolicitation="Y"/>
+    <PostalAddress contactMechId="9000" toName="Company XYZ" address1="2003 Open Blvd" city="Open City" postalCode="999999" countryGeoId="USA" stateProvinceGeoId="CA"
+                   geoPointId="9000"/>
+    <ContactMech contactMechId="Company" contactMechTypeId="EMAIL_ADDRESS" infoString="ofbiztest@example.com"/>
+    <PartyContactMech partyId="Company" contactMechId="Company" fromDate="2000-01-01 00:00:00.000" allowSolicitation="Y"/>
+    <PartyContactMechPurpose contactMechPurposeTypeId="PRIMARY_EMAIL" partyId="Company" contactMechId="Company" fromDate="2003-01-01 00:00:00.000"/>
+    <ContactMech contactMechId="CompanySupport" contactMechTypeId="EMAIL_ADDRESS" infoString="ofbizsupport@example.com"/>
+    <PartyContactMech partyId="Company" contactMechId="CompanySupport" fromDate="2003-01-01 00:00:00.0" allowSolicitation="Y"/>
+    <PartyContactMechPurpose partyId="Company" contactMechId="9000" contactMechPurposeTypeId="BILLING_LOCATION" fromDate="2000-01-01 00:00:00.000"/>
+    <PartyContactMechPurpose partyId="Company" contactMechId="9000" contactMechPurposeTypeId="GENERAL_LOCATION" fromDate="2000-01-01 00:00:00.000"/>
+    <PartyContactMechPurpose partyId="Company" contactMechId="9000" contactMechPurposeTypeId="PAYMENT_LOCATION" fromDate="2000-01-01 00:00:00.000"/>
+
+    <!-- GL journal for suspended transactions (failed post) -->
+    <GlJournal organizationPartyId="Company" glJournalId="ERROR_JOURNAL" glJournalName="Suspense transactions"/>
+
+    <PartyAcctgPreference partyId="Company" cogsMethodId="COGS_LIFO" baseCurrencyUomId="USD"
+                          invoiceSeqCustMethId="INV_HOOK_ENF_SEQ" invoiceIdPrefix="CI"
+                          quoteIdPrefix="CQ"
+                          orderIdPrefix="CO"
+                          errorGlJournalId="ERROR_JOURNAL"/>
+    <!-- Customer -->
+    <Party partyId="DemoCustomer" partyTypeId="PARTY_GROUP"/>
+    <PartyGroup partyId="DemoCustomer" groupName="Demo Customer"/>
+    <PartyRole partyId="DemoCustomer" roleTypeId="PLACING_CUSTOMER"/>
+    <PartyRole partyId="DemoCustomer" roleTypeId="BILL_TO_CUSTOMER"/>
+    <PartyRole partyId="DemoCustomer" roleTypeId="SHIP_TO_CUSTOMER"/>
+    <PartyRole partyId="DemoCustomer" roleTypeId="END_USER_CUSTOMER"/>
+    <PartyRole partyId="Company" roleTypeId="BILL_FROM_VENDOR"/>
+
+    <ContactMech contactMechId="9001" contactMechTypeId="POSTAL_ADDRESS"/>
+    <PartyContactMech partyId="DemoCustomer" contactMechId="9001" fromDate="2001-05-13 00:00:00.000" allowSolicitation="Y"/>
+    <PostalAddress contactMechId="9001" toName="Demo Supplier Company" address1="2004 Factory Blvd" city="City of Industry" postalCode="90000" countryGeoId="USA"
+                   stateProvinceGeoId="CA"/>
+    <PartyContactMechPurpose partyId="DemoCustomer" contactMechId="9001" contactMechPurposeTypeId="BILLING_LOCATION" fromDate="2001-05-13 00:00:00.000"/>
+    <PartyContactMechPurpose partyId="DemoCustomer" contactMechId="9001" contactMechPurposeTypeId="GENERAL_LOCATION" fromDate="2001-05-13 00:00:00.000"/>
+    <PartyContactMechPurpose partyId="DemoCustomer" contactMechId="9001" contactMechPurposeTypeId="PAYMENT_LOCATION" fromDate="2001-05-13 00:00:00.000"/>
+
+    <Facility facilityId="WebStoreWarehouse" facilityTypeId="WAREHOUSE" facilityName="Web Store Warehouse" description="Warehouse exclusively for the Web Store "
+              ownerPartyId="Company"
+              defaultInventoryItemTypeId="NON_SERIAL_INV_ITEM" defaultWeightUomId="WT_lt" defaultDaysToShip="25"/>
+
+    <ContactMech contactMechId="9200" contactMechTypeId="POSTAL_ADDRESS"/>
+    <ContactMech contactMechId="9201" contactMechTypeId="TELECOM_NUMBER"/>
+    <ContactMech contactMechId="9202" contactMechTypeId="EMAIL_ADDRESS" infoString="ofbiztest@example.com"/>
+    <PostalAddress contactMechId="9200" toName="Company XYZ" attnName="ZJAA" address1="2003 Open Blvd" city="Orem" postalCode="84058" countryGeoId="USA" stateProvinceGeoId="UT"
+                   geoPointId="9000"/>
+    <TelecomNumber contactMechId="9201" areaCode="801" contactNumber="555-5555"/>
+    <FacilityContactMech facilityId="WebStoreWarehouse" contactMechId="9200" fromDate="2001-05-13 12:00:00.0"/>
+    <FacilityContactMech facilityId="WebStoreWarehouse" contactMechId="9201" fromDate="2001-05-13 12:00:00.0"/>
+    <FacilityContactMech facilityId="WebStoreWarehouse" contactMechId="9202" fromDate="2001-05-13 12:00:00.0"/>
+    <FacilityContactMechPurpose facilityId="WebStoreWarehouse" contactMechId="9200" contactMechPurposeTypeId="SHIPPING_LOCATION" fromDate="2001-05-13 12:00:00.0"/>
+    <FacilityContactMechPurpose facilityId="WebStoreWarehouse" contactMechId="9200" contactMechPurposeTypeId="SHIP_ORIG_LOCATION" fromDate="2001-05-13 12:00:00.0"/>
+    <FacilityContactMechPurpose facilityId="WebStoreWarehouse" contactMechId="9201" contactMechPurposeTypeId="PHONE_SHIPPING" fromDate="2001-05-13 12:00:00.0"/>
+    <FacilityContactMechPurpose facilityId="WebStoreWarehouse" contactMechId="9201" contactMechPurposeTypeId="PHONE_SHIP_ORIG" fromDate="2001-05-13 12:00:00.0"/>
+    <FacilityContactMechPurpose facilityId="WebStoreWarehouse" contactMechId="9202" contactMechPurposeTypeId="PRIMARY_EMAIL" fromDate="2001-05-13 12:00:00.0"/>
+    <FacilityLocation facilityId="WebStoreWarehouse" locationSeqId="TLTLTLLL01" locationTypeEnumId="FLT_PICKLOC" areaId="TL" aisleId="TL" sectionId="TL" levelId="LL"
+                      positionId="01"/>
+    <FacilityLocation facilityId="WebStoreWarehouse" locationSeqId="TLTLTLUL01" locationTypeEnumId="FLT_BULK" areaId="TL" aisleId="TL" sectionId="TL" levelId="UL" positionId="01"/>
+    <FacilityLocation facilityId="WebStoreWarehouse" locationSeqId="TLTLTLLL02" locationTypeEnumId="FLT_PICKLOC" areaId="TL" aisleId="TL" sectionId="TL" levelId="LL"
+                      positionId="02"/>
+    <FacilityLocation facilityId="WebStoreWarehouse" locationSeqId="TLTLTLUL02" locationTypeEnumId="FLT_BULK" areaId="TL" aisleId="TL" sectionId="TL" levelId="UL" positionId="02"/>
+    <FacilityLocation facilityId="WebStoreWarehouse" locationSeqId="TLTLTLLL03" locationTypeEnumId="FLT_PICKLOC" areaId="TL" aisleId="TL" sectionId="TL" levelId="LL"
+                      positionId="03"/>
+    <FacilityLocation facilityId="WebStoreWarehouse" locationSeqId="TLTLTLUL03" locationTypeEnumId="FLT_BULK" areaId="TL" aisleId="TL" sectionId="TL" levelId="UL" positionId="03"/>
+    <FacilityLocation facilityId="WebStoreWarehouse" locationSeqId="TLTLTLLL04" locationTypeEnumId="FLT_PICKLOC" areaId="TL" aisleId="TL" sectionId="TL" levelId="LL"
+                      positionId="04"/>
+    <FacilityLocation facilityId="WebStoreWarehouse" locationSeqId="TLTLTLUL04" locationTypeEnumId="FLT_BULK" areaId="TL" aisleId="TL" sectionId="TL" levelId="UL" positionId="04"/>
+
+    <Product productId="GZ-2644" smallImageUrl="/images/products/GZ-2644/small.png" largeImageUrl="/images/products/GZ-2644/large.png"/>
+    <ProductPrice productId="GZ-2644" productPriceTypeId="DEFAULT_PRICE" productPricePurposeId="PURCHASE" currencyUomId="USD" productStoreGroupId="_NA_"
+                  price="38.4" fromDate="2001-05-13 12:00:00.0"/>
+
+    <ProductPromo productPromoId="9011" promoName="Test percent off entire purchase, no condition" promoText="10% off entire purchase" userEntered="Y" showToCustomer="Y" requireCode="N" useLimitPerOrder="1" createdDate="2001-05-13 12:00:00.0" createdByUserLogin="admin" lastModifiedDate="2001-05-13 12:00:00.0" lastModifiedByUserLogin="admin"/>
+    <ProductPromoRule productPromoId="9011" productPromoRuleId="01" ruleName="Test percent off order"/>
+    <ProductPromoAction productPromoId="9011" productPromoRuleId="01" productPromoActionSeqId="01" productPromoActionEnumId="PROMO_ORDER_PERCENT" orderAdjustmentTypeId="PROMOTION_ADJUSTMENT" amount="10.0"/>
+
+    <!-- Product Store & Shipping Method -->
+    <ProductStore productStoreId="9000" storeName="SME E-Commerce Store" companyName="Open For Business" title="Open For Commerce"
+                  subtitle="Part of the Open For Business Family of Open Source Software" payToPartyId="Company" daysToCancelNonPay="30" prorateShipping="Y" prorateTaxes="Y"
+                  inventoryFacilityId="WebStoreWarehouse" oneInventoryFacility="Y" checkInventory="Y" reserveInventory="Y" balanceResOnOrderCreation="Y" reserveOrderEnumId="INVRO_FIFO_REC" requireInventory="N"
+                  defaultLocaleString="en_US" defaultCurrencyUomId="USD" defaultSalesChannelEnumId="WEB_SALES_CHANNEL" allowPassword="Y" explodeOrderItems="N" retryFailedAuths="Y" reqReturnInventoryReceive="N"
+                  headerApprovedStatus="ORDER_APPROVED" itemApprovedStatus="ITEM_APPROVED" digitalItemApprovedStatus="ITEM_APPROVED" headerDeclinedStatus="ORDER_REJECTED"
+                  itemDeclinedStatus="ITEM_REJECTED" headerCancelStatus="ORDER_CANCELLED" itemCancelStatus="ITEM_CANCELLED" orderNumberPrefix="WS"
+                  authDeclinedMessage="There has been a problem with your method of payment. Please try a different method or call customer service."
+                  authFraudMessage="Your order has been rejected and your account has been disabled due to fraud."
+                  authErrorMessage="Problem connecting to payment processor; we will continue to retry and notify you by email."
+                  storeCreditValidDays="90" storeCreditAccountEnumId="FIN_ACCOUNT" pricesIncludeTax="N"
+                  visualThemeId="EC_DEFAULT" prodSearchExcludeVariants="Y" autoApproveInvoice="Y" shipIfCaptureFails="Y" autoApproveOrder="Y" showOutOfStockProducts="Y"/>
+
+    <ShipmentMethodType shipmentMethodTypeId="NEXT_DAY"/>
+    <Party partyId="UPS"/>
+    <PartyRole partyId="UPS" roleTypeId="CARRIER"/>
+    <ContactMech contactMechId="9015"/>
+    <PostalAddress contactMechId="9015"/>
+    <CarrierShipmentMethod partyId="UPS" roleTypeId="CARRIER" shipmentMethodTypeId="NEXT_DAY" sequenceNumber="1" carrierServiceCode="01"/>
+    <PaymentMethod paymentMethodId="EXT_COD"/>
+    <ProductStorePaymentSetting productStoreId="9000" paymentMethodTypeId="EXT_COD" paymentServiceTypeEnumId="PRDS_PAY_EXTERNAL" paymentService=""
+                                paymentCustomMethodId=""/>
+
+    <!-- INVENTORIES -->
+    <InventoryItem facilityId="WebStoreWarehouse" locationSeqId="TLTLTLUL01" datetimeReceived="2008-08-01 08:00:00.000"
+                   inventoryItemId="9000" inventoryItemTypeId="NON_SERIAL_INV_ITEM" productId="GZ-2644" ownerPartyId="Company" currencyUomId="USD" unitCost="2.5"/>
+    <InventoryItemDetail inventoryItemId="9000" inventoryItemDetailSeqId="0001" effectiveDate="2001-05-13 12:00:00.0" availableToPromiseDiff="500" quantityOnHandDiff="500" accountingQuantityDiff="500"/>
+    <InventoryItem facilityId="WebStoreWarehouse" locationSeqId="TLTLTLLL01" datetimeReceived="2008-08-01 08:00:00.000"
+                   inventoryItemId="9001" inventoryItemTypeId="NON_SERIAL_INV_ITEM" productId="GZ-2644" ownerPartyId="Company" currencyUomId="USD" unitCost="2.5"/>
+    <InventoryItemDetail inventoryItemId="9001" inventoryItemDetailSeqId="0001" effectiveDate="2001-05-13 12:00:00.0" availableToPromiseDiff="5" quantityOnHandDiff="5" accountingQuantityDiff="5"/>
+
+    <OrderAdjustmentType orderAdjustmentTypeId="SHIPPING_CHARGES" description="Shipping and Handling"/>
+    <OrderAdjustmentType orderAdjustmentTypeId="PROMOTION_ADJUSTMENT" description="Promotion"/>
+
+</entity-engine-xml>
+

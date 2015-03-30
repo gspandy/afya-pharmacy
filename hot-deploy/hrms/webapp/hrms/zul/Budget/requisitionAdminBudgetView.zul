@@ -1,0 +1,87 @@
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<zk>
+	<zscript>
+<![CDATA[
+	import org.ofbiz.entity.*;
+	import org.ofbiz.base.util.*;
+	GenericValue userLogin = (GenericValue) Executions.getCurrent()
+			.getDesktop().getSession().getAttribute("userLogin");
+	employeeId = userLogin.getString("partyId");
+	GenericDelegator delegator = userLogin.getDelegator();
+	String budgetId = (String) Executions.getCurrent().getArg().get("budgetId");
+	GenericValue budgetGv = null;
+	GenericValue timePeriodGv = null;
+	budgetGv = delegator.findByPrimaryKey("Budget", UtilMisc.toMap("budgetId",
+			budgetId));
+	String customTimePeriodId = budgetGv.getString("customTimePeriodId");
+	timePeriodGv = delegator.findByPrimaryKey("CustomTimePeriod", UtilMisc
+			.toMap("customTimePeriodId", customTimePeriodId));
+]]>
+</zscript>
+	<window border="normal" closable="true" width="30%" height="35%"
+		id="budgetWindow" contentStyle="overflow:auto" mode="modal">
+		<caption label="${c:l('HRMS_BUDGETDETAILS') }"
+			style="font-weight:bold;color:black">
+		</caption>
+		<separator />
+		<hbox>
+			<div align="right" width="150px">
+				<label value="${c:l('FormFieldTitle_budgetId') }" style="font-weight:bold" />
+			</div>
+			<div align="right">
+				<label value="${budgetGv.budgetId}"
+					style="font-weight:bold;color:#666666" />
+			</div>
+		</hbox>
+		<separator />
+		<hbox>
+			<div align="right" width="150px">
+				<label value="${c:l('FormFieldTitle_budgetType') }" style="font-weight:bold" />
+			</div>
+			<div align="right">
+				<label onCreate='self.setValue(com.ndz.zkoss.HrmsUtil.getBudgetType(budgetGv.getString("budgetTypeId")))' 
+					style="font-weight:bold;color:#666666" />
+			</div>
+		</hbox>
+		<separator />
+		<hbox>
+			<div align="right" width="150px">
+				<label value="${c:l('FormFieldTitle_budgetPeriodFrom') }"
+					style="font-weight:bold" />
+			</div>
+			<div align="right">
+				<label  onCreate='self.setValue(UtilDateTime.formatDate(timePeriodGv.getDate("fromDate")))'
+					style="font-weight:bold;color:#666666" />
+			</div>
+		</hbox>
+		<separator />
+		<hbox>
+			<div align="right" width="150px">
+				<label value="${c:l('FormFieldTitle_budgetPeriodTo') }"
+					style="font-weight:bold" />
+			</div>
+			<div align="right">
+				<label onCreate='self.setValue(UtilDateTime.formatDate(timePeriodGv.getDate("thruDate")))'
+					style="font-weight:bold;color:#666666" />
+			</div>
+		</hbox>
+		<separator />
+		<hbox>
+			<div align="right" width="150px">
+				<label value="${c:l('FormFieldTitle_comments') }" style="font-weight:bold" />
+			</div>
+			<div align="right">
+				<label value="${budgetGv.comments}"
+					style="font-weight:bold;color:#666666" />
+			</div>
+		</hbox>
+		<separator />
+		<div align="center">
+			<box align="center">
+				<button label="${c:l('ButtonCancel') }" onClick="budgetWindow.detach();"
+					mold="os">
+				</button>
+			</box>
+		</div>
+	</window>
+</zk>

@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+Licensed to the Apache Software Foundation (ASF) under one
+or more contributor license agreements.  See the NOTICE file
+distributed with this work for additional information
+regarding copyright ownership.  The ASF licenses this file
+to you under the Apache License, Version 2.0 (the
+"License"); you may not use this file except in compliance
+with the License.  You may obtain a copy of the License at
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing,
+software distributed under the License is distributed on an
+"AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+KIND, either express or implied.  See the License for the
+specific language governing permissions and limitations
+under the License.
+-->
+
+<ofbiz-component name="humanresext"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+        xsi:noNamespaceSchemaLocation="http://ofbiz.apache.org/dtds/ofbiz-component.xsd">
+    <resource-loader name="main" type="component"/>
+    <classpath type="jar" location="build/lib/*"/>
+    <classpath type="jar" location="../dyna-forms/build/lib/*"/>
+	<classpath type="jar" location="lib/*"/>
+    <classpath type="dir" location="script"/>
+    <classpath type="dir" location="config"/>
+
+    <entity-resource type="data" reader-name="seed" loader="main" location="data/HumanResDemoData.xml"/>
+	<entity-resource type="data" reader-name="seed" loader="main" location="data/HumanResSecurityData.xml"/>
+	<entity-resource type="data" reader-name="seed" loader="main" location="data/LeaveSeedData.xml"/>
+	<entity-resource type="data" reader-name="seed" loader="main" location="data/HumanResTypeData.xml"/>
+	<entity-resource type="data" reader-name="seed" loader="main" location="data/SMEHRUserData.xml"/>
+	<entity-resource type="data" reader-name="seed" loader="main" location="data/PayrollData.xml"/>
+	<entity-resource type="data" reader-name="seed" loader="main" location="data/TaxSeedData.xml"/>
+	<entity-resource type="data" reader-name="seed" loader="main" location="data/EloanSeedData.xml"/>
+	<entity-resource type="data" reader-name="seed" loader="main" location="data/ClaimsSeedData.xml"/>
+	<entity-resource type="data" reader-name="seed" loader="main" location="data/TerminationSeedData.xml"/>
+	<entity-resource type="data" reader-name="demo" loader="main" location="data/CustomTimePeriod.xml"/>
+
+	<entity-resource type="model" reader-name="main" loader="main" location="entitydef/entitymodel.xml"/>
+    <entity-resource type="model" reader-name="main" loader="main" location="entitydef/entitymodel-ext.xml"/>
+
+	<!-- Claims Data -->
+	<entity-resource type="model" reader-name="main" loader="main" location="entitydef/entitymodel_claims.xml"/>
+	<!-- ELoan Data -->
+	<entity-resource type="model" reader-name="main" loader="main" location="entitydef/entitymodel_eloan.xml"/>
+    
+    <entity-resource type="model" reader-name="main" loader="main" location="entitydef/entitymodel_view.xml"/>
+    <entity-resource type="model" reader-name="main" loader="main" location="entitydef/entitymodel-payroll.xml"/>
+    <entity-resource type="model" reader-name="main" loader="main" location="entitydef/entitymodel-taxdecl.xml"/>
+    <entity-resource type="model" reader-name="main" loader="main" location="entitydef/entitymodel_termination.xml"/>
+    <entity-resource type="model" reader-name="main" loader="main" location="entitydef/entitymodel_offer.xml"/>
+    <entity-resource type="model" reader-name="main" loader="main" location="entitydef/entitymodel_serviceregister.xml"/>
+    
+    <entity-resource type="eca" reader-name="main" loader="main" location="entitydef/eecas.xml"/>
+    
+    <service-resource type="model" loader="main" location="servicedef/services.xml"/>
+    <service-resource type="model" loader="main" location="servicedef/services-payroll.xml"/>
+    <service-resource type="model" loader="main" location="servicedef/services-ext.xml"/>
+    <service-resource type="model" loader="main" location="servicedef/services-taxdecl.xml"/>
+    <service-resource type="model" loader="main" location="servicedef/services-claims.xml"/>
+	<service-resource type="model" loader="main" location="servicedef/services-eloan.xml"/>
+    <service-resource type="model" loader="main" location="servicedef/services-leave.xml"/>
+	<service-resource type="model" loader="main" location="servicedef/services-termination.xml"/> 
+	<service-resource type="model" loader="main" location="servicedef/services-offer.xml"/> 
+	<service-resource type="model" loader="main" location="servicedef/services_serviceregister.xml"/>
+	<service-resource type="model" loader="main" location="servicedef/services_policy.xml"/>
+	<service-resource type="eca" loader="main" location="servicedef/secas_payroll.xml"/>
+    <test-suite loader="main" location="testdef/payrolltests.xml"/>
+    
+    <webapp name="humanresext"
+        title="Human Resources"
+        description="HumanResourceApplication"
+        server="default-server"
+        location="webapp/humanresext"
+        base-permission="HUMANRES"
+        mount-point="/humanresext"
+        app-bar-display="false"
+        />
+</ofbiz-component>

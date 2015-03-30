@@ -1,0 +1,135 @@
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<zk>
+	<zscript>
+	import org.ofbiz.entity.*;
+	import org.ofbiz.base.util.*;
+	import org.ofbiz.entity.condition.*;
+	import org.ofbiz.entity.condition.EntityConditionFunction;
+	import org.zkoss.util.resource.Labels;
+	import java.util.*;
+	GenericDelegator delegator = com.ndz.zkoss.util.HrmsInfrastructure.getDelegator();//GenericDelegator.getGenericDelegator("default");
+	String partyId = (String) Executions.getCurrent().getArg().get("partyId");
+	//List partyIdList = null;
+	//partyIdList = delegator.findList("Party",UtilMisc.toMap("partyId",partyId,"emailadd",emailAddr),null,null,null,null,false);
+	String contactMechId = (String) Executions.getCurrent().getArg().get("contactMechId");
+	String contactMechId1 = (String) Executions.getCurrent().getArg().get("contactMechId");	
+	List emailAddressList = null;
+	emailAddressList = delegator.findByAnd("ContactMech", UtilMisc.toMap("contactMechId", contactMechId));
+	GenericValue emailAddressGv = null;
+	emailAddressGv = org.ofbiz.entity.util.EntityUtil.getFirst(emailAddressList);
+	String emailAddr = (String) emailAddressGv.getString("infoString");
+	List partyContactMechPurposeList =null;
+	partyContactMechPurposeList= delegator.findByAnd("PartyContactMechPurpose", UtilMisc.toMap("contactMechId", contactMechId));
+	GenericValue partyContactMechGv = org.ofbiz.entity.util.EntityUtil.getFirst(partyContactMechPurposeList);
+	String contactMechPurposeId = null;
+	if (partyContactMechGv != null) {
+		contactMechPurposeId = (String) partyContactMechGv.getString("contactMechPurposeTypeId");
+	}
+</zscript>
+	<window id="editEmailAddressWindow" title="${c:l('HRMS_EDITEMAILADDRESS') }" border="normal" height="35%" width="35%" closable="true" maximizable="true">
+		<textbox id="contactMechId" value="${contactMechId}" visible="false" />
+		<textbox id="partyId" visible="false" value="${partyId}"></textbox>
+		<textbox visible="false" id="contactMechTypeId" value="EMAIL_ADDRESS" />
+		<separator height="10px"></separator>
+		<hbox visible="true">
+			<!-- <div width="150px" align="right">
+				<label value="${c:l('HRMS_EMAIL_TYPE') }:"/>
+				<label value="*" style="color:red"/>
+			</div> -->
+			 <listbox id="contactMechPurposeTypeId" mold="select" visible="false">
+				<listitem label="${c:l('ListBox_PrimaryEmail') }" value="PRIMARY_EMAIL" id="primaryEmailListitem" selected="true"/>
+				<listitem label="${c:l('ListBox_OtherEmail') }" value="OTHER_EMAIL" id="otherEmailListitem"/>
+			</listbox>
+		</hbox> 
+		<zscript>
+	<!-- <![CDATA[
+	if (contactMechPurposeId != null) {
+		if (contactMechPurposeId.equals("PRIMARY_EMAIL"))
+			primaryEmailListitem.setSelected(true); 
+		if (contactMechPurposeId.equals("OTHER_EMAIL"))
+			otherEmailListitem.setSelected(true);
+	}
+]]> -->
+	</zscript>
+		<separator height="10px" />
+		<hbox>
+			<div align="right" width="150px">
+				<label value="${c:l('HRMS_EMAILADDRESS') }:" style="font-weight:bold" />
+				<label value="*" style="color:red" />
+			</div>
+			<div align="right">
+				<textbox id="emailAddress" cols="30" value="${emailAddr}"
+					constraint="/^[a-zA-Z][\w\.-]*[a-zA-Z0-9]@[a-zA-Z0-9][\w\.-]*[a-zA-Z0-9]\.[a-zA-Z][a-zA-Z\.]*[a-zA-Z]$/: ${c:l('HRMS_NO_BLANK_EMAIL_ID') }" />
+			</div>
+		</hbox>
+		<separator />
+		<zscript>
+		/*original validate method*/
+		/*void validate(){
+ 			 if(contactMechPurposeTypeId.getSelectedItem() == null){
+				   throw new WrongValueException(contactMechPurposeTypeId,Labels.getLabel("HRMS_REQUIRED_EMAIL_TYPE"));
+				}
+				EntityCondition ec=EntityCondition.makeCondition("contactMechId",EntityComparisonOperator.NOT_EQUAL,contactMechId1);
+				EntityCondition ec1=EntityCondition.makeCondition("infoString",emailAddress.getValue());
+				EntityCondition ec3=EntityCondition.makeCondition(new EntityCondition[]{ec1,ec});		
+			    List emails=delegator.findList("ContactMech",ec3,null,null,null,false);
+			if( emails.size()>0){
+			 throw new WrongValueException(emailAddress,Labels.getLabel("HRMS_EMAIL_ADDRESS_ALREADY_EXIST"));
+		}
+		}*/
+	
+		/* validate method written by me*/
+		/*void validate()
+		{
+		  ArrayList list=new ArrayList();
+		  ArrayList emails=new ArrayList();
+		  String contactmechpurpose=(String)contactMechPurposeTypeId.getSelectedItem().getValue();
+		  String partyId1=partyId.getValue();
+		  List  values=delegator.findByAnd("PartyContactMechPurpose",UtilMisc.toMap("partyId", partyId1,"contactMechPurposeTypeId",contactmechpurpose));
+		  for(Object obj:values){
+		   GenericValue gv=(GenericValue)obj; 
+		   if(gv!=null){
+		   String contactMechId=gv.getString("contactMechId");
+		   if(contactMechId!=null){
+		    list.add(contactMechId);
+		    }
+		    }		
+		}
+		for(Object value:list){
+		String contactvalue=(String)value;
+		List value1=delegator.findByAnd("ContactMech",UtilMisc.toMap("contactMechId",contactvalue));
+		GenericValue gv1=(GenericValue)org.ofbiz.entity.util.EntityUtil.getFirst(value1);
+		if(gv1!=null){
+		String emailAdd=gv1.getString("infoString");
+		if(emailAdd!=null){	
+		emails.add(emailAdd);
+		}
+		}
+		}
+		if(emails.contains(emailAddress.getValue())){
+			    throw new WrongValueException(emailAddress,Labels.getLabel("HRMS_EMAIL_ADDRESS_ALREADY_EXIST"));		
+		}
+		}*/
+		void validate(){
+		List email=delegator.findByAnd("ContactMech",UtilMisc.toMap("infoString",emailAddress.getValue()));
+		if(email.size()>0){
+		  throw new WrongValueException(emailAddress,Labels.getLabel("HRMS_EMAIL_ADDRESS_ALREADY_EXIST"));
+		}
+		}
+		</zscript>
+		<hbox>
+			<div align="right" width="230px">
+				<button label="${c:l('btnSave') }" id="updateEmailAddress"
+					onClick='validate();com.ndz.controller.UpdateEmployeeProfileController.updateEmailAddress(event);
+					if((partyId.getValue()).equals("Company")){
+					Events.postEvent("onClick",editEmailAddressWindow.getPage().getFellow("companyWindow").getFellow("appendGroupbox").getFellow("personPostalAddressWindow").getFellow("emailAddressTab"),null);
+					}else{
+					Events.postEvent("onClick",Path.getComponent("/personPostalAddressWindow//emailAddressTab"),null);
+					}
+					editEmailAddressWindow.detach()'>
+				</button>
+				<button label="${c:l('ButtonCancel') }" onClick="editEmailAddressWindow.detach()"/>
+			</div>
+		</hbox>
+	</window>
+</zk>

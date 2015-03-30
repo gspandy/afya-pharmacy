@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<entity-engine-xml>
+    <Party partyId="@userLoginId@" partyTypeId="PERSON" statusId="PARTY_ENABLED"/>
+    <Person partyId="@userLoginId@" firstName="The System" lastName="Administrator"/>
+    <UserLogin userLoginId="@userLoginId@" currentPassword="{SHA}c98e2ead0713f9c73f63b0f307ba4d8d42960773" requirePasswordChange="Y" partyId="@userLoginId@"/>
+    <UserLoginSecurityGroup groupId="FULLADMIN" userLoginId="@userLoginId@" fromDate="2012-01-01 12:00:00.0"/>
+    <PartyRole partyId="@userLoginId@" roleTypeId="MANAGER"/>
+    <PartyRole partyId="@userLoginId@" roleTypeId="SALES_MGR"/>
+    <PartyRole partyId="@userLoginId@" roleTypeId="QUOTE_MGR"/>
+    <PartyRole partyId="@userLoginId@" roleTypeId="REQ_MANAGER"/>
+    <PartyRole partyId="@userLoginId@" roleTypeId="REQ_MGR"/>
+</entity-engine-xml>

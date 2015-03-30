@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<services xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+        xsi:noNamespaceSchemaLocation="http://ofbiz.apache.org/dtds/services.xsd">
+    <description>SFAEXT Services</description>
+    <vendor></vendor>
+    <version>1.0</version>
+    
+	<service name="sfaext.addAccountMarketingCampaign" engine="java" location="com.smebiz.sfa.marketing.MarketingCampaignServices" invoke="addAccountMarketingCampaign">
+        <description>Adds a MarketingCampaign to the Account. The userLogin is required to have CRMSFA_ACCOUNT_UPDATE permission on this account.</description>
+        <attribute name="partyId" type="String" mode="IN" optional="false"/>
+        <attribute name="marketingCampaignId" type="String" mode="IN" optional="false"/>
+    </service>
+
+    <service name="sfaext.removeAccountMarketingCampaign" engine="java" location="com.smebiz.sfa.marketing.MarketingCampaignServices" invoke="removeAccountMarketingCampaign">
+        <description>Removes a MarketingCampaign from the Account. The userLogin is required to have CRMSFA_ACCOUNT_UPDATE permission on this account.</description>
+        <attribute name="partyId" type="String" mode="IN" optional="false"/>
+        <attribute name="marketingCampaignId" type="String" mode="IN" optional="false"/>
+    </service>
+
+    <service name="sfaext.addContactMarketingCampaign" engine="java" location="com.smebiz.sfa.marketing.MarketingCampaignServices" invoke="addContactMarketingCampaign">
+        <description>Adds a MarketingCampaign to the Contact. The userLogin is required to have CRMSFA_CONTACT_UPDATE permission on this account.</description>
+        <attribute name="partyId" type="String" mode="IN" optional="false"/>
+        <attribute name="marketingCampaignId" type="String" mode="IN" optional="false"/>
+    </service>
+
+    <service name="sfaext.removeContactMarketingCampaign" engine="java" location="com.smebiz.sfa.marketing.MarketingCampaignServices" invoke="removeContactMarketingCampaign">
+        <description>Removes a MarketingCampaign from the Contact. The userLogin is required to have CRMSFA_CONTACT_UPDATE permission on this account.</description>
+        <attribute name="partyId" type="String" mode="IN" optional="false"/>
+        <attribute name="marketingCampaignId" type="String" mode="IN" optional="false"/>
+    </service>
+
+    <service name="sfaext.addLeadMarketingCampaign" engine="java" location="com.smebiz.sfa.marketing.MarketingCampaignServices" invoke="addLeadMarketingCampaign">
+        <description>Adds a MarketingCampaign to the Lead. The userLogin is required to have CRMSFA_LEAD_UPDATE permission on this lead.</description>
+        <attribute name="partyId" type="String" mode="IN" optional="false"/>
+        <attribute name="marketingCampaignId" type="String" mode="IN" optional="false"/>
+    </service>
+
+    <service name="createContactList" default-entity-name="ContactList" engine="java" location="com.smebiz.sfa.marketing.MarketingCampaignServices" invoke="createContactList" auth="true">
+        <description>Create a ContactList record and associate with sfaext.addContactListToMarketingCampaign rather than the marketingCampaignId field</description>
+        <permission-service service-name="marketingPermissionService" main-action="UPDATE"/>
+        <auto-attributes include="pk" mode="INOUT" optional="true"/>
+        <auto-attributes include="nonpk" mode="IN" optional="true"/>
+        <override name="contactListTypeId" optional="false"/>
+        <override name="contactListName" optional="false"/>
+    </service>
+    <service name="updateContactList" default-entity-name="ContactList" engine="simple"
+            location="org/ofbiz/marketing/contact/ContactListServices.xml" invoke="updateContactList" auth="true">
+        <description>Update a ContactList record</description>
+        <auto-attributes include="pk" mode="IN" optional="false"/>
+        <auto-attributes include="nonpk" mode="IN" optional="true"/>
+        <override name="contactListName" optional="false"/>
+    </service>
+
+    <service name="sfaext.removeLeadMarketingCampaign" engine="java" location="com.smebiz.sfa.marketing.MarketingCampaignServices" invoke="removeLeadMarketingCampaign">
+        <description>Removes a MarketingCampaign from the Lead. The userLogin is required to have CRMSFA_LEAD_UPDATE permission on this lead.</description>
+        <attribute name="partyId" type="String" mode="IN" optional="false"/>
+        <attribute name="marketingCampaignId" type="String" mode="IN" optional="false"/>
+    </service>
+
+    <service name="sfaext.addContactListToMarketingCampaign" engine="java" location="com.smebiz.sfa.marketing.MarketingCampaignServices" invoke="addContactListToMarketingCampaign">
+        <description>Add a ContactList to a Marketing Campaign with an optional tracking code</description>
+        <permission-service service-name="marketingPermissionService" main-action="UPDATE"/>
+        <attribute name="contactListId" type="String" mode="IN" optional="false"/>
+        <attribute name="marketingCampaignId" type="String" mode="IN" optional="false"/>
+        <attribute name="trackingCode" type="String" mode="IN" optional="true"/>
+        <attribute name="campaignListId" type="String" mode="OUT" optional="false"/>
+    </service>
+
+    <service name="sfaext.removeContactListFromMarketingCampaign" engine="java" location="com.smebiz.sfa.marketing.MarketingCampaignServices" invoke="removeContactListFromMarketingCampaign">
+        <description>Expire a ContactList from a Marketing Campaign and its tracking code (if any)</description>
+        <permission-service service-name="marketingPermissionService" main-action="UPDATE"/>
+        <attribute name="campaignListId" type="String" mode="IN" optional="false"/>
+    </service>
+
+</services>

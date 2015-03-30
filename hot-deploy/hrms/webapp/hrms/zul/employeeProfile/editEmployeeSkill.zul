@@ -1,0 +1,115 @@
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<zk>
+	<zscript>
+	import org.ofbiz.base.util.*;
+	import java.util.*;
+	import org.ofbiz.entity.*;
+	import org.zkoss.zul.*;
+	GenericDelegator delegator = com.ndz.zkoss.util.HrmsInfrastructure.getDelegator();//GenericDelegator.getGenericDelegator("default");
+	
+	String skillTypeId = (String)Executions.getCurrent().getArg().get("skillTypeId");
+	GenericValue skillTypeGv =null;  try{skillTypeGv= delegator.findOne("SkillType",UtilMisc.toMap("skillTypeId",skillTypeId),false);}catch(Exception e){
+	}
+	String skillTypeDescription = skillTypeGv.getString("description");
+	
+	
+	Map map = Executions.getCurrent().getArg();
+	String partyId = (String) map.get("partyId");
+	String skillType = (String) map.get("skillTypeId");
+</zscript>
+	<window title="${c:l('HRMS_EDIT_SKILL') }" id="editSkillWindow" border="normal"
+		style="background-color:#B2A4F2; border:1px solid #8E83C1;"
+		height="35%" width="30%" closable="true" maximizable="true"
+		contentStyle="overflow:auto">
+		<separator height="15px" />
+		<textbox  id="partyId" value="${partyId}" visible="false"/>
+		<hbox>
+			<div align="right" width="150px" style="margin-right:5px">
+				<label value="${c:l('HumanResSkillType') }:" style="font-weight:bold" />
+				<label value="*" style="color:red"/>
+			</div>
+			<div align="left" width="150px" style="margin-right:5px">
+					<label id="skillTypeIdLabel" value="${skillTypeDescription}" />
+			</div>
+		</hbox>
+		<separator />
+		<hbox>
+			<div align="right" width="150px" style="margin-right:5px">
+				<label value="${c:l('HRMS_YrsOfExprience') }:"
+					style="font-weight:bold" /><label value="*" style="color:red"/>
+			</div>
+			<div align="left" width="150px" style="margin-right:5px">
+				<spinner id="yearsExperience" constraint="no negative" readonly="true" />
+			</div>
+		</hbox>
+		<separator />
+		<hbox>
+			<div align="right" width="150px" style="margin-right:5px">
+				<label value="${c:l('FormFieldTitle_rating') }:" style="font-weight:bold" />
+				<label value="*" style="color:red"/>
+			</div>
+			<div align="left" width="150px" style="margin-right:5px">
+				<spinner id="rating" constraint="no negative" readonly="true" />
+			</div>
+		</hbox>
+		<separator />
+		<hbox>
+			<div align="right" width="150px" style="margin-right:5px">
+				<label value="${c:l('FormFieldTitle_skillLevel') }:" style="font-weight:bold" />
+				<label value="*" style="color:red"/>
+			</div>
+			<div align="left" width="150px" style="margin-right:5px">
+				<listbox id="skillLevel" mold="select">
+					<listitem value="" />
+					<listitem label="${c:l('ListBox_Beginner') }" value="1" />
+					<listitem label="${c:l('ListBox_Intermediate') }" value="2" />
+					<listitem label="${c:l('ListBox_Expert') }" value="3" />
+					<listitem label="${c:l('ListBox_Uber') }" value="4" />
+				</listbox>
+			</div>
+		</hbox>
+		<zscript><![CDATA[
+		List partyStatusList = delegator.findByAnd("PartySkill",UtilMisc.toMap("partyId",partyId.getValue(),"skillTypeId",skillType));
+		if(UtilValidate.isNotEmpty(partyStatusList)){
+		GenericValue partyStatusGV =(GenericValue) partyStatusList.get(0);
+		String partyStatusString = partyStatusGV.getString("skillLevel");
+		List list = skillLevel.getItems();
+		for(int i; i<list.size();i++){
+			Listitem li =(Listitem) list.get(i);
+			String liStr =(String) li.getValue();
+			if(liStr.equals(partyStatusString)){
+				skillLevel.setSelectedIndex(i);
+			}
+		}
+		String yearsExperienceString = partyStatusGV.getString("yearsExperience");
+		int yearsExperienceInt = Integer.parseInt(yearsExperienceString);
+		yearsExperience.setValue(yearsExperienceInt);
+		String ratingString = partyStatusGV.getString("rating");
+		int ratingInt = Integer.parseInt(ratingString);
+		rating.setValue(ratingInt);
+		}
+		]]></zscript>
+	<separator />
+		<hbox>
+		<zscript>
+			import org.zkoss.util.resource.Labels;
+			void validate(){
+			   String skillLevelString = skillLevel.getSelectedItem().getLabel();
+			   if(skillLevelString == null){
+			     throw new WrongValueException(skillLevel,Labels.getLabel("HRMS_REQUIRED_SKILL_LEVEL"));
+			   }
+			}
+		</zscript>
+			<div align="right" width="262px">
+				<button label="${c:l('btnSave') }" id="saveSkill"
+					onClick='validate();com.ndz.controller.UpdateEmployeeProfileController
+				.updateEmployeeSkill(event,skillTypeId);
+				Events.postEvent("onClick",editSkillWindow.getPage().getFellow("personSkillWindow").getParent().getParent().getParent().getParent().getFellow("skillInformationBtn"),null);
+				editSkillWindow.detach();'>
+				</button>
+				<button label="${c:l('ButtonCancel') }"
+					onClick="editSkillWindow.detach()" />
+			</div>
+		</hbox>
+	</window>
+</zk>

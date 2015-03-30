@@ -1,0 +1,53 @@
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<?page title="new page title" contentType="text/html;charset=UTF-8"?>
+<zk xmlns:n="http://www.zkoss.org/2005/zk/native">
+	<zscript>
+	import com.hrms.training.composer.*;
+	import org.ofbiz.entity.GenericDelegator;
+	import java.security.Security;
+	import org.ofbiz.entity.GenericValue;
+	TrainingWkflowComposer composer = new TrainingWkflowComposer();
+</zscript>
+	<window title="${c:l('HRMS_CONFIGURE_WORKFLOW') }" border="normal" apply="${composer}">
+		<n:table width="100%" style="border:0px" cellspacing="0px" cellpadding="0px">
+			<n:tr>
+				<n:td width="80%">
+					<!--<toolbarbutton id="newStatus" label="New" ></toolbarbutton>
+					<toolbarbutton id="updateAllStatus" label="Update All"></toolbarbutton>
+				--></n:td>
+			</n:tr>
+		</n:table>
+		<listbox id="statusListbox" model="@{composer.model}" mold="paging" pageSize="5" selectedItem="@{composer.selectedStatusItem}"
+			checkmark="true">
+			<listhead>
+				<listheader label="${c:l('FormFieldTitle_status') }"></listheader>
+				<listheader label="${c:l('FormFieldTitle_description') }"></listheader>
+			</listhead>
+			<listitem self="@{each='zk1'}">
+				<listcell label="@{zk1.statusId}"></listcell>
+				<listcell>
+					<textbox value="@{zk1.description}"></textbox>
+				</listcell>
+			</listitem>
+		</listbox>
+
+		<separator></separator>
+		<panel>
+			<caption label="${c:l('HRMS_STATE_TRANSITION') }"></caption>
+			<panelchildren>
+				<listbox id="statusDetailsListbox" model="@{composer.statusDetailList}">
+					<listhead>
+						<listheader label="${c:l('HRMS_STATUS_TO') }"></listheader>
+						<listheader label="${c:l('HRMS_TRANSITION_NAME') }"></listheader>
+					</listhead>
+					<listitem self="@{each='zk3'}">
+						<listcell label="@{zk3.statusIdTo}"></listcell>
+						<listcell>
+							<textbox value="@{zk3.transitionName}"></textbox>
+						</listcell>
+					</listitem>
+				</listbox>
+			</panelchildren>
+		</panel>
+	</window>
+</zk>

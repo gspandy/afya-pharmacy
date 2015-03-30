@@ -1,0 +1,256 @@
+<?component name="findbox" macroURI="../macros/textfindMacro.zul" id="macro1"?>
+<?component name="fromDatebox" macroURI="../macros/datefindMacro.zul" id="macro2"?>
+<?component name="thruDatebox" macroURI="../macros/datefindMacro.zul" id="macro3"?>
+<?component list="${leaveTypesList}" renderer="${leaveTypeItemRenderer}" name="selectbox" macroURI="../macros/findselectbox.zul" id="macro4" ?>
+<?page title="${c:l('HRMS_LEAVEPAGETITLE')}" id="leavemgmt"?>
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<zk xmlns:h="http://www.zkoss.org/2005/zk/native">
+	<zscript>
+	import com.ndz.controller.*;
+	import org.ofbiz.entity.*;
+	import org.ofbiz.base.util.*;
+	import org.zkoss.zk.ui.event.EventListener;
+	List leaveTypes = null;
+	GenericDelegator delegator = com.ndz.zkoss.util.HrmsInfrastructure.getDelegator();//GenericDelegator.getGenericDelegator("default");
+	leaveTypes = delegator.findByAnd("Enumeration", UtilMisc.toMap(
+			"enumTypeId", "LEAVE_TYPE"));
+	leaveTypes.add(0, null);
+	leaveTypesArray = leaveTypes.toArray(new GenericValue[leaveTypes.size()]);
+	SimpleListModel leaveTypesList = new SimpleListModel(leaveTypesArray);
+	public class LeaveTypeItemRenderer implements ListitemRenderer {
+
+		public LeaveTypeItemRenderer() {
+		}
+
+		public void render(Listitem li, Object data) {
+			if (data instanceof GenericValue) {
+				GenericValue val = (GenericValue) data;
+				li.setLabel(val.getString("description"));
+				li.setValue(val.getString("enumId"));
+			}
+		}
+	}
+	ListitemRenderer leaveTypeItemRenderer = new LeaveTypeItemRenderer();
+	String[] values = new String[] { "Casual", "Earned" };
+	SearchController controller = new SearchController();
+	Button allocateLeaveLimitBtn = arg.get("allocateLeaveLimitBtn");
+</zscript>
+	<window id="searchPanel" apply="${controller}" onCreate="activateSearch()" width="100%">
+		<custom-attributes entityName="EmplLeaveLimit"
+			companyWide="true">
+		</custom-attributes>
+		<separator height="10px"/>
+		<hbox width="100%">
+			<div align="right" width="590px">
+				<selectbox
+					fieldLabel="${c:l('HumanResLeaveSummaryType') }" name="leaveTypeId" />
+			</div>
+		</hbox>
+		<separator />
+		
+		<box width="100%" height="30px" align="center">
+			<hbox>
+				<button label="${c:l('HumanResSearch') }" mold="os"
+					id="searchPerCompany"
+					onClick="results.setVisible(true);results.setFocus(true)">
+				</button>
+				<button label="${c:l('HRMS_ResetButton') }"
+					onClick='Events.postEvent("onClick",allocateLeaveLimitBtn,null)'/>
+			</hbox>
+		</box>
+<zscript>
+	void activateSearch() {
+		Events.postEvent("onClick", searchPerCompany, null);
+	}
+</zscript>
+		<zscript><![CDATA[
+	import org.ofbiz.base.util.*;
+	class MyRowRenderer implements RowRenderer {
+
+		MyRowRenderer() {
+		}
+
+		public void render(Row row, Object data) {
+			org.ofbiz.entity.GenericValue gv = ((org.ofbiz.entity.GenericValue) data);
+			row.setTooltiptext("DoubleClick To Edit/Update");
+			new Label(gv.getString("partyLeaveId")).setParent(row);
+			//new Label(gv.getString("emplPosTypeId")).setParent(row);
+			org.ofbiz.entity.condition.EntityCondition condition1 = org.ofbiz.entity.condition.EntityCondition
+					.makeCondition("emplPositionTypeId",
+							org.ofbiz.entity.condition.EntityOperator.EQUALS,
+							gv.getString("emplPosTypeId"));
+			List employeePositionList = delegator.findList("EmplPositionType", condition1,
+					null, null, null, false);
+					if(employeePositionList.size()!=0){
+					GenericValue employeePositionGV = (GenericValue) employeePositionList.get(0);
+			new Label(employeePositionGV.getString("description")).setParent(row);
+					}else{
+					new Label("").setParent(row);
+					}
+
+			new Label(gv.getString("positionCategory")).setParent(row);
+			new Label(gv.getString("employeeType")).setParent(row);
+			//new Label(gv.getString("leaveTypeId")).setParent(row);
+			
+			org.ofbiz.entity.condition.EntityCondition condition = org.ofbiz.entity.condition.EntityCondition
+					.makeCondition("enumId",org.ofbiz.entity.condition.EntityOperator.EQUALS,gv.getString("leaveTypeId"));
+			List statusItemList = delegator.findList("Enumeration", condition,
+					null, null, null, false);
+			GenericValue statusItemGV = (GenericValue) statusItemList.get(0);
+			new Label(statusItemGV.getString("description")).setParent(row);
+			   java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("dd-MM-yyyy");
+			Date fromDate = null;
+			Date thruDate = null;
+			if (gv.getTimestamp("beginYear") != null) {
+				
+				fromDate = new Date(gv.getTimestamp("beginYear").getTime());
+				if (fromDate != null) {
+					new Label(sdf.format((gv.getTimestamp("beginYear")).getTime()).toString()).setParent(row);
+				} else {
+					new Label("").setParent(row);
+				}
+			} else {
+				new Label("").setParent(row);
+			}
+			if (gv.getTimestamp("endYear") != null) {
+				thruDate = new Date(gv.getTimestamp("endYear").getTime());
+				if (thruDate != null) {
+					new Label(sdf.format((gv.getTimestamp("endYear")).getTime()).toString()).setParent(row);
+				} else {
+					new Label("").setParent(row);
+				}
+			} else {
+				new Label("").setParent(row);
+			}
+			new Label(gv.getString("description")).setParent(row);
+			
+			java.math.BigDecimal numDaysDecimal = gv.getBigDecimal("numDays");
+			if(numDaysDecimal != null){
+			/* java.math.BigInteger numDaysBiginteger = numDaysDecimal.toBigInteger();
+			new Label(numDaysBiginteger.toString()).setParent(row); */
+			new Label(numDaysDecimal.toString()).setParent(row);
+			}else{
+			 new Label("").setParent(row);
+			}
+			org.ofbiz.entity.GenericValue personGV = null;
+			personGV= delegator.findByPrimaryKey("Person",UtilMisc.toMap("partyId",gv.getString("partyId")));
+			if(gv.getString("partyId") != null)
+	        new Label(gv.getString("partyId")).setParent(row);
+	        else
+	        new Label("").setParent(row);
+	       
+	        if(personGV!=null){
+	         new Label(personGV.getString("firstName") + " " + personGV.getString("lastName")).setParent(row);
+	        }else{
+	         new Label("").setParent(row);
+	        }
+	      
+	        String updatedDate = null;
+	         if (gv.getTimestamp("lastUpdatedStamp") != null){
+	            java.text.SimpleDateFormat formater = new java.text.SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
+				updatedDate =formater.format(gv.getTimestamp("lastUpdatedStamp"));
+				new Label(updatedDate.toString()).setParent(row);
+				//new Label((gv.getTimestamp("updateDate").getTime()).toString()).setParent(row);
+			}else
+				new Label("").setParent(row);
+			Button img = new com.ndz.zkoss.HrmsButton();
+			img.setLabel("Delete");
+			img.setParent(row);
+			img.setTooltiptext("Click here to delete");
+			img.setSclass("btnDelete");
+			img.addEventListener("onClick", new EventListener() {
+
+				public void onEvent(Event event) throws Exception {
+				org.ofbiz.entity.GenericDelegator delegator = com.ndz.zkoss.util.HrmsInfrastructure.getDelegator();//org.ofbiz.entity.GenericDelegator.getGenericDelegator("default");
+				if (com.ndz.zkoss.HrmsUtil.checkLeaveType(gv.getString("leaveTypeId"),gv.getString("emplPosTypeId"))) {
+					Messagebox.show("Selected leave Type is in Use; can't be deleted", "Error", 1, null);
+				}else{
+					ConfigureLeaveManagementController.deleteLeaveLimit(event,gv,searchPerCompany);
+				}
+				}
+			});
+			
+			
+			row.addEventListener("onDoubleClick",
+					new org.zkoss.zk.ui.event.EventListener() {
+						public void onEvent(Event event) throws Exception {
+							ConfigureLeaveManagementController
+									.showLeaveLimitWindow(event, gv);
+						}
+					});
+		}
+	}
+	RowRenderer tableRenderer = new MyRowRenderer();
+	]]>
+</zscript>
+		<separator />
+		<div id="results" visible="false">
+			<h:table width="100%" style="border:0px" cellspacing="0px" cellpadding="0px">
+				<h:tr>
+					<h:td width="90%">
+						<label value="${c:l('HRMS_SEARCHRESULTS') }"></label>
+					</h:td>
+					<h:td width="20%" style="text-align:right">
+						<paging id="paging" />
+					</h:td>
+				</h:tr>
+			</h:table>
+			<grid id="dataGrid"
+				rowRenderer="${tableRenderer}">
+
+				<columns menupopup="auto">
+					<column label="Leave Limit Id"
+						onDrop="move(event.dragged)" draggable="col" droppable="col"
+						 />
+					<column label="Position Type" width="150px" />
+                    <column label="Position Category" width="150px" />
+                    <column label="Employee Type" width="150px" />
+					<column label="${c:l('HumanResLeaveSummaryType')}"
+						onDrop="move(event.dragged)" draggable="col" droppable="col"
+						 />
+					<column
+						label="${c:l('HumanResLeaveSummaryBeginYear') }"
+						onDrop="move(event.dragged)" draggable="col" droppable="col"
+						/>
+					<column
+						label="${c:l('HumanResLeaveSummaryEndYear') }"
+						onDrop="move(event.dragged)" draggable="col" droppable="col"
+						 />
+					<column label="${c:l('Hrms_Comment') }"
+						onDrop="move(event.dragged)" draggable="col" droppable="col"
+						visible="false"/>
+					<column label="Number Of Days"
+						onDrop="move(event.dragged)" draggable="col" droppable="col"
+						 />
+						 <column label="Updated By Id"
+						onDrop="move(event.dragged)" draggable="col" droppable="col"
+						 visible="false"/>
+						 <column label="Updated By Name"
+						onDrop="move(event.dragged)" draggable="col" droppable="col"
+						 />
+						 <column label="Updated Date"
+						onDrop="move(event.dragged)" draggable="col" droppable="col"
+						 />
+					<column label="Action" onDrop="move(event.dragged)"
+						draggable="col" droppable="col"  />
+				</columns>
+			</grid>
+		</div>
+		<zscript><![CDATA[
+	void move(Component dragged) {
+		if (dragged.getClass().getName().endsWith("Column")) {
+			int maxRows = dragged.getGrid().getRows().getChildren().size();
+			int i = dragged.getParent().getChildren().indexOf(dragged);
+			int j = self.getParent().getChildren().indexOf(self);
+
+			//move celles for each row 
+			for (int k = 0; k < maxRows; k++)
+				self.getGrid().getCell(k, j).parent.insertBefore(self.getGrid()
+						.getCell(k, i), self.getGrid().getCell(k, j));
+		}
+
+		self.parent.insertBefore(dragged, self);
+	}
+]]></zscript>
+	</window>
+</zk>

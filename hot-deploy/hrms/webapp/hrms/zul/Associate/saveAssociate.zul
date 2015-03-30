@@ -1,0 +1,79 @@
+<?init class="org.zkoss.zk.ui.util.Composition"
+arg0="/WEB-INF/layout/template.zul"?>
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<zk xmlns:n="http://www.zkoss.org/2005/zk/native">
+
+	<div style="float:left" self="@{define(content}">
+	<hbox self="@{define(content}" width="100%" style="float:left">
+		<toolbarbutton href="/control/createemployee"
+			label="${c:l('HumanResProfile')}">
+		</toolbarbutton>
+		<separator orient="vertical" />
+		<toolbarbutton href="/control/partySkils"
+			label="${c:l('HumanResPartySkills')}">
+		</toolbarbutton>
+		<separator orient="vertical" />
+		<toolbarbutton href="/control/addpartyQualification"
+			label="${c:l('HumanResQualification')}">
+		</toolbarbutton>
+		<separator orient="vertical" />
+		<toolbarbutton href="/control/deleteEmployee"
+			label="${c:l('HumanResTraining')}">
+		</toolbarbutton>
+		<separator orient="vertical" />
+		<toolbarbutton href="/control/deleteEmployee"
+			label="${c:l('HumanResCertificates')}">
+		</toolbarbutton>
+		<separator orient="vertical" />
+		<toolbarbutton href="/control/deleteEmployee"
+			label="${c:l('HumanResServiceRegisterSec2')}">
+		</toolbarbutton>
+		<separator orient="vertical" />
+		<toolbarbutton href="/control/deleteEmployee"
+			label="${c:l('HumanResServiceRegisterSec3')}">
+		</toolbarbutton>
+		<separator orient="vertical" />
+		<toolbarbutton href="/control/deleteEmployee"
+			label="${c:l('HumanResEarnedLeaves')}">
+		</toolbarbutton>
+		<separator orient="vertical" />
+		<toolbarbutton href="/control/deleteEmployee"
+			label="${c:l('HumanResViewLTC')}">
+		</toolbarbutton>
+		<separator orient="vertical" />
+		<toolbarbutton href="/control/deleteEmployee"
+			label="${c:l('HumanResEmploymentApp')}">
+		</toolbarbutton>
+		<separator orient="vertical" />
+		<toolbarbutton href="/control/deleteEmployee"
+			label="${c:l('HumanResEmployeeResume')}">
+		</toolbarbutton>
+		<separator orient="vertical" />
+		<toolbarbutton href="/control/deleteEmployee"
+			label="${c:l('HumanResPerfNote')}">
+		</toolbarbutton>
+		<separator orient="vertical" />
+		<toolbarbutton href="/control/deleteEmployee"
+			label="${c:l('HumanResEmplLeave')}">
+		</toolbarbutton>
+		<separator orient="vertical" />
+		<toolbarbutton href="/control/deleteEmployee"
+			label="${c:l('HumanResPrintServiceRegister')}">
+		</toolbarbutton>
+		<separator orient="vertical" />
+	</hbox>
+	
+	
+
+	<window self="@{insert(empContent)}" style="float:left"
+		width="100%">
+	</window>
+</div>
+
+
+</zk>
+				
+
+
+
+

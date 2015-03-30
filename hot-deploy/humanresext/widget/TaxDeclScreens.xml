@@ -1,0 +1,661 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<screens xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="http://ofbiz.apache.org/dtds/widget-screen.xsd">
+
+
+	<screen name="TaxDeclarationDecorator">
+		<section>
+			<actions>
+				<set field="MainColumnStyle" value="leftonly" />
+				<set field="headerItem" value="TaxDeclaration" />
+				<set field="leftbarScreenName" value="shortcuts" />
+				<set field="leftbarScreenLocation" value="component://humanresext/widget/TaxDeclScreens.xml" />
+			</actions>
+			<widgets>
+				<decorator-screen name="main-decorator"
+					location="${parameters.mainDecoratorLocation}">
+					<decorator-section name="body">
+						<decorator-section-include name="body" />
+					</decorator-section>
+				</decorator-screen>
+			</widgets>
+		</section>
+	</screen>
+
+	<screen name="shortcuts">
+		<section>
+			<widgets>
+				<container style="left">
+					<platform-specific>
+						<html>
+							<html-template
+								location="component://humanresext/webapp/humanresext/taxdecl/shortcuts.ftl" />
+						</html>
+					</platform-specific>
+				</container>
+			</widgets>
+		</section>
+	</screen>
+
+	<screen name="EditTaxCategory">
+		<section>
+			<actions>
+				<set field="tabButtonItem" value="EditTaxCategory" />
+			</actions>
+			<widgets>
+				<decorator-screen name="GlobalHRSettingsDecorator"
+					location="component://humanresext/widget/CommonScreens.xml">
+					<decorator-section name="body">
+						<container style="screenlet-title-bar">
+							<container style="h3">
+								<label text="Create Tax Category" />
+							</container>
+						</container>
+						<container style="screenlet-body">
+							<include-form
+								location="component://humanresext/widget/forms/TaxDeclForms.xml"
+								name="EditTaxCategory" />
+						</container>
+					</decorator-section>
+				</decorator-screen>
+			</widgets>
+		</section>
+	</screen>
+
+	<screen name="FindTaxCategory">
+		<section>
+			<actions>
+				<set field="tabButtonItem" value="EditTaxCategory" />
+				<set field="titleProperty" value="Find Tax Category" />
+			</actions>
+			<widgets>
+				<decorator-screen name="GlobalHRSettingsDecorator"
+					location="component://humanresext/widget/CommonScreens.xml">
+					<decorator-section name="body">
+						<decorator-screen name="FindScreenDecorator"
+							location="component://common/widget/CommonScreens.xml">
+							<decorator-section name="menu-bar">
+								<container style="button-bar">
+									<link target="editTaxCategory"
+										text="${uiLabelMap.CommonNew} ${uiLabelMap.TaxCategory}"
+										style="buttontext" />
+								</container>
+							</decorator-section>
+							<decorator-section name="search-options">
+								<include-form
+									location="component://humanresext/widget/forms/TaxDeclForms.xml"
+									name="FindTaxCategory" />
+							</decorator-section>
+							<decorator-section name="search-results">
+								<include-form
+									location="component://humanresext/widget/forms/TaxDeclForms.xml"
+									name="ListTaxCategories" />
+							</decorator-section>
+						</decorator-screen>
+					</decorator-section>
+				</decorator-screen>
+			</widgets>
+		</section>
+	</screen>
+
+	<screen name="EditTaxItem">
+		<section>
+			<actions>
+				<set field="tabButtonItem" value="EditTaxItem" />
+			</actions>
+			<widgets>
+				<decorator-screen name="GlobalHRSettingsDecorator"
+					location="component://humanresext/widget/CommonScreens.xml">
+					<decorator-section name="body">
+						<container style="screenlet-title-bar">
+							<container style="h3">
+								<label text="Create Tax Item For Tax Category" />
+							</container>
+						</container>
+						<container style="screenlet-body">
+							<include-form
+								location="component://humanresext/widget/forms/TaxDeclForms.xml"
+								name="EditTaxItem" />
+						</container>
+					</decorator-section>
+				</decorator-screen>
+			</widgets>
+		</section>
+	</screen>
+
+
+	<screen name="FindTaxItem">
+		<section>
+			<actions>
+				<set field="tabButtonItem" value="EditTaxItem" />
+				<set field="titleProperty" value="Find Tax Items" />
+			</actions>
+			<widgets>
+				<decorator-screen name="GlobalHRSettingsDecorator"
+					location="component://humanresext/widget/CommonScreens.xml">
+					<decorator-section name="body">
+						<decorator-screen name="FindScreenDecorator"
+							location="component://common/widget/CommonScreens.xml">
+							<decorator-section name="menu-bar">
+								<container style="button-bar">
+									<link target="editTaxItem"
+										text="${uiLabelMap.CommonNew} ${uiLabelMap.TaxItem}" style="buttontext" />
+								</container>
+							</decorator-section>
+							<decorator-section name="search-options">
+								<include-form
+									location="component://humanresext/widget/forms/TaxDeclForms.xml"
+									name="FindTaxItem" />
+							</decorator-section>
+							<decorator-section name="search-results">
+								<include-form
+									location="component://humanresext/widget/forms/TaxDeclForms.xml"
+									name="ListTaxItems" />
+							</decorator-section>
+						</decorator-screen>
+					</decorator-section>
+				</decorator-screen>
+			</widgets>
+		</section>
+	</screen>
+
+	<screen name="ViewTaxCategory">
+		<section>
+			<actions>
+				<set field="tabButtonItem" value="TaxCategory" />
+			</actions>
+			<widgets>
+				<decorator-screen name="GlobalHRSettingsDecorator"
+					location="component://humanresext/widget/CommonScreens.xml">
+					<decorator-section name="body">
+						<container style="screenlet-title-bar">
+							<container style="h3">
+								<label text="Tax Category" />
+							</container>
+						</container>
+						<container style="screenlet-body">
+							<platform-specific>
+								<html>
+									<html-template
+										location="component://humanresext/webapp/humanresext/taxdecl/ViewTaxCategory.ftl" />
+								</html>
+							</platform-specific>
+						</container>
+					</decorator-section>
+				</decorator-screen>
+			</widgets>
+		</section>
+	</screen>
+
+
+	<screen name="FindTaxDeclDef">
+		<section>
+			<actions>
+				<set field="tabButtonItem" value="TaxDecl" />
+				<set field="titleProperty" value="Find Tax Declaration Definitions" />
+			</actions>
+			<widgets>
+				<decorator-screen name="GlobalHRSettingsDecorator"
+					location="component://humanresext/widget/CommonScreens.xml">
+					<decorator-section name="body">
+						<decorator-screen name="FindScreenDecorator"
+							location="component://common/widget/CommonScreens.xml">
+							<decorator-section name="menu-bar">
+								<container style="button-bar">
+									<link target="taxDecl"
+										text="${uiLabelMap.CommonNew} ${uiLabelMap.TaxDeclarationDefinition}"
+										style="buttontext" />
+								</container>
+							</decorator-section>
+							<decorator-section name="search-options">
+								<include-form name="FindTaxDeclDef"
+									location="component://humanresext/widget/forms/TaxDeclForms.xml" />
+							</decorator-section>
+							<decorator-section name="search-results">
+								<include-form name="ListTaxDeclDef"
+									location="component://humanresext/widget/forms/TaxDeclForms.xml" />
+							</decorator-section>
+						</decorator-screen>
+					</decorator-section>
+				</decorator-screen>
+			</widgets>
+		</section>
+	</screen>
+
+	<screen name="TaxDecl">
+		<section>
+			<actions>
+				<set field="tabButtonItem" value="TaxDecl" />
+			</actions>
+			<widgets>
+				<decorator-screen name="TaxDeclDecorator"
+					location="${parameters.mainDecoratorLocation}">
+					<decorator-section name="body">
+						<container style="screenlet-title-bar">
+							<container style="h3">
+								<label text="Manage Tax Declaration" />
+							</container>
+						</container>
+						<container style="screenlet-body">
+							<include-form
+								location="component://humanresext/widget/forms/TaxDeclForms.xml"
+								name="TaxDecl" />
+						</container>
+					</decorator-section>
+				</decorator-screen>
+			</widgets>
+		</section>
+	</screen>
+
+	<screen name="FindTaxDeclaration">
+		<section>
+			<actions>
+				<set field="tabButtonItem" value="TaxDeclaration" />
+			</actions>
+			<widgets>
+				<decorator-screen name="TaxDeclDecorator"
+					location="${parameters.mainDecoratorLocation}">
+					<decorator-section name="body">
+						<container style="screenlet-title-bar">
+							<container style="h3">
+								<label text="Tax Declaration" />
+							</container>
+						</container>
+						<container style="screenlet-body">
+							<include-form
+								location="component://humanresext/widget/forms/TaxDeclForms.xml"
+								name="ValidTaxDecls" />
+						</container>
+					</decorator-section>
+				</decorator-screen>
+			</widgets>
+		</section>
+	</screen>
+
+	<!-- Admin screen for approving tax declarations for a party -->
+	<screen name="ApproveTaxDeclaration">
+		<section>
+			<actions>
+				<set field="tabButtonItem" value="ApproveTaxDeclaration" />
+			</actions>
+			<widgets>
+				<decorator-screen name="TaxDeclDecorator"
+					location="${parameters.mainDecoratorLocation}">
+					<decorator-section name="body">
+						<container style="screenlet-title-bar">
+							<container style="h3">
+								<label text="Approve Tax Declaration" />
+							</container>
+						</container>
+						<container style="screenlet-body">
+							<include-form
+								location="component://humanresext/widget/forms/TaxDeclForms.xml"
+								name="ApproveTaxDecl" />
+						</container>
+					</decorator-section>
+				</decorator-screen>
+			</widgets>
+		</section>
+	</screen>
+
+	<screen name="EditTaxDecl">
+		<section>
+			<actions>
+				<set field="partyId" value="${parameters.partyId}" />
+			</actions>
+			<widgets>
+				<decorator-screen name="TaxDeclDecorator"
+					location="${parameters.mainDecoratorLocation}">
+					<decorator-section name="body">
+						<container style="screenlet-title-bar">
+							<container style="h3">
+								<label text="Party Tax Declaration" />
+							</container>
+						</container>
+						<container style="screenlet-body">
+							<platform-specific>
+								<html>
+									<html-template
+										location="component://humanresext/webapp/humanresext/taxdecl/editTaxDecl.ftl" />
+								</html>
+							</platform-specific>
+						</container>
+					</decorator-section>
+				</decorator-screen>
+			</widgets>
+		</section>
+	</screen>
+
+	<!-- Screens to add fields to Tax Forms -->
+	<screen name="FormFieldScreen">
+		<section>
+			<widgets>
+				<decorator-screen name="TaxDeclDecorator"
+					location="${parameters.mainDecoratorLocation}">
+					<decorator-section name="body">
+						<screenlet id="FindFormFieldPanel" title="${uiLabelMap.FindFormField}"
+							collapsible="true">
+							<include-form name="FormFieldSearchForm"
+								location="component://humanresext/widget/forms/TaxDeclForms.xml" />
+						</screenlet>
+						<include-form name="FormFieldForm"
+							location="component://humanresext/widget/forms/TaxDeclForms.xml" />
+					</decorator-section>
+				</decorator-screen>
+			</widgets>
+		</section>
+	</screen>
+
+	<screen name="EditFormFieldScreen">
+		<section>
+			<widgets>
+				<decorator-screen name="TaxDeclDecorator"
+					location="${parameters.mainDecoratorLocation}">
+					<decorator-section name="body">
+						<screenlet id="EditFormFieldPanel" title="${uiLabelMap.EditFormField}"
+							collapsible="true">
+							<include-form name="EditFormFieldForm"
+								location="component://humanresext/widget/forms/TaxDeclForms.xml" />
+						</screenlet>
+					</decorator-section>
+				</decorator-screen>
+			</widgets>
+		</section>
+	</screen>
+
+	<!-- TDS details of Employee -->
+	<screen name="FindTdsPartyScreen">
+		<section>
+			<widgets>
+				<decorator-screen name="TaxDeclDecorator"
+					location="${parameters.mainDecoratorLocation}">
+					<decorator-section name="body">
+						<screenlet id="FindTDSScreenPanel" title="${uiLabelMap.FindTDSScreen}"
+							collapsible="true">
+							<include-form name="FindTDSForm"
+								location="component://humanresext/widget/forms/TaxDeclForms.xml" />
+						</screenlet>
+						<include-form name="TDSForm"
+							location="component://humanresext/widget/forms/TaxDeclForms.xml" />
+					</decorator-section>
+				</decorator-screen>
+			</widgets>
+		</section>
+	</screen>
+
+	<screen name="EditTdsPartyScreen">
+		<section>
+			<widgets>
+				<decorator-screen name="TaxDeclDecorator"
+					location="${parameters.mainDecoratorLocation}">
+					<decorator-section name="body">
+						<screenlet id="FindTDSScreenPanel" title="${uiLabelMap.EditTDSScreen}"
+							collapsible="true">
+							<include-form name="EditTDSForm"
+								location="component://humanresext/widget/forms/TaxDeclForms.xml" />
+						</screenlet>
+					</decorator-section>
+				</decorator-screen>
+			</widgets>
+		</section>
+	</screen>
+
+	<screen name="FindForm16Screen">
+		<section>
+			<actions>
+			</actions>
+			<widgets>
+				<decorator-screen name="TaxDeclDecorator"
+					location="${parameters.mainDecoratorLocation}">
+					<decorator-section name="body">
+						<screenlet id="AdminViewForm16Panel" title="${uiLabelMap.ViewForm16}"
+							collapsible="true">
+							<include-form name="FindForm16Form"
+								location="component://humanresext/widget/forms/TaxDeclForms.xml" />
+						</screenlet>
+						<section>
+							<widgets>
+							</widgets>
+						</section>
+					</decorator-section>
+				</decorator-screen>
+			</widgets>
+		</section>
+	</screen>
+
+	<screen name="AXForm16Screen">
+		<section>
+			<actions>
+				<set field="partyId" value="${parameters.partyId}" />
+				<set field="fromDate" value="${parameters.fromDate}" />
+				<set field="thruDate" value="${parameters.thruDate}" />
+				<script
+					location="component://humanresext/webapp/humanresext/WEB-INF/actions/taxdecl/form16.groovy" />
+				<script
+					location="component://humanresext/webapp/humanresext/WEB-INF/actions/taxdecl/CompanyHeader.groovy" />
+				<script
+					location="component://humanresext/webapp/humanresext/WEB-INF/actions/taxdecl/form12BA.groovy" />
+			</actions>
+			<widgets>
+
+				<section>
+					<widgets>
+						<platform-specific>
+							<html>
+								<html-template
+									location="component://humanresext/webapp/humanresext/taxdecl/form16.ftl" />
+							</html>
+						</platform-specific>
+					</widgets>
+				</section>
+			</widgets>
+		</section>
+	</screen>
+
+	<screen name="FindForm16PDFScreen">
+		<section>
+			<actions>
+			</actions>
+			<widgets>
+				<decorator-screen name="TaxDeclDecorator"
+					location="${parameters.mainDecoratorLocation}">
+					<decorator-section name="body">
+						<screenlet id="AdminViewForm16Panel" title="${uiLabelMap.ViewForm16}"
+							collapsible="true">
+							<include-form name="FindForm16PDFForm"
+								location="component://humanresext/widget/forms/TaxDeclForms.xml" />
+						</screenlet>
+						<section>
+							<widgets>
+							</widgets>
+						</section>
+					</decorator-section>
+				</decorator-screen>
+			</widgets>
+		</section>
+	</screen>
+
+	<screen name="Form16Pdf">
+		<section>
+			<actions>
+				<set field="layoutSettings.documentTitle" value="${uiLabelMap.Form16Report}" />
+				<set field="partyId" value="${parameters.partyId}" />
+				<set field="fromDate" value="${parameters.fromDate}" />
+				<set field="thruDate" value="${parameters.thruDate}" />
+				<script
+					location="component://humanresext/webapp/humanresext/WEB-INF/actions/taxdecl/form16.groovy" />
+				<script
+					location="component://humanresext/webapp/humanresext/WEB-INF/actions/taxdecl/CompanyHeader.groovy" />
+				<script
+					location="component://humanresext/webapp/humanresext/WEB-INF/actions/taxdecl/form12BA.groovy" />
+			</actions>
+			<widgets>
+				<decorator-screen name="FoReportDecorator"
+					location="component://common/widget/CommonScreens.xml">
+					<decorator-section name="body">
+						<platform-specific>
+							<xsl-fo>
+								<html-template
+									location="component://humanresext/webapp/humanresext/taxdecl/form16.fo.ftl" />
+							</xsl-fo>
+						</platform-specific>
+					</decorator-section>
+				</decorator-screen>
+			</widgets>
+		</section>
+	</screen>
+
+	<!-- Form 6A Screen -->
+	<screen name="FindPFScreen">
+		<section>
+			<actions>
+			</actions>
+			<widgets>
+				<decorator-screen name="TaxDeclDecorator"
+					location="${parameters.mainDecoratorLocation}">
+					<decorator-section name="body">
+						<screenlet id="AdminViewPFPanel" title="${uiLabelMap.ViewPF}"
+							collapsible="true">
+							<include-form name="FindPFForm"
+								location="component://humanresext/widget/forms/TaxDeclForms.xml" />
+						</screenlet>
+						<section>
+							<widgets>
+							</widgets>
+						</section>
+					</decorator-section>
+				</decorator-screen>
+			</widgets>
+		</section>
+	</screen>
+
+	<!-- Form 6A PDF -->
+	<screen name="PFFormPdf">
+		<section>
+			<actions>
+				<set field="fromDate" value="${parameters.fromDate}" />
+				<set field="thruDate" value="${parameters.thruDate}" />
+				<script
+					location="component://humanresext/webapp/humanresext/WEB-INF/actions/taxdecl/CompanyHeader.groovy" />
+				<script
+					location="component://humanresext/webapp/humanresext/WEB-INF/actions/taxdecl/pfForm.groovy" />
+			</actions>
+			<widgets>
+				<decorator-screen name="FoReportDecorator"
+					location="component://common/widget/CommonScreens.xml">
+					<decorator-section name="body">
+						<platform-specific>
+							<xsl-fo>
+								<html-template
+									location="component://humanresext/webapp/humanresext/taxdecl/pfForm6A.fo.ftl" />
+							</xsl-fo>
+						</platform-specific>
+					</decorator-section>
+				</decorator-screen>
+			</widgets>
+		</section>
+	</screen>
+
+	<screen name="PF3AScreen">
+		<section>
+			<actions>
+			</actions>
+			<widgets>
+				<decorator-screen name="TaxDeclDecorator"
+					location="${parameters.mainDecoratorLocation}">
+					<decorator-section name="body">
+						<screenlet id="AdminViewPFPanel" title="${uiLabelMap.ViewPF}"
+							collapsible="true">
+							<include-form name="PF3AForm"
+								location="component://humanresext/widget/forms/TaxDeclForms.xml" />
+						</screenlet>
+						<section>
+							<widgets>
+							</widgets>
+						</section>
+					</decorator-section>
+				</decorator-screen>
+			</widgets>
+		</section>
+	</screen>
+
+	<screen name="PF3AFormPdf">
+		<section>
+			<actions>
+				<set field="partyId" value="${parameters.partyId}" />
+				<set field="fromDate" value="${parameters.fromDate}" />
+				<set field="thruDate" value="${parameters.thruDate}" />
+				<script
+					location="component://humanresext/webapp/humanresext/WEB-INF/actions/taxdecl/CompanyHeader.groovy" />
+				<script
+					location="component://humanresext/webapp/humanresext/WEB-INF/actions/taxdecl/pfForm.groovy" />
+			</actions>
+			<widgets>
+				<decorator-screen name="FoReportDecorator"
+					location="component://common/widget/CommonScreens.xml">
+					<decorator-section name="body">
+						<platform-specific>
+							<xsl-fo>
+								<html-template
+									location="component://humanresext/webapp/humanresext/taxdecl/pfForm3A.fo.ftl" />
+							</xsl-fo>
+						</platform-specific>
+					</decorator-section>
+				</decorator-screen>
+			</widgets>
+		</section>
+	</screen>
+
+	<screen name="FindTaxDecl">
+		<section>
+			<actions>
+				<set field="tabButtonItem" value="FindEmplSal" />
+				<property-to-field field="screenTitle" property="TaxDeclarations"
+					resource="PayrollUiLabels" />
+				<set field="titleProperty" value="Find ${screenTitle}" />
+			</actions>
+			<widgets>
+				<decorator-screen name="PayrollDecorator"
+					location="component://humanresext/widget/CommonScreens.xml">
+					<decorator-section name="body">
+						<decorator-screen name="FindScreenDecorator"
+							location="component://common/widget/CommonScreens.xml">
+							<decorator-section name="search-options">
+								<include-form name="FindTaxDecl"
+									location="component://humanresext/widget/forms/PayrollForms.xml" />
+							</decorator-section>
+							<decorator-section name="search-results">
+								<include-form name="ListTaxDecl"
+									location="component://humanresext/widget/forms/PayrollForms.xml" />
+							</decorator-section>
+						</decorator-screen>
+					</decorator-section>
+				</decorator-screen>
+			</widgets>
+		</section>
+	</screen>
+
+	<screen name="ViewStatutoryForms">
+		<section>
+			<actions>
+				<set field="tabButtonItem" value="StatutoryForms" />
+				<script
+					location="component://humanresext/webapp/humanresext/WEB-INF/actions/taxdecl/GetCustomForms.groovy" />
+			</actions>
+			<widgets>
+				<decorator-screen name="TaxDeclDecorator"
+					location="${parameters.mainDecoratorLocation}">
+					<decorator-section name="body">
+						<platform-specific>
+							<html>
+								<html-template
+									location="component://humanresext/webapp/humanresext/payroll/viewStatutoryForms.ftl" />
+							</html>
+						</platform-specific>
+					</decorator-section>
+				</decorator-screen>
+			</widgets>
+		</section>
+	</screen>
+</screens>

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<simple-methods xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://ofbiz.apache.org/dtds/simple-methods.xsd">
+
+	<simple-method method-name="createTallyConfig" short-description="Create Tally Configuration" login-required="false">
+			<make-value value-field="newEntity" entity-name="TallyConfiguration" />
+			<set-nonpk-fields value-field="newEntity" map="parameters" />
+			<set-pk-fields value-field="newEntity" map="parameters"/>
+			<create-value value-field="newEntity" />
+	</simple-method>
+	
+	<simple-method method-name="updateTallyConfig" short-description="Create Tally Configuration" login-required="false">
+			<entity-one value-field="oldValue" entity-name="TallyConfiguration">
+				<field-map field-name="tallyId" from-field="parameters.tallyId"/>
+			</entity-one>
+			<log level="always" message="******************* ${oldValue}"></log>
+			<set-nonpk-fields value-field="oldValue" map="parameters" />
+			<store-value value-field="oldValue" />
+	</simple-method>
+
+</simple-methods>

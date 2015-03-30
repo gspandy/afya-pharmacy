@@ -1,0 +1,523 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+Licensed to the Apache Software Foundation (ASF) under one
+or more contributor license agreements.  See the NOTICE file
+distributed with this work for additional information
+regarding copyright ownership.  The ASF licenses this file
+to you under the Apache License, Version 2.0 (the
+"License"); you may not use this file except in compliance
+with the License.  You may obtain a copy of the License at
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing,
+software distributed under the License is distributed on an
+"AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+KIND, either express or implied.  See the License for the
+specific language governing permissions and limitations
+under the License.
+-->
+<simple-methods xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://ofbiz.apache.org/dtds/simple-methods-v2.xsd">
+
+    <simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_" event-event-message-name="_event_message_" event-request-object-name="request" event-response-code-name="_response_code_" event-response-object-name="response" login-required="true" method-name="createShipmentReceipt" service-error-message-list-name="errorMessageList" service-error-message-map-name="errorMessageMap" service-error-message-name="errorMessage" service-response-message-name="responseMessage" service-success-message-list-name="successMessageList" service-success-message-name="successMessage" short-description="Create a ShipmentReceipt" use-transaction="true">
+        <make-value entity-name="ShipmentReceipt" value-field="newEntity"/>
+        <log level="info" message="*****shivraj************ ${parameters}"/>
+        <set-nonpk-fields map="parameters" set-if-null="true" value-field="newEntity"/>
+        <sequenced-id field="receiptId" get-long-only="false" sequence-name="ShipmentReceipt"/>
+        <to-string field="receiptId"/>
+        <set field="newEntity.receiptId" from="receiptId" />
+        <field-to-result field="receiptId" result-name="receiptId"/>
+        <if-empty field="newEntity.datetimeReceived">
+            <now-timestamp field="nowTimestamp"/>
+            <set field="newEntity.datetimeReceived" from="nowTimestamp" />
+        </if-empty>
+        <set field="newEntity.receivedByUserLoginId" from="userLogin.userLoginId" />
+
+        <set field="newEntity.shipmentItemSeqId" from-field="parameters.shipmentItemSeqId"/>
+        <create-value do-cache-clear="true" or-store="false" value-field="newEntity"/>
+        <if-not-empty field="parameters.inventoryItemDetailSeqId">
+            <entity-one auto-field-map="true" entity-name="InventoryItemDetail" use-cache="false" value-field="invDet">
+                <field-map field-name="inventoryItemDetailSeqId" from-field="parameters.inventoryItemDetailSeqId"/>
+                <field-map field-name="inventoryItemId" from-field="parameters.inventoryItemId"/>
+            </entity-one>
+            <set field="invDet.receiptId" from="receiptId" />
+            <store-value do-cache-clear="true" value-field="invDet"/>
+        </if-not-empty>
+    </simple-method>
+
+    <simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_" event-event-message-name="_event_message_" event-request-object-name="request" event-response-code-name="_response_code_" event-response-object-name="response" login-required="true" method-name="createShipmentReceiptRole" service-error-message-list-name="errorMessageList" service-error-message-map-name="errorMessageMap" service-error-message-name="errorMessage" service-response-message-name="responseMessage" service-success-message-list-name="successMessageList" service-success-message-name="successMessage" short-description="Create a ShipmentReceipt Role" use-transaction="true">
+        <make-value entity-name="ShipmentReceiptRole" value-field="newEntity"/>
+        <set-pk-fields map="parameters" set-if-null="true" value-field="newEntity"/>
+        <set-nonpk-fields map="parameters" set-if-null="true" value-field="newEntity"/>
+        <create-value do-cache-clear="true" or-store="false" value-field="newEntity"/>
+    </simple-method>
+
+    <simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_" event-event-message-name="_event_message_" event-request-object-name="request" event-response-code-name="_response_code_" event-response-object-name="response" login-required="true" method-name="removeShipmentReceiptRole" service-error-message-list-name="errorMessageList" service-error-message-map-name="errorMessageMap" service-error-message-name="errorMessage" service-response-message-name="responseMessage" service-success-message-list-name="successMessageList" service-success-message-name="successMessage" short-description="Remove a ShipmentReceipt Role" use-transaction="true">
+        <make-value entity-name="ShipmentReceiptRole" value-field="lookupPKMap"/>
+        <set-pk-fields map="parameters" set-if-null="true" value-field="lookupPKMap"/>
+        <find-by-primary-key entity-name="ShipmentReceiptRole" map="lookupPKMap" use-cache="false" value-field="lookedUpValue"/>
+        <remove-value do-cache-clear="true" value-field="lookedUpValue"/>
+    </simple-method>
+
+    <simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_" event-event-message-name="_event_message_"
+                   event-request-object-name="request" event-response-code-name="_response_code_" event-response-object-name="response" login-required="true"
+                   method-name="receiveInventoryProduct" service-error-message-list-name="errorMessageList" service-error-message-map-name="errorMessageMap" service-error-message-name="errorMessage" service-response-message-name="responseMessage" service-success-message-list-name="successMessageList" service-success-message-name="successMessage" short-description="Receive Inventory in new Inventory Item(s)" use-transaction="true">
+        <!-- NOTES
+            - for serialized items with a serial number passed in: the quantityAccepted _should_ always be 1
+            - if the type is SERIALIZED_INV_ITEM but there is not serial number (which is weird...) we'll create a bunch of individual InventoryItems
+            - DEJ20070822: something to consider for the future: maybe instead of this funny looping maybe for serialized items we should only allow a quantity of 1, ie return an error if it is not 1
+        -->
+        <set field="loops"  type="Double" value="1"/>
+        <if-compare field="parameters.inventoryItemTypeId" operator="equals" type="String" value="SERIALIZED_INV_ITEM">
+            <!-- if we are serialized and either a serialNumber or inventoyItemId is passed in and the quantityAccepted is greater than 1 then complain -->
+            <if>
+                <condition>
+                    <and>
+                        <or>
+                            <not>
+                                <if-empty field="parameters.serialNumber"/>
+                            </not>
+                            <not>
+                                <if-empty field="parameters.currentInventoryItemId"/>
+                            </not>
+                        </or>
+                        <if-compare field="parameters.quantityAccepted" operator="greater" type="BigDecimal" value="1"/>
+                    </and>
+                </condition>
+                <then>
+                    <add-error error-list-name="error_list">
+                        <fail-message message="Tried to receive a serialized inventory item with serialNumber [${parameters.serialNumber}] or inventoryItemId [${parameters.currentInventoryItemId}] passed in and quantityAccepted [${parameters.quantityAccepted}] was greater than 1; we don't know what to do with that!"/>
+                    </add-error>
+                </then>
+            </if>
+            <set field="loops" from="parameters.quantityAccepted" />
+            <set field="parameters.quantityAccepted"  type="BigDecimal" value="1"/>
+        </if-compare>
+        <set field="parameters.quantityOnHandDiff" from="parameters.quantityAccepted" />
+        <set field="parameters.availableToPromiseDiff" from="parameters.quantityAccepted" />
+        <!-- before getting going, see if there are any validation issues so far -->
+        <check-errors error-code="error" error-list-name="error_list"/>
+        <loop count="${loops}" field="currentLoop">
+            <log level="error" message="receiveInventoryProduct Looping and creating inventory info - ${currentLoop}"/>
+            <!-- if there is an inventoryItemId, update it (this will happen when receiving serialized inventory already in the system, like for returns); if not create one -->
+            <clear-field field="serviceInMap"/>
+            <clear-field field="currentInventoryItemId"/>
+
+            <!-- Set supplier partyId, if inventory received by purchase order -->
+            <if-not-empty field="parameters.orderId">
+                <entity-and entity-name="OrderRole" list="orderRoles">
+                    <field-map field-name="orderId" from-field="parameters.orderId"/>
+                    <field-map field-name="roleTypeId" value="SUPPLIER_AGENT"/>
+                </entity-and>
+                <if-not-empty field="orderRoles">
+                    <first-from-list list="orderRoles" entry="orderRole"/>
+                    <set field="parameters.partyId" from-field="orderRole.partyId"/>
+                </if-not-empty>
+            </if-not-empty>
+
+
+
+            <if-empty field="parameters.currentInventoryItemId">
+                <set-service-fields service-name="createInventoryItem" map="parameters" to-map="serviceInMap"/>
+                <call-service service-name="createInventoryItem" in-map-name="serviceInMap">
+                    <result-to-field result-name="inventoryItemId" field="currentInventoryItemId"/>
+                </call-service>
+                <else>
+                    <if-not-empty field="parameters.currentInventoryItemId">
+                        <set field="parameters.inventoryItemId" from-field="parameters.currentInventoryItemId"/>
+                    </if-not-empty>
+                    <set-service-fields service-name="updateInventoryItem" map="parameters" to-map="serviceInMap"/>
+                    <call-service service-name="updateInventoryItem" in-map-name="serviceInMap"/>
+                    <set field="currentInventoryItemId" from-field="parameters.currentInventoryItemId"/>
+                </else>
+            </if-empty>
+            <log level="error" message="receiveInventoryProduct currentInventoryItemId - ${currentInventoryItemId}"/>
+
+            <!-- do this only for non-serialized inventory -->
+            <if-compare field="parameters.inventoryItemTypeId" operator="not-equals" type="String" value="SERIALIZED_INV_ITEM">
+                <clear-field field="serviceInMap"/>
+                <set-service-fields service-name="createInventoryItemDetail" map="parameters" to-map="serviceInMap"/>
+                <set field="serviceInMap.inventoryItemId" from-field="currentInventoryItemId"/>
+                <call-service service-name="createInventoryItemDetail" in-map-name="serviceInMap">
+                    <result-to-field result-name="inventoryItemDetailSeqId" field="parameters.inventoryItemDetailSeqId"/>
+                </call-service>
+                <else>
+                    <clear-field field="serviceInMap"/>
+                    <set field="parameters.quantityOnHandDiff" value="1" />
+                    <set field="parameters.availableToPromiseDiff" value="1" />
+                    <set field="parameters.userLogin" from-field="parameters.userLogin"/>
+                    <set-service-fields map="parameters" service-name="createInventoryItemDetail" to-map="serviceInMap"/>
+                    <set field="serviceInMap.inventoryItemId" from="currentInventoryItemId" />
+                    <call-service break-on-error="true" error-code="error" in-map-name="serviceInMap" include-user-login="true" require-new-transaction="false" service-name="createInventoryItemDetail" success-code="success">
+                        <result-to-field field="parameters.inventoryItemDetailSeqId" result-name="inventoryItemDetailSeqId"/>
+                    </call-service>
+                </else>
+            </if-compare>
+
+            <clear-field field="serviceInMap"/>
+            <set-service-fields map="parameters" service-name="createShipmentReceipt" to-map="serviceInMap"/>
+            <log level="info" message="############### Samir serviceInMap ${serviceInMap}"/>
+            <set field="serviceInMap.inventoryItemId" from="currentInventoryItemId" />
+            <call-service break-on-error="true" error-code="error" in-map-name="serviceInMap" include-user-login="true" require-new-transaction="false" service-name="createShipmentReceipt" success-code="success"/>
+
+            <!-- update serialized items to AVAILABLE (only if this is not a return), which then triggers other SECA chains -->
+            <if>
+                <condition>
+                    <and>
+                        <if-compare field="parameters.inventoryItemTypeId" operator="equals" type="String" value="SERIALIZED_INV_ITEM"/>
+                        <if-empty field="parameters.returnId"/>
+                    </and>
+                </condition>
+                <then>
+                    <!-- Retrieve the new inventoryItem -->
+                    <entity-one auto-field-map="true" entity-name="InventoryItem" use-cache="false" value-field="inventoryItem"/>
+                    <!-- Don't reset the status if it's already set to INV_PROMISED or INV_ON_HOLD -->
+                    <if>
+                        <condition>
+                            <and>
+                                <if-compare field="inventoryItem.statusId" operator="not-equals" type="String" value="INV_PROMISED"/>
+                                <if-compare field="inventoryItem.statusId" operator="not-equals" type="String" value="INV_ON_HOLD"/>
+                            </and>
+                        </condition>
+                        <then>
+                            <clear-field field="serviceInMap"/>
+                            <set field="serviceInMap.inventoryItemId" from="currentInventoryItemId" />
+                            <!-- XXX set to returned instead -->
+                            <set field="serviceInMap.statusId"  value="INV_AVAILABLE"/>
+                            <call-service break-on-error="true" error-code="error" in-map-name="serviceInMap" include-user-login="true" require-new-transaction="false" service-name="updateInventoryItem" success-code="success"/>
+                        </then>
+                    </if>
+                </then>
+            </if>
+
+            <clear-field field="serviceInMap"/>
+            <set-service-fields map="parameters" service-name="balanceInventoryItems" to-map="serviceInMap"/>
+            <set field="serviceInMap.inventoryItemId" from="currentInventoryItemId" />
+            <call-service break-on-error="true" error-code="error" in-map-name="serviceInMap" include-user-login="true" require-new-transaction="false" service-name="balanceInventoryItems" success-code="success"/>
+            <set field="successMessageList[]"  value="Received ${parameters.quantityAccepted} of ${parameters.productId} in inventory item ${currentInventoryItemId}"/>
+        </loop>
+        <!-- return the last inventory item received -->
+        <log level="error" message="*************** Inventory Item id ${inventoryItemId}"/>
+        <field-to-result field="currentInventoryItemId" result-name="inventoryItemId"/>
+    </simple-method>
+
+    <simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_" event-event-message-name="_event_message_" event-request-object-name="request" event-response-code-name="_response_code_" event-response-object-name="response" login-required="true" method-name="quickReceiveReturn" service-error-message-list-name="errorMessageList" service-error-message-map-name="errorMessageMap" service-error-message-name="errorMessage" service-response-message-name="responseMessage" service-success-message-list-name="successMessageList" service-success-message-name="successMessage" short-description="Quick Receive Entire Return" use-transaction="true">
+        <entity-one auto-field-map="true" entity-name="ReturnHeader" use-cache="false" value-field="returnHeader">
+            <field-map field-name="returnId" from-field="parameters.returnId"/>
+        </entity-one>
+        <if-compare field="returnHeader.needsInventoryReceive" operator="equals" type="String" value="Y">
+            <!-- before receiving inventory, check to see if there is inventory information in this database -->
+            <entity-count count-field="iiCount" entity-name="InventoryItem">
+                <condition-expr field-name="facilityId" from-field="returnHeader.destinationFacilityId" ignore="false" ignore-case="false" ignore-if-empty="false" ignore-if-null="false" operator="equals"/>
+            </entity-count>
+            <if-compare field="iiCount" operator="greater" type="Integer" value="0">
+                <!-- create a return shipment for this return -->
+                <set field="shipmentCtx.returnId" from="parameters.returnId" />
+                <call-service break-on-error="true" error-code="error" in-map-name="shipmentCtx" include-user-login="true" require-new-transaction="false" service-name="createShipmentForReturn" success-code="success">
+                    <result-to-field result-name="shipmentId"/>
+                </call-service>
+                <log level="info" message="Created new shipment ${shipmentId}"/>
+                <entity-condition distinct="false" entity-name="ReturnItem" filter-by-date="false" list="returnItems" use-cache="false">
+                    <condition-expr field-name="returnId" from-field="returnHeader.returnId" ignore="false" ignore-case="false" ignore-if-empty="false" ignore-if-null="false" operator="equals"/>
+                </entity-condition>
+                <!-- if no inventory item type specified, get default from facility -->
+                <if-empty field="parameters.inventoryItemTypeId">
+                    <get-related-one relation-name="Facility" to-value-field="facility" use-cache="false" value-field="returnHeader"/>
+                    <set field="parameters.inventoryItemTypeId" from="facility.defaultInventoryItemTypeId" />
+                </if-empty>
+                <now-timestamp field="nowTimestamp"/>
+                <entity-count count-field="returnItemCount" entity-name="ReturnItem">
+                    <condition-expr field-name="returnId" from-field="returnHeader.returnId" ignore="false" ignore-case="false" ignore-if-empty="false" ignore-if-null="false" operator="equals"/>
+                </entity-count>
+                <set field="nonProductItems"  type="Long" value="0"/>
+                <iterate entry="returnItem" list="returnItems">
+                    <!-- record this return item on the return shipment as well.  not sure if this is actually necessary... -->
+                    <clear-field field="shipItemCtx"/>
+                    <set field="shipItemCtx.shipmentId" from="shipmentId" />
+                    <set field="shipItemCtx.productId" from="returnItem.productId" />
+                    <set field="shipItemCtx.quantity" from="returnItem.returnQuantity" />
+                    <log level="info" message="calling create shipment item with ${shipItemCtx}"/>
+                    <call-service break-on-error="true" error-code="error" in-map-name="shipItemCtx" include-user-login="true" require-new-transaction="false" service-name="createShipmentItem" success-code="success">
+                        <result-to-field result-name="shipmentItemSeqId"/>
+                    </call-service>
+                </iterate>
+                <iterate entry="returnItem" list="returnItems">
+                    <clear-field field="receiveCtx"/>
+                    <if-empty field="returnItem.expectedItemStatus">
+                        <set field="returnItem.expectedItemStatus"  type="String" value="INV_RETURNED"/>
+                    </if-empty>
+                    <get-related-one relation-name="OrderItem" to-value-field="orderItem" use-cache="false" value-field="returnItem"/>
+                    <if-not-empty field="orderItem.productId">
+                        <set field="costCtx.returnItemSeqId" from="returnItem.returnItemSeqId" />
+                        <set field="costCtx.returnId" from="returnItem.returnId" />
+                        <call-service break-on-error="true" error-code="error" in-map-name="costCtx" include-user-login="true" require-new-transaction="false" service-name="getReturnItemInitialCost" success-code="success">
+                            <result-to-field field="receiveCtx.unitCost" result-name="initialItemCost"/>
+                        </call-service>
+                        <!--check if the items already have SERIALIZED inventory. If so, it still puts them back as SERIALIZED with status "Accepted."-->
+                        <entity-count count-field="serializedItemCount" entity-name="InventoryItem">
+                            <condition-list combine="and">
+                                <condition-expr field-name="productId" from-field="returnItem.productId" ignore="false" ignore-case="false" ignore-if-empty="false" ignore-if-null="false" operator="equals"/>
+                                <condition-expr field-name="facilityId" from-field="returnHeader.destinationFacilityId" ignore="false" ignore-case="false" ignore-if-empty="false" ignore-if-null="false" operator="equals"/>
+                                <condition-expr field-name="inventoryItemTypeId" ignore="false" ignore-case="false" ignore-if-empty="false" ignore-if-null="false" operator="equals" value="SERIALIZED_INV_ITEM"/>
+                            </condition-list>
+                        </entity-count>
+                        <get-related-one relation-name="Facility" to-value-field="destinationFacility" use-cache="false" value-field="returnHeader"/>
+                        <set field="setNonSerial"  value="false"/>
+                        <if-compare field="destinationFacility.defaultInventoryItemTypeId" operator="equals" type="String" value="NON_SERIAL_INV_ITEM">
+                            <if-compare field="serializedItemCount" operator="equals" type="String" value="0">
+                                <set field="parameters.inventoryItemTypeId"  value="NON_SERIAL_INV_ITEM"/>
+                                <set field="setNonSerial"  value="true"/>
+                            </if-compare>
+                        </if-compare>
+                        <if-compare field="setNonSerial" operator="equals" type="String" value="false">
+                            <set field="parameters.inventoryItemTypeId"  value="SERIALIZED_INV_ITEM"/>
+                            <set field="returnItem.returnQuantity"  type="BigDecimal" value="1"/>
+                        </if-compare>
+                        <set field="receiveCtx.inventoryItemTypeId" from="parameters.inventoryItemTypeId" />
+                        <set field="receiveCtx.statusId" from="returnItem.expectedItemStatus" />
+                        <set field="receiveCtx.productId" from="returnItem.productId" />
+                        <set field="receiveCtx.returnItemSeqId" from="returnItem.returnItemSeqId" />
+                        <set field="receiveCtx.returnId" from="returnItem.returnId" />
+                        <set field="receiveCtx.quantityAccepted" from="returnItem.returnQuantity" />
+                        <set field="receiveCtx.facilityId" from="returnHeader.destinationFacilityId" />
+                        <!-- important: associate ShipmentReceipt with return shipment created -->
+                        <set field="receiveCtx.shipmentId" from="shipmentId" />
+                        <set field="receiveCtx.comments"  value="Returned Item RA# ${returnItem.returnId}"/>
+                        <set field="receiveCtx.datetimeReceived" from="nowTimestamp" />
+                        <set field="receiveCtx.quantityRejected"  type="BigDecimal" value="0"/>
+                        <call-service break-on-error="true" error-code="error" in-map-name="receiveCtx" include-user-login="true" require-new-transaction="false" service-name="receiveInventoryProduct" success-code="success"/>
+                        <else>
+                            <calculate decimal-scale="2" field="nonProductItems" rounding-mode="HalfEven" type="Long">
+                                <calcop operator="add">
+                                    <number value="1"/>
+                                </calcop>
+                            </calculate>
+                        </else>
+                    </if-not-empty>
+                </iterate>
+                <!-- now that the receive is done; set the need flag to N -->
+                <refresh-value do-cache-clear="true" value-field="returnHeader"/>
+                <set field="returnHeader.needsInventoryReceive"  value="N"/>
+                <store-value do-cache-clear="true" value-field="returnHeader"/>
+                <!-- check if we need to manually update the status -->
+                <if-compare-field field="nonProductItems" operator="equals" to-field="returnItemCount" type="Long">
+                    <set field="retStCtx.returnId" from="returnHeader.returnId" />
+                    <set field="retStCtx.statusId"  value="RETURN_RECEIVED"/>
+                    <call-service break-on-error="true" error-code="error" in-map-name="retStCtx" include-user-login="true" require-new-transaction="false" service-name="updateReturnHeader" success-code="success"/>
+                </if-compare-field>
+                <else>
+                    <log level="info" message="Not receiving inventory for returnId ${returnHeader.returnId}, no inventory information available."/>
+                </else>
+            </if-compare>
+        </if-compare>
+    </simple-method>
+
+    <simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_" event-event-message-name="_event_message_" event-request-object-name="request" event-response-code-name="_response_code_" event-response-object-name="response" login-required="true" method-name="issueOrderItemToShipmentAndReceiveAgainstPO" service-error-message-list-name="errorMessageList" service-error-message-map-name="errorMessageMap" service-error-message-name="errorMessage" service-response-message-name="responseMessage" service-success-message-list-name="successMessageList" service-success-message-name="successMessage" short-description="Issues order item quantity specified to the shipment, then receives inventory for that item and quantity" use-transaction="true">
+        <set field="operationName"  value="Issue OrderItem to Shipment and Receive against PO"/>
+        <call-simple-method method-name="checkCanChangeShipmentStatusPacked" xml-resource="component://product/script/org/ofbiz/shipment/shipment/ShipmentServices.xml"/>
+        <!-- get orderItem -->
+        <entity-one auto-field-map="true" entity-name="OrderItem" use-cache="false" value-field="orderItem"/>
+        <!-- get orderItemShipGroupAssoc -->
+        <entity-one auto-field-map="true" entity-name="OrderItemShipGroupAssoc" use-cache="false" value-field="orderItemShipGroupAssoc"/>
+        <!-- get shipment -->
+        <entity-one auto-field-map="true" entity-name="Shipment" use-cache="false" value-field="shipment"/>
+        <!-- try to find an existing shipmentItem and attach to it, if none found create a new shipmentItem -->
+        <!-- if there is NO productId on the orderItem, ALWAYS create a new shipmentItem -->
+        <if-not-empty field="orderItem.productId">
+            <entity-condition distinct="false" entity-name="ShipmentItem" filter-by-date="false" list="shipmentItems" use-cache="false">
+                <condition-list combine="and">
+                    <condition-expr field-name="productId" from-field="orderItem.productId" ignore="false" ignore-case="false" ignore-if-empty="false" ignore-if-null="false" operator="equals"/>
+                    <condition-expr field-name="shipmentId" from-field="shipment.shipmentId" ignore="false" ignore-case="false" ignore-if-empty="false" ignore-if-null="false" operator="equals"/>
+                    <condition-expr field-name="shipmentItemSeqId" from-field="parameters.shipmentItemSeqId" ignore="false" ignore-case="false" ignore-if-empty="true" ignore-if-null="false" operator="equals"/>
+                </condition-list>
+                <order-by field-name="shipmentItemSeqId"/>
+            </entity-condition>
+            <first-from-list entry="shipmentItem" list="shipmentItems"/>
+        </if-not-empty>
+        <if-empty field="shipmentItem">
+            <set field="shipmentItemCreate.productId" from="orderItem.productId" />
+            <set field="shipmentItemCreate.shipmentId" from="parameters.shipmentId" />
+            <set field="shipmentItemCreate.quantity" from="parameters.quantity" />
+            <call-service break-on-error="true" error-code="error" in-map-name="shipmentItemCreate" include-user-login="true" require-new-transaction="false" service-name="createShipmentItem" success-code="success">
+                <result-to-field field="shipmentItemLookupPk.shipmentItemSeqId" result-name="shipmentItemSeqId"/>
+            </call-service>
+            <set field="shipmentItemLookupPk.shipmentId" from="parameters.shipmentId" />
+            <find-by-primary-key entity-name="ShipmentItem" map="shipmentItemLookupPk" use-cache="false" value-field="shipmentItem"/>
+            <!-- Create OrderShipment for this ShipmentItem -->
+            <set field="orderShipmentCreate.quantity" from="parameters.quantity" />
+            <set field="orderShipmentCreate.shipmentId" from="shipmentItem.shipmentId" />
+            <set field="orderShipmentCreate.shipmentItemSeqId" from="shipmentItem.shipmentItemSeqId" />
+            <set field="orderShipmentCreate.orderId" from="orderItem.orderId" />
+            <set field="orderShipmentCreate.orderItemSeqId" from="orderItem.orderItemSeqId" />
+            <if-not-empty field="orderItemShipGroupAssoc">
+                <!-- If we have a ShipGroup Assoc for this Item to focus on, set that; this is mostly the case for purchase orders and such -->
+                <set field="orderShipmentCreate.shipGroupSeqId" from="orderItemShipGroupAssoc.shipGroupSeqId" />
+            </if-not-empty>
+            <call-service break-on-error="true" error-code="error" in-map-name="orderShipmentCreate" include-user-login="true" require-new-transaction="false" service-name="createOrderShipment" success-code="success"/>
+            <else>
+                <call-simple-method method-name="getTotalIssuedQuantityForOrderItem" xml-resource="component://product/script/org/ofbiz/shipment/issuance/IssuanceServices.xml"/>
+                <call-simple-method method-name="getReceivedQuantityForOrderItem"/>
+                <set field="receivedQuantity" from="receivedQuantity$bigDecimal + parameters.quantity$bigDecimal"  type="BigDecimal"/>
+                <entity-and entity-name="OrderShipment" filter-by-date="false" list="orderShipments" use-cache="false">
+                    <field-map field-name="orderId" from-field="orderItem.orderId"/>
+                    <field-map field-name="orderItemSeqId" from-field="orderItem.orderItemSeqId"/>
+                    <field-map field-name="shipmentId" from-field="shipmentItem.shipmentId"/>
+                    <field-map field-name="shipmentItemSeqId" from-field="shipmentItem.shipmentItemSeqId"/>
+                    <field-map field-name="shipGroupSeqId" from-field="orderItemShipGroupAssoc.shipGroupSeqId"/>
+                </entity-and>
+                <first-from-list entry="orderShipment" list="orderShipments"/>
+                <if-compare-field field="totalIssuedQuantity" operator="less" to-field="receivedQuantity" type="BigDecimal">
+                    <set field="quantityToAdd" from="receivedQuantity$bigDecimal - totalIssuedQuantity$bigDecimal"  type="BigDecimal"/>
+                    <set field="shipmentItem.quantity" from="shipmentItem.quantity$bigDecimal + quantityToAdd$bigDecimal"  type="BigDecimal"/>
+                    <store-value do-cache-clear="true" value-field="shipmentItem"/>
+                    <set field="shipmentItemSeqId" from="shipmentItem.shipmentItemSeqId" />
+                    <set field="orderShipment.quantity" from="orderShipment.quantity$bigDecimal + quantityToAdd$bigDecimal"  type="BigDecimal"/>
+                    <store-value do-cache-clear="true" value-field="orderShipment"/>
+                </if-compare-field>
+            </else>
+        </if-empty>
+        <!--
+            TODO: if we want to record the role of the facility operation we have to re-implement this using ShipmentReceiptRole
+        <call-simple-method method-name="associateIssueRoles" xml-resource="component://product/script/org/ofbiz/shipment/issuance/IssuanceServices.xml"/>
+        -->
+        <set-service-fields map="parameters" service-name="receiveInventoryProduct" to-map="receiveInventoryProductCtx"/>
+        <set field="receiveInventoryProductCtx.shipmentItemSeqId" from="shipmentItemSeqId" />
+        <call-service break-on-error="true" error-code="error" in-map-name="receiveInventoryProductCtx" include-user-login="true" require-new-transaction="false" service-name="receiveInventoryProduct" success-code="success">
+            <result-to-result result-name="inventoryItemId"/>
+        </call-service>
+    </simple-method>
+
+    <simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_" event-event-message-name="_event_message_" event-request-object-name="request" event-response-code-name="_response_code_" event-response-object-name="response" login-required="true" method-name="getReceivedQuantityForOrderItem" service-error-message-list-name="errorMessageList" service-error-message-map-name="errorMessageMap" service-error-message-name="errorMessage" service-response-message-name="responseMessage" service-success-message-list-name="successMessageList" service-success-message-name="successMessage" short-description="Computes the till now received quantity from all ShipmentReceipts" use-transaction="true">
+        <set field="receivedQuantity"  type="BigDecimal" value="0"/>
+        <entity-and entity-name="ShipmentReceipt" filter-by-date="false" list="shipmentReceipts" use-cache="false">
+            <field-map field-name="orderId" from-field="orderItem.orderId"/>
+            <field-map field-name="orderItemSeqId" from-field="orderItem.orderItemSeqId"/>
+        </entity-and>
+        <iterate entry="shipmentReceipt" list="shipmentReceipts">
+            <set field="receivedQuantity" from="receivedQuantity$bigDecimal + shipmentReceipt.quantityAccepted$bigDecimal
+                        + shipmentReceipt.quantityVariance$bigDecimal"  type="BigDecimal"/>
+        </iterate>
+    </simple-method>
+
+    <simple-method default-error-code="error" default-success-code="success" event-error-message-name="_error_message_" event-event-message-name="_event_message_" event-request-object-name="request" event-response-code-name="_response_code_" event-response-object-name="response" login-required="true" method-name="updateIssuanceShipmentAndPoOnReceiveInventory" service-error-message-list-name="errorMessageList" service-error-message-map-name="errorMessageMap" service-error-message-name="errorMessage" service-response-message-name="responseMessage" service-success-message-list-name="successMessageList" service-success-message-name="successMessage" short-description="Update issuance, shipment and order items if quantity received is higher than quantity on purchase order" use-transaction="true">
+        <entity-one auto-field-map="true" entity-name="OrderItem" use-cache="false" value-field="orderItem"/>
+        <!--  <if-not-empty field="parameters.orderCurrencyUnitPrice">
+            <if-compare-field field="parameters.orderCurrencyUnitPrice" operator="not-equals" to-field="orderItem.unitPrice" type="BigDecimal">
+                <set field="orderItem.unitPrice" from="parameters.orderCurrencyUnitPrice"  type="BigDecimal"/>
+                <store-value do-cache-clear="true" value-field="orderItem"/>
+            </if-compare-field>
+            <else>
+                <if-compare-field field="parameters.unitCost" operator="not-equals" to-field="orderItem.unitPrice" type="BigDecimal">
+                    <set field="orderItem.unitPrice" from="parameters.unitCost"  type="BigDecimal"/>
+                    <store-value do-cache-clear="true" value-field="orderItem"/>
+                </if-compare-field>
+            </else>
+        </if-not-empty>  -->
+        <call-simple-method method-name="getReceivedQuantityForOrderItem"/>
+        <if-compare-field field="orderItem.quantity" operator="less" to-field="receivedQuantity" type="BigDecimal">
+            <set field="orderItem.quantity" from="receivedQuantity" />
+            <store-value do-cache-clear="true" value-field="orderItem"/>
+        </if-compare-field>
+        <if-not-empty field="parameters.shipmentId">
+            <if-not-empty field="orderItem.productId">
+                <call-simple-method method-name="getTotalIssuedQuantityForOrderItem" xml-resource="component://product/script/org/ofbiz/shipment/issuance/IssuanceServices.xml"/>
+                <if-compare-field field="totalIssuedQuantity" operator="less" to-field="receivedQuantity" type="BigDecimal">
+                    <set field="quantityToAdd" from="receivedQuantity$bigDecimal - totalIssuedQuantity$bigDecimal"  type="BigDecimal"/>
+                    <entity-condition distinct="false" entity-name="ShipmentItem" filter-by-date="false" list="shipmentItems" use-cache="false">
+                        <condition-list combine="and">
+                            <condition-expr field-name="productId" from-field="orderItem.productId" ignore="false" ignore-case="false" ignore-if-empty="false" ignore-if-null="false" operator="equals"/>
+                            <condition-expr field-name="shipmentId" from-field="parameters.shipmentId" ignore="false" ignore-case="false" ignore-if-empty="false" ignore-if-null="false" operator="equals"/>
+                            <condition-expr field-name="shipmentItemSeqId" from-field="parameters.shipmentItemSeqId" ignore="false" ignore-case="false" ignore-if-empty="true" ignore-if-null="false" operator="equals"/>
+                        </condition-list>
+                        <order-by field-name="shipmentItemSeqId"/>
+                    </entity-condition>
+                    <first-from-list entry="shipmentItem" list="shipmentItems"/>
+                    <set field="shipmentItem.quantity" from="shipmentItem.quantity$bigDecimal + quantityToAdd$bigDecimal"  type="BigDecimal"/>
+                    <store-value do-cache-clear="true" value-field="shipmentItem"/>
+                    <entity-and entity-name="OrderShipment" filter-by-date="false" list="orderShipments" use-cache="false">
+                        <field-map field-name="orderId" from-field="parameters.orderId"/>
+                        <field-map field-name="orderItemSeqId" from-field="parameters.orderItemSeqId"/>
+                        <field-map field-name="shipmentId" from-field="parameters.shipmentId"/>
+                        <field-map field-name="shipmentItemSeqId" from-field="shipmentItem.shipmentItemSeqId"/>
+                    </entity-and>
+                    <first-from-list entry="orderShipment" list="orderShipments"/>
+                    <set field="orderShipment.quantity" from="orderShipment.quantity$bigDecimal + quantityToAdd$bigDecimal"  type="BigDecimal"/>
+                    <store-value do-cache-clear="true" value-field="orderShipment"/>
+                    <!--
+                        TODO: if we want to record the role of the facility operation we have to re-implement this using ShipmentReceiptRole
+                    <set field="itemIssuanceId" from-field="itemIssuance.itemIssuanceId"/>
+                    <call-simple-method method-name="associateIssueRoles" xml-resource="component://product/script/org/ofbiz/shipment/issuance/IssuanceServices.xml"/>
+                    -->
+                </if-compare-field>
+            </if-not-empty>
+        </if-not-empty>
+    </simple-method>
+
+    <simple-method event-request-object-name="request" event-response-code-name="_response_code_" event-response-object-name="response" login-required="true"
+                   method-name="cancelReceivedItems" service-error-message-list-name="errorMessageList" service-error-message-map-name="errorMessageMap" service-error-message-name="errorMessage" service-response-message-name="responseMessage" service-success-message-list-name="successMessageList" service-success-message-name="successMessage" short-description="Cancel Received Items against a purchase order if received something incorrectly" use-transaction="true">
+        <!-- TODO: When items are received against a Purchase Order, service listed below changes certain things in the system.
+               Changes done by these services also need to be reverted and missing logic can be added later.
+            1. addProductsBackToCategory
+            2. setUnitPriceAsLastPrice
+            3. createAcctgTransForShipmentReceipt
+            4. updateProductIfAvailableFromShipment
+         -->
+        <!-- update the accepted and received quantity to zero in ShipmentReceipt entity -->
+        <entity-one auto-field-map="true" entity-name="ShipmentReceipt" use-cache="false" value-field="shipmentReceipt"/>
+        <set field="shipmentReceipt.quantityAccepted"  type="BigDecimal" value="0"/>
+        <set field="shipmentReceipt.quantityRejected"  type="BigDecimal" value="0"/>
+        <set field="shipmentReceipt.quantityVariance"  type="BigDecimal" value="0"/>
+
+        <store-value do-cache-clear="true" value-field="shipmentReceipt"/>
+        <!-- create record for InventoryItemDetail entity -->
+        <get-related-one relation-name="InventoryItem" to-value-field="inventoryItem" use-cache="false" value-field="shipmentReceipt"/>
+        <set field="inventoryItemDetailMap.inventoryItemId" from="inventoryItem.inventoryItemId" />
+
+        <set field="inventoryItemDetailMap.quantityOnHandDiff" from="${-1 * inventoryItem.quantityOnHandTotal}"  type="BigDecimal"/>
+        <set field="inventoryItemDetailMap.availableToPromiseDiff" from="${-1 * inventoryItem.availableToPromiseTotal}"  type="BigDecimal"/>
+        <call-service break-on-error="true" error-code="error" in-map-name="inventoryItemDetailMap" include-user-login="true" require-new-transaction="false" service-name="createInventoryItemDetail" success-code="success"/>
+
+        <!-- Balance the inventory item -->
+        <set field="balanceInventoryItemMap.inventoryItemId" from="inventoryItem.inventoryItemId" />
+        <set field="balanceInventoryItemMap.priorityOrderId" from="shipmentReceipt.orderId" />
+        <set field="balanceInventoryItemMap.priorityOrderItemSeqId" from="shipmentReceipt.orderItemSeqId" />
+        <call-service break-on-error="true" error-code="error" in-map-name="balanceInventoryItemMap" include-user-login="true"
+                      require-new-transaction="false" service-name="balanceInventoryItems" success-code="success"/>
+        <!-- update the shipment status, if shipment was received -->
+        <get-related-one relation-name="Shipment" to-value-field="shipment" use-cache="false" value-field="shipmentReceipt"/>
+        <if-compare field="shipment.statusId" operator="equals" type="String" value="PURCH_SHIP_RECEIVED">
+            <set field="shipmentStatusMap.shipmentId" from="shipment.shipmentId"/>
+            <set field="shipmentStatusMap.statusId"  value="PURCH_SHIP_SHIPPED"/>
+            <call-service break-on-error="true" error-code="error" in-map-name="shipmentStatusMap" include-user-login="true" require-new-transaction="false" service-name="updateShipment" success-code="success"/>
+        </if-compare>
+        <!-- change order item and order status -->
+        <get-related-one relation-name="OrderItem" to-value-field="orderItem" use-cache="false" value-field="shipmentReceipt"/>
+        <if-compare field="orderItem.statusId" operator="equals" type="String" value="ITEM_COMPLETED">
+            <!-- update the order item status -->
+            <set field="orderItem.statusId"  value="ITEM_APPROVED"/>
+            <set-service-fields map="orderItem" service-name="changeOrderItemStatus" to-map="orderItemCtx"/>
+            <call-service break-on-error="true" error-code="error" in-map-name="orderItemCtx" include-user-login="true" require-new-transaction="false" service-name="changeOrderItemStatus" success-code="success"/>
+            <get-related-one relation-name="OrderHeader" to-value-field="orderHeader" use-cache="false" value-field="orderItem"/>
+            <!-- cancel the invoice -->
+            <entity-and entity-name="OrderItemBilling" filter-by-date="false" list="orderItemBillings" use-cache="false">
+                <field-map field-name="orderId" from-field="orderItem.orderId"/>
+            </entity-and>
+            <if-not-empty field="orderItemBillings">
+                <first-from-list entry="orderItemBilling" list="orderItemBillings"/>
+                <set field="invoiceStatusMap.invoiceId" from="orderItemBilling.invoiceId" />
+                <set field="invoiceStatusMap.statusId"  value="INVOICE_CANCELLED"/>
+                <call-service break-on-error="true" error-code="error" in-map-name="invoiceStatusMap" include-user-login="true" require-new-transaction="false" service-name="setInvoiceStatus" success-code="success"/>
+            </if-not-empty>
+        </if-compare>
+
+
+        <entity-condition entity-name="AcctgTrans" list="acctgTransList">
+            <condition-expr field-name="receiptId" from-field="shipmentReceipt.receiptId"/>
+        </entity-condition>
+        <first-from-list entry="acctgTrans" list="acctgTransList"/>
+        <set field="serviceCtx.fromAcctgTransId" from-field="acctgTrans.acctgTransId"/>
+        <set field="serviceCtx.revert" value="Y"/>
+        <call-service service-name="copyAcctgTransAndEntries" in-map-name="serviceCtx"/>
+
+    </simple-method>
+</simple-methods>

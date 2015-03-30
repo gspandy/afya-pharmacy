@@ -1,0 +1,30 @@
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<?init class="org.zkoss.zkplus.databind.AnnotateDataBinderInit" arg0="./payrollScheduling"?>
+<?page title="new page title" contentType="text/html;charset=UTF-8"?>
+<zk>
+
+	<zscript>
+	import com.hrms.payroll.composer.*;
+	InitiatePayrollComposer composer = (InitiatePayrollComposer) (execution.getArg().get("composer"));
+</zscript>
+	<window title="${c:l('HRMS_PAYROLL_SCHEDULING') }" border="normal" id="payrollScheduling" width="400px" height="100px" closable="true">
+
+		<grid height="30px">
+			<rows>
+				<row>
+					<label value="${c:l('HRMS_RUN_ON') }"></label>
+					<datebox cols="23" id="startDatebox" value="@{composer.startDate}" format="d MMM yyyy HH:mm:ss" readonly="false"
+						buttonVisible="true">
+					</datebox>
+				</row>
+			</rows>
+		</grid>
+		<box width="100%" align="center">
+			<hbox>
+				<button id="submit" label="${c:l('HRMS_SUBMIT') }" onClick="composer.onClick$runPayroll(event)"></button>
+				<button label="${c:l('ButtonCancel') }" onClick="payrollScheduling.detach()"></button>
+			</hbox>
+		</box>
+
+	</window>
+</zk>

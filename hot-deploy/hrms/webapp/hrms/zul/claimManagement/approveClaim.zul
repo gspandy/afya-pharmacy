@@ -1,0 +1,362 @@
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<zk xmlns="http://www.zkoss.org/2005/zul"
+    xmlns:h="http://www.w3.org/1999/xhtml"
+    xmlns:w="http://www.zkoss.org/2005/zk/client"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:n="http://www.zkoss.org/2005/zk/native"
+    xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
+
+	<zscript>
+	<![CDATA[
+        import  org.ofbiz.entity.*;
+        import org.ofbiz.base.util.*;
+	org.ofbiz.security.Security security = requestScope.get("security");
+	org.ofbiz.entity.GenericValue userLogin = (org.ofbiz.entity.GenericValue) Executions.getCurrent().getDesktop().getSession().getAttribute("userLogin");
+	boolean isAdmin = security.hasPermission("HUMANRES_ADMIN", userLogin);
+	boolean isManager = security.hasPermission("HUMANRES_MGR", userLogin);
+	java.math.BigDecimal tClaimAmount = arg.getBigDecimal("amount");
+	
+	String strTClaimAmount = tClaimAmount.toString();
+	String allotedCurrency=arg.get("currencyUomId");
+    String claimIdValue = arg.getString("claimId");
+        GenericValue claimGv = delegator.findOne("ClaimHead",UtilMisc.toMap("claimId",claimIdValue),false);
+    boolean both = false;
+    if(isAdmin && isManager)
+    	both=true;
+    String statusId = arg.getString("statusId");
+	]]>
+</zscript>
+	<window id="approveClaimWindow" width="720px" position="center"
+		height="670px" closable="true" border="normal" mode="modal" maximizable="true" >
+		<separator height="10px" />
+		<label id="permissionId" value="${isAdmin}" visible="false"></label>
+		<label id="permissionIdForBoth" value="${both}" visible="false"></label>
+		<hbox>
+			<div align="right" width="150px" style="margin-right:5px">
+				<label value="${c:l('FormFieldTitle_EmployeeId') }" />
+			</div>
+			<div align="left" width="300px" style="margin-right:5px">
+				<label id="employeeId" />
+			</div>
+		</hbox>
+			<label id="mgrPositionId" visible="false"/>
+		<separator />
+		<hbox>
+			<div align="right" width="150px" style="margin-right:5px">
+				<label value="${c:l('Hrms_EmployeeName') }" />
+			</div>
+			<div align="left" width="300px" style="margin-right:5px">
+				<label id="employeeName" style="font-weight:regular"/>
+			</div>
+		</hbox>
+		<separator />
+		<hbox>
+			<div align="right" width="150px" style="margin-right:5px">
+				<label value="${c:l('Hrms_ClaimId') }" />
+			</div>
+			<div align="left" width="300px" style="margin-right:5px">
+				<label id="claimId" style="font-weight:regular"/>
+			</div>
+		</hbox>
+		<separator />
+		<hbox>
+			<div align="right" width="150px" style="margin-right:5px">
+				<label value="${c:l('Hrms_ClaimType') }" />
+			</div>
+			<div align="left" width="300px" style="margin-right:5px">
+				<listbox id="claimType" mold="select" visible="false" />
+				<label id="claimTypeLabel" />
+			</div>
+		</hbox>
+		<separator />
+		<hbox>
+			<div align="right" width="150px" style="margin-right:5px">
+				<label value="${c:l('HumanResLeaveSummaryFromDate') }" />
+			</div>
+			<div align="left" width="300px" style="margin-right:5px">
+				<label id="fromDate" />
+			</div>
+		</hbox>
+		<separator />
+		<hbox>
+			<div align="right" width="150px" style="margin-right:5px">
+				<label value="${c:l('HumanResLeaveSummaryThruDate') }" />
+			</div>
+			<div align="left" width="300px" style="margin-right:5px">
+				<label id="thruDate" />
+				<datebox id="thruDateBox" visible="false"  />
+			</div>
+		</hbox>
+		<separator />
+		<hbox>
+			<div align="right" width="150px" style="margin-right:5px">
+				<label value="${c:l('Hrms_Currency') }" />
+			</div>
+			<div align="left" width="300px" style="margin-right:5px">
+			<listbox id="currency" mold="select" onSelect="Clients.closeErrorBox(self);Clients.closeErrorBox(fixRate);fixRate.setFocus(true);" />
+			</div>
+		</hbox>
+		<separator />
+		<hbox>
+			<div align="right" width="150px" style="margin-right:5px">
+				<label value="${c:l('Hrms_FixRate') }"  /><label value="*" style="color:red" />
+			</div>
+			<div align="left" width="300px" style="margin-right:5px">
+				<decimalbox id="fixRate" onBlur="Clients.closeErrorBox(self)" constraint="no negative : Fx Rate cannot be negative"/>
+			</div>
+		</hbox>
+		<separator />
+		<hbox>
+			<div align="right" width="150px" style="margin-right:5px">
+				<label value="${c:l('Hrms_ReimbDate') }" /><label value="*" style="color:red" />
+			</div>
+			<div align="left" width="300px" style="margin-right:5px">
+				<datebox id="reimDate" width="126px" onChange="Clients.closeErrorBox(self)">
+				<zscript><![CDATA[
+		/*	void validate3() {	
+           java.util.Date reimbDateType = (java.util.Date)((Datebox)approveClaimWindow.getFellow("reimDate")).getValue();
+			int d = reimbDateType.getDay();
+			alert("cant be saturday n Sunday");
+			if((d==0)||(d==6)){
+		   //  Datebox datebox =(Datebox) approveClaimWindow.getFellow("reimDate");
+				throw new WrongValueException(reimDate,
+				"Reimbursement Date can't be Non working day/Public Holiday");	
+			}
+			}*/
+			]]>
+			
+	</zscript>
+		</datebox>
+				</div>
+		</hbox>
+
+		<separator />
+		<hbox>
+			<div align="right" width="150px" style="margin-right:5px">
+				<label value="${c:l('Hrms_ClaimStatus') }" />
+			</div>
+			<div align="left" width="300px" style="margin-right:5px">
+				<label id="claimStatus" visible="false"/>
+				<label id="claimStatusDescription" />
+			</div>
+		</hbox>
+		<separator />
+		<hbox>
+			<div align="right" width="150px" style="margin-right:5px">
+				<label value="${c:l('Hrms_ClaimAmount') }" />
+			</div>
+			<div align="left" width="300px" style="margin-right:5px">
+				<hbox> <label id="amount" />
+				<label visible="false" id="hiddenAmount" value="${ strTClaimAmount}"></label>
+				<div style="margin-left:4px"><label id="amountCurrency" /></div>
+				</hbox>
+			</div>
+		</hbox>
+		<separator />
+		<hbox>
+			<div align="right" width="150px" style="margin-right:5px">
+				<label value="${c:l('Hrms_ClaimLimit') }" />
+			</div>
+			<div align="left" width="300px" style="margin-right:5px">
+				<hbox> <label id="claimLimit" />
+				<div style="margin-left:4px"> <label id="claimLimitCurrency" /></div>
+				</hbox>
+			</div>
+		</hbox>
+		<separator />
+		<hbox>
+			<div align="right" width="150px" style="margin-right:5px">
+				<label value="${c:l('Hrms_NoofReceipts') }" />
+			</div>
+			<div align="left" width="300px" style="margin-right:5px">
+				<label id="receipts" />
+			</div>
+		</hbox>
+		<separator />
+		<hbox>
+			<div align="right" width="150px" style="margin-right:5px">
+				<label value="${c:l('Hrms_AcceptedAmount') }" /><label value="*" style="color:red" />
+			</div>
+			<div align="left" width="300px" style="margin-right:5px">
+				<decimalbox id="acceptedAmount" format="#,#00.00#">
+				<attribute name="onBlur"><![CDATA[
+				    java.math.BigDecimal bi = new java.math.BigDecimal(0.0);
+					if(acceptedAmount.getValue() == null){
+					    throw new WrongValueException(acceptedAmount,"Accepted Amount Required");
+					 }
+					if(acceptedAmount.getValue().compareTo(bi) == -1){
+						 throw new WrongValueException(acceptedAmount,"Accepted Amount Must Be Greater Than/Equal To Zero");
+					}
+					java.math.BigDecimal accepAmount = acceptedAmount.getValue();
+					if(tClaimAmount.compareTo(accepAmount) == -1){
+						throw new WrongValueException(self,"Accepted Amount Can't Be Greater Than Claim Amount");
+					}
+					java.math.BigDecimal rejectedAm = tClaimAmount.subtract(accepAmount);
+					rejectedAmount.setValue(rejectedAm);
+					]]></attribute>
+				</decimalbox>
+			</div>
+		</hbox>
+		<separator />
+		<hbox>
+			<div align="right" width="150px" style="margin-right:5px">
+				<label value="${c:l('Hrms_RejectedAmount') }" /><label value="*" style="color:red" />
+			</div>
+			<div align="left" width="300px" style="margin-right:5px">
+				<decimalbox id="rejectedAmount" disabled="true" />
+			</div>
+		</hbox>
+		<separator />
+		<hbox>
+			<div align="right" width="150px" style="margin-right:5px">
+				<label value="${c:l('HumanResEmployeeComments') }"  />
+			</div>
+			<div align="left" width="300px" style="margin-right:5px">
+				<textbox id="employeeComment" rows="3" cols="66" readonly="true" />
+			</div>
+		</hbox>
+		<separator />
+		<hbox>
+			<div align="right" width="150px" style="margin-right:5px">
+				<label value="${c:l('HumanResManagerComments') }" />
+			</div>
+			<div align="left" width="300px" style="margin-right:5px">
+				<textbox id="comment" rows="3" cols="66"  />
+			</div>
+		</hbox>
+		<separator />
+		<hbox id="hboxAdminComment">
+			<div align="right" width="150px" style="margin-right:5px">
+				<label value="${c:l('HumanResAdminComments') }" />
+			</div>
+			<div align="left" width="300px" style="margin-right:5px">
+				<textbox id="adminComment" rows="3" cols="66" />
+			</div>
+		</hbox>
+        <separator/>
+        <hbox  style="margin-left: 150px">
+            <div></div>
+            <div align="right">
+                <toolbarbutton label="View Receipt"  style="font-weight:bold" onClick='com.ndz.controller.ClaimManagementController.downloadAttachment(claimIdValue,delegator)'/>
+                <label value="${claimGv.attachmentName}"/>
+                <toolbarbutton label="Send Email to CFO"  style="font-weight:bold" visible="${isAdmin}" onClick='com.ndz.controller.ClaimManagementController.sendMailToCFO(claimIdValue,delegator)'/>
+            </div>
+        </hbox>
+		<zscript><![CDATA[
+		import java.util.regex.*;
+		
+		if(!isManager || "CL_MGR_APPROVED".equals(statusId) ){
+		 comment.setReadonly(true);
+		}
+		if(!isAdmin || !"CL_MGR_APPROVED".equals(statusId)){
+		 hboxAdminComment.setVisible(false);
+		}
+		 void submitValidate(){
+			 if(isManager && "CL_SUBMITTED".equals(statusId)){
+        	 if(org.ofbiz.base.util.UtilValidate.isEmpty(comment.getValue())){
+        		 throw new WrongValueException(comment,"Manager Comments Required");
+        	 }
+        	 if(com.ndz.zkoss.HrmsUtil.checkSpaceValidation(comment.getValue())){
+       	 		throw new WrongValueException(comment,"Manager Comments Required");
+       	 	 }
+        	 }
+        	 if(isAdmin && "CL_MGR_APPROVED".equals(statusId)){
+        		 if(org.ofbiz.base.util.UtilValidate.isEmpty(adminComment.getValue())){
+            		 throw new WrongValueException(adminComment,"Admin Comments Required");
+            	 } 
+        		 if(com.ndz.zkoss.HrmsUtil.checkSpaceValidation(adminComment.getValue())){
+        	  		throw new WrongValueException(adminComment,"Admin Comments Required");
+        	  	 }
+        	 }
+          }
+		void validate(){
+		                               fixRate.getValue();
+			if(currency.getSelectedItem() == null){
+				throw new WrongValueException(currency,"Currency Required");
+			}
+		java.math.BigDecimal fixRateBI = fixRate.getValue();
+		
+		if(fixRateBI == null)
+			throw new WrongValueException(fixRate,"Fx Rate Required");
+		Double fixRateInt = fixRateBI.doubleValue();
+
+		/*if(fixRateInt > 1.0){
+		    throw new WrongValueException(fixRate,"The Fx Rate should be 1");
+		}
+		if(fixRateInt < 1.0){
+		    throw new WrongValueException(fixRate,"The Fx Rate should be 1");
+		}*/
+
+		if(fixRateInt < 0.01){
+		    throw new WrongValueException(fixRate,"Fx Rate Must Be Greater Than Zero");
+		}
+		 if(isManager && "CL_SUBMITTED".equals(claimStatus.getValue())){
+
+		if (currency.getSelectedItem().getValue().equals(allotedCurrency))
+		{
+		java.math.BigDecimal fixRateBI1 = (java.math.BigDecimal)fixRate.getValue();
+		if (!fixRateBI1.equals(java.math.BigDecimal.ONE))
+		{
+		throw new WrongValueException(fixRate,"The Fx Rate should be 1");
+			//Messagebox.show("The Fx Rate should be 1","Error",1,null);
+		}
+		java.math.BigDecimal fxrateBigDecimal = new java.math.BigDecimal(com.ndz.zkoss.util.CurrencyFormatter.format(fixRate.getValue().doubleValue()));
+		fixRate.setValue(fxrateBigDecimal);
+		}
+		else
+		{
+			java.math.BigDecimal fixRateBI2 = (java.math.BigDecimal)fixRate.getValue();
+		}
+		 }
+		
+		/*if (!currency.getSelectedItem().getValue().equals(allotedCurrency))
+		{
+		java.math.BigDecimal fixRateBI2 = (java.math.BigDecimal)fixRate.getValue();
+		
+		}*/
+		java.math.BigDecimal fxrateBigDecimal1 = new java.math.BigDecimal(com.ndz.zkoss.util.CurrencyFormatter.format(fixRate.getValue().doubleValue()));
+		fixRate.setValue(fxrateBigDecimal1);	
+		
+		
+		
+		
+		
+		if((reimDate.getValue()) == null){
+		    throw new WrongValueException(reimDate,"Reimbursement Date Required");
+		    }else{
+		     		 java.util.Date prevDate = (org.ofbiz.base.util.UtilDateTime.nowTimestamp());
+			        	if (com.ndz.zkoss.HrmsUtil.dateCompare(prevDate,(java.util.Date)reimDate.getValue()) == 1){
+							throw new WrongValueException(reimDate,"Reimbursement Date Must Be Greater Than Or Equal To Current Date");
+						
+						}
+		    }
+		java.math.BigDecimal accepAmount = acceptedAmount.getValue();
+		if(acceptedAmount.getValue() == null){
+		    throw new WrongValueException(acceptedAmount,"Accepted Amount Required");
+		 }
+		
+		if(acceptedAmount.getValue()!= null && acceptedAmount.getValue().doubleValue()<=0.0){
+		    throw new WrongValueException(acceptedAmount,"Accepted Amount Must Be Greater Than Zero");
+		 }
+		if(tClaimAmount.compareTo(accepAmount) == -1){
+			throw new WrongValueException(acceptedAmount,"Accepted Amount Can't Be Greater Than Claim Amount");
+		}
+		java.math.BigDecimal rejectedAm = tClaimAmount.subtract(accepAmount);
+		rejectedAmount.setValue(rejectedAm);
+		
+		}
+		]]></zscript>
+		<hbox>
+			<div align="right" width="344px">
+				<button id="approveClaimButton"
+					label="${c:l('Hrms_Approve') }" mold="os"
+					onClick='validate()' />
+				<button id="rejectClaimButton" onClick="submitValidate()"
+					label="${c:l('Hrms_Reject') }" mold="os"/>
+				<button id="rejectLeaveCancelButton"
+					label="${c:l('ButtonCancel') }" mold="os"
+					onClick="approveClaimWindow.detach()" />
+			</div>
+		</hbox>
+	</window>
+</zk>
