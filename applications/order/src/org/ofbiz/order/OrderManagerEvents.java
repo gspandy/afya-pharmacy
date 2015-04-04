@@ -289,7 +289,7 @@ public class OrderManagerEvents {
 
         if (okayToApprove) {
             // update the status of the order and items
-            // OrderChangeHelper.approveOrder(dispatcher, userLogin, orderId);
+//            OrderChangeHelper.approveOrder(dispatcher, userLogin, orderId);
         }
 
         return "success";

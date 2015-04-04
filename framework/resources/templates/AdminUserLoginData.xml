@@ -9,4 +9,5 @@
     <PartyRole partyId="@userLoginId@" roleTypeId="QUOTE_MGR"/>
     <PartyRole partyId="@userLoginId@" roleTypeId="REQ_MANAGER"/>
     <PartyRole partyId="@userLoginId@" roleTypeId="REQ_MGR"/>
+    <PartyRole partyId="@userLoginId@" roleTypeId="INVOICE_MANAGER"/>
 </entity-engine-xml>

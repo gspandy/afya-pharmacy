@@ -499,7 +499,11 @@ under the License.
                                 <td align="right" colspan="2">
                                     <span class="label">Comments</span>&nbsp;${orderItem.comments?if_exists?default("")}
                                 </td>
-                                <td colspan="6"></td>
+                                <td align="right" colspan="2">
+                                    <span class="label">Home Service</span>
+                                            &nbsp;<#if orderItem.homeService=='Y'> Yes <#else> No </#if>
+                                </td>
+                                <td colspan="5"></td>
                             </tr>
                             
                         <#-- now show inventory reservation info per line item -->

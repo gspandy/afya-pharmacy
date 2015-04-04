@@ -2180,7 +2180,23 @@
 		<response name="success" type="view" value="ViewLandedCost" />
 		<response name="error" type="view" value="ViewLandedCost" />
 	</request-map>
-	<!-- These are just examples of reports developed using JasperReport and not really useful reports. In order to run them you'll have to follow the notes in the 
+
+	<!-- Afya Prescription Requests -->
+	<request-map uri="createRxOrder">
+		<security https="true" auth="true" />
+		<event type="java" path="org.ofbiz.order.shoppingcart.AfyaSalesOrderController"
+			   invoke="createSalesOrderForPrescription" />
+		<response name="success" type="view" value="main" />
+	</request-map>
+
+	<request-map uri="testOrderRx">
+		<security https="true" auth="true" />
+		<event type="jsonjava" path="org.ofbiz.order.shoppingcart.AfyaSalesOrderController"
+			   invoke="testJsonPost" />
+		<response name="success" type="view" value="main" />
+	</request-map>
+
+	<!-- These are just examples of reports developed using JasperReport and not really useful reports. In order to run them you'll have to follow the notes in the
 		OPTIONAL_LIBRARIES files, add the following entry: <handler name="jasperreportspdf" type="view" class="org.ofbiz.webapp.view.JasperReportsPdfViewHandler"/> to the 
 		handler section of this file and uncomment the following lines: <request-map uri="orderreportjasper.pdf"><security https="true" auth="true"/> <event type="bsf" path="/reports/" 
 		invoke="OrderReportPrepare.groovy"/> <response name="success" type="view" value="orderreportjasper"/> </request-map> <request-map uri="orderitemreportjasper.pdf"><security 

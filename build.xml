@@ -181,12 +181,6 @@ under the License.
         <subant target="clean">
             <filelist dir="." files="framework/build.xml"/>
         </subant>
-        <subant>
-            <filelist dir=".">
-                <file name="applications/timesheet/build.xml"/>
-            </filelist>
-            <target name="clean"/>
-        </subant>
         <delete file="sme.jar"/>
         <echo message="[clean] ========== Done Cleaning =========="/>
     </target>
@@ -252,29 +246,9 @@ under the License.
 
         <antcall target="clean-svninfo"/>
 	
-		<antcall target="timesheet-build"/>
-	
+
         <echo message="[build] ========== Done Building (Compile) =========="/>
     </target>
-	
-	<target name="timesheet-build">
-		<echo message="[build] ========== Start Time sheet Building  =========="/>
-        <subant>
-			<filelist dir=".">
-				<file name="applications/timesheet/build.xml"/>
-			</filelist>
-			<target name="explodedwar"/>
-		</subant>	
-		
-        <copy todir="hot-deploy\timesheet\webapp\timesheet" overwrite="true">
-            <fileset dir="applications\timesheet\target\timesheet" />
-        </copy>
-        <rename src="hot-deploy\timesheet\webapp\timesheet\WEB-INF\sme-zk.xml" dest="hot-deploy\timesheet\webapp\timesheet\WEB-INF\zk.xml" replace="Yes"/>
-        <rename src="hot-deploy\timesheet\webapp\timesheet\WEB-INF\sme-web.xml" dest="hot-deploy\timesheet\webapp\timesheet\WEB-INF\web.xml" replace="Yes"/>
-		
-		
-		<echo message="[build] ========== Done Time sheet Building  =========="/>
-	</target>
 	
     <!-- ================================================================== -->
     <!-- Build JavaDocs                                                     -->
@@ -423,7 +397,7 @@ under the License.
             <jvmarg value="${memory.maxpermsize.param}"/>
         </java>
     </target>
-    <target name="start-debug" depends="build"
+    <target name="start-debug"
             description="Start OFBiz in debugging mode. It uses the 8091 port by default">
         <java jar="sme.jar" fork="true">
             <jvmarg value="${memory.initial.param}"/>
@@ -496,7 +470,7 @@ under the License.
             <arg value="delegator=default#DEMO2"/>
         </java> -->
     </target>
-    <target name="load-seed" depends="build"
+    <target name="load-seed"
             description="Load ONLY the seed data (not seed-initial, demo, ext* or anything else); meant for use after an update of the code to reload the seed data as it is generally maintained along with the code and needs to be in sync for operation">
         <java jar="sme.jar" fork="true">
             <jvmarg value="${memory.initial.param}"/>

@@ -40,91 +40,6 @@ under the License.
   <!-- ========================================================= -->
   <!-- org.ofbiz.workeffort.timesheet -->
   <!-- ========================================================= -->
-
-    <entity entity-name="TimeEntry"
-            package-name="org.ofbiz.workeffort.timesheet"
-            title="Time Entry Entity">
-      <field name="timeEntryId" type="id-ne"></field>
-      <field name="partyId" type="id"></field>
-      <field name="fromDate" type="date-time"></field>
-      <field name="thruDate" type="date-time"></field>
-      <field name="rateTypeId" type="id"></field>
-      <field name="workEffortId" type="id"></field>
-      <field name="timesheetId" type="id"></field>
-      <field name="invoiceId" type="id"></field>
-      <field name="invoiceItemSeqId" type="id"></field>
-      <field name="hours" type="floating-point"></field>
-      <field name="comments" type="comment"></field>
-      <prim-key field="timeEntryId"/>
-      <relation type="one" fk-name="TIME_ENT_PRTY" rel-entity-name="Party">
-        <key-map field-name="partyId"/>
-      </relation>
-      <relation type="one" fk-name="TIME_ENT_RTTP" rel-entity-name="RateType">
-        <key-map field-name="rateTypeId"/>
-      </relation>
-      <relation type="one" fk-name="TIME_ENT_WEFF" rel-entity-name="WorkEffort">
-        <key-map field-name="workEffortId"/>
-      </relation>
-      <relation type="one" fk-name="TIME_ENT_TSHT" rel-entity-name="Timesheet">
-        <key-map field-name="timesheetId"/>
-      </relation>
-      <relation type="one-nofk" rel-entity-name="Invoice">
-        <key-map field-name="invoiceId"/>
-      </relation>
-      <relation type="one" fk-name="TIME_ENT_INVIT" rel-entity-name="InvoiceItem">
-        <key-map field-name="invoiceId"/>
-        <key-map field-name="invoiceItemSeqId"/>
-      </relation>
-    </entity>
-    <entity entity-name="Timesheet"
-            package-name="org.ofbiz.workeffort.timesheet"
-            title="Timesheet Entity">
-      <field name="timesheetId" type="id-ne"></field>
-      <field name="partyId" type="id"></field>
-      <field name="clientPartyId" type="id"></field>
-      <field name="fromDate" type="date-time"></field>
-      <field name="thruDate" type="date-time"></field>
-      <field name="statusId" type="id"></field>
-      <field name="approvedByUserLoginId" type="id-vlong"></field>
-      <field name="comments" type="comment"></field>
-      <prim-key field="timesheetId"/>
-      <relation type="one" fk-name="TIMESHEET_PRTY" rel-entity-name="Party">
-        <key-map field-name="partyId"/>
-      </relation>
-      <relation type="one" fk-name="TIMESHEET_CPTY" title="Client" rel-entity-name="Party">
-        <key-map field-name="clientPartyId" rel-field-name="partyId"/>
-      </relation>
-      <relation type="one" fk-name="TIMESHEET_STS" rel-entity-name="StatusItem">
-        <key-map field-name="statusId"/>
-      </relation>
-        <relation type="one" fk-name="TIMESHEET_AB_UL" title="ApprovedBy" rel-entity-name="UserLogin">
-            <key-map field-name="approvedByUserLoginId" rel-field-name="userLoginId"/>
-        </relation>
-    </entity>
-    <entity entity-name="TimesheetRole"
-            package-name="org.ofbiz.workeffort.timesheet"
-            title="Timesheet Role Entity">
-      <field name="timesheetId" type="id-ne"></field>
-      <field name="partyId" type="id-ne"></field>
-      <field name="roleTypeId" type="id-ne"></field>
-      <prim-key field="timesheetId"/>
-      <prim-key field="partyId"/>
-      <prim-key field="roleTypeId"/>
-      <relation type="one" fk-name="TIMESHTRL_TSHT" rel-entity-name="Timesheet">
-        <key-map field-name="timesheetId"/>
-      </relation>
-      <relation type="one" fk-name="TIMESHTRL_PRTY" rel-entity-name="Party">
-        <key-map field-name="partyId"/>
-      </relation>
-      <relation type="one-nofk" rel-entity-name="RoleType">
-        <key-map field-name="roleTypeId"/>
-      </relation>
-      <relation type="one" fk-name="TIMESHTRL_PTRL" rel-entity-name="PartyRole">
-        <key-map field-name="partyId"/>
-        <key-map field-name="roleTypeId"/>
-      </relation>
-    </entity>
-
   <!-- ========================================================= -->
   <!-- org.ofbiz.workeffort.workeffort -->
   <!-- ========================================================= -->
@@ -803,23 +718,7 @@ under the License.
             <key-map field-name="visitId"/>
         </relation>
     </entity>
-    <entity entity-name="WorkEffortSkillStandard"
-            package-name="org.ofbiz.workeffort.workeffort"
-            title="Work Effort Skill Standard Entity">
-      <field name="workEffortId" type="id-ne"></field>
-      <field name="skillTypeId" type="id-ne"></field>
-      <field name="estimatedNumPeople" type="floating-point"></field>
-      <field name="estimatedDuration" type="floating-point"></field>
-      <field name="estimatedCost" type="currency-amount"></field>
-      <prim-key field="workEffortId"/>
-      <prim-key field="skillTypeId"/>
-      <relation type="one" fk-name="WKEFF_SKLSTD_WEFF" rel-entity-name="WorkEffort">
-        <key-map field-name="workEffortId"/>
-      </relation>
-      <relation type="one" fk-name="WKEFF_SKLSTD_SKTP" rel-entity-name="SkillType">
-        <key-map field-name="skillTypeId"/>
-      </relation>
-    </entity>
+
     <entity entity-name="WorkEffortStatus"
             package-name="org.ofbiz.workeffort.workeffort"
             title="Work Effort Status Entity">

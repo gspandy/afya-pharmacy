@@ -21,17 +21,5 @@
 	    <entity-resource type="eca" reader-name="main" loader="main" location="entitydef/eecas.xml"/>
 	    
         <service-resource type="model" loader="main" location="servicedef/services.xml"/>
-    
-    <webapp name="issuetracking"
-		app-bar-display="true"
-		title="Issue Tracking"
-        server="default-server"
-        location="webapp/issuetracking"
-        base-permission="ISSUEMGR"
-        mount-point="/issuetracking"/>
-		
-		
-		
-	
-		
+
 </ofbiz-component>

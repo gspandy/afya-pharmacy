@@ -30,13 +30,13 @@ under the License.
 		<action service="createGlAccountAndPartyGlAccount" mode="sync" />
 	</eca>-->
 	
-	<eca entity="PartyRole" operation="create-store" event="return">
+	<!--<eca entity="PartyRole" operation="create-store" event="return">
 		<condition operator="equals" value="BILL_TO_CUSTOMER" field-name="roleTypeId" />
 		<action service="NewCustomerEmailAlert" mode="sync" />
 	</eca>
 	<eca entity="PartyRole" operation="create-store" event="return">
 		<condition operator="equals" value="BILL_FROM_VENDOR" field-name="roleTypeId" />
 		<action service="NewSupplierEmailAlert" mode="sync" />
-	</eca>
+	</eca>-->
 	
 </entity-eca>

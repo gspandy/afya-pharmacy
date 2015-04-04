@@ -739,7 +739,7 @@ public class ShoppingCartEvents {
                 return "error";
             }
         }*/
-        List<EntityCondition> conditionList = new ArrayList<>(); 
+        List<EntityCondition> conditionList = new ArrayList<EntityCondition>();
         conditionList.add(EntityCondition.makeCondition("productId",EntityOperator.EQUALS,productId));
         conditionList.add(EntityCondition.makeCondition("partyId",EntityOperator.EQUALS,supplierPartyId));
         List<GenericValue> supplierProductList = delegator.findList("SupplierProduct", EntityCondition.makeCondition(conditionList), null, null, null, false);

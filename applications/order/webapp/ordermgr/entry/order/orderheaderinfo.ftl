@@ -145,7 +145,7 @@ under the License.
             <tr><td colspan="7"><hr /></td></tr>
         </#if>
         
-        <#-- splitting preference -->
+        <#-- splitting preference
         <tr>
             <td align="right" valign="top" width="15%">
                 <div>&nbsp;<b>${uiLabelMap.OrderSplittingPreference}</b></div>
@@ -158,7 +158,7 @@ under the License.
                 </div>
             </td>
         </tr>
-        
+        -->
         <#-- shipping instructions -->
         <#if shippingInstructions?has_content>
             <tr><td colspan="7"><hr /></td></tr>

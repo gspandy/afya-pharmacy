@@ -90,19 +90,6 @@ under the License.
             <menu-item name="salesOrder" title="Sales Orders">
                 <link target="findorders?type=SALES_ORDER"/>
                 <menu-item name="createSalesOrder" title="Create Sales Order">
-                    <condition>
-	                    <and>
-		                    <if-has-permission permission="ORDERMGR" action="_SALES_CREATE"/>
-		                    <if-has-permission permission="ORDERMGR_SALES_ENTRY"/>
-	                    </and>
-                        <!-- <and>
-                            <if-has-permission permission="ORDERMGR" action="_CREATE"/>
-                            <if-has-permission permission="ORDERMGR" action="_VIEW"/> -->
-                       <!-- <not>
-                                <if-has-permission permission="ORDERMGR" action="_PURCHASE_CREATE"/>
-                            </not>  -->
-                        <!-- </and> -->
-                    </condition>
                     <link target="orderentry?type=SALES_ORDER"/>
                 </menu-item>
                 <menu-item name="findSalesOrder" title="Find Sales Orders">

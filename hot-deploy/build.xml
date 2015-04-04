@@ -22,7 +22,7 @@ under the License.
     <import file="../macros.xml"/>
 
     <filelist id="hot-deploy-builds" dir="."
-        files="smebiz-common/build.xml,humanresext/build.xml,dyna-forms/build.xml,hrms/build.xml,facilityext/build.xml,accountingext/build.xml,sfaext/build.xml,issuetracking/build.xml"/>
+        files="facilityext/build.xml,smebiz-common/build.xml"/>
 
 
     <property name="memory.max.param" value="-Xmx384M"/>

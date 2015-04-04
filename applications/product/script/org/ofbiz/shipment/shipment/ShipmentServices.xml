@@ -1133,7 +1133,7 @@
                    service-success-message-list-name="successMessageList" service-success-message-name="successMessage"
                    short-description="Create ShipmentItem" use-transaction="true">
         <set field="operationName" set-if-empty="true" set-if-null="false" value="Create ShipmentItem"/>
-        <call-simple-method method-name="checkCanChangeShipmentStatusPacked"/>
+        <!--<call-simple-method method-name="checkCanChangeShipmentStatusPacked"/>-->
         <check-errors error-code="error" error-list-name="error_list"/>
         <make-value entity-name="ShipmentItem" value-field="newEntity"/>
         <set-pk-fields map="parameters" set-if-null="true" value-field="newEntity"/>

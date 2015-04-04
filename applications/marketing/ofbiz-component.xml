@@ -29,7 +29,7 @@ under the License.
     <entity-resource type="data" reader-name="seed" loader="main" location="data/MarketingTypeData.xml"/>
     <entity-resource type="data" reader-name="seed" loader="main" location="data/MarketingSecurityData.xml"/>
     <entity-resource type="data" reader-name="seed" loader="main" location="data/MarketingHelpData.xml"/>
-    <entity-resource type="data" reader-name="seed" loader="main" location="data/SfaPortletData.xml"/>
+    <entity-resource type="data" reader-name="demo" loader="main" location="data/SfaPortletData.xml"/>
     <entity-resource type="data" reader-name="demo" loader="main" location="data/sfaDemoData.xml"/>
     <entity-resource type="data" reader-name="demo" loader="main" location="testdef/SeleniumTests.xml"/>
     <service-resource type="model" loader="main" location="servicedef/services.xml"/>
@@ -39,7 +39,7 @@ under the License.
     <!-- test suite -->
     <test-suite loader="main" location="testdef/MarketingTests.xml"/>
 
-    <webapp name="marketing"
+   <!-- <webapp name="marketing"
         title="Marketing"
         server="default-server"
         location="webapp/marketing"
@@ -52,6 +52,6 @@ under the License.
         location="webapp/sfa"
         base-permission="OFBTOOLS,SFA"
         mount-point="/sfa"
-        app-bar-display="false"/>
+        app-bar-display="false"/>-->
 </ofbiz-component>
 

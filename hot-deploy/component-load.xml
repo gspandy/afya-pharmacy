@@ -13,18 +13,9 @@
 
 	
     <load-component component-location="facilityext" />
-	<load-component component-location="issuetracking" /> 
-	<load-component component-location="sfaext" /> 
-	<load-component component-location="accountingext" />
 	<load-component component-location="bluemenu" />
-    <load-component component-location="humanresext" />
-	<load-component component-location="hrms" />
 	<load-component component-location="smebiz-common" />
-	<load-component component-location="timesheet" />
 
-	
-	
-	
 	<!-- <load-component component-location="egovernance" /> -->
 
 </component-loader>

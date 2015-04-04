@@ -78,6 +78,8 @@
 	<screen name="orderHeader">
 		<section>
 			<condition>
+				<and>
+					<if-compare field="orderHeader.orderTypeId" operator="equals"  value="PURCHASE_ORDER" type="String"/>
 				<or>
 					<not>
 						<if-empty field="orderHeader" />
@@ -86,6 +88,8 @@
 						<if-empty field="partyRoles" />
 					</not>
 				</or>
+
+				</and>
 			</condition>
 			<actions>
 				<set field="layoutSettings.javaScripts[]" value="/ordermgr/images/js/order.js" global="true" />
@@ -104,10 +108,42 @@
 				</container>
 			</widgets>
 			<fail-widgets>
-				<label style="h2" text="${uiLabelMap.OrderNoOrderFound}: [${orderId}]"></label>
-			</fail-widgets>
+					<container style="lefthalf">
+						<include-screen name="rxinfo" />
+						<include-screen name="orderterms" />
+						<include-screen name="orderpaymentinfo" />
+					</container>
+					<container style="righthalf">
+						<include-screen name="prescriptionInfo" />
+					</container>
+		</fail-widgets>
 		</section>
 	</screen>
+
+	<screen name="prescriptionInfo">
+		<section>
+			<widgets>
+				<platform-specific>
+					<html>
+						<html-template location="component://order/webapp/ordermgr/order/prescriptionInfo.ftl" />
+					</html>
+				</platform-specific>
+			</widgets>
+		</section>
+	</screen>
+
+	<screen name="rxinfo">
+		<section>
+			<widgets>
+				<platform-specific>
+					<html>
+						<html-template location="component://order/webapp/ordermgr/order/rxinfo.ftl" />
+					</html>
+				</platform-specific>
+			</widgets>
+		</section>
+	</screen>
+
 	<screen name="orderinfo">
 		<section>
 			<widgets>

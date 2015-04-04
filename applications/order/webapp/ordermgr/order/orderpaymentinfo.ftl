@@ -555,15 +555,7 @@ ${cardNumberDisplay?if_exists}
             </#if>
         </#list>
 
-        <#if customerPoNumber?has_content>
-        <tr><td colspan="4"><hr /></td></tr>
-        <tr>
-            <td align="right" valign="top" width="29%"><span class="label">${uiLabelMap.OrderPONumber}</span></td>
-            <td width="1%">&nbsp;</td>
-            <td valign="top" width="60%">${customerPoNumber?if_exists}</td>
-            <td width="10%">&nbsp;</td>
-        </tr>
-        </#if>
+
 
     <#-- invoices -->
         <#if invoices?has_content>
@@ -574,10 +566,11 @@ ${cardNumberDisplay?if_exists}
             <td valign="top" width="60%">
                 <#list invoices as invoice>
                 <#assign invoiceGv = delegator.findOne("Invoice", {"invoiceId" : invoice}, false)>
-            	<#assign statusItem = delegator.findOne("StatusItem", {"statusId" : invoiceGv.statusId}, false)>
-                    <div>${uiLabelMap.CommonNbr}<a target="_blank" href="/accounting/control/invoiceOverview?invoiceId=${invoice}&amp;externalLoginKey=${externalLoginKey}" class="buttontext">${invoice}</a>
-                    <block style="margin-right:12px;font-weight:bold;"> ${statusItem.description?if_exists} </block>
-                        (<a target="_blank" href="/accounting/control/invoice.pdf?invoiceId=${invoice}&amp;externalLoginKey=${externalLoginKey}" class="buttontext">PDF</a>)</div>
+            	<#--<#assign statusItem = delegator.findOne("StatusItem", {"statusId" : invoiceGv.statusId}, false)>-->
+                    <div>
+                    <#--${uiLabelMap.CommonNbr}<a target="_blank" href="/accounting/control/invoiceOverview?invoiceId=${invoice}&amp;externalLoginKey=${externalLoginKey}" class="buttontext">${invoice}</a>-->
+                    <#--<block style="margin-right:12px;font-weight:bold;"> ${statusItem.description?if_exists} </block>-->
+                        ${invoice} <a target="_blank" href="/accounting/control/invoice.pdf?invoiceId=${invoice}&amp;externalLoginKey=${externalLoginKey}" class="buttontext">PDF</a></div>
                 </#list>
             </td>
             <td width="10%">&nbsp;</td>

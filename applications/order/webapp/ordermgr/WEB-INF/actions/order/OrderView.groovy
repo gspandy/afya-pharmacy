@@ -371,6 +371,8 @@ if (orderHeader) {
 
     // set the type of return based on type of order
     if ("SALES_ORDER".equals(orderType)) {
+        GenericValue orderRxHeader = delegator.findOne("OrderRxHeader",true,"orderId",orderId);
+        context.orderRxHeader=orderRxHeader;
         context.returnHeaderTypeId = "CUSTOMER_RETURN";
         // also set the product store facility Id for sales orders
         productStore = orderHeader.getRelatedOne("ProductStore");

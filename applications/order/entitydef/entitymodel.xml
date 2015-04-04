@@ -18,7 +18,7 @@
 	<!-- ========================================================= -->
 	<!-- ======================== Data Model ===================== -->
 	<!-- The modules in this file are as follows: -->
-	<!-- - org.ofbiz.order.order -->
+	<!-- - org.ofbiz.orderItem.order -->
 	<!-- - org.ofbiz.order.quote -->
 	<!-- - org.ofbiz.order.request -->
 	<!-- - org.ofbiz.order.requirement -->
@@ -3078,5 +3078,22 @@
 	</entity>
 
 
+	<entity entity-name="OrderRxHeader" package-name="org.ofbiz.order.order" title="Rx Order Details">
+		<field name="orderId" type="id-ne"/>
+		<field name="visitId" type="id-ne"/>
+		<field name="clinicId" type="id-ne"/>
+		<field name="afyaId" type="id-ne"/>
+		<field name="patientFirstName" type="id-vlong-ne"/>
+		<field name="patientLastName" type="id-vlong-ne"/>
+		<field name="patientType" type="id-ne"/>
+		<field name="mobileNumber" type="id-ne"/>
+		<field name="visitDate" type="date"></field>
+		<prim-key field="orderId" />
+	</entity>
+	
+	<extend-entity entity-name="OrderItem">
+		<field name="rxFrequency" type="id-ne"/>
+		<field name="homeService" type="indicator"/>
+	</extend-entity>
 
 </entitymodel>

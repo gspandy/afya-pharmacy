@@ -1,3 +1,0 @@
-FCKConfig.ToolbarSets["CustomToolbarSpellCheck"] = [
-['SpellCheck']
-] ;

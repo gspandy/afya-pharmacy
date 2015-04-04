@@ -138,80 +138,7 @@ under the License.
     <SecurityGroupPermission groupId="SMEMAIN" permissionId="MYPAGE_VIEW"/>
 	<SecurityGroupPermission groupId="SMEMAIN" permissionId="MYPAGE_EMPLOYEE"/>
 	<SecurityGroupPermission groupId="SMEMAIN" permissionId="PARTYMGR_VIEW"/>
-	
-	<SecurityGroupPermission groupId="SMEMAIN_SFA" permissionId="ACCOUNTING_ADMIN" lastUpdatedStamp="2012-03-01 12:31:09.0" lastUpdatedTxStamp="2012-03-01 12:31:09.0" 			   createdStamp="2012-03-01 12:31:09.0" createdTxStamp="2012-03-01 12:31:09.0"/>
-    <SecurityGroupPermission groupId="SMEMAIN_SFA" permissionId="ACCOUNTING_COMM_VIEW" lastUpdatedStamp="2012-03-01 12:31:09.0" lastUpdatedTxStamp="2012-03-01 12:31:09.0" createdStamp="2012-03-01 12:31:09.0" createdTxStamp="2012-03-01 12:31:09.0"/>
-    <SecurityGroupPermission groupId="SMEMAIN_SFA" permissionId="ACCOUNTING_PRINT_CHECKS" lastUpdatedStamp="2012-03-01 12:31:09.0" lastUpdatedTxStamp="2012-03-01 12:31:09.0" createdStamp="2012-03-01 12:31:09.0" createdTxStamp="2012-03-01 12:31:09.0"/>
-    <SecurityGroupPermission groupId="SMEMAIN_SFA" permissionId="ACCTG_ATX_CREATE" lastUpdatedStamp="2012-03-01 12:31:09.0" lastUpdatedTxStamp="2012-03-01 12:31:09.0" createdStamp="2012-03-01 12:31:09.0" createdTxStamp="2012-03-01 12:31:09.0"/>
-    <SecurityGroupPermission groupId="SMEMAIN_SFA" permissionId="ACCTG_ATX_DELETE" lastUpdatedStamp="2012-03-01 12:31:09.0" lastUpdatedTxStamp="2012-03-01 12:31:09.0" createdStamp="2012-03-01 12:31:09.0" createdTxStamp="2012-03-01 12:31:09.0"/>
-    <SecurityGroupPermission groupId="SMEMAIN_SFA" permissionId="ACCTG_ATX_UPDATE" lastUpdatedStamp="2012-03-01 12:31:09.0" lastUpdatedTxStamp="2012-03-01 12:31:09.0" createdStamp="2012-03-01 12:31:09.0" createdTxStamp="2012-03-01 12:31:09.0"/>
-    <SecurityGroupPermission groupId="SMEMAIN_SFA" permissionId="ACCTG_ATX_VIEW" lastUpdatedStamp="2012-03-01 12:31:09.0" lastUpdatedTxStamp="2012-03-01 12:31:09.0" createdStamp="2012-03-01 12:31:09.0" createdTxStamp="2012-03-01 12:31:09.0"/>
-    <SecurityGroupPermission groupId="SMEMAIN_SFA" permissionId="ACCTG_FX_UPDATE" lastUpdatedStamp="2012-03-01 12:31:09.0" lastUpdatedTxStamp="2012-03-01 12:31:09.0" createdStamp="2012-03-01 12:31:09.0" createdTxStamp="2012-03-01 12:31:09.0"/>
-    <SecurityGroupPermission groupId="SMEMAIN_SFA" permissionId="ACCTG_PREF_CREATE" lastUpdatedStamp="2012-03-01 12:31:09.0" lastUpdatedTxStamp="2012-03-01 12:31:09.0" createdStamp="2012-03-01 12:31:09.0" createdTxStamp="2012-03-01 12:31:09.0"/>
-    <SecurityGroupPermission groupId="SMEMAIN_SFA" permissionId="ACCTG_PREF_DELETE" lastUpdatedStamp="2012-03-01 12:31:09.0" lastUpdatedTxStamp="2012-03-01 12:31:09.0" createdStamp="2012-03-01 12:31:09.0" createdTxStamp="2012-03-01 12:31:09.0"/>
-    <SecurityGroupPermission groupId="SMEMAIN_SFA" permissionId="ACCTG_PREF_UPDATE" lastUpdatedStamp="2012-03-01 12:31:09.0" lastUpdatedTxStamp="2012-03-01 12:31:09.0" createdStamp="2012-03-01 12:31:09.0" createdTxStamp="2012-03-01 12:31:09.0"/>
-    <SecurityGroupPermission groupId="SMEMAIN_SFA" permissionId="ACCTG_PREF_VIEW" lastUpdatedStamp="2012-03-01 12:31:09.0" lastUpdatedTxStamp="2012-03-01 12:31:09.0" createdStamp="2012-03-01 12:31:09.0" createdTxStamp="2012-03-01 12:31:09.0"/>
-    <SecurityGroupPermission groupId="SMEMAIN_SFA" permissionId="CATALOG_ADMIN" lastUpdatedStamp="2012-03-01 12:31:03.0" lastUpdatedTxStamp="2012-03-01 12:31:03.0" createdStamp="2012-03-01 12:31:03.0" createdTxStamp="2012-03-01 12:31:03.0"/>
-    <SecurityGroupPermission groupId="SMEMAIN_SFA" permissionId="CATALOG_PRICE_MAINT" lastUpdatedStamp="2012-03-01 12:31:03.0" lastUpdatedTxStamp="2012-03-01 12:31:03.0" createdStamp="2012-03-01 12:31:03.0" createdTxStamp="2012-03-01 12:31:03.0"/>
-    <!-- <SecurityGroupPermission groupId="SMEMAIN_SFA" permissionId="CONTENTMGR_ADMIN" lastUpdatedStamp="2012-03-01 12:31:01.0" lastUpdatedTxStamp="2012-03-01 12:31:01.0" createdStamp="2012-03-01 12:31:01.0" createdTxStamp="2012-03-01 12:31:01.0"/> -->
-    <SecurityGroupPermission groupId="SMEMAIN_SFA" permissionId="CRMSFA_ADMIN" lastUpdatedStamp="2012-03-01 12:31:14.0" lastUpdatedTxStamp="2012-03-01 12:31:14.0" createdStamp="2012-03-01 12:31:14.0" createdTxStamp="2012-03-01 12:31:14.0"/>
-    <SecurityGroupPermission groupId="SMEMAIN_SFA" permissionId="EXAMPLE_ADMIN" lastUpdatedStamp="2012-03-01 12:30:56.0" lastUpdatedTxStamp="2012-03-01 12:30:56.0" createdStamp="2012-03-01 12:30:56.0" createdTxStamp="2012-03-01 12:30:56.0"/>
-    <SecurityGroupPermission groupId="SMEMAIN_SFA" permissionId="FACILITY_ADMIN" lastUpdatedStamp="2012-03-01 12:31:03.0" lastUpdatedTxStamp="2012-03-01 12:31:03.0" createdStamp="2012-03-01 12:31:03.0" createdTxStamp="2012-03-01 12:31:03.0"/>
-    <SecurityGroupPermission groupId="SMEMAIN_SFA" permissionId="HUMANRES_ADMIN" lastUpdatedStamp="2012-03-01 12:31:09.0" lastUpdatedTxStamp="2012-03-01 12:31:09.0" createdStamp="2012-03-01 12:31:09.0" createdTxStamp="2012-03-01 12:31:09.0"/>
-    <SecurityGroupPermission groupId="SMEMAIN_SFA" permissionId="MANUAL_PAYMENT" lastUpdatedStamp="2012-03-01 12:31:09.0" lastUpdatedTxStamp="2012-03-01 12:31:09.0" createdStamp="2012-03-01 12:31:09.0" createdTxStamp="2012-03-01 12:31:09.0"/>
-    <SecurityGroupPermission groupId="SMEMAIN_SFA" permissionId="MARKETING_ADMIN" lastUpdatedStamp="2012-03-01 12:31:11.0" lastUpdatedTxStamp="2012-03-01 12:31:11.0" createdStamp="2012-03-01 12:31:11.0" createdTxStamp="2012-03-01 12:31:11.0"/>
-    <SecurityGroupPermission groupId="SMEMAIN_SFA" permissionId="OFBTOOLS_VIEW" lastUpdatedStamp="2012-03-01 12:30:53.0" lastUpdatedTxStamp="2012-03-01 12:30:53.0" createdStamp="2012-03-01 12:30:53.0" createdTxStamp="2012-03-01 12:30:53.0"/>
-    <SecurityGroupPermission groupId="SMEMAIN_SFA" permissionId="ORDERMGR_ADMIN" lastUpdatedStamp="2012-03-01 12:31:11.0" lastUpdatedTxStamp="2012-03-01 12:31:11.0" createdStamp="2012-03-01 12:31:11.0" createdTxStamp="2012-03-01 12:31:11.0"/>
-    <SecurityGroupPermission groupId="SMEMAIN_SFA" permissionId="PARTYMGR_ADMIN" lastUpdatedStamp="2012-03-01 12:30:59.0" lastUpdatedTxStamp="2012-03-01 12:30:59.0" createdStamp="2012-03-01 12:30:59.0" createdTxStamp="2012-03-01 12:30:59.0"/>
-    <SecurityGroupPermission groupId="SMEMAIN_SFA" permissionId="PAYPROC_ADMIN" lastUpdatedStamp="2012-03-01 12:31:09.0" lastUpdatedTxStamp="2012-03-01 12:31:09.0" createdStamp="2012-03-01 12:31:09.0" createdTxStamp="2012-03-01 12:31:09.0"/>
-    <SecurityGroupPermission groupId="SMEMAIN_SFA" permissionId="PAY_INFO_ADMIN" lastUpdatedStamp="2012-03-01 12:31:09.0" lastUpdatedTxStamp="2012-03-01 12:31:09.0" createdStamp="2012-03-01 12:31:09.0" createdTxStamp="2012-03-01 12:31:09.0"/>
-    <SecurityGroupPermission groupId="SMEMAIN_SFA" permissionId="PERIOD_MAINT" lastUpdatedStamp="2012-03-01 12:30:56.0" lastUpdatedTxStamp="2012-03-01 12:30:56.0" createdStamp="2012-03-01 12:30:56.0" createdTxStamp="2012-03-01 12:30:56.0"/>
-    <SecurityGroupPermission groupId="SMEMAIN_SFA" permissionId="PROJECTMGR_ADMIN" lastUpdatedStamp="2012-03-01 12:31:13.0" lastUpdatedTxStamp="2012-03-01 12:31:13.0" createdStamp="2012-03-01 12:31:13.0" createdTxStamp="2012-03-01 12:31:13.0"/>
-    <SecurityGroupPermission groupId="SMEMAIN_SFA" permissionId="SHIPRATE_ADMIN" lastUpdatedStamp="2012-03-01 12:31:03.0" lastUpdatedTxStamp="2012-03-01 12:31:03.0" createdStamp="2012-03-01 12:31:03.0" createdTxStamp="2012-03-01 12:31:03.0"/>
-    <SecurityGroupPermission groupId="SMEMAIN_SFA" permissionId="WORKEFFORTMGR_ADMIN" lastUpdatedStamp="2012-03-01 12:31:02.0" lastUpdatedTxStamp="2012-03-01 12:31:02.0" createdStamp="2012-03-01 12:31:02.0" createdTxStamp="2012-03-01 12:31:02.0"/>
-	<SecurityGroupPermission groupId="SMEMAIN_SFA" permissionId="ISSUEMGR_ADMIN"/>
-    <SecurityGroupPermission groupId="SMEMAIN_SFA" permissionId="ISSUEMGR_OWNER"/>
-    <SecurityGroupPermission groupId="SMEMAIN_SFA" permissionId="ISSUEMGR_RESOLVER"/>
-    <SecurityGroupPermission groupId="SMEMAIN_SFA" permissionId="ISSUEMGR_VIEW"/>
-    <SecurityGroupPermission groupId="SMEMAIN_SFA" permissionId="MYPAGE_VIEW"/>
-	<SecurityGroupPermission groupId="SMEMAIN_SFA" permissionId="MYPAGE_EMPLOYEE"/>
-	<SecurityGroupPermission groupId="SMEMAIN_SFA" permissionId="PARTYMGR_VIEW"/>
-	<SecurityGroupPermission groupId="SMEMAIN_SFA" permissionId="SFA_ADMIN" lastUpdatedStamp="2012-03-01 12:31:11.0" lastUpdatedTxStamp="2012-03-01 12:31:11.0" createdStamp="2012-03-01 12:31:11.0" createdTxStamp="2012-03-01 12:31:11.0"/>
-	
-	<SecurityGroupPermission groupId="SMEMAIN_MNF" permissionId="ACCOUNTING_ADMIN" lastUpdatedStamp="2012-03-01 12:31:09.0" lastUpdatedTxStamp="2012-03-01 12:31:09.0" 			   createdStamp="2012-03-01 12:31:09.0" createdTxStamp="2012-03-01 12:31:09.0"/>
-    <SecurityGroupPermission groupId="SMEMAIN_MNF" permissionId="ACCOUNTING_COMM_VIEW" lastUpdatedStamp="2012-03-01 12:31:09.0" lastUpdatedTxStamp="2012-03-01 12:31:09.0" createdStamp="2012-03-01 12:31:09.0" createdTxStamp="2012-03-01 12:31:09.0"/>
-    <SecurityGroupPermission groupId="SMEMAIN_MNF" permissionId="ACCOUNTING_PRINT_CHECKS" lastUpdatedStamp="2012-03-01 12:31:09.0" lastUpdatedTxStamp="2012-03-01 12:31:09.0" createdStamp="2012-03-01 12:31:09.0" createdTxStamp="2012-03-01 12:31:09.0"/>
-    <SecurityGroupPermission groupId="SMEMAIN_MNF" permissionId="ACCTG_ATX_CREATE" lastUpdatedStamp="2012-03-01 12:31:09.0" lastUpdatedTxStamp="2012-03-01 12:31:09.0" createdStamp="2012-03-01 12:31:09.0" createdTxStamp="2012-03-01 12:31:09.0"/>
-    <SecurityGroupPermission groupId="SMEMAIN_MNF" permissionId="ACCTG_ATX_DELETE" lastUpdatedStamp="2012-03-01 12:31:09.0" lastUpdatedTxStamp="2012-03-01 12:31:09.0" createdStamp="2012-03-01 12:31:09.0" createdTxStamp="2012-03-01 12:31:09.0"/>
-    <SecurityGroupPermission groupId="SMEMAIN_MNF" permissionId="ACCTG_ATX_UPDATE" lastUpdatedStamp="2012-03-01 12:31:09.0" lastUpdatedTxStamp="2012-03-01 12:31:09.0" createdStamp="2012-03-01 12:31:09.0" createdTxStamp="2012-03-01 12:31:09.0"/>
-    <SecurityGroupPermission groupId="SMEMAIN_MNF" permissionId="ACCTG_ATX_VIEW" lastUpdatedStamp="2012-03-01 12:31:09.0" lastUpdatedTxStamp="2012-03-01 12:31:09.0" createdStamp="2012-03-01 12:31:09.0" createdTxStamp="2012-03-01 12:31:09.0"/>
-    <SecurityGroupPermission groupId="SMEMAIN_MNF" permissionId="ACCTG_FX_UPDATE" lastUpdatedStamp="2012-03-01 12:31:09.0" lastUpdatedTxStamp="2012-03-01 12:31:09.0" createdStamp="2012-03-01 12:31:09.0" createdTxStamp="2012-03-01 12:31:09.0"/>
-    <SecurityGroupPermission groupId="SMEMAIN_MNF" permissionId="ACCTG_PREF_CREATE" lastUpdatedStamp="2012-03-01 12:31:09.0" lastUpdatedTxStamp="2012-03-01 12:31:09.0" createdStamp="2012-03-01 12:31:09.0" createdTxStamp="2012-03-01 12:31:09.0"/>
-    <SecurityGroupPermission groupId="SMEMAIN_MNF" permissionId="ACCTG_PREF_DELETE" lastUpdatedStamp="2012-03-01 12:31:09.0" lastUpdatedTxStamp="2012-03-01 12:31:09.0" createdStamp="2012-03-01 12:31:09.0" createdTxStamp="2012-03-01 12:31:09.0"/>
-    <SecurityGroupPermission groupId="SMEMAIN_MNF" permissionId="ACCTG_PREF_UPDATE" lastUpdatedStamp="2012-03-01 12:31:09.0" lastUpdatedTxStamp="2012-03-01 12:31:09.0" createdStamp="2012-03-01 12:31:09.0" createdTxStamp="2012-03-01 12:31:09.0"/>
-    <SecurityGroupPermission groupId="SMEMAIN_MNF" permissionId="ACCTG_PREF_VIEW" lastUpdatedStamp="2012-03-01 12:31:09.0" lastUpdatedTxStamp="2012-03-01 12:31:09.0" createdStamp="2012-03-01 12:31:09.0" createdTxStamp="2012-03-01 12:31:09.0"/>
-    <SecurityGroupPermission groupId="SMEMAIN_MNF" permissionId="CATALOG_ADMIN" lastUpdatedStamp="2012-03-01 12:31:03.0" lastUpdatedTxStamp="2012-03-01 12:31:03.0" createdStamp="2012-03-01 12:31:03.0" createdTxStamp="2012-03-01 12:31:03.0"/>
-    <SecurityGroupPermission groupId="SMEMAIN_MNF" permissionId="CATALOG_PRICE_MAINT" lastUpdatedStamp="2012-03-01 12:31:03.0" lastUpdatedTxStamp="2012-03-01 12:31:03.0" createdStamp="2012-03-01 12:31:03.0" createdTxStamp="2012-03-01 12:31:03.0"/>
-    <!-- <SecurityGroupPermission groupId="SMEMAIN_MNF" permissionId="CONTENTMGR_ADMIN" lastUpdatedStamp="2012-03-01 12:31:01.0" lastUpdatedTxStamp="2012-03-01 12:31:01.0" createdStamp="2012-03-01 12:31:01.0" createdTxStamp="2012-03-01 12:31:01.0"/> -->
-    <SecurityGroupPermission groupId="SMEMAIN_MNF" permissionId="CRMSFA_ADMIN" lastUpdatedStamp="2012-03-01 12:31:14.0" lastUpdatedTxStamp="2012-03-01 12:31:14.0" createdStamp="2012-03-01 12:31:14.0" createdTxStamp="2012-03-01 12:31:14.0"/>
-    <SecurityGroupPermission groupId="SMEMAIN_MNF" permissionId="EXAMPLE_ADMIN" lastUpdatedStamp="2012-03-01 12:30:56.0" lastUpdatedTxStamp="2012-03-01 12:30:56.0" createdStamp="2012-03-01 12:30:56.0" createdTxStamp="2012-03-01 12:30:56.0"/>
-    <SecurityGroupPermission groupId="SMEMAIN_MNF" permissionId="FACILITY_ADMIN" lastUpdatedStamp="2012-03-01 12:31:03.0" lastUpdatedTxStamp="2012-03-01 12:31:03.0" createdStamp="2012-03-01 12:31:03.0" createdTxStamp="2012-03-01 12:31:03.0"/>
-    <SecurityGroupPermission groupId="SMEMAIN_MNF" permissionId="HUMANRES_ADMIN" lastUpdatedStamp="2012-03-01 12:31:09.0" lastUpdatedTxStamp="2012-03-01 12:31:09.0" createdStamp="2012-03-01 12:31:09.0" createdTxStamp="2012-03-01 12:31:09.0"/>
-    <SecurityGroupPermission groupId="SMEMAIN_MNF" permissionId="MANUAL_PAYMENT" lastUpdatedStamp="2012-03-01 12:31:09.0" lastUpdatedTxStamp="2012-03-01 12:31:09.0" createdStamp="2012-03-01 12:31:09.0" createdTxStamp="2012-03-01 12:31:09.0"/>
-    <SecurityGroupPermission groupId="SMEMAIN_MNF" permissionId="MARKETING_ADMIN" lastUpdatedStamp="2012-03-01 12:31:11.0" lastUpdatedTxStamp="2012-03-01 12:31:11.0" createdStamp="2012-03-01 12:31:11.0" createdTxStamp="2012-03-01 12:31:11.0"/>
-    <SecurityGroupPermission groupId="SMEMAIN_MNF" permissionId="OFBTOOLS_VIEW" lastUpdatedStamp="2012-03-01 12:30:53.0" lastUpdatedTxStamp="2012-03-01 12:30:53.0" createdStamp="2012-03-01 12:30:53.0" createdTxStamp="2012-03-01 12:30:53.0"/>
-    <SecurityGroupPermission groupId="SMEMAIN_MNF" permissionId="ORDERMGR_ADMIN" lastUpdatedStamp="2012-03-01 12:31:11.0" lastUpdatedTxStamp="2012-03-01 12:31:11.0" createdStamp="2012-03-01 12:31:11.0" createdTxStamp="2012-03-01 12:31:11.0"/>
-    <SecurityGroupPermission groupId="SMEMAIN_MNF" permissionId="PARTYMGR_ADMIN" lastUpdatedStamp="2012-03-01 12:30:59.0" lastUpdatedTxStamp="2012-03-01 12:30:59.0" createdStamp="2012-03-01 12:30:59.0" createdTxStamp="2012-03-01 12:30:59.0"/>
-    <SecurityGroupPermission groupId="SMEMAIN_MNF" permissionId="PAYPROC_ADMIN" lastUpdatedStamp="2012-03-01 12:31:09.0" lastUpdatedTxStamp="2012-03-01 12:31:09.0" createdStamp="2012-03-01 12:31:09.0" createdTxStamp="2012-03-01 12:31:09.0"/>
-    <SecurityGroupPermission groupId="SMEMAIN_MNF" permissionId="PAY_INFO_ADMIN" lastUpdatedStamp="2012-03-01 12:31:09.0" lastUpdatedTxStamp="2012-03-01 12:31:09.0" createdStamp="2012-03-01 12:31:09.0" createdTxStamp="2012-03-01 12:31:09.0"/>
-    <SecurityGroupPermission groupId="SMEMAIN_MNF" permissionId="PERIOD_MAINT" lastUpdatedStamp="2012-03-01 12:30:56.0" lastUpdatedTxStamp="2012-03-01 12:30:56.0" createdStamp="2012-03-01 12:30:56.0" createdTxStamp="2012-03-01 12:30:56.0"/>
-    <SecurityGroupPermission groupId="SMEMAIN_MNF" permissionId="PROJECTMGR_ADMIN" lastUpdatedStamp="2012-03-01 12:31:13.0" lastUpdatedTxStamp="2012-03-01 12:31:13.0" createdStamp="2012-03-01 12:31:13.0" createdTxStamp="2012-03-01 12:31:13.0"/>
-    <SecurityGroupPermission groupId="SMEMAIN_MNF" permissionId="SHIPRATE_ADMIN" lastUpdatedStamp="2012-03-01 12:31:03.0" lastUpdatedTxStamp="2012-03-01 12:31:03.0" createdStamp="2012-03-01 12:31:03.0" createdTxStamp="2012-03-01 12:31:03.0"/>
-    <SecurityGroupPermission groupId="SMEMAIN_MNF" permissionId="WORKEFFORTMGR_ADMIN" lastUpdatedStamp="2012-03-01 12:31:02.0" lastUpdatedTxStamp="2012-03-01 12:31:02.0" createdStamp="2012-03-01 12:31:02.0" createdTxStamp="2012-03-01 12:31:02.0"/>
-	<SecurityGroupPermission groupId="SMEMAIN_MNF" permissionId="ISSUEMGR_ADMIN"/>
-    <SecurityGroupPermission groupId="SMEMAIN_MNF" permissionId="ISSUEMGR_OWNER"/>
-    <SecurityGroupPermission groupId="SMEMAIN_MNF" permissionId="ISSUEMGR_RESOLVER"/>
-    <SecurityGroupPermission groupId="SMEMAIN_MNF" permissionId="ISSUEMGR_VIEW"/>
+
     <SecurityGroupPermission groupId="SMEMAIN_MNF" permissionId="MYPAGE_VIEW"/>
 	<SecurityGroupPermission groupId="SMEMAIN_MNF" permissionId="MYPAGE_EMPLOYEE"/>
 	<SecurityGroupPermission groupId="SMEMAIN_MNF" permissionId="PARTYMGR_VIEW"/>
@@ -258,14 +185,6 @@ under the License.
 	<SecurityGroupPermission groupId="SMEMAIN_MNF_SFA" permissionId="SFA_ADMIN" lastUpdatedStamp="2012-03-01 12:31:11.0" lastUpdatedTxStamp="2012-03-01 12:31:11.0" createdStamp="2012-03-01 12:31:11.0" createdTxStamp="2012-03-01 12:31:11.0"/>
 	
 	<!-- For HRMS -->
-	
-	<SecurityGroup groupId="HRMS" description="HRMS Security Group" lastUpdatedStamp="2010-03-17 12:40:50.0" lastUpdatedTxStamp="2010-03-17 12:40:50.0" createdStamp="2010-03-17 12:40:50.0" createdTxStamp="2010-03-17 12:40:50.0"/>
-	<SecurityGroup groupId="HRMS_ADMIN" description="HRMS-Administrator" lastUpdatedStamp="2010-07-09 15:14:12.0" lastUpdatedTxStamp="2010-07-09 15:14:11.0" createdStamp="2010-07-09 15:14:12.0" createdTxStamp="2010-07-09 15:14:11.0"/>
-	<SecurityGroup groupId="HRMS_RECRUIT" description="RecruitmentAgency" lastUpdatedStamp="2010-06-29 11:24:09.0" lastUpdatedTxStamp="2010-06-29 11:24:09.0" createdStamp="2010-06-29 11:24:09.0" createdTxStamp="2010-06-29 11:24:09.0"/>
-	<SecurityGroup groupId="HUMANRES_ADMIN" description="Full Access To Human Resource permissions." lastUpdatedStamp="2010-02-20 13:27:12.0" lastUpdatedTxStamp="2010-02-20 13:27:12.0" createdStamp="2010-02-20 13:27:12.0" createdTxStamp="2010-02-20 13:27:12.0"/>
-	<SecurityGroup groupId="HUMANRES_MGR" description="Managerial Access To Human Resource." lastUpdatedStamp="2010-03-29 10:51:25.0" lastUpdatedTxStamp="2010-03-29 10:51:25.0" createdStamp="2010-02-20 13:27:12.0" createdTxStamp="2010-02-20 13:27:12.0"/>
-	<SecurityGroup groupId="HUMANRES_USER" description="Employee Access To Human Resource." lastUpdatedStamp="2010-02-20 13:27:12.0" lastUpdatedTxStamp="2010-02-20 13:27:12.0" createdStamp="2010-02-20 13:27:12.0" createdTxStamp="2010-02-20 13:27:12.0"/>
-
     <SecurityPermission description="View operations in the HRMS Component." permissionId="HRMS_VIEW"/>
     <SecurityPermission description="Create operations in the HRMS Component." permissionId="HRMS_CREATE"/>
     <SecurityPermission description="Update operations in the HRMS Component." permissionId="HRMS_UPDATE"/>
@@ -304,16 +223,5 @@ under the License.
 	<UserLogin userLoginId="admin" currentPassword="{SHA}47ca69ebb4bdc9ae0adec130880165d2cc05db1a" enabled="Y" hasLoggedOut="N" successiveFailedLogins="0" lastUpdatedStamp="2010-05-25 10:50:02.0" lastUpdatedTxStamp="2010-05-25 10:50:02.0" createdStamp="2010-02-20 13:28:07.0" createdTxStamp="2010-02-20 13:28:07.0" partyId="admin"/>
 	<UserLoginSecurityGroup userLoginId="admin" groupId="FULLADMIN" fromDate="2001-01-01 12:00:00.0" lastUpdatedStamp="2010-02-20 13:28:07.0" lastUpdatedTxStamp="2010-02-20 13:28:07.0" createdStamp="2010-02-20 13:28:07.0" createdTxStamp="2010-02-20 13:28:07.0"/>
 	<UserLoginSecurityGroup userLoginId="admin" groupId="HRMS" fromDate="2001-01-01 12:00:00.0" lastUpdatedStamp="2010-02-20 13:28:07.0" lastUpdatedTxStamp="2010-02-20 13:28:07.0" createdStamp="2010-02-20 13:28:07.0" createdTxStamp="2010-02-20 13:28:07.0"/>
-	<Party partyId="Company" partyTypeId="PARTY_GROUP" lastUpdatedStamp="2010-02-20 13:28:09.0" lastUpdatedTxStamp="2010-02-20 13:28:09.0" createdStamp="2010-02-20 13:28:09.0" createdTxStamp="2010-02-20 13:28:09.0"/>
-	<Party partyId="DEV" partyTypeId="PARTY_GROUP" lastUpdatedStamp="2010-02-20 13:28:09.0" lastUpdatedTxStamp="2010-02-20 13:28:09.0" createdStamp="2010-02-20 13:28:09.0" createdTxStamp="2010-02-20 13:28:09.0"/>
-	<ContactMech contactMechId="10190" contactMechtypeId="POSTAL_ADDRESS"></ContactMech>
-	<!-- <PartyGroup partyId="Company" groupName="Nth Dimenzion Pvt Ltd." logoImageUrl="companyLogo.png" lastUpdatedStamp="2010-02-20 13:28:09.0" lastUpdatedTxStamp="2010-02-20 13:28:09.0" createdStamp="2010-02-20 13:28:09.0" createdTxStamp="2010-02-20 13:28:09.0"/> -->
-	<PartyGroup partyId="DEV" groupName="Development department" lastUpdatedStamp="2010-02-20 13:28:09.0" lastUpdatedTxStamp="2010-02-20 13:28:09.0" createdStamp="2010-02-20 13:28:09.0" createdTxStamp="2010-02-20 13:28:09.0"/>
-	<EmplPositionType emplPositionTypeId="SYS_ADMIN" hasTable="N" description="System Administrator" lastUpdatedStamp="2010-02-20 13:27:12.0" lastUpdatedTxStamp="2010-02-20 13:27:12.0" createdStamp="2010-02-20 13:27:12.0" createdTxStamp="2010-02-20 13:27:12.0"/>
-	<StatusType statusTypeId="EMPL_POSITION_STATUS" hasTable="N" description="Employee Position Status" lastUpdatedStamp="2010-07-19 11:17:01.0" lastUpdatedTxStamp="2010-07-19 11:17:01.0" createdStamp="2010-07-19 11:17:01.0" createdTxStamp="2010-07-19 11:17:01.0"/>
-	<StatusItem statusId="EMPL_POS_FULFILLED" statusTypeId="EMPL_POSITION_STATUS" statusCode="EMPL_POS_FULFILLED" sequenceId="04" description="Fulfilled" lastUpdatedStamp="2010-07-19 11:16:52.0" lastUpdatedTxStamp="2010-07-19 11:16:52.0" createdStamp="2010-07-19 11:16:52.0" createdTxStamp="2010-07-19 11:16:52.0"/>
-	<EmplPosition emplPositionId="adminpos" statusId="EMPL_POS_FULFILLED" partyId="DEV" emplPositionTypeId="SYS_ADMIN" salaryFlag="Y" exemptFlag="Y" fulltimeFlag="Y" temporaryFlag="Y" lastUpdatedStamp="2010-03-17 11:55:20.0" lastUpdatedTxStamp="2010-03-17 11:55:20.0" createdStamp="2010-03-17 11:55:15.0" createdTxStamp="2010-03-17 11:55:15.0"/>
-	<EmplPositionFulfillment emplPositionId="adminpos" partyId="admin" fromDate="2010-03-18 10:56:00.0" thruDate="2011-03-18 10:56:05.0" lastUpdatedStamp="2010-03-17 11:56:11.0" lastUpdatedTxStamp="2010-03-17 11:56:10.0" createdStamp="2010-03-17 11:56:11.0" createdTxStamp="2010-03-17 11:56:10.0"/>
-	
-	
+
 </entity-engine-xml>

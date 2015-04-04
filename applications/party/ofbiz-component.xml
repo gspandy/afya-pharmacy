@@ -32,37 +32,6 @@ under the License.
     <entity-resource type="data" reader-name="seed" loader="main" location="data/PartySecurityData.xml"/>
     <entity-resource type="data" reader-name="seed" loader="main" location="data/PartyGeoPointData.xml"/>
     <entity-resource type="data" reader-name="seed" loader="main" location="data/PartyPortletData.xml"/>
-	
-	<entity-resource type="data" reader-name="seed" loader="main" location="data/hrmsseed/AccountingExtDemoData.xml"/>
-	<entity-resource type="data" reader-name="seed" loader="main" location="data/hrmsseed/AccountingExtSecurityData.xml"/>
-	<entity-resource type="data" reader-name="seed" loader="main" location="data/hrmsseed/AccountingExtTypeData.xml"/>
-	<entity-resource type="data" reader-name="seed" loader="main" location="data/hrmsseed/ClaimsSeedData.xml"/>
-	<entity-resource type="data" reader-name="seed" loader="main" location="data/hrmsseed/CustomTimePeriod.xml"/>
-	<entity-resource type="data" reader-name="seed" loader="main" location="data/hrmsseed/EloanSeedData.xml"/>
-	<entity-resource type="data" reader-name="seed" loader="main" location="data/hrmsseed/facilityextDemoData.xml"/>
-	<entity-resource type="data" reader-name="seed" loader="main" location="data/hrmsseed/facilityextSecurityData.xml"/>
-	<entity-resource type="data" reader-name="seed" loader="main" location="data/hrmsseed/facilityextTypeData.xml"/>
-	<entity-resource type="data" reader-name="seed" loader="main" location="data/hrmsseed/HRMSDemoData.xml"/>
-	<entity-resource type="data" reader-name="seed" loader="main" location="data/hrmsseed/HRMSSecurityData.xml"/>
-	<entity-resource type="data" reader-name="seed" loader="main" location="data/hrmsseed/HRMSTypeData.xml"/>
-	<entity-resource type="data" reader-name="seed" loader="main" location="data/hrmsseed/HumanResDemoData.xml"/>
-	<entity-resource type="data" reader-name="seed" loader="main" location="data/hrmsseed/HumanResSecurityData.xml"/>
-	<entity-resource type="data" reader-name="seed" loader="main" location="data/hrmsseed/HumanResTypeData.xml"/>
-	<!--<entity-resource type="data" reader-name="seed" loader="main" location="data/hrmsseed/IssueMasterData.xml"/>-->
-	<entity-resource type="data" reader-name="seed" loader="main" location="data/hrmsseed/LeaveSeedData.xml"/>
-	<entity-resource type="data" reader-name="seed" loader="main" location="data/hrmsseed/PayrollData.xml"/>
-	<entity-resource type="data" reader-name="seed" loader="main" location="data/hrmsseed/SFAEXTDemoData.xml"/>
-	<entity-resource type="data" reader-name="seed" loader="main" location="data/hrmsseed/SFAEXTSecurityData.xml"/>
-	<entity-resource type="data" reader-name="seed" loader="main" location="data/hrmsseed/SFAEXTTypeData.xml"/>
-	<entity-resource type="data" reader-name="seed" loader="main" location="data/hrmsseed/SMEHRUserData.xml"/>
-    <entity-resource type="data" reader-name="seed" loader="main" location="data/hrmsseed/TaxSeedData.xml"/>
-	<entity-resource type="data" reader-name="seed" loader="main" location="data/hrmsseed/TerminationSeedData.xml"/>
-    <!--<entity-resource type="data" reader-name="seed" loader="main" location="data/ZPCDepartment.xml"/>-->
-	
-	
-	
-    <entity-resource type="data" reader-name="demo" loader="main" location="data/PartyDemoData.xml"/>
-    <entity-resource type="data" reader-name="seed-initial" loader="main" location="data/ScheduledJobs.xml"/>
     <service-resource type="model" loader="main" location="servicedef/services.xml"/>
     <service-resource type="model" loader="main" location="servicedef/services_view.xml"/>
     <service-resource type="eca" loader="main" location="servicedef/secas.xml"/>

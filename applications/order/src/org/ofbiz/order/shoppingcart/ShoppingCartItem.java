@@ -156,6 +156,8 @@ public class ShoppingCartItem implements java.io.Serializable {
 
     private BigDecimal defaultProductPrice;
     private BigDecimal assessableAmount;
+    private boolean homeService;
+
     /**
      * Makes a ShoppingCartItem for a purchase order item and adds it to the cart.
      * NOTE: This method will get the product entity and check to make sure it can be purchased.
@@ -2517,6 +2519,14 @@ public class ShoppingCartItem implements java.io.Serializable {
                 cart.addItem(thisIndex, (ShoppingCartItem) newItemsItr.next());
             }
         }
+    }
+
+    public boolean isHomeService(){
+        return homeService;
+    }
+
+    public void setHomeService(boolean homeService){
+        this.homeService=homeService;
     }
 
     public static String getPurchaseOrderItemDescription(GenericValue product, GenericValue supplierProduct, Locale locale) {

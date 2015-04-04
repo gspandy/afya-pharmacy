@@ -165,9 +165,6 @@ under the License.
       <relation type="many" rel-entity-name="WorkEffortInventoryAssign">
         <key-map field-name="workEffortId"/>
       </relation>
-      <relation type="many" rel-entity-name="WorkEffortSkillStandard">
-        <key-map field-name="workEffortId"/>
-      </relation>
     </view-entity>
     <view-entity entity-name="WorkEffortAndFixedAssetAssign"
             package-name="org.ofbiz.workeffort.workeffort"

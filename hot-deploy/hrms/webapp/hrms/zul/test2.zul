@@ -1,5 +1,0 @@
-<?init class="org.zkoss.zk.ui.util.Composition"
-arg0="/WEB-INF/layout/template.zul"?>
-<zk>
-	
-</zk>

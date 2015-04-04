@@ -490,32 +490,6 @@ public class LoginWorker {
             return "error";
 
         }
-
-
-        String partyId = EntityUtil.getFirst(totalvalue).getString("partyId");
-        List values = null;
-        try {
-            values = delegator.findByAnd("EmplTerminationDetail", UtilMisc.toMap("partyId", partyId, "statusId", "ET_ADM_APPROVED"));
-        } catch (GenericEntityException e1) {
-            // TODO Auto-generated catch block
-            e1.printStackTrace();
-        }
-        if (values.size() > 0) {
-            GenericValue gv1 = EntityUtil.getFirst(values);
-            Date checkdate = gv1.getDate("terminationDate");
-            Date current = new Date();
-            if (current.compareTo(checkdate) == 1) {
-                String errmsg = " Your login is disabled. Please contact System Administrator";
-                request.setAttribute("_ERROR_MESSAGE_", errmsg);
-                return "error";
-            }
-            /*if (current.compareTo(checkdate) == 0) {
-                String errmsg = " Your login is disabled. Please contact System Administrator";
-                request.setAttribute("_ERROR_MESSAGE_", errmsg);
-                return "error";
-            }*/
-        }
-
         Map<String, Object> result = null;
         try {
             // get the visit id to pass to the userLogin for history

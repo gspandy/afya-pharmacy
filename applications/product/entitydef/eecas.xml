@@ -23,16 +23,16 @@ under the License.
     <!-- Product Keyword Indexing ECAs -->
     <eca entity="Product" operation="create-store" event="return">
         <condition field-name="autoCreateKeywords" operator="not-equals" value="N"/>
-        <action service="indexProductKeywords" mode="sync" value-attr="productInstance"/>
+        <action service="indexProductKeywords" mode="async" value-attr="productInstance"/>
     </eca>
     <eca entity="ProductAttribute" operation="create-store" event="return">
-        <action service="indexProductKeywords" mode="sync"/>
+        <action service="indexProductKeywords" mode="async"/>
     </eca>
     <eca entity="ProductFeatureAppl" operation="create-store" event="return">
-        <action service="indexProductKeywords" mode="sync"/>
+        <action service="indexProductKeywords" mode="async"/>
     </eca>
     <eca entity="ProductContent" operation="create-store" event="return">
-        <action service="indexProductKeywords" mode="sync"/>
+        <action service="indexProductKeywords" mode="async"/>
     </eca>
 
     <!-- inventory related ECAs -->
@@ -62,11 +62,6 @@ under the License.
     <eca entity="InventoryItemDetail" operation="create-store-remove" event="return">
         <condition field-name="availableToPromiseDiff" operator="not-equals" value="0" type="BigDecimal"/>
         <action service="setLastInventoryCount" mode="sync"/>
-    </eca>
-    
-    <eca entity="Product" operation="create" event="return">
-        <condition field-name="autoCreateKeywords" operator="not-equals" value="N"/>
-        <action service="NewProductEmailAlert" mode="sync" value-attr="productInstance"/>
     </eca>
     
 </entity-eca>

@@ -924,7 +924,8 @@ public class OrderServices {
             while (ocmi.hasNext()) {
                 GenericValue ocm = (GenericValue) ocmi.next();
                 ocm.set("orderId", orderId);
-                toBeStored.add(ocm);
+                if(ocm.getString("contactMechId")!=null)
+                    toBeStored.add(ocm);
             }
         }
 

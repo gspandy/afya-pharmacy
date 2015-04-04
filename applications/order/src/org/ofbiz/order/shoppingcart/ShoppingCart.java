@@ -3990,6 +3990,7 @@ public class ShoppingCart implements Iterable<ShoppingCartItem>, Serializable {
                 orderItem.set("quoteId", item.getQuoteId());
                 orderItem.set("quoteItemSeqId", item.getQuoteItemSeqId());
                 orderItem.set("statusId", status);
+                orderItem.set("homeService", item.isHomeService());
 
                 orderItem.set("shipBeforeDate", item.getShipBeforeDate());
                 orderItem.set("shipAfterDate", item.getShipAfterDate());

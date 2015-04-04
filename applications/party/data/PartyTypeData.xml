@@ -271,10 +271,6 @@ under the License.
     <PartyClassificationType description="SIC Code" hasTable="N" parentTypeId="" partyClassificationTypeId="SIC_CODE"/>
     <PartyClassificationType description="Ownership" hasTable="N" parentTypeId="" partyClassificationTypeId="OWNERSHIP"/>
 
-    <PartyQualType description="Work experience" hasTable="N" parentTypeId="" partyQualTypeId="EXPERIENCE"/>
-    <PartyQualType description="Certification" hasTable="N" parentTypeId="" partyQualTypeId="CERTIFICATION"/>
-    <PartyQualType description="Degree" hasTable="N" parentTypeId="" partyQualTypeId="DEGREE"/>
-
     <!-- NOTE: The partyRelationshipName describes the TO party, ie A is a customer of B, so A is the partyTo and B is the partyFrom -->
     <PartyRelationshipType description="" hasTable="N" parentTypeId="" partyRelationshipName="Agent" partyRelationshipTypeId="AGENT" roleTypeIdValidFrom="" roleTypeIdValidTo=""/>
     <PartyRelationshipType description="" hasTable="N" parentTypeId="" partyRelationshipName="Child" partyRelationshipTypeId="CHILD" roleTypeIdValidFrom="" roleTypeIdValidTo=""/>
@@ -1286,6 +1282,5 @@ under the License.
     <FacilityType description="Retail Store" facilityTypeId="RETAIL_STORE" hasTable="N" parentTypeId=""/>
     <FacilityType description="Warehouse" facilityTypeId="WAREHOUSE" hasTable="N" parentTypeId=""/>
 
-    <PartyRole partyId="admin" roleTypeId="INVOICE_MANAGER"/>
-    </entity-engine-xml>
+</entity-engine-xml>
     
