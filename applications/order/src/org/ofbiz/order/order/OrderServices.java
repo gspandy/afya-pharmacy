@@ -720,170 +720,6 @@ public class OrderServices {
             }
         }
 
-        // create the workeffort records
-        // and connect them with the orderitem over the WorkOrderItemFulfillment
-        // create also the techData calendars to keep track of availability of the fixed asset.
-        if (UtilValidate.isNotEmpty(workEfforts)) {
-            List tempList = new LinkedList();
-            Iterator we = workEfforts.iterator();
-            while (we.hasNext()) {
-                // create the entity maps required.
-                GenericValue workEffort = (GenericValue) we.next();
-                GenericValue workOrderItemFulfillment = delegator.makeValue("WorkOrderItemFulfillment");
-                // find fixed asset supplied on the workeffort map
-                GenericValue fixedAsset = null;
-                Debug.logInfo("find the fixedAsset", module);
-                try {
-                    fixedAsset =
-                            delegator.findByPrimaryKey("FixedAsset",
-                                    UtilMisc.toMap("fixedAssetId", workEffort.get("fixedAssetId")));
-                } catch (GenericEntityException e) {
-                    return ServiceUtil.returnError(UtilProperties.getMessage(resource_error,
-                            "OrderFixedAssetNotFoundFixedAssetId",
-                            UtilMisc.toMap("fixedAssetId", workEffort.get("fixedAssetId")), locale));
-                }
-                if (fixedAsset == null) {
-                    return ServiceUtil.returnError(UtilProperties.getMessage(resource_error,
-                            "OrderFixedAssetNotFoundFixedAssetId",
-                            UtilMisc.toMap("fixedAssetId", workEffort.get("fixedAssetId")), locale));
-                }
-                // see if this fixed asset has a calendar, when no create one and attach to fixed asset
-                Debug.logInfo("find the techdatacalendar", module);
-                GenericValue techDataCalendar = null;
-                try {
-                    techDataCalendar = fixedAsset.getRelatedOne("TechDataCalendar");
-                } catch (GenericEntityException e) {
-                    Debug.logInfo(
-                            "TechData calendar does not exist yet so create for fixedAsset: "
-                                    + fixedAsset.get("fixedAssetId"), module);
-                }
-                if (techDataCalendar == null) {
-                    Iterator fai = tempList.iterator();
-                    while (fai.hasNext()) {
-                        GenericValue currentValue = (GenericValue) fai.next();
-                        if ("FixedAsset".equals(currentValue.getEntityName())
-                                && currentValue.getString("fixedAssetId").equals(workEffort.getString("fixedAssetId"))) {
-                            fixedAsset = currentValue;
-                            break;
-                        }
-                    }
-                    Iterator tdci = tempList.iterator();
-                    while (tdci.hasNext()) {
-                        GenericValue currentValue = (GenericValue) tdci.next();
-                        if ("TechDataCalendar".equals(currentValue.getEntityName())
-                                && currentValue.getString("calendarId").equals(fixedAsset.getString("calendarId"))) {
-                            techDataCalendar = currentValue;
-                            break;
-                        }
-                    }
-                }
-                if (techDataCalendar == null) {
-                    techDataCalendar = delegator.makeValue("TechDataCalendar");
-                    Debug.logInfo("create techdata calendar because it does not exist", module);
-                    String calendarId = delegator.getNextSeqId("TechDataCalendar");
-                    techDataCalendar.set("calendarId", calendarId);
-                    tempList.add(techDataCalendar);
-                    Debug.logInfo("update fixed Asset", module);
-                    fixedAsset.set("calendarId", calendarId);
-                    tempList.add(fixedAsset);
-                }
-                // then create the workEffort and the workOrderItemFulfillment to connect to the order and orderItem
-                workOrderItemFulfillment.set("orderItemSeqId", workEffort.get("workEffortId").toString()); // orderItemSeqNo
-                // is stored
-                // here so save
-                // first
-                // workeffort
-                String workEffortId = delegator.getNextSeqId("WorkEffort"); // find next available workEffortId
-                workEffort.set("workEffortId", workEffortId);
-                workEffort.set("workEffortTypeId", "ASSET_USAGE");
-                toBeStored.add(workEffort); // store workeffort before workOrderItemFulfillment because of workEffortId
-                // key
-                // constraint
-                // workOrderItemFulfillment
-                workOrderItemFulfillment.set("workEffortId", workEffortId);
-                workOrderItemFulfillment.set("orderId", orderId);
-                toBeStored.add(workOrderItemFulfillment);
-                // Debug.logInfo("Workeffort "+ workEffortId + " created for asset " + workEffort.get("fixedAssetId") +
-                // " and order "+ workOrderItemFulfillment.get("orderId") + "/" +
-                // workOrderItemFulfillment.get("orderItemSeqId") + " created", module);
-                //
-                // now create the TechDataExcDay, when they do not exist, create otherwise update the capacity values
-                // please note that calendarId is the same for (TechData)Calendar, CalendarExcDay and CalendarExWeek
-                Timestamp estimatedStartDate = workEffort.getTimestamp("estimatedStartDate");
-                Timestamp estimatedCompletionDate = workEffort.getTimestamp("estimatedCompletionDate");
-                long dayCount = (estimatedCompletionDate.getTime() - estimatedStartDate.getTime()) / 86400000;
-                while (--dayCount >= 0) {
-                    GenericValue techDataCalendarExcDay = null;
-                    // find an existing Day exception record
-                    Timestamp exceptionDateStartTime =
-                            UtilDateTime.getDayStart(new Timestamp(estimatedStartDate.getTime()), (int) dayCount);
-                    try {
-                        techDataCalendarExcDay =
-                                delegator.findByPrimaryKey("TechDataCalendarExcDay", UtilMisc.toMap("calendarId",
-                                        fixedAsset.get("calendarId"), "exceptionDateStartTime", exceptionDateStartTime));
-                    } catch (GenericEntityException e) {
-                        Debug.logInfo(" techData excday record not found so creating........", module);
-                    }
-                    if (techDataCalendarExcDay == null) {
-                        Iterator tdcedi = tempList.iterator();
-                        while (tdcedi.hasNext()) {
-                            GenericValue currentValue = (GenericValue) tdcedi.next();
-                            if ("TechDataCalendarExcDay".equals(currentValue.getEntityName())
-                                    && currentValue.getString("calendarId").equals(fixedAsset.getString("calendarId"))
-                                    && currentValue.getTimestamp("exceptionDateStartTime").equals(exceptionDateStartTime)) {
-                                techDataCalendarExcDay = currentValue;
-                                break;
-                            }
-                        }
-                    }
-                    if (techDataCalendarExcDay == null) {
-                        techDataCalendarExcDay = delegator.makeValue("TechDataCalendarExcDay");
-                        techDataCalendarExcDay.set("calendarId", fixedAsset.get("calendarId"));
-                        techDataCalendarExcDay.set("exceptionDateStartTime", exceptionDateStartTime);
-                        techDataCalendarExcDay.set("usedCapacity", BigDecimal.ZERO); // initialise to zero
-                        techDataCalendarExcDay.set("exceptionCapacity", fixedAsset.getBigDecimal("productionCapacity"));
-                        // Debug.logInfo(" techData excday record not found creating for calendarId: " +
-                        // techDataCalendarExcDay.getString("calendarId") +
-                        // " and date: " + exceptionDateStartTime.toString(), module);
-                    }
-                    // add the quantity to the quantity on the date record
-                    BigDecimal newUsedCapacity =
-                            techDataCalendarExcDay.getBigDecimal("usedCapacity").add(
-                                    workEffort.getBigDecimal("quantityToProduce"));
-                    // check to see if the requested quantity is available on the requested day but only when the
-                    // maximum
-                    // capacity is set on the fixed asset
-                    if (fixedAsset.get("productionCapacity") != null) {
-                        // Debug.logInfo("see if maximum not reached, available:  " +
-                        // techDataCalendarExcDay.getString("exceptionCapacity") +
-                        // " already allocated: " + techDataCalendarExcDay.getString("usedCapacity") +
-                        // " Requested: " + workEffort.getString("quantityToProduce"), module);
-                        if (newUsedCapacity.compareTo(techDataCalendarExcDay.getBigDecimal("exceptionCapacity")) > 0) {
-                            String errMsg =
-                                    "ERROR: fixed_Asset_sold_out AssetId: " + workEffort.get("fixedAssetId") + " on date: "
-                                            + techDataCalendarExcDay.getString("exceptionDateStartTime");
-                            Debug.logError(errMsg, module);
-                            errorMessages.add(errMsg);
-                            continue;
-                        }
-                    }
-                    techDataCalendarExcDay.set("usedCapacity", newUsedCapacity);
-                    tempList.add(techDataCalendarExcDay);
-                    // Debug.logInfo("Update success CalendarID: " + techDataCalendarExcDay.get("calendarId").toString()
-                    // +
-                    // " and for date: " + techDataCalendarExcDay.get("exceptionDateStartTime").toString() +
-                    // " and for quantity: " + techDataCalendarExcDay.getDouble("usedCapacity").toString(), module);
-                }
-            }
-            if (tempList.size() > 0) {
-                toBeStored.addAll(tempList);
-            }
-        }
-        if (errorMessages.size() > 0) {
-            return ServiceUtil.returnError(errorMessages);
-        }
-
-        // set the orderId on all adjustments; this list will include order and
         // item adjustments...
         if (UtilValidate.isNotEmpty(orderAdjustments)) {
             Iterator iter = orderAdjustments.iterator();
@@ -1200,6 +1036,30 @@ public class OrderServices {
 
         try {
             // store line items, etc so that they will be there for the foreign key checks
+
+            PatientInfo patientInfo = (PatientInfo)context.get("patientDetails");
+            if(patientInfo!=null){
+                Map presciptionData = UtilMisc.toMap("orderId", orderId, "visitId", patientInfo.getVisitId(), "clinicId", patientInfo.getClinicId(),
+                        "afyaId", patientInfo.getAfyaId(), "patientFirstName", patientInfo.getFirstName(), "patientLastName", patientInfo.getLastName(),
+                        "visitDate", UtilDateTime.toSqlDate(patientInfo.getVisitDate()),
+                        "doctorName",patientInfo.getDoctorName(),
+                        "clinicName",patientInfo.getClinicName(),
+                        "patientType", patientInfo.getPatientType(),
+                        "mobileNumber", patientInfo.getMobile());
+                GenericValue genericValue = delegator.makeValidValue("OrderRxHeader", presciptionData);
+                toBeStored.add(genericValue);
+            }
+
+            if (context.get("grandTotal") != null) {
+                BigDecimal grandTotal = (BigDecimal)context.get("grandTotal");
+                String paymentPrefId = delegator.getNextSeqId("OrderPaymentPreference");
+                Map paymentPreference = UtilMisc.toMap("orderId", orderId, "orderPaymentPreferenceId",paymentPrefId,
+                        "paymentMethodTypeId",patientInfo.getPatientType(),
+                        "maxAmount",grandTotal,"statusId","PAYMENT_NOT_RECEIVED");
+                GenericValue genericValue = delegator.makeValidValue("OrderPaymentPreference", paymentPreference);
+                toBeStored.add(genericValue);
+
+            }
             delegator.storeAll(toBeStored);
 
             // START inventory reservation

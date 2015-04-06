@@ -747,7 +747,8 @@ public class CheckOutEvents {
 		ShoppingCart cart = (ShoppingCart) request.getSession().getAttribute("shoppingCart");
 		Delegator delegator = (Delegator) request.getAttribute("delegator");
 		LocalDispatcher dispatcher = (LocalDispatcher) request.getAttribute("dispatcher");
-		if (cart.getOrderName() == null || UtilValidate.isEmpty(cart.getOrderName().trim())) {
+
+		/*if (cart.getOrderName() == null || UtilValidate.isEmpty(cart.getOrderName().trim())) {
 			request.setAttribute("_ERROR_MESSAGE_", "Order Name cannot be blank.");
 			return "error";
 		}
@@ -755,7 +756,7 @@ public class CheckOutEvents {
 			request.setAttribute("_ERROR_MESSAGE_", "Delivery Date cannot be less than Order Date.");
 			return "error";
 		}
-
+*/
 		Map paramMap = UtilHttp.getParameterMap(request);
 		Boolean offlinePayments;
 		String shippingContactMechId = null;

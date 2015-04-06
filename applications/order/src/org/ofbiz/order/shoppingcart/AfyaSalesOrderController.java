@@ -45,58 +45,50 @@ public class AfyaSalesOrderController {
 
             LocalDispatcher dispatcher = (LocalDispatcher) request.getAttribute("dispatcher");
             Delegator delegator = (GenericDelegator) request.getAttribute("delegator");
-
-            String tenantId=request.getParameter("tenantId");
-            String delegatorName = delegator.getDelegatorBaseName() + "#" + tenantId;
-            try {
-                // after this line the delegator is replaced with the new
-                // per-tenant delegator
-                delegator = DelegatorFactory.getDelegator(delegatorName);
-                dispatcher = ContextFilter.makeWebappDispatcher(request.getServletContext(), delegator);
-            } catch (Exception e) {
-
-            }
-
             Locale locale = UtilHttp.getLocale(request);
             String currencyUom = UtilProperties.getPropertyValue(generalPropertiesFiles, currencyPropName);
             String productStoreId = UtilProperties.getPropertyValue(generalPropertiesFiles, PRODUCT_STORE_ID);
-            String facilityId = UtilProperties.getPropertyValue(generalPropertiesFiles, FACILITY_ID);
-            String destination = UtilProperties.getPropertyValue(generalPropertiesFiles, SHIPPING_LOC_ID);
 
             ShoppingCart cart = new org.ofbiz.order.shoppingcart.ShoppingCart(delegator, productStoreId, locale, currencyUom);
             GenericValue userLogin = delegator.findOne("UserLogin", true, "userLoginId", "system");
 
             cart.setOrderType("SALES_ORDER");
             cart.setUserLogin(userLogin, dispatcher);
-            cart.setProductStoreId(productStoreId);
-
-            cart.setOrderPartyId(CUSTOMER_PARTY_ID);
+            cart.setDefaultCheckoutOptions(dispatcher);
 
             addItemsToCart(dispatcher, cart, prescription.getRows());
-            cart.setDefaultCheckoutOptions(dispatcher);
+            String facilityId = UtilProperties.getPropertyValue(generalPropertiesFiles, FACILITY_ID);
+            String destination = UtilProperties.getPropertyValue(generalPropertiesFiles, SHIPPING_LOC_ID);
+            cart.setPlacingCustomerPartyId(CUSTOMER_PARTY_ID);
+            cart.setBillToCustomerPartyId(CUSTOMER_PARTY_ID);
+            cart.setShipToCustomerPartyId(CUSTOMER_PARTY_ID);
+            cart.setEndUserCustomerPartyId(CUSTOMER_PARTY_ID);
             cart.setChannelType("AFYA_SALES_CHANNEL");
             cart.setShipmentMethodTypeId("PICKUP");
             cart.setCarrierPartyId("_NA_");
             cart.setShippingOriginContactMechId(1, destination);
             cart.setBillFromVendorPartyId("Company");
             cart.setFacilityId(facilityId);
-            cart.setPlacingCustomerPartyId(CUSTOMER_PARTY_ID);
-            cart.setBillToCustomerPartyId(CUSTOMER_PARTY_ID);
-            cart.setShipToCustomerPartyId(CUSTOMER_PARTY_ID);
-            cart.setEndUserCustomerPartyId(CUSTOMER_PARTY_ID);
+            cart.setOrderPartyId(CUSTOMER_PARTY_ID);
+
+            PatientInfo patientInfo = new PatientInfo();
+            patientInfo.setAfyaId(prescription.getAfyaId());
+            patientInfo.setLastName(prescription.getLastName());
+            patientInfo.setFirstName(prescription.getFirstName());
+            patientInfo.setMobile(prescription.getMobile());
+            patientInfo.setClinicId(prescription.getClinicId());
+            patientInfo.setClinicName(prescription.getClinicName());
+            patientInfo.setDoctorName(prescription.getDoctorName());
+            patientInfo.setVisitDate(prescription.getVisitDate());
+            patientInfo.setVisitId(prescription.getVisitId());
+            patientInfo.setPatientType(prescription.getPatientType());
+            patientInfo.setAddress(prescription.getAddress());
+            cart.setPatientInfo(patientInfo);
 
 
             CheckOutHelper checkOutHelper = new CheckOutHelper(dispatcher, dispatcher.getDelegator(), cart);
             java.util.Map orderCreate = checkOutHelper.createOrder(userLogin);
             String orderId = (String) orderCreate.get("orderId");
-
-            Map presciptionData = UtilMisc.toMap("orderId", orderId, "visitId", prescription.getVisitId(), "clinicId", prescription.getClinicId(),
-                    "afyaId", prescription.getAfyaId(), "patientFirstName", prescription.getFirstName(), "patientLastName", prescription.getLastName(),
-                    "visitDate", UtilDateTime.toSqlDate(prescription.getVisitDate()), "patientType", prescription.getPatientType(),
-                    "mobileNumber", prescription.getMobile());
-            GenericValue genericValue = delegator.makeValidValue("OrderRxHeader",presciptionData);
-            delegator.create(genericValue);
-
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -162,6 +154,15 @@ public class AfyaSalesOrderController {
         private String patientType;
         private String clinicName;
         private String doctorName;
+        private String address;
+
+        public String getAddress() {
+            return address;
+        }
+
+        public void setAddress(String address) {
+            this.address = address;
+        }
 
         public String getClinicName() {
             return clinicName;
@@ -250,6 +251,24 @@ public class AfyaSalesOrderController {
         public void setMobile(String mobile) {
             this.mobile = mobile;
         }
+
+        @Override
+        public String toString() {
+            return "Prescription{" +
+                    "clinicId='" + clinicId + '\'' +
+                    ", afyaId='" + afyaId + '\'' +
+                    ", rows=" + rows +
+                    ", visitId='" + visitId + '\'' +
+                    ", visitDate=" + visitDate +
+                    ", firstName='" + firstName + '\'' +
+                    ", lastName='" + lastName + '\'' +
+                    ", mobile='" + mobile + '\'' +
+                    ", patientType='" + patientType + '\'' +
+                    ", clinicName='" + clinicName + '\'' +
+                    ", doctorName='" + doctorName + '\'' +
+                    ", address='" + address + '\'' +
+                    '}';
+        }
     }
 
     static class LineItem {
@@ -297,6 +316,17 @@ public class AfyaSalesOrderController {
 
         public void setHomeService(boolean homeService) {
             this.homeService = homeService;
+        }
+
+        @Override
+        public String toString() {
+            return "LineItem{" +
+                    "tradeName='" + tradeName + '\'' +
+                    ", quantity=" + quantity +
+                    ", details='" + details + '\'' +
+                    ", homeService=" + homeService +
+                    ", genericName='" + genericName + '\'' +
+                    '}';
         }
     }
 }

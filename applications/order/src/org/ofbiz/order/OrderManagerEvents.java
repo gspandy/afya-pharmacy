@@ -203,7 +203,7 @@ public class OrderManagerEvents {
                     paymentPreference.set("maxAmount", paymentTypeAmount);
                     paymentPreference.set("statusId", "PAYMENT_RECEIVED");
                     paymentPreference.set("orderId", orderId);
-                    paymentPreference.set("createdDate", UtilDateTime.nowTimestamp());
+//                    paymentPreference.set("createdDate", UtilDateTime.nowTimestamp());
                     if (userLogin != null) {
                         paymentPreference.set("createdByUserLogin", userLogin.getString("userLoginId"));
                     }

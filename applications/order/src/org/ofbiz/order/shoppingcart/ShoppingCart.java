@@ -101,9 +101,15 @@ public class ShoppingCart implements Iterable<ShoppingCartItem>, Serializable {
     private final Map itemGroupByNumberMap = FastMap.newInstance();
     private final List paymentInfo = FastList.newInstance();
     private final List<CartShipInfo> shipInfo = FastList.<CartShipInfo> newInstance();
-    private final Map<String, Object> attributes = FastMap.newInstance(); // user
-                                                                          // defined
-                                                                          // attributes
+    private final Map<String, Object> attributes = FastMap.newInstance();
+
+    private static final String PRODUCT_STORE_ID = "store.id.default";
+    private static final String generalPropertiesFiles = "general.properties";
+    private static final String currencyPropName = "currency.uom.id.default";
+    private static final String FACILITY_ID = "facility.id.default";
+    private static final String CUSTOMER_PARTY_ID = "10000";
+    private static final String SHIPPING_LOC_ID = "default.customer.contact.mech.default";
+
     // Lists of internal/public notes: when the order is stored they are
     // transformed into OrderHeaderNotes
     private final List internalOrderNotes = FastList.newInstance(); // internal
@@ -208,6 +214,7 @@ public class ShoppingCart implements Iterable<ShoppingCartItem>, Serializable {
 
     private Boolean ignoreTaxes;
     private String shippingOriginContactMechId;
+    private PatientInfo patientInfo;
 
     /** don't allow empty constructor */
     protected ShoppingCart() {
@@ -4545,7 +4552,7 @@ public class ShoppingCart implements Iterable<ShoppingCartItem>, Serializable {
         result.put("orderItemPriceInfos", this.makeAllOrderItemPriceInfos());
         result.put("orderProductPromoUses", this.makeProductPromoUses());
         result.put("orderProductPromoCodes", this.getProductPromoCodesEntered());
-
+        result.put("patientDetails", this.getPatientInfo());
         result.put("orderAttributes", this.makeAllOrderAttributes());
         result.put("orderItemAttributes", this.makeAllOrderItemAttributes());
         result.put("orderContactMechs", this.makeAllOrderContactMechs());
@@ -4918,6 +4925,14 @@ public class ShoppingCart implements Iterable<ShoppingCartItem>, Serializable {
 
     public String getShippingOriginContactMechId() {
         return this.shippingOriginContactMechId;
+    }
+
+    public void setPatientInfo(PatientInfo patientInfo) {
+        this.patientInfo = patientInfo;
+    }
+
+    public PatientInfo getPatientInfo() {
+        return patientInfo;
     }
 
     static class BasePriceOrderComparator implements Comparator, Serializable {

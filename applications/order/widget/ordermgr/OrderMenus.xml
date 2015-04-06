@@ -90,7 +90,7 @@ under the License.
             <menu-item name="salesOrder" title="Sales Orders">
                 <link target="findorders?type=SALES_ORDER"/>
                 <menu-item name="createSalesOrder" title="Create Sales Order">
-                    <link target="orderentry?type=SALES_ORDER"/>
+                    <link target="initorderentry?orderMode=SALES_ORDER"/>
                 </menu-item>
                 <menu-item name="findSalesOrder" title="Find Sales Orders">
                     <condition>

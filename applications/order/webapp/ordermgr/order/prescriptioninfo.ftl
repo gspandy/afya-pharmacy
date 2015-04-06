@@ -17,6 +17,7 @@ specific language governing permissions and limitations
 under the License.
 -->
 
+<#if orderRxHeader?has_content>
 <div class="screenlet">
     <div class="screenlet-title-bar">
         <ul>
@@ -29,17 +30,17 @@ under the License.
             <tr>
                 <td align="right" valign="top" width="19%"><span class="label">Patient First Name</span></td>
                 <td width="1%">&nbsp;</td>
-                <td valign="top" width="80%">${orderRxHeader.patientFirstName}</td>
+                <td valign="top" width="80%">${orderRxHeader.patientFirstName?if_exists}</td>
             </tr>
             <tr>
                 <td align="right" valign="top" width="19%"><span class="label">Patient Last Name</span></td>
                 <td width="1%">&nbsp;</td>
-                <td valign="top" width="80%">${orderRxHeader.patientLastName}</td>
+                <td valign="top" width="80%">${orderRxHeader.patientLastName?if_exists}</td>
             </tr>
             <tr>
                 <td align="right" valign="top" width="19%"><span class="label">Mobile</span></td>
                 <td width="1%">&nbsp;</td>
-                <td valign="top" width="80%">${orderRxHeader.mobileNumber}</td>
+                <td valign="top" width="80%">${orderRxHeader.mobileNumber?if_exists}</td>
             </tr>
             <tr>
                 <td align="right" valign="top" width="19%"><span class="label">Visit ID</span></td>
@@ -54,7 +55,7 @@ under the License.
             <tr>
                 <td align="right" valign="top" width="19%"><span class="label">Afya ID</span></td>
                 <td width="1%">&nbsp;</td>
-                <td valign="top" width="80%">${orderRxHeader.afyaId}</td>
+                <td valign="top" width="80%">${orderRxHeader.afyaId?if_exists}</td>
             </tr>
             <tr>
                 <td align="right" valign="top" width="19%"><span class="label">Clinic Name</span></td>
@@ -74,7 +75,7 @@ under the License.
         </table>
     </div>
 </div>
-
+</#if>
 
 <div class="screenlet">
     <div class="screenlet-title-bar">

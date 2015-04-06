@@ -59,14 +59,13 @@ public class PaymentWorker {
             Boolean showOld) {
         List<Map<String, GenericValue>> paymentMethodValueMaps = FastList.newInstance();
         try {
-            List<GenericValue> paymentMethods = delegator.findByAnd("PaymentMethod", UtilMisc.toMap("partyId", partyId));
+            List<GenericValue> paymentMethods = delegator.findList("PaymentMethod",null,null,null,null,false);
 
             if (!showOld)
                 paymentMethods = EntityUtil.filterByDate(paymentMethods, true);
 
             for (GenericValue paymentMethod : paymentMethods) {
                 Map<String, GenericValue> valueMap = FastMap.newInstance();
-
                 paymentMethodValueMaps.add(valueMap);
                 valueMap.put("paymentMethod", paymentMethod);
                 if ("CREDIT_CARD".equals(paymentMethod.getString("paymentMethodTypeId"))) {

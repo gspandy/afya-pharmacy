@@ -36,9 +36,11 @@ under the License.
         </#if>
       <#else>
         <#if shoppingCart.size() = 0>
-          <li class="disabled">${uiLabelMap.OrderFinalizeOrder}</li>
+          <#--<li class="disabled">${uiLabelMap.OrderFinalizeOrder}</li>-->
+            <li class="disabled"><a href="<@ofbizUrl>patientinfo</@ofbizUrl>">Patient Info</a></li>
         <#else>
-          <li><a href="<@ofbizUrl>quickcheckout</@ofbizUrl>">${uiLabelMap.OrderQuickFinalizeOrder}</a></li>
+            <li><a href="<@ofbizUrl>patientinfo</@ofbizUrl>">Patient Info</a></li>
+            <#--<li><a href="<@ofbizUrl>calcTax</@ofbizUrl>">${uiLabelMap.OrderQuickFinalizeOrder}</a></li>-->
         </#if>
       </#if>
 

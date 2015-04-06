@@ -132,6 +132,7 @@ under the License.
         <attribute name="orderAttributes" type="List" mode="IN" optional="true"/>
         <attribute name="orderPaymentInfo" type="List" mode="IN" optional="true"/>
         <attribute name="orderContactMechs" type="List" mode="IN" optional="true"/>
+        <attribute name="patientDetails" type="org.ofbiz.order.shoppingcart.PatientInfo" mode="IN" optional="true"/>
         <attribute name="orderItemContactMechs" type="List" mode="IN" optional="true"/>
         <attribute name="orderItemPriceInfos" type="List" mode="IN" optional="true"/>
         <attribute name="orderProductPromoUses" type="List" mode="IN" optional="true"/>

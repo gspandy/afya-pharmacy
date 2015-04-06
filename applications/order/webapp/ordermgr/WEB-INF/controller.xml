@@ -384,6 +384,17 @@
 		<response name="advanceOrderEntry" type="request" value="orderentry" />
 		<response name="error" type="view" value="checkinits" />
 	</request-map>
+	<request-map uri="patientinfo">
+		<security https="true" auth="true" />
+		<response name="success" type="view" value="patientinfo" />
+		<response name="error" type="view" value="patientinfo" />
+	</request-map>
+	<request-map uri="savePatientInfo">
+		<security https="true" auth="true" />
+		<event type="java" path="org.ofbiz.order.shoppingcart.ShoppingCartEvents" invoke="savePatientInfo" />
+		<response name="success" type="request" value="calcTax" />
+		<response name="error" type="view" value="patientinfo" />
+	</request-map>
 	<request-map uri="checkinits">
 		<security https="true" auth="true" />
 		<response name="success" type="view" value="checkinits" />
@@ -2315,6 +2326,8 @@
 	<view-map name="survey" type="screen" page="component://order/widget/ordermgr/OrderEntryCartScreens.xml#survey" />
 	<view-map name="showcart" type="screen" page="component://order/widget/ordermgr/OrderEntryCartScreens.xml#ShowCart" />
 	<view-map name="checkinits" type="screen" page="component://order/widget/ordermgr/OrderEntryScreens.xml#CheckInits" />
+	<view-map name="patientinfo" type="screen" page="component://order/widget/ordermgr/OrderEntryScreens.xml#PatientInfo" />
+
 	<view-map name="orderagreements" type="screen" page="component://order/widget/ordermgr/OrderEntryScreens.xml#OrderAgreements" />
 	<view-map name="viewshoppinglists" type="screen" page="component://order/widget/ordermgr/OrderEntryScreens.xml#ViewShoppingLists" />
 	<view-map name="addfromshoppinglist" type="screen" page="component://order/widget/ordermgr/OrderEntryScreens.xml#AddFromShoppingList" />
