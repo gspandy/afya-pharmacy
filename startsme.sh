@@ -19,7 +19,7 @@
 #####################################################################
 
 # shutdown settings
-ADMIN_PORT=10530
+ADMIN_PORT=10537
 ADMIN_KEY=so3du5kasd5dn
 
 # console log file
