@@ -5195,6 +5195,87 @@ public class OrderServices {
         return ServiceUtil.returnSuccess();
     }
 
+    public static Map editOrderPaymentPreference(DispatchContext dctx, Map context) {
+        Delegator delegator = dctx.getDelegator();
+        LocalDispatcher dispatcher = dctx.getDispatcher();
+        GenericValue userLogin = (GenericValue) context.get("userLogin");
+        Locale locale = (Locale) context.get("locale");
+
+        String orderId = (String) context.get("orderId");
+        String orderPaymentPreferenceId = (String) context.get("orderPaymentPreferenceId");
+        String checkOutPaymentId = (String) context.get("checkOutPaymentId");
+        String statusId = (String) context.get("statusId");
+        String amountReceivedStr = (String) context.get("receivedAmount");
+        //String receivedAmtRefNum = (String) context.get("receivedAmtRefNum");
+        //String creditCardNumer = (String) context.get("creditCardNumer");
+        
+        try {
+            GenericValue opp =
+                    delegator.findByPrimaryKey("OrderPaymentPreference",
+                            UtilMisc.toMap("orderPaymentPreferenceId", orderPaymentPreferenceId));
+            String paymentMethodId = null;
+            String paymentMethodTypeId = null;
+
+            if (!UtilValidate.isEmpty(amountReceivedStr)) {
+                BigDecimal amountReceived = BigDecimal.ZERO;
+                try {
+                    amountReceived = (BigDecimal) ObjectType.simpleTypeConvert(amountReceivedStr, "BigDecimal", null, locale);
+                } catch (GeneralException e) {
+                    String errorMessage =
+                            UtilProperties.getMessage(resource_error, "OrderProblemsPaymentParsingAmount",
+                                    UtilMisc.toMap("orderId", orderId), locale);
+                    Debug.logError(errorMessage, module);
+                    return ServiceUtil.returnError(errorMessage);
+                }
+                opp.set("amountReceived", amountReceived);
+            } else {
+            	opp.set("amountReceived", BigDecimal.ZERO);
+            }
+
+            // The checkOutPaymentId is either a paymentMethodId or paymentMethodTypeId
+            // the original method did a "\d+" regexp to decide which is the case, this version is more explicit with
+            // its
+            // lookup of PaymentMethodType
+            if (checkOutPaymentId != null) {
+                List paymentMethodTypes = delegator.findList("PaymentMethodType", null, null, null, null, true);
+                for (Iterator iter = paymentMethodTypes.iterator(); iter.hasNext(); ) {
+                    GenericValue type = (GenericValue) iter.next();
+                    if (type.get("paymentMethodTypeId").equals(checkOutPaymentId)) {
+                        paymentMethodTypeId = (String) type.get("paymentMethodTypeId");
+                        break;
+                    }
+                }
+                if (paymentMethodTypeId == null) {
+                    GenericValue method =
+                            delegator.findByPrimaryKey("PaymentMethod",
+                                    UtilMisc.toMap("paymentMethodTypeId", paymentMethodTypeId));
+                    paymentMethodId = checkOutPaymentId;
+                    paymentMethodTypeId = (String) method.get("paymentMethodTypeId");
+                }
+            }
+
+            Map results = ServiceUtil.returnSuccess();
+            if (UtilValidate.isNotEmpty(statusId) && statusId.equalsIgnoreCase("PAYMENT_NOT_RECEIVED")) {
+                opp.set("statusId", "PAYMENT_NOT_RECEIVED");
+                opp.set("amountReceived", BigDecimal.ZERO);
+                opp.set("receivedAmtRefNum", null);
+                opp.store();
+                results.put("orderPaymentPreferenceId", opp.get("orderPaymentPreferenceId"));
+            } else {
+                opp.set("statusId", "PAYMENT_RECEIVED");
+                opp.set("paymentMethodTypeId", paymentMethodTypeId);
+                opp.setNonPKFields(context);
+                opp.store();
+                results.put("orderPaymentPreferenceId", opp.get("orderPaymentPreferenceId"));
+            }
+
+            return results;
+        } catch (GenericEntityException e) {
+            Debug.logError(e, module);
+            return ServiceUtil.returnError(e.getMessage());
+        }
+    }
+
     public static Map updateOrderPaymentPreference(DispatchContext dctx, Map context) {
         Delegator delegator = dctx.getDelegator();
         LocalDispatcher dispatcher = dctx.getDispatcher();

@@ -1800,6 +1800,14 @@
 		</response>
 	</request-map>
 
+	<request-map uri="editOrderPaymentPreference">
+		<security https="true" auth="true" />
+		<event type="service" invoke="editOrderPaymentPreference" />
+		<response name="success" type="request-redirect" value="orderview">
+			<redirect-parameter name="orderId" />
+		</response>
+		<response name="error" type="view" value="orderview" />
+	</request-map>
 	<request-map uri="updateOrderPaymentPreference">
 		<security https="true" auth="true" />
 		<event type="service" invoke="updateOrderPaymentPreference" />

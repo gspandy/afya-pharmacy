@@ -270,7 +270,7 @@ ${cardNumberDisplay?if_exists}
                         </div>
                     </td>
                     <td width="1%">&nbsp;</td>
-                    <#if paymentMethodType.paymentMethodTypeId=='CASH' &&  orderPaymentPreference.statusId!='PAYMENT_NOT_RECEIVED'>
+                    <#if (paymentMethodType.paymentMethodTypeId=='CASH' || paymentMethodType.paymentMethodTypeId=='CREDIT_CARD') &&  orderPaymentPreference.statusId!='PAYMENT_NOT_RECEIVED'>
                         <td width="60%">
                             <div>
                                 <#if orderPaymentPreference.maxAmount?has_content>
@@ -285,10 +285,29 @@ ${cardNumberDisplay?if_exists}
                         </td>
                     <#else>
                         <td align="right" width="60%">
-                            <a href="<@ofbizUrl>receivepayment?${paramString}</@ofbizUrl>" class="buttontext">${uiLabelMap.AccountingReceivePayment}</a>
+                            <#if orderPaymentPreference.orderPaymentPreferenceId?has_content>
+                                <a href="<@ofbizUrl>receivepayment?${paramString}&amp;orderPaymentPreferenceId=${orderPaymentPreference.orderPaymentPreferenceId}</@ofbizUrl>" class="buttontext">${uiLabelMap.AccountingReceivePayment}</a>
+                            <#else>
+                                <a href="<@ofbizUrl>receivepayment?${paramString}</@ofbizUrl>" class="buttontext">${uiLabelMap.AccountingReceivePayment}</a>
+                            </#if>
                         </td>
                     </#if>
                     <td width="10%">
+                        <#if (!orderHeader.statusId.equals("ORDER_COMPLETED")) && !(orderHeader.statusId.equals("ORDER_REJECTED")) && !(orderHeader.statusId.equals("ORDER_CANCELLED"))>
+                            <#if orderPaymentPreference.statusId != "PAYMENT_SETTLED">
+                                <div>
+                                    <a href="javascript:document.CancelOrderPaymentPreference_${orderPaymentPreference.orderPaymentPreferenceId}.submit()" class="buttontext">${uiLabelMap.CommonCancel}</a>
+                                    <form name="CancelOrderPaymentPreference_${orderPaymentPreference.orderPaymentPreferenceId}" method="post" action="<@ofbizUrl>editOrderPaymentPreference</@ofbizUrl>">
+                                        <input type="hidden" name="orderId" value="${orderId}" />
+                                        <input type="hidden" name="orderPaymentPreferenceId" value="${orderPaymentPreference.orderPaymentPreferenceId}" />
+                                        <input type="hidden" name="statusId" value="PAYMENT_NOT_RECEIVED" />
+                                        <input type="hidden" name="checkOutPaymentId" value="${paymentMethod.paymentMethodTypeId?if_exists}" />
+                                    </form>
+                                </div>
+                            </#if>
+                        </#if>
+                    </td>
+                    <#-- <td width="10%">
                         <#if (!orderHeader.statusId.equals("ORDER_COMPLETED")) && !(orderHeader.statusId.equals("ORDER_REJECTED")) && !(orderHeader.statusId.equals("ORDER_CANCELLED"))>
                             <#if orderPaymentPreference.statusId != "PAYMENT_SETTLED">
                                 <div>
@@ -302,7 +321,7 @@ ${cardNumberDisplay?if_exists}
                                 </div>
                             </#if>
                         </#if>
-                    </td>
+                    </td> -->
                 </tr>
                     <#if paymentList?has_content>
                     <tr>

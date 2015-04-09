@@ -1129,6 +1129,8 @@
 		<field name="swipedFlag" type="indicator"></field>
 		<field name="overflowFlag" type="indicator"></field>
 		<field name="maxAmount" type="currency-amount"></field>
+		<field name="amountReceived" type="currency-amount"></field>
+		<field name="receivedAmtRefNum" type="short-varchar"></field>
 		<field name="processAttempt" type="numeric"></field>
 		<field name="billingPostalCode" type="short-varchar"></field>
 		<field name="manualAuthCode" type="short-varchar"></field>

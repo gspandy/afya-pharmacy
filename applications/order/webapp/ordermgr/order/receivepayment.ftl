@@ -16,7 +16,19 @@ KIND, either express or implied.  See the License for the
 specific language governing permissions and limitations
 under the License.
 -->
-
+<script language="JavaScript" type="text/javascript">
+    function validate(selection) {
+        var paymentMode = selection.value;
+        if(paymentMode == "CREDIT_CARD") {
+            cardTitle.style.display = '';
+            refTitle.style.display = 'none';
+        }
+        if(paymentMode != "CREDIT_CARD") {
+            refTitle.style.display = '';
+            cardTitle.style.display = 'none';
+        }
+    }
+</script>
 <#if security.hasEntityPermission("ORDERMGR", "_UPDATE", session)>
 <div class="screenlet">
     <div class="screenlet-title-bar">
@@ -29,27 +41,43 @@ under the License.
       <a href="<@ofbizUrl>authview/${donePage}</@ofbizUrl>" class="buttontext">${uiLabelMap.CommonBack}</a>
       <a href="javascript:document.paysetupform.submit()" class="btn btn-success">${uiLabelMap.CommonSave}</a>
 
-      <form method="post" action="<@ofbizUrl>receiveOfflinePayments/${donePage}</@ofbizUrl>" name="paysetupform">
+      <form method="post" action="<@ofbizUrl>editOrderPaymentPreference/${donePage}</@ofbizUrl>" name="paysetupform">
         <#if requestParameters.workEffortId?exists>
             <input type="hidden" name="workEffortId" value="${requestParameters.workEffortId}" />
         </#if>
+        <#if requestParameters.orderPaymentPreferenceId?exists>
+            <input type="hidden" name="orderPaymentPreferenceId" value="${requestParameters.orderPaymentPreferenceId}" />
+        </#if>
         <table class="basic-table" cellspacing='0'>
           <tr class="header-row">
-            <td width="30%" align="right">${uiLabelMap.OrderPaymentType}</td>
+            <td width="30%" class="align-text">${uiLabelMap.OrderPaymentType}</td>
             <td width="1">&nbsp;&nbsp;&nbsp;</td>
             <td width="1">${uiLabelMap.OrderAmount}</td>
             <td width="1">&nbsp;&nbsp;&nbsp;</td>
-            <td width="70%">${uiLabelMap.OrderReference}</td>
+            <td width="70%" id="refTitle">${uiLabelMap.OrderReference}</td>
+            <td width="70%" id="cardTitle" style="display:none">Credit Card Reference Number</td>
           </tr>
-          <#list paymentMethodTypes as payType>
           <tr>
-            <td width="30%" align="right">${payType.get("description",locale)?default(payType.paymentMethodTypeId)}</td>
+            <td width="30%" class="align-text">
+              <select name="checkOutPaymentId" id="paymentMethodTypeId" onchange="javascript:validate(this);">
+                <#list paymentMethodTypes as payType>
+                  <option value="${payType.paymentMethodTypeId}">${payType.get("description",locale)?default(payType.paymentMethodTypeId)}</option>
+                </#list>
+                <#assign paymentMethodType = delegator.findOne("PaymentMethodType", {"paymentMethodTypeId" : "CREDIT_CARD"}, true)>
+                <option value="${paymentMethodType.paymentMethodTypeId}">${paymentMethodType.get("description",locale)?default(paymentMethodType.paymentMethodTypeId)}</option>
+              </select>
+            </td>
             <td width="1">&nbsp;&nbsp;&nbsp;</td>
-            <td width="1"><input type="text" size="7" name="${payType.paymentMethodTypeId}_amount" /></td>
+            <td width="1">
+              <#assign orderPaymentPreference = delegator.findOne("OrderPaymentPreference", {"orderPaymentPreferenceId" : requestParameters.orderPaymentPreferenceId}, true)>
+              <input type="text" size="15" name="receivedAmount" value="${orderPaymentPreference.maxAmount?if_exists}" readonly="true" /></td>
             <td width="1">&nbsp;&nbsp;&nbsp;</td>
-            <td width="70%"><input type="text" size="15" name="${payType.paymentMethodTypeId}_reference" /></td>
+            <td width="70%" id="reference"><input type="text" size="20" name="receivedAmtRefNum" /></td>
+            <#-- <td width="70%" id="creditCardNumber" style="display:none">
+              <#assign payType = delegator.findOne("PaymentMethodType", {"paymentMethodTypeId" : "CREDIT_CARD"}, true)>
+              <input type="text" size="15" name="creditCardNumber" /> -->
+            </td>
           </tr>
-          </#list>
         </table>
       </form>
 
