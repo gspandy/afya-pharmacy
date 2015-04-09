@@ -21,11 +21,15 @@ under the License.
       <table class="basic-table hover-bar" cellspacing='0'>
         <tr class="header-row">
           <td width="10%">${uiLabelMap.OrderOrder} #</td>
-          <td width="15%">${uiLabelMap.OrderOrderBillToParty}</td>
-          <td width="25%">${uiLabelMap.OrderProductStore}</td>
-          <td width="10%" style="text-align:right;">${uiLabelMap.CommonAmount} &nbsp;&nbsp;</td>
-          <!-- <td width="20%">${uiLabelMap.OrderTrackingCode}</td> -->
-          <td width="20%" style="text-align:center;">${uiLabelMap.CommonStatus}</td>
+          <#-- <td width="15%">${uiLabelMap.OrderOrderBillToParty}</td>
+          <td width="25%">${uiLabelMap.OrderProductStore}</td> -->
+          <td width="10%">Clinic Id</td>
+          <td width="10%">Visit Id</td>
+          <td width="15%">Visit Date</td>
+          <td width="20%">Patient Name</td>
+          <td width="20%" class="align-text">${uiLabelMap.CommonAmount} &nbsp;&nbsp;</td>
+          <#-- <td width="20%">${uiLabelMap.OrderTrackingCode}</td> -->
+          <td width="15%" style="text-align:center;">${uiLabelMap.CommonStatus}</td>
         </tr>
         <#assign alt_row = false>
         <#list orderHeaderList as orderHeader>
@@ -37,13 +41,18 @@ under the License.
             <#assign billTo = billToPartyNameResult.fullName?default("[${uiLabelMap.OrderPartyNameNotFound}]")/>
           </#if>
           <#assign productStore = orderHeader.getRelatedOneCache("ProductStore")?if_exists />
+          <#assign orderRxHeader = delegator.findOne("OrderRxHeader",true,{"orderId":orderHeader.orderId})?default({})>
           <tr<#if alt_row> class="alternate-row"</#if>>
             <#assign alt_row = !alt_row>
             <td><a href="/ordermgr/control/orderview?orderId=${orderHeader.orderId}" class="btn btn-link">${orderHeader.orderId}</a></td>
-            <td>${billTo?if_exists}</td>
-            <td><#if productStore?has_content>${productStore.storeName?default(productStore.productStoreId)}</#if></td>
-            <td style="text-align:right;"><@ofbizCurrency amount=orderHeader.grandTotal isoCode=orderHeader.currencyUom/></td>
-          <!--  <td>
+            <#-- <td>${billTo?if_exists}</td>
+            <td><#if productStore?has_content>${productStore.storeName?default(productStore.productStoreId)}</#if></td> -->
+            <td><#if orderRxHeader?has_content>${orderRxHeader.clinicId?if_exists}</#if></td>
+            <td><#if orderRxHeader?has_content>${orderRxHeader.visitId?if_exists}</#if></td>
+            <td><#if orderRxHeader?has_content>${Static["org.ofbiz.base.util.UtilDateTime"].toDateString(orderRxHeader.visitDate, "dd/MM/yyyy")}</#if></td>
+            <td><#if orderRxHeader?has_content>${orderRxHeader.patientFirstName?if_exists} ${orderRxHeader.patientLastName?if_exists}</#if></td>
+            <td class="align-text"><@ofbizCurrency amount=orderHeader.grandTotal isoCode=orderHeader.currencyUom/></td>
+            <#-- <td>
               <#assign trackingCodes = orderHeader.getRelated("TrackingCodeOrder")>
               <#list trackingCodes as trackingCode>
                 <#if trackingCode?has_content>
