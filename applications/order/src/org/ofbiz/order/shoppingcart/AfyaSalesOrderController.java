@@ -2,24 +2,24 @@ package org.ofbiz.order.shoppingcart;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import org.ofbiz.base.util.*;
-import org.ofbiz.entity.*;
+import org.ofbiz.base.util.UtilHttp;
+import org.ofbiz.base.util.UtilMisc;
+import org.ofbiz.base.util.UtilProperties;
+import org.ofbiz.entity.Delegator;
+import org.ofbiz.entity.GenericDelegator;
+import org.ofbiz.entity.GenericEntityException;
+import org.ofbiz.entity.GenericValue;
 import org.ofbiz.entity.condition.EntityCondition;
 import org.ofbiz.entity.util.EntityUtil;
 import org.ofbiz.service.LocalDispatcher;
-import org.ofbiz.webapp.control.ContextFilter;
 
-import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Created by pradyumna on 02-04-2015.
@@ -33,10 +33,9 @@ public class AfyaSalesOrderController {
     private static final String CUSTOMER_PARTY_ID = "10000";
     private static final String SHIPPING_LOC_ID = "default.customer.contact.mech.default";
 
-    public static String createSalesOrderForPrescription(HttpServletRequest request, HttpServletResponse response) {
+    public static Map createSalesOrderForPrescription(HttpServletRequest request, HttpServletResponse response) {
+        Map responseStatus = new HashMap();
         try {
-
-
             ObjectMapper mapper = new ObjectMapper();
             mapper.configure(SerializationFeature.WRITE_DATE_KEYS_AS_TIMESTAMPS, false);
             mapper.setDateFormat(new SimpleDateFormat("yyyy-MM-dd")); // 1.8 and above
@@ -84,15 +83,19 @@ public class AfyaSalesOrderController {
             patientInfo.setPatientType(prescription.getPatientType());
             patientInfo.setAddress(prescription.getAddress());
             cart.setPatientInfo(patientInfo);
-
-
             CheckOutHelper checkOutHelper = new CheckOutHelper(dispatcher, dispatcher.getDelegator(), cart);
             java.util.Map orderCreate = checkOutHelper.createOrder(userLogin);
             String orderId = (String) orderCreate.get("orderId");
+            responseStatus.put("statusCode",200);
+            responseStatus.put("orderId",orderId);
+            responseStatus.put("message","Order successfully place.");
         } catch (Exception e) {
+            responseStatus.put("statusCode",500);
+            responseStatus.put("message",e.getMessage());
             e.printStackTrace();
+            response.setStatus(500);
         }
-        return "";
+        return responseStatus;
 
     }
 

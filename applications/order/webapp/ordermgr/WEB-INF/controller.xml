@@ -2203,7 +2203,7 @@
 	<!-- Afya Prescription Requests -->
 	<request-map uri="createRxOrder">
 		<security https="true" auth="true" />
-		<event type="java" path="org.ofbiz.order.shoppingcart.AfyaSalesOrderController"
+		<event type="jsonjava" path="org.ofbiz.order.shoppingcart.AfyaSalesOrderController"
 			   invoke="createSalesOrderForPrescription" />
 		<response name="success" type="view" value="main" />
 	</request-map>

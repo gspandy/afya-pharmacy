@@ -34,7 +34,6 @@ import org.ofbiz.entity.model.ModelEntity;
 import org.ofbiz.entity.serialize.XmlSerializer;
 import org.ofbiz.entity.transaction.GenericTransactionException;
 import org.ofbiz.entity.transaction.TransactionUtil;
-import org.ofbiz.entity.util.EntityUtil;
 import org.ofbiz.security.Security;
 import org.ofbiz.security.SecurityConfigurationException;
 import org.ofbiz.security.SecurityFactory;
@@ -55,7 +54,6 @@ import javax.servlet.jsp.PageContext;
 import javax.transaction.Transaction;
 import java.math.BigInteger;
 import java.security.cert.X509Certificate;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -371,34 +369,7 @@ public class LoginWorker {
         // with that tenantId (can use any delegator for this, entity is not
         // tenant-specific)
         String tenantId = request.getParameter("tenantId");
-        
-        if(tenantId!=null)
-        	tenantId=tenantId.trim();
-        List<GenericValue> tenantGv = null;
-        if(UtilValidate.isNotEmpty(tenantId)){
-        try {
-        	 tenantGv = delegator.findByAnd("UserDefineTenant",UtilMisc.toMap("userDefineTenantId",tenantId,"disabled","N"));
-		} catch (GenericEntityException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
-        if(UtilValidate.isNotEmpty(tenantGv)){
-        	tenantId = tenantGv.get(0).getString("systemDefineTenantId");
-        }else{
-        	try {
-				tenantGv = delegator.findByAnd("UserDefineTenant",UtilMisc.toMap("systemDefineTenantId",tenantId,"disabled","N"));
-			} catch (GenericEntityException e) {
-				e.printStackTrace();
-			}
-        	if(UtilValidate.isEmpty(tenantGv)){
-        		request.setAttribute("_ERROR_MESSAGE_", "Following error occurred during login:Tenant ID  incorrect or disabled by Admin.");
-                return "error";
-        	}else{
-        		tenantId = tenantGv.get(0).getString("systemDefineTenantId");
-        	}
-        }
-        }
-        
+
         if (UtilValidate.isNotEmpty(tenantId)) {
             // see if we need to activate a tenant delegator, only do if the
             // current delegatorName has a hash symbol in it, and if the passed
@@ -413,42 +384,6 @@ public class LoginWorker {
             }
 
             if (delegatorNameHashIndex == -1 || (currentDelegatorTenantId != null && !tenantId.equals(currentDelegatorTenantId))) {
-                /*
-                 * don't require this, allow a user to authenticate inside the
-                 * tenant as long as the userLoginId and password match what is
-                 * in that tenant's database; instead just set things up below
-                 * try { List<GenericValue> tenantUserLoginList =
-                 * delegator.findList("TenantUserLogin",
-                 * EntityCondition.makeCondition(EntityOperator.AND, "tenantId",
-                 * tenantId, "userLoginId", username), null, null, null, false);
-                 * if (tenantUserLoginList != null && tenantUserLoginList.size()
-                 * > 0) { ServletContext servletContext =
-                 * session.getServletContext();
-                 * 
-                 * // if so make that tenant active, setup a new delegator and a
-                 * new dispatcher String delegatorName =
-                 * delegator.getDelegatorName() + "#" + tenantId;
-                 * 
-                 * // after this line the delegator is replaced with the new
-                 * per-tenant delegator delegator =
-                 * DelegatorFactory.getDelegator(delegatorName); dispatcher =
-                 * ContextFilter.makeWebappDispatcher(servletContext,
-                 * delegator);
-                 * 
-                 * // NOTE: these will be local for now and set in the request
-                 * and session later, after we've verified that the user
-                 * setupNewDelegatorEtc = true; } else { // not associated with
-                 * this tenant, can't login String errMsg =
-                 * UtilProperties.getMessage(resourceWebapp,
-                 * "loginevents.unable_to_login_tenant",
-                 * UtilHttp.getLocale(request));
-                 * request.setAttribute("_ERROR_MESSAGE_", errMsg); return
-                 * "error"; } } catch (GenericEntityException e) { String errMsg
-                 * = "Error checking TenantUserLogin: " + e.toString();
-                 * Debug.logError(e, errMsg, module);
-                 * request.setAttribute("_ERROR_MESSAGE_", errMsg); return
-                 * "error"; }
-                 */
 
                 ServletContext servletContext = session.getServletContext();
 
