@@ -363,15 +363,5 @@ under the License.
             </fo:table-row>
         </fo:table-body>
     </fo:table>
-    <fo:table table-layout="fixed" font-size="10pt" width="100%">
-        <fo:table-column/>
-        <fo:table-body>
-            <fo:table-row space-start="2.15in" border-width="thin">
-                <fo:table-cell>
-                    <fo:block text-align="center" font-weight="bold">High Strength, Super Quality 42.5N</fo:block>
-                </fo:table-cell>
-            </fo:table-row>
-        </fo:table-body>
-    </fo:table>
 
 </#escape>
