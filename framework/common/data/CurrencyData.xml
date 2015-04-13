@@ -19,7 +19,8 @@ under the License.
 -->
 
 <entity-engine-xml>
-    <Uom abbreviation="ZMW" description="Zambian Kwacha" uomId="ZMW" uomTypeId="CURRENCY_MEASURE"/>
-    <Uom abbreviation="USD" description="United States Dollar" uomId="USD" uomTypeId="CURRENCY_MEASURE"/>
+    <Uom abbreviation="KWD" description="Kuwaiti Dinar" uomId="KWD" uomTypeId="CURRENCY_MEASURE"/>
     <Uom abbreviation="EUR" description="Euro" uomId="EUR" uomTypeId="CURRENCY_MEASURE"/>
+    <Uom abbreviation="USD" description="United States Dollar" uomId="USD" uomTypeId="CURRENCY_MEASURE"/>
+    <Uom abbreviation="ZMW" description="Zambian Kwacha" uomId="ZMW" uomTypeId="CURRENCY_MEASURE"/>
 </entity-engine-xml>
