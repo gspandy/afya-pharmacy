@@ -26,14 +26,14 @@ under the License.
             <fo:table-cell height="70px">
               <fo:block><fo:leader></fo:leader></fo:block>
               <fo:block font-size="10pt" font-weight="bold">BANK TRANSFER DETAILS</fo:block>
-              <fo:block font-size="9pt">BENEFICIARY: ZAMBEZI PORTLAND LTD</fo:block>
+              <#-- <fo:block font-size="9pt">BENEFICIARY: ZAMBEZI PORTLAND LTD</fo:block>
               <fo:block font-size="9pt">BANK: FINANCE BANK (Z) LTD</fo:block>
               <fo:block font-size="9pt">A/C: (ZMW) 0025493780012</fo:block>
               <fo:block font-size="9pt" margin-left="15px">: (USD) 0025493780001</fo:block>
               <fo:block font-size="9pt">BRANCH: PRESIDENT AVENUE NDOLA</fo:block>
               <fo:block font-size="9pt">SWIFT CODE: ZFBAZMLU</fo:block>
               <fo:block font-size="9pt">BRANCH CODE: 110102</fo:block>
-              <fo:block font-size="9pt">COUNTRY: ZAMBIA</fo:block>
+              <fo:block font-size="9pt">COUNTRY: ZAMBIA</fo:block> -->
               <fo:block><fo:leader></fo:leader></fo:block>
             </fo:table-cell>
           </fo:table-row>
