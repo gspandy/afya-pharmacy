@@ -88,7 +88,7 @@ public class AfyaSalesOrderController {
             String orderId = (String) orderCreate.get("orderId");
             responseStatus.put("statusCode",200);
             responseStatus.put("orderId",orderId);
-            responseStatus.put("message","Order successfully place.");
+            responseStatus.put("message","Order successfully placed.");
         } catch (Exception e) {
             responseStatus.put("statusCode",500);
             responseStatus.put("message",e.getMessage());

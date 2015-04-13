@@ -98,7 +98,14 @@
 				<container style="lefthalf">
 					<include-screen name="orderinfo" />
 					<include-screen name="orderterms" />
-					<include-screen name="orderpaymentinfo" />
+					<section>
+						<condition>
+							<if-compare field="orderHeader.orderTypeId" operator="equals"  value="SLAES_ORDER" type="String"/>
+						</condition>
+						<widgets>
+							<include-screen name="orderpaymentinfo" />
+						</widgets>
+					</section>
 					<include-screen name="projectAssoOrder" />
 					<include-screen name="OrderContent" />
 				</container>

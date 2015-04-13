@@ -1050,7 +1050,7 @@ public class OrderServices {
                 toBeStored.add(genericValue);
             }
 
-            if (context.get("grandTotal") != null) {
+            if (context.get("grandTotal") != null && "SALES_ORDER".equals(orderTypeId)) {
                 BigDecimal grandTotal = (BigDecimal)context.get("grandTotal");
                 String paymentPrefId = delegator.getNextSeqId("OrderPaymentPreference");
                 Map paymentPreference = UtilMisc.toMap("orderId", orderId, "orderPaymentPreferenceId",paymentPrefId,
