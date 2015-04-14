@@ -2145,6 +2145,17 @@
 		<response name="pdf" type="view" value="DebitBalancePDFReport" />
 	</request-map>
 
+	<request-map uri="ProductwiseSalesReport">
+		<security https="true" auth="true" />
+		<response name="success" type="view" value="ProductwiseSalesReport" />
+	</request-map>
+
+	<request-map uri="ProductwiseSalesReport.pdf">
+		<security https="true" auth="true" />
+		<event type="java" path="com.nzion.redirect.UtilRedirect" invoke="checkExprotType" />
+		<response name="pdf" type="view" value="ProductwiseSalesReportPDF" />
+	</request-map>
+
 	<request-map uri="SalesByProductReport">
 		<security https="true" auth="true" />
 		<response name="success" type="view" value="SalesByProductReport" />
@@ -2545,6 +2556,10 @@
 	<view-map name="DebitBalanceReport" type="screen" page="component://order/widget/ordermgr/ReportScreens.xml#DebitBalanceReport"
 		encoding="none" />
 	<view-map name="DebitBalancePDFReport" type="screenfop" page="component://order/widget/ordermgr/ReportScreens.xml#DebitBalanceReportPDF"
+		content-type="application/pdf" encoding="none" />
+	<view-map name="ProductwiseSalesReport" type="screen" page="component://order/widget/ordermgr/ReportScreens.xml#ProductwiseSalesReport"
+		encoding="none" />
+	<view-map name="ProductwiseSalesReportPDF" type="screenfop" page="component://order/widget/ordermgr/ReportScreens.xml#ProductwiseSalesReportPDF"
 		content-type="application/pdf" encoding="none" />
 	<view-map name="SalesByProductReport" type="screen" page="component://order/widget/ordermgr/ReportScreens.xml#SalesByProductReport"
 		encoding="none" />

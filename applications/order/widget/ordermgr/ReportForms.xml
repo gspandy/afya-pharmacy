@@ -505,8 +505,28 @@ under the License.
             <submit button-type="button"/>
         </field>
     </form>
+
+    <form name="ProductwiseSalesReport" type="single" target="ProductwiseSalesReport.pdf" title=""
+        header-row-style="header-row" default-table-style="basic-table" target-window="_blank">
+        <field name="orderTypeId" title="OrderType">
+            <hidden value="SALES_ORDER" />
+        </field>
+        <field name="productId" title="Product">
+            <lookup target-form-name="LookupProductName"></lookup>
+        </field>
+        <field name="fromDate" title="${uiLabelMap.OrderReportFromDate}"><date-time type="date"/></field>
+        <field name="thruDate" title="${uiLabelMap.OrderReportDeliveryThruDate}"><date-time type="date"/></field> 
+        <field name="exportType" title="Export Type">
+            <drop-down current="first-in-list">
+                <option key="pdf" description="PDF"/>
+            </drop-down>
+        </field>
+        <field name="submitButton" title="${uiLabelMap.CommonRun}" widget-style="btn btn-primary" event="onClick" action="javascript:jQuery('#ProductwiseSalesReport').validate();invokeExport(this.form);">
+            <submit button-type="button"/>
+        </field>
+    </form>
     
-    <!-- form for generating a report of customer balance -->
+    <!-- form for generating a report of Sales -->
     <form name="SalesByProductReport" type="single" target="SalesReport.pdf" title=""
         header-row-style="header-row" default-table-style="basic-table" target-window="_blank">
         <field name="orderTypeId" title="OrderType">

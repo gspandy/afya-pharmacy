@@ -860,6 +860,60 @@ under the License.
         </section>
     </screen>
 
+    <screen name="ProductwiseSalesReport">
+        <section>
+            <actions>
+                <set field="titleProperty" value="OrderReportSales"/>
+            </actions>
+            <widgets>
+                <decorator-screen name="CommonOrderReportsDecorator" location="component://order/widget/ordermgr/ReportScreens.xml">
+                    <decorator-section name="body">
+                        <screenlet title="${uiLabelMap.OrderReportSales}">
+                            <include-form name="ProductwiseSalesReport" location="component://order/widget/ordermgr/ReportForms.xml" />
+                        </screenlet>
+                    </decorator-section>
+                </decorator-screen>
+            </widgets>
+        </section>
+    </screen>
+
+    <screen name="ProductwiseSalesReportPDF">
+        <section>
+            <actions>
+                <set field="titleProperty" value="OrderReportSales"/>
+                <set field="headerItem" value="reports"/>
+                <set field="footerLabel" value="Sales Report"/>
+                <set field="viewSize" value="${parameters.VIEW_SIZE}" default-value="20" type="Integer"/>
+                <set field="viewIndex" value="${parameters.VIEW_INDEX}" default-value="0" type="Integer"/>
+                <set field="productId" from-field="parameters.productId" />
+                <set field="fromDate" from-field="parameters.fromDate" type="Timestamp"/>
+                <set field="thruDate" from-field="parameters.thruDate" type="Timestamp"/>
+                <script location="component://order/webapp/ordermgr/WEB-INF/actions/reports/ProductwiseSalesReport.groovy"/>
+            </actions>
+            <widgets>
+                <decorator-screen name="FoReportDecorator" location="component://common/widget/CommonScreens.xml">
+                    <!-- at the top of every page we put the logo and company information -->
+                    <decorator-section name="header">
+                        <section>
+                            <widgets>
+                                <include-screen name="ZPCHeader" location="component://order/widget/ordermgr/ReportScreens.xml"/>
+                            </widgets>
+                        </section>
+                    </decorator-section>
+                    <decorator-section name="body">
+                        <section>
+                            <widgets>
+                                <platform-specific>
+                                    <xsl-fo><html-template location="component://order/webapp/ordermgr/reports/ProductwiseSalesReport.fo.ftl"/></xsl-fo>
+                                </platform-specific>
+                            </widgets>
+                        </section>
+                    </decorator-section>
+                </decorator-screen>
+            </widgets>
+        </section>
+    </screen>
+
     <screen name="SalesByProductReport">
         <section>
             <actions>

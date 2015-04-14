@@ -176,9 +176,9 @@ under the License.
      </menu-item>
         
         <menu-item name="orderReports" title="${uiLabelMap.CommonReports}">
-            <condition>
-            <if-has-permission permission="ORDERMGR_REPORT_VIEW"/>
-            </condition>
+            <!-- <condition>
+                <if-has-permission permission="ORDERMGR_REPORT_VIEW"/>
+            </condition> -->
             <!-- <link target="OrderPurchaseReportOptions?show=false"/> -->
             <link target="CustomerBalanceReport"/>
             <menu-item name="pendingLoadingSlips" title="Pending Shipments ">
@@ -196,6 +196,12 @@ under the License.
             <!--<menu-item name="debitBalanceReport" title="Debit Balance">
                 <link target="DebitBalanceReport"/>
             </menu-item>-->
+            <menu-item name="productwiseSalesReport" title="Sales Report">
+                <!-- <condition>
+                    <if-has-permission permission="ORDERMGR_SALES_ENTRY"/>
+                </condition> -->
+                <link target="ProductwiseSalesReport"/>
+            </menu-item>
             <menu-item name="salesByProductReport" title="Sales">
                 <condition>
                     <if-has-permission permission="ORDERMGR_SALES_ENTRY"/>
