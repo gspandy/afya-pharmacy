@@ -59,7 +59,7 @@ under the License.
     <br class="clear"/>
   </div>
   <div class="screenlet-body">
-      <form method="post" action="<@ofbizUrl>initorderentry?type=${parameters.type}</@ofbizUrl>"  name="salesentryform" >
+      <form method="post" action="<@ofbizUrl>initorderentry?type=${parameters.type}</@ofbizUrl>" name="salesentryform" >
       <input type="hidden" name="originOrderId" value="${parameters.originOrderId?if_exists}"/>
       <input type="hidden" name="finalizeMode" value="type"/>
       <input type="hidden" name="orderMode" value="SALES_ORDER"/>
@@ -162,7 +162,6 @@ under the License.
     <div class="screenlet-body">
       <form method="post" name="poentryform" action="<@ofbizUrl>initorderentry?type=${parameters.type}</@ofbizUrl>">
       <input type='hidden' name='finalizeMode' value='type'/>
-      <input type='hidden' name='orderMode' value='PURCHASE_ORDER'/>
       <input type='hidden' name='orderMode' value='PURCHASE_ORDER'/>
       <table width="100%" border='0' cellspacing='0' cellpadding='0' class='boxbottom'>
        <tr>

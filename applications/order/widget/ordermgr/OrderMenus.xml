@@ -107,31 +107,31 @@ under the License.
                     </or>
                 </condition>
                 <link target="findorders?type=PURCHASE_ORDER"/>
-            <menu-item name="createPurchaseOrder" title="Create Purchase Order">
+                <menu-item name="createPurchaseOrder" title="Create Purchase Order">
+                    <condition>
+                        <and>
+                            <if-has-permission permission="ORDERMGR" action="_PURCHASE_CREATE"/>
+                        </and>
+                    </condition>
+                    <link target="orderentry?type=PURCHASE_ORDER"/>
+                </menu-item>
+                <menu-item name="findPurchaseOrder" title="Find Purchase Orders">
+                    <condition>
+                        <or>
+                            <if-has-permission permission="ORDERMGR" action="_PURCHASE_CREATE"/>
+                            <if-has-permission permission="ORDERMGR_PURCHASE_VIEW"/>
+                        </or>
+                    </condition> 
+                    <link target="findorders?type=PURCHASE_ORDER"/>
+                </menu-item>
+            </menu-item>
+            
+            <!-- <menu-item name="orderlist" title="Order Lists">
                 <condition>
-                    <and>
-                        <if-has-permission permission="ORDERMGR" action="_PURCHASE_CREATE"/>
-                    </and>
+                    <if-has-permission permission="ORDERMGR" action="_VIEW"/>
                 </condition>
-                <link target="orderentry?type=PURCHASE_ORDER"/>
-            </menu-item>
-            <menu-item name="findPurchaseOrder" title="Find Purchase Orders">
-                <condition>
-                    <or>
-                        <if-has-permission permission="ORDERMGR" action="_PURCHASE_CREATE"/>
-                        <if-has-permission permission="ORDERMGR_PURCHASE_VIEW"/>
-                    </or>
-                </condition> 
-                <link target="findorders?type=PURCHASE_ORDER"/>
-            </menu-item>
-        </menu-item>
-        
-        <!-- <menu-item name="orderlist" title="Order Lists">
-            <condition>
-                <if-has-permission permission="ORDERMGR" action="_VIEW"/>
-            </condition>
-            <link target="orderlist"/>
-        </menu-item> -->
+                <link target="orderlist"/>
+            </menu-item> -->
         
         </menu-item>
 

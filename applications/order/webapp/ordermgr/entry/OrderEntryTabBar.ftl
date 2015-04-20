@@ -51,7 +51,11 @@ under the License.
         <li class="disabled">${uiLabelMap.OrderRecalculateOrder}</li>
         <li class="disabled">${uiLabelMap.OrderRemoveSelected}</li>
       </#if>
-      <li><a href="<@ofbizUrl>emptycart?type=${parameters.orderMode}</@ofbizUrl>">${uiLabelMap.OrderClearOrder}</a></li>
+      <#if shoppingCart.getOrderType() == "PURCHASE_ORDER">
+        <li><a href="<@ofbizUrl>emptycart?type=${parameters.orderMode}</@ofbizUrl>">${uiLabelMap.OrderClearOrder}</a></li>
+      <#else>
+        <li><a href="<@ofbizUrl>emptySalesOrderCart?type=${parameters.orderMode}</@ofbizUrl>">${uiLabelMap.OrderClearOrder}</a></li>
+      </#if>
     </ul>
   </div>
 </div>

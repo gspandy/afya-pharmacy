@@ -22,10 +22,11 @@ under the License.
     <div class="screenlet-title-bar">
         <ul>
             <li class="h3">&nbsp;${uiLabelMap.OrderContactInformation}</li>
+            <li class="expanded"><a onclick="javascript:toggleScreenlet(this, 'PatientInfoScreenletBody_${orderId}', 'true', '${uiLabelMap.CommonExpand}', '${uiLabelMap.CommonCollapse}');" title="Collapse">&nbsp;</a></li>
         </ul>
         <br class="clear"/>
     </div>
-    <div class="screenlet-body">
+    <div class="screenlet-body" id="PatientInfoScreenletBody_${orderId}">
         <table class="basic-table" cellspacing='0'>
             <tr>
                 <td align="right" valign="top" width="19%"><span class="label">Patient First Name</span></td>
@@ -79,10 +80,13 @@ under the License.
 
 <div class="screenlet">
     <div class="screenlet-title-bar">
-        <ul><li class="h3">&nbsp;${uiLabelMap.OrderActions}</li></ul>
+        <ul>
+            <li class="h3">&nbsp;${uiLabelMap.OrderActions}</li>
+            <li class="expanded"><a onclick="javascript:toggleScreenlet(this, 'ActionsScreenletBody_${orderId}', 'true', '${uiLabelMap.CommonExpand}', '${uiLabelMap.CommonCollapse}');" title="Collapse">&nbsp;</a></li>
+        </ul>
         <br class="clear"/>
     </div>
-    <div class="screenlet-body">
+    <div class="screenlet-body" id="ActionsScreenletBody_${orderId}">
         <ul class="tab-bar">
         <#if security.hasEntityPermission("FACILITY", "_CREATE", session) && ((orderHeader.statusId == "ORDER_APPROVED") || (orderHeader.statusId == "ORDER_SENT"))>
         <#-- Special shipment options -->

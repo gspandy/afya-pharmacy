@@ -34,6 +34,7 @@ under the License.
       <#assign orderType = orderHeader.getRelatedOne("OrderType")/>
         <li class="h3">&nbsp;${orderType?if_exists.get("description", locale)?default(uiLabelMap.OrderOrder)}&nbsp;#
             <a href="<@ofbizUrl>orderview?orderId=${orderId}</@ofbizUrl>">${orderId}</a>
+        <li class="expanded"><a onclick="javascript:toggleScreenlet(this, 'RXInfoScreenletBody_${orderId}', 'true', '${uiLabelMap.CommonExpand}', '${uiLabelMap.CommonCollapse}');" title="Collapse">&nbsp;</a></li>
             <#if orderHeader.orderTypeId == "PURCHASE_ORDER">
                 [&nbsp;<a href="<@ofbizUrl>order.pdf?orderId=${orderId}&amp;orderTypeId=${orderType?if_exists.get("orderTypeId", locale)}</@ofbizUrl>" target="_blank">PDF</a>&nbsp;]
             </#if>
@@ -127,7 +128,7 @@ under the License.
         </ul>
         <br class="clear"/>
     </div>
-    <div class="screenlet-body">
+    <div class="screenlet-body" id="RXInfoScreenletBody_${orderId}">
         <table class="basic-table" cellspacing='0'>
             <#if orderHeader.orderName?has_content>
             <tr>

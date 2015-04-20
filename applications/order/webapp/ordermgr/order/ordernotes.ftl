@@ -23,13 +23,16 @@ under the License.
     <div class="screenlet-title-bar">
       <ul>
         <li class="h3">&nbsp;${uiLabelMap.OrderNotes}</li>
+        <#if orderHeader.orderTypeId == "SALES_ORDER">
+            <li class="expanded"><a onclick="javascript:toggleScreenlet(this, 'NotesScreenletBody_${orderId}', 'true', '${uiLabelMap.CommonExpand}', '${uiLabelMap.CommonCollapse}');" title="Collapse">&nbsp;</a></li>
+        </#if>
         <#if security.hasEntityPermission("ORDERMGR", "_NOTE", session)>
           <li><a href="<@ofbizUrl>createnewnote?${paramString}</@ofbizUrl>">${uiLabelMap.OrderNotesCreateNew}</a></li>
         </#if>
       </ul>
       <br class="clear"/>
     </div>
-    <div class="screenlet-body">
+    <div class="screenlet-body" id="NotesScreenletBody_${orderId}">
       <table class="basic-table" cellspacing='0'>
         <tr>
           <td>

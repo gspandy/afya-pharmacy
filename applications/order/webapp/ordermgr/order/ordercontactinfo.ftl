@@ -92,7 +92,7 @@ under the License.
                                 <input type="hidden" name="partyId" value="${partyId}"/>
                                 <input type="hidden" name="sendTo" value="dummyemail@domain.com"/>
                             </form>
-                            dummyemail@domain.com
+                            dummyemail@domain.com<br/>
                             (<a href="javascript:onClick();" class="btn btn-link">${uiLabelMap.OrderSendConfirmationEmail}</a>)
                             <script>
                             function onClick(){
@@ -167,7 +167,7 @@ under the License.
                         </div>
                     <#elseif contactMech.contactMechTypeId == "EMAIL_ADDRESS">
                         <div>
-                        ${contactMech.infoString}
+                        ${contactMech.infoString}<br/>
                             (<a href="<@ofbizUrl>confirmationmailedit?orderId=${orderId}&amp;partyId=${partyId}&amp;sendTo=${contactMech.infoString}</@ofbizUrl>"
                                 class="btn btn-link">${uiLabelMap.OrderSendConfirmationEmail}</a>)
                         </div>

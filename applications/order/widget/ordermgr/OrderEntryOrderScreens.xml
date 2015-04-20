@@ -261,11 +261,18 @@
 								<html-template location="component://order/webapp/ordermgr/entry/order/orderpaymentinfo.ftl" />
 							</html>
 						</platform-specific>
-						<platform-specific>
-							<html>
-								<html-template location="component://order/webapp/ordermgr/entry/order/shipGroupConfirmSummary.ftl" />
-							</html>
-						</platform-specific>
+						<section>
+							<condition>
+								<if-compare field="cart.orderType" operator="equals" value="PURCHASE_ORDER"/>
+							</condition>
+							<widgets>
+								<platform-specific>
+									<html>
+										<html-template location="component://order/webapp/ordermgr/entry/order/shipGroupConfirmSummary.ftl" />
+									</html>
+								</platform-specific>
+							</widgets>
+						</section>
 						<platform-specific>
 							<html>
 								<html-template location="component://order/webapp/ordermgr/entry/order/orderitems.ftl" />
