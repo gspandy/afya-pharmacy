@@ -18,7 +18,7 @@
         <fo:table-row  border-style="solid" border-color="black">
             <fo:table-cell>
                 <fo:block font-size="16pt" text-align="center" font-weight="bold">
-                    Zambezi Portland Cement Company Limited
+                    ${companyName?if_exists}
                 </fo:block>
             </fo:table-cell>
         </fo:table-row>

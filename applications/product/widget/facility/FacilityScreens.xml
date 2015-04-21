@@ -2913,6 +2913,10 @@
     <screen name="ShipmentReceivedReportPdf">
         <section>
             <actions>
+                <entity-one value-field="partygrp" entity-name="PartyGroup">
+                    <field-map field-name="partyId" value="Company"/>
+                </entity-one>
+                <set field="companyName" from-field="partygrp.groupName"/>
                 <set field="footerLabel" value="Shipment Received"></set>
             </actions>
             <widgets>
