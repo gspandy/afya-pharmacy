@@ -49,17 +49,17 @@
 <link href="/bootstrap/style.css" type="text/css" rel="stylesheet" />
 
   <div class="bg_wrap">
-    <div class="header"> SME Business Mantra </div>
+    <div class="header"> Afya Pharmacy </div>
     <div class="login_section">
      <div class="login_form_section">
       <form method="post" action="<@ofbizUrl>login</@ofbizUrl>" name="loginform">
      	 User Name <br />
-         <input type="text"  name="USERNAME" value="${username}" size="20" class="login_input" /><br /><br />
+         <input type="text" name="USERNAME" value="${username}" size="20" class="login_input" /><br /><br />
       	 Password<br />
-         <input type="password"  name="PASSWORD" value="" size="20" class="login_input" /><br /><br />
+         <input type="password" name="PASSWORD" value="" size="20" class="login_input" /><br /><br />
          <#if ("Y" == useMultitenant)>
          Tenant ID <br />
-         <input type="text"  name="tenantId" value="${parameters.tenantId?if_exists}" size="20" class="login_input" /><br /><br />
+         <input type="text" name="tenantId" value="${parameters.tenantId?if_exists}" size="20" class="login_input" /><br /><br />
       	</#if>
       	<!-- <#if displayApps?has_content>
       		My Application <br />

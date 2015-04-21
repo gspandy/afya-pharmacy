@@ -115,7 +115,7 @@
                                             <a style="color:black" title="View Profile" href="/partymgr/control/viewprofile?partyId=${userLogin.partyId?if_exists}&amp;externalLoginKey=${externalLoginKey?if_exists}"><i class="icon-user"></i> View Profile </a>
                                         </li>
                                         <li>
-                                            <a style="color:black" title="Log Out" href="/myportal/control/logout"><i class="icon-off"></i> Logout </a>
+                                            <a style="color:black" title="Log Out" href="<@ofbizUrl>logout</@ofbizUrl>"><i class="icon-off"></i> Logout </a>
                                         </li>
                                     </ul>
                                 </li>
