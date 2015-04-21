@@ -121,8 +121,7 @@
                                 </li>
                             </#if>
                         </#if>
-                        <br/>
-                        <br/>
+                        <br/><br/>
                         <#list displayApps as display>
                             <#assign thisApp = display.getContextRoot()>
                             <#assign permission = true>
