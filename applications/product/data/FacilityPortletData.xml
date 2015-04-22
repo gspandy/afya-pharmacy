@@ -8,7 +8,7 @@
 	
 	<PortletCategory portletCategoryId="FACILITYMGR" description="List of ShipmentArrivals/Departures" />
 	
-	<PortalPortlet portalPortletId="SADueToday" portletName="Shipments Arrivals Over Due" screenName="ShipmentsArrivalsOverDue"
+	<!-- <PortalPortlet portalPortletId="SADueToday" portletName="Shipments Arrivals Over Due" screenName="ShipmentsArrivalsOverDue"
 		screenLocation="component://product/widget/facility/ShipmentScreens.xml" description="Shipments Arrivals Over Due" />
 	<PortletPortletCategory portalPortletId="SADueToday" portletCategoryId="FACILITYMGR" />
 
@@ -22,7 +22,7 @@
 	
 	<PortalPortlet portalPortletId="SDToday" portletName="Shipments Departure Today" screenName="ShipmentsDepartureToday"
 		screenLocation="component://product/widget/facility/ShipmentScreens.xml" description="Shipments Departure Today" />
-	<PortletPortletCategory portalPortletId="SDToday" portletCategoryId="FACILITYMGR" />
+	<PortletPortletCategory portalPortletId="SDToday" portletCategoryId="FACILITYMGR" /> -->
 	
 	<PortalPortlet portalPortletId="InvRejectsToday" portletName="Inventory Rejection Today" screenName="InventoryRejectionToday"
 		screenLocation="component://product/widget/facility/ShipmentScreens.xml" description="Inventory Rejectionss Today" />
@@ -64,7 +64,7 @@
 		screenLocation="component://product/widget/facility/ShipmentScreens.xml" description="Customer Returns Today" />
 	<PortletPortletCategory portalPortletId="CustomerRetunsToday" portletCategoryId="FACILITYMGR" />
 	
-	<PortalPagePortlet portalPageId="FacilityPortalPage" portalPortletId="SADueToday" portletSeqId="00001"
+	<!-- <PortalPagePortlet portalPageId="FacilityPortalPage" portalPortletId="SADueToday" portletSeqId="00001"
 		columnSeqId="00001" sequenceNum="2" />
 	
 	<PortalPagePortlet portalPageId="FacilityPortalPage" portalPortletId="SAToday" portletSeqId="00001"
@@ -74,7 +74,7 @@
 		columnSeqId="00001" sequenceNum="1" />
 		
 	<PortalPagePortlet portalPageId="FacilityPortalPage" portalPortletId="SDToday" portletSeqId="00001"
-		columnSeqId="00001" sequenceNum="1" />	
+		columnSeqId="00001" sequenceNum="1" /> -->	
 		
 	<PortalPagePortlet portalPageId="FacilityPortalPage" portalPortletId="InvRejectsToday" portletSeqId="00001"
 		columnSeqId="00002" sequenceNum="2" />
