@@ -503,11 +503,11 @@ under the License.
                                     <td align="right" colspan="2">
                                         <span class="label">Comments</span>&nbsp;${orderItem.comments?if_exists?default("")}
                                     </td>
-                                    <td align="right" colspan="2">
+                                    <#-- <td align="right" colspan="2">
                                         <span class="label">Home Service</span>
                                                 &nbsp;<#if orderItem.homeService=='Y'> Yes <#else> No </#if>
-                                    </td>
-                                    <td colspan="5"></td>
+                                    </td> -->
+                                    <td colspan="7"></td>
                                 </tr>
                                 
                             <#-- now show inventory reservation info per line item -->

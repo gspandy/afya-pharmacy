@@ -278,11 +278,11 @@
 								<html-template location="component://order/webapp/ordermgr/entry/order/orderitems.ftl" />
 							</html>
 						</platform-specific>
-						<platform-specific>
+						<!-- <platform-specific>
 							<html>
 								<html-template location="component://order/webapp/ordermgr/entry/ordertaxinfo.ftl" />
 							</html>
-						</platform-specific>
+						</platform-specific> -->
 					</decorator-section>
 				</decorator-screen>
 			</widgets>

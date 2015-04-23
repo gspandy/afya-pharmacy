@@ -245,6 +245,7 @@ under the License.
             <tr><td colspan="3"><hr /></td></tr> -->
           </#if>
           
+         <#if "SALES_ORDER" == orderHeader.orderTypeId>  
            <tr>
              <td align="right" valign="top" width="15%" class="label">&nbsp;Delivery Date </td>
              <td width="5%">&nbsp;</td>
@@ -255,8 +256,9 @@ under the License.
                  ${uiLabelMap.CommonNotSet}
                </#if>
              </td>
-            </tr>
-            <tr><td colspan="3"><hr /></td></tr>
+           </tr>
+           <tr><td colspan="3"><hr /></td></tr>
+         </#if>
             
             <tr>
               <td align="right" valign="top" width="15%" class="label">&nbsp;${uiLabelMap.CommonCreatedBy}</td>

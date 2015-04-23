@@ -435,16 +435,28 @@
                                         </html>
                                     </platform-specific>
                                 </screenlet>
-                                <screenlet id="shipmentInvoicePanel"
-                                           title="View Shipment Invoice Info"
-                                           initially-collapsed="true">
-                                    <platform-specific>
-                                        <html>
-                                            <html-template
-                                                    location="component://product/webapp/facility/shipment/ViewInvoiceShipmentInfo.ftl"/>
-                                        </html>
-                                    </platform-specific>
-                                </screenlet>
+                                <section>
+                                    <condition>
+                                        <not>
+                                            <or>
+                                                <if-compare field="shipment.shipmentTypeId" operator="equals" value="PURCHASE_SHIPMENT"/>
+                                                <if-compare field="shipment.shipmentTypeId" operator="equals" value="SALES_RETURN"/>
+                                            </or>
+                                        </not>
+                                    </condition>
+                                    <widgets>
+                                        <screenlet id="shipmentInvoicePanel"
+                                                   title="View Shipment Invoice Info"
+                                                   initially-collapsed="true">
+                                            <platform-specific>
+                                                <html>
+                                                    <html-template
+                                                            location="component://product/webapp/facility/shipment/ViewInvoiceShipmentInfo.ftl"/>
+                                                </html>
+                                            </platform-specific>
+                                        </screenlet>
+                                    </widgets>
+                                </section>
                             </decorator-section>
                         </decorator-screen>
                     </widgets>
