@@ -18,42 +18,10 @@
  *******************************************************************************/
 package org.ofbiz.order.shoppingcart;
 
-import java.io.Serializable;
-import java.math.BigDecimal;
-import java.math.MathContext;
-import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeMap;
-
 import javolution.util.FastList;
 import javolution.util.FastMap;
-
-import org.ofbiz.base.util.Debug;
-import org.ofbiz.base.util.GeneralException;
-import org.ofbiz.base.util.GeneralRuntimeException;
-import org.ofbiz.base.util.UtilDateTime;
-import org.ofbiz.base.util.UtilFormatOut;
-import org.ofbiz.base.util.UtilMisc;
-import org.ofbiz.base.util.UtilNumber;
-import org.ofbiz.base.util.UtilProperties;
-import org.ofbiz.base.util.UtilValidate;
-import org.ofbiz.entity.Delegator;
-import org.ofbiz.entity.DelegatorFactory;
-import org.ofbiz.entity.GenericEntityException;
-import org.ofbiz.entity.GenericPK;
-import org.ofbiz.entity.GenericValue;
+import org.ofbiz.base.util.*;
+import org.ofbiz.entity.*;
 import org.ofbiz.entity.condition.EntityCondition;
 import org.ofbiz.entity.condition.EntityExpr;
 import org.ofbiz.entity.condition.EntityOperator;
@@ -71,6 +39,12 @@ import org.ofbiz.product.product.ProductWorker;
 import org.ofbiz.product.store.ProductStoreWorker;
 import org.ofbiz.service.LocalDispatcher;
 import org.ofbiz.service.ServiceUtil;
+
+import java.io.Serializable;
+import java.math.BigDecimal;
+import java.math.MathContext;
+import java.sql.Timestamp;
+import java.util.*;
 
 /**
  * Shopping Cart Object
@@ -2973,7 +2947,7 @@ public class ShoppingCart implements Iterable<ShoppingCartItem>, Serializable {
             return this.getSubTotal();
 
         BigDecimal grandTotal = this.getSubTotal().add(this.getTotalSalesTax()).add(this.getItemAdjustmentTotal());
-        return grandTotal;
+        return grandTotal.setScale(scale, rounding);
     }
 
     public BigDecimal getDisplaySubTotal() {
