@@ -57,7 +57,7 @@
     <ShipmentCostEstimate productStoreId="PRODUCTSTOREID" orderFlatPrice="0.0" orderItemFlatPrice="0.0" orderPricePercent="0.0" shipmentMethodTypeId="GROUND" carrierPartyId="FEDEX" carrierRoleTypeId="CARRIER"/>
     <ShipmentCostEstimate productStoreId="PRODUCTSTOREID" orderFlatPrice="0.0" orderItemFlatPrice="0.0" orderPricePercent="0.0" shipmentMethodTypeId="GROUND_HOME" carrierPartyId="FEDEX" carrierRoleTypeId="CARRIER"/>
     
-    <ProductStoreEmailSetting productStoreId="PRODUCTSTOREID" emailType="PRDS_ODR_CONFIRM" bodyScreenLocation="component://ecommerce/widget/EmailOrderScreens.xml#OrderConfirmNotice" subject="SME - Order Confirmation #${orderId}" bccAddress="smetest@yahoo.com" fromAddress="smetest@yahoo.com"/>
-    <ProductStoreEmailSetting productStoreId="PRODUCTSTOREID" emailType="GRN_CONFIRM" bodyScreenLocation="component://product/widget/facility/FacilityScreens.xml#OrderConfirmNotice" subject="SME - Goods Receive Note Confirmation" bccAddress="smetest@yahoo.com" fromAddress="smetest@yahoo.com"/>
+    <ProductStoreEmailSetting productStoreId="PRODUCTSTOREID" emailType="PRDS_ODR_CONFIRM" bodyScreenLocation="component://ecommerce/widget/EmailOrderScreens.xml#OrderConfirmNotice" subject="Afya Pharmacy - Order Confirmation #${orderId}" bccAddress="smesupport@nthdimenzion.com" fromAddress="afyaarabia@nthdimenzion.com"/>
+    <ProductStoreEmailSetting productStoreId="PRODUCTSTOREID" emailType="GRN_CONFIRM" bodyScreenLocation="component://product/widget/facility/FacilityScreens.xml#OrderConfirmNotice" subject="Afya Pharmacy - Goods Receive Note Confirmation" bccAddress="smesupport@nthdimenzion.com" fromAddress="afyaarabia@nthdimenzion.com"/>
     
 </entity-engine-xml>
