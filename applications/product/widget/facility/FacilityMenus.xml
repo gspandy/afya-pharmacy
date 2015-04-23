@@ -516,12 +516,15 @@ under the License.
 
         <menu-item name="Reports" title="Reports">
             <condition>
-                <and>
+                <not>
+                    <if-empty field="parameters.facilityId"/>
+                </not>
+                <!-- <and>
                     <not>
                         <if-empty field="parameters.facilityId"/>
                     </not>
                     <if-has-permission permission="FACILITY_REPORT_VIEW"/>
-                </and>
+                </and> -->
             </condition>
             <!-- <link target="ShipmentReports">
                 <parameter param-name="facilityId"/>
