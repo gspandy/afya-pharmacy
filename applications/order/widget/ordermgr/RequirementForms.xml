@@ -402,7 +402,7 @@ under the License.
     </form>
     <form name="ApprovedProductRequirementsSubmit" type="single"
         header-row-style="header-row" default-table-style="basic-table">
-        <field name="orderName" id-name="orderName_o_0"><text/></field>
+        <!-- <field name="orderName" id-name="orderName_o_0"><text/></field> -->
         <field name="submitButton" title="${uiLabelMap.CommonEmptyHeader}" widget-style="btn btn-success">
             <hyperlink also-hidden="false" target-type="plain" description="${uiLabelMap.OrderInputQuickPurchaseOrder}"
                        target="javascript:document.ApprovedProductRequirements.orderName_o_0.value=document.ApprovedProductRequirementsSubmit.orderName_o_0.value;document.ApprovedProductRequirements.submit()"/>
