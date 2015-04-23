@@ -44,7 +44,7 @@ under the License.
         <th></th>
         <th>${uiLabelMap.OrderQtyOrdered}</th>
       </#if>
-      <th >${uiLabelMap.EcommerceUnitPrice}</th>
+      <th >${uiLabelMap.OrderUnitPrice}</th>
       <th >${uiLabelMap.OrderAdjustments}</th>
       <th >${uiLabelMap.CommonSubtotal}</th>
       <#if maySelectItems?default("N") == "Y" && roleTypeId?if_exists == "PLACING_CUSTOMER">
@@ -266,7 +266,7 @@ under the License.
       <#list itemAdjustments as orderItemAdjustment>
         <tr>
           <td>
-            ${uiLabelMap.EcommerceAdjustment}: ${localOrderReadHelper.getAdjustmentType(orderItemAdjustment)}
+            ${uiLabelMap.OrderAdjustment}: ${localOrderReadHelper.getAdjustmentType(orderItemAdjustment)}
             <#if orderItemAdjustment.description?has_content>: ${orderItemAdjustment.description}</#if>
             <#if orderItemAdjustment.orderAdjustmentTypeId == "SALES_TAX">
               <#if orderItemAdjustment.primaryGeoId?has_content>
@@ -279,9 +279,9 @@ under the License.
                   (${uiLabelMap.CommonIn}: ${secondaryGeo.geoName} [${secondaryGeo.abbreviation?if_exists}])
                 </#if>
               </#if>
-              <#if orderItemAdjustment.sourcePercentage?exists>${uiLabelMap.EcommerceRate}: ${orderItemAdjustment.sourcePercentage}</#if>
+              <#if orderItemAdjustment.sourcePercentage?exists>${uiLabelMap.OrderRate}: ${orderItemAdjustment.sourcePercentage}</#if>
               <#if orderItemAdjustment.customerReferenceId?has_content>${uiLabelMap.OrderCustomerTaxId}: ${orderItemAdjustment.customerReferenceId}</#if>
-              <#if orderItemAdjustment.exemptAmount?exists>${uiLabelMap.EcommerceExemptAmount}: ${orderItemAdjustment.exemptAmount}</#if>
+              <#if orderItemAdjustment.exemptAmount?exists>${uiLabelMap.OrderExemptAmount}: ${orderItemAdjustment.exemptAmount}</#if>
             </#if>
           </td>
           <td colspan="5"></td>

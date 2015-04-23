@@ -5315,6 +5315,21 @@
         <value xml:lang="it">Includi solo</value>
         <value xml:lang="pt_BR">Inclui somente</value>
     </property>
+    <property key="OrderBeSureToIncludeYourOrderNb">
+        <value xml:lang="da">Husk at inkludere din ordre</value>
+        <value xml:lang="en">Be sure to include your order #</value>
+        <value xml:lang="es">Asegurese de incluir la Orden #</value>
+        <value xml:lang="fr">Soyez sûr(e) d'inclure votre n° de commande</value>
+        <value xml:lang="hi_IN">आर्डर सम्मिमित करना न भूलें</value>
+        <value xml:lang="it">Assicurati di specificare il tuo ordine n°</value>
+        <value xml:lang="ja">Be sure to include your order #</value>
+        <value xml:lang="nl">bestellingsnummer niet vergeten?</value>
+        <value xml:lang="pt_BR">Certifique-se de incluir número de pedido</value>
+        <value xml:lang="ro">Asigurate ca ai inclus comanda ta #</value>
+        <value xml:lang="ru">Убедитесь что указали № заказа</value>
+        <value xml:lang="th">แน่ใจในการรวมรายการสินค้าของคุณ #</value>
+        <value xml:lang="zh">确信包括了你的订单 #</value>
+    </property>
     <property key="OrderOpenCollequeCustomerRequests">
         <value xml:lang="en">Open Customer requests from my Colleques</value>
         <value xml:lang="it">Richieste cliente aperte dai miei colleghi</value>

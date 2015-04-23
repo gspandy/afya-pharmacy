@@ -44,7 +44,7 @@ under the License.
               ${paymentAddress.city}<#if paymentStateGeo?has_content>, ${paymentStateGeo.geoName?if_exists}</#if> ${paymentAddress.postalCode?if_exists}
               <#assign paymentCountryGeo = (delegator.findOne("Geo", {"geoId", paymentAddress.countryGeoId?if_exists}, false))?if_exists />
               <#if paymentCountryGeo?has_content>${paymentCountryGeo.geoName?if_exists}</#if>
-              ${uiLabelMap.EcommerceBeSureToIncludeYourOrderNb}
+              ${uiLabelMap.OrderBeSureToIncludeYourOrderNb}
             </#if>
           <#else>
             <#assign outputted = true>
