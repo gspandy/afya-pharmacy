@@ -52,16 +52,16 @@ under the License.
             <link target="EditFacility?facilityId=${parameters.facilityId}"/>
             <menu-item name="EditFacility" title="${uiLabelMap.ProductEditFacility}">
                 <link target="EditFacility">
-                    <parameter param-name="facilityId"/>
+                    <parameter param-name="facilityId" value="${parameters.facilityId}"/>
                 </link>
             </menu-item>
             <menu-item name="ViewContactMechs" title="${uiLabelMap.PartyContactMechs}">
                 <link target="ViewContactMechs">
-                    <parameter param-name="facilityId"/>
+                    <parameter param-name="facilityId" value="${parameters.facilityId}"/>
                 </link>
                 <menu-item name="ViewContactMech" title="View Contact Mech">
                     <link target="ViewContactMechs">
-                        <parameter param-name="facilityId"/>
+                        <parameter param-name="facilityId" value="${parameters.facilityId}"/>
                     </link>
                 </menu-item>
                 <menu-item name="EditContactMech" title="Create Contact Mech">
@@ -69,17 +69,17 @@ under the License.
                         <if-service-permission service-name="facilityGenericPermission" main-action="CREATE"/>
                     </condition>
                     <link target="EditContactMech">
-                        <parameter param-name="facilityId"/>
+                        <parameter param-name="facilityId" value="${parameters.facilityId}"/>
                     </link>
                 </menu-item>
             </menu-item>
             <menu-item name="FacilityLocation" title="${uiLabelMap.ProductLocations}">
                 <link target="FindFacilityLocation">
-                    <parameter param-name="facilityId"/>
+                    <parameter param-name="facilityId" value="${parameters.facilityId}"/>
                 </link>
                 <menu-item name="SearchFacilityLocation" title="Find Facility Location">
                     <link target="FindFacilityLocation">
-                        <parameter param-name="facilityId"/>
+                        <parameter param-name="facilityId" value="${parameters.facilityId}"/>
                     </link>
                 </menu-item>
                 <menu-item name="EditFacilityLocation" title="Create Facility Location">
@@ -101,7 +101,7 @@ under the License.
                 <set field="reserveInventory" default-value="${reserveInventory}"/>
             </actions>
             <link target="ViewFacilityInventoryByProduct">
-                <parameter param-name="facilityId"/>
+                <parameter param-name="facilityId" value="${parameters.facilityId}"/>
             </link>
             <menu-item name="ViewFacilityInventoryByProduct" title="Find Inventory">
                 <condition>
@@ -111,21 +111,21 @@ under the License.
                     </or>
                 </condition>
                 <link target="ViewFacilityInventoryByProduct">
-                    <parameter param-name="facilityId"/>
+                    <parameter param-name="facilityId" value="${parameters.facilityId}"/>
                 </link>
             </menu-item>
             <menu-item name="EditFacilityInventoryItems" title="${uiLabelMap.ProductInventoryItems}">
                 <link target="EditFacilityInventoryItems">
-                    <parameter param-name="facilityId"/>
+                    <parameter param-name="facilityId" value="${parameters.facilityId}"/>
                 </link>
                 <menu-item name="FindInventoryItem" title="Find Inventory Items">
                     <link target="EditFacilityInventoryItems">
-                        <parameter param-name="facilityId"/>
+                        <parameter param-name="facilityId" value="${parameters.facilityId}"/>
                     </link>
                 </menu-item>
                 <!--<menu-item name="CreateInventoryItem" title="Create Inventory Items">
                     <link target="EditInventoryItem">
-                        <parameter param-name="facilityId"/>
+                        <parameter param-name="facilityId" value="${parameters.facilityId}"/>
                     </link>
                 </menu-item>-->
             </menu-item>
@@ -134,41 +134,41 @@ under the License.
                     <if-has-permission permission="FACILITY_INVENTORY_ISSUANCE"/>
                 </condition>
                 <link target="issuanceItems">
-                    <parameter param-name="facilityId"/>
+                    <parameter param-name="facilityId" value="${parameters.facilityId}"/>
                 </link>
                 <!--<menu-item name="Default" title="Default">
                     <link target="issuanceItems">
-                        <parameter param-name="facilityId"/>
+                        <parameter param-name="facilityId" value="${parameters.facilityId}"/>
                         <parameter param-name="issueMode" value="Default"/>
                     </link>
                 </menu-item>-->
                 <!--<menu-item name="SampleToCustomer" title="Sample To Customer">
                     <link target="FindSampleToCustomer">
-                        <parameter param-name="facilityId"/>
+                        <parameter param-name="facilityId" value="${parameters.facilityId}"/>
                         <parameter param-name="issueMode" value="SC"/>
                     </link>
                 </menu-item>-->
                 <!--<menu-item name="IssueToSubContract" title="Issue To Sub Contract">
                     <link target="FindIssueToSubContract">
-                        <parameter param-name="facilityId"/>
+                        <parameter param-name="facilityId" value="${parameters.facilityId}"/>
                         <parameter param-name="issueMode" value="ISC"/>
                     </link>
                 </menu-item>-->
                 <menu-item name="IssueToEmployee" title="Issue To Employee">
                     <link target="FindIssueToEmployee">
-                        <parameter param-name="facilityId"/>
+                        <parameter param-name="facilityId" value="${parameters.facilityId}"/>
                         <parameter param-name="issueMode" value="ISC"/>
                     </link>
                 </menu-item>
             </menu-item>
             <menu-item name="ViewFacilityInventoryItemsDetails" title="${uiLabelMap.ProductInventoryItemsDetails}">
                 <link target="ViewFacilityInventoryItemsDetails">
-                    <parameter param-name="facilityId"/>
+                    <parameter param-name="facilityId" value="${parameters.facilityId}"/>
                 </link>
             </menu-item>
             <menu-item name="ReceiveInventory" title="${uiLabelMap.ProductInventoryReceive}">
                 <link target="ReceiveInventory">
-                    <parameter param-name="facilityId"/>
+                    <parameter param-name="facilityId" value="${parameters.facilityId}"/>
                 </link>
             </menu-item>
             <menu-item name="PhysicalInventory" title="${uiLabelMap.ProductPhysicalInventory}">
@@ -176,7 +176,7 @@ under the License.
                     <if-has-permission permission="FACILITY_INVENTORY_EDIT"/>
                 </condition> -->
                 <link target="FindPhysicalInvNew">
-                    <parameter param-name="facilityId"/>
+                    <parameter param-name="facilityId" value="${parameters.facilityId}"/>
                 </link>
             </menu-item>
             <menu-item name="FindFacilityTransfers" title="Inventory Transfers">
@@ -184,7 +184,7 @@ under the License.
                     <if-has-permission permission="FACILITY_INVENTORY_EDIT"/>
                 </condition>
                 <link target="FindFacilityTransfers">
-                    <parameter param-name="facilityId"/>
+                    <parameter param-name="facilityId" value="${parameters.facilityId}"/>
                 </link>
             </menu-item>
             <menu-item name="ReceiveReturn" title="${uiLabelMap.ProductReceiveReturn}">
@@ -272,18 +272,18 @@ under the License.
                      <set field="reserveInventory" default-value="${reserveInventory}"/>
                  </actions>
                  <link target="PicklistOptions">
-                     <parameter param-name="facilityId"/>
+                     <parameter param-name="facilityId" value="${parameters.facilityId}"/>
                      <parameter param-name="mode" value="Auto"/>
                  </link>
                  <menu-item name="PicklistOptions" title="Auto Shipment">
                      <link target="PicklistOptions">
-                         <parameter param-name="facilityId"/>
+                         <parameter param-name="facilityId" value="${parameters.facilityId}"/>
                          <parameter param-name="mode" value="Auto"/>
                      </link>
                  </menu-item>
                  <menu-item name="FindOrdersFromShipment" title="Manual Shipment">
                      <link target="FindOrdersFromShipment">
-                         <parameter param-name="facilityId"/>
+                         <parameter param-name="facilityId" value="${parameters.facilityId}"/>
                          <parameter param-name="mode" value="Manual"/>
                      </link>
                  </menu-item>
@@ -299,7 +299,7 @@ under the License.
                      <set field="reserveInventory" default-value="${reserveInventory}"/>
                  </actions>
                  <link target="PickMoveStock">
-                     <parameter param-name="facilityId"/>
+                     <parameter param-name="facilityId" value="${parameters.facilityId}"/>
                  </link>
              </menu-item>
              <menu-item name="PicklistManage" title="${uiLabelMap.ProductPicklistManage}">
@@ -313,7 +313,7 @@ under the License.
                      <set field="reserveInventory" default-value="${reserveInventory}"/>
                  </actions>
                  <link target="PicklistManage">
-                     <parameter param-name="facilityId"/>
+                     <parameter param-name="facilityId" value="${parameters.facilityId}"/>
                  </link>
              </menu-item>
              <menu-item name="VerifyPick" title="${uiLabelMap.ProductVerifyPick}">
@@ -327,18 +327,18 @@ under the License.
                      <set field="reserveInventory" default-value="${reserveInventory}"/>
                  </actions>
                  <link target="VerifyPick">
-                     <parameter param-name="facilityId"/>
+                     <parameter param-name="facilityId" value="${parameters.facilityId}"/>
                      <parameter param-name="mode" value="Auto"/>
                  </link>
                  <menu-item name="VerifyPick" title="Auto Shipment">
                      <link target="VerifyPick">
-                         <parameter param-name="facilityId"/>
+                         <parameter param-name="facilityId" value="${parameters.facilityId}"/>
                          <parameter param-name="mode" value="Auto"/>
                      </link>
                  </menu-item>
                  <menu-item name="VerifyPickInShipment" title="Manual Shipment">
                      <link target="VerifyPickInShipment">
-                         <parameter param-name="facilityId"/>
+                         <parameter param-name="facilityId" value="${parameters.facilityId}"/>
                          <parameter param-name="mode" value="Manual"/>
                      </link>
                  </menu-item>
@@ -354,18 +354,18 @@ under the License.
                      <set field="reserveInventory" default-value="${reserveInventory}"/>
                  </actions>
                  <link target="PackOrder">
-                     <parameter param-name="facilityId"/>
+                     <parameter param-name="facilityId" value="${parameters.facilityId}"/>
                      <parameter param-name="mode" value="Auto"/>
                  </link>
                  <menu-item name="PackOrder" title="Auto Shipment">
                      <link target="PackOrder">
-                         <parameter param-name="facilityId"/>
+                         <parameter param-name="facilityId" value="${parameters.facilityId}"/>
                          <parameter param-name="mode" value="Auto"/>
                      </link>
                  </menu-item>
                  <menu-item name="PackInShipment" title="Manual Shipment">
                      <link target="PackInShipment">
-                         <parameter param-name="facilityId"/>
+                         <parameter param-name="facilityId" value="${parameters.facilityId}"/>
                          <parameter param-name="mode" value="Manual"/>
                      </link>
                  </menu-item>
@@ -435,7 +435,7 @@ under the License.
                   </or>
               </condition>
               <link target="StockReservations">
-                  <parameter param-name="facilityId"/>
+                  <parameter param-name="facilityId" value="${parameters.facilityId}"/>
               </link>
               <menu-item name="ReserveInventoryItem" title="Reserve Inventory Item">
                   <link target="StockReservations">
@@ -527,49 +527,49 @@ under the License.
                 </and> -->
             </condition>
             <!-- <link target="ShipmentReports">
-                <parameter param-name="facilityId"/>
+                <parameter param-name="facilityId" value="${parameters.facilityId}"/>
             </link> -->
             <link target="DepartmentIssueReport">
                 <parameter param-name="facilityId" from-field="parameters.facilityId"/>
             </link>
             <menu-item name="PurchaseInboundReport" title="Purchase Inbound">
                 <link target="PurchaseInboundReport.xls?ename=PurchaseOrderItemFact">
-                    <parameter param-name="facilityId"/>
+                    <parameter param-name="facilityId" value="${parameters.facilityId}"/>
                 </link>
             </menu-item>
             <menu-item name="ShipmentArrivalsReport" title="Shipment Arrivals">
                 <link target="ShipmentArrivalsReport.xls?ename=PurchaseOrderItemFact">
-                    <parameter param-name="facilityId"/>
+                    <parameter param-name="facilityId" value="${parameters.facilityId}"/>
                 </link>
             </menu-item>
             <menu-item name="SalesOutboundReport" title="Sales Outbound">
                 <link target="SalesOutboundReport.xls?ename=SalesOrderItemFact">
-                    <parameter param-name="facilityId"/>
+                    <parameter param-name="facilityId" value="${parameters.facilityId}"/>
                 </link>
             </menu-item>
             <menu-item name="ManufecIssuance" title="Manufacturing Issuance">
                 <link target="manufecIssuance">
-                    <parameter param-name="facilityId"/>
+                    <parameter param-name="facilityId" value="${parameters.facilityId}"/>
                 </link>
             </menu-item>
             <menu-item name="ProductInventoryPositionReports" title="Product Inventory Position">
                 <link target="ProductInventoryPositionReports">
-                    <parameter param-name="facilityId"/>
+                    <parameter param-name="facilityId" value="${parameters.facilityId}"/>
                 </link>
             </menu-item>
             <menu-item name="InventorySummaryReport" title="Inventory Summary">
                 <link target="InventorySummaryReport">
-                    <parameter param-name="facilityId"/>
+                    <parameter param-name="facilityId" value="${parameters.facilityId}"/>
                 </link>
             </menu-item>
             <menu-item name="PhysicalInventorySummaryReport" title="Physical Inventory Summary">
                 <link target="PhysicalInventorySummaryReport.xls">
-                    <parameter param-name="facilityId"/>
+                    <parameter param-name="facilityId" value="${parameters.facilityId}"/>
                 </link>
             </menu-item>
             <!-- <menu-item name="ABCAnalysis" title="ABC Analysis">
                  <link target="ABCAnalysis">
-                     <parameter param-name="facilityId"/>
+                     <parameter param-name="facilityId" value="${parameters.facilityId}"/>
                  </link>
              </menu-item>-->
 
@@ -587,54 +587,54 @@ under the License.
 
             <menu-item name="OpenRequest" title="Open Request">
                 <link target="openRequest">
-                    <parameter param-name="facilityId"/>
+                    <parameter param-name="facilityId" value="${parameters.facilityId}"/>
                 </link>
             </menu-item>
 
             <menu-item name="StoreIssuanceNoteReport" title="Stores Issuance">
                 <link target="StoreIssuanceNote">
-                    <parameter param-name="facilityId"/>
+                    <parameter param-name="facilityId" value="${parameters.facilityId}"/>
                 </link>
             </menu-item>
 
             <menu-item name="StockVarianceReport" title="Stock Variance">
                 <link target="StockVariance">
-                    <parameter param-name="facilityId"/>
+                    <parameter param-name="facilityId" value="${parameters.facilityId}"/>
                 </link>
             </menu-item>
 
             <menu-item name="ReturnableReport" title="Returnables">
                 <link target="Returnable">
-                    <parameter param-name="facilityId"/>
+                    <parameter param-name="facilityId" value="${parameters.facilityId}"/>
                 </link>
             </menu-item>
 
             <menu-item name="QualityMaterialsReceivedReport" title="Quality Materials Received">
                 <link target="QualityMaterialsReceived">
-                    <parameter param-name="facilityId"/>
+                    <parameter param-name="facilityId" value="${parameters.facilityId}"/>
                 </link>
             </menu-item>
 
             <menu-item name="InventoryReceiptReport" title="Inventory Receipt">
                 <link target="StoresMaterialReceived">
-                    <parameter param-name="facilityId"/>
+                    <parameter param-name="facilityId" value="${parameters.facilityId}"/>
                 </link>
             </menu-item>
 
             <menu-item name="StoppageAnalysisReport" title="Stoppage Analysis">
                 <link target="StoppageAnalysis">
-                    <parameter param-name="facilityId"/>
+                    <parameter param-name="facilityId" value="${parameters.facilityId}"/>
                 </link>
             </menu-item>
 
             <!-- <menu-item name="shipmentReceiptReport" title="Shipment Receipt">
                 <link target="shipmentReceiptReport">
-                    <parameter param-name="facilityId"/>
+                    <parameter param-name="facilityId" value="${parameters.facilityId}"/>
                 </link>
             </menu-item> -->
             <menu-item name="FastSlowNonMoving" title="Fast Slow Non Moving">
                 <link target="fastSlowNonMoving">
-                    <parameter param-name="facilityId"/>
+                    <parameter param-name="facilityId" value="${parameters.facilityId}"/>
                 </link>
             </menu-item>
         </menu-item>
@@ -643,7 +643,7 @@ under the License.
                 <not><if-empty field="facilityId"/></not>
             </condition>
             <link target="ReportFacility">
-                <parameter param-name="facilityId"/>
+                <parameter param-name="facilityId" value="${parameters.facilityId}"/>
             </link>
         </menu-item> -->
         <!-- <menu-item name="route" title="Routes"><link target="Route"/></menu-item> -->
@@ -658,26 +658,26 @@ under the License.
 
         <!-- <menu-item name="EditFacility" title="${uiLabelMap.ProductFacility}">
             <link target="EditFacility">
-                <parameter param-name="facilityId"/>
+                <parameter param-name="facilityId" value="${parameters.facilityId}"/>
             </link>
         </menu-item> -->
         <menu-item name="FacilityChildren" title="${uiLabelMap.CommonEntityChildren}">
             <link target="FacilityChildren">
-                <parameter param-name="facilityId"/>
+                <parameter param-name="facilityId" value="${parameters.facilityId}"/>
             </link>
         </menu-item>
         <!-- <menu-item name="ListFixedAssets" title="Fixed Assets">
             <link target="ViewFixedAssets">
-                <parameter param-name="facilityId"/>
+                <parameter param-name="facilityId" value="${parameters.facilityId}"/>
             </link>
         </menu-item> -->
         <!-- <menu-item name="ViewContactMechs" title="${uiLabelMap.PartyContactMechs}">
             <link target="ViewContactMechs">
-                <parameter param-name="facilityId"/>
+                <parameter param-name="facilityId" value="${parameters.facilityId}"/>
             </link>
             <menu-item name="ViewContactMech" title="View Contact Mech">
                 <link target="ViewContactMechs">
-                    <parameter param-name="facilityId"/>
+                    <parameter param-name="facilityId" value="${parameters.facilityId}"/>
                 </link>
             </menu-item>
             <menu-item name="EditContactMech" title="Create Contact Mech">
@@ -685,144 +685,144 @@ under the License.
                     <if-service-permission service-name="facilityGenericPermission" main-action="CREATE" />
                 </condition>
                 <link target="EditContactMech">
-                    <parameter param-name="facilityId"/>
+                    <parameter param-name="facilityId" value="${parameters.facilityId}"/>
                 </link>
             </menu-item>
         </menu-item> -->
         <menu-item name="EditFacilityGroups" title="${uiLabelMap.ProductGroups}">
             <link target="EditFacilityGroups">
-                <parameter param-name="facilityId"/>
+                <parameter param-name="facilityId" value="${parameters.facilityId}"/>
             </link>
         </menu-item>
         <!-- <menu-item name="FacilityLocation" title="${uiLabelMap.ProductLocations}">
             <link target="FindFacilityLocation">
-                <parameter param-name="facilityId"/>
+                <parameter param-name="facilityId" value="${parameters.facilityId}"/>
             </link>
             <menu-item name="SearchFacilityLocation" title="Find Facility Location">
                 <link target="FindFacilityLocation">
-                    <parameter param-name="facilityId"/>
+                    <parameter param-name="facilityId" value="${parameters.facilityId}"/>
                 </link>
             </menu-item>
             <menu-item name="EditFacilityLocation" title="Create Facility Location">
                 <link target="EditFacilityLocation">
-                    <parameter param-name="facilityId"/>
+                    <parameter param-name="facilityId" value="${parameters.facilityId}"/>
                 </link>
             </menu-item>
         </menu-item> -->
         <menu-item name="EditFacilityParties" title="${uiLabelMap.PartyRoles}">
             <link target="EditFacilityParties">
-                <parameter param-name="facilityId"/>
+                <parameter param-name="facilityId" value="${parameters.facilityId}"/>
             </link>
         </menu-item>
         <!-- <menu-item name="ViewFacilityInventoryByProduct" title="${uiLabelMap.ProductInventory}">
             <link target="ViewFacilityInventoryByProduct">
-                <parameter param-name="facilityId"/>
+                <parameter param-name="facilityId" value="${parameters.facilityId}"/>
             </link>
         </menu-item>
         <menu-item name="EditFacilityInventoryItems" title="${uiLabelMap.ProductInventoryItems}">
             <link target="EditFacilityInventoryItems">
-                <parameter param-name="facilityId"/>
+                <parameter param-name="facilityId" value="${parameters.facilityId}"/>
             </link>
             <menu-item name="FindInventoryItem" title="Find Inventory Items">
                 <link target="EditFacilityInventoryItems">
-                    <parameter param-name="facilityId"/>
+                    <parameter param-name="facilityId" value="${parameters.facilityId}"/>
                 </link>
             </menu-item>
             <menu-item name="CreateInventoryItem" title="Create Inventory Items">
                 <link target="EditInventoryItem">
-                    <parameter param-name="facilityId"/>
+                    <parameter param-name="facilityId" value="${parameters.facilityId}"/>
                 </link>
             </menu-item>
         </menu-item>
         <menu-item name="issuanceItems" title="Issue Inventory">
             <link target="issuanceItems">
-                <parameter param-name="facilityId"/>
+                <parameter param-name="facilityId" value="${parameters.facilityId}"/>
             </link>
         </menu-item>
         <menu-item name="ViewFacilityInventoryItemsDetails" title="${uiLabelMap.ProductInventoryItemsDetails}">
             <link target="ViewFacilityInventoryItemsDetails">
-                <parameter param-name="facilityId"/>
+                <parameter param-name="facilityId" value="${parameters.facilityId}"/>
             </link>
         </menu-item>
         <menu-item name="ReceiveInventory" title="${uiLabelMap.ProductInventoryReceive}">
             <link target="ReceiveInventory">
-                <parameter param-name="facilityId"/>
+                <parameter param-name="facilityId" value="${parameters.facilityId}"/>
             </link>
         </menu-item>
         <menu-item name="PhysicalInventory" title="${uiLabelMap.ProductPhysicalInventory}">
             <link target="FindPhysicalInvNew">
-                <parameter param-name="facilityId"/>
+                <parameter param-name="facilityId" value="${parameters.facilityId}"/>
             </link>
         </menu-item>
         <menu-item name="FindFacilityTransfers" title="Inventory Transfers">
             <link target="FindFacilityTransfers">
-                <parameter param-name="facilityId"/>
+                <parameter param-name="facilityId" value="${parameters.facilityId}"/>
             </link>
         </menu-item>
         <menu-item name="ReceiveReturn" title="${uiLabelMap.ProductReceiveReturn}">
             <link target="ReceiveReturn">
-                <parameter param-name="facilityId"/>
+                <parameter param-name="facilityId" value="${parameters.facilityId}"/>
             </link>
         </menu-item> -->
         <!-- <menu-item name="PicklistOptions" title="${uiLabelMap.ProductPicking}" >
             <link target="PicklistOptions">
-                <parameter param-name="facilityId"/>
+                <parameter param-name="facilityId" value="${parameters.facilityId}"/>
                 <parameter param-name="mode" value="Auto"/>
             </link>
         </menu-item>
         <menu-item name="PickMoveStock" title="${uiLabelMap.ProductStockMoves}">
             <link target="PickMoveStock">
-                <parameter param-name="facilityId"/>
+                <parameter param-name="facilityId" value="${parameters.facilityId}"/>
             </link>
         </menu-item>
         <menu-item name="PicklistManage" title="${uiLabelMap.ProductPicklistManage}">
             <link target="PicklistManage">
-                <parameter param-name="facilityId"/>
+                <parameter param-name="facilityId" value="${parameters.facilityId}"/>
             </link>
         </menu-item>
         <menu-item name="VerifyPick" title="${uiLabelMap.ProductVerifyPick}">
             <link target="VerifyPick">
-                <parameter param-name="facilityId"/>
+                <parameter param-name="facilityId" value="${parameters.facilityId}"/>
                 <parameter param-name="mode" value="Auto"/>
             </link>
         </menu-item>
         <menu-item name="PackOrder" title="${uiLabelMap.ProductPacking}">
             <link target="PackOrder">
-                <parameter param-name="facilityId"/>
+                <parameter param-name="facilityId" value="${parameters.facilityId}"/>
                 <parameter param-name="mode" value="Auto"/>
             </link>
         </menu-item> -->
         <!--<menu-item name="Scheduling" title="${uiLabelMap.ProductScheduling}">
             <link target="Scheduling">
-                <parameter param-name="facilityId"/>
+                <parameter param-name="facilityId" value="${parameters.facilityId}"/>
             </link>
         </menu-item>-->
         <!--<menu-item name="EditFacilityContent" title="${uiLabelMap.ProductContent}">
             <link target="EditFacilityContent">
-                <parameter param-name="facilityId"/>
+                <parameter param-name="facilityId" value="${parameters.facilityId}"/>
             </link>
         </menu-item>-->
         <!-- <menu-item name="EditFacilityGeoPoint" title="${uiLabelMap.CommonGeoLocation}">
              <link target="EditFacilityGeoPoint">
-                 <parameter param-name="facilityId"/>
+                 <parameter param-name="facilityId" value="${parameters.facilityId}"/>
              </link>
          </menu-item>-->
         <!-- <menu-item name="transformations" title="Transformation">
             <link target="SearchTransformation">
-                <parameter param-name="facilityId"/>
+                <parameter param-name="facilityId" value="${parameters.facilityId}"/>
             </link>
         </menu-item>
         
         <menu-item name="stockReserve" title="Stock Reservations">
             <condition>   <if-compare operator="equals" value="N" field="reserveInventory"/>   </condition>
             <link target="StockReservations">
-                <parameter param-name="facilityId"/>
+                <parameter param-name="facilityId" value="${parameters.facilityId}"/>
             </link>
         </menu-item>
         
         <menu-item name="Reports" title="Reports">
             <link target="ShipmentReports">
-                <parameter param-name="facilityId"/>
+                <parameter param-name="facilityId" value="${parameters.facilityId}"/>
             </link>
         </menu-item> -->
         <!-- <menu-item name="viewCalender" title="View Calender">
@@ -862,25 +862,25 @@ under the License.
         <menu-item name="EditInventoryItem" title="${uiLabelMap.ProductInventoryItem}">
             <link target="EditInventoryItem">
                 <parameter param-name="inventoryItemId"/>
-                <parameter param-name="facilityId"/>
+                <parameter param-name="facilityId" value="${parameters.facilityId}"/>
             </link>
         </menu-item>
         <menu-item name="ViewInventoryItemDetail" title="${uiLabelMap.ProductInventoryDetails}">
             <link target="ViewInventoryItemDetail">
                 <parameter param-name="inventoryItemId"/>
-                <parameter param-name="facilityId"/>
+                <parameter param-name="facilityId" value="${parameters.facilityId}"/>
             </link>
         </menu-item>
         <menu-item name="ViewAtrributes" title="Attributes">
             <link target="ViewAtrributes">
                 <parameter param-name="inventoryItemId"/>
-                <parameter param-name="facilityId"/>
+                <parameter param-name="facilityId" value="${parameters.facilityId}"/>
             </link>
         </menu-item>
         <!-- <menu-item name="EditInventoryItemLabels" title="${uiLabelMap.ProductInventoryItemLabelAppl}">
             <link target="EditInventoryItemLabels">
                 <parameter param-name="inventoryItemId"/>
-                <parameter param-name="facilityId"/>
+                <parameter param-name="facilityId" value="${parameters.facilityId}"/>
             </link>
         </menu-item> -->
     </menu>
