@@ -1,0 +1,50 @@
+<?init class="org.zkoss.zk.ui.util.Composition" arg0="/WEB-INF/layout/templateWestCollapsible.zul"?>
+<zk xmlns:n="http://www.zkoss.org/2005/zk/native">
+
+	<groupbox mold="3d" self="@{define(westContent) }">
+		<caption label="Tax" />
+		<vbox>
+			<toolbarbutton label="Tax Declaration" >
+				<attribute name="onClick">
+	Div div = (Div) appendDiv;
+	Component firstChild = div.getFirstChild();
+	if (firstChild != null) {
+		div.removeChild(firstChild);
+	}
+	Window win = (Window) Executions.createComponents(
+			"/zul/payRollManagement/employeetaxDeclaration.zul", null, null);
+	div.appendChild(win);
+</attribute>
+			</toolbarbutton>
+			<toolbarbutton label="Approve Tax Declaration">
+				<attribute name="onClick">
+					Div div = (Div) appendDiv;
+					Component firstChild = div.getFirstChild();
+					if (firstChild != null) {
+						div.removeChild(firstChild);
+					}
+					Window win = (Window) Executions.createComponents(
+							"/zul/payRollManagement/ApproveemployeetaxDeclaration.zul", null, null);
+					div.appendChild(win);
+				</attribute>
+			</toolbarbutton>
+			<toolbarbutton label="Statuatory Forms" id="statuatoryForms">
+				<attribute name="onClick">
+	Div div = (Div) appendDiv;
+	Component firstChild = div.getFirstChild();
+	if (firstChild != null) {
+		div.removeChild(firstChild);
+	}
+	Window win = (Window) Executions.createComponents(
+			"/zul/payRollManagement/EmployeeStatuatoryForms.zul", null, null);
+	div.appendChild(win);
+</attribute>
+			</toolbarbutton>
+		</vbox>
+	</groupbox>
+
+
+	<div id="appendDiv" self="@{define(content)}">
+
+	</div>
+</zk>

@@ -1,0 +1,148 @@
+<zk>
+	<zscript>
+	import org.ofbiz.entity.*;
+	GenericDelegator delegator = com.ndz.zkoss.util.HrmsInfrastructure.getDelegator();//GenericDelegator.getGenericDelegator("default");
+	GenericValue gv = (GenericValue) Executions.getCurrent().getArg().get("gv");
+	String terminationId = gv.getString("terminationId");
+	String mgrPositionId=gv.getString("mgrPositionId");
+	String partyId = gv.getString("partyId");
+	GenericValue personGv = null;
+	personGv = delegator.findByPrimaryKey("Person", org.ofbiz.base.util.UtilMisc.toMap("partyId", partyId));
+	String fullName = null;
+	fullName = personGv.getString("firstName") + " " + personGv.getString("lastName");
+	String reason = gv.getString("reason");
+	java.sql.Date applicationDateType = gv.getDate("applicationDate");
+	Date applicationDate = new Date(applicationDateType.getTime());
+	
+	java.sql.Date terminationDateType = gv.getDate("terminationDate");
+	Date terminationDate1 = new Date(terminationDateType.getTime());
+	
+	String noticePeriod = gv.getString("noticePeriod");
+	java.util.Date currentDate = new java.util.Date();
+	String currentDateSTR = org.ofbiz.base.util.UtilDateTime.formatDate(currentDate);
+</zscript>
+	<window width="55%" height="50%" closable="true" id="editTerminationApplicationWindow" border="normal" maximizable="true">
+		<caption label="Edit Resignation Application" style="font-weight:bold;color:black"></caption>
+		<separator height="10px" />
+		<label value="${partyId}" visible="false" id="partyId"></label>
+		<label value="${mgrPositionId}" visible="false" id="mgrPositionId"></label>
+		<hbox>
+			<div align="right" width="150px">
+				<label value="Resignation Id" style="font-weight:bold"></label>
+			</div>
+			<div align="left">
+				<label value="${terminationId}" id="terminationId" style="font-weight:regular" />
+			</div>
+		</hbox>
+		<separator />
+		<hbox>
+			<div align="right" width="150px">
+				<label value="Employee Name" style="font-weight:bold" />
+			</div>
+
+			<div align="left">
+				<label value="${fullName}" style="font-weight:regular" />
+			</div>
+		</hbox>
+		<separator />
+		<hbox>
+			<div align="right" width="153px">
+				<label value="Application Date" style="font-weight:bold" />
+			</div>
+
+			<div align="left" >
+				<label value="${currentDateSTR}"/>
+				<datebox id="applicationDate" value="${currentDate}" visible="false"/>
+			</div>
+		</hbox>
+		<separator />
+		<hbox>
+			<div align="right" width="153px">
+				<label value="Notice Period" style="font-weight:bold" />
+				<label value="*" style="color:red"></label>
+			</div>
+			<div align="left">
+				<intbox id="noticePeriod" value="${noticePeriod}" onChange="show();" constraint="no empty:Notice Period Required"></intbox>
+				<label value="in Days" style="font-weight:bold"></label>
+			</div>
+		</hbox>
+		<separator />
+		<hbox>
+			<div align="right" width="153px">
+			<hbox>
+				<label value="Exit Date" style="font-weight:bold" />
+				<label value="*" style="color:red" />
+				</hbox>
+			</div>
+
+			<div align="left">
+			<hbox>
+				<label id="terminationDate" value="${terminationDate1}">
+					<attribute name="onCreate">
+						terminationDate.setValue(org.ofbiz.base.util.UtilDateTime.formatDate(terminationDate1));
+					</attribute>
+				
+				</label>
+				</hbox>
+			</div>
+		</hbox>
+		<separator />
+		<zscript>
+		
+		<![CDATA[
+	void show() {
+		Object applicationDateObj = ((Datebox) editTerminationApplicationWindow.getFellow("applicationDate")).getRawValue();
+		java.util.Date applicationDate = (java.util.Date) applicationDateObj;
+		if (applicationDate != null) {
+			java.sql.Timestamp appDate = new java.sql.Timestamp(applicationDate.getTime());
+			int noticeperiod = 0;
+			appDate = org.ofbiz.base.util.UtilDateTime.addDaysToTimestamp(appDate, noticePeriod.getValue().intValue());
+			terminationDate.setValue(org.ofbiz.base.util.UtilDateTime.formatDate(new java.util.Date(appDate.getTime())));
+		}
+	}
+]]>
+		</zscript>
+
+
+		<hbox>
+			<div align="right" width="153px">
+				<label value="Resignation Reason" style="font-weight:bold" />
+				<label value="*" style="color:red"></label>
+			</div>
+			<div width="100px" align="left">
+				<textbox id="reasonForTermination" rows="3" cols="45" value="${reason}" constraint="no empty:Resignation Reason Required" />
+			</div>
+		</hbox>
+		<separator />
+		<zscript>
+		<![CDATA[
+	void validateForm() {
+		if (applicationDate.getValue() == null) {
+			throw new WrongValueException(applicationDate, "Application Date Required");
+		}
+		applicationDate.getValue();
+		if (org.ofbiz.base.util.UtilValidate.isNegativeInteger((noticePeriod.getValue()).toString())) {
+			throw new WrongValueException(noticePeriod, "Notice Period Cannot be negative");
+		} else if (!(org.ofbiz.base.util.UtilValidate.isInteger((noticePeriod.getValue()).toString()))) {
+			throw new WrongValueException(noticePeriod, "Notice Period Cannot be Decimal");
+		}
+		terminationDate.getValue();
+		reasonForTermination.getValue();
+
+	}
+]]>
+		</zscript>
+		<hbox>
+			<div align="right" width="360px">
+				<button id="updateTerminationButton" label="Save"
+					onClick='validateForm();com.ndz.controller.EmployeeTerminationManagementController.updateTerminationApplication(event);Events.postEvent("onClick", Path
+				.getComponent("/searchPanel//searchButton"), null);editTerminationApplicationWindow.detach()' />
+				<button id="submitTerminationButton" label="Submit"
+					onClick='validateForm();com.ndz.controller.EmployeeTerminationManagementController.submitTerminationApplication(event);Events.postEvent("onClick", Path
+				.getComponent("/searchPanel//searchButton"), null);editTerminationApplicationWindow.detach();' />
+				<button id="editTerminationCancelButton" label="${c:l('ButtonCancel') }"
+					onClick="editTerminationApplicationWindow.detach()" />
+			</div>
+		</hbox>
+	</window>
+</zk>

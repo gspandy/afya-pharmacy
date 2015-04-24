@@ -1,0 +1,979 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<entitymodel xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xsi:noNamespaceSchemaLocation="http://ofbiz.apache.org/dtds/entitymodel.xsd">
+    <!-- ========================================================= -->
+    <!-- ======================== Defaults ======================= -->
+    <!-- ========================================================= -->
+    <title>Entity of HRMS Component</title>
+    <description>None</description>
+    <copyright></copyright>
+    <author>None</author>
+    <version></version>
+    <entity entity-name="EmployeeRequisition" package-name="org.ofbiz.hrms.employeeRequisition">
+        <field name="requisitionId" type="id-ne"></field>
+        <field name="approverPositionId" type="id-ne"></field>
+        <field name="partyId" type="id-ne"></field>
+        <field name="positionType" type="id-ne"></field>
+        <field name="statusId" type="id-ne"></field>
+        <field name="numberOfPosition" type="numeric"></field>
+        <field name="qualification" type="text"></field>
+        <field name="minExprience" type="numeric"></field>
+        <field name="maxExprience" type="numeric"></field>
+        <field name="jobTitle" type="text"></field>
+        <field name="jobDescription" type="text"></field>
+        <field name="roleDetails" type="text"></field>
+        <field name="softSkills" type="text"></field>
+        <field name="justificationForHiring" type="text"></field>
+        <field name="minimumSalary" type="currency-amount"></field>
+        <field name="maximumSalary" type="currency-amount"></field>
+        <field name="reqRaisedByDept" type="id-ne"></field>
+        <field name="fromDate" type="date-time"></field>
+        <field name="thruDate" type="date-time"></field>
+        <field name="hodComment" type="text"></field>
+        <field name="adminComment" type="text"></field>
+        <field name="requisitionType" type="id-ne"></field>
+        <field name="replacementpositionId" type="id-ne"></field>
+        <field name="locationId" type="id-ne"></field>
+        <field name="budgetId" type="id-ne"></field>
+        <field name="budgetItemSeqId" type="id-ne"></field>
+        <field name="uomId" type="id-ne"></field>
+        <field name="enumId" type="id-ne"></field>
+        <field name="managerId" type="id-ne"></field>
+        <prim-key field="requisitionId"/>
+        <relation rel-entity-name="Location" type="one" fk-name="REQ_LOC">
+            <key-map field-name="locationId" rel-field-name="locationId"/>
+        </relation>
+        <!--<relation rel-entity-name="Budget" type="one" fk-name="REQ_BUDGET">
+            <key-map field-name="budgetId" rel-field-name="budgetId" /> </relation> -->
+        <!--<relation rel-entity-name="BudgetItem" type="one" fk-name="REQ_BUDGETITEM">
+            <key-map field-name="budgetId" rel-field-name="budgetId" /> <key-map field-name="budgetItemSeqId"
+            rel-field-name="budgetItemSeqId" /> </relation> -->
+        <relation rel-entity-name="Uom" type="one" fk-name="REQ_CURRENCY">
+            <key-map field-name="uomId" rel-field-name="uomId"/>
+        </relation>
+        <relation rel-entity-name="Enumeration" type="one"
+                  fk-name="REQ_ENUMERATION">
+            <key-map field-name="enumId" rel-field-name="enumId"/>
+        </relation>
+    </entity>
+    <entity entity-name="DepartmentPosition" package-name="org.ofbiz.hrms.Department">
+        <description>
+            This entity stores the relationship of HOD Position Id for a Department.
+        </description>
+        <field name="departmentId" type="id-ne"></field>
+        <field name="departmentName" type="id-ne"></field>
+        <field name="departmentPositionId" type="id-ne"></field>
+        <field name="fromDate" type="date-time"></field>
+        <field name="thruDate" type="date-time"></field>
+        <field name="locationId" type="id-ne"></field>
+        <field name="departmentCode" type="id-ne"></field>
+        <prim-key field="departmentId"/>
+        <unique-constraint title="UNI_DEP_NAME_LOC">
+            <unique-key-map field-name="locationId"/>
+            <unique-key-map field-name="departmentName"/>
+        </unique-constraint>
+        <unique-constraint title="UNI_DEP_CODE">
+            <unique-key-map field-name="departmentCode"/>
+        </unique-constraint>
+        <relation rel-entity-name="PartyGroup" type="one">
+            <key-map field-name="departmentId" rel-field-name="partyId"/>
+        </relation>
+        <relation rel-entity-name="Location" type="one">
+            <key-map field-name="locationId" rel-field-name="locationId"/>
+        </relation>
+    </entity>
+    <extend-entity entity-name="EmplPosition">
+        <field name="additionalResponsibility" type="text"></field>
+    </extend-entity>
+
+    <entity entity-name="Location" package-name="org.ofbiz.hrms.Location">
+        <field name="locationId" type="id-ne"></field>
+        <field name="locationName" type="text"></field>
+        <field name="contactMechId" type="id-ne"></field>
+        <field name="locationType" type="text"></field>
+        <prim-key field="locationId"/>
+        <relation type="one-nofk" rel-entity-name="PostalAddress">
+            <key-map field-name="contactMechId"/>
+        </relation>
+    </entity>
+    <view-entity entity-name="EmployeePositionPersonFullfillmentDetail"
+                 package-name="org.ofbiz.hrms">
+        <member-entity entity-alias="emplPos" entity-name="EmplPosition"/>
+        <member-entity entity-alias="emplPosReport"
+                       entity-name="EmplPositionReportingStruct"/>
+        <member-entity entity-alias="person" entity-name="Person"/>
+        <member-entity entity-alias="emplPosType" entity-name="EmplPositionType"/>
+        <alias-all entity-alias="emplPos"></alias-all>
+        <alias-all entity-alias="emplPosReport"></alias-all>
+        <alias-all entity-alias="person"></alias-all>
+        <alias-all entity-alias="emplPosType"></alias-all>
+    </view-entity>
+    <extend-entity entity-name="EmplTermination">
+        <field name="settlementType" type="description"></field>
+    </extend-entity>
+    <extend-entity entity-name="EmployeeRequisition">
+        <field name="requirementType" type="description"></field>
+        <field name="grade" type="description"></field>
+        <field name="positionCategory" type="description"></field>
+        <field name="employeeType" type="description"></field>
+        
+    </extend-entity>
+    <entity entity-name="PosResponsibilitySubType" package-name="org.ofbiz.hrms">
+        <field name="emplPositionId" type="id-ne"></field>
+        <field name="responsibilityTypeId" type="id-ne"></field>
+        <field name="responsibilitySubType" type="description"></field>
+        <field name="responsibilitySubTypeId" type="id-ne"></field>
+        <prim-key field="responsibilitySubTypeId"/>
+        <relation type="one-nofk" rel-entity-name="EmplPosition">
+            <key-map field-name="emplPositionId"/>
+        </relation>
+        <relation type="one-nofk" rel-entity-name="ResponsibilityType">
+            <key-map field-name="responsibilityTypeId"/>
+        </relation>
+    </entity>
+    <entity entity-name="RecruitmentAgency" package-name="org.ofbiz.hrms.RecruitmentAgency">
+        <field name="agencyId" type="id-ne"></field>
+        <field name="agencyName" type="text"></field>
+        <field name="emailAddress" type="text"></field>
+        <field name="contactNumber" type="text"></field>
+        <field name="locationId" type="id-ne"></field>
+        <field name="emailContactMechId" type="id-ne"></field>
+        <field name="contactNumberContactMechId" type="id-ne"></field>
+        <field name="userLoginId" type="id-vlong-ne"></field>
+        <field name="password" type="short-varchar"></field>
+        <prim-key field="agencyId"/>
+        <prim-key field="emailContactMechId"/>
+        <prim-key field="contactNumberContactMechId"/>
+        <relation rel-entity-name="PartyGroup" type="one" fk-name="RRT_AG">
+            <key-map field-name="agencyId" rel-field-name="partyId"/>
+        </relation>
+        <relation type="one-nofk" rel-entity-name="TelecomNumber">
+            <key-map field-name="contactNumberContactMechId"
+                     rel-field-name="contactMechId"/>
+        </relation>
+    </entity>
+
+    <entity entity-name="RecruitmentRequisition" package-name="org.ofbiz.hrms.Recruitment">
+        <field name="requisitionId" type="id-ne"/>
+        <field name="agencyId" type="id-ne"/>
+        <field name="contactNumberContactMechId" type="id-ne"></field>
+        <field name="emailContactMechId" type="id-ne"></field>
+        <prim-key field="requisitionId"/>
+        <prim-key field="agencyId"/>
+        <prim-key field="contactNumberContactMechId"/>
+        <prim-key field="emailContactMechId"/>
+       <!-- <relation rel-entity-name="RecruitmentAgency" type="one">
+            <key-map field-name="agencyId"/>
+            <key-map field-name="contactNumberContactMechId"/>
+            <key-map field-name="emailContactMechId"/>
+        </relation>-->
+        <relation rel-entity-name="EmployeeRequisition" type="one">
+            <key-map field-name="requisitionId"/>
+        </relation>
+    </entity>
+    <view-entity entity-name="PartyEmploymentAppDetails"
+                 package-name="org.ofbiz.hrms.recruitment">
+        <member-entity entity-alias="EMPAPP" entity-name="EmplPerfReview"/>
+        <member-entity entity-alias="PR" entity-name="PartyResume"/>
+        <alias-all entity-alias="EMPAPP"></alias-all>
+        <alias-all entity-alias="PR"></alias-all>
+        <view-link entity-alias="EMPAPP" rel-entity-alias="PR">
+            <key-map field-name="partyId" rel-field-name="partyId"/>
+        </view-link>
+    </view-entity>
+    <extend-entity entity-name="PartyResume">
+        <field name="resumeStatus" type="id-ne"></field>
+    </extend-entity>
+
+    <entity entity-name="EmployeeLeaveInfo" package-name="org.ofbiz.hrms.EmployeeLeaveInfo">
+        <field name="partyId" type="id-ne"></field>
+        <field name="leaveType" type="id-ne"></field>
+        <field name="leaveLimit" type="floating-point"/>
+        <field name="availedLeave" type="floating-point"/>
+        <field name="balanceLeave" type="floating-point"/>
+        <field name="beginYear" type="date-time"></field>
+        <field name="endYear" type="date-time"></field>
+        <prim-key field="beginYear"/>
+        <prim-key field="endYear"/>
+        <prim-key field="partyId"/>
+        <prim-key field="leaveType"/>
+        <relation type="one-nofk" rel-entity-name="Person">
+            <key-map field-name="partyId"/>
+        </relation>
+    </entity>
+    <extend-entity entity-name="EmployeeRequisition">
+        <field name="balancePositionToFulfill" type="numeric"></field>
+        <field name="isAdminApproved" type="id-ne"></field>
+    </extend-entity>
+    <extend-entity entity-name="EmplLeave">
+        <field name="statusType" type="id-ne"></field>
+    </extend-entity>
+    <extend-entity entity-name="EmplLeave">
+        <field name="adminStatusType" type="id-ne"></field>
+    </extend-entity>
+    <extend-entity entity-name="EmplLeave">
+        <field name="updatedBy" type="id-ne"></field>
+    </extend-entity>
+    <extend-entity entity-name="ELoanStatus">
+        <field name="statusType" type="id-ne"></field>
+    </extend-entity>
+    <extend-entity entity-name="ELoanStatus">
+        <field name="adminStatusType" type="id-ne"></field>
+    </extend-entity>
+    <extend-entity entity-name="ClaimStatus">
+        <field name="statusType" type="id-ne"></field>
+    </extend-entity>
+    <extend-entity entity-name="ClaimStatus">
+        <field name="adminStatusType" type="id-ne"></field>
+    </extend-entity>
+    <extend-entity entity-name="ClaimStatus">
+        <field name="adminComment" type="description"></field>
+    </extend-entity>
+    <extend-entity entity-name="ClaimHead">
+        <field name="employeeComment" type="description"></field>
+        <field name="attachment" type="blob"></field>
+        <field name="attachmentName" type="id-ne"></field>
+    </extend-entity>
+    <extend-entity entity-name="ClaimHead">
+        <field name="admincurrencyUomId" type="id-ne"></field>
+    </extend-entity>
+    <extend-entity entity-name="ELoanStatus">
+        <field name="employeeComment" type="description"></field>
+    </extend-entity>
+    <extend-entity entity-name="ELoanStatus">
+        <field name="adminComment" type="description"></field>
+    </extend-entity>
+    <extend-entity entity-name="Announcement">
+        <field name="fromDate" type="date-time"></field>
+        <field name="thruDate" type="date-time"></field>
+    </extend-entity>
+    <extend-entity entity-name="UserLoginSecurityGroup">
+        <field name="isRequisitionAdmin" type="id-ne"></field>
+    </extend-entity>
+    <extend-entity entity-name="EmplTermination">
+        <field name="exitType" type="id-ne"></field>
+    </extend-entity>
+    <extend-entity entity-name="PerformanceNote">
+        <field name="communicationTime" type="date-time"></field>
+        <field name="noOfInterview" type="numeric"></field>
+        <field name="interviewPanelDetails" type="text"></field>
+    </extend-entity>
+    <extend-entity entity-name="Person">
+        <field name="imageUrl" type="url"></field>
+    </extend-entity>
+
+
+    <entity entity-name="OpinionPoll" package-name="org.ofbiz.hrms">
+        <field name="pollId" type="id-ne"></field>
+        <field name="question" type="text"></field>
+        <field name="fromDate" type="date" not-null="false"></field>
+        <field name="thruDate" type="date"></field>
+        <prim-key field="pollId"/>
+    </entity>
+
+    <entity entity-name="OpinionPollResponse" package-name="org.ofbiz.hrms">
+        <field name="pollId" type="id-ne"></field>
+        <field name="partyId" type="id-ne"></field>
+        <field name="comments" type="very-long" col-name="POLL_COMMENTS"></field>
+        <field name="response" type="very-short"></field>
+        <prim-key field="pollId"/>
+        <prim-key field="partyId"/>
+    </entity>
+
+    <view-entity entity-name="OpnionPollView" package-name="org.ofbiz.hrms">
+        <member-entity entity-alias="OP" entity-name="OpinionPoll"></member-entity>
+        <member-entity entity-alias="OPR" entity-name="OpinionPollResponse"></member-entity>
+        <alias name="pollId" entity-alias="OP"/>
+        <alias name="responseCount" field="response" entity-alias="OPR"
+               function="count"></alias>
+        <alias name="response" entity-alias="OPR" group-by="true"></alias>
+        <view-link rel-entity-alias="OP" entity-alias="OPR">
+            <key-map field-name="pollId"/>
+        </view-link>
+    </view-entity>
+
+    <entity entity-name="EmplStatus" package-name="org.ofbiz.hrms">
+        <field name="partyId" type="id-ne"></field>
+        <field name="statusId" type="id-ne"></field>
+        <field name="createdBy" type="id-ne"></field>
+        <prim-key field="partyId"/>
+        <prim-key field="statusId"/>
+        <relation rel-entity-name="Party" type="one">
+            <key-map field-name="partyId" rel-field-name="partyId"/>
+        </relation>
+        <relation rel-entity-name="StatusItem" type="one">
+            <key-map field-name="statusId" rel-field-name="statusId"/>
+        </relation>
+    </entity>
+
+    <entity entity-name="SetupMenu" package-name="com.ofbiz.hrms">
+        <field name="menuId" type="id-ne"></field>
+        <field name="parentMenuId" type="id-ne"></field>
+        <field name="menuLabel" type="short-varchar"></field>
+        <field name="pageUrl" type="short-varchar"></field>
+        <prim-key field="menuId"/>
+        <relation rel-entity-name="SetupMenu" type="one">
+            <key-map field-name="parentMenuId" rel-field-name="menuId"/>
+        </relation>
+    </entity>
+
+    <extend-entity entity-name="Training">
+        <field name="maxTrainees" type="numeric"></field>
+        <field name="startTime" type="time"></field>
+        <field name="endTime" type="time"></field>
+    </extend-entity>
+
+    <entity entity-name="TrainingRequest" package-name="com.ofbiz.hrms">
+        <field name="trainingId" type="id-ne"></field>
+        <field name="partyId" type="id-ne"></field>
+        <field name="managerId" type="id-ne"></field>
+        <field name="statusId" type="id-ne"></field>
+        <prim-key field="trainingId"/>
+        <prim-key field="partyId"/>
+        <relation rel-entity-name="Training" type="one">
+            <key-map field-name="trainingId"/>
+        </relation>
+        <relation rel-entity-name="Party" type="one-nofk" fk-name="REQR_PER">
+            <key-map field-name="partyId" rel-field-name="partyId"/>
+        </relation>
+        <relation rel-entity-name="Person" type="one" fk-name="MGR_PER">
+            <key-map field-name="managerId" rel-field-name="partyId"/>
+        </relation>
+        <relation rel-entity-name="StatusItem" type="one" fk-name="TRV_STI">
+            <key-map field-name="statusId"/>
+        </relation>
+    </entity>
+
+    <view-entity entity-name="TrainingRequestView"
+                 package-name="org.ofbiz.hrms">
+        <member-entity entity-alias="TR" entity-name="TrainingRequest"></member-entity>
+        <member-entity entity-alias="T" entity-name="Training"></member-entity>
+        <alias-all entity-alias="TR"></alias-all>
+        <alias-all entity-alias="T"></alias-all>
+        <view-link rel-entity-alias="T" entity-alias="TR">
+            <key-map field-name="trainingId"/>
+        </view-link>
+        <relation rel-entity-name="StatusItem" type="one" fk-name="TRV_STI">
+            <key-map field-name="statusId"/>
+        </relation>
+    </view-entity>
+
+    <entity entity-name="TrainingFeedback" package-name="org.ofbiz.hrms">
+        <field name="trainingId" type="id-ne"></field>
+        <field name="partyId" type="id-ne"></field>
+        <field name="feedback" type="text"></field>
+        <prim-key field="trainingId"/>
+        <prim-key field="partyId"/>
+        <relation rel-entity-name="TrainingRequest" type="one">
+            <key-map field-name="trainingId"/>
+            <key-map field-name="partyId"/>
+        </relation>
+    </entity>
+
+    <view-entity entity-name="TrainingView" package-name="org.ofbiz.hrms">
+        <member-entity entity-alias="T" entity-name="Training"></member-entity>
+        <member-entity entity-alias="TR" entity-name="TrainingRequest"></member-entity>
+        <alias-all entity-alias="T"/>
+        <alias name="trainingCnt" entity-alias="TR" function="count"
+               field="trainingId"/>
+        <view-link rel-entity-alias="TR" entity-alias="T"
+                   rel-optional="false">
+            <key-map field-name="trainingId"/>
+        </view-link>
+    </view-entity>
+
+    <view-entity entity-name="EmplPositionFulfilmentAndPerson"
+                 package-name="org.ofbiz.hrms">
+        <member-entity entity-alias="EPF" entity-name="EmplPositionFulfillment"></member-entity>
+        <member-entity entity-alias="P" entity-name="Person"></member-entity>
+        <alias-all entity-alias="EPF"></alias-all>
+        <alias-all entity-alias="P"></alias-all>
+        <view-link rel-entity-alias="EPF" entity-alias="P">
+            <key-map field-name="partyId"/>
+        </view-link>
+    </view-entity>
+
+    <view-entity entity-name="PersonLocation" package-name="org.ofbiz.hrms">
+        <member-entity entity-alias="LOC" entity-name="Location"></member-entity>
+        <member-entity entity-alias="P" entity-name="Person"></member-entity>
+        <alias-all entity-alias="P"></alias-all>
+        <alias-all entity-alias="LOC"></alias-all>
+        <view-link rel-entity-alias="LOC" entity-alias="P">
+            <key-map field-name="locationId"/>
+        </view-link>
+        <relation rel-entity-name="PostalAddress" type="one">
+            <key-map field-name="contactMechId"/>
+        </relation>
+    </view-entity>
+    <view-entity entity-name="TimesheetManagerRoleView"
+                 package-name="com.ofbiz.hrms">
+        <member-entity entity-alias="T" entity-name="Timesheet"></member-entity>
+        <member-entity entity-alias="TR" entity-name="TimesheetRole"></member-entity>
+        <alias-all entity-alias="T"></alias-all>
+        <alias name="emplPartyId" entity-alias="T" field="partyId"></alias>
+        <alias name="roleTypeId" entity-alias="TR"></alias>
+        <alias name="managerPartyId" field="partyId" entity-alias="TR"></alias>
+        <view-link rel-entity-alias="T" entity-alias="TR">
+            <key-map field-name="timesheetId"/>
+        </view-link>
+        <relation rel-entity-name="Timesheet" type="one">
+            <key-map field-name="timesheetId"/>
+        </relation>
+    </view-entity>
+
+    <entity entity-name="PartyRequest" package-name="com.ofbiz.hrms">
+        <field name="requestId" type="id-ne"></field>
+        <field name="partyId" type="id-ne"></field>
+        <field name="requestMsg" type="very-long"></field>
+        <field name="requestTypeId" type="description"></field>
+        <prim-key field="requestId"/>
+        <relation type="one" fk-name="PARTYREQ_STS" rel-entity-name="StatusItem">
+            <key-map field-name="statusId"/>
+        </relation>
+        <relation type="one" fk-name="PARTYREQ_PRTY" rel-entity-name="Party">
+            <key-map field-name="partyId"/>
+        </relation>
+        <relation type="one" fk-name="PARTYREQ_TYPE" rel-entity-name="PartyRequestType">
+            <key-map field-name="requestTypeId"/>
+        </relation>
+    </entity>
+
+    <entity entity-name="PartyRequestType" package-name="com.ofbiz.hrms">
+        <field name="requestTypeId" type="description"></field>
+        <field name="description" type="description"/>
+        <field name="priority" type="id-ne"></field>
+        <prim-key field="requestTypeId"/>
+        <unique-constraint title="PARTY_REQ_TYPE_UNIQUE">
+            <unique-key-map field-name="requestTypeId"/>
+            <unique-key-map field-name="description"/>
+        </unique-constraint>
+    </entity>
+
+    <entity entity-name="PartyReqResponse" package-name="com.ofbiz.hrms">
+        <field name="responseId" type="id-ne"></field>
+        <field name="requestId" type="id-ne"></field>
+        <field name="statusTypeId" type="id-ne"/>
+        <prim-key field="responseId"/>
+        <relation rel-entity-name="PartyRequest" type="one">
+            <key-map field-name="requestId"/>
+        </relation>
+        <relation rel-entity-name="StatusItem" type="one" fk-name="PREQ_STATUS">
+            <key-map rel-field-name="statusId" field-name="statusTypeId"/>
+        </relation>
+    </entity>
+
+    <view-entity entity-name="PartyRequestView" package-name="com.ofbiz.hrms">
+        <member-entity entity-alias="PR" entity-name="PartyRequest"></member-entity>
+        <member-entity entity-alias="PRT" entity-name="PartyRequestType"></member-entity>
+        <member-entity entity-alias="P" entity-name="Person"/>
+        <member-entity entity-alias="PRIOR" entity-name="PriorityType"/>
+        <alias-all entity-alias="PR"></alias-all>
+        <alias-all entity-alias="PRT"></alias-all>
+        <alias-all entity-alias="P"></alias-all>
+        <alias-all entity-alias="PRIOR"></alias-all>
+        <view-link rel-entity-alias="PR" entity-alias="PRT">
+            <key-map field-name="requestTypeId"/>
+        </view-link>
+
+        <view-link rel-entity-alias="P" entity-alias="PR">
+            <key-map field-name="partyId"/>
+        </view-link>
+        <view-link rel-entity-alias="PRIOR" entity-alias="PRT">
+            <key-map rel-field-name="priorityTypeId" field-name="priority"/>
+        </view-link>
+    </view-entity>
+
+    <entity entity-name="PriorityType" package-name="com.ofbiz.hrms">
+        <field name="orderId" type="numeric"/>
+        <field name="priorityTypeId" type="id-ne"></field>
+        <field name="description" type="description"/>
+        <prim-key field="priorityTypeId"/>
+    </entity>
+
+    <extend-entity entity-name="PartyRequestType">
+        <field name="asignedPartyId" type="id-ne"></field>
+    </extend-entity>
+    <extend-entity entity-name="PartyRequestType">
+        <field name="requestTypePurpose" type="description"></field>
+    </extend-entity>
+    <extend-entity entity-name="PartyRequestType">
+        <field name="assignedBy" type="id-ne"></field>
+    </extend-entity>
+    <extend-entity entity-name="PartyReqResponse">
+        <field name="updatedBy" type="id-ne"></field>
+        <field name="responseMessage" type="text"></field>
+        <field name="additionalNote" type="text"></field>
+        <field name="attachemntName" type="text"></field>
+    </extend-entity>
+    <extend-entity entity-name="PartyRequest">
+        <field name="requestDescription" type="text"></field>
+    </extend-entity>
+
+    <entity entity-name="EmployeeClaimInfo" package-name="com.ofbiz.hrms">
+        <field name="claimTypeId" type="id-ne"></field>
+        <field name="partyId" type="id-ne"/>
+        <field name="managerId" type="id-ne"/>
+        <field name="balanceAmount" type="currency-amount"/>
+        <prim-key field="claimTypeId"/>
+        <prim-key field="partyId"/>
+    </entity>
+    <extend-entity entity-name="EmployeeClaimInfo">
+        <field name="positionType" type="id-ne"></field>
+        <field name="availedAmount" type="currency-amount"/>
+
+    </extend-entity>
+    <extend-entity entity-name="SequenceValueItem">
+        <field name="seqPrefix" type="text"></field>
+        <field name="suffix" type="text"></field>
+    </extend-entity>
+    <entity entity-name="EmployeeLoanInfo" package-name="com.ofbiz.hrms">
+        <field name="loanTypeId" type="id-ne"></field>
+        <field name="partyId" type="id-ne"/>
+        <field name="managerId" type="id-ne"/>
+        <field name="balanceAmount" type="currency-amount"/>
+        
+        <prim-key field="loanTypeId"/>
+        <prim-key field="partyId"/>
+    </entity>
+    <extend-entity entity-name="EmployeeLoanInfo">
+        <field name="positionType" type="id-ne"></field>
+        <field name="availedAmount" type="currency-amount"/>
+
+    </extend-entity>
+    <extend-entity entity-name="OpinionPoll">
+        <field name="questionStatus" type="text"></field>
+    </extend-entity>
+
+    <view-entity entity-name="EmplLeaveView" package-name="org.ofbiz.humanres.employment"
+                 title="EmplLeave View">
+
+        <member-entity entity-alias="ENUM" entity-name="Enumeration"></member-entity>
+        <member-entity entity-alias="EMPL" entity-name="EmplLeave"></member-entity>
+        <member-entity entity-alias="PER" entity-name="Person"></member-entity>
+        <member-entity entity-alias="ST" entity-name="StatusItem"></member-entity>
+
+        <alias-all entity-alias="ENUM"/>
+        <alias-all entity-alias="EMPL"/>
+        <alias name="firstName" entity-alias="PER" field="firstName"/>
+        <alias name="lastName" entity-alias="PER" field="lastName"/>
+        <alias name="statusItemDescription" entity-alias="ST" field="description"/>
+
+        <view-link rel-entity-alias="EMPL" entity-alias="ENUM">
+            <key-map rel-field-name="leaveTypeId" field-name="enumId"/>
+        </view-link>
+        <view-link rel-entity-alias="PER" entity-alias="EMPL">
+            <key-map rel-field-name="partyId" field-name="partyId"/>
+        </view-link>
+        <view-link rel-entity-alias="ST" entity-alias="EMPL">
+            <key-map rel-field-name="statusId" field-name="leaveStatusId"/>
+        </view-link>
+    </view-entity>
+
+
+    <view-entity entity-name="MaxELoanDetailView" package-name="org.ofbiz.eloan"
+                 title="Employee Loan Detail Entity">
+        <member-entity entity-alias="LS" entity-name="ELoanStatus"/>
+        <member-entity entity-alias="LH" entity-name="ELoanHead"/>
+        <member-entity entity-alias="E" entity-name="Enumeration"/>
+        <member-entity entity-alias="MLI" entity-name="MaxLsId"/>
+        <alias-all entity-alias="LS">
+            <exclude field="fromDate"/>
+            <exclude field="thruDate"/>
+        </alias-all>
+        <alias-all entity-alias="LH"/>
+        <alias-all entity-alias="E"/>
+        <view-link entity-alias="LH" rel-entity-alias="E">
+            <key-map rel-field-name="enumId" field-name="loanType"/>
+        </view-link>
+        <view-link entity-alias="LS" rel-entity-alias="LH">
+            <key-map field-name="loanId"/>
+        </view-link>
+        <view-link entity-alias="LS" rel-entity-alias="MLI">
+            <key-map field-name="lsId"/>
+        </view-link>
+    </view-entity>
+
+    <entity entity-name="EmplTaxDeclStatus" package-name="org.ofbiz.tax">
+        <field name="partyId" type="id-ne"></field>
+        <field name="validTaxDeclId" type="id-ne"></field>
+        <field name="statusId" type="id-ne"></field>
+        <prim-key field="partyId"/>
+        <prim-key field="validTaxDeclId"/>
+
+        <relation rel-entity-name="Party" type="one" fk-name="TAX_DECL_PTY">
+            <key-map field-name="partyId"/>
+        </relation>
+
+        <relation rel-entity-name="ValidTaxDecl" type="one" fk-name="VLD_TAX_DECL">
+            <key-map field-name="validTaxDeclId"/>
+        </relation>
+
+        <relation rel-entity-name="StatusItem" type="one" fk-name="TX_DECL_SI">
+            <key-map field-name="statusId"/>
+        </relation>
+    </entity>
+
+
+    <view-entity entity-name="EmployeeClaimDetail"
+                 package-name="org.ofbiz.hrms">
+        <member-entity entity-alias="ECI" entity-name="EmployeeClaimInfo"/>
+        <member-entity entity-alias="EN" entity-name="Enumeration"/>
+        <alias-all entity-alias="ECI"></alias-all>
+        <alias name="description" entity-alias="EN" field="description"></alias>
+        <alias name="enumTypeId" entity-alias="EN" field="enumTypeId"></alias>
+        <view-link entity-alias="ECI" rel-entity-alias="EN">
+            <key-map field-name="claimTypeId" rel-field-name="enumId"/>
+        </view-link>
+    </view-entity>
+    <view-entity entity-name="EmployeeLeaveDetail"
+                 package-name="org.ofbiz.hrms">
+        <member-entity entity-alias="ELI" entity-name="EmployeeLeaveInfo"/>
+        <member-entity entity-alias="EN" entity-name="Enumeration"/>
+        <alias-all entity-alias="ELI"></alias-all>
+        <alias name="description" entity-alias="EN" field="description"></alias>
+        <alias name="enumTypeId" entity-alias="EN" field="enumTypeId"></alias>
+        <view-link entity-alias="ELI" rel-entity-alias="EN">
+            <key-map field-name="leaveType" rel-field-name="enumId"/>
+        </view-link>
+    </view-entity>
+    <view-entity entity-name="EmployeeLeaveLimitDetail"
+                 package-name="org.ofbiz.hrms">
+        <member-entity entity-alias="ELL" entity-name="EmplLeaveLimit"/>
+        <member-entity entity-alias="EN" entity-name="Enumeration"/>
+        <alias-all entity-alias="ELL"></alias-all>
+        <alias name="description" entity-alias="EN" field="description"></alias>
+        <alias name="enumTypeId" entity-alias="EN" field="enumTypeId"></alias>
+        <view-link entity-alias="ELL" rel-entity-alias="EN">
+            <key-map field-name="leaveTypeId" rel-field-name="enumId"/>
+        </view-link>
+    </view-entity>
+    <extend-entity entity-name="EmployeeLeaveInfo">
+        <field name="positionType" type="id-ne"></field>
+    </extend-entity>
+    <view-entity entity-name="EmployeeClaimLimitDetail"
+                 package-name="org.ofbiz.hrms">
+        <member-entity entity-alias="ECL" entity-name="ClaimLimit"/>
+        <member-entity entity-alias="EN" entity-name="Enumeration"/>
+        <alias-all entity-alias="ECL"></alias-all>
+        <alias name="description" entity-alias="EN" field="description"></alias>
+        <alias name="enumTypeId" entity-alias="EN" field="enumTypeId"></alias>
+        <view-link entity-alias="ECL" rel-entity-alias="EN">
+            <key-map field-name="claimType" rel-field-name="enumId"/>
+        </view-link>
+    </view-entity>
+    <view-entity entity-name="EmployeeLoanLimitDetail"
+                 package-name="org.ofbiz.hrms">
+        <member-entity entity-alias="LL" entity-name="ELoanLimit"/>
+        <member-entity entity-alias="EN" entity-name="Enumeration"/>
+        <alias-all entity-alias="LL"></alias-all>
+        <alias-all entity-alias="EN"></alias-all>
+        <view-link entity-alias="LL" rel-entity-alias="EN">
+            <key-map field-name="loanType" rel-field-name="enumId"/>
+        </view-link>
+    </view-entity>
+    <view-entity entity-name="EmployeeLoanDetail" package-name="org.ofbiz.hrms">
+        <member-entity entity-alias="ELI" entity-name="EmployeeLoanInfo"/>
+        <member-entity entity-alias="EN" entity-name="Enumeration"/>
+        <alias-all entity-alias="ELI"></alias-all>
+        <alias name="description" entity-alias="EN" field="description"></alias>
+        <alias name="enumTypeId" entity-alias="EN" field="enumTypeId"></alias>
+        <view-link entity-alias="ELI" rel-entity-alias="EN">
+            <key-map field-name="loanTypeId" rel-field-name="enumId"/>
+        </view-link>
+    </view-entity>
+    <extend-entity entity-name="PartyRequest">
+        <field name="statusId" type="id-ne"></field>
+    </extend-entity>
+    <extend-entity entity-name="EmplLeave">
+        <field name="adminComment" type="text"></field>
+    </extend-entity>
+    <extend-entity entity-name="EmplTermination">
+        <field name="statusType" type="id-ne"></field>
+        <field name="adminComment" type="text"></field>
+        <field name="submitStatus" type="text"></field>
+        <field name="managerComment" type="text"></field>
+        <field name="managerStatusType" type="id-ne"></field>
+        <field name="lastUpdatedDate" type="date-time"></field>
+    </extend-entity>
+    <extend-entity entity-name="EmplPayslip">
+        <field name="monthlyLoanAmount" type="floating-point"/>
+    </extend-entity>
+
+    <entity entity-name="EmplPrevSalInfo" package-name="org.ofbiz.sal">
+        <field name="partyId" type="id-ne"></field>
+        <field name="prevGrossAmount" type="currency-amount"></field>
+        <field name="prevTaxPaid" type="currency-amount"></field>
+        <prim-key field="partyId"/>
+        <relation rel-entity-name="Party" type="one" fk-name="PREV_SAL_INFO">
+            <key-map field-name="partyId"/>
+        </relation>
+    </entity>
+    <view-entity entity-name="EmplPositionStatusView"
+                 package-name="org.ofbiz.humanres.position" title="Empl Position Status View">
+        <member-entity entity-alias="EP" entity-name="EmplPosition"/>
+        <member-entity entity-alias="SI" entity-name="StatusItem"/>
+        <alias-all entity-alias="EP"/>
+        <alias-all entity-alias="SI"/>
+
+        <view-link entity-alias="SI" rel-entity-alias="EP">
+            <key-map field-name="statusId"/>
+        </view-link>
+    </view-entity>
+
+    <extend-entity entity-name="PartyGroup">
+        <field name="currencyType" type="text"/>
+    </extend-entity>
+
+    <view-entity entity-name="EmployeementView" package-name="org.ofbiz.humanres.employment">
+        <member-entity entity-alias="employmt" entity-name="Employment"/>
+        <alias name="partyId" field="partyIdTo" entity-alias="employmt"/>
+        <alias name="partyIdFrom" field="partyIdFrom" entity-alias="employmt"/>
+        <alias name="thruDate" field="thruDate" entity-alias="employmt"/>
+    </view-entity>
+    <view-entity entity-name="EmployeementPersonView"
+                 package-name="org.ofbiz.humanres.employment">
+        <member-entity entity-alias="employmt" entity-name="EmployeementView"/>
+        <member-entity entity-alias="person" entity-name="Person"/>
+        <alias-all entity-alias="person"></alias-all>
+        <alias name="partyId" field="partyId" entity-alias="employmt"/>
+        <alias name="partyIdFrom" field="partyIdFrom" entity-alias="employmt"/>
+        <alias name="thruDate" field="thruDate" entity-alias="employmt"></alias>
+        <view-link entity-alias="employmt" rel-entity-alias="person">
+            <key-map field-name="partyId" rel-field-name="partyId"/>
+        </view-link>
+    </view-entity>
+
+    <extend-entity entity-name="Employment">
+        <field name="confirmationDate" type="date-time"></field>
+    </extend-entity>
+
+    <extend-entity entity-name="Person">
+        <field name="vehicleNumber" type="long-varchar"></field>
+        <field name="vehicleType" type="long-varchar"></field>
+        <field name="nrcNo" type="short-varchar"></field>
+        <field name="grades" type="short-varchar"></field>
+        <field name="employeeType" type="short-varchar"></field>
+        <field name="positionCategory" type="short-varchar"></field>
+        <field name="jobDescription" type="long-varchar"></field>
+        <field name="qualification" type="long-varchar"></field>
+        <field name="isCfo" type="indicator"></field>
+        <field name="isCeo" type="indicator"></field>
+        <field name="previousEmployeeId" type="id-ne"></field>
+        <field name="isDisabled" type="indicator"></field>
+    </extend-entity>
+
+    <extend-entity entity-name="Preferences">
+        <field name="ifscCode" type="short-varchar"></field>
+        <field name="micrCode" type="short-varchar"></field>
+    </extend-entity>
+
+    <entity entity-name="EmployeeDependant" package-name="org.ofbiz.hrms">
+        <field name="dependantId" type="id-ne"/>
+        <field name="employeeId" type="id-ne"/>
+        <field name="dependantName" type="text"/>
+        <field name="dateOfBirth" type="date"/>
+        <field name="gender" type="text"/>
+        <field name="relationshipType" type="id-ne"/>
+        <field name="fromDate" type="date"/>
+        <field name="thruDate" type="date"/>
+        <field name="placeOfBirth" type="text"/>
+        <field name="timeOfBirth" type="date-time"/>
+        <field name="fatherName" type="text"/>
+        <field name="motherName" type="text"/>
+        <field name="nrcNo" type="text"/>
+        
+        <prim-key field="dependantId"/>
+        <relation rel-entity-name="PartyRelationshipType" type="one" fk-name="EMPL_INS_DET_PTY_RLN">
+            <key-map field-name="relationshipType" rel-field-name="partyRelationshipTypeId"/>
+        </relation>
+    </entity>
+    <entity entity-name="EmployeePolicyDetail" package-name="org.ofbiz.hrms">
+        <field name="policyId" type="id-ne"/>
+        <field name="employeeId" type="id-ne"/>
+        <field name="dependantId" type="id-ne"/>
+        <field name="memberId" type="text"/>
+        <field name="insuranceId" type="text"/>
+        <field name="insuranceCompany" type="text"/>
+        <field name="primaryBenificiary" type="text"/>
+        <field name="policyNumber" type="text"/>
+        <field name="policyHolder" type="text"/>
+        <field name="validFrom" type="date"/>
+        <field name="validThru" type="date"/>
+        <field name="active" type="id-ne"/>
+        <prim-key field="policyId"/>
+    </entity>
+
+
+    <view-entity entity-name="EmployeeDependantPartyRelationshipTypeView" package-name="org.ofbiz.hrms">
+        <member-entity entity-alias="employeeDependant" entity-name="EmployeeDependant"/>
+        <member-entity entity-alias="partyRelationshipType" entity-name="PartyRelationshipType"/>
+        <alias-all entity-alias="partyRelationshipType"></alias-all>
+        <alias-all entity-alias="employeeDependant"></alias-all>
+        <view-link entity-alias="employeeDependant" rel-entity-alias="partyRelationshipType">
+            <key-map field-name="relationshipType" rel-field-name="partyRelationshipTypeId"/>
+        </view-link>
+    </view-entity>
+    <extend-entity entity-name="Budget">
+        <field name="description" type="text"></field>
+        <field name="emplPositionTypeId" type="id-ne"></field>
+    </extend-entity>
+    <extend-entity entity-name="PartyGroup">
+        <field name="employerId" type="numeric"></field>
+        <field name="agentId" type="numeric"></field>
+        <field name="bankCode" type="numeric"></field>
+    </extend-entity>
+    <extend-entity entity-name="Person">
+        <field name="employeeAccWithAgent" type="name"></field>
+        <field name="WO" type="name">
+            <description>Wife of</description>
+        </field>
+        <field name="SO" type="name">
+            <description>Son of</description>
+        </field>
+        <field name="countryCode" type="id"></field>
+        <field name="emergencyContactNo" type="id">
+            <description>Phone number with ISD + STD code</description>
+        </field>
+        <field name="locationId" type="id-ne"></field>
+    </extend-entity>
+    <view-entity entity-name="PartySecurityAndPartyDetail" package-name="org.ofbiz.party.party"
+                 title="Party Role and Party Detail (Person, PartyGroup, etc) View Entity">
+        <member-entity entity-alias="PTY" entity-name="Party"/>
+        <member-entity entity-alias="PERSON" entity-name="Person"/>
+        <member-entity entity-alias="PTYGRP" entity-name="PartyGroup"/>
+        <member-entity entity-alias="PS" entity-name="PartyStatus"/>
+        <member-entity entity-alias="UL" entity-name="UserLogin"/>
+        <member-entity entity-alias="ULSG" entity-name="UserLoginSecurityGroup"/>
+        <alias-all entity-alias="UL"/>
+        <alias-all entity-alias="ULSG"/>
+        <alias-all entity-alias="PTY"/>
+        <alias-all entity-alias="PS">
+            <exclude field="statusId"/>
+        </alias-all>
+        <alias-all entity-alias="PERSON">
+            <exclude field="comments"/>
+        </alias-all>
+        <alias-all entity-alias="PTYGRP">
+            <exclude field="comments"/>
+        </alias-all>
+        <alias entity-alias="PERSON" name="personComments" field="comments"/>
+        <alias entity-alias="PTYGRP" name="partyGroupComments" field="comments"/>
+        <alias entity-alias="PS" name="previousStatusId" field="statusId"/>
+        <view-link entity-alias="PTY" rel-entity-alias="PERSON" rel-optional="true">
+            <key-map field-name="partyId"/>
+        </view-link>
+        <view-link entity-alias="PTY" rel-entity-alias="PTYGRP" rel-optional="true">
+            <key-map field-name="partyId"/>
+        </view-link>
+        <view-link entity-alias="PTY" rel-entity-alias="PS" rel-optional="true">
+            <key-map field-name="partyId"/>
+        </view-link>
+        <view-link entity-alias="PTY" rel-entity-alias="UL" rel-optional="true">
+            <key-map field-name="partyId"/>
+        </view-link>
+        <view-link entity-alias="UL" rel-entity-alias="ULSG" rel-optional="true">
+            <key-map field-name="userLoginId"/>
+        </view-link>
+    </view-entity>
+    <entity entity-name="DepreciationMethod"
+            package-name="org.ofbiz.accounting.fixedasset"
+            title="Depreciation Method Entity">
+        <field name="depreciationMethodId" type="id-ne"></field>
+        <field name="description" type="description"></field>
+        <field name="formula" type="long-varchar"></field>
+        <prim-key field="depreciationMethodId"/>
+    </entity>
+    <view-entity entity-name="AcctgTransEntryProdSums"
+                 package-name="org.ofbiz.accounting.ledger"
+                 title="Sum of AcctgTransEntry entity amounts, grouped by glAccountId, productId, debitCreditFlag">
+        <member-entity entity-alias="ATE" entity-name="AcctgTransEntry"/>
+        <member-entity entity-alias="ACT" entity-name="AcctgTrans"/>
+        <member-entity entity-alias="GLA" entity-name="GlAccount"/>
+        <alias entity-alias="ATE" name="organizationPartyId" group-by="true"/>
+        <alias entity-alias="ATE" name="productId" group-by="true"/>
+        <alias entity-alias="ATE" name="debitCreditFlag" group-by="true"/>
+        <alias entity-alias="ATE" name="amount" function="sum"/>
+        <alias entity-alias="ATE" name="glAccountId" group-by="false"/>
+        <alias entity-alias="GLA" name="glAccountTypeId" group-by="true"/>
+        <!-- so we can select by type of account -->
+        <alias entity-alias="ACT" name="isPosted" group-by="false"/>
+        <!-- so we can select by posted status -->
+        <alias entity-alias="ACT" name="glFiscalTypeId" group-by="true"/>
+        <alias entity-alias="ACT" name="transactionDate" group-by="false"/>
+        <!-- so we can select the sum by date -->
+        <view-link entity-alias="ATE" rel-entity-alias="GLA">
+            <key-map field-name="glAccountId"/>
+        </view-link>
+        <view-link entity-alias="ATE" rel-entity-alias="ACT">
+            <key-map field-name="acctgTransId"/>
+        </view-link>
+    </view-entity>
+
+
+    <extend-entity entity-name="EmplLeaveLimit">
+        <field name="employeeType" type="text"></field>
+        <field name="positionCategory" type="text"></field>
+    </extend-entity>
+
+    <entity entity-name="EmployeeLoanEmiInfo" package-name="org.ofbiz.hrms">
+        <field name="emiId" type="id-ne"></field>
+        <field name="employeeId" type="id-ne"></field>
+        <field name="loanName" type="text"></field>
+        <field name="loanType" type="id-ne"/>
+        <field name="fromDate" type="date"/>
+        <field name="thruDate" type="date"/>
+        <field name="amount" type="currency-amount"/>
+        <field name="toBePaid" type="indicator"/>
+        <field name="loanId" type="id-ne"/>
+        <prim-key field="emiId"/>
+        <prim-key field="employeeId"/>
+        <prim-key field="loanId"/>
+        <relation rel-entity-name="Party" type="one" fk-name="EMPL_PARTY_PARTY_ID">
+            <key-map field-name="employeeId" rel-field-name="partyId"/>
+        </relation>
+        <relation rel-entity-name="Enumeration" type="one" fk-name="ENUMERATION_ENUM_ID">
+            <key-map field-name="loanType" rel-field-name="enumId"/>
+        </relation>
+    </entity>
+
+    <extend-entity entity-name="Person">
+        <field name="napsaNo" type="id"></field>
+    </extend-entity>
+
+    <entity entity-name="Division" package-name="org.ofbiz.hrms">
+        <field name="divisionId" type="id-ne"></field>
+        <field name="divisionCode" type="id-ne"></field>
+        <field name="divisionName" type="text"></field>
+        <prim-key field="divisionId"/>
+        <unique-constraint title="UNI_DIVISION_CODE">
+            <unique-key-map field-name="divisionCode"/>
+        </unique-constraint>
+    </entity>
+
+    <entity entity-name="DepartmentDivision" package-name="org.ofbiz.hrms">
+        <field name="departmentId" type="id-ne"></field>
+        <field name="divisionId" type="id-ne"></field>
+        <prim-key field="divisionId"/>
+        <prim-key field="departmentId"/>
+        <relation rel-entity-name="DepartmentPosition" type="one" fk-name="DEPARTMENT_POSITION_DEPARTMENT_ID">
+            <key-map field-name="departmentId" rel-field-name="departmentId"/>
+        </relation>
+        <relation rel-entity-name="Division" type="many" fk-name="DIVISION_DIVISION_ID">
+            <key-map field-name="divisionId" rel-field-name="divisionId"/>
+        </relation>
+    </entity>
+    <extend-entity entity-name="EmplPosition">
+        <field name="divisionId" type="id-ne"></field>
+    </extend-entity>
+    
+    <extend-entity entity-name="ClaimLimit">
+        <field name="employeeType" type="text"></field>
+        <field name="positionCategory" type="text"></field>
+    </extend-entity>
+    
+     <extend-entity entity-name="ELoanLimit">
+        <field name="employeeType" type="text"></field>
+        <field name="positionCategory" type="text"></field>
+    </extend-entity>
+   
+</entitymodel>

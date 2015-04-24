@@ -1,0 +1,190 @@
+<?init class="org.zkoss.zk.ui.util.Composition"
+arg0="/WEB-INF/layout/template.zul"?>
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<zk>
+	<zscript>
+	public class MyConstraint implements Constraint, ClientConstraint {
+
+		public MyConstraint() {
+		}
+
+		//specity the name of Javascript funtion and pass required parameters
+		public String getClientValidation() {
+			return "validatePassword";
+		}
+
+		// not necessay, it's ok to define error message in JavaScript function.
+		public String getErrorMessage(Component arg0) {
+			return null;
+		}
+
+		//must return true, or user's data will be send back to server without encryption
+		public boolean isClientComplete() {
+			return true;
+		}
+
+		//not necessay, it's for server-side validation
+		public void validate(Component arg0, Object arg1)
+				throws WrongValueException {
+
+		}
+	}
+	MyConstraint cc = new MyConstraint();
+</zscript>
+
+	<script type="text/javascript">
+
+
+
+
+
+
+
+
+
+		
+		<![CDATA[ //Running at the browser window.Validate_errorbox =
+
+		function validatePassword(){ alert('Validating Password'); }
+
+		function (id, boxid, msg) { var html = '<div
+		style="display:none;position:absolute" id="'
+		+boxid+'">'+zk.encodeXML(msg, true)+'</div>';
+		document.body.insertAdjacentHTML("afterbegin", html); return
+		$e(boxid); } ]]>
+		
+		
+		
+		
+		
+		
+		
+		
+		
+</script>
+	<window self="@{define(content)}" title="New Associate"
+		apply="com.ndz.composer.associate.AssociateComposer">
+		<attribute name="onFirstName"><![CDATA[
+	userName.setValue(firstName.getValue().toLowerCase() + "."
+			+ lastName.getValue().toLowerCase());
+]]></attribute>
+
+		<attribute name="onLastName"><![CDATA[
+	userName.setValue(firstName.getValue().toLowerCase() + "."
+			+ lastName.getValue().toLowerCase());
+]]></attribute>
+
+
+
+		<div align="center">
+			<groupbox>
+				<caption>${c:l('FormFieldTitle_employeePersonalInformation') }</caption>
+				<grid align="center" width="700px">
+
+					<rows>
+						<row>
+							<label value="${c:l('FormFieldTitle_EmployeeId') }"></label>
+							<textbox></textbox>
+							<label value="${c:l('FormFieldTitle_Title') }"></label>
+							<textbox id="title"></textbox>
+						</row>
+						<row>
+							<label value="${c:l('HRMS_FirstName') }"></label>
+							<textbox id="firstName"
+								forward="onChange=onFirstName">
+							</textbox>
+							<label value="${c:l('HRMS_MiddleName') }"></label>
+							<textbox></textbox>
+							<label value="${c:l('HRMS_LastName') }"></label>
+							<textbox id="lastName"
+								forward="onChange=onLastName">
+							</textbox>
+						</row>
+						<row>
+							<label value="${c:l('HRMS_Gender') }"></label>
+							<listbox mold="select">
+								<listitem label="${c:l('ListBox_GenderMale') }" value="M"></listitem>
+								<listitem label="${c:l('ListBox_GenderFemale') }" value="F"></listitem>
+							</listbox>
+						</row>
+					</rows>
+				</grid>
+			</groupbox>
+
+			<groupbox>
+				<caption>${c:l('FormFieldTitle_employeeLoginInformation') }</caption>
+				<grid align="center" width="700px">
+					<rows>
+						<row>
+							<label value="${c:l('FormFieldTitle_UserLoginId') }"></label>
+							<textbox id="userName" cols="40"
+								disabled="true">
+							</textbox>
+						</row>
+
+						<row>
+							<label value="${c:l('FormFieldTitle_EmployeeAssociatePassword') }"></label>
+							<textbox constraint="${cc}" id="password"></textbox>
+						</row>
+						<row>
+							<label value="${c:l('FormFieldTitle_EmployeeAssociateVerifyPassword') }"></label>
+							<textbox constraint="no empty"></textbox>
+						</row>
+					</rows>
+				</grid>
+			</groupbox>
+
+			<groupbox>
+				<caption>${c:l('FormFieldTitle_employeeDepartmentInformation') }</caption>
+				<grid align="center" width="700px">
+					<rows>
+						<row>
+							<label value="${c:l('FormFieldTitle_DepartmentName') }" left="no"></label>
+							<listbox mold="select" id="department">
+								<listitem value="admin"
+									label="${c:l('ListBox_Administrator') }">
+								</listitem>
+							</listbox>
+							<label value="${c:l('HRMS_POSITIONID') }"></label>
+							<bandbox></bandbox>
+						</row>
+					</rows>
+				</grid>
+			</groupbox>
+
+			<hbox>
+				<button id="cancelAssociate" label="${c:l('Hrms_CancelAssociate') }"
+					mold="os" />
+				<button id="saveAssociate" label="${c:l('Hrms_CreateAssociate') }"
+					mold="os" />
+			</hbox>
+		</div>
+		
+		<window id="profile">
+		<label value="${c:l('HRMS_FirstName') }"></label>
+		<label id="firstName" value="Pradyumna">
+			<attribute name="onDoubleClick">
+			{
+				Window win = (Window) Executions.createComponents(
+				"/zul/Associate/singleEdit.zul", null, null);
+				win.setMaximizable(true);
+				win.setAttribute("employeeId","10001");
+				((Label)win.getFellowIfAny("fieldLabel")).setValue("First Name");
+				win.doModal();
+			}
+		</attribute>
+
+		</label>
+	</window>
+
+		
+		<window id="dynaProfile" apply="com.ndz.component.ProfileWindowComponent">
+			
+		</window>
+
+	</window>
+
+	
+
+
+</zk>

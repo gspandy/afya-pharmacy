@@ -1,0 +1,52 @@
+<?page title="Manage Attendance Register" contentType="text/html;charset=UTF-8"?>
+<?init class="org.zkoss.zkplus.databind.AnnotateDataBinderInit"  arg0="attendanceRegisterWin" ?>
+<zk>
+    <window vflex="1" hflex="1" border="" apply="org.zkoss.bind.BindComposer"
+            viewModel="@id('vm') @init('com.zpc.timesheet.view.ManageAttendanceRegisterVM')" id="attendanceRegisterWin">
+        <style src="/images/mainCSS.css"/>
+        <div height="20%">
+            <groupbox>
+                <caption label="LEGEND"></caption>
+                <vbox hflex="1" align="center">
+                    <auxhead hflex="1">
+                        <auxheader label="P - Present" align="center" width="10%"/>
+                        <auxheader label="A - Absent" align="center" width="10%"/>
+                        <auxheader label="AD - Away on Duty" align="center" width="10%"/>
+                        <auxheader label="SB - StandBy" align="center" width="10%"/>
+                        <auxheader label="D - Deserted" align="center" width="10%"/>
+                        <auxheader label="F - Free Day" align="center" width="10%"/>
+                        <auxheader label="L - Annual Leave" align="center" width="10%"/>
+                        <auxheader label="S - Sick" align="center"/>
+                        <auxheader label="R - Resigned" align="center"/>
+                    </auxhead>
+                    <auxhead>
+                        <auxheader label="CL - Compassionate Leave" align="center" width="10%"/>
+                        <auxheader label="LP - Annual Leave Passage" align="center" width="10%"/>
+                        <auxheader label="ML - Maternity Leave" align="center"/>
+                        <auxheader label="UL - Unpaid Leave" align="center"/>
+                        <auxheader label="SL - Special Leave" align="center"/>
+                        <auxheader label="SU - Suspended" align="center"/>
+                        <auxheader label="T - Terminated/Dismissed" align="center"/>
+                        <auxheader label="TR - Transferred" align="center"/>
+                        <auxheader label="WD - Wrong Department" align="center"/>
+                    </auxhead>
+                    <auxhead>
+                        <auxheader label="PF - Present on Free Day" align="center" width="10%"/>
+                    </auxhead>
+                </vbox>
+            </groupbox>
+        </div>
+        <div height="75%"><spreadsheet src="/WEB-INF/template/template.xlsx" vflex="1" hflex="1" showFormulabar="true" id="attendanceRegisterSpreadsheet" maxVisibleColumns="152"  preloadColumnSize="152"/></div>
+        <grid width="100%" height="5%">
+            <rows>
+                <row>
+                    <cell width="93%">
+                        <button label="Save" id="save" onClick="@command('save')"/>
+                        <button style="margin-left:20px" label="Back" onClick="@command('redirect')"/>
+                    </cell>
+                    <cell width="7%"><button label="Submit" onClick="@command('submit')" visible="${vm.isTimeKeeper eq false}"/></cell>
+                </row>
+            </rows>
+        </grid>
+    </window>
+</zk>

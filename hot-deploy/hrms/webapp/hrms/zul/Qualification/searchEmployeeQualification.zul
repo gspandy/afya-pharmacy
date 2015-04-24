@@ -1,0 +1,196 @@
+<?init class="org.zkoss.zk.ui.util.Composition"
+arg0="/WEB-INF/layout/template.zul"?>
+
+<?component name="findbox" macroURI="../macros/textfindMacro.zul" id="macro1"?>
+<?component name="findbox1" macroURI="../macros/textfindMacro.zul" id="macro4"?>
+<?component name="findbox2" macroURI="../macros/textfindMacro.zul" id="macro5"?>
+<?component name="findbox3" macroURI="../macros/textfindMacro.zul" id="macro6"?>
+<?component name="fromDatebox" macroURI="../macros/datefindMacro.zul" id="macro2"?>
+<?component name="thruDatebox" macroURI="../macros/datefindMacro.zul" id="macro3"?>
+<?component name="selectbox" macroURI="../macros/findselectbox.zul"?>
+<?page title="Secure Page" id="leavemgmt"?>
+
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<zk>
+	<zscript>
+	import com.ndz.controller.*;
+	SearchController controller = new SearchController();
+</zscript>
+	<window title="${c:l('HRMS_SEARCH_QUALIFICATION') }" border="normal"
+		id="searchPanel" self="@{define(content)}" apply="${controller}">
+		<custom-attributes entityName="PartyQual"></custom-attributes>
+		<div align="center"
+			apply="com.ndz.controller.SearchQualificationManagementController">
+			<grid oddRowSclass="none"
+				style="border:0px 0px 0px 0px;cellpadding:0px" width="70%">
+				<rows style="border:0px">
+					<row>
+
+						<hbox width="255px" align="left">
+							<div width="150px" align="right">
+								<label value="${c:l('HRMS_EMPLOYEE_QUAL_TYPE_ID') }"></label>
+							</div>
+							<div width="100px" align="left">
+								<listbox id="listBoxEmployeeQualTypeId"
+									focus="true" name="listBoxEmployeeQualTypeId" mold="select">
+									<listitem label=""></listitem>
+								</listbox>
+							</div>
+						</hbox>
+
+
+						<div width="100%" align="left">
+							<findbox fieldLabel="${c:l('HRMS_QUALIFICATION_DESC') }"
+								name="employeeId" type="text" cols="20" />
+						</div>
+
+					</row>
+
+					<row>
+
+						<findbox1 fieldLabel="${c:l('FormFieldTitle_Title') }"
+							name="yearsExperience" type="text" cols="20" />
+						<div width="255px" align="right">
+							<label value="${c:l('FormFieldTitle_statusId') }"></label>
+							<listbox
+								id="searchEmployeeQualificationStatusID" focus="true"
+								name="searchEmployeeQualificationStatusID" mold="select">
+
+							</listbox>
+
+
+						</div>
+
+
+					</row>
+					<row>
+
+
+
+						<div width="250px" align="right">
+							<label value="${c:l('FormFieldTitle_statusId') }"></label>
+							<listbox
+								id="searchEmployeeQualificationVerifyStatusID" focus="true"
+								name="searchEmployeeQualificationVerifyStatusID"
+								mold="select">
+
+							</listbox>
+
+
+						</div>
+
+						<vbox>
+							<div>
+								<hbox>
+									<div align="right" width="148px"
+										style="margin-right:5px">
+										<label value="${c:l('HumanResLeaveSummaryFromDate') }" />
+									</div>
+									<div width="200px" align="left">
+										<datebox
+											id="editLeaveFromDatebox" name="editLeaveFromDatebox"
+											buttonVisible="true" constraint="${dateConstraint}" />
+
+									</div>
+								</hbox>
+							</div>
+
+							<div>
+								<hbox>
+									<div align="right" width="148px"
+										style="margin-right:5px">
+										<label value="${c:l('HumanResLeaveSummaryThruDate') }" />
+									</div>
+									<div width="200px" align="left">
+										<datebox
+											id="editLeaveThruDatebox" name="editLeaveFromDatebox"
+											buttonVisible="true" constraint="${dateConstraint}" />
+
+									</div>
+								</hbox>
+							</div>
+						</vbox>
+
+
+					</row>
+
+
+
+
+
+
+
+
+
+					<row spans="2" align="center">
+						<button label="${c:l('HRMS_SearchButton') }" mold="os"
+							id="searchButton">
+
+						</button>
+					</row>
+				</rows>
+			</grid>
+		</div>
+
+
+
+		<separator height="15px" tooltip="${c:l('HRMS_NEW') }"></separator>
+
+		<image src="/images/icon/add.png" height="25px">
+			<attribute name="onClick">
+	{
+		final Window win = (Window) Executions.createComponents(
+				"/zul/Qualification/newEmployeeQualification.zul", null, null);
+		win.setMaximizable(true);
+		win.doModal();
+
+	}
+</attribute>
+		</image>
+
+
+
+
+
+
+		<zscript>
+	import org.ofbiz.base.util.*;
+	class MyRowRenderer implements RowRenderer {
+
+		MyRowRenderer() {
+		}
+
+		public void render(Row row, Object data) {
+			org.ofbiz.entity.GenericValue gv = ((org.ofbiz.entity.GenericValue) data);
+
+			new Label(gv.getString("partyId")).setParent(row);
+			new Label(gv.getString("partyQualTypeId")).setParent(row);
+			new Label(gv.getTimestamp("fromDate").toString()).setParent(row);
+			new Label(gv.getString("qualificationDesc")).setParent(row);
+			new Label(gv.getString("title")).setParent(row);
+			new Label(gv.getString("statusId")).setParent(row);
+			new Label(gv.getString("verifStatusId")).setParent(row);
+
+			new Label(gv.getTimestamp("thruDate").toString()).setParent(row);
+
+		}
+	}
+	RowRenderer tableRenderer = new MyRowRenderer();
+</zscript>
+		<paging id="paging" width="100%" />
+		<grid width="100%" id="dataGrid"
+			rowRenderer="${tableRenderer}">
+			<columns menupopup="auto">
+				<column label="${c:l('HRMS_EMPLOYEEID') }" />
+				<column label="${c:l('HRMS_EMPLOYEE_QUAL_TYPE_ID') }" />
+				<column label="${c:l('HumanResLeaveSummaryFromDate') }" />
+				<column label="${c:l('HRMS_QUALIFICATION_DESC') }" />
+				<column label="${c:l('FormFieldTitle_Title') }" />
+				<column label="${c:l('FormFieldTitle_statusId') }" />
+				<column label="${c:l('HRMS_VERIF_STATUS_ID') }" />
+				<column label="${c:l('HumanResLeaveSummaryThruDate') }" />
+			</columns>
+		</grid>
+
+	</window>
+</zk>

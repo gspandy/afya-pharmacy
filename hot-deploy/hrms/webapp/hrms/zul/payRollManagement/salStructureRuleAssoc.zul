@@ -1,0 +1,206 @@
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<?page title="new page title" contentType="text/html;charset=UTF-8"?>
+<?init class="org.zkoss.zkplus.databind.AnnotateDataBinderInit" arg0="./salStructureAssoc"?>
+<zk xmlns:h="http://www.zkoss.org/2005/zk/native">
+	<zscript>
+	<![CDATA[
+	import com.hrms.payroll.composer.*;
+	import org.ofbiz.entity.GenericValue;
+	import org.ofbiz.entity.GenericDelegator;
+	EditSalaryStructureComposer salaryStructureComposer = (EditSalaryStructureComposer) Executions.getCurrent().getArg().get("composer");
+	BindingListModel model = salaryStructureComposer.getAttachedSalaryHeads();
+	GenericDelegator delegator = (GenericDelegator) Executions.getCurrent().getAttributes().get("delegator");
+	BindingListModel payrollRules = new BindingListModelList(salaryStructureComposer.getPayrollRules(), false);
+]]>
+</zscript>
+	<window title="${c:l('HRMS_SALARY_STRUCTURE') }" border="normal" id="salStructureAssoc">
+		<groupbox>
+			<h:table width="100%">
+				<h:tr>
+					<h:td style="text-align:right">
+						<label value="${c:l('HRMS_STRUTURE_ID') }"></label>
+					</h:td>
+					<h:td>
+						<label value="${salaryStructureComposer.salaryStructure.salaryStructureId}" />
+					</h:td>
+					<h:td style="text-align:right">
+						<label value="${c:l('Hrms_PositionType') }"></label>
+					</h:td>
+					<h:td>
+						<label value="${salaryStructureComposer.salaryStructure.positionId}" />
+					</h:td>
+				</h:tr>
+				<h:tr>
+					<h:td style="text-align:right">
+						<label value="${c:l('HRMS_STRUCTURE_NAME') }"></label>
+					</h:td>
+					<h:td>
+						<label value="${salaryStructureComposer.salaryStructure.hrName}" />
+					</h:td>
+				</h:tr>
+			</h:table>
+		</groupbox>
+		<separator></separator>
+
+		<panel>
+			<caption label="${c:l('HRMS_ASSOCIATED_SALARY_HEADS') }"></caption>
+			<panelchildren>
+				<listbox multiple="true" height="200px" model="${model}" id="attachedSHListbox"
+					itemRenderer="${salaryStructureComposer.salaryHeadRenderer}" vflex="true">
+					<listhead>
+						<listheader label="${c:l('HRMS_HEAD_NAME') }" align="center"></listheader>
+						<listheader label="${c:l('HRMS_HEAD_TYPE') }" align="center"></listheader>
+						<listheader label="${c:l('HRMS_CREDIT') }" align="center"></listheader>
+						<listheader label="${c:l('HRMS_TAXABLE') }" align="center"></listheader>
+						<listheader label="${c:l('HRMS_MANDATORY') }" align="center"></listheader>
+						<listheader label="${c:l('HRMS_COMPUTATION_TYPE') }" align="center"></listheader>
+					</listhead>
+				</listbox>
+			</panelchildren>
+		</panel>
+		<separator></separator>
+		<panel id="rulesPanel" if="${salaryStructureComposer.havingFormulas}" height="100px">
+			<caption label="${c:l('HRMS_ASSOCIATE_RULES') }"></caption>
+			<panelchildren>
+				<listbox model="@{payrollRules}" itemRenderer="${salaryStructureComposer.salaryHeadRuleRenderer}" height="100px"
+					vflex="true">
+					<listhead>
+						<listheader label="${c:l('HRMS_HEAD_ID') }"></listheader>
+						<listheader label="${c:l('HRMS_HEAD_NAME') }"></listheader>
+						<listheader label="${c:l('HRMS_RULE') }"></listheader>
+					</listhead>
+				</listbox>
+			</panelchildren>
+		</panel>
+
+		<box width="100%" style="text-align:center" align="center">
+			<button label="${c:l('btnSave') }" id="saveSalaryStructure" onClick="storeRules()" />
+		</box>
+
+
+
+		<zscript><![CDATA[
+	public void storeRules() {
+		boolean beganTransaction = org.ofbiz.entity.transaction.TransactionUtil.begin();
+		Map payrollRule=null;
+		if(salaryStructureComposer.getPayrollRules().size() > 0){
+		for (Iterator payrollIter = salaryStructureComposer.getPayrollRules().iterator(); payrollIter.hasNext();) {
+		    payrollRule = (Map) payrollIter.next();
+		    if(payrollRule.get("ruleId") == null){
+		    	Messagebox.show("Please Select Rule","Warning",1,null);
+		    	return;
+		    }
+			Map entityMap = org.ofbiz.base.util.UtilMisc.toMap("salaryStructureHeadId", payrollRule.get("salaryStructureHeadId"), "ruleId",
+					payrollRule.get("ruleId"));
+			delegator.removeByCondition("PayrollHeadRule", org.ofbiz.entity.condition.EntityCondition.makeCondition("salaryStructureHeadId",
+					payrollRule.get("salaryStructureHeadId")));
+			delegator.createOrStore(delegator.makeValue("PayrollHeadRule", entityMap));
+		}
+		
+		 String salid=salaryStructureComposer.getSalaryStructureId();
+		 String ruleid=(String)payrollRule.get("ruleId");
+		 ArrayList headIdbyrule=new ArrayList();
+		 List actionidlist=delegator.findByAnd("RuleConditionAction",org.ofbiz.base.util.UtilMisc.toMap("ruleId",ruleid));
+		 GenericValue gv1=(GenericValue )actionidlist.get(0);
+		 String actionid=(String)gv1.get("actionId");
+         List payrollaction=delegator.findByAnd("PayrollAction",org.ofbiz.base.util.UtilMisc.toMap("actionId",actionid));
+         GenericValue gv2=(GenericValue )payrollaction.get(0);
+         String operand1=(String)gv2.get("operandOne");
+         String operand2=(String)gv2.get("operandTwo");
+         
+         if(operand1.indexOf("ACTION.(")!=-1){
+         String actionid1=operand1.substring(operand1.indexOf("(")+1,operand1.indexOf(")"));
+         List actionid2=getAllHeadId(actionid1);
+         for(Object o:actionid2){
+         String s=(String)o;
+         headIdbyrule.add(s);
+         }
+         }
+         if(operand1.indexOf("SALARYHEAD.(")!=-1){
+              String actionid1=operand1.substring(operand1.indexOf("(")+1,operand1.indexOf(")"));
+               headIdbyrule.add(actionid1);         
+         }  
+           if(operand2.indexOf("ACTION.(")!=-1){
+         String actionid2=operand2.substring(operand2.indexOf("(")+1,operand2.indexOf(")"));
+         List actionid3=getAllHeadId(actionid2);
+          for(Object o:actionid3){
+            String s=(String)o;
+            headIdbyrule.add(s);
+         }
+         }
+         if(operand2.indexOf("SALARYHEAD.(")!=-1){
+              String actionid2=operand1.substring(operand1.indexOf("(")+1,operand1.indexOf(")"));
+              headIdbyrule.add(actionid2);         
+         } 
+               	
+		 List salheadidbysalstructureid=delegator.findByAnd("SalaryStructureHead",org.ofbiz.base.util.UtilMisc.toMap("salaryStructureId",salid));
+		 ArrayList headIdbystructure=new ArrayList();
+		   for(Object o: salheadidbysalstructureid)
+	       {
+	        GenericValue gv=(GenericValue)o;
+	        String value=(String)gv.getString("salaryHeadId"); 
+	         if(value==null){
+	              }
+	              else{
+	              headIdbystructure.add(value);
+	              }   
+	       	       
+	       }
+		   boolean flag= headIdbystructure.containsAll(headIdbyrule);
+		if(flag==true){
+		Messagebox.show("Payroll Rule added to Formula based Salary Head", "Success", 1, null);
+		org.ofbiz.entity.transaction.TransactionUtil.commit(beganTransaction);
+		//Executions.sendRedirect("/control/PayRoll?id=salaryStructure");
+		}else{
+		 Messagebox.show("Please Check the Rule,All Salary Head are not there in the Associated Salary Head","Warning",1,null);
+		}
+		}else{
+		Messagebox.show("Salary Heads added to Salary Structure", "Success", 1, null);
+		}
+	}
+	public List getAllHeadId(String s){
+	     ArrayList al=new ArrayList();
+	     List payrollaction=delegator.findByAnd("PayrollAction",org.ofbiz.base.util.UtilMisc.toMap("actionId",s));
+         GenericValue gv2=(GenericValue )payrollaction.get(0);
+         String operand1=(String)gv2.get("operandOne");
+         String operand2=(String)gv2.get("operandTwo"); 
+                
+         if(operand1.indexOf("ACTION.(")!=-1){
+         String actionid1=operand1.substring(operand1.indexOf("(")+1,operand1.indexOf(")"));
+        List headid=getAllHeadId(actionid1);
+        for(Object o:headid){
+	        String value=(String)o;
+	         if(value==null){
+	              }
+	              else{
+	              al.add(value);
+	              } 
+        }
+         }
+         if(operand1.indexOf("SALARYHEAD.(")!=-1){
+              String actionid1=operand1.substring(operand1.indexOf("(")+1,operand1.indexOf(")"));
+               al.add(actionid1);         
+         }  
+           if(operand2.indexOf("ACTION.(")!=-1){
+              String actionid2=operand2.substring(operand2.indexOf("(")+1,operand2.indexOf(")"));
+             List headid= getAllHeadId(actionid2);
+              for(Object o:headid){
+	        String value=(String)o;
+	         if(value==null){
+	              }
+	              else{
+	              al.add(value);
+	              } 
+        }
+         }
+         if(operand2.indexOf("SALARYHEAD.(")!=-1){
+              String actionid2=operand2.substring(operand2.indexOf("(")+1,operand2.indexOf(")"));
+              al.add(actionid2);         
+         } 
+         return al;
+	
+	}
+	]]></zscript>
+	</window>
+
+</zk>

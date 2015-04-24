@@ -1,0 +1,159 @@
+<?component name="findbox" macroURI="../macros/findBox.zul" id="macro1"?>
+<?component name="findbox1" macroURI="../macros/textfindMacro.zul" id="macro2"?>
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<?page title="HRMS-Location" id="locationmgmt"?>
+<zk xmlns:h="http://www.zkoss.org/2005/zk/native">
+	<zscript>
+	import com.ndz.controller.*;
+	SearchController controller = new SearchController();
+	
+	org.ofbiz.security.Security security = requestScope.get("security");
+	org.ofbiz.entity.GenericValue userLogin = (org.ofbiz.entity.GenericValue) Executions.getCurrent().getDesktop().getSession().getAttribute("userLogin");
+	boolean isAdmin = security.hasPermission("HUMANRES_ADMIN", userLogin);
+	Toolbarbutton location = arg.get("location");
+</zscript>
+	<window id="searchPanel" self="@{define(content)}" apply="${controller}" border="normal" if="${isAdmin }">
+		<caption label="${c:l('HRMS_LOCATION') }">
+		<div align="right">
+					<toolbarbutton label="New" image="/images/icon/update.png" style="color:#FFFFFF">
+					<attribute name="onClick" >
+						{
+							final Window win = (Window) Executions.createComponents(
+									"/zul/location/addLocation.zul", null, null);
+							win.doModal();
+						}
+					</attribute>
+					</toolbarbutton>
+				</div>
+		</caption>
+		<custom-attributes entityName="Location"></custom-attributes>
+		<separator height="10px"></separator>
+		<h:table width="100%">
+			<div align="right">
+				<h:tr height="50px">
+					<h:td>
+						<findbox fieldLabel="${c:l('HRMS_LOCATION_ID') }"
+							name="locationId" type="text" cols="40" />
+					</h:td>
+				</h:tr>
+			
+			<h:tr height="50px">
+				<h:td>
+					<findbox1 fieldLabel="${c:l('HRMS_LOCATION_NAME') }"
+						name="locationName" type="text" cols="40" />
+				</h:td>
+			</h:tr>
+			</div>
+		</h:table>
+		<box width="100%" height="30px" align="center">
+			<hbox>
+				<button label="${c:l('HumanResSearch') }" mold="os"
+					id="searchButton"
+					onClick="results.setVisible(true);results.setFocus(true)">
+				</button>
+				<button label="${c:l('HRMS_ResetButton') }"
+					onClick='Events.postEvent("onClick",location,null)' />
+			</hbox>
+		</box>
+		<zscript>
+	import org.zkoss.util.resource.Labels;
+	import org.ofbiz.base.util.*;
+	import org.zkoss.zk.ui.event.EventListener;
+	org.ofbiz.entity.GenericDelegator delegator = com.ndz.zkoss.util.HrmsInfrastructure.getDelegator();//org.ofbiz.entity.GenericDelegator.getGenericDelegator("default");
+	class MyRowRenderer implements RowRenderer {
+
+		MyRowRenderer() {
+		}
+
+		public void render(Row row, Object data) {
+			org.ofbiz.entity.GenericValue gv = ((org.ofbiz.entity.GenericValue) data);
+			org.ofbiz.entity.GenericValue postalAddressGV = delegator.findByPrimaryKey("PostalAddress",UtilMisc.toMap("contactMechId",gv.getString("contactMechId")));
+			new Label(gv.getString("locationId")).setParent(row);
+			new Label(gv.getString("locationName")).setParent(row);
+			new Label(postalAddressGV.getString("address1")).setParent(row);
+			if(UtilValidate.isNotEmpty(postalAddressGV.getString("address2"))){
+			new Label(postalAddressGV.getString("address2")).setParent(row);
+			}else{
+			new Label("").setParent(row);
+			}
+			new Label(postalAddressGV.getString("city")).setParent(row);
+			new Label(postalAddressGV.getString("countryGeoId")).setParent(row);
+			new Label(postalAddressGV.getString("stateProvinceGeoId")).setParent(row);
+			new Label(postalAddressGV.getString("postalCode")).setParent(row);
+			row.setTooltiptext("Double Click To Edit");
+			Button btn=new com.ndz.zkoss.HrmsButton();
+			btn.setParent(row);
+			btn.setLabel("Delete");
+			btn.setTooltiptext("Click here to delete");
+			btn.setSclass("btnDelete");
+			btn.addEventListener("onClick", new EventListener() {
+				public void onEvent(Event event) throws Exception {
+					LocationManagementController.deleteLocation(event, gv);
+				}
+			});
+			Map arg = new HashMap();
+			arg.put("gv", gv);
+			row.addEventListener("onDoubleClick", new EventListener() {
+				public void onEvent(Event event) throws Exception {
+					Window win = (Window) Executions.createComponents(
+							"/zul/location/editLocation.zul", null,
+							arg);
+					win.doModal();
+				}
+			});
+		}
+	}
+	RowRenderer tableRenderer = new MyRowRenderer();
+</zscript>
+<separator/>
+		<panel id="results" visible="false">
+			<panelchildren>
+			<h:table width="100%" style="border:0px" cellspacing="0px" cellpadding="0px">
+				<h:tr>
+					<h:td width="80%">
+						<label value="${c:l('HRMS_SEARCHRESULTS') }" ></label>
+					</h:td>
+					<h:td width="20%" style="text-align:right">
+						<paging id="paging" width="100%"/>
+					</h:td>
+				</h:tr>
+			</h:table>
+			<grid width="100%" id="dataGrid"
+				rowRenderer="${tableRenderer}">
+				<columns menupopup="auto">
+					<column label="${c:l('HRMS_LOCATION_ID')}"
+						onDrop="move(event.dragged)" draggable="col" droppable="col" sortDirection="ascending" />
+					<column label="${c:l('HRMS_LOCATION_NAME')}"
+						onDrop="move(event.dragged)" draggable="col" droppable="col"/>
+						<column label="${c:l('FormFieldTitle_Address1')}"/>
+						<column label="${c:l('FormFieldTitle_Address2')}"/>
+						<column label="${c:l('FormFieldTitle_City')}"/>
+						<column label="${c:l('FormFieldTitle_Country')}"/>
+						<column label="${c:l('FormFieldTitle_State')}"/>
+						<column label="${c:l('FormFieldTitle_PostalCode')}"/>
+						<column label="${c:l('HRMS_ACTION')}" onDrop="move(event.dragged)"
+						draggable="col" droppable="col" align="center"/>
+						
+				</columns>
+			</grid>
+		</panelchildren>
+		</panel>
+		<zscript><![CDATA[
+		                  Events.postEvent("onClick",searchButton,null);
+	void move(Component dragged) {
+		if (dragged.getClass().getName().endsWith("Column")) {
+			int maxRows = dragged.getGrid().getRows().getChildren().size();
+			int i = dragged.getParent().getChildren().indexOf(dragged);
+			int j = self.getParent().getChildren().indexOf(self);
+
+			//move celles for each row 
+			for (int k = 0; k < maxRows; k++)
+				self.getGrid().getCell(k, j).parent.insertBefore(self.getGrid()
+						.getCell(k, i), self.getGrid().getCell(k, j));
+		}
+
+		self.parent.insertBefore(dragged, self);
+	}
+]]></zscript>
+	</window>
+</zk>

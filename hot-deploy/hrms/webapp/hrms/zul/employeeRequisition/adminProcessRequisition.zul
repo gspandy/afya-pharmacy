@@ -1,0 +1,157 @@
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<zk>
+	<zscript>
+		import org.ofbiz.base.util.*;
+		org.ofbiz.entity.GenericValue userLogin = (org.ofbiz.entity.GenericValue) Executions.getCurrent()
+						.getDesktop().getSession().getAttribute("userLogin");
+		org.ofbiz.entity.GenericDelegator delegator = userLogin.getDelegator();				
+		employeeId = userLogin.getString("partyId");
+		org.ofbiz.entity.GenericValue employeePosIdGv = org.ofbiz.humanresext.util.HumanResUtil.getEmplPositionForParty(
+								employeeId, delegator);
+		employeePosId = employeePosIdGv.getString("emplPositionId");
+		String employeePosTypeId = org.ofbiz.humanresext.util.HumanResUtil.getPositionTypeId(delegator,
+					employeePosId);
+		boolean isHOD = new Boolean(employeePosTypeId);
+		List employeeRoles = delegator.findByAnd("PartyRole",UtilMisc.toMap("roleTypeId","Requisition_Admin"));
+	</zscript>
+	<window id="processRequisitionWindow" width="60%" position="center"
+		 closable="true" border="normal" height="90%" style="overflow:auto;scroll:auto" >
+		<separator height="10px" />
+		<label id="permissionId" value="${employeePosTypeId}" visible="false"></label>
+		<textbox id="employeeId_RoleType" value="${each.partyId}" forEach="${employeeRoles}"></textbox>
+		<hbox>
+			<div align="right" width="150px" style="margin-right:5px">
+				<label value="${c:l('HRMS_REQUISITION_INITIATOR_ID') }:" style="font-weight:bold"/>
+			</div>
+			<div align="left" width="300px" style="margin-right:5px">
+				<label id="employeeId" />
+			</div>
+		</hbox>
+		<separator />
+		<hbox>
+			<div align="right" width="150px" style="margin-right:5px">
+				<label value="${c:l('HRMS_REQUISITION_REQUISITIONID') }:" style="font-weight:bold"/>
+			</div>
+			<div align="left" width="300px" style="margin-right:5px">
+				<label id="requisitionId" />
+			</div>
+		</hbox>
+		<separator />
+		<hbox>
+			<div align="right" width="150px" style="margin-right:5px">
+				<label value="${c:l('HRMS_REQUISITION_GRIDCOLUMNREQUISITIONSTATUS') }:" style="font-weight:bold"/>
+			</div>
+			<div align="left" width="300px" style="margin-right:5px">
+				<label id="requisitionStatus" />
+			</div>
+		</hbox>
+		<separator />
+		<hbox>
+			<div align="right" width="150px" style="margin-right:5px">
+				<label value="${c:l('HRMS_REQUISITION_JOBTITLE') }:" style="font-weight:bold"/>
+			</div>
+			<div align="left" width="300px" style="margin-right:5px">
+				<label id="jobTitle" />
+			</div>
+		</hbox>
+		<separator />
+		<hbox>
+			<div align="right" width="150px" style="margin-right:5px">
+				<label value="${c:l('HRMS_REQUISITION_NOOFPOSITION') }:" style="font-weight:bold"/>
+			</div>
+			<div align="left" width="300px" style="margin-right:5px">
+				<label id="noOfPosition" />
+			</div>
+		</hbox>
+		<separator />
+		<hbox>
+			<div align="right" width="150px" style="margin-right:5px">
+				<label value="${c:l('HRMS_REQUISITION_JOBDESCRIPTION') }:" style="font-weight:bold"/>
+			</div>
+			<div align="left" width="300px" style="margin-right:5px">
+				<label id="jobDescription" />
+			</div>
+		</hbox>
+		<separator />
+		<hbox>
+			<div align="right" width="150px" style="margin-right:5px">
+				<label value="${c:l('HRMS_REQUISITION_ROLEDETAILS') }:" style="font-weight:bold"/>
+			</div>
+			<div align="left" width="300px" style="margin-right:5px">
+				<label id="roleDetails" />
+			</div>
+		</hbox>
+		<separator />
+		<hbox>
+			<div align="right" width="150px" style="margin-right:5px">
+				<label value="${c:l('HRMS_REQUISITION_QUALIFICATION') }:" style="font-weight:bold"/>
+			</div>
+			<div align="left" width="300px" style="margin-right:5px">
+				<label id="qualification" />
+			</div>
+		</hbox>
+		<separator />
+		<hbox>
+			<div align="right" width="150px" style="margin-right:5px">
+				<label value="${c:l('HRMS_REQUISITION_SOFTSKILL') }:" style="font-weight:bold"/>
+			</div>
+			<div align="left" width="300px" style="margin-right:5px">
+				<label id="softSkills" />
+			</div>
+		</hbox>
+		<separator />
+		<hbox>
+			<div align="right" width="150px" style="margin-right:5px">
+				<label value="${c:l('HRMS_MIN_EXPERIENCE') }:" style="font-weight:bold"/>
+			</div>
+			<div align="left" width="300px" style="margin-right:5px">
+				<label id="minExprience" />
+			</div>
+		</hbox>
+		<separator />
+		<hbox>
+			<div align="right" width="150px" style="margin-right:5px">
+				<label value="${c:l('HRMS_MAX_EXPERIENCE') }:" style="font-weight:bold"/>
+			</div>
+			<div align="left" width="300px" style="margin-right:5px">
+				<label id="maxExprience" />
+			</div>
+		</hbox>
+		<separator />
+		<hbox>
+			<div align="right" width="150px" style="margin-right:5px">
+				<label value="${c:l('HRMS_REQUISITION_JUSTIFICATIONFORHIRING') }:" style="font-weight:bold"/>
+			</div>
+			<div align="left" width="300px" style="margin-right:5px">
+				<label id="justify" />
+			</div>
+		</hbox>
+		
+		<separator />
+		<hbox>
+			<div align="right" width="150px" style="margin-right:5px" >
+				<label value="${c:l('HRMS_MIN_SALARY') }:" style="font-weight:bold"/>
+			</div>
+			<div align="left" width="300px" style="margin-right:5px">
+				<label id="minSalary" />
+			</div>
+		</hbox>
+		<separator />
+		<hbox>
+			<div align="right" width="150px" style="margin-right:5px">
+				<label value="${c:l('HRMS_MAX_SALARY') }:" style="font-weight:bold"/>
+			</div>
+			<div align="left" width="300px" style="margin-right:5px">
+				<label id="maxSalary" />
+			</div>
+		</hbox>
+		<separator />
+		<hbox>
+			<div align="right" width="360px">
+				<button id="acceptRequisition" label="${c:l('HRMS_AcceptButton') }" mold="os"/>
+				<button id="cancel" label="${c:l('HRMS_CancelButton') }" mold="os"
+					onClick="processRequisitionWindow.detach()" />
+			</div>
+		</hbox>
+	</window>
+</zk>

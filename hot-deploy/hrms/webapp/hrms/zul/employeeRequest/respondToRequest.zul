@@ -1,0 +1,107 @@
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<zk>
+	<zscript>
+		<![CDATA[
+			import com.ndz.zkoss.*;
+			import com.hrms.composer.*;
+			import org.ofbiz.entity.*;
+			import com.ndz.component.HrmsMessageBox;
+			String statusId = (String) Executions.getCurrent().getArg().get("statusId");
+			String requestId = (String) Executions.getCurrent().getArg().get("requestId");
+			GenericValue userLogin = (GenericValue) Executions.getCurrent().getDesktop().getSession().getAttribute("userLogin");
+			GenericDelegator delegator = userLogin.getDelegator();
+			String partyId = (String) userLogin.getString("partyId");
+			EmployeeRequestProcessComposer composer = new EmployeeRequestProcessComposer();
+			List requestStatusList =null;
+			String status=null;
+			String s=null;
+			requestStatusList= composer.getRequestStatus(delegator,requestId);
+			SimpleListModel requestStatusModel = new SimpleListModel(requestStatusList);
+			if (statusId.equals("REQUEST_WITHDRAWN")){
+				status="Withdraw";
+				s="Withdrawn";
+			} 
+			else if (statusId.equals("REQUEST_RESOLVED")){
+				status="Resolve";
+			    s="Resolved";
+			} 
+			else if (statusId.equals("REQUEST_REOPENED")){
+			    status="Reopen";
+			    s="Reopened";
+			} 
+			else if (statusId.equals("REQUEST_CLOSED")){
+			    status="Close";
+			    s="Closed";
+			} 
+			public class StatusItemRenderer implements ComboitemRenderer {
+		
+				public StatusItemRenderer() {
+				}
+		
+				public void render(Comboitem ci, Object data) {
+					if (data instanceof GenericValue) {
+						GenericValue val = (GenericValue) data;
+						ci.setLabel(val.getString("description"));
+						ci.setValue(val.getString("statusIdTo"));
+						if (statusId.equals(val.getString("statusIdTo"))) {
+							((Combobox) ci.getParent()).setSelectedItem(ci);
+						}
+					}
+				}
+			}
+			ComboitemRenderer statusItemRenderer = new StatusItemRenderer();
+		]]>
+	</zscript>
+	<window closable="true" width="60%" height="65%" id="respondwindow" border="normal" contentStyle="overflow:auto">
+		<caption id="respondWindowCaption"></caption>
+		<grid id="requestHistoryGrid" height="10%" visible="false"></grid>
+		<grid  id="requestViewComponent" height="60%">
+			<rows>
+				<row>
+					<hbox>
+						<div align="right" width="150px">
+							<label value="${c:l('HRMS_STATUS') }"></label>
+						</div>
+					</hbox>
+					<hbox>
+						<div align="left">
+							<label id="requestStatusLabel" value="${statusId}" visible="false"/>
+							<label id="requestStatusLabel1" value="${status}" />
+							
+						</div>
+					</hbox>
+				</row>
+				<row style="background-color:#DBD594">
+					<hbox>
+						<div align="right" width="150px">
+							<label value="${c:l('HRMS_ADD_NOTE') }"></label>
+						</div>
+					</hbox>
+					<hbox>
+						<div align="left">
+							<textbox id="addNoteTextBox" cols="69" rows="10"></textbox>
+						</div>
+					</hbox>
+				</row>
+				<row>
+					<hbox></hbox>
+				</row>
+			</rows>
+		</grid>
+		<separator />
+		<div align="center">
+			<hbox>
+				<button  id="respondButton" >
+					<attribute name="onClick">
+						String statusTypeId = (String) (requestStatusLabel.getValue() == null ? null : requestStatusLabel.getValue());
+						String note = addNoteTextBox.getValue() == null ? null : addNoteTextBox.getValue();
+						EmployeeRequestComposer employeeRequestComposer = new EmployeeRequestComposer();
+						employeeRequestComposer.createRequestResponse(event, delegator, requestId, partyId, note, statusTypeId);
+						HrmsMessageBox.showOk(" " +s+ " Successfully", "Success", "/control/viewRequest?requestId=" + requestId);
+					</attribute>
+				</button>
+				<!-- <button label="${c:l('ButtonCancel') }" onClick="respondwindow.detach();"></button> -->
+			</hbox>
+		</div>
+	</window>
+</zk>

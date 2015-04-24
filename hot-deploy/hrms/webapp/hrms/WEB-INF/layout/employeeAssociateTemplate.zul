@@ -1,0 +1,12 @@
+<?init class="org.zkoss.zk.ui.util.Composition"
+arg0="/WEB-INF/layout/template.zul"?>
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+
+<zk>
+<window title="Associate Management" self="@{define(content)}">
+	
+		
+		
+			<window self="@{insert(associateContent)}"></window>
+			</window>
+			</zk>

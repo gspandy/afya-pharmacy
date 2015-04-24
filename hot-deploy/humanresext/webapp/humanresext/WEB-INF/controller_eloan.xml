@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Employee Loan Application Controller -->	
+<site-conf xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+        xsi:noNamespaceSchemaLocation="http://www.ofbiz.org/dtds/site-conf.xsd">
+	
+  	<!-- Request Mappings -->
+   
+   	<request-map uri="ELoan">
+		<security https="true" auth="true" />
+		<response name="success" type="view" value="ApplyELoan" />
+	</request-map>
+ 	
+ 	<request-map uri="AdminViewELoan">
+   		<security https="true" auth="true"/>
+ 		<response name="success" type="view" value="AdminViewELoan"/>	
+ 	</request-map>
+ 	
+   <request-map uri="ApplyELoan">
+   		<security https="true" auth="true"/>
+ 		<response name="success" type="view" value="ApplyELoan"/>	
+ 	</request-map>
+ 	
+ 	<request-map uri="createELoan">
+   		<security https="true" auth="true"/>
+		<event type="service" invoke="createELoanService"/> 
+ 		<response name="success" type="request-redirect" value="AdminViewELoan"/>	
+ 	</request-map>
+ 	
+ 	<request-map uri="updateELoan">
+   		<security https="true" auth="true"/>
+		<event type="service" invoke="updateELoanService"/> 
+ 		<response name="success" type="request-redirect" value="AdminViewELoan"/>	
+ 	</request-map>
+
+ 	<request-map uri="submitELoan">
+   		<security https="true" auth="true"/>
+		<event type="service" invoke="submitELoanService"/> 
+ 		<response name="success" type="request-redirect" value="AdminViewELoan"/>	
+ 	</request-map>
+ 	
+   <request-map uri="EMI">
+   		<security https="true" auth="true"/>
+ 		<response name="success" type="view" value="EMISlip"/>	
+ 	</request-map>
+ 	
+ 	<request-map uri="AdminProcessELoan">
+   		<security https="true" auth="true" direct-request="false"/>
+ 		<response name="success" type="view" value="AdminProcessELoan"/>	
+ 		<response name="error" type="view" value="AdminViewELoan"/>
+ 	</request-map>
+ 	
+ 	<request-map uri="processELoan">
+   		<security https="true" auth="true"/>
+		<event type="service" invoke="processELoanService"/> 
+ 		<response name="success" type="request-redirect" value="AdminViewELoan"/>	
+ 	</request-map>
+ 	
+ 	<request-map uri="ELoanLimit">
+   		<security https="true" auth="true"/>
+ 		<response name="success" type="view" value="ELoanLimit"/>	
+ 	</request-map>
+ 	
+ 	<request-map uri="EditELoanLimit">
+   		<security https="true" auth="true"/>
+ 		<response name="success" type="view" value="EditELoanLimit"/>	
+ 	</request-map>
+ 	
+ 	<request-map uri="createELoanLimit">
+   		<security https="true" auth="true"/>
+		<event type="service" invoke="createELoanLimitService"/> 
+ 		<response name="success" type="request-redirect" value="ELoanLimit"/>	
+ 	</request-map>
+ 	
+ 	<request-map uri="updateELoanLimit">
+   		<security https="true" auth="true"/>
+		<event type="service" invoke="updateELoanLimitService"/> 
+ 		<response name="success" type="request-redirect" value="ELoanLimit"/>	
+ 	</request-map>
+ 	  
+ 	<request-map uri="fetchELoanComment">
+   		<security https="true" auth="true"/>
+		<event type="service" invoke="fetchELoanComment"/> 
+ 		<response name="success" type="view" value="ApplyELoan"/>	
+ 	</request-map>
+ 	
+ 	<request-map uri="ELoanReports">
+   		<security https="true" auth="true"/>
+ 		<response name="success" type="view" value="ELoanReports"/>	
+ 	</request-map>
+ 	
+    <request-map uri="ListELoan">
+    	<security https="true" auth="true"/>
+		<response name="success" type="view" value="ListELoan" />
+    </request-map>
+
+    <request-map uri="listELoan.pdf">
+    	<security https="true" auth="true" direct-request="false"/>
+		<response name="success" type="view" value="ListELoanPDF" />
+    </request-map>
+    
+    <request-map uri="listELoan.xls">
+    	<security https="true" auth="true" direct-request="false"/>
+		<response name="success" type="view" value="ListELoanXLS" />
+    </request-map>
+ 	
+ 	<request-map uri="ELoanSlipReport">
+ 		<security https="true" auth="true"/>
+		<response name="success" type="view" value="EMISlipReport" />
+    </request-map>
+
+    <request-map uri="eloanSlip.pdf">
+    	<security https="true" auth="true" direct-request="false"/>
+		<response name="success" type="view" value="ELoanSlipPDF" />
+    </request-map>
+    
+    <request-map uri="eloanSlip.xls">
+    	<security https="true" auth="true" direct-request="false"/>
+		<response name="success" type="view" value="ELoanSlipXLS" />
+    </request-map>
+    
+    <request-map uri="ELoanLimitsReport">
+    	<security https="true" auth="true"/>
+		<response name="success" type="view" value="ELoanLimitsReport" />
+    </request-map>
+
+    <request-map uri="eloanLimits.pdf">
+    	<security https="true" auth="true" direct-request="false"/>
+		<response name="success" type="view" value="ELoanLimitsPDF" />
+    </request-map>
+    
+    <request-map uri="eloanLimits.xls">
+    	<security https="true" auth="true" direct-request="false"/>
+		<response name="success" type="view" value="ELoanLimitsXLS" />
+    </request-map>
+     
+	<view-map name="login" type="screen" page="component://common/widget/CommonScreens.xml#login"/>
+	<view-map name="ApplyELoan" type="screen" page="component://humanresext/widget/ELoanScreens.xml#ApplyELoanScreen"/>
+	<view-map name="EMISlip" type="screen" page="component://humanresext/widget/ELoanScreens.xml#EMISlipScreen"/>
+	<view-map name="AdminViewELoan" type="screen" page="component://humanresext/widget/ELoanScreens.xml#AdminViewELoanScreen"/>
+	<view-map name="AdminProcessELoan" type="screen" page="component://humanresext/widget/ELoanScreens.xml#AdminProcessELoanScreen"/>
+	<view-map name="ELoanLimit" type="screen" page="component://humanresext/widget/ELoanScreens.xml#ELoanLimitScreen"/>
+	<view-map name="EditELoanLimit" type="screen" page="component://humanresext/widget/ELoanScreens.xml#EditELoanLimitScreen"/>
+	<view-map name="ELoanReports" type="screen" page="component://humanresext/widget/ELoanReportScreens.xml#ELoanReports"/>
+ 	
+ 	<!--  Report Maps -->
+ 	<view-map name="ListELoan" type="screen" page="component://humanresext/widget/ELoanReportScreens.xml#ListELoan"/>
+    <view-map name="ListELoanPDF" type="screenfop" page="component://humanresext/widget/ELoanReportScreens.xml#ListELoanPDF" content-type="application/pdf" encoding="none"/>
+    <view-map name="ListELoanXLS" type="excel" page="component://humanresext/widget/ELoanReportScreens.xml#ListELoanXls" content-type="application/ms-excel" encoding="none"/>
+	<view-map name="ELoanSlipReport" type="screen" page="component://humanresext/widget/ELoanReportScreens.xml#ELoanSlipReport"/>
+    <view-map name="ELoanSlipPDF" type="screenfop" page="component://humanresext/widget/ELoanReportScreens.xml#ELoanSlipPDF" content-type="application/pdf" encoding="none"/>
+    <view-map name="ELoanSlipXLS" type="excel" page="component://humanresext/widget/ELoanReportScreens.xml#ELoanSlipXLS" content-type="application/ms-excel" encoding="none"/>
+	<view-map name="ELoanLimitsReport" type="screen" page="component://humanresext/widget/ELoanReportScreens.xml#ELoanLimitsReport"/>
+    <view-map name="ELoanLimitsPDF" type="screenfop" page="component://humanresext/widget/ELoanReportScreens.xml#ELoanLimitsPDF" content-type="application/pdf" encoding="none"/>
+    <view-map name="ELoanLimitsXLS" type="excel" page="component://humanresext/widget/ELoanReportScreens.xml#ELoanLimitsXLS" content-type="application/ms-excel" encoding="none"/>
+
+</site-conf>
+

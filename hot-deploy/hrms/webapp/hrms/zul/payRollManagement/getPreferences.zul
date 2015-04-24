@@ -1,0 +1,274 @@
+<?component name="findbox" macroURI="../macros/textfindMacro.zul" id="macro1"?>
+<?component name="findbox1" macroURI="../macros/textfindMacro.zul" id="macro2"?>
+<?component name="findbox2" macroURI="../macros/textfindMacro.zul" id="macro3"?>
+<?component name="findbox3" macroURI="../macros/textfindMacro.zul" id="macro4"?>
+<?component name="findbox4" macroURI="../macros/textfindMacro.zul" id="macro5"?>
+<?component name="fromDatebox" macroURI="../macros/datefindMacro.zul" id="macro2"?>
+<?component name="thruDatebox" macroURI="../macros/datefindMacro.zul" id="macro3"?>
+<?component name="selectbox" macroURI="../macros/findselectbox.zul"?>
+
+<?page title="Preferences" id="leavemgmt"?>
+
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<zk xmlns:h="http://www.zkoss.org/2005/zk/native">
+	<zscript>
+	<![CDATA[
+	import com.ndz.controller.*;
+	SearchController controller = new SearchController();
+]]>
+</zscript>
+	<window title="${c:l('HRMS_PREFERENCES') }" border="normal" id="searchPanel"
+		self="@{define(content)}" apply="${controller}"
+		contentStyle="background-color:#F5F5F5">
+		<custom-attributes entityName="Preferences"
+			CompanyWide="true">
+		</custom-attributes>
+
+		<separator height="10px"></separator>
+
+		<box width="100%" height="30px"
+			style="background-color:#25587E;color:#FFFFFF;">
+			<label value="${c:l('HRMS_FIND_PREFERENCES') }" style="margin:10px"></label>
+		</box>
+		<separator height="10px"></separator>
+		<vbox align="start">
+
+			<hbox visible="false">
+				<findbox fieldLabel="${c:l('FormFieldTitle_EmployeeId') }" name="partyId"
+					type="text" cols="20" />
+			</hbox>
+			<zscript>
+	void getValueOfPartyId() {
+
+		((Textbox) searchPanel.getFellow("macro1").getFellow("partyId"))
+				.setValue(searchPanelbandbox.getValue());
+		searchPerCompany.setDisabled(false);
+	}
+</zscript>
+
+			<hbox style="margin-left:1px">
+				<div width="290px" align="right">
+					<label value="${c:l('FormFieldTitle_EmployeeId') }"
+						style="font-weight:bold;margin-left:56px">
+					</label>
+				</div>
+				<bandbox mold="rounded" id="searchPanelbandbox"
+					name="partyId">
+					<bandpopup>
+						<vbox>
+							<hbox style="margin-left:40px">
+								<label value="${c:l('HRMS_FIND_EMPLOYEE_ID') }" />
+								<textbox id="partyId" />
+							</hbox>
+							<hbox>
+
+							</hbox>
+							<button mold="os"
+								label="${c:l('HumanResSearch') }" id="bandboxsearch"
+								autodisable="self" onClick="populate()" />
+						</vbox>
+						<listbox id="dataGridbandbox" mold="paging"
+							pageSize="8" itemRenderer="${listItemRenderer}" width="425px"
+							onSelect="searchPanelbandbox.value=self.selectedItem.label;searchPanelbandbox.close();getValueOfPartyId()">
+							<listhead>
+								<listheader label="${c:l('HRMS_EmployeeId') }" />
+								<listheader label="${c:l('Hrms_EmployeeName') }" />
+							</listhead>
+						</listbox>
+					</bandpopup>
+
+				</bandbox>
+				<zscript><![CDATA[
+	import org.ofbiz.entity.condition.EntityCondition;
+	import org.ofbiz.entity.GenericValue;
+	import org.ofbiz.entity.GenericDelegator;
+	import org.ofbiz.entity.condition.EntityOperator;
+	org.ofbiz.security.Security security = requestScope.get("security");
+	GenericValue userLogin = (GenericValue) Executions.getCurrent()
+			.getDesktop().getSession().getAttribute("userLogin");
+	boolean isAdmin = security.hasPermission("HUMANRES_ADMIN", userLogin);
+	boolean isManager = security.hasPermission("HUMANRES_MGR", userLogin);
+	System.out.println("\n\n\n\n\n\n Manager      ADMIN" + isManager + isAdmin);
+	void populate() {
+		if (dataGridbandbox.getItems() != null) {
+			dataGridbandbox.getItems().clear();
+		}
+
+		GenericDelegator delegator = com.ndz.zkoss.util.HrmsInfrastructure.getDelegator();//GenericDelegator.getGenericDelegator("default");
+		EntityCondition condition = null;
+		if (!(partyId.getValue().equals(""))) 
+			condition = EntityCondition.makeCondition("partyId",
+					EntityOperator.LIKE, partyId.getValue());
+		List type = delegator.findList("Person", condition, null, null, null, false);
+		String partyIdLoggedIn = userLogin.getString("partyId");
+		String subordinatePartyId = null;
+
+		LinkedList subEmpl = new LinkedList();
+		List list = (List) org.ofbiz.humanresext.util.HumanResUtil
+				.getSubordinatesForParty(partyIdLoggedIn, delegator);
+
+		GenericValue subordinateGV = null;
+
+		if (isManager) {
+			Listitem listitem = new Listitem();
+			Listcell cell1 = new Listcell();
+			Listcell cell2=new Listcell();
+			if(!UtilValidate.isEmpty(list))
+			{
+			for (int i = 0; i < list.size(); i++) {
+				GenericValue gv = (GenericValue) list.get(i);
+				EntityCondition subordinateCondition = EntityCondition
+						.makeCondition("emplPositionId", EntityOperator.EQUALS,
+								gv.getString("emplPositionIdManagedBy"));
+
+				List subordinateList = delegator.findList(
+						"EmplPositionFulfillment", subordinateCondition, null,
+						null, null, false);
+
+				if (org.ofbiz.base.util.UtilValidate
+						.isNotEmpty(subordinateList)) {
+					subordinateGV = (GenericValue) subordinateList.get(0);
+					subordinatePartyId = subordinateGV.getString("partyId");
+					subEmpl.add(subordinatePartyId);
+				}
+			}}
+			String subOrds = null;
+
+			for (int j = 0; j < subEmpl.size(); j++) {
+				subOrds = subEmpl.get(j);
+				Listitem li = new Listitem();
+				Listcell cell = new Listcell();
+				Listcell cell3 = new Listcell();
+				li.setParent(dataGridbandbox);
+				cell.setParent(li);
+				cell3.setParent(li);
+				cell.setLabel(subOrds);
+				cell3.setLabel(org.ofbiz.humanresext.util.HumanResUtil
+						.getFullName(subOrds));
+			}
+			listitem.setParent(dataGridbandbox);
+			cell1.setParent(listitem);
+			cell1.setLabel(partyIdLoggedIn);
+			cell2.setParent(listitem);
+			cell2.setLabel(org.ofbiz.humanresext.util.HumanResUtil
+					.getFullName(partyIdLoggedIn));
+		}
+
+		else if (isAdmin) {
+			for (int i = 0; i < type.size(); i++) {
+				GenericValue gv = (GenericValue) type.get(i);
+				Listitem listitem = new Listitem();
+				listitem.setParent(dataGridbandbox);
+				Listcell cell1 = new Listcell();
+				Listcell cell2 = new Listcell();
+				cell1.setParent(listitem);
+				cell1.setLabel(gv.getString("partyId"));
+				cell2.setParent(listitem);
+				cell2.setLabel(org.ofbiz.humanresext.util.HumanResUtil
+						.getFullName(gv.getString("partyId")));
+			}
+		} else {
+			Listitem listitem = new Listitem();
+			listitem.setParent(dataGridbandbox);
+			Listcell cell1 = new Listcell();
+			Listcell cell2=new Listcell();
+			cell1.setParent(listitem);
+			cell1.setLabel(partyIdLoggedIn);
+			cell2.setParent(listitem);
+			cell2.setLabel(org.ofbiz.humanresext.util.HumanResUtil
+					.getFullName(partyIdLoggedIn));
+		}
+	}
+]]></zscript>
+			</hbox>
+<separator />
+			<div width="650px" align="right">
+				<findbox1 fieldLabel="${c:l('FormFieldTitle_bankName') }" name="bankName"
+					type="text" cols="17" />
+			</div>
+			<separator />
+
+
+			<div width="650px" align="right">
+				<findbox2 fieldLabel="${c:l('HRMS_BANK_ACCOUNTNUMBER') }"
+					name="bankAccountNumber" type="text" cols="17" />
+			</div>
+			<div align="right"  width="650px">
+				<findbox3 fieldLabel="${c:l('HRMS_PAN_NUMBER') }" name="panNumber"
+					type="text" cols="17" />
+			</div>
+
+			<separator />
+
+
+			<div width="650px" align="right">
+				<findbox4 fieldLabel="${c:l('HRMS_PF_ACCOUNT_NUMBER') }"
+					name="pfAccountNumber" type="text" cols="17" />
+			</div>
+		</vbox>
+		<separator />
+
+		<box width="100%" height="30px" align="center"
+			style="background-color:#FFE4E1">
+			<hbox>
+				<button label="${c:l('HRMS_SearchButton') }" mold="os"
+					onClick="results.setVisible(true);results.setFocus(true)"
+					id="searchPerCompany" disabled="true">
+				</button>
+				<button label="${c:l('HRMS_ResetButton') }" mold="os"
+					onClick="results.setVisible(false)">
+				</button>
+			</hbox>
+		</box>
+		<separator height="15px" />
+		<zscript>
+				<![CDATA[
+	import org.ofbiz.base.util.*;
+	SalaryStructureManagementController prefernces = new SalaryStructureManagementController();
+	class MyRowRenderer implements RowRenderer {
+
+		MyRowRenderer() {
+		}
+
+		public void render(Row row, Object data) {
+			org.ofbiz.entity.GenericValue gv = ((org.ofbiz.entity.GenericValue) data);
+			new Label(gv.getString("partyId")).setParent(row);
+			new Label(gv.getString("bankName")).setParent(row);
+			new Label(gv.getString("bankAccountNumber")).setParent(row);
+			new Label(gv.getString("panNumber")).setParent(row);
+			new Label(gv.getString("pfAccountNumber")).setParent(row);
+			row.addEventListener("onDoubleClick",
+					new org.zkoss.zk.ui.event.EventListener() {
+						public void onEvent(Event event) throws Exception {
+
+							prefernces.updatePreferences(event, gv);
+						}
+					});
+		}
+	}
+	RowRenderer tableRenderer = new MyRowRenderer();
+]]>
+</zscript>
+
+		<div id="results" visible="false">
+			<box width="100%" height="30px"
+				style="background-color:#25587E;color:#FFFFFF;">
+				<label value="${c:l('HRMS_SEARCH_RESULTS') }" style="margin:10px"></label>
+			</box>
+			<separator height="10px"></separator>
+
+			<paging id="paging" width="100%" />
+			<separator height="5px"></separator>
+			<grid width="100%" id="dataGrid"
+				rowRenderer="${tableRenderer}">
+				<columns menupopup="auto">
+					<column label="${c:l('HRMS_EmployeeId') }" />
+					<column label="${c:l('FormFieldTitle_bankName') }" />
+					<column label="${c:l('HRMS_BANK_ACCOUNT_NUMBER') }" />
+					<column label="${c:l('HRMS_PAN_NUMBER') }" />
+					<column label="${c:l('HRMS_PF_ACCOUNT_NUMBER') }" />
+				</columns>
+			</grid>
+		</div>
+	</window>
+</zk>

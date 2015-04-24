@@ -1,0 +1,103 @@
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<?init class="org.zkoss.zkplus.databind.AnnotateDataBinderInit" root="./createMedicalInsuranceWindow"?>
+<?component name="profileField" macroURI="../macros/profileField.zul" id="profileMacro"?>
+<zk xmlns:h="http://www.zkoss.org/2005/zk/native">
+	<zscript>
+		<![CDATA[
+			com.ndz.controller.EmployeeInsuranceDetailComposer employeeInsuranceDetailComposer = new com.ndz.controller.EmployeeInsuranceDetailComposer();
+			Toolbarbutton createMedicalInsuranceButton = (Toolbarbutton)Executions.getCurrent().getArg().get("createMedicalInsuranceBtn");
+		 ]]>
+	</zscript>
+	<window id="createMedicalInsuranceWindow" height="100%" apply="${employeeInsuranceDetailComposer}">
+		<h:table width="100%" CELLSPACING="20">
+			<h:tr>
+				<h:td style="text-align:right">
+					<label value="${c:l('HRMS_MemberId') } : " style="font-weight:bold"></label>
+					<label value="*" style="color:red" />
+				</h:td>
+				<h:td>
+					<textbox maxlength="20" id="memberId" value="@{employeeInsuranceDetailComposer.insuranceDetail.memberId,save-when=createMedicalInsurance.onClick}" style="font-weight:regular" constraint="no empty: ${c:l('HRMS_REQUIRED_MEMBER_ID') }" />
+				</h:td>
+				<h:td style="text-align:right">
+					<label value="${c:l('HRMS_INSURANCE_ID') } :" />
+				</h:td>
+				<h:td>
+					<textbox id="insuranceId" value="@{employeeInsuranceDetailComposer.insuranceDetail.insuranceId,save-when=createMedicalInsurance.onClick}" />
+				</h:td>
+				<h:td style="text-align:right">
+					<label value="${c:l('HRMS_INSURANCE_COMPANY') } :" />
+					<label value="*" style="color:red" />
+				</h:td>
+				<h:td>
+					<textbox id="insuranceCompany" value="@{employeeInsuranceDetailComposer.insuranceDetail.insuranceCompany,save-when=createMedicalInsurance.onClick}" constraint="no empty: ${c:l('HRMS_REQUIRED_INSURANCE_COMPANY_NAME') }" />
+				</h:td>
+			</h:tr>
+			<h:tr>
+				<h:td style="text-align:right">
+					<label value="${c:l('HRMS_MEMBER_NAME') } :" />
+					<label value="*" style="color:red" />
+				</h:td>
+				<h:td>
+					<textbox id="memberName" value="@{employeeInsuranceDetailComposer.insuranceDetail.memberName,save-when=createMedicalInsurance.onClick}" constraint="no empty: ${c:l('HRMS_REQUIRED_MEMBER_NAME') }" />
+				</h:td>
+				<h:td style="text-align:right">
+					<label value="${c:l('HRMS_AGE') } :" style="font-weight:bold" />
+					<label value="*" style="color:red" />
+				</h:td>
+				<h:td style="text-align:left">
+					<longbox id="age" maxlength="3" value="@{employeeInsuranceDetailComposer.insuranceDetail.age,save-when=createMedicalInsurance.onClick}" constraint="no empty: ${c:l('HRMS_REQUIRED_AGE') }" />
+				</h:td>
+				<h:td style="text-align:right">
+					<label value="${c:l('HRMS_Gender') } :" style="font-weight:bold" />
+					<label value="*" style="color:red" />
+				</h:td>
+				<h:td style="text-align:left">
+					<combobox id="gender" selectedItem="@{employeeInsuranceDetailComposer.insuranceDetail.gender,save-when=createMedicalInsurance.onClick}" constraint="no empty: ${c:l('HRMS_REQUIRED_GENDER') }">
+						<comboitem label="${c:l('ListBox_GenderMale') }" value="Male" />
+						<comboitem  label="${c:l('ListBox_GenderFemale') }" value="Female" />
+					</combobox>
+				</h:td>
+			</h:tr>
+			<h:tr>
+				<h:td style="text-align:right">
+					<label value="${c:l('HRMS_POLICY_NUMBER') } :" style="font-weight:bold" />
+					<label value="*" style="color:red" />
+				</h:td>
+				<h:td style="text-align:left">
+					<textbox id="policyNumber" value="@{employeeInsuranceDetailComposer.insuranceDetail.policyNumber,save-when=createMedicalInsurance.onClick}" constraint="no empty: ${c:l('HRMS_REQUIRED_POLICY_NUMBER') }" />
+				</h:td>
+				<h:td style="text-align:right">
+					<label value="${c:l('HRMS_PRIMARY_BENIFICIARY') } :" style="font-weight:bold" />
+				</h:td>
+				<h:td style="text-align:left">
+					<label id="primaryBenificiary" value="@{employeeInsuranceDetailComposer.insuranceDetail.primaryBenificiary}" />
+				</h:td>
+				<h:td style="text-align:right">
+					<label value="${c:l('HRMS_RELATONSHIP') } :" style="font-weight:bold" />
+					<label value="*" style="color:red" />
+				</h:td>
+				<h:td style="text-align:left">
+					<combobox id="relationshipType" selectedItem="@{employeeInsuranceDetailComposer.insuranceDetail.relationshipType,save-when=createMedicalInsurance.onClick}" constraint="no empty: ${c:l('HRMS_REQUIRED_RELATIONSHIP') }">
+						<comboitem forEach="${employeeInsuranceDetailComposer.partyRelationshipTypeGvs}" value="${each.partyRelationshipTypeId}" label="${each.partyRelationshipName}" />
+					</combobox>
+				</h:td>
+			</h:tr>
+			<h:tr>
+				<h:td style="text-align:right">
+					<label value="${c:l('HRMS_POLICY_HOLDER') } :" style="font-weight:bold" />
+				</h:td>
+				<h:td style="text-align:left">
+					<label id="policyHolder" value="@{employeeInsuranceDetailComposer.insuranceDetail.policyHolder}" />
+				</h:td>
+				<h:td style="text-align:right">
+					<label value="${c:l('HRMS_VALID_FROM') } :" style="font-weight:bold" />
+					<label value="*" style="color:red" />
+				</h:td>
+				<h:td>
+					<datebox id="validFrom" value="@{employeeInsuranceDetailComposer.insuranceDetail.validFrom,save-when=createMedicalInsurance.onClick}" constraint="no empty: ${c:l('HRMS_REQUIRED_VALID_FROM_DATE') }" />
+				</h:td>
+			</h:tr>
+		</h:table>
+		<button label="${c:l('Hrms_Create') }" id="createMedicalInsurance" onClick="employeeInsuranceDetailComposer.createOrUpdateInsuranceDetail(createMedicalInsuranceButton,createMedicalInsuranceWindow)" visible="false" />
+	</window>
+</zk>

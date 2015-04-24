@@ -1,0 +1,56 @@
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<?init class="org.zkoss.zkplus.databind.AnnotateDataBinderInit" arg0="./loanEmiInfoWindow"?>
+<zk xmlns="http://www.zkoss.org/2005/zul"
+    xmlns:h="http://www.w3.org/1999/xhtml"
+    xmlns:w="http://www.zkoss.org/2005/zk/client"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:n="http://www.zkoss.org/2005/zk/native"
+    xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
+    <zscript>
+        <![CDATA[
+           import com.ndz.controller.*;
+           EmiLoanInfoController emiLoanInfoController = new EmiLoanInfoController();
+           String employeeId = (String) Executions.getCurrent().getArg().get("employeeId");
+           GenericValue personGv = delegator.findByPrimaryKey("Person", org.ofbiz.base.util.UtilMisc.toMap("partyId", employeeId));
+				String employeeName = personGv.getString("firstName") + " " + personGv.getString("lastName");
+			String title = "EMI Info of "+employeeName;
+        ]]>
+    </zscript>
+
+    <window apply="${emiLoanInfoController}" id="loanEmiInfoWindow" width="75%" position="center"
+            mode="modal"  closable="true" border="normal"
+            maximizable="true" title="${title}" contentStyle="overflow:auto">
+        <separator height="10px" />
+            <button label="Add" id="addButton" onClick="emiLoanInfoController.addNewEmi()"/>
+            <button label="Update" id="updateButton" onClick="emiLoanInfoController.updateEmi(loanEmiInfoWindow)"/>
+        <separator height="10px" />
+        <grid id="emiListBox" model="@{emiLoanInfoController.employeeLoanEmiInfoList,load-after='addButton.onClick,self.onReload'}">
+            <columns>
+                <column label="Loan Type"/>
+                <column label="From Date"/>
+                <column label="Thru Date"/>
+                <column label="Amount"/>
+                <column label="To Be Paid"/>
+                <column label="Action"/>
+            </columns>
+            <rows>
+                <row self="@{each='emiInfo'}" value="@{emiInfo}">
+                    <label value="@{emiInfo.loanName}"/>
+                     <datebox value="@{emiInfo.fromDate}" disabled="@{emiInfo.disabled}"/>
+                     <datebox value="@{emiInfo.thruDate}" disabled="@{emiInfo.disabled}"/>
+                     <decimalbox value="@{emiInfo.amount}" width="75%"/>
+                        <combobox readonly="true" selectedItem="@{emiInfo.toBePaid}" width="50%">
+                            <comboitem value="Y" label="Yes"></comboitem>
+                            <comboitem value="N" label="No"></comboitem>
+                        </combobox>
+                        <toolbarbutton label="Remove" disabled="@{emiInfo.disabled}">
+                            <attribute name="onClick">
+                                emiLoanInfoController.removeEmi(self.getParent().getValue());
+                                Events.postEvent("onReload",emiListBox,null);
+                            </attribute>
+                        </toolbarbutton>
+                </row>
+            </rows>
+        </grid>
+    </window>
+</zk>

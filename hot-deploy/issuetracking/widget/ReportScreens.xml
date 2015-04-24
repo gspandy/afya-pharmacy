@@ -1,0 +1,228 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<screens xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+        xsi:noNamespaceSchemaLocation="http://ofbiz.apache.org/dtds/widget-screen.xsd">
+  
+  	<screen name="issueReports">
+		<section>
+			<actions>
+				<set field="layoutSettings.javaScripts[]"
+					value="/smeVisualTheme/images/export.js" global="true" />
+					<set field="titleProperty" value="Reports" />
+					<set field="headerItem" value="reports" />
+				<set field="tabButtonItem" value="issueReports" />
+			</actions>
+			<widgets>
+				<decorator-screen name="main-decorator"
+					location="${parameters.mainDecoratorLocation}">
+					<decorator-section name="body">
+							<platform-specific>
+								<html>
+									<html-template-decorator location="component://issuetracking/webapp/issuetracking/issue/issueReportsBaseContainer.ftl">
+										<html-template-decorator-section name="IssueReportBySeverity">
+											<include-screen name="IssueReportBySeverity"/>
+										</html-template-decorator-section>
+										<html-template-decorator-section name="IssueReportByCategory">
+											<include-screen name="IssueReportByCategory"/>
+										</html-template-decorator-section>
+										<html-template-decorator-section name="IssueReportBySla">
+											<include-screen name="IssueReportBySla"/>
+										</html-template-decorator-section>
+									</html-template-decorator>
+								</html>
+							</platform-specific>
+					</decorator-section>
+				</decorator-screen>
+			</widgets>
+		</section>
+	</screen>
+
+  	<screen name="IssueReportBySeverity">
+		<section>
+			<widgets>
+				<screenlet title="${uiLabelMap.SeverityReport}">
+					<include-form name="IssueReportBySeverity" location="component://issuetracking/webapp/issuetracking/ReportForms.xml" />
+				</screenlet>
+			</widgets>
+		</section>
+	</screen>
+    
+    <screen name="IssueReportBySeverityPdf">
+        <section>
+            <actions>
+				<set field="layoutSettings.documentTitle" value="${uiLabelMap.SeverityReport}" />
+                <entity-condition entity-name="IssueSeverityReportView" list="issueReportList">
+                    <condition-list combine="and">
+                        <condition-expr field-name="issueSeverityId" operator="equals" from-field="parameters.issueSeverityId" ignore-if-empty="true"/>
+                        <condition-expr field-name="createdOn" operator="greater-equals" from-field="parameters.fromDate" ignore-if-empty="true"/>
+                        <condition-expr field-name="createdOn" operator="less-equals" from-field="parameters.toDate" ignore-if-empty="true"/>
+                        <condition-expr field-name="categoryOwner" operator="equals" from-field="parameters.categoryOwner" ignore-if-empty="true"/>
+                  </condition-list>
+                    <select-field field-name="issueId"/>
+                    <select-field field-name="status"/>
+                    <select-field field-name="severity"/>
+                    <select-field field-name="category"/>
+                    <select-field field-name="subCategory"/>
+                    <select-field field-name="categoryOwner"/>
+
+                    <select-field field-name="createdBy"/>
+                    <select-field field-name="createdOn"/>
+                    <select-field field-name="lastUpdatedBy"/>
+                    <select-field field-name="lastUpdatedOn"/>
+                </entity-condition>
+            </actions>
+            <widgets>
+				<platform-specific>
+					<xsl-fo>
+						<html-template
+							location="component://issuetracking/webapp/issuetracking/reports/issueReportBySeverity.fo.ftl" />
+					</xsl-fo>
+				</platform-specific>
+            </widgets>
+        </section>
+    </screen>
+    
+	<screen name="IssueReportBySeverityXls">
+        <section>
+            <actions>
+				<set field="layoutSettings.documentTitle" value="${uiLabelMap.SeverityReport}" />
+                <entity-condition entity-name="IssueSeverityReportView" list="issueReportList">
+                    <condition-list combine="and">
+                        <condition-expr field-name="issueSeverityId" operator="equals" from-field="parameters.issueSeverityId" ignore-if-empty="true"/>
+                        <condition-expr field-name="createdOn" operator="greater-equals" from-field="parameters.fromDate" ignore-if-empty="true"/>
+                        <condition-expr field-name="createdOn" operator="less-equals" from-field="parameters.toDate" ignore-if-empty="true"/>
+                    </condition-list>
+                    <select-field field-name="issueId"/>
+                    <select-field field-name="status"/>
+                    <select-field field-name="severity"/>
+                    <select-field field-name="category"/>
+                    <select-field field-name="subCategory"/>
+                    <select-field field-name="categoryOwner"/>
+
+                    <select-field field-name="createdBy"/>
+                    <select-field field-name="createdOn"/>
+                    <select-field field-name="lastUpdatedBy"/>
+                    <select-field field-name="lastUpdatedOn"/>
+                </entity-condition>
+            </actions>
+			<widgets>
+				<include-form name="ListIssueReportBySeverity" location="component://issuetracking/webapp/issuetracking/ReportForms.xml" />
+			</widgets>
+        </section>
+	</screen>
+
+  	<screen name="IssueReportByCategory">
+		<section>
+			<widgets>
+				<screenlet title="${uiLabelMap.CategoryReport}">
+					<include-form name="IssueReportByCategory" location="component://issuetracking/webapp/issuetracking/ReportForms.xml" />
+				</screenlet>
+			</widgets>
+		</section>
+	</screen>
+
+    <screen name="IssueReportByCategoryPdf">
+        <section>
+            <actions>
+				<set field="layoutSettings.documentTitle" value="${uiLabelMap.CategoryReport}" />
+                <entity-condition entity-name="IssueCategoryReportView" list="issueReportList">
+                    <condition-list combine="and">
+                        <condition-expr field-name="issueCategoryId" operator="equals" from-field="parameters.issueCategoryId" ignore-if-empty="true"/>
+                        <condition-expr field-name="issueSubCategoryId" operator="equals" from-field="parameters.issueSubCategoryId" ignore-if-empty="true"/>
+                        <condition-expr field-name="createdOn" operator="greater-equals" from-field="parameters.fromDate" ignore-if-empty="true"/>
+                        <condition-expr field-name="createdOn" operator="less-equals" from-field="parameters.toDate" ignore-if-empty="true"/>
+                    </condition-list>
+                    <select-field field-name="issueId"/>
+                    <select-field field-name="status"/>
+                    <select-field field-name="severity"/>
+                    <select-field field-name="category"/>
+                    <select-field field-name="subCategory"/>
+                    <select-field field-name="categoryOwner"/>
+                    
+                    <select-field field-name="createdBy"/>
+                    <select-field field-name="createdOn"/>
+                    <select-field field-name="lastUpdatedBy"/>
+                    <select-field field-name="lastUpdatedOn"/>
+                </entity-condition>
+            </actions>
+            <widgets>
+				<platform-specific>
+					<xsl-fo>
+						<html-template
+							location="component://issuetracking/webapp/issuetracking/reports/issueReportByCategory.fo.ftl" />
+					</xsl-fo>
+				</platform-specific>
+            </widgets>
+        </section>
+    </screen>
+
+	<screen name="IssueReportByCategoryXls">
+        <section>
+            <actions>
+				<set field="layoutSettings.documentTitle" value="${uiLabelMap.CategoryReport}" />
+                <entity-condition entity-name="IssueCategoryReportView" list="issueReportList">
+                    <condition-list combine="and">
+                        <condition-expr field-name="issueCategoryId" operator="equals" from-field="parameters.issueCategoryId" ignore-if-empty="true"/>
+                        <condition-expr field-name="issueSubCategoryId" operator="equals" from-field="parameters.issueSubCategoryId" ignore-if-empty="true"/>
+                        <condition-expr field-name="createdOn" operator="greater-equals" from-field="parameters.fromDate" ignore-if-empty="true"/>
+                        <condition-expr field-name="createdOn" operator="less-equals" from-field="parameters.toDate" ignore-if-empty="true"/>
+                    </condition-list>
+                    <select-field field-name="issueId"/>
+                    <select-field field-name="status"/>
+                    <select-field field-name="severity"/>
+                    <select-field field-name="category"/>
+                    <select-field field-name="subCategory"/>
+                    <select-field field-name="categoryOwner"/>
+                    
+                    <select-field field-name="createdBy"/>
+                    <select-field field-name="createdOn"/>
+                    <select-field field-name="lastUpdatedBy"/>
+                    <select-field field-name="lastUpdatedOn"/>
+                </entity-condition>
+            </actions>
+			<widgets>
+				<include-form name="ListIssueReportByCategory" location="component://issuetracking/webapp/issuetracking/ReportForms.xml" />
+			</widgets>
+        </section>
+	</screen>
+
+  	<screen name="IssueReportBySla">
+		<section>
+			<widgets>
+				<screenlet title="${uiLabelMap.SlaReport}">
+					<include-form name="IssueReportBySla" location="component://issuetracking/webapp/issuetracking/ReportForms.xml" />
+				</screenlet>
+			</widgets>
+		</section>
+	</screen>
+
+    <screen name="IssueReportBySlaPdf">
+        <section>
+            <actions>
+				<set field="layoutSettings.documentTitle" value="${uiLabelMap.SlaReport}" />
+				<script	location="component://issuetracking/webapp/issuetracking/WEB-INF/actions/IssueReportBySla.groovy" />
+            </actions>
+            <widgets>
+				<platform-specific>
+					<xsl-fo>
+						<html-template
+							location="component://issuetracking/webapp/issuetracking/reports/issueReportBySla.fo.ftl" />
+					</xsl-fo>
+				</platform-specific>
+            </widgets>
+        </section>
+    </screen>
+    
+    <screen name="IssueReportBySlaXls">
+        <section>
+            <actions>
+				<set field="layoutSettings.documentTitle" value="${uiLabelMap.SlaReport}" />
+				<script	location="component://issuetracking/webapp/issuetracking/WEB-INF/actions/IssueReportBySla.groovy" />
+            </actions>
+            <widgets>
+				<include-form name="ListIssueReportBySla" location="component://issuetracking/webapp/issuetracking/ReportForms.xml" />
+			</widgets>	
+        </section>
+    </screen>
+
+</screens>

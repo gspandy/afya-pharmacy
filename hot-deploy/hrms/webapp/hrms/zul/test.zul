@@ -1,0 +1,15 @@
+<zk xmlns:n="http://www.zkoss.org/2005/zk/native">
+	<?init class="org.zkoss.zk.ui.util.Composition" arg0="/WEB-INF/layout/testTemplate.zul"?>
+<zscript>
+
+ 
+</zscript>
+		<window self="@{define(xml)}">
+			
+			<label value="${userName}"/>
+		</window>
+</zk>
+
+
+
+

@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<services xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="http://ofbiz.apache.org/dtds/services.xsd">
+	<description>Employee Termination Services</description>
+	<vendor>NthDimenzion</vendor>
+	<version>1.0</version>
+
+ 	<service name="terminationInterface" engine="interface">
+    	<description>Interface to describe base parameters for Employee Termination Services</description>
+    	<attribute name="partyId" mode="IN" type="String" optional="false"></attribute>
+		<attribute name="applicationDate" mode="IN" type="java.sql.Date" optional="true"></attribute>
+		<attribute name="terminationDate" mode="IN" type="java.sql.Date" optional="false"></attribute>
+		<attribute name="noticePeriod" mode="IN" type="Long" optional="true"></attribute>
+		<attribute name="mgrPositionId" mode="IN" type="String" optional="true"></attribute>
+		<attribute name="reason" mode="IN" type="String" optional="false"></attribute>
+		<attribute name="exitType" mode="IN" type="String" optional="true"></attribute>
+		<attribute name="hr_comment" mode="IN" type="String" optional="true"></attribute>
+		<attribute name="terminationId" mode="INOUT" type="String" optional="true"></attribute>
+		<attribute name="lastUpdatedDate" mode="IN" type="Timestamp" optional="true"></attribute>
+    </service>
+   
+	<!-- New Termination Section -->
+	<service name="createEmplTerminationService"  engine="java"
+		location="com.smebiz.terminate.TerminateService" invoke="createEmplTermination" auth="true">
+		<description>Create Employee Termination</description>
+		<required-permissions join-type="OR">
+    		<check-permission permission="HUMANRES" action="_USER"  /> 
+    		<check-permission permission="HUMANRES" action="_MGR"  />
+    		<check-permission permission="HUMANRES" action="_ADMIN"  /> 
+    	</required-permissions>
+    	<implements service="terminationInterface"/>
+	<!-- 	<attribute name="tsId" mode="OUT" type="String" optional="true"></attribute> -->
+	</service>
+
+	<service name="createEmplTerminationStatusService"  engine="java"
+		location="com.smebiz.terminate.TerminateService" invoke="createEmplTerminationStatus"
+		auth="false">
+		<description>Create Employee Termination Status</description>
+		<attribute name="terminationId" mode="IN" type="String" optional="false"></attribute>
+		<attribute name="statusId" mode="IN" type="String" optional="false"></attribute>
+		<attribute name="hr_comment" mode="IN" type="String" optional="true"></attribute>
+		<attribute name="updatedBy" mode="IN" type="String" optional="false"></attribute>
+		<attribute name="tsId" mode="OUT" type="String" optional="true"></attribute>
+
+
+	</service>
+	
+	<service name="updateEmplTerminationService"  engine="java"
+		location="com.smebiz.terminate.TerminateService" invoke="updateEmplTermination"
+		auth="true">
+		<description>Update Employee Termination</description>
+		<required-permissions join-type="OR">
+    		<check-permission permission="HUMANRES_" action="USER" />
+    		<check-permission permission="HUMANRES_" action="MGR" />
+    		<check-permission permission="HUMANRES_" action="ADMIN"  />  
+    	</required-permissions>
+		<implements service="terminationInterface"/>
+	</service>
+	
+	<service name="submitEmplTerminationService"  engine="java"
+		location="com.smebiz.terminate.TerminateService" invoke="submitEmplTermination"
+		auth="true">
+		<description>Submit Employee Termination</description>
+		<required-permissions join-type="OR">
+    		<check-permission permission="HUMANRES_" action="USER"  /> 
+    		<check-permission permission="HUMANRES_" action="MGR"  />
+    		<check-permission permission="HUMANRES_" action="ADMIN"  />
+    	</required-permissions>
+    	<attribute name="partyId" mode="IN" type="String" optional="true"></attribute>
+    	<attribute name="terminationId" mode="IN" type="String" optional="false"></attribute>
+		<attribute name="hr_comment" mode="IN" type="String" optional="true"></attribute>
+		<attribute name="submitStatus" mode="IN" type="String" optional="true"></attribute>
+		<attribute name="managerStatusType" mode="IN" type="String" optional="true"></attribute>
+		<attribute name="tsId" mode="OUT" type="String" optional="true"></attribute>
+		<attribute name="mgrPositionId" mode="IN" type="String" optional="true"></attribute>
+	</service>
+
+	<service name="processEmplTerminationService"  engine="java"
+		location="com.smebiz.terminate.TerminateService" invoke="processEmplTermination"
+		auth="true">
+		<description>Process Employee Termination</description>
+		<required-permissions join-type="OR">
+    		<check-permission permission="HUMANRES_" action="MGR"  /> 
+    		<check-permission permission="HUMANRES_" action="ADMIN"  /> 
+    	</required-permissions>
+    	<attribute name="partyId" mode="IN" type="String" optional="false"></attribute>
+		<attribute name="terminationId" mode="INOUT" type="String" optional="true"></attribute>
+    	<attribute name="applicationDate" mode="IN" type="java.sql.Date" optional="true"></attribute>
+		<attribute name="terminationDate" mode="IN" type="java.sql.Date" optional="false"></attribute>
+		<attribute name="noticePeriod" mode="IN" type="Long" optional="true"></attribute>
+		<attribute name="statusId" mode="IN" type="String" optional="false"></attribute>
+		<attribute name="hr_comment" mode="IN" type="String" optional="true"></attribute>
+    	<attribute name="unusedLeaves" mode="IN" type="Double" optional="false"></attribute>
+		<attribute name="encashLeaves" mode="IN" type="Double" optional="false"></attribute>
+		<attribute name="settlementType" mode="IN" type="String" optional="true"></attribute>
+		<attribute name="statusType" mode="IN" type="String" optional="true"></attribute>
+		<attribute name="adminComment" mode="IN" type="String" optional="true"></attribute>
+		<attribute name="submitStatus" mode="IN" type="String" optional="true"></attribute>
+		<attribute name="managerComment" mode="IN" type="String" optional="true"></attribute>
+		<attribute name="managerStatusType" mode="IN" type="String" optional="true"></attribute>
+		<attribute name="updatedBy" mode="IN" type="String" optional="true"></attribute>
+	</service>
+	
+	<service name="fetchEmplTerminationComment"  engine="java"
+		location="com.smebiz.terminate.TerminateService" invoke="getEmplTerminationComment"
+		auth="false">
+		<description>Fetch Employee Termination Comment</description>
+		<attribute name="terminationId" mode="IN" type="String" optional="true"></attribute>
+		<attribute name="statusId" mode="INOUT" type="String" optional="true"></attribute>
+		<attribute name="hr_comment" mode="INOUT" type="String" optional="true"></attribute>
+		<attribute name="tsId" mode="OUT" type="String" optional="true"></attribute>
+		<attribute name="updatedBy" mode="OUT" type="String" optional="true"></attribute>
+	</service>
+	
+	<service name="notifyTerminationService"  engine="java"
+		location="com.smebiz.terminate.TerminateService" invoke="notifyTermination"
+		auth="false">
+		<description>Email manager about termination initiation</description>
+		<attribute name="partyId" mode="IN" type="String" optional="false"></attribute>
+		<attribute name="terminationDate" mode="IN" type="Date" optional="false"></attribute>
+		<attribute name="applicationDate" mode="IN" type="Date" optional="true"></attribute>
+	</service>
+</services>

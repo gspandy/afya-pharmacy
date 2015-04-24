@@ -1,0 +1,88 @@
+<?component name="positionTypebox" macroURI="../macros/textfindMacro.zul" id="macro2"?>
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<zk xmlns:n="http://www.zkoss.org/2005/zk/native">
+	<zscript>
+		import org.ofbiz.entity.*;
+		GenericValue userLogin = (GenericValue) Executions.getCurrent()
+				.getDesktop().getSession().getAttribute("userLogin");
+		String partyId = userLogin.getString("partyId");
+		Map map = Executions.getCurrent().getArg();
+		String requisitionId = (String) map.get("requisitionId");
+	</zscript>
+	<window id="submitApplicationWindow" width="35%" height="35%"
+		border="normal" closable="true">
+		<separator height="30px" />
+		<caption label="${c:l('HRMS_SUBMIT_APPLICATION') }" style="font-weight:bold" />
+		<textbox id="reqId" value="${requisitionId}" visible="false" />
+		<textbox id="applyingPartyId" name="applyingPartyId" value="${partyId}"
+			visible="false" />
+		<zscript>
+			com.ndz.controller.SearchController controller = new com.ndz.controller.SearchController();
+			com.ndz.zkoss.GenericValueRenderer listItemRenderer = new com.ndz.zkoss.GenericValueRenderer(
+					new String[] { "emplPositionId", "partyId", "statusId",
+							"emplPositionTypeId" });
+							
+			com.ndz.controller.EmployeeRequisitionController requisitionController = new com.ndz.controller.EmployeeRequisitionController();			
+		</zscript>
+		<hbox>
+			<div align="right" width="150px" style="margin-right:5px">
+				<label value="${c:l('Hrms_PositionId') }" style="font-weight:bold" />
+			</div>
+			<div>
+				<bandbox mold="rounded" apply="${controller}"
+					id="searchPanel" name="emplPositionId">
+					<custom-attributes entityName="EmplPosition"
+						companyWide="true">
+					</custom-attributes>
+					<bandpopup>
+						<vbox>
+							<hbox>
+								<positionTypebox
+									fieldLabel="${c:l('HumanResEditEmplPositionType') }"
+									name="emplPositionTypeId" type="text" cols="18" />
+							</hbox>
+							<hbox>
+
+							</hbox>
+							<button mold="os"
+								label="${c:l('HumanResSearch') }" id="searchPerCompany"
+								autodisable="self" />
+						</vbox>
+						<paging id="paging" width="425px" />
+						<listbox id="dataGrid"
+							itemRenderer="${listItemRenderer}" width="425px"
+							onSelect="searchPanel.value=self.selectedItem.label;searchPanel.close();">
+							<listhead>
+								<listheader
+									label="${c:l('Hrms_PositionId') }" />
+								<listheader
+									label="${c:l('FormFieldTitle_DepartmentName') }" />
+								<listheader
+									label="${c:l('HumanResPerfReviewStatus') }" />
+								<listheader
+									label="${c:l('HumanResEmplPositionType') }" />
+							</listhead>
+						</listbox>
+					</bandpopup>
+				</bandbox>
+			</div>
+		</hbox>
+		<separator />
+		<hbox>
+			<div align="right" width="158px">
+				<label value="${c:l('HRMS_UPLOAD_RESUME') }" style="font-weight:bold" />
+			</div>
+			<div align="left">
+				<fileupload label="${c:l('HRMS_BROWSE') }" onUpload="requisitionController.setUploadedFile((UploadEvent)event,uploadMessage);"/>
+				<label id="uploadMessage" style="font-weight:bold"></label>
+			</div>
+		</hbox>
+		<separator />
+		<hbox>
+			<div align="right" width="290px">
+				<button id="submit" label="${c:l('HRMS_SUBMIT') }" onClick="requisitionController.submitApplication(event);submitApplicationWindow.detach();"/>
+				<button id="cancel" label="${c:l('HRMS_CANCEL') }" onClick="submitApplicationWindow.detach();" />
+			</div>
+		</hbox>
+	</window>
+</zk>

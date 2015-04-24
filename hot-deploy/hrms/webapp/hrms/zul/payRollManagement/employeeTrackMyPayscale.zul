@@ -1,0 +1,110 @@
+<?init class="org.zkoss.zk.ui.util.Composition"
+arg0="/WEB-INF/layout/adminViewMyPayrollManagementTemplate.zul"?>
+
+<?page title="Secure Page" ?>
+
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<zk>
+	<zscript>
+		<![CDATA[
+	import com.ndz.controller.*;
+	import org.ofbiz.entity.GenericValue;
+	SearchController controller = new SearchController();
+	GenericValue person = (GenericValue) Executions.getCurrent().getDesktop()
+			.getSession().getAttribute("person");
+	String partyId = (String) person.get("partyId");
+	String firstName = (String) person.get("firstName");
+	String lastName = (String) person.get("lastName");
+	if (firstName == null)
+		firstName = "";
+	if (lastName == null)
+		lastName = "";
+	firstName = firstName + " " + lastName;
+]]>
+</zscript>
+
+	<window title="${c:l('HRMS_MY_PAYSCALE') }" border="normal" id="searchPanel"
+		self="@{define(content)}" apply="${controller}" width="100%"
+		contentStyle="background-color:#F9F9F9">
+		<custom-attributes entityName="PartyPayGradeView"></custom-attributes>
+		<separator height="10px"></separator>
+
+		<box width="100%" height="30px"
+			style="background-color:#25587E;color:#FFFFFF;">
+			<label value="${c:l('HRMS_SEARCH_MY_PAYSCALE') }" style="margin:10px">
+			</label>
+		</box>
+		<separator height="20px"></separator>
+
+		<hbox>
+			<div align="right" width="50px" style="margin-right:5px">
+			</div>
+			<label value="${c:l('Hrms_EmployeeName') } " style="font-weight:bold">
+			</label>
+			<div width="160px" align="left" height="20px"
+				style="background-color:#AF7817;color:#FFFFFF">
+				<label value="${firstName}"></label>
+			</div>
+		</hbox>
+
+		<separator height="25px" />
+
+		<box width="100%" height="30px" align="center"
+			style="background-color:#FFE4E1">
+			<hbox>
+				<button label="${c:l('HRMS_SHOW') }" mold="os"
+					onClick="results.setVisible(true);results.setFocus(true)"
+					id="searchButton">
+				</button>
+				<button label="${c:l('HRMS_ResetButton') }" mold="os"
+					onClick="results.setVisible(false);results.setFocus(false)"
+					id="reset">
+				</button>
+			</hbox>
+		</box>
+
+		<zscript>
+		<![CDATA[
+	import org.ofbiz.base.util.*;
+	class MyRowRenderer implements RowRenderer {
+
+		MyRowRenderer() {
+		}
+
+		public void render(Row row, Object data) {
+			org.ofbiz.entity.GenericValue gv = ((org.ofbiz.entity.GenericValue) data);
+
+			String payGradeName = gv.getString("payGradeName");
+			String description = gv.getString("description");
+			String revision = gv.getString("revision");
+			String createdDate = gv.getString("fromDate");
+
+			new Label(payGradeName).setParent(row);
+			new Label(description).setParent(row);
+			new Label(revision).setParent(row);
+			new Label(createdDate).setParent(row);
+		}
+	}
+	RowRenderer tableRenderer = new MyRowRenderer();
+]]>
+</zscript>
+		<div id="results" visible="false">
+			<box width="100%" height="30px"
+				style="background-color:#25587E;color:#FFFFFF;">
+				<label value="${c:l('HRMS_SEARCH_RESULTS') }" style="margin:10px"></label>
+			</box>
+			<separator height="10px"></separator>
+			<paging id="paging" width="100%" />
+			<grid width="100%" id="dataGrid"
+				rowRenderer="${tableRenderer}">
+				<columns menupopup="auto">
+					<column label="${c:l('FormFieldTitle_payGradeName') }" />
+					<column label="${c:l('HumanResAllocateEmployeeDescription') }" />
+					<column label="${c:l('HRMS_REVISION') }" />
+					<column label="${c:l('HRMS_CREATED_DATE') }" />
+				</columns>
+			</grid>
+		</div>
+	</window>
+
+</zk>

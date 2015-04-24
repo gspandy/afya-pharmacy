@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<resource xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <property key="SeverityReport">
+        <value xml:lang="en">Report by Issue Severity</value>
+    </property>
+    <property key="CategoryReport">
+        <value xml:lang="en">Report by Issue Category</value>
+    </property>
+    <property key="SlaReport">
+        <value xml:lang="en">Report by Service Level Agreement</value>
+    </property>
+</resource>

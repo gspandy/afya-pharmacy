@@ -1,0 +1,132 @@
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<?component name="findbox" macroURI="../macros/textfindMacro.zul" id="macro1"?>
+<?component name="findbox1" macroURI="../macros/textfindMacro.zul" id="macro2"?>
+<zk xmlns:h="http://www.zkoss.org/2005/zk/native">
+	<zscript>
+	import com.ndz.controller.*;
+	SearchController	controller	= new SearchController();
+	
+	org.ofbiz.security.Security security = requestScope.get("security");
+	org.ofbiz.entity.GenericValue userLogin = (org.ofbiz.entity.GenericValue) Executions.getCurrent().getDesktop().getSession().getAttribute("userLogin");
+	boolean isAdmin = security.hasPermission("HUMANRES_ADMIN", userLogin);
+	Toolbarbutton toolbarbuttonPerformancePlanSection = arg.get("toolbarbuttonPerformancePlanSection");
+</zscript>
+	<window border="normal" id="searchPanel" self="@{define(content)}"
+		apply="${controller}" onCreate="search()" if="${isAdmin }">
+		<custom-attributes entityName="PerfReviewSection"></custom-attributes>
+		<caption label="${c:l('HumanResPerfReviewSection') }">
+			<div align="right">
+				<toolbarbutton label="New" style="color:#FFFFFF"
+					image="/images/icon/update.png">
+					<attribute name="onClick" >
+	{
+		final Window win = (Window) Executions.createComponents("/zul/GlobalHRSetting/newPerformancePlanSections.zul", null, null);
+		win.doModal();
+	}
+</attribute>
+				</toolbarbutton>
+			</div>
+		</caption>
+		<div align="center">
+			<vbox>
+				<hbox style="margin-top:40px">
+					<findbox
+						fieldLabel="${c:l('HumanResPerfReviewSectionName') }"
+						style="font-weight: bold " name="sectionName" type="text"
+						cols="40" />
+				</hbox>
+				<hbox style="margin-top:10px;">
+					<findbox1
+						fieldLabel="${c:l('HumanResAllocateEmployeeDescription') }"
+						style="font-weight: bold " name="description" type="text"
+						cols="40" />
+				</hbox>
+
+			</vbox>
+			<separator height="10px" />
+		</div>
+		<box width="100%" height="30px" align="center">
+		<hbox>
+			<button label="Search" id="searchButton"
+				onClick="results.setVisible(true)">
+			</button>
+			<button label="Reset" onClick='Events.postEvent("onClick",toolbarbuttonPerformancePlanSection,null)'/>
+			</hbox>
+			<zscript>
+	void search() {
+		Events.postEvent("onClick", searchButton, null);
+	}
+</zscript>
+		</box>
+
+		<zscript>
+	import org.zkoss.util.resource.Labels;
+	import com.ndz.controller.GlobalHrSettingPerformancePlanSection;
+	import org.ofbiz.base.util.*;
+	GlobalHrSettingPerformancePlanSection	GlobalHrSettingPerformancePlanSection	= new GlobalHrSettingPerformancePlanSection();
+	class MyRowRenderer implements RowRenderer {
+
+		MyRowRenderer() {
+		}
+
+		public void render( Row row, Object data ) {
+			org.ofbiz.entity.GenericValue gv = ((org.ofbiz.entity.GenericValue) data);
+
+			new Label(gv.getString("perfReviewSectionId")).setParent(row);
+			new Label(gv.getString("sectionName")).setParent(row);
+			new Label(gv.getString("description")).setParent(row);
+			row.setTooltiptext(Labels.getLabel("ToolTipText_DoubleClickToEdit"));
+
+			row.addEventListener("onDoubleClick", new org.zkoss.zk.ui.event.EventListener() {
+				public void onEvent( Event event ) throws Exception {
+					GlobalHrSettingPerformancePlanSection.resPonsibilityTypesEdit(event, gv);
+				}
+			});
+			Button btn = new com.ndz.zkoss.HrmsButton();
+			btn.setParent(row);
+			//btn.setMold("os");
+			//btn.setSclass("btnStyle");
+			btn.setLabel(Labels.getLabel("ButtonDelete"));
+			btn.setTooltiptext("Click here to delete");
+			btn.setSclass("btnDelete");
+			btn.addEventListener("onClick", new org.zkoss.zk.ui.event.EventListener() {
+				public void onEvent( Event event ) throws Exception {
+					GlobalHrSettingPerformancePlanSection.delete(event, gv.getString("perfReviewSectionId"));
+				}
+			});
+
+		}
+	}
+	RowRenderer	tableRenderer	= new MyRowRenderer();
+</zscript>
+		<panel id="results" visible="false">
+			<panelchildren>
+			<h:table width="100%" style="border:0px" cellspacing="0px" cellpadding="0px">
+				<h:tr>
+					<h:td width="80%">
+						<label value="${c:l('HRMS_SEARCHRESULTS') }" ></label>
+					</h:td>
+					<h:td width="20%" style="text-align:right">
+						<paging id="paging" width="100%"/>
+					</h:td>
+				</h:tr>
+			</h:table>
+			<grid width="100%" id="dataGrid"
+				rowRenderer="${tableRenderer}">
+				<columns menupopup="auto">
+					<column label="SectionId" visible="false"></column>
+					<column
+						label="${c:l('HumanResPerfReviewSectionName') }" width="250px">
+					</column>
+					<column
+						label="${c:l('HumanResAllocateEmployeeDescription') }">
+					</column>
+					<column label="Action"
+						width="80px">
+					</column>
+				</columns>
+			</grid>
+		</panelchildren>
+		</panel>
+	</window>
+</zk>

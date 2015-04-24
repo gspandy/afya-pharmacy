@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<services xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+        xsi:noNamespaceSchemaLocation="http://ofbiz.apache.org/dtds/services.xsd">
+    <description>SFAEXT Services</description>
+    <vendor></vendor>
+    <version>1.0</version>
+    
+    <service name="sfaext.leadInterface" engine="interface" location="" invoke="">
+        <!-- Party and Person fields (Person) -->
+        <attribute name="firstName" type="String" mode="IN" optional="false"/>
+        <attribute name="lastName" type="String" mode="IN" optional="false"/>
+        <attribute name="personalTitle" type="String" mode="IN" optional="true"/>
+        <attribute name="birthDate" type="java.sql.Date" mode="IN" optional="true"/>
+        <attribute name="statusId" type="String" mode="IN" optional="true"/>
+        <attribute name="description" type="String" mode="IN" optional="true"/>
+        <!-- PartySupplementalData fields -->
+        <attribute name="companyName" type="String" mode="IN" optional="false"/>
+        <attribute name="parentPartyId" type="String" mode="IN" optional="true"/>
+        <attribute name="generalProfTitle" type="String" mode="IN" optional="true"/>
+        <attribute name="departmentName" type="String" mode="IN" optional="true"/>
+        <attribute name="annualRevenue" type="Double" mode="IN" optional="true"/>
+        <attribute name="currencyUomId" type="String" mode="IN" optional="true"/> <!-- re-used as preferredCurrencyUomId for Person -->
+        <attribute name="numberEmployees" type="Long" mode="IN" optional="true"/>
+        <attribute name="industryEnumId" type="String" mode="IN" optional="true"/>
+        <attribute name="ownershipEnumId" type="String" mode="IN" optional="true"/>
+        <attribute name="tickerSymbol" type="String" mode="IN" optional="true"/>
+        <attribute name="importantNote" type="String" mode="IN" optional="true"/>
+    </service>
+    
+    <service name="sfaext.createLead" engine="java" location="com.smebiz.sfa.leads.LeadsServices" invoke="createLead">
+        <description>Creates an Lead, which is a combination of Party, Person, PartyGroup, and PartySupplementalData.
+            Leads can be created by anyone with CRMSFA_LEAD_CREATE permission.</description>
+        <!--  <required-permissions join-type="OR">
+            <check-permission permission="CRMSFA" action="_LEAD_CREATE"/>
+        </required-permissions> -->
+        <implements service="sfaext.leadInterface"/>
+        <implements service="sfaext.createBasicContactInfoForPartyInterface"/> 
+        <attribute name="partyId" type="String" mode="OUT" optional="false"/>
+        <attribute name="dataSourceId" type="String" mode="IN" optional="true"/> <!-- initial data source -->
+        <attribute name="marketingCampaignId" type="String" mode="IN" optional="true"/> <!-- initial marketing campaign -->
+    </service>
+    
+    <service name="sfaext.updateLead" engine="java" location="com.smebiz.sfa.leads.LeadsServices" invoke="updateLead">
+        <description>Creates an Lead, which is a combination of Party, Person, PartyGroup, and PartySupplementalData.
+            Leads can be created by anyone with CRMSFA_LEAD_CREATE permission.</description>
+         <required-permissions join-type="OR">
+        	<check-permission permission="CRMSFA" action="_LEAD_UPDATE"/>
+        </required-permissions>
+        <implements service="sfaext.leadInterface"/>
+        <attribute name="partyId" type="String" mode="INOUT" optional="false"/>
+    </service>
+
+	<service name="sfaext.reassignLeadResponsibleParty" engine="java"
+        location="com.smebiz.sfa.leads.LeadsServices" invoke="reassignLeadResponsibleParty" auth="true">
+        <description>Reassigns the person RESPONSIBLE_FOR a lead</description>
+        <attribute name="leadPartyId" type="String" mode="IN" optional="false"/>
+        <attribute name="newPartyId" type="String" mode="IN" optional="false"/>
+    </service>
+
+	<service name="sfaext.convertLead" engine="java" location="com.smebiz.sfa.leads.LeadsServices" invoke="convertLead">
+        <description>Converts a Lead into an Account and a Contact.</description>
+        <attribute name="leadPartyId" type="String" mode="IN" optional="false"/>
+        <attribute name="accountPartyId" type="String" mode="IN" optional="true"/>
+        <!-- the output partyId is whichever one is needed on the display form you route it to next.  in our case,
+            since the controller routes it to viewContact, we make it the lead/cotactPartyId -->
+        <attribute name="partyId" type="String" mode="OUT" optional="false"/>
+    </service>
+
+   <service name="sfaext.deleteLead" engine="java"
+        location="com.smebiz.sfa.leads.LeadsServices" invoke="deleteLead" auth="true">
+        <description>Deletes an unconverted lead and all its associated Party data. Requires CRMSFA_LEAD_DELETE permission.</description>
+        <attribute name="leadPartyId" type="String" mode="IN" optional="false"/>
+    </service>
+  
+  </services>  

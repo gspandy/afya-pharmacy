@@ -1,0 +1,200 @@
+<?page title="Initiate Payroll" id="InitiatePayroll"?>
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<?init class="org.zkoss.zkplus.databind.AnnotateDataBinderInit" root="./InitiatePayrollWindow"?>
+<zk xmlns:n="http://www.zkoss.org/2005/zk/native">
+	<zscript>
+	import org.zkoss.zk.ui.event.EventListener;
+	import com.hrms.payroll.composer.*;
+	InitiatePayrollComposer initComposer = new InitiatePayrollComposer();
+	Toolbarbutton toolBarBtn = (Toolbarbutton)Executions.getCurrent().getArg().get("toolbarBtn");
+	initComposer.setLinkToLMS("true");
+	org.ofbiz.entity.GenericDelegator delegator = com.ndz.zkoss.util.HrmsInfrastructure.getDelegator();//org.ofbiz.entity.GenericDelegator.getGenericDelegator("default");
+	List departmentPositionList = delegator.findList("DepartmentPosition",null,null,null,null,false);
+</zscript>
+	<window id="InitiatePayrollWindow" apply="${initComposer}" title="${c:l('HRMS_INITIATE_PAYROLL') }">
+<zscript>
+
+</zscript>
+		<separator height="20px"></separator>
+		<n:table width="100%" align="center">
+			<n:tr>
+				<n:td style="text-align:right">
+					<label value="${c:l('HRMS_EMPLOYEEID') }" style="font-weight:bold"  />
+					<label value="*" style="color:red;"/>
+				</n:td>
+				<n:td>
+					<employeebox value='@{initComposer.selectedEmployeeId}' id="employeeId" 
+						onChange='initComposer.setSelectedDepartmentId("")'  />
+				</n:td>
+			</n:tr>
+			<n:tr>
+				<n:td style="text-align:right">
+					<label value="${c:l('FormFieldTitle_Department') }" style="font-weight:bold"></label>
+				</n:td>
+				<n:td>
+					<!--<listbox width="198px" model="@{departmentPositionList}" mold="select" id="department" 
+						selectedItem="@{initComposer.selectedDepartmentId}" onSelect='employeeId.setValue("")'
+						tooltiptext="On selecting a Department the salary will be initiated for all employees belonging to that Department">
+						<listitem self="@{each}" label="@{each}" value="@{each}"></listitem>
+					</listbox>-->
+					<combobox selectedItem="@{initComposer.selectedDepartmentId}" onSelect='employeeId.setValue("")' id="department"
+					 readonly="true">
+						<comboitem forEach="${departmentPositionList}" label="${each.departmentName}" value="${each.departmentId}" >
+						<attribute name="onCreate">
+						  GenericValue depPos = delegator.findByPrimaryKey("DepartmentPosition",org.ofbiz.base.util.UtilMisc.toMap("departmentId",self.getValue()));
+						  GenericValue loc = delegator.findByPrimaryKey("Location",org.ofbiz.base.util.UtilMisc.toMap("locationId",depPos.getString("locationId")));
+						  if(loc != null)
+						  self.setDescription(loc.getString("locationName"));
+						</attribute>
+						</comboitem>
+					</combobox>
+				</n:td>
+			</n:tr>
+			<n:tr>
+				<n:td style="text-align:right">
+					<label value="${c:l('HRMS_SELECT_MONTH') }" style="font-weight:bold" />
+					<label value="*" style="color:red;"/>
+				</n:td>
+				<n:td>
+					<combobox id="timePeriod" autodrop="true" focus="true" maxlength="100" readonly="true"  
+						model="@{initComposer.frequencyModel}" selectedItem="@{initComposer.selectedFrequency}">
+						<comboitem self="@{each}" label="@{each}" value="@{each}"></comboitem>
+					</combobox>
+				</n:td>
+			</n:tr>
+			<n:tr>
+				<n:td style="text-align:right">
+					<label value="${c:l('HRMS_SELECT_YEAR') }" style="font-weight:bold" />
+					<label value="*" style="color:red;"/>
+				</n:td>
+				<n:td>
+					<combobox id="year" autodrop="true" focus="true" maxlength="100" readonly="true" 
+						model="@{initComposer.years}" selectedItem="@{initComposer.selectedYear}">
+						<comboitem self="@{each}" label="@{each}" value="@{each}"></comboitem>
+					</combobox>
+				</n:td>
+			</n:tr>
+			<n:tr>
+				<n:td style="text-align:right">
+					<label value="Use Leave Info" style="font-weight:bold" />
+				</n:td>
+				<n:td>
+					<listbox mold="select" id="linkToLMSTest" width="100px" selectedItem="@{initComposer.linkToLMS}">
+						<listitem label="${c:l('ListBox_Yes') }" value="true" />
+						<listitem label="${c:l('ListBox_No') }" value="false" />
+					</listbox>
+				</n:td>
+			</n:tr>
+		</n:table>
+		<separator height="25px" />
+		<box width="100%" height="30px" align="center" >
+			<hbox>
+				<button id="proceed" label="${c:l('HRMS_PROCEED') }">
+				<attribute name="onClick"><![CDATA[
+
+if ( department.getSelectedItem()== null && employeeId.getSelectedItem() == null ) {
+	throw new WrongValueException(employeeId,"please Select either Employee Id or Department");
+}
+if (org.ofbiz.base.util.UtilValidate.isEmpty(timePeriod.getValue())) {
+	throw new WrongValueException(timePeriod,"Please Select Month");
+}
+if (org.ofbiz.base.util.UtilValidate.isEmpty(year.getValue())) {
+	throw new WrongValueException(year,"Please Select Year");
+}
+Object lms = linkToLMSTest.getSelectedItem() != null ? linkToLMSTest.getSelectedItem().getValue() : null;
+					
+				]]>
+				</attribute>
+			
+				</button>
+			</hbox>
+		</box>
+		<separator width="100%"  />
+
+
+		<zscript>
+	import org.ofbiz.entity.GenericValue;
+	class JobRenderer implements RowRenderer {
+		java.text.SimpleDateFormat formatter = null;
+
+		public JobRenderer() {
+			formatter = new java.text.SimpleDateFormat(org.ofbiz.base.util.UtilDateTime.DATE_FORMAT);
+		}
+
+		public void render(Row row, Object data) {
+			formatter = new java.text.SimpleDateFormat(org.ofbiz.base.util.UtilDateTime.DATE_FORMAT);
+			GenericValue gv = (GenericValue) data;
+			new Label(gv.getString("jobId")).setParent(row);
+			new Label(gv.getDate("fromPeriod") != null ? formatter.format(gv.getDate("fromPeriod")) : "").setParent(row);
+			new Label(gv.getDate("toPeriod") != null ? formatter.format(gv.getDate("toPeriod")) : "").setParent(row);
+			formatter = new java.text.SimpleDateFormat(org.ofbiz.base.util.UtilDateTime.DATE_TIME_FORMAT);
+			new Label(gv.getTimestamp("createdStamp") != null ? formatter.format(gv.getTimestamp("createdStamp")) : "").setParent(row);
+			
+			new Label(gv.getString("timeTaken")).setParent(row);
+			String status = gv.getString("status");
+			new Label(gv.getString("status")).setParent(row);
+
+			new Label(gv.getString("failureCount")).setParent(row);
+			if ("SCHEDULED".equals(status)) {
+				Button button = new com.ndz.zkoss.HrmsButton();
+				button.setLabel("Delete");
+				button.setTooltiptext("Click here to delete");
+				button.setParent(row);
+				button.setSclass("btnDelete");
+				button.addEventListener("onClick", new EventListener() {
+				public void onEvent(Event event) throws Exception {
+					InitiatePayrollComposer.deletePayRollJob(event,gv,toolBarBtn);
+				}
+			});
+			} 
+			else {
+				//new Label().setParent(row);
+				if ("FINISHED".equals(status)){
+					Button button = new com.ndz.zkoss.HrmsButton();
+					button.setLabel("SIF File");
+					button.setTooltiptext("Click here to Generate Salary Information File");
+					button.setParent(row);
+					button.addEventListener("onClick", new EventListener() {
+					public void onEvent(Event event) throws Exception {
+						InitiatePayrollComposer.generateSifFile(event,gv,toolBarBtn);
+					}
+				});
+				}
+			}
+			
+			Map arg = new HashMap();
+			arg.put("gv",gv);
+			row.addEventListener("onDoubleClick", new EventListener() {
+				public void onEvent(Event event) throws Exception {
+					Window window = (Window) Executions.createComponents("/zul/payRollManagement/viewscheduledPayroll.zul", null,arg);
+					window.doModal();
+				}
+			});
+		}
+	}
+	RowRenderer jobRenderer = new JobRenderer();
+</zscript>
+				<n:table width="100%" style="border:0px" cellspacing="0px" cellpadding="0px">
+					<n:tr>
+						<n:td>
+							<label value="${c:l('HRMS_SEARCHRESULTS') }"></label>
+						</n:td>
+						<n:td width="10%" style="text-align:center">
+							<paging id="payslipPaginal" pageSize="12" style="text-align:right" />
+						</n:td>
+					</n:tr>
+				</n:table>
+			<grid model="@{initComposer.payrollJobs}" rowRenderer="${jobRenderer}" mold="paging" paginal="${payslipPaginal}">
+				<columns>
+					<column label="${c:l('HRMS_JOB_ID') }"></column>
+					<column label="${c:l('HRMS_PERIOD_FROM') }"></column>
+					<column label="${c:l('HRMS_PERIOD_TO') }"></column>
+					<column label="${c:l('HRMS_SCHEDULED_DATE_TIME') }"></column>
+					<column label="${c:l('HRMS_TIME_TAKEN') }" ></column>
+					<column label="${c:l('FormFieldTitle_status') }"></column>
+					<column label="${c:l('HRMS_FAILURE_COUNT') }"></column>
+					<column label="${c:l('HRMS_ACTIONS') }"></column>
+				</columns>
+			</grid>
+	</window>
+</zk>

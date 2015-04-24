@@ -1,0 +1,44 @@
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<zk xmlns:n="http://www.zkoss.org/2005/zk/native">
+	
+	<window id="personPostalAddressWindow" border="normal" title="Contact Information">
+		<tabbox>
+			<tabs>
+				<tab label="${c:l('HRMS_POSTALADDRESS') }" id="postalAddressTab">
+					<attribute name="onClick">
+	Window	win	= (Window) Executions.createComponents("/zul/company/postalAddress.zul", null, null);
+	Div	div	= (Div) personPostalAddressWindow.getFellow("appendSubWindow");
+	Component	cmp	= div.getFirstChild();
+	if (cmp != null)
+		cmp.detach();
+	div.appendChild(win);
+</attribute>
+				</tab>
+				<tab label="${c:l('HRMS_EMAILADDRESS') }" id="emailAddressTab">
+					<attribute name="onClick">
+	Window	win	= (Window) Executions.createComponents("/zul/company/emailAddress.zul", null, null);
+	Div	div	= (Div) personPostalAddressWindow.getFellow("appendSubWindow");
+	Component	cmp	= div.getFirstChild();
+	if (cmp != null)
+		cmp.detach();
+	div.appendChild(win);
+</attribute>
+				</tab>
+				<tab label="${c:l('HRMS_PHONENUMBER') }" id="phoneNumberTab">
+					<attribute name="onClick">
+	Window	win	= (Window) Executions.createComponents("/zul/company/phoneNumber.zul", null, null);
+	Div	div	= (Div) personPostalAddressWindow.getFellow("appendSubWindow");
+	Component	cmp	= div.getFirstChild();
+	if (cmp != null)
+		cmp.detach();
+	div.appendChild(win);
+</attribute>
+				</tab>
+			</tabs>
+		</tabbox>
+		<div id="appendSubWindow"></div>
+		<div
+			onCreate='Events.postEvent("onClick",postalAddressTab,null)'>
+		</div>
+	</window>
+</zk>

@@ -1,0 +1,146 @@
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<?component name="findbox" macroURI="/zul/macros/textfindMacro.zul" id="macro"?>
+<?component name="findbox1" macroURI="/zul/macros/textfindMacro.zul" id="macro1"?>
+<?component name="fromDatebox" macroURI="/zul/macros/datefindMacro.zul" id="macro2"?>
+<?component name="thruDatebox" macroURI="/zul/macros/datefindMacro.zul" id="macro3"?>
+<?component name="positionTypebox" macroURI="../../macros/textfindMacro.zul" id="macro5"?>
+<zk xmlns:n="http://www.zkoss.org/2005/zk/native">
+	<zscript>
+	import com.ndz.controller.*;
+	SearchController controller = new SearchController();
+</zscript>
+	<window title="${c:l('HRMS_APPRAISALS_BY_POSITION') }" border="none"
+		id="appraisalbyDepartmentReports">
+		<n:form method="post" name="appraisalbyDepartmentReports"
+			action="/hrms/control/appraisalReportsbyDepartment"
+			id="appraisalUpdateForm" target="_New">
+			<div align="center" style="margin-top:20px">
+				<vbox>
+					<zscript>
+						com.ndz.controller.SearchController controller = new com.ndz.controller.SearchController();
+						com.ndz.zkoss.GenericValueRenderer listItemRenderer = new com.ndz.zkoss.GenericValueRenderer(
+								new String[] { "partyId", "partyTypeId" });
+					</zscript>
+					<hbox>
+						<hbox style="margin-top:20px">
+							<div style="margin-left:28px">
+								<label value="${c:l('Hrms_EmployeeId') }"
+									style="font-weight:bold;">
+								</label>
+							</div>
+							<bandbox mold="rounded" id="searchPanel"
+								apply="${controller}" name="employeeId">
+								<custom-attributes entityName="Party"
+									companyWide="true">
+								</custom-attributes>
+
+								<bandpopup>
+									<vbox>
+										<hbox>
+											<positionTypebox fieldLabel="${c:l('HRMS_FIND_EMPLOYEE_TYPE') }" name="partyTypeId" type="text" cols="18" />
+										</hbox>
+										<hbox>
+
+										</hbox>
+										<button mold="os"
+											label="${c:l('HumanResSearch') }" id="searchPerCompany"
+											autodisable="self" />
+									</vbox>
+									<paging id="paging" width="425px" />
+									<listbox id="dataGrid"
+										itemRenderer="${listItemRenderer}" width="425px"
+										onSelect="searchPanel.value=self.selectedItem.label;    searchPanel.close();">
+										<listhead>
+											<listheader
+												label="${c:l('Hrms_EmployeeId') }" />
+											<listheader
+												label="${c:l('HRMS_EMPLOYEE_TYPE') }" />
+
+
+										</listhead>
+									</listbox>
+								</bandpopup>
+
+							</bandbox>
+						
+						<div style="margin-left:62px">
+							<label value="${c:l('HRMS_POSITION') }"
+								style="font-weight:bold" />
+						</div>
+						<div>
+							<listbox mold="select"
+								id="listboxPosition" name="listboxPosition">
+
+							</listbox>
+							
+							<zscript>
+	import org.ofbiz.entity.*;
+	import org.ofbiz.entity.condition.*;
+	import org.ofbiz.base.util.*;
+	import org.ofbiz.entity.GenericDelegator;
+	import org.ofbiz.entity.GenericValue;
+	import org.ofbiz.entity.condition.EntityCondition;
+	import org.ofbiz.entity.condition.EntityExpr;
+	GenericDelegator delegator = com.ndz.zkoss.util.HrmsInfrastructure.getDelegator();//GenericDelegator.getGenericDelegator("default");
+	List EmployeePositionTypeList = delegator.findList("EmplPositionType",null,null,null,null,false);
+	EmployeePositionTypeList.add(0, null);
+	SimpleListModel simpleListPositionType = new SimpleListModel(EmployeePositionTypeList);
+	listboxPosition.setModel(simpleListPositionType);
+	listboxPosition.setItemRenderer(new com.ndz.zkoss.DropDownGenericValueAdapter("description"));
+</zscript>
+						</div>
+						</hbox>
+					</hbox>
+					
+					<hbox style="margin-top:20px">
+						<div align="left" style="margin-left:40px">
+							<hbox>
+								<label value="${c:l('HRMS_FROMDATE') }"
+									style="font-weight:bold" />
+								<datebox id="fromDate" name="fromDate" />
+							</hbox>
+						</div>
+						<div align="right" style="margin-left:124px">
+							<hbox>
+								<label value="${c:l('HRMS_THRUDATE') }" style="font-weight:bold" />
+								<datebox id="thruDate" name="thruDate"/>
+							</hbox>
+						</div>
+					</hbox>
+					
+					<div align="left" style="margin-top:20px;margin-left:40px">
+					<hbox>
+						<label value="${c:l('Hrms_StatusType') }" style="font-weight:bold" />
+						<listbox mold="select" id="listboxStatusType" name="listboxStatusType"/>
+					</hbox>
+				    </div>
+						<zscript>
+					import org.ofbiz.entity.GenericDelegator;
+					import org.ofbiz.entity.GenericValue;
+					import org.ofbiz.entity.condition.EntityCondition;
+					import org.ofbiz.entity.condition.EntityExpr;
+					   EntityCondition condition = EntityCondition.makeCondition("statusTypeId",org.ofbiz.entity.condition.EntityOperator.EQUALS,"PERF_REVIEW_STATUS");
+					   List statusTypeList = delegator.findList("StatusItem",condition,null,null,null,false);
+                       statusTypeList.add(0,null);
+					   SimpleListModel simpleListStatusType = new SimpleListModel(statusTypeList);
+					   listboxStatusType.setModel(simpleListStatusType);
+					   listboxStatusType.setItemRenderer(new com.ndz.zkoss.DropDownGenericValueAdapter("description"));
+					</zscript>
+					
+					<div align="center">
+					<hbox style="margin-top:20px">
+						<textbox name="reportFormat" value="PDF" visible="false"/>
+						<button label="${c:l('HRMS_SHOW') }">
+							<attribute name="onClick">
+								Clients.submitForm("appraisalUpdateForm");
+							</attribute>
+						</button>
+					</hbox>
+				</div>
+					<separator height="40px"></separator>
+				</vbox>
+			</div>
+		</n:form>
+		<separator width="100%" height="3px" style="color:red" bar="true" />
+	</window>
+</zk>

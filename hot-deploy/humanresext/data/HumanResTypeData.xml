@@ -1,0 +1,241 @@
+<?xml version="1.0" encoding="UTF-8"?>
+	<!--
+		Licensed to the Apache Software Foundation (ASF) under one or more
+		contributor license agreements. See the NOTICE file distributed with
+		this work for additional information regarding copyright ownership.
+		The ASF licenses this file to you under the Apache License, Version
+		2.0 (the "License"); you may not use this file except in compliance
+		with the License. You may obtain a copy of the License at
+
+		http://www.apache.org/licenses/LICENSE-2.0 Unless required by
+		applicable law or agreed to in writing, software distributed under the
+		License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
+		CONDITIONS OF ANY KIND, either express or implied. See the License for
+		the specific language governing permissions and limitations under the
+		License.
+	-->
+
+<entity-engine-xml>
+	<StatusType description="Employment Application" hasTable="N"
+		parentTypeId="" statusTypeId="EMPLOYMENT_APP_STTS" />
+	<StatusType description="Employee Position Status" hasTable="N"
+		parentTypeId="" statusTypeId="EMPL_POSITION_STATUS" />
+	<StatusItem description="Planned For" sequenceId="01"
+		statusCode="PLANNED_FOR" statusId="EMPL_POS_PLANNEDFOR" statusTypeId="EMPL_POSITION_STATUS" />
+	<StatusItem description="Active/Open" sequenceId="02"
+		statusCode="ACTIVE" statusId="EMPL_POS_ACTIVE" statusTypeId="EMPL_POSITION_STATUS" />
+	<StatusItem description="Inactive/Closed" sequenceId="03"
+		statusCode="INACTIVE" statusId="EMPL_POS_INACTIVE" statusTypeId="EMPL_POSITION_STATUS" />
+
+	<StatusType description="Unemployment Claim" hasTable="N"
+		parentTypeId="" statusTypeId="UNEMPL_CLAIM_STATUS" />
+
+	<StatusType description="Degree status" hasTable="N"
+		parentTypeId="" statusTypeId="HR_DEGREE_STATUS" />
+	<StatusItem description="Completed" sequenceId="01"
+		statusCode="COMPLETE" statusId="HR_DS_COMPLETE" statusTypeId="HR_DEGREE_STATUS" />
+	<StatusItem description="Incomplete" sequenceId="02"
+		statusCode="INCOMPLETE" statusId="HR_DS_INCOMPLETE" statusTypeId="HR_DEGREE_STATUS" />
+	<StatusItem description="Deferred" sequenceId="03"
+		statusCode="DEFERRED" statusId="HR_DS_DEFERRED" statusTypeId="HR_DEGREE_STATUS" />
+
+	<StatusType description="Job status" hasTable="N"
+		parentTypeId="" statusTypeId="HR_JOB_STATUS" />
+	<StatusItem description="Full time" sequenceId="01"
+		statusCode="FULLTIME" statusId="HR_JS_FULLTIME" statusTypeId="HR_JOB_STATUS" />
+	<StatusItem description="Part time" sequenceId="02"
+		statusCode="PARTTIME" statusId="HR_JS_PARTTIME" statusTypeId="HR_JOB_STATUS" />
+	<StatusItem description="Contractor" sequenceId="03"
+		statusCode="CONTRACTOR" statusId="HR_JS_CONTRACTOR" statusTypeId="HR_JOB_STATUS" />
+
+	<StatusType description="PartyQual verification status"
+		hasTable="N" parentTypeId="" statusTypeId="PARTYQUAL_VERIFY" />
+	<StatusItem description="Not verified" sequenceId="01"
+		statusCode="NOT_VERIFIED" statusId="PQV_NOT_VERIFIED" statusTypeId="PARTYQUAL_VERIFY" />
+	<StatusItem description="Verified" sequenceId="02"
+		statusCode="VERIFIED" statusId="PQV_VERIFIED" statusTypeId="PARTYQUAL_VERIFY" />
+
+	<ResponsibilityType description="Finance Management"
+		hasTable="N" parentTypeId="" responsibilityTypeId="FIN_MGMT" />
+	<ResponsibilityType description="Inventory Management"
+		hasTable="N" parentTypeId="" responsibilityTypeId="INV_MGMT" />
+	<ResponsibilityType description="Purchase Management"
+		hasTable="N" parentTypeId="" responsibilityTypeId="PUR_MGMT" />
+	<ResponsibilityType description="Resource Management"
+		hasTable="N" parentTypeId="" responsibilityTypeId="RES_MGMT" />
+	<ResponsibilityType description="Production Management"
+		hasTable="N" parentTypeId="" responsibilityTypeId="PROD_MGMT" />
+	<ResponsibilityType description="Sales Management"
+		hasTable="N" parentTypeId="" responsibilityTypeId="SALES_MGMT" />
+
+	<BenefitType description="Health" hasTable="N"
+		parentTypeId="" benefitTypeId="HEALTH" />
+	<BenefitType description="Vacation" hasTable="N"
+		parentTypeId="" benefitTypeId="VACATION" />
+	<BenefitType description="Sick Leave" hasTable="N"
+		parentTypeId="" benefitTypeId="SICK_LEAVE" />
+
+	<TrainingClassType trainingClassTypeId="BASIC_TRAINING"
+		description="Basic Training" />
+	<TrainingClassType trainingClassTypeId="ONJOB_TRAINING"
+		description="On Job Training" />
+	<TrainingClassType trainingClassTypeId="ADVAN_TRAINING"
+		description="Advance Training" />
+	<TrainingClassType trainingClassTypeId="IMPRO_TRAINING"
+		description="Improvement Training" />
+
+	<PartyQualType description="Degree" hasTable="N"
+		parentTypeId="" partyQualTypeId="DEGREE" />
+	<PartyQualType description="Certification" hasTable="N"
+		parentTypeId="" partyQualTypeId="CERTIFICATION" />
+
+	<EmploymentAppSourceType description="NewsPaper"
+		hasTable="N" parentTypeId="" employmentAppSourceTypeId="NEWS_PAPER" />
+	<EmploymentAppSourceType description="PersonalReferal"
+		hasTable="N" parentTypeId="" employmentAppSourceTypeId="PER_REF" />
+	<EmploymentAppSourceType description="Internet"
+		hasTable="N" parentTypeId="" employmentAppSourceTypeId="INTERNET" />
+	<EmploymentAppSourceType description="Advertisement"
+		hasTable="N" parentTypeId="" employmentAppSourceTypeId="ADV" />
+
+	<DeductionType description="Federal Tax" parentTypeId=""
+		deductionTypeId="FED_TAX" />
+	<DeductionType description="State Tax" parentTypeId=""
+		deductionTypeId="STATE_TAX" />
+	<DeductionType description="Insurance" parentTypeId=""
+		deductionTypeId="INSURANCE" />
+	<DeductionType description="Cafeteria Plan" parentTypeId=""
+		deductionTypeId="CAFE_PLAN" />
+
+	<TerminationType description="Resignation" hasTable="N"
+		parentTypeId="" terminationTypeId="RESIGN" />
+	<TerminationType description="Fired" hasTable="N"
+		parentTypeId="" terminationTypeId="FIRE" />
+	<TerminationType description="Retirement" hasTable="N"
+		parentTypeId="" terminationTypeId="RETIRE" />
+
+
+
+	<WebSite webSiteId="HR" siteName="Human Resource Manager"
+		visualThemeSetId="BACKOFFICE" />
+
+
+	<PolicyType policyTypeId="10020" policyTypeName="LEAVE_POLICY"
+		thruDate="2012-03-31" fromDate="2009-04-01" />
+
+	<Policy policyId="10000" policyTypeId="10020" thruDate="2012-03-31"
+		fromDate="2009-04-01" />
+
+	<PolicyDetail policyId="10000" dataType="N"
+		displayName="Earned Leaves per Month" attrName="EL_PER_MONTH"
+		attrNumValue="1.5" />
+	<PolicyDetail policyId="10000" dataType="N"
+		displayName="Earned Leaves in Calendar Year" attrName="EL_PER_YEAR"
+		attrNumValue="18" />
+	<PolicyDetail policyId="10000" dataType="N"
+		displayName="Earned Leave Limit" attrName="EL_MAX" attrNumValue="36" />
+	<PolicyDetail policyId="10000" dataType="N"
+		displayName="Earned Leave Carry Forward" attrName="EL_YEARS"
+		attrNumValue="2" />
+
+	<!-- Service Register Section II Master Data For Certificates -->
+
+	<ContactMechPurposeType
+		contactMechPurposeTypeId="PARENT_LOCATION" description="Parent Address" />
+	<ContactMechPurposeType
+		contactMechPurposeTypeId="SPOUSE_LOCATION" description="Spouse Address" />
+	<ContactMechPurposeType
+		contactMechPurposeTypeId="PERMANENT_LOCATION" description="Permanent Address" />
+	<ContactMechPurposeType
+		contactMechPurposeTypeId="LTC_LOCATION" description="Home Town Address" />
+
+	<ContactMechTypePurpose contactMechTypeId="POSTAL_ADDRESS"
+		contactMechPurposeTypeId="PARENT_LOCATION" />
+	<ContactMechTypePurpose contactMechTypeId="POSTAL_ADDRESS"
+		contactMechPurposeTypeId="SPOUSE_LOCATION" />
+	<ContactMechTypePurpose contactMechTypeId="POSTAL_ADDRESS"
+		contactMechPurposeTypeId="PERMANENT_LOCATION" />
+	<ContactMechTypePurpose contactMechTypeId="POSTAL_ADDRESS"
+		contactMechPurposeTypeId="LTC_LOCATION" />
+
+	<PartyContentType partyContentTypeId="BIODATA"
+		description="Personal Information" />
+	<PartyContentType partyContentTypeId="EMPL_PHOTO"
+		parentTypeId="BIODATA" description="Personal Information" />
+	<PartyContentType partyContentTypeId="FAMILY_PHOTO"
+		parentTypeId="BIODATA" description="Family Photograph" />
+	<PartyContentType partyContentTypeId="NATIONALITY"
+		parentTypeId="BIODATA" description="National Eligibility" />
+	<PartyContentType partyContentTypeId="CASTE_CERT"
+		parentTypeId="BIODATA" description="Caste Certificate" />
+
+
+
+	<CertificateType certificateTypeId="10010"
+		description="Medical Certificate" screenType="complex"/>
+	<CertificateType certificateTypeId="10020"
+		description="Character Certificate" screenType="simple"/>
+	<CertificateType certificateTypeId="10030"
+		description="Allegiance Certificate" screenType="simple"/>
+	<CertificateType certificateTypeId="10040" description="Oath Certificate" screenType="simple"/>
+	<CertificateType certificateTypeId="10050"
+		description="Marital Certificate" screenType="simple"/>
+	<CertificateType certificateTypeId="10060"
+		description="Declaration of Home Town Certificate" screenType="simple"/>
+	<CertificateType certificateTypeId="10070"
+		description="Verification of Enteries in Part-I" screenType="simple"/>
+	<CertificateType certificateTypeId="10080" description="G.P.F. No" screenType="simple"/>
+	<CertificateType certificateTypeId="10090"
+		description="ParticularsOfInsurance" screenType="complex"/>
+	<CertificateType certificateTypeId="10100" description="FamilyParticulars" screenType="simple"/>
+	<CertificateType certificateTypeId="10200" description="DCRG" screenType="simple"/>
+
+	<Certificate certificateId="10010" certificateTypeId="10010"
+		attributeId="10010" attributeName="doctorName" displayName="Doctor Name" />
+	<Certificate certificateId="10010" certificateTypeId="10010"
+		attributeId="10011" attributeName="examinedOn" displayName="Examined On" />
+	<Certificate certificateId="10010" certificateTypeId="10010"
+		attributeId="10012" attributeName="videSNo" displayName="vide S.No" />
+
+	<Certificate certificateId="10020" certificateTypeId="10020"
+		attributeId="10020" attributeName="videSNo" displayName="vide S.No" />
+
+	<Certificate certificateId="10030" certificateTypeId="10030"
+		attributeId="10030" attributeName="videSNo" displayName="vide S.No" />
+
+	<Certificate certificateId="10040" certificateTypeId="10040"
+		attributeId="10040" attributeName="videSNo" displayName="vide S.No" />
+
+	<Certificate certificateId="10050" certificateTypeId="10050"
+		attributeId="10050" attributeName="videSNo" displayName="vide S.No" />
+
+	<Certificate certificateId="10060" certificateTypeId="10060"
+		attributeId="10060" attributeName="videSNo" displayName="vide S.No" />
+
+	<Certificate certificateId="10070" certificateTypeId="10070"
+		attributeId="10070" attributeName="videSNo" displayName="vide S.No" />
+
+	<Certificate certificateId="10080" certificateTypeId="10080"
+		attributeId="10080" attributeName="GPFRecords" displayName="G.P.F. Records" />
+
+	<Certificate certificateId="10090" certificateTypeId="10090"
+		attributeId="10091" attributeName="policyNo" displayName="Policy Name" />
+	<Certificate certificateId="10090" certificateTypeId="10090"
+		attributeId="10092" attributeName="amount" displayName="Amount" />
+	<Certificate certificateId="10090" certificateTypeId="10090"
+		attributeId="10093" attributeName="nomination" displayName="Nomination" />
+	<Certificate certificateId="10090" certificateTypeId="10090"
+		attributeId="10094" attributeName="subsequentPolicy" displayName="Subsequent Policy No." />
+	<Certificate certificateId="10090" certificateTypeId="10090"
+		attributeId="10095" attributeName="amount" displayName="Amount" />
+	<Certificate certificateId="10090" certificateTypeId="10090"
+		attributeId="10096" attributeName="nomination" displayName="Nomination" />
+		
+		
+	<Certificate certificateId="10100" certificateTypeId="10100"
+		attributeId="10100" attributeName="videNo" displayName="Sl.No" />
+	<Certificate certificateId="10200" certificateTypeId="10200"
+		attributeId="10200" attributeName="videNo" displayName="Sl.No" />	
+		
+		
+</entity-engine-xml>

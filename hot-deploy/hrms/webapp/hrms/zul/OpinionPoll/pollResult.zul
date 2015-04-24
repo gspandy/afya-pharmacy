@@ -1,0 +1,107 @@
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<?page title="Poll Result" contentType="text/html;charset=UTF-8"?>
+<zk>
+<zscript>
+<![CDATA[
+import java.lang.*;
+import org.ofbiz.entity.*;
+import org.ofbiz.entity.condition.*;
+GenericDelegator delegator = com.ndz.zkoss.util.HrmsInfrastructure.getDelegator();//GenericDelegator.getGenericDelegator("default");
+String pollId=(String)Executions.getCurrent().getArg().get("pollId");
+Long vote=0l;
+List opinionPollGvs =  delegator.findByAnd("OpinionPollResponse",org.ofbiz.base.util.UtilMisc.toMap("pollId",pollId));
+vote= org.ofbiz.base.util.UtilValidate.isNotEmpty(opinionPollGvs)?opinionPollGvs.size():vote;
+List result= null;
+try{
+	result = delegator.findList("OpnionPollView",EntityCondition.makeCondition(org.ofbiz.base.util.UtilMisc.toMap("pollId",pollId)),null,null,null,false);
+}catch(Exception e){
+}
+
+Map pollResult = new HashMap();
+for(int i=0;i<result.size();i++){
+	GenericValue resGV = (GenericValue)result.get(i);
+	pollResult.put(resGV.getString("response"), resGV.getLong("responseCount"));	
+}
+GenericValue pollGv = delegator.findByPrimaryKey("OpinionPoll",org.ofbiz.base.util.UtilMisc.toMap("pollId",pollId));
+String question = (String)pollGv.getString("question");
+]]>
+</zscript>
+
+	<window title="Poll Result" border="normal" width="600px"
+		height="400px" closable="true" contentStyle="background:#F3F7F8"
+		id="pollView" onCancel="self.detach()" maximizable="true">
+		<div align="center">
+		<label value="${question}"></label>
+		</div>
+		<separator/>
+		<label value="${c:l('HRMS_TOTAL_VOTE') }:" style="font-weight:bold"></label>
+		<label value="${vote}" style="color"></label>
+		<hbox>
+		<div align="right" width="140px">
+		<label value="${c:l('HRMS_YES') }" style="color:red"></label>
+		</div>
+		<div align="right" width="140px">
+		<label value="${c:l('HRMS_NO') }" style="color:blue"></label>
+		</div>
+		<div align="right" width="140px">
+		<label value="${c:l('HRMS_CANT_SAY') }" style="color:green"></label>
+		</div>
+		</hbox>
+		<separator/>
+		<hbox>
+		<div align="right" width="130px">
+		<label value="${pollResult.YES}" style="color:red"></label>
+		</div>
+		<div align="right" width="140px">
+		<label value="${pollResult.NO}" style="color:blue"></label>
+		</div>
+		<div align="right" width="130px">
+		<label value="${pollResult.CANTSAY}" style="color:green"></label>
+		</div>
+		</hbox>
+		<separator/>
+		<div align="center">
+		<image id="myimage" />
+		</div>
+		<separator/>
+		<div align="center" visible="false">
+		<hbox align="center"> 
+		<label value="${c:l('HRMS_COMMENT') }"></label>
+		<textbox id="response" rows="5" cols="45"></textbox>
+		</hbox>
+		</div>
+		<separator/>
+		<div align="center">
+		<hbox>
+		<button label="${c:l('HRMS_SUBMIT') }" onClick="com.ndz.controller.PollManagementController.updateOpinion(event,pollId);" visible="false"></button>
+		<button label="${c:l('ButtonCancel') }" onClick="pollView.detach();"></button>
+		</hbox>
+		</div>
+	</window>
+<zscript>
+	org.jfree.data.category.DefaultCategoryDataset categoryDataSet = new org.jfree.data.category.DefaultCategoryDataset();
+	categoryDataSet.addValue((Number)pollResult.get("YES"), "q", "Yes");
+	categoryDataSet.addValue((Number)pollResult.get("NO"), "w", "No");
+	categoryDataSet.addValue((Number)pollResult.get("CANTSAY"), "e", "Can't Say");
+	org.jfree.chart.JFreeChart chart = org.jfree.chart.ChartFactory
+			.createBarChart("", "", "", categoryDataSet,
+					org.jfree.chart.plot.PlotOrientation.HORIZONTAL, false,
+					true, false);
+	org.jfree.chart.plot.CategoryPlot plot = chart.getCategoryPlot();
+	plot.setForegroundAlpha(1f);
+	java.awt.image.BufferedImage bi = chart.createBufferedImage(400, 100,
+			java.awt.image.BufferedImage.OPAQUE, null);
+	byte[] bytes = null;
+	try {
+		bytes = org.jfree.chart.encoders.EncoderUtil.encode(bi,
+				org.jfree.chart.encoders.ImageFormat.PNG, true);
+	} catch (java.io.IOException e) {
+	}
+	org.zkoss.image.AImage image = null;
+	try {
+		image = new org.zkoss.image.AImage("Pie Chart", bytes);
+	} catch (java.io.IOException e) {
+	}
+	((Image) pollView.getFellow("myimage", true)).setContent(image);
+</zscript>
+</zk>

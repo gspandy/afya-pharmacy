@@ -1,0 +1,118 @@
+<?component name="findbox" macroURI="../macros/findBox.zul" id="macro1"?>
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<zk xmlns:h="http://www.zkoss.org/2005/zk/native">
+	<zscript>
+	import com.ndz.controller.*;
+	com.ndz.controller.SearchController controller = new com.ndz.controller.SearchController();
+	Toolbarbutton myLeaveBtn = arg.get("myLeaveBtn");
+</zscript>
+	<window id="searchPanel" apply="${controller}" onCreate="activateSearch()">
+		<custom-attributes entityName="OpinionPoll"></custom-attributes>
+		<separator height="10px"></separator>
+		<hbox>
+			<div align="left" style="margin-left:-20px">
+				<findbox fieldLabel="${c:l('HRMS_POLL_ID') }" name="pollId" type="text" cols="40" />
+			</div>
+		</hbox>
+		<box width="100%" height="30px" align="center">
+			<hbox>
+				<button label="${c:l('HumanResSearch') }" mold="os" id="searchPerCompany"
+					onClick="results.setVisible(true);results.setFocus(true)">
+				</button>
+				<button label="${c:l('HRMS_ResetButton') }" onClick='Events.postEvent("onClick",myLeaveBtn,null)' />
+			</hbox>
+		</box>
+		<zscript>
+	void activateSearch() {
+		Events.postEvent("onClick", searchPerCompany, null);
+	}
+</zscript>
+		<zscript>
+	import org.ofbiz.entity.*;
+	import org.zkoss.util.resource.Labels;
+	import org.ofbiz.base.util.*;
+	import org.zkoss.zk.ui.event.EventListener;
+	class MyRowRenderer implements RowRenderer {
+		MyRowRenderer() {
+		}
+
+		public void render(Row row, Object data) {
+			org.ofbiz.entity.GenericValue gv = ((org.ofbiz.entity.GenericValue) data);
+			String pollId = gv.getString("pollId");
+			new Label(pollId).setParent(row);
+			new Label(gv.getString("question")).setParent(row);
+			new Label(gv.getDate("fromDate").toString()).setParent(row);
+			new Label(gv.getDate("thruDate").toString()).setParent(row);
+			new Label(gv.getString("questionStatus")).setParent(row);
+			if ((gv.getString("questionStatus")).equals("Saved")) {
+				Button btn = new com.ndz.zkoss.HrmsButton();
+				btn.setLabel("Delete");
+				btn.setParent(row);
+				btn.setTooltiptext("Click here to delete");
+				btn.setSclass("btnDelete");
+				btn.addEventListener("onClick", new EventListener() {
+
+					public void onEvent(Event event) throws Exception {
+						PollManagementController.deletePoll(event, gv,
+								searchPerCompany);
+					}
+				}
+				);
+				row.setTooltiptext("Double click to Edit/Submit");
+				row.addEventListener("onDoubleClick", new EventListener() {
+
+					public void onEvent(Event event) throws Exception {
+						Window window = (Window)Executions.createComponents("/zul/OpinionPoll/editPoll.zul",null,UtilMisc.toMap("gv",gv));
+						window.doModal();
+					}
+				});
+
+			}
+			else{
+			new Label(" ").setParent(row);
+			}
+		}
+	}
+	RowRenderer tableRenderer = new MyRowRenderer();
+</zscript>
+		<div id="results" visible="false">
+			<h:table width="100%" style="border:0px" cellspacing="0px" cellpadding="0px">
+				<h:tr>
+					<h:td width="90%">
+						<label value="${c:l('HRMS_SEARCHRESULTS') }"></label>
+					</h:td>
+					<h:td width="10%" style="text-align:right">
+						<paging id="paging" />
+					</h:td>
+				</h:tr>
+			</h:table>
+			<grid id="dataGrid" rowRenderer="${tableRenderer}">
+				<columns menupopup="auto">
+					<column label="${c:l('HRMS_POLL_ID') }" onDrop="move(event.dragged)" draggable="col" droppable="col" style="font-weight:bold"
+						sortDirection="ascending" />
+					<column label="${c:l('HRMS_POLL_QUESTION') }" onDrop="move(event.dragged)" draggable="col" droppable="col" style="font-weight:bold" />
+					<column label="${c:l('HRMS_FROMDATE') }" onDrop="move(event.dragged)" draggable="col" droppable="col" style="font-weight:bold" />
+					<column label="${c:l('HRMS_THRUDATE') }" onDrop="move(event.dragged)" draggable="col" droppable="col" style="font-weight:bold" />
+					<column label="${c:l('HRMS_POLL_STATUS') }" onDrop="move(event.dragged)" draggable="col" droppable="col" style="font-weight:bold" />
+					<column label="${c:l('HRMS_ACTION') }" onDrop="move(event.dragged)" draggable="col" droppable="col" style="font-weight:bold" />
+				</columns>
+			</grid>
+		</div>
+		<zscript><![CDATA[
+	void move(Component dragged) {
+		if (dragged.getClass().getName().endsWith("Column")) {
+			int maxRows = dragged.getGrid().getRows().getChildren().size();
+			int i = dragged.getParent().getChildren().indexOf(dragged);
+			int j = self.getParent().getChildren().indexOf(self);
+
+			//move celles for each row 
+			for (int k = 0; k < maxRows; k++)
+				self.getGrid().getCell(k, j).parent.insertBefore(self.getGrid()
+						.getCell(k, i), self.getGrid().getCell(k, j));
+		}
+
+		self.parent.insertBefore(dragged, self);
+	}
+]]></zscript>
+	</window>
+</zk>

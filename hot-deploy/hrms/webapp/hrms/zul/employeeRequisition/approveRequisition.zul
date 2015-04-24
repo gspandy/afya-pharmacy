@@ -1,0 +1,429 @@
+<?init class="org.zkoss.zk.ui.util.Composition" arg0="/WEB-INF/layout/template.zul"?>
+<?page title="HRMS-ApproveRequisition" id="approveRequisition"?>
+<?init class="org.zkoss.zkplus.databind.AnnotateDataBinderInit" root="./processRequisitionWindow"?>
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<?link rel="icon" type="image/x-icon" href="/images/companyLogo.png"?>
+<zk xmlns:n="http://www.zkoss.org/2005/zk/native">
+	<zscript>
+	<![CDATA[
+		com.hrms.composer.RecruitmentComposer recruitmentComposer = new com.hrms.composer.RecruitmentComposer();
+		import com.ndz.zkoss.HrmsUtil;
+		import com.ndz.zkoss.util.HrmsConstants;
+		import org.zkoss.util.resource.Labels;
+		boolean isReqAdmin = HrmsUtil.isRequisitionAdmin();
+		List budgetItems = recruitmentComposer.getBudgetItems();
+		List budgetSequenceItems = recruitmentComposer.getBudgetSequenceItems();
+		boolean isHod = HrmsUtil.isHod();
+		org.ofbiz.entity.GenericDelegator delegator = com.ndz.zkoss.util.HrmsInfrastructure.getDelegator();//org.ofbiz.entity.GenericDelegator.getGenericDelegator("default");
+
+	 	String requisitionIdValue = Executions.getCurrent().getParameter("requisitionId");
+	 	boolean both=false;
+	 	if(isHod && isReqAdmin)
+	 		both = true;
+	 	
+    ]]>
+	</zscript>
+	<window id="processRequisitionWindow" title="Approve/Reject Requisition" border="normal" width="100%" contentStyle="overflow:auto" self="@{define(content)}"
+		apply="${recruitmentComposer}">
+		<zscript>
+			boolean showButton = HrmsConstants.REQUISITION_ADMIN_REJECT_STATUS.equalsIgnoreCase(recruitmentComposer.getRequisitionVo().getStatusId()) || HrmsConstants.REQUISITION_CLOSE_STATUS.equalsIgnoreCase(recruitmentComposer.getRequisitionVo().getStatusId()) || HrmsConstants.REQUISITION_HOD_REJECT_STATUS.equalsIgnoreCase(recruitmentComposer.getRequisitionVo().getStatusId()) || HrmsConstants.REQUISITION_PROCESSING_STATUS.equalsIgnoreCase(recruitmentComposer.getRequisitionVo().getStatusId());
+		</zscript>
+		<n:table>
+			<box width="100%" height="30px">
+				<label value="${c:l('HRMS_REQUISITION_APPROVEREQUISITIONREQUISITIONDETAILS')}" style="font-weight:bold" />
+			</box>
+		</n:table>
+		<n:table width="100%">
+			<n:tr>
+				<n:td>
+					<div align="right" width="100%" style="margin-right:5px">
+						<label value="${c:l('HRMS_REQUISITION_REQUISITIONID')}" style="font-weight:bold" />
+					</div>
+				</n:td>
+				<n:td>
+					<label id="requisitionId" style="font-weight:bold;color:#666666"
+						value="@{recruitmentComposer.requisitionId}" />
+				</n:td>
+			</n:tr>
+			<n:tr>
+				<n:td>
+					<div align="right" width="100%" style="margin-right:5px">
+						<label value="${c:l('HRMS_REQUIREMENT_TYPE') }" style="font-weight:bold" />
+					</div>
+				</n:td>
+				<n:td>
+					<label id="requirementType" style="font-weight:bold;color:#666666"
+						value="@{recruitmentComposer.requisitionVo.requirementType}" />
+				</n:td>
+			</n:tr>
+			<n:tr>
+				<n:td width="50%">
+					<div align="right" width="100%" style="margin-right:5px">
+						<label value="${c:l('HRMS_REQUISITION_GRIDCOLUMNREQUISITIONINITIATOR')}" style="font-weight:bold" />
+					</div>
+				</n:td>
+				<n:td>
+					<label id="employeeName" style="font-weight:bold;color:#666666"
+						onCreate="self.setValue(com.ndz.zkoss.HrmsUtil.getFullName(recruitmentComposer.getDelegator(),recruitmentComposer.getRequisitionVo().getRequisitionRaisedBy()))" />
+				</n:td>
+			</n:tr>
+			<n:tr>
+				<n:td>
+					<div align="right" width="100%" style="margin-right:5px">
+						<label value="${c:l('HRMS_REQUISITION_GRIDCOLUMNREQUISITIONINITIATORDEPARTMENT')}"
+							style="font-weight:bold" />
+					</div>
+				</n:td>
+				<n:td>
+					<label id="deptId" style="font-weight:bold;color:#666666"
+						onCreate="self.setValue(com.ndz.zkoss.HrmsUtil.getDepartmentName(recruitmentComposer.getRequisitionVo().getInitiatorDepartmentId()))" />
+				</n:td>
+			</n:tr>
+			<n:tr>
+				<n:td>
+					<div align="right" width="100%">
+						<label value="${c:l('HRMS_REQUISITION_GRIDCOLUMNREQUISITIONOPENEDDATE') }" style="font-weight:bold" />
+					</div>
+				</n:td>
+				<n:td>
+					<label id="fromDate" value="@{recruitmentComposer.requisitionVo.startDate,converter='com.ndz.component.DateConverter'}"/>
+				</n:td>
+			</n:tr>
+			<n:tr>
+				<n:td>
+					<div align="right" width="100%" style="margin-right:5px">
+						<label value="Requisition End Date" style="font-weight:bold" />
+					</div>
+				</n:td>
+				<n:td>
+					<label id="endDate" value="@{recruitmentComposer.requisitionVo.endDate,converter='com.ndz.component.DateConverter'}"/>
+				</n:td>
+			</n:tr>
+			<n:tr>
+				<n:td>
+					<div align="right" width="100%" style="margin-right:5px">
+						<label value="${c:l('HRMS_REQUISITION_GRIDCOLUMNREQUISITIONSTATUS')}" style="font-weight:bold" />
+					</div>
+				</n:td>
+				<n:td>
+					<label id="requisitionStatus" style="font-weight:bold;color:#666666" onCreate="self.setValue(com.ndz.zkoss.HrmsUtil.getRequisitionStatusDescription(recruitmentComposer.getRequisitionVo().getStatusId()))"/>
+				</n:td>
+			</n:tr>
+			<div if="${isReqAdmin}">
+				<n:tr>
+					<n:td>
+						<div align="right" width="100%" style="margin-right:5px">
+							<label value="${c:l('HRMS_HOD_COMMENTS') }" style="font-weight:bold" />
+						</div>
+					</n:td>
+					<n:td>
+						<label id="adminComment" style="font-weight:bold;color:#666666" value="@{recruitmentComposer.requisitionVo.hodComment}" />
+					</n:td>
+				</n:tr>
+			</div>
+			<div if="${isReqAdmin}" >
+				<n:tr>
+					<n:td>
+						<div align="right" width="100%" style="margin-right:5px" visible="false">
+							<label value="${c:l('HumanResBudgetID') }" style="font-weight:bold" />
+						</div>
+					</n:td>
+					<n:td>
+						<toolbarbutton label="@{recruitmentComposer.requisitionVo.budgetId}" style="font-weight:bold;color:blue"
+							onClick='Executions.createComponents("/zul/Budget/requisitionAdminBudgetView.zul",null,org.ofbiz.base.util.UtilMisc.toMap("budgetId",self.getLabel()))'
+							visible="false">
+						</toolbarbutton>
+					</n:td>
+				</n:tr>
+				<n:tr>
+					<n:td>
+						<div align="right" width="100%" style="margin-right:5px" visible="false">
+							<label value="${c:l('HumanResBudgetItemSeqId') }" style="font-weight:bold" />
+						</div>
+					</n:td>
+					<n:td>
+						<toolbarbutton label="@{recruitmentComposer.requisitionVo.budgetItemSequenceId}" style="font-weight:bold;color:blue"
+							onClick='Executions.createComponents("/zul/Budget/requisitionAdminBudgetItemView.zul",null,org.ofbiz.base.util.UtilMisc.toMap("budgetItemSeqId",self.getLabel()))'
+							visible="false">
+						</toolbarbutton>
+					</n:td>
+				</n:tr>
+			</div>
+		</n:table>
+		<box width="100%" height="30px">
+			<label value="${c:l('HRMS_REQUISITION_APPROVEREQUISITIONJOBDETAILS') }" style="font-weight:bold" />
+		</box>
+		<n:table>
+			<n:tr>
+				<n:td>
+					<div align="right" width="250px" style="margin-right:5px">
+						<label value="${c:l('HRMS_REQUISITION_JOBTITLE') }" style="font-weight:bold" />
+					</div>
+				</n:td>
+				<n:td>
+					<label id="jobTitle" style="font-weight:bold" value="@{recruitmentComposer.requisitionVo.jobTitle}" />
+				</n:td>
+			</n:tr>
+			<n:tr>
+				<n:td>
+					<div align="right" width="250px" style="margin-right:5px">
+						<label value="${c:l('HRMS_JOB_LOCATION') }" style="font-weight:bold" />
+					</div>
+				</n:td>
+				<n:td>
+					<label id="locId"  style="font-weight:bold" onCreate='self.setValue(com.ndz.zkoss.HrmsUtil.getLocationName(recruitmentComposer.getRequisitionVo().getLocationGv().getString("locationId")))'/>
+				</n:td>
+			</n:tr>
+			<n:tr>
+				<n:td>
+					<div align="right" width="250px" style="margin-right:5px">
+						<label value="${c:l('HRMS_POSITIONTYPE') }" style="font-weight:bold" />
+					</div>
+				</n:td>
+				<n:td>
+					<label id="positionType" style="font-weight:bold" onCreate='self.setValue(com.ndz.zkoss.HrmsUtil.getPositionTypeDescription(recruitmentComposer.getRequisitionVo().getPositionTypeGv().getString("emplPositionTypeId")))'/>
+				</n:td>
+			</n:tr>
+			<n:tr>
+				<n:td>
+					<div align="right" width="250px" style="margin-right:5px">
+						<label value="${c:l('HRMS_REQUISITION_MINIMUMEXPERIENCE') }" style="font-weight:bold" />
+					</div>
+				</n:td>
+				<n:td>
+					<label id="minExprience" value="@{recruitmentComposer.requisitionVo.minimumExprience}" style="font-weight:bold" />
+					<label value="${c:l('HRMS_YEARS') }"/>
+				</n:td>
+			</n:tr>
+			<n:tr>
+				<n:td>
+					<div align="right" width="250px" style="margin-right:5px">
+						<label value="${c:l('HRMS_REQUISITION_MAXIMUMEXPERIENCE') }" style="font-weight:bold" />
+					</div>
+				</n:td>
+				<n:td>
+					<label id="maxExprience" value="@{recruitmentComposer.requisitionVo.maximumExprience}" style="font-weight:bold" />
+					<label value="${c:l('HRMS_YEARS') }"/>
+				</n:td>
+			</n:tr>
+			<n:tr>
+				<n:td>
+					<div align="right" width="250px" style="margin-right:5px">
+						<label value="${c:l('HRMS_REQUISITION_MINIMUMCTC') }" style="font-weight:bold" />
+					</div>
+				</n:td>
+				<n:td>
+					<label id="minSalary" style="font-weight:bold" value="@{recruitmentComposer.requisitionVo.minimumSalary}" />
+					<label onCreate='self.setValue(com.ndz.zkoss.HrmsUtil.getEnumDescription(recruitmentComposer.getRequisitionVo().getCurrencyBaseLineGv().getString("enumId")))'/>
+					<label value="${c:l('HRMS_PER_ANNUM_IN') } "/>
+					<label onCreate='self.setValue(com.ndz.zkoss.HrmsUtil.getUomDescription(recruitmentComposer.getRequisitionVo().getCurrencyTypeGv().getString("uomId")))' style="font-weight:bold" />
+				</n:td>
+			</n:tr>
+			<n:tr>
+				<n:td>
+					<div align="right" width="250px" style="margin-right:5px">
+						<label value="${c:l('HRMS_REQUISITION_MAXIMUMCTC') }" style="font-weight:bold" />
+					</div>
+				</n:td>
+				<n:td>
+					<label id="maxSalary" value="@{recruitmentComposer.requisitionVo.maximumSalary}" style="font-weight:bold" />
+					<label onCreate='self.setValue(com.ndz.zkoss.HrmsUtil.getEnumDescription(recruitmentComposer.getRequisitionVo().getCurrencyBaseLineGv().getString("enumId")))'/>
+					<label value="${c:l('HRMS_PER_ANNUM_IN') } "/>
+					<label onCreate='self.setValue(com.ndz.zkoss.HrmsUtil.getUomDescription(recruitmentComposer.getRequisitionVo().getCurrencyTypeGv().getString("uomId")))' style="font-weight:bold" />
+				</n:td>
+			</n:tr>
+			<n:tr>
+				<n:td>
+					<div align="right" width="250px" style="margin-right:5px">
+						<label value="${c:l('HRMS_REQUISITION_NOOFPOSITION') }" style="font-weight:bold" />
+					</div>
+				</n:td>
+				<n:td>
+					<label id="noOfPosition" style="font-weight:bold" value="@{recruitmentComposer.requisitionVo.noOfPosition}" />
+				</n:td>
+			</n:tr>
+			<n:tr>
+				<n:td>
+					<div align="right" width="250px" style="margin-right:5px">
+						<label value="${c:l('HRMS_REQUISITION_JOBDESCRIPTION') }" style="font-weight:bold" />
+					</div>
+				</n:td>
+				<n:td>
+					<html>${recruitmentComposer.requisitionVo.jobDescription}</html>
+				</n:td>
+			</n:tr>
+			<n:tr>
+				<n:td>
+					<div align="right" width="250px" style="margin-right:5px">
+						<label value="${c:l('HRMS_REQUISITION_ROLEDETAILS') }" style="font-weight:bold" />
+					</div>
+				</n:td>
+				<n:td>
+					<html>
+						${recruitmentComposer.requisitionVo.roleDetails}
+					</html>
+				</n:td>
+			</n:tr>
+			<n:tr>
+				<n:td>
+					<div align="right" width="250px" style="margin-right:5px">
+						<label value="${c:l('HRMS_REQUISITION_QUALIFICATION') }" style="font-weight:bold" />
+					</div>
+				</n:td>
+				<n:td>
+					<html>${recruitmentComposer.requisitionVo.qualifications}</html>
+				</n:td>
+			</n:tr>
+			<n:tr>
+				<n:td>
+					<div align="right" width="250px" style="margin-right:5px">
+						<label value="${c:l('HRMS_REQUISITION_SOFTSKILL') }" style="font-weight:bold" />
+					</div>
+				</n:td>
+				<n:td>
+					<html>${recruitmentComposer.requisitionVo.softSkills}</html>
+				</n:td>
+			</n:tr>
+			<n:tr>
+				<n:td>
+					<div align="right" width="250px" style="margin-right:5px">
+						<label value="${c:l('HRMS_REQUISITION_JUSTIFICATIONFORHIRING') }" style="font-weight:bold" />
+					</div>
+				</n:td>
+				<n:td>
+					<html>${recruitmentComposer.requisitionVo.justificationForHiring}</html>
+				</n:td>
+				<n:td>
+					<div if="${isReqAdmin}" align="right" width="250px" style="margin-right:25px">
+						<toolbarbutton id="notifyCfo" onClick= "com.ndz.controller.EmployeeRequisitionController.sendRequisitionMailToCEO(requisitionIdValue,delegator)"
+						label="Notify CEO" style="font-weight:bold" />
+					</div>
+				</n:td>
+				
+			</n:tr>
+		</n:table>
+		<separator height="10px"></separator>
+		<div if="${isHod}" visible="false">
+			<n:table>
+				<n:tr>
+					<box width="100%">
+						<label value="${c:l('HRMS_POSITION_ESTIMATES') }:" style="font-weight:bold" />
+					</box>
+				</n:tr>
+			</n:table>
+			<n:table>
+				<n:tr>
+					<n:td>
+						<div align="right" width="250px" style="margin-right:5px">
+							<label value="${c:l('HumanResBudgetID') }" style="font-weight:bold" />
+						</div>
+					</n:td>
+					<n:td>
+						<bandbox id="budgetId" readonly="true" value="@{recruitmentComposer.requisitionVo.budgetId,save-when='approveRequisition.onClick'}">
+							<bandpopup>
+								<paging id="budgetPaging" width="425px" pageSize="10" pageIncrement="1" />
+								<listbox id="budgetListbox" width="425px" model="@{recruitmentComposer.budgetItems}"
+									onSelect="budgetId.value=self.selectedItem.label; budgetId.close();"
+									mold="paging" paginal="${budgetPaging}">
+									<listhead>
+										<listheader label="${c:l('HumanResBudgetID') }" style="font-weight:bold" />
+										<listheader label="${c:l('FormFieldTitle_budgetTypeId') }" style="font-weight:bold" />
+									</listhead>
+									<listitem self="@{each='budgetGv'}" value="@{budgetGv}">
+										<listcell label="@{budgetGv.budgetId}"/>
+										<listcell label="@{budgetGv.budgetTypeId}"/>
+									</listitem>
+								</listbox>
+							</bandpopup>
+						</bandbox>
+					</n:td>
+					<n:td>
+						<div align="right" width="250px" style="margin-right:5px">
+							<label value="${c:l('HRMS_BUDGET_ITEM_SEQ_ID') }" style="font-weight:bold" />
+						</div>
+					</n:td>
+					<n:td>
+						<bandbox id="budgetItemSeqId" readonly="true" value="@{recruitmentComposer.requisitionVo.budgetItemSequenceId,save-when='approveRequisition.onClick'}">
+							<bandpopup>
+								<paging id="budgetItemPaging" width="425px" pageSize="10" pageIncrement="1" />
+								<listbox id="budgetItemListbox" width="425px" model="@{recruitmentComposer.budgetSequenceItems}"
+									onSelect="budgetItemSeqId.value=self.selectedItem.label; budgetItemSeqId.close();"
+									 mold="paging" paginal="${budgetItemPaging}">
+									<listhead>
+										<listheader label="${c:l('FormFieldTitle_budgetItemSeqId') }" style="font-weight:bold" />
+										<listheader label="${c:l('FormFieldTitle_budgetItemTypeId') }" style="font-weight:bold" />
+										<listheader label="${c:l('FormFieldTitle_amount') }" style="font-weight:bold" />
+									</listhead>
+									<listitem self="@{each='budgetItemGv'}" value="@{budgetItemGv}">
+										<listcell label="@{budgetItemGv.budgetItemSeqId}"/>
+										<listcell label="@{budgetItemGv.budgetItemTypeId}"/>
+										<listcell label="@{budgetItemGv.amount}"/>
+									</listitem>
+								</listbox>
+							</bandpopup>
+						</bandbox>
+					</n:td>
+				</n:tr>
+			</n:table>
+		</div>
+		<n:table>
+			<n:tr>
+				<n:td>
+					<div align="right" width="250px" style="margin-right:5px">
+						<label value="${c:l('HRMS_Comments') }"  style="font-weight:bold" />
+					</div>
+				</n:td>
+				<n:td>
+					<div align="left" width="130px" style="margin-right:5px">
+						<textbox id="commentTextBox" width="500px"  height="70px" multiline="true"/>
+					</div>
+				</n:td>
+			</n:tr>
+		</n:table>
+		<n:table width="100%">
+			<n:tr>
+				<n:td>
+					<div align="center" width="100%" style="margin-center:5px">
+						<hbox id="enableForHOD">
+							<button label="${c:l('HRMS_BackButton') }" onClick='Executions.getCurrent().sendRedirect("/control/requisitionManagement");' />
+							<button id="approveRequisition" label="${c:l('HRMS_ApproveButton') }" mold="os" visible="${!showButton}">
+								<attribute name="onClick">
+								<![CDATA[
+									commentTextBox.clearErrorMessage();
+									if(isHod && HrmsConstants.REQUISITION_SUBMIT_STATUS.equals(recruitmentComposer.getRequisitionVo().getStatusId())){
+										recruitmentComposer.getRequisitionVo().setHodComment(commentTextBox.getValue());
+										recruitmentComposer.getRequisitionVo().setStatusId(HrmsConstants.REQUISITION_HOD_APPROVE_STATUS);
+									}	
+									else if(isReqAdmin && HrmsConstants.REQUISITION_HOD_APPROVE_STATUS.equals(recruitmentComposer.getRequisitionVo().getStatusId())){
+										recruitmentComposer.getRequisitionVo().setAdminComment(commentTextBox.getValue());
+										recruitmentComposer.getRequisitionVo().setStatusId(HrmsConstants.REQUISITION_ADMIN_APPROVE_STATUS);
+										
+									}		
+									com.ndz.zkoss.HrmsUtil.processRequisition(recruitmentComposer,Labels.getLabel("HRMS_AR_APPROVED_SUCCESS_MSG"),Labels.getLabel("HRMS_AR_REQUISITION_APPROVED/REJECTED_CONTINUE_SUGGESTION_MSG"));
+								]]>
+									</attribute>
+							</button>
+							<button id="rejectButton" label="${c:l('HRMS_RejectButton') }" mold="os" visible="${!showButton}">
+							<attribute name="onClick">
+							<![CDATA[
+								if(org.ofbiz.base.util.UtilValidate.isEmpty(commentTextBox.getValue()))
+									throw new WrongValueException(commentTextBox,"Comments Required");
+								if(isHod && HrmsConstants.REQUISITION_SUBMIT_STATUS.equals(recruitmentComposer.getRequisitionVo().getStatusId())){
+									recruitmentComposer.getRequisitionVo().setStatusId(HrmsConstants.REQUISITION_HOD_REJECT_STATUS);
+									recruitmentComposer.getRequisitionVo().setHodComment(commentTextBox.getValue());
+								}	
+								else if(isReqAdmin && HrmsConstants.REQUISITION_HOD_APPROVE_STATUS.equals(recruitmentComposer.getRequisitionVo().getStatusId()) ){
+								recruitmentComposer.getRequisitionVo().setStatusId(HrmsConstants.REQUISITION_ADMIN_REJECT_STATUS);
+								recruitmentComposer.getRequisitionVo().setAdminComment(commentTextBox.getValue());
+								}	
+								com.ndz.zkoss.HrmsUtil.processRequisition(recruitmentComposer,Labels.getLabel("HRMS_AR_REJECTED_SUCCESS_MSG"),Labels.getLabel("HRMS_AR_REQUISITION_APPROVED/REJECTED_CONTINUE_SUGGESTION_MSG"));
+							]]>
+								</attribute>
+							</button>
+						</hbox>	
+					</div>
+				</n:td>
+			</n:tr>
+		</n:table>
+	</window>
+</zk>

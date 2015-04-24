@@ -1,0 +1,122 @@
+<?init class="org.zkoss.zk.ui.util.Composition"
+arg0="/WEB-INF/layout/template.zul"?>
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+
+<zk>
+	<window title="Employee Profile" self="@{define(content)}">
+
+		<menubar>
+			<menu label="Action">
+				<menupopup>
+					<menuitem label="Postal Address"
+						href="/control/employeeProfilePostalAddress" />
+					<menuitem label="Email"
+						href="/control/employeeProfileEmailAddress" />
+					<menuitem label="Telephone"
+						href="/control/employeeProfileTelephone" />
+				</menupopup>
+			</menu>
+		</menubar>
+
+
+		<vbox>
+			<hbox style="margin-top:10px">
+				<div align="right" width="200px"
+					style="margin-right:5px">
+					<label id="FirstName" value="${c:l('HRMS_FirstName') }:" popup="popupFirstName" />
+					
+
+				</div>
+				<div width="200px" align="left">
+					<label id="labelemployeeProfile_FirstName"
+						value="${person.firstName}" popup="popupFirstName">
+					</label>
+					<popup id="popupFirstName" width="300px" >
+					
+						<label id="popupLabelFirstName" value="${c:l('HRMS_FirstName') }:"/>
+						<textbox value="${labelemployeeProfile_FirstName.value}"></textbox>
+						<button id="SaveFirstName" label="Ok"></button>
+					</popup>
+					
+
+
+
+				</div>
+				<div align="right" width="100px"
+					style="margin-right:5px">
+					<label id="MiddleName" value="${c:l('HRMS_MiddleName') }:" />
+				</div>
+				<div width="200px" align="left">
+
+					<label id="labelemployeeProfile_MiddleName"
+						value="${person.middleName }" popup="popupMiddleName" />
+						
+						<popup id="popupMiddleName" width="300px" >
+						<label id="popupLabelMiddleName" value="${c:l('HRMS_MiddleName') }:"/>
+						<textbox value="${labelemployeeProfile_MiddleName.value}"></textbox>
+						<button id="SaveMiddleName" label="Ok"></button>
+					</popup>
+				</div>
+				<div align="right" width="100px"
+					style="margin-right:5px">
+					<label id="LastName" value="${c:l('HRMS_LastName') }:">
+
+					</label>
+
+				</div>
+
+				<div width="200px" align="left">
+					<label id="labelemployeeProfile_LastName"
+						value="${person.lastName}" popup="popupLastName">
+					</label>
+					<popup id="popupLastName" width="300px" >
+						<label id="popupLabelLastName" value="${c:l('HRMS_LastName') }:"/>
+						<textbox value="${labelemployeeProfile_LastName.value}"></textbox>
+						<button id="SaveLastName" label="Ok"></button>
+					</popup>
+
+				</div>
+			</hbox>
+		</vbox>
+		<vbox>
+			<hbox style="margin-top:10px">
+				<div align="right" width="200px"
+					style="margin-right:5px">
+					<label id="Gender" value="${c:l('HRMS_Gender') }:" />
+				</div>
+				<div width="200px" align="left">
+					<label id="labelemployeeProfile_Gender"
+						value="${person.gender }" popup="popupGender" />
+						<popup id="popupGender" width="300px" >
+						<label id="popupLabelGender" value="${c:l('HRMS_LastName') }:"/>
+						<textbox value="${labelemployeeProfile_Gender.value}"></textbox>
+						<button id="SaveGender" label="Ok"></button>
+					</popup>
+
+				</div>
+				<div align="right" width="100px"
+					style="margin-right:5px">
+					<label id="Dateofbirth" value="${c:l('FormFieldTitle_DateOfBirth') }:" />
+				</div>
+				<div width="200px" align="left">
+					<label id="labelemployeeProfile_Dateofbirth"
+						value="${person.birthDate}" popup="popupDateofBirth" />
+						
+						<popup id="popupDateofBirth" width="300px" >
+						<label id="popupLabelDateofbirth" value="${c:l('HRMS_LastName') }:"/>
+						<textbox value="${labelemployeeProfile_Dateofbirth.value}"></textbox>
+						<button id="SaveDateofBirth" label="Ok"></button>
+					</popup>
+				</div>
+			</hbox>
+		</vbox>
+
+
+
+		<window self="@{insert(associateContent)}">
+		
+
+		</window>
+
+	</window>
+</zk>

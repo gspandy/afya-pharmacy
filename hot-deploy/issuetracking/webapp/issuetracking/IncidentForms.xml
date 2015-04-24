@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<forms xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+        xsi:noNamespaceSchemaLocation="http://ofbiz.apache.org/dtds/widget-form.xsd">
+
+    <form name="issueEntry" type="upload" target="createNewIssue" default-map-name="issueDetail" >
+    		
+    	<alt-target use-when="issueDetail!=null" target="updateIssue"/>
+    	
+    	<field name="issueId" ><hidden value="${issueDetail.issueId}" /></field>
+        <field use-when="issueDetail!=null" name="issueStatusId" title="Issue Status" >
+            <drop-down current="selected">
+            	<list-options  list-name="statusList" list-entry-name="status" 
+            				key-name="status.issueStatusId" description="${status.issueStatusCaption}"/>
+            </drop-down>
+        </field>
+        <field name="issueSeverityId" title="Issue Severity" >
+            <drop-down current="selected" >
+            	<list-options  list-name="severityList" list-entry-name="severity" 
+            				key-name="severity.issueSeverityId" description="${severity.issueSeverityCaption}"/>
+            </drop-down>
+        </field>
+        
+       	 <field name="issueCategoryId" title="Category"  id-name="issueCategoryId" >
+        		 <display-entity description="${issueCategoryCaption}" entity-name="IssueCategory" key-field-name="issueCategoryId" ></display-entity>
+        </field>
+        
+          <field use-when="${issueDetail.issueStatusId eq 1}" name="issueCategoryId" title="Category"  id-name="issueCategoryId" event="onChange" action="javascript: getSubCategoryOptions(this.value);" >
+            <drop-down current="selected">
+                <option key="" description="-- Select --"/>
+                <entity-options description="${issueCategoryCaption}" entity-name="IssueCategory" key-field-name="issueCategoryId"/>
+            </drop-down>
+        </field>
+        
+        <field use-when="${mode eq 'new'}" name="issueCategoryId" title="Category"  id-name="issueCategoryId" event="onChange" action="javascript: getSubCategoryOptions(this.value);" >
+            <drop-down current="selected">
+                <option key="" description="-- Select --"/>
+                <entity-options description="${issueCategoryCaption}" entity-name="IssueCategory" key-field-name="issueCategoryId"/>
+            </drop-down>
+        </field>
+        
+        
+        
+        <field name="issueSubCategoryId" title="Sub-Category"  id-name="issueSubCategoryId">
+           <display-entity description="${issueSubCategoryCaption}" entity-name="IssueSubCategory" key-field-name="issueSubCategoryId" ></display-entity>
+        </field>
+        <field use-when="${issueDetail.issueStatusId eq 1&amp;&amp;issueDetail.issueSubCategoryId!=null}" name="issueSubCategoryId" title="Sub-Category" id-name="issueSubCategoryId">
+            <drop-down current="selected" >	
+            <entity-options description="${issueSubCategoryCaption}" entity-name="IssueSubCategory" key-field-name="issueSubCategoryId"></entity-options>
+            </drop-down>
+        </field>
+        
+        <field use-when="${issueDetail.issueStatusId eq 1&amp;&amp;issueDetail.issueSubCategoryId==null}" name="issueSubCategoryId" title="Sub-Category" id-name="issueSubCategoryId">
+            <drop-down current="selected" >
+            </drop-down>
+        </field>
+        
+        
+        <field use-when="${mode eq 'new'}" name="issueSubCategoryId" title="Sub-Category" id-name="issueSubCategoryId">
+            <drop-down current="selected" >	
+            </drop-down>
+        </field>
+       
+        <field use-when="issueDetail!=null&amp;&amp;isOwner!=null" name="assignedTo" title="Assign To">
+        	<lookup target-form-name="LookupPartyName"/>
+        </field>
+		<field name="uploadedFile" title="Attachment">
+			<file size="50"/>
+		</field>
+        <field name="issueSummary" title="Summary"><text size="30"/></field>
+        <field name="issueDescription" title="Description"><textarea cols="70" rows="5"/></field>
+        <field name="issueAdditionalInfo" title="Additional Info"><textarea cols="70" rows="5"/></field>
+        <field use-when="issueDetail!=null" name="comment" title="Add Reponse"><textarea cols="70" rows="4"/></field>
+
+        <field name="submitButton" title="${uiLabelMap.CommonSubmit}" widget-style="btn btn-success">
+            <submit button-type="button"/>
+        </field>
+    </form>
+
+    <form name="issueSeach" type="single" target="find" separate-columns="true" >  
+    	<field name="noConditionFind"><hidden value="Y"/></field>
+      	<field name="issueId" position="1"><text-find /></field>
+      	<field name="issueSeverityId" title="Severity" position="2">
+            <drop-down current="selected" allow-empty="true">
+                <entity-options description="${issueSeverityCaption}" entity-name="IssueSeverity" key-field-name="issueSeverityId"/>
+            </drop-down>
+        </field>
+        <field name="createdBy" title="Reported By"  entity-name="Party" entry-name="createdBy" position="1"> 
+			<lookup target-form-name="LookupPartyName"/>
+        </field>
+        <field name="issueStatusId" title="Status" position="2">
+            <drop-down current="selected" allow-empty="true">
+                <entity-options description="${issueStatusCaption}" entity-name="IssueStatus" key-field-name="issueStatusId"/>
+            </drop-down>
+        </field>
+        <field name="issueCategoryId" title="Category" position="1">
+            <drop-down current="selected" allow-empty="true">
+                <entity-options description="${issueCategoryCaption}" entity-name="IssueCategory" key-field-name="issueCategoryId"/>
+            </drop-down>
+        </field>
+        <field name="issueSubCategoryId" title="Sub-Category" position="2">
+            <drop-down current="selected" allow-empty="true">
+                <entity-options description="${issueSubCategoryCaption}" entity-name="IssueSubCategory" key-field-name="issueSubCategoryId"/>
+            </drop-down>
+        </field>
+        <field name="issueSummary" position="1"><text-find/> </field>
+        <field name="issueDescription" position="2"><text-find/> </field>
+        <field name="issueAdditionalInfo"><text-find/> </field>
+        <field name="submitButton" title="${uiLabelMap.CommonFind}" event="onClick" action="javascript: document.issueSeach.ready.value='Y'; return true;" widget-style="btn btn-primary">
+            <submit button-type="button"  />
+        </field>
+    </form>    
+    
+    <form name="listIssueSearchResults" type="list" separate-columns="true" 
+				 list-name="listIt"  paginate-target="find" paginate="true"
+				 odd-row-style="alternate-row" header-row-style="header-row-2" 
+				 default-table-style="basic-table hover-bar">
+        <actions>
+            <service service-name="performFind" result-map="result" result-map-list="listIt">
+                <field-map field-name="inputFields" env-name="parameters"/>
+                <field-map field-name="entityName" value="IssueDetailView"/>
+            </service>
+        </actions>
+		
+		<field name="issueId">
+		    <hyperlink target="viewIssueDetail?issueId=${issueId}" description="${issueId}" />
+		</field>
+		<field name="issueStatusCaption" title="Status"><display description="${issueStatusCaption}" /> </field>
+		<field name="issueSeverityCaption" title="Severity"><display description="${issueSeverityCaption}" /> </field>
+		<field name="issueCategoryCaption" title="Category"><display description="${issueCategoryCaption}" /> </field>
+		<field name="issueSubCategoryCaption" title="Sub-Category"><display description="${issueSubCategoryCaption}" /> </field>
+		<field name="ownerId" title="Owner">
+			<display-entity entity-name="PartyNameView" key-field-name="partyId" description="${groupName} ${firstName} ${lastName}"/>
+		</field>
+		<field name="assignedTo" title="Assigned To">
+			<display-entity entity-name="PartyNameView" key-field-name="partyId" description="${groupName} ${firstName} ${lastName}"/>
+		</field>
+		<field name="createdBy" title="Reported By">
+			<display-entity entity-name="PartyNameView" key-field-name="partyId" description="${groupName} ${firstName} ${lastName}"/>
+		</field>
+		<field name="createdOn" title="Reported On"><display description="${createdOn}" /></field>
+    </form>
+	
+    <form name="categoryForm" type="single" target="addNewCategory">    		     	
+        <field name="Display Caption" parameter-name="issueCategoryCaption" required-field="true"  widget-style="required"><text/></field>
+        <field name="ownerId" title="Owner Party" required-field="true" widget-style="required"><lookup target-form-name="LookupPartyName"/></field>
+        <field name="Description" parameter-name="issueCategoryDescription" required-field="true"  widget-style="required"><text/></field>
+        <field name="submitButton" title="${uiLabelMap.CommonAdd}" widget-style="btn btn-success">
+        	<submit button-type="button"/>
+        </field>
+	</form>    
+
+    <form name="subCategoryForm" type="single" target="addNewSubCategory">    		     	
+        <field name="Display Caption" parameter-name="issueSubCategoryCaption" required-field="true"  widget-style="required"><text/></field>
+        <field name="Base Category" parameter-name="categoryId" required-field="true"  widget-style="required">  
+            <drop-down current="selected" allow-empty="true" size="1">
+                <entity-options description="${issueCategoryCaption}" entity-name="IssueCategory" key-field-name="issueCategoryId"/>
+            </drop-down>
+        </field>
+        <field name="Description" parameter-name="issueSubCategoryDescription" required-field="true"  widget-style="required"><text/> </field>
+        <field name="submitButton" title="${uiLabelMap.CommonAdd}" widget-style="btn btn-success"><submit button-type="button"/></field>
+	</form>
+	
+    <form name="listCategory" type="list" target="editCategory" separate-columns="true" 
+            odd-row-style="alternate-row" header-row-style="header-row-2" default-table-style="basic-table hover-bar" paginate-target="issueAdmin">    		     	
+        <actions>
+			<entity-condition entity-name="IssueCategory"/>
+        </actions>
+    	<field name="issueCategoryId"><hidden/></field>
+        <field name="issueCategoryCaption" title="Display Caption "><text/></field>
+        <field name="ownerId" title="Owner party"><lookup target-form-name="LookupPartyName"/></field>
+        <field name="issueCategoryDescription" title="Description"><text/></field>
+        <field name="submitButton" title="${uiLabelMap.CommonUpdate}" widget-style="btn btn-success"><submit button-type="button"/></field>
+	</form>    
+
+    <form name="listSubCategory" type="list" target="editSubCategory" separate-columns="true"
+            odd-row-style="alternate-row" header-row-style="header-row-2" default-table-style="basic-table hover-bar" paginate-target="issueAdmin">    		     	
+        <actions>
+			<entity-condition entity-name="IssueSubCategory"/>
+        </actions>
+    	<field name="issueSubCategoryId"><hidden/></field>
+        <field name="issueSubCategoryCaption" title="Display Caption "><text/></field>
+        <field name="categoryId" title="Base Category">
+			<drop-down>
+				<entity-options description="${issueCategoryCaption}" entity-name="IssueCategory" key-field-name="issueCategoryId"/>
+			</drop-down>
+         </field>
+        <field name="issueSubCategoryDescription" title="Description"><text/></field>
+        <field name="submitButton" title="${uiLabelMap.CommonUpdate}" widget-style="btn btn-success"><submit button-type="button"/></field>
+	</form>    
+</forms>

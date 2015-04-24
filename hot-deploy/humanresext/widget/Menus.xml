@@ -1,0 +1,690 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<menus xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="http://ofbiz.apache.org/dtds/widget-menu.xsd">
+
+	<menu name="HumanResAppBar" title="${uiLabelMap.HumanResManagerApplication}" 
+		extends="CommonAppBarMenu" extends-resource="component://common/widget/CommonMenus.xml">
+
+		<menu-item name="GlobalHRSettings" title="${uiLabelMap.HumanResGlobalHRSettings}" 
+			selected-style="selected">
+			<condition>
+				<if-has-permission permission="HUMANRES" action="_ADMIN" />
+			</condition>
+			<link target="globalHRSettings" />
+		</menu-item>
+
+		<menu-item name="PayrollAdmin" title="${uiLabelMap.HumanResPayroll}">
+			<link target="Payroll?header=PayrollAdmin" />
+		</menu-item>
+
+		<menu-item name="TaxDeclaration" title="${uiLabelMap.TaxDeclarations}">
+			<link target="FindTaxDeclaration" />
+		</menu-item>
+
+		<menu-item name="Claims" title="${uiLabelMap.ClaimsApplication}"
+			selected-style="selected">
+			<link target="AdminViewClaim" />
+		</menu-item>
+
+		<menu-item name="ELoan" title="${uiLabelMap.ELoanApplication}"
+			selected-style="selected">
+			<link target="AdminViewELoan" />
+		</menu-item>
+
+		<menu-item name="Leave" title="${uiLabelMap.HumanResEmplLeave}">
+			<link target="LeaveSummary" />
+		</menu-item>
+
+		<menu-item name="Termination" title="${uiLabelMap.HumanResEmplTermination}">
+			<condition>
+				<or>
+					<if-has-permission permission="HUMANRES" action="_USER" />
+					<if-has-permission permission="HUMANRES" action="_MGR" />
+					<if-has-permission permission="HUMANRES" action="_ADMIN" />
+				</or>
+			</condition>
+			<link target="InitiateTermination" />
+		</menu-item>
+
+		<menu-item name="Employee" title="${uiLabelMap.HumanResEmployee}">
+			<link target="findEmployees" />
+		</menu-item>
+		<menu-item name="EmplPosition" title="${uiLabelMap.HumanResEmployeePosition}">
+			<condition>
+				<if-has-permission permission="HUMANRES" action="_ADMIN" />
+			</condition>
+			<link target="FindEmplPositions" />
+		</menu-item>
+
+		<menu-item name="PerfReview" title="${uiLabelMap.HumanResPerfReview}">
+			<link target="perfReview" />
+		</menu-item>
+
+		<menu-item name="Employment" title="${uiLabelMap.HumanResEmployment}">
+			<condition>
+				<if-has-permission permission="HUMANRES" action="_ADMIN" />
+			</condition>
+			<link target="FindEmployments" />
+		</menu-item>
+		<menu-item name="PartySkills" title="${uiLabelMap.HumanResSkills}">
+			<condition>
+				<if-has-permission permission="HUMANRES" action="_ADMIN" />
+
+			</condition>
+			<link target="FindPartySkills" />
+		</menu-item>
+		<menu-item name="PartyQual" title="${uiLabelMap.HumanResPartyQualification}">
+			<condition>
+				<or>
+					<if-has-permission permission="HUMANRES" action="_ADMIN" />
+					<if-has-permission permission="HUMANRES" action="_MGR" />
+				</or>
+			</condition>
+			<link target="FindPartyQuals" />
+		</menu-item>
+
+		<menu-item name="Offer" title="${uiLabelMap.HumanResOffer}">
+			<link target="ViewOffer" />
+		</menu-item>
+
+		<menu-item name="Training" title="${uiLabelMap.HumanResTraining}">
+			<condition>
+				<if-has-permission permission="HUMANRES" action="_ADMIN" />
+			</condition>
+			<link target="FindPersonTrainings" />
+		</menu-item>
+		<menu-item name="EmploymentApp" title="${uiLabelMap.HumanResEmploymentApp}">
+			<link target="FindEmploymentApps" />
+		</menu-item>
+		<menu-item name="PartyResume" title="${uiLabelMap.HumanResPartyResume}">
+			<link target="FindPartyResumes" />
+		</menu-item>
+
+	</menu>
+
+	<menu name="GlobalHRSettingMenus" type="simple"
+		default-menu-item-name="SkillType" menu-container-style="button-bar tab-bar"
+		selected-menuitem-context-field-name="tabButtonItem"
+		default-selected-style="selected">
+		<menu-item name="SkillType" title="${uiLabelMap.HumanResSkillType}">
+			<link target="EditSkillTypes" />
+		</menu-item>
+		<menu-item name="ResponsibilityType" title="${uiLabelMap.HumanResResponsibilityType}">
+			<link target="EditResponsibilityTypes" />
+		</menu-item>
+		<!--
+			<menu-item name="TerminationReason"
+			title="${uiLabelMap.HumanResTerminationReason}"> <link
+			target="EditTerminationReasons" /> </menu-item> <menu-item
+			name="TerminationType"
+			title="${uiLabelMap.HumanResTerminationTypes}"> <link
+			target="EditTerminationTypes" /> </menu-item>
+		-->
+		<menu-item name="EmplPositionTypes" title="${uiLabelMap.HumanResEmplPositionType}">
+			<link target="FindEmplPositionTypes" />
+		</menu-item>
+
+		<menu-item name="NewLeaveType" title="${uiLabelMap.HumanResNewLeaveType}">
+			<link target="NewLeaveType" />
+		</menu-item>
+
+		<menu-item name="LeavePolicy" title="${uiLabelMap.HumanResEmplLeavePolicy}">
+			<link target="leavePolicy" />
+		</menu-item>
+
+		<menu-item name="PublicHolidays" title="${uiLabelMap.HumanResPublicHoliday}">
+			<link target="publicHolidays" />
+		</menu-item>
+
+		<menu-item name="PerfReviewSection" title="${uiLabelMap.HumanResPerfReviewSection}">
+			<link target="EditPerfReviewSection" />
+		</menu-item>
+
+		<menu-item name="PerfReviewSectionOptions" title="${uiLabelMap.HumanResPerfSectionAttribute}">
+			<link target="EditPerfReviewSectionAttribute" />
+		</menu-item>
+
+		<menu-item name="PerfRating" title="${uiLabelMap.HumanResPerfRating}">
+			<link target="EditPerfRating" />
+		</menu-item>
+
+		<menu-item name="Announcement" title="${uiLabelMap.HumanResAnnouncement}">
+			<link target="announcement" />
+		</menu-item>
+
+		<menu-item name="SalaryHead" title="${uiLabelMap.HumanResSalaryHead}">
+			<link target="FindSalaryHead" />
+		</menu-item>
+
+		<menu-item name="SalaryHeadType" title="${uiLabelMap.HumanResSalaryHeadType}">
+			<link target="FindSalaryHeadType" />
+		</menu-item>
+
+		<menu-item name="editRuleAndSalaryHeadAssoc" title="Exemption For Salary Head">
+			<link target="editRuleAndSalaryHeadAssoc" />
+		</menu-item>
+
+		<menu-item name="Conditions" title="${uiLabelMap.HumanResPayrollConditions}">
+			<link target="FindCondition" />
+		</menu-item>
+
+		<menu-item name="Actions" title="${uiLabelMap.HumanResPayrollActions}">
+			<link target="FindAction" />
+		</menu-item>
+		<menu-item name="Rules" title="${uiLabelMap.HumanResPayrollRules}">
+			<link target="Rules" />
+		</menu-item>
+
+		<menu-item name="FindSalaryStructure" title="${uiLabelMap.HumanResSalaryStructure}">
+			<link target="FindSalaryStructure" />
+		</menu-item>
+
+		<menu-item name="FindEmplSalaryStructure" title="${uiLabelMap.HumanResFindSalaryStructure}">
+			<link target="FindEmplSal" />
+		</menu-item>
+
+		<menu-item name="ManagePayroll" title="${uiLabelMap.HumanResInitPayroll}">
+			<link target="ManagePayroll" />
+		</menu-item>
+
+		<menu-item name="FindPayGrade" title="${uiLabelMap.HumanResFindPayGrade}">
+			<link target="FindPayGrades" />
+		</menu-item>
+
+		<!-- TAX DECLARATION -->
+		<menu-item name="EditTaxCategory" title="${uiLabelMap.TaxCategory}">
+			<link target="findTaxCategory" />
+		</menu-item>
+
+		<menu-item name="EditTaxItem" title="${uiLabelMap.TaxItem}">
+			<link target="findTaxItem" />
+		</menu-item>
+
+		<menu-item name="TaxDecl" title="${uiLabelMap.TaxDeclarationManage}">
+			<condition>
+				<if-has-permission permission="HUMANRES" action="_ADMIN" />
+			</condition>
+			<link target="findTaxDeclDef" />
+		</menu-item>
+
+	</menu>
+
+	<menu name="ProfileTabBar" default-menu-item-name="viewprofile"
+		default-selected-style="selected" type="simple" menu-container-style="button-bar tab-bar"
+		selected-menuitem-context-field-name="tabButtonItem">
+		<menu-item name="viewprofile" title="${uiLabelMap.PartyProfile}">
+			<link target="viewprofile?partyId=${partyId}" />
+		</menu-item>
+		<menu-item name="EditPartySkills" title="${uiLabelMap.CommonPartySkills}">
+			<link target="EditPartySkills?partyId=${partyId}" />
+		</menu-item>
+		<menu-item name="EditPartyQuals" title="${uiLabelMap.HumanResPartyQualification}">
+			<link target="EditPartyQuals?partyId=${partyId}" />
+		</menu-item>
+		<menu-item name="EditPersonTrainings" title="${uiLabelMap.HumanResTraining}">
+			<link target="EditPersonTrainings?partyId=${partyId}" />
+		</menu-item>
+		<menu-item name="Certificates" title="${uiLabelMap.HumanResCertificates}">
+			<link target="SelectCertificate?partyId=${partyId}" />
+		</menu-item>
+		<menu-item name="EditSectionII" title="${uiLabelMap.HumanResServiceRegisterSec2}">
+			<link url-mode="inter-app"
+				target="/formdesign/control/previewLayout?partyId=${partyId}&amp;renderFull=true&amp;formId=10000" />
+		</menu-item>
+		<menu-item name="EditSectionIII" title="${uiLabelMap.HumanResServiceRegisterSec3}">
+			<link target="ViewQualifyingService?partyId=${partyId}&amp;sectionId=3" />
+		</menu-item>
+		<menu-item name="LeaveScreen" title="${uiLabelMap.HumanResEarnedLeaves}">
+			<link target="serviceRegisterLeaveScreen?partyId=${partyId}" />
+		</menu-item>
+		<menu-item name="PartyLTC" title="${uiLabelMap.HumanResViewLTC}">
+			<link target="ViewLTC?partyId=${partyId}" />
+		</menu-item>
+
+		<menu-item name="EditEmploymentApps" title="${uiLabelMap.HumanResEmploymentApp}">
+			<link target="EditEmploymentApps?partyId=${partyId}" />
+		</menu-item>
+		<menu-item name="EditPartyResumes" title="${uiLabelMap.HumanResPartyResume}">
+			<link target="EditPartyResumes?partyId=${partyId}" />
+		</menu-item>
+		<menu-item name="EditPerformanceNotes" title="${uiLabelMap.HumanResPerfNote}">
+			<link target="EditPerformanceNotes?partyId=${partyId}" />
+		</menu-item>
+		<menu-item name="EditEmplLeaves" title="${uiLabelMap.HumanResEmplLeave}">
+			<link target="LeaveSummary" />
+		</menu-item>
+		<menu-item name="PrintServiceRegister" title="${uiLabelMap.HumanResPrintServiceRegister}">
+			<link target="PrintServiceRegister?partyId=${partyId}" />
+		</menu-item>
+	</menu>
+
+	<menu name="EmplPostionBar" default-menu-item-name="EmplPositionView"
+		type="simple" menu-container-style="button-bar tab-bar"
+		default-selected-style="selected"
+		selected-menuitem-context-field-name="tabButtonItem">
+		<menu-item name="EmplPositionView" title="${uiLabelMap.CommonSummary}">
+			<link target="emplPositionView?emplPositionId=${emplPositionId}" />
+		</menu-item>
+		<menu-item name="EditEmplPosition" title="${uiLabelMap.HumanResEmployeePosition}">
+			<link target="EditEmplPosition?emplPositionId=${emplPositionId}" />
+		</menu-item>
+		<menu-item name="EditEmplPositionFulfillments" title="${uiLabelMap.HumanResPositionFulfillments}">
+			<link target="EditEmplPositionFulfillments?emplPositionId=${emplPositionId}" />
+		</menu-item>
+		<menu-item name="EditEmplPositionResponsibilities"
+			title="${uiLabelMap.HumanResEmplPositionResponsibilities}">
+			<link
+				target="EditEmplPositionResponsibilities?emplPositionId=${emplPositionId}" />
+		</menu-item>
+		<menu-item name="EditEmplPositionReportingStructs"
+			title="${uiLabelMap.HumanResEmplPositionReportingStruct}">
+			<link
+				target="EditEmplPositionReportingStructs?emplPositionId=${emplPositionId}" />
+		</menu-item>
+	</menu>
+
+	<menu name="PerfReviewTemplate" default-menu-item-name="PerfReviewTemplateView"
+		type="simple" menu-container-style="button-bar tab-bar"
+		default-selected-style="selected"
+		selected-menuitem-context-field-name="tabButtonItem">
+
+		<menu-item name="PerfReviewTemplateView" title="${uiLabelMap.CommonSummary}">
+			<link target="perfTemplateView?perfTemplateId=${perfTemplateId}" />
+		</menu-item>
+
+		<menu-item name="EditPerfTemplateSection" title="${uiLabelMap.HumanResPerfReviewSection}">
+			<link target="EditPerfTemplateSection?perfTemplateId=${perfTemplateId}" />
+		</menu-item>
+	</menu>
+
+	<menu name="LeaveMenus" type="simple" default-menu-item-name="LeaveSummary"
+		menu-container-style="button-bar tab-bar" default-selected-style="selected"
+		selected-menuitem-context-field-name="tabButtonItem">
+		<menu-item name="LeaveSummary" title="${uiLabelMap.HumanResLeaveSummary}">
+			<link target="LeaveSummary" />
+		</menu-item>
+		<menu-item name="ApplyLeave" title="${uiLabelMap.HumanResApplyLeave}">
+			<link target="ApplyLeave" />
+		</menu-item>
+		<menu-item name="SearchLeave" title="${uiLabelMap.HumanResSearchLeave}">
+			<condition>
+				<or>
+					<if-has-permission permission="HUMANRES" action="_MGR" />
+					<if-has-permission permission="HUMANRES" action="_ADMIN" />
+				</or>
+			</condition>
+			<link target="SearchLeave" />
+		</menu-item>
+
+		<!--
+			<menu-item name="AdminProcessLeave"
+			title="${uiLabelMap.HumanResAdminProcessLeave}"> <condition> <or>
+			<if-has-permission permission="HUMANRES" action="_MGR"/>
+			<if-has-permission permission="HUMANRES" action="_ADMIN"/> </or>
+			</condition> <link target="AdminProcessLeave" /> </menu-item>
+		-->
+
+		<menu-item name="AllocateLeave" title="${uiLabelMap.AllocateLeave}">
+			<condition>
+				<or>
+					<if-has-permission permission="HUMANRES" action="_ADMIN" />
+				</or>
+			</condition>
+			<link target="AllocateLeave" />
+		</menu-item>
+		<menu-item name="SearchLeaveLimit" title="${uiLabelMap.SearchLeaveLimit}">
+			<condition>
+				<or>
+					<if-has-permission permission="HUMANRES" action="_ADMIN" />
+				</or>
+			</condition>
+			<link target="SearchLeaveLimit" />
+		</menu-item>
+
+	</menu>
+
+
+	<menu name="EmplPositionTypeTabBar" default-menu-item-name="EditEmplPositionType"
+		default-selected-style="selected" menu-container-style="button-bar tab-bar"
+		type="simple" selected-menuitem-context-field-name="tabButtonItem2">
+		<menu-item name="EditEmplPositionType" title="${uiLabelMap.HumanResEmplPositionType}">
+			<link
+				target="EditEmplPositionTypes?emplPositionTypeId=${emplPositionTypeId}" />
+		</menu-item>
+		<menu-item name="EditEmplPositionTypeRate" title="${uiLabelMap.HumanResEmplPositionTypeRate}">
+			<link
+				target="EditEmplPositionTypeRates?emplPositionTypeId=${emplPositionTypeId}" />
+		</menu-item>
+	</menu>
+
+	<menu name="SalaryBar" default-menu-item-name="EditSalaryStep"
+		default-selected-style="selected" type="simple" menu-container-style="button-bar tab-bar"
+		selected-menuitem-context-field-name="tabButtonItem">
+		<menu-item name="EditPayGrade" title="${uiLabelMap.HumanResPayGrade}">
+			<link target="EditPayGrade?payGradeId=${payGradeId}" />
+		</menu-item>
+		<menu-item name="EditSalaryStep" title="${uiLabelMap.HumanResEditSalaryStep}">
+			<link target="EditSalarySteps?payGradeId=${payGradeId}" />
+		</menu-item>
+	</menu>
+
+	<menu name="SkillType" type="simple" id="app-navigation"
+		default-selected-style="selected"
+		selected-menuitem-context-field-name="tabButtonItem" />
+
+	<menu name="PartyBar" default-menu-item-name="EditPerfReviewItems"
+		default-selected-style="selected" type="simple" menu-container-style="button-bar tab-bar"
+		selected-menuitem-context-field-name="tabButtonItem">
+		<menu-item name="EditPerfReviewItems" title="${uiLabelMap.HumanResEditPerfReviewItems}">
+			<link target="EditPerfReviewItems?perfReviewId=${perfReviewId}" />
+		</menu-item>
+	</menu>
+
+	<menu name="EmploymentBar" default-menu-item-name="EditPartyBenefit"
+		default-selected-style="selected" type="simple" menu-container-style="button-bar tab-bar"
+		selected-menuitem-context-field-name="tabButtonItem">
+		<menu-item name="EditEmployment" title="${uiLabelMap.HumanResEmployment}">
+			<link
+				target="EditEmployment?roleTypeIdFrom=${roleTypeIdFrom}&amp;roleTypeIdTo=${roleTypeIdTo}&amp;partyIdFrom=${partyIdFrom}&amp;partyIdTo=${partyIdTo}&amp;fromDate=${fromDate}" />
+		</menu-item>
+		<menu-item name="EditPartyBenefit" title="${uiLabelMap.HumanResEditPartyBenefit}">
+			<link
+				target="EditPartyBenefits?roleTypeIdFrom=${roleTypeIdFrom}&amp;roleTypeIdTo=${roleTypeIdTo}&amp;partyIdFrom=${partyIdFrom}&amp;partyIdTo=${partyIdTo}&amp;fromDate=${fromDate}" />
+		</menu-item>
+		<menu-item name="EditPayrollPreference"
+			title="${uiLabelMap.HumanResEditPayrollPreference}">
+			<link
+				target="EditPayrollPreferences?roleTypeIdFrom=${roleTypeIdFrom}&amp;roleTypeIdTo=${roleTypeIdTo}&amp;partyIdFrom=${partyIdFrom}&amp;partyIdTo=${partyIdTo}&amp;fromDate=${fromDate}" />
+		</menu-item>
+		<menu-item name="EditPayHistory" title="${uiLabelMap.HumanResEditPayHistory}">
+			<link
+				target="ListPayHistories?roleTypeIdFrom=${roleTypeIdFrom}&amp;roleTypeIdTo=${roleTypeIdTo}&amp;partyIdFrom=${partyIdFrom}&amp;partyIdTo=${partyIdTo}&amp;fromDate=${fromDate}" />
+		</menu-item>
+		<menu-item name="EditUnemploymentClaims"
+			title="${uiLabelMap.HumanResEditUnemploymentClaim}">
+			<link
+				target="EditUnemploymentClaims?roleTypeIdFrom=${roleTypeIdFrom}&amp;roleTypeIdTo=${roleTypeIdTo}&amp;partyIdFrom=${partyIdFrom}&amp;partyIdTo=${partyIdTo}&amp;fromDate=${fromDate}" />
+		</menu-item>
+		<menu-item name="EditAgreementEmploymentAppls"
+			title="${uiLabelMap.HumanResAgreementEmploymentAppl}">
+			<link
+				target="EditAgreementEmploymentAppls?agreementId=${agreementId}&amp;agreementItemSeqId=${agreementItemSeqId}&amp;roleTypeIdFrom=${roleTypeIdFrom}&amp;roleTypeIdTo=${roleTypeIdTo}&amp;partyIdFrom=${partyIdFrom}&amp;partyIdTo=${partyIdTo}&amp;fromDate=${fromDate}" />
+		</menu-item>
+	</menu>
+
+	<menu name="Claims" default-menu-item-name="AdminViewClaim"
+		default-selected-style="selected" type="simple" menu-container-style="button-bar tab-bar"
+		selected-menuitem-context-field-name="tabButtonItem">
+
+		<menu-item name="AdminViewClaim" title="${uiLabelMap.ViewClaim}">
+			<link target="AdminViewClaim" />
+		</menu-item>
+
+		<menu-item name="ApplyClaim" title="${uiLabelMap.ApplyClaim}">
+			<link target="ApplyClaim" />
+		</menu-item>
+
+		<menu-item name="ReimbursementSlip" title="${uiLabelMap.ReimbursementSlip}">
+			<link target="Reimbursement" />
+		</menu-item>
+		<!--
+			<menu-item name="AdminProcessClaim"
+			title="${uiLabelMap.AdminProcessClaim}"> <condition>
+			<if-has-permission permission="HUMANRES" action="_MGR"/> </condition>
+			<link target="AdminProcessClaim" /> </menu-item>
+		-->
+		<menu-item name="ClaimLimit" title="${uiLabelMap.ClaimLimit}">
+			<condition>
+				<if-has-permission permission="HUMANRES" action="_MGR" />
+			</condition>
+			<link target="ClaimLimit" />
+		</menu-item>
+
+		<menu-item name="EditClaimLimit" title="${uiLabelMap.EditClaimLimit}">
+			<condition>
+				<if-has-permission permission="HUMANRES" action="_ADMIN" />
+			</condition>
+			<link target="EditClaimLimit" />
+		</menu-item>
+
+		<menu-item name="ClaimReports" title="${uiLabelMap.ClaimReports}">
+			<condition>
+				<if-has-permission permission="HUMANRES" action="_ADMIN" />
+			</condition>
+			<link target="ClaimReports" />
+		</menu-item>
+	</menu>
+
+	<menu name="ELoan" default-menu-item-name="AdminViewELoan"
+		default-selected-style="selected" type="simple" menu-container-style="button-bar tab-bar"
+		selected-menuitem-context-field-name="tabButtonItem">
+
+		<menu-item name="AdminViewELoan" title="${uiLabelMap.ViewELoan}">
+			<link target="AdminViewELoan" />
+		</menu-item>
+
+		<menu-item name="ApplyELoan" title="${uiLabelMap.ApplyELoan}">
+			<link target="ApplyELoan" />
+		</menu-item>
+
+		<menu-item name="ELoanSlip" title="${uiLabelMap.ELoanSlip}">
+			<link target="EMI" />
+		</menu-item>
+
+		<menu-item name="ELoanLimit" title="${uiLabelMap.ELoanLimit}">
+			<condition>
+				<if-has-permission permission="HUMANRES" action="_MGR" />
+			</condition>
+			<link target="ELoanLimit" />
+		</menu-item>
+
+		<menu-item name="EditELoanLimit" title="${uiLabelMap.EditELoanLimit}">
+			<condition>
+				<if-has-permission permission="HUMANRES" action="_ADMIN" />
+			</condition>
+			<link target="EditELoanLimit" />
+		</menu-item>
+
+		<menu-item name="ELoanReports" title="${uiLabelMap.ELoanReports}">
+			<condition>
+				<if-has-permission permission="HUMANRES" action="_ADMIN" />
+			</condition>
+			<link target="ELoanReports" />
+		</menu-item>
+	</menu>
+
+	<!--  Tax Declarations -->
+	<menu name="TaxDeclaration" default-menu-item-name="FindTaxDeclaration"
+		default-selected-style="selected" type="simple" menu-container-style="button-bar tab-bar"
+		selected-menuitem-context-field-name="tabButtonItem">
+
+		<menu-item name="TaxDeclaration" title="${uiLabelMap.FindTaxDeclaration}">
+			<link target="FindTaxDeclaration" />
+		</menu-item>
+
+		<menu-item name="ApproveTaxDeclaration" title="${uiLabelMap.ApproveTaxDeclaration}">
+			<condition>
+				<if-has-permission permission="HUMANRES" action="_ADMIN" />
+			</condition>
+			<link target="ApproveTaxDeclaration" />
+		</menu-item>
+
+		<menu-item name="StatutoryForms" title="Statutory Forms">
+			<link target="ViewStatutoryForms" />
+		</menu-item>
+
+		<!--		<menu-item name="Form16" title="${uiLabelMap.Form16}">-->
+		<!--			<condition>-->
+		<!--				<if-has-permission permission="HUMANRES" action="_ADMIN"/>-->
+		<!--			</condition>-->
+		<!--			<link target="FindForm16" />-->
+		<!--		</menu-item>-->
+		<!--			-->
+		<!--		<menu-item name="PFForm3A" title="${uiLabelMap.PFForm3A}">-->
+		<!--			<condition>-->
+		<!--				<if-has-permission permission="HUMANRES" action="_ADMIN"/>-->
+		<!--			</condition>-->
+		<!--			<link target="FindPF3A" />-->
+		<!--		</menu-item>-->
+		<!--			-->
+		<!--		<menu-item name="PFForm6A" title="${uiLabelMap.PFForm6A}">-->
+		<!--			<condition>-->
+		<!--				<if-has-permission permission="HUMANRES" action="_ADMIN"/>-->
+		<!--			</condition>-->
+		<!--			<link target="FindPF6A" />-->
+		<!--		</menu-item>-->
+		<!--		-->
+	</menu>
+
+	<!--  Payroll -->
+	<menu name="Payroll" default-menu-item-name="Payroll"
+		default-selected-style="selected" type="simple" menu-container-style="button-bar tab-bar"
+		selected-menuitem-context-field-name="tabButtonItem">
+
+		<menu-item name="Payslip" title="${uiLabelMap.HumanResPayslip}">
+			<link target="FindPayslip?header=PayrollAdmin" />
+		</menu-item>
+
+		<menu-item name="trackMyPayScale" title="${uiLabelMap.HumanResTrackPayScale}">
+			<link target="MyPayScaleHistory?header=PayrollAdmin" />
+		</menu-item>
+
+		<menu-item name="ViewEmplSal" title="${uiLabelMap.HumanResMySalaryDetail}">
+			<link target="ViewEmplSal?header=PayrollAdmin&amp;partyId=${userLogin.partyId}&amp;mode=view" />
+		</menu-item>
+
+		<menu-item name="Preferences" title="${uiLabelMap.HumanResPreferences}">
+			<link target="Preferences?header=PayrollAdmin" />
+		</menu-item>
+
+		<menu-item name="FindEmplSal" title="${uiLabelMap.HumanResEmployeeSal}">
+			<condition>
+				<if-has-permission permission="HUMANRES" action="_ADMIN" />
+			</condition>
+			<link target="FindEmplSal?header=PayrollAdmin" />
+		</menu-item>
+
+		<menu-item name="FindTDS" title="${uiLabelMap.HumanResTDS}">
+			<link target="FindTDS?header=PayrollAdmin" />
+		</menu-item>
+
+		<menu-item name="FindTotalTDS" title="${uiLabelMap.HumanResTotalTDS}">
+			<link target="FindTotalTDS?header=PayrollAdmin" />
+		</menu-item>
+
+		<menu-item name="FindTotalPF" title="${uiLabelMap.HumanResTotalPF}">
+			<link target="FindTotalPF?header=PayrollAdmin" />
+		</menu-item>
+
+	</menu>
+
+	<menu name="Termination" default-menu-item-name="InitiateTermination"
+		default-selected-style="selected" type="simple" menu-container-style="button-bar tab-bar"
+		selected-menuitem-context-field-name="tabButtonItem">
+
+		<menu-item name="InitiateTermination" title="${uiLabelMap.HumanResInitTermination}">
+			<link target="InitiateTermination" />
+		</menu-item>
+
+		<menu-item name="ViewTermination" title="${uiLabelMap.ViewTermination}">
+			<condition>
+				<or>
+					<if-has-permission permission="HUMANRES" action="_ADMIN" />
+					<if-has-permission permission="HUMANRES" action="_MGR" />
+				</or>
+			</condition>
+			<link target="ViewTermination" />
+		</menu-item>
+
+		<!--
+			<menu-item name="ProcessTermination"
+			title="${uiLabelMap.HumanResProcessTermination}"> <condition>
+			<if-has-permission permission="HUMANRES" action="_MGR"/> </condition>
+			<link target="ProcessTermination" /> </menu-item>
+		-->
+
+		<menu-item name="EmplSettlement" title="${uiLabelMap.HumanResEmplSettlement}">
+			<condition>
+				<if-has-permission permission="HUMANRES" action="_ADMIN" />
+			</condition>
+			<link target="EmplSettlement" />
+		</menu-item>
+
+	</menu>
+
+	<menu name="Offer" default-menu-item-name="ViewOffer"
+		default-selected-style="selected" type="simple" menu-container-style="button-bar tab-bar"
+		selected-menuitem-context-field-name="tabButtonItem">
+
+		<menu-item name="SearchProspect" title="${uiLabelMap.SearchProspect}">
+			<condition>
+				<or>
+					<if-has-permission permission="HUMANRES" action="_ADMIN" />
+				</or>
+			</condition>
+			<link target="SearchProspect" />
+		</menu-item>
+
+		<menu-item name="ViewOffer" title="${uiLabelMap.ViewOffer}">
+			<condition>
+				<or>
+					<if-has-permission permission="HUMANRES" action="_ADMIN" />
+					<if-has-permission permission="HUMANRES" action="_MGR" />
+				</or>
+			</condition>
+			<link target="ViewOffer" />
+		</menu-item>
+
+		<menu-item name="InitiateOffer" title="${uiLabelMap.HumanResInitOffer}">
+			<condition>
+				<if-has-permission permission="HUMANRES" action="_ADMIN" />
+			</condition>
+			<link target="InitiateOffer" />
+		</menu-item>
+
+		<menu-item name="OfferReports" title="${uiLabelMap.HumanResOfferReports}">
+			<condition>
+				<if-has-permission permission="HUMANRES" action="_ADMIN" />
+			</condition>
+			<link target="OfferReports" />
+		</menu-item>
+
+	</menu>
+
+
+	<menu name="employeeUpdate">
+		<menu-item name="update" title="${uiLabelMap.CommonUpdate}">
+			<link target="employeeUpdate?partyId=${party.partyId}" />
+		</menu-item>
+	</menu>
+
+
+	<menu name="prevServiceRec">
+		<menu-item name="prevServiceRec" title="${uiLabelMap.CommonCreate}">
+			<link
+				target="newPartyPreviousQual?partyId=${parameters.partyId}&amp;sectionId=3" />
+		</menu-item>
+	</menu>
+
+	<menu name="foreignServiceRec">
+		<menu-item name="prevServiceRec" title="${uiLabelMap.CommonCreate}">
+			<link target="newPartyForeignService?partyId=${parameters.partyId}" />
+		</menu-item>
+	</menu>
+
+	<menu name="ltc">
+		<menu-item name="prevServiceRec" title="${uiLabelMap.CommonCreate}">
+			<link target="newPartyLTC?partyId=${parameters.partyId}" />
+		</menu-item>
+	</menu>
+
+	<menu name="htltc">
+		<menu-item name="prevServiceRec" title="${uiLabelMap.CommonCreate}">
+			<link target="newPartyHTLTC?partyId=${parameters.partyId}" />
+		</menu-item>
+	</menu>
+
+
+
+</menus>

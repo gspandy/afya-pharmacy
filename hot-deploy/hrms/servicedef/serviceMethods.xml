@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<simple-methods xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://ofbiz.apache.org/dtds/simple-methods.xsd">
+	<simple-method method-name="updateCompanyTraining" short-description="Update A Training">
+		<log level="error">
+			<string>Update Training</string>
+		</log>
+		<entity-one entity-name="Training" value-field="lookedUpValue" />
+		<set-nonpk-fields map="parameters" value-field="lookedUpValue" />
+		<store-value value-field="lookedUpValue" />
+
+		<entity-one entity-name="WorkEffort" value-field="lookedUpValue" />
+		<set-nonpk-fields map="parameters" value-field="lookedUpValue" />
+		<store-value value-field="lookedUpValue" />
+	</simple-method>
+	<!-- Create Budget Type	-->
+	<simple-method method-name="createBudgetType" short-description="Create Budget Type">
+		<make-value entity-name="BudgetType" value-field="newEntity" />
+		<set-pk-fields map="parameters" value-field="newEntity" />
+		<set-nonpk-fields map="parameters" value-field="newEntity" />
+		<!--
+			<sequenced-id sequence-name="BudgetType"
+			field="newEntity.budgetTypeId"/>
+		-->
+		<field-to-result field="newEntity.budgetTypeId" result-name="budgetTypeId" />
+		<create-value value-field="newEntity" />
+	</simple-method>
+	<!-- Update Budget Type	-->
+	<simple-method method-name="updateBudgetType" short-description="Update Budget Type">
+		<entity-one entity-name="BudgetType" value-field="lookedUpValue" />
+		<set-nonpk-fields value-field="lookedUpValue" map="parameters" />
+		<field-to-result field="lookedUpValue.budgetTypeId" result-name="budgetTypeId" />
+		<store-value value-field="lookedUpValue" />
+	</simple-method>
+	<!--  Delete budget Type  -->
+	<simple-method method-name="deleteBudgetType" short-description="Delete Budget Type">
+		<entity-one entity-name="BudgetType" value-field="lookedUpValue" />
+		<remove-value value-field="lookedUpValue" />
+	</simple-method>
+	<!-- Create Budget Item Type	-->
+	<simple-method method-name="createBudgetItemType" short-description="Create Budget Item Type">
+		<make-value entity-name="BudgetItemType" value-field="newEntity" />
+		<set-pk-fields map="parameters" value-field="newEntity" />
+		<set-nonpk-fields map="parameters" value-field="newEntity" />
+		<field-to-result field="newEntity.budgetItemTypeId" result-name="budgetItemTypeId" />
+		<create-value value-field="newEntity" />
+	</simple-method>
+	<!-- Update Budget Item Type	-->
+	<simple-method method-name="updateBudgetItemType" short-description="Update Budget Item Type">
+		<entity-one entity-name="BudgetItemType" value-field="lookedUpValue" />
+		<set-nonpk-fields value-field="lookedUpValue" map="parameters" />
+		<field-to-result field="lookedUpValue.budgetItemTypeId" result-name="budgetItemTypeId" />
+		<store-value value-field="lookedUpValue" />
+	</simple-method>
+	<!--  Delete Budget Item Type  -->
+	<simple-method method-name="deleteBudgetItemType" short-description="Delete Budget Item Type">
+		<entity-one entity-name="BudgetItemType" value-field="lookedUpValue" />
+		<remove-value value-field="lookedUpValue" />
+	</simple-method>
+	<!-- Create Budget	-->
+	<simple-method method-name="createBudget" short-description="Create Budget">
+		<make-value entity-name="Budget" value-field="newEntity" />
+		<sequenced-id sequence-name="CreateBudget" field="newEntity.budgetId" />
+		<set-nonpk-fields map="parameters" value-field="newEntity" />
+		<field-to-result field="newEntity.budgetId" result-name="budgetId" />
+		<create-value value-field="newEntity" />
+	</simple-method>
+	<!-- Update Budget 	-->
+	<simple-method method-name="updateBudget" short-description="Update Budget">
+		<entity-one entity-name="Budget" value-field="lookedUpValue" />
+		<set-nonpk-fields value-field="lookedUpValue" map="parameters" />
+		<field-to-result field="lookedUpValue.budgetId" result-name="budgetId" />
+		<store-value value-field="lookedUpValue" />
+	</simple-method>
+	<!--  Delete Budget   -->
+	<simple-method method-name="deleteBudget" short-description="Delete Budget">
+		<entity-one entity-name="Budget" value-field="lookedUpValue" />
+		<remove-value value-field="lookedUpValue" />
+	</simple-method>
+	<!--Delet Location-->
+	<simple-method method-name="deleteLocation" short-description="Delete Location">
+		<entity-one entity-name="Location" value-field="lookedUpValue" />
+		<remove-value value-field="lookedUpValue" />
+	</simple-method>
+	<!-- Create Budget	Item-->
+	<simple-method method-name="createBudgetItem" short-description="Create Budget Item">
+		<make-value entity-name="BudgetItem" value-field="newEntity" />
+		<sequenced-id sequence-name="CreateBudgetItem" field="newEntity.budgetItemSequenceId" />
+		<set-nonpk-fields map="parameters" value-field="newEntity" />
+		<set-pk-fields map="parameters" value-field="newEntity" />
+		<field-to-result field="newEntity.budgetItemSequenceId" result-name="budgetItemSequenceId" />
+		<create-value value-field="newEntity" />
+	</simple-method>
+	<!-- Update Budget 	Item-->
+	<simple-method method-name="updateBudgetItem" short-description="Update Budget Item">
+		<entity-one entity-name="BudgetItem" value-field="lookedUpValue" />
+		<set-nonpk-fields value-field="lookedUpValue" map="parameters" />
+		<field-to-result field="lookedUpValue.budgetItemSequenceId" result-name="budgetItemSequenceId" />
+		<field-to-result field="lookedUpValue.budgetId" result-name="budgetId" />
+		<store-value value-field="lookedUpValue" />
+	</simple-method>
+	<!--  Delete Budget  Item -->
+	<simple-method method-name="deleteBudgetItem" short-description="Delete Budget Item">
+		<entity-one entity-name="BudgetItem" value-field="lookedUpValue" />
+		<remove-value value-field="lookedUpValue" />
+	</simple-method>
+	<!--  Create Enumeration -->
+	<simple-method method-name="createEnumeration" short-description="Create Enumeartion">
+		<make-value entity-name="Enumeration" value-field="newEntity" />
+		<set-nonpk-fields map="parameters" value-field="newEntity" />
+		<set-pk-fields map="parameters" value-field="newEntity" />
+		<field-to-result field="newEntity.enumId" result-name="enumId" />
+		<create-value value-field="newEntity" />
+	</simple-method>
+	<!--  Create Employment -->
+	<simple-method method-name="createEmployment" short-description="Create Employment">
+		<make-value entity-name="Employment" value-field="newEntity" />
+		<set-nonpk-fields map="parameters" value-field="newEntity" />
+		<set-pk-fields map="parameters" value-field="newEntity" />
+		<create-value value-field="newEntity" />
+	</simple-method>
+	<simple-method method-name="createPartyRole" short-description="Create Party Role">
+		<entity-one entity-name="PartyRole" value-field="partyRole" />
+		<if-empty field="partyRole">
+			<make-value entity-name="PartyRole" value-field="newEntity" />
+			<set-pk-fields map="parameters" value-field="newEntity" />
+			<create-value value-field="newEntity" />
+		</if-empty>
+	</simple-method>
+
+	<simple-method method-name="checkTrainingSeatAvailability" short-description="">
+
+		<set field="CANCELLED" value="TRNG_CANCELLED"/>
+		<if-compare operator="equals" field="CANCELLED" value="parameters.statusId">
+		<entity-condition list="waitingReqs" entity-name="TrainingRequest">
+			<condition-list>
+			<condition-expr field-name="statusId" value="TRNG_WAITING" />
+			<condition-expr field-name="trainingId" from-field="parameters.trainingId" />
+			</condition-list>
+		</entity-condition>
+		<first-from-list entry="firstWaitingReq" list="waitingReqs"/>
+		<set field="firstWaitingReq.statusId" value="TRNG_CONFIRMED"/>
+		<store-value value-field="firstWaitingReq"/>
+		<else>
+		<entity-count count-field="confirmedReqs" entity-name="TrainingRequest">
+			<condition-list>
+				<condition-expr field-name="statusId" value="TRNG_CONFIRMED" />
+				<condition-expr field-name="trainingId" value="${parameters.trainingId}" />
+			</condition-list>
+		</entity-count>
+
+		<entity-one value-field="training" entity-name="Training">
+			<field-map field-name="trainingId" value="${parameters.trainingId}" />
+		</entity-one>
+		<set field="maxTrainees" from-field="training.maxTrainees" type="Integer"/>
+		<if-compare-field operator="equals" field="confirmedReqs" to-field="maxTrainees" type="Integer">
+			<add-error>
+				<fail-message message="The training is Full."/>
+			</add-error>
+			<return response-code="error"/>
+		</if-compare-field>
+		
+		</else>
+		</if-compare>
+		
+	</simple-method>
+</simple-methods>	

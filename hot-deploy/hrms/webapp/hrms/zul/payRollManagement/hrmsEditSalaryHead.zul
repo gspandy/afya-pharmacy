@@ -1,0 +1,210 @@
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<?component name="positionTypebox" macroURI="../macros/textfindMacro.zul" id="macro1"?>
+<zk>
+	<window id="EditSalaryHeadWindow" width="55%"
+		title="${c:l('HRMS_NEW_SALARY_HEAD') }" position="center" closable="true"
+		maximizable="true"
+		apply="com.ndz.controller.SalaryHeadManagementController"
+		border="normal">
+		<separator height="30px" />
+		<panel>
+			<panelchildren>
+				<hbox>
+					<div align="right" width="150px"
+						style="margin-right:5px">
+						<label value="${c:l('HRMS_NAME') }" />
+					</div>
+					<label value="*" style="color:red" />
+
+					<div width="297px" align="left">
+						<textbox id="applyHrName" name="applyHrName"
+							constraint="no empty:Name Required" />
+					</div>
+				</hbox>
+			</panelchildren>
+		</panel>
+		<separator></separator>
+		<panel>
+			<panelchildren>
+				<hbox>
+					<div align="right" width="150px"
+						style="margin-right:5px">
+						<label value="${c:l('HRMS_CREDIT') }" />
+
+					</div>
+					<label value="*" style="color:red" />
+					<div width="297px" align="left">
+						<listbox id="applyCredit" mold="select">
+							<listitem label="" value="" />
+							<listitem label="${c:l('ListBox_Yes') }" value="Y" />
+							<listitem label="${c:l('ListBox_No') }" value="N" />
+						</listbox>
+					</div>
+				</hbox>
+				<separator />
+				<hbox>
+					<div align="right" width="150px"
+						style="margin-right:5px">
+						<label value="${c:l('HRMS_SALARY_HEAD_TYPE') }" width="100px" />
+					</div>
+					<label value="*" style="color:red" />
+					<div width="297px" align="left">
+						<listbox id="applySalaryHeadType"
+							name="applySalaryHeadType" mold="select">
+							<listitem value=""></listitem>
+						</listbox>
+					</div>
+				</hbox>
+			</panelchildren>
+		</panel>
+		<separator></separator>
+		<panel>
+			<panelchildren>
+				<hbox>
+					<div align="right" width="150px"
+						style="margin-right:5px">
+						<label value="${c:l('HRMS_COUNTRY_GEO_ID') }" />
+					</div>
+					<label value="*" style="color:red" />
+					<div align="left">
+						<countrybox id="countrybandbox" constraint="no empty:Country Geo Id Required"></countrybox>	
+					</div>
+				</hbox>
+			</panelchildren>
+		</panel>
+
+		<separator></separator>
+		<panel>
+			<panelchildren>
+				<hbox>
+					<div align="right" width="150px"
+						style="margin-right:5px">
+						<label value="${c:l('HRMS_TAXABLE') }" />
+
+					</div>
+					<label value="*" style="color:red" />
+					<div width="297px" align="left">
+						<listbox id="applyTaxable" mold="select">
+							<listitem label="" value="" />
+							<listitem label="${c:l('ListBox_Yes') }" value="Y" />
+							<listitem label="${c:l('ListBox_No') }" value="N" />
+						</listbox>
+					</div>
+				</hbox>
+				<separator />
+				<hbox>
+					<div align="right" width="150px"
+						style="margin-right:5px">
+						<label value="${c:l('HRMS_MANDATORY') }" />
+					</div>
+					<label value="*" style="color:red" />
+					<div width="297px" align="left">
+						<listbox id="applyMandatory" mold="select">
+							<listitem label="" value="" />
+							<listitem label="${c:l('ListBox_Yes') }" value="Y" />
+							<listitem label="${c:l('ListBox_No') }" value="N" />
+						</listbox>
+					</div>
+				</hbox>
+			</panelchildren>
+		</panel>
+
+		<separator></separator>
+		<panel>
+			<panelchildren>
+				<hbox>
+					<div align="right" width="150px"
+						style="margin-right:5px">
+						<label value="${c:l('Hrms_Currency') }" />
+					</div>
+					<label value="*" style="color:red" />
+
+					<div width="297px" align="left">
+						<listbox id="applyCurrencyUomId"
+							name="applyCurrencyUomId" mold="select">
+							<listitem label="-----"></listitem>
+						</listbox>
+					</div>
+				</hbox>
+			</panelchildren>
+		</panel>
+		<separator></separator>
+		<panel>
+			<panelchildren>
+				<hbox>
+					<div align="right" width="150px"
+						style="margin-right:5px">
+						<label value="${c:l('HRMS_COMPUTATION_TYPE') }" />
+					</div>
+					<label value="*" style="color:red" />
+					<div width="297px" align="left">
+						<listbox id="applyComputationType"
+							name="applyComputationType" mold="select">
+							<listitem label="-----"></listitem>
+						</listbox>
+					</div>
+				</hbox>
+			</panelchildren>
+		</panel>
+
+		<separator />
+		<panel>
+			<panelchildren>
+				<hbox>
+					<div align="right" width="287px"
+						style="margin-top:5px">
+						<button id="applySalaryHeadCreateButton"
+							label="${c:l('Hrms_Create') }" forward="onClick=onEvent" onClick="validation()" />
+						<button id="applySalaryHeadCancelButton"
+							label="${c:l('ButtonCancel') }" onClick="EditSalaryHeadWindow.detach()" />
+					</div>
+				</hbox>
+			</panelchildren>
+		</panel>
+
+		<separator height="20px"></separator>
+		<zscript><![CDATA[
+	void validation() {
+		applyHrName.getValue();
+
+		Object credit = applyCredit.getSelectedItem();
+		if (credit == null) {
+			throw new WrongValueException(applyCredit, "Credit Required");
+		}
+		Object salaryHeadType = applySalaryHeadType.getSelectedItem();
+		if (salaryHeadType == null) {
+			throw new WrongValueException(applySalaryHeadType, "Salary Head Type Required");
+		}
+		//searchPanel.getValue();
+
+		Object taxable = applyTaxable.getSelectedItem();
+		if (taxable == null) {
+			throw new WrongValueException(applyTaxable, "Taxable Required");
+		}
+		Object mandatory = applyMandatory.getSelectedItem();
+		if (mandatory == null) {
+			throw new WrongValueException(applyMandatory, "Mandatory Required");
+		}
+		Object currencyUomId = applyCurrencyUomId.getSelectedItem();
+		if (currencyUomId == null) {
+			throw new WrongValueException(applyCurrencyUomId, "Currency Required");
+		}
+
+		Object computationType = applyComputationType.getSelectedItem();
+		if (computationType == null) {
+			throw new WrongValueException(applyComputationType, "Computation Type Required");
+		}
+
+		org.ofbiz.entity.GenericDelegator delegator = com.ndz.zkoss.util.HrmsInfrastructure.getDelegator();//org.ofbiz.entity.GenericDelegator.getGenericDelegator("default");
+		String headName = applyHrName.getValue();
+		/*List salaryHeadsDuplicacy = delegator.findByAnd("SalaryHead", org.ofbiz.base.util.UtilMisc.toMap("hrName", applyHrName.getValue(), "geoId",
+				searchPanel.getValue()));*/
+				List salaryHeadsDuplicacy = delegator.findByAnd("SalaryHead", org.ofbiz.base.util.UtilMisc.toMap("hrName",applyHrName.getValue(),"geoId",(String)((com.ndz.zkoss.CountryBox)EditSalaryHeadWindow.getFellow("countrybandbox")).getSelectedItem().getValue()));
+			if (salaryHeadsDuplicacy.size() > 0) {
+			throw new WrongValueException(applyHrName, "Salary Head already exists");
+		}
+	}
+	]]></zscript>
+
+	</window>
+</zk>

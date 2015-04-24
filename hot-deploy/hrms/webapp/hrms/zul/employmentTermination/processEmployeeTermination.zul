@@ -1,0 +1,254 @@
+<?component name="findbox1" macroURI="../macros/findBox.zul" id="macro1"?>
+<?component name="findbox2" macroURI="../macros/textfindMacro.zul" id="macro2"?>
+<?component name="selectBox" macroURI="../macros/selectBox.zul" id="macro3"?>
+<zk xmlns:h="http://www.zkoss.org/2005/zk/native">
+	<zscript>
+	<![CDATA[
+	import com.ndz.controller.*;
+        import org.ofbiz.base.util.UtilMisc;
+        import org.ofbiz.base.util.UtilValidate;
+	SearchController controller = new SearchController();
+	Toolbarbutton processTerminationBtn = arg.get("processTerminationBtn");
+	org.ofbiz.entity.GenericValue userLogin = (org.ofbiz.entity.GenericValue) Executions.getCurrent().getDesktop().getSession()
+			.getAttribute("userLogin");
+	employeeId = userLogin.getString("partyId");
+	org.ofbiz.entity.GenericValue employeePosIdGv = org.ofbiz.humanresext.util.HumanResUtil.getEmplPositionForParty(employeeId, delegator);
+	String employeePosId = null;
+	if (employeePosIdGv != null) {
+		employeePosId = employeePosIdGv.getString("emplPositionId");
+	}
+	org.ofbiz.security.Security security = requestScope.get("security");
+	boolean isManager = security.hasPermission("HUMANRES_MGR", userLogin);
+        boolean isAdmin = security.hasPermission("HUMANRES_ADMIN", userLogin);
+	String[] values = new String[] { "", "Termination", "Resignation" };
+	
+	boolean both = false;
+	if (isAdmin && isManager) both = true;
+]]>
+</zscript>
+	<window id="searchPanel" apply="${controller}">
+		<custom-attributes entityName="MaxTerminationDetail" companyWide="true"></custom-attributes>
+		<textbox visible="false" id="mgrPositionId_searchfld" value="${employeePosId}"></textbox>
+		<textbox visible="false" id="managerStatusType_searchfld" value="2" unless="${both}"></textbox>
+		<textbox visible="false" id="statusType_1adminfld" value="1" unless="${both}"></textbox>
+		<h:table width="100%">
+			<h:tr>
+				<h:td>
+					<findbox1 fieldLabel="Resignation Id" name="terminationId" type="text" cols="40" />
+				</h:td>
+			</h:tr>
+			<h:tr>
+				<h:td>
+					<findbox2 fieldLabel="Employee Id" name="partyId" type="text" cols="40" />
+				</h:td>
+			</h:tr>
+			<h:tr>
+				<h:td>
+					<selectBox value="${values}" fieldLabel="Exit Process Type" name="exitType" />
+				</h:td>
+			</h:tr>
+		</h:table>
+		<separator />
+		<box width="100%" height="30px" align="center">
+			<hbox>
+				<button label="${c:l('HumanResSearch') }" mold="os" id="searchPerCompany"
+					onClick="results.setVisible(true);results.setFocus(true)">
+				</button>
+				<button label="${c:l('HRMS_ResetButton') }" onClick='Events.postEvent("onClick",processTerminationBtn,null)' />
+			</hbox>
+		</box>
+		<zscript>
+		<![CDATA[
+	import org.zkoss.util.resource.Labels;
+	import org.ofbiz.base.util.*;
+	import org.zkoss.zk.ui.event.EventListener;
+	import org.ofbiz.entity.*;
+	java.text.SimpleDateFormat formater = new java.text.SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
+	class MyRowRenderer implements RowRenderer {
+
+		MyRowRenderer() {
+		}
+
+		public void render(Row row, Object data) {
+			
+			org.ofbiz.entity.GenericValue gv = ((org.ofbiz.entity.GenericValue) data);
+			if (gv.getString("statusId").equals("ET_SUBMITTED")){
+				row.setTooltiptext("Double Click To Approve/Reject");
+				}
+			if (gv.getString("statusId").equals("ET_MGR_APPROVED")&&(!isManager)){
+				row.setTooltiptext("Double Click To Approve/Reject");
+				}
+			new Label(gv.getString("terminationId")).setParent(row);
+			new Label(gv.getString("partyId")).setParent(row);
+			GenericDelegator delegator = com.ndz.zkoss.util.HrmsInfrastructure.getDelegator();//GenericDelegator.getGenericDelegator("default");
+			GenericValue personGv = delegator.findByPrimaryKey("Person", UtilMisc.toMap("partyId", gv.getString("partyId")));
+			String fullName = personGv.getString("firstName") + " " + personGv.getString("lastName");
+			new Label(fullName).setParent(row);
+			String partyId = org.ofbiz.humanresext.util.HumanResUtil.getPartyIdForPositionId(gv.getString("mgrPositionId"), delegator);
+			GenericValue managerGv = delegator.findByPrimaryKey("Person", UtilMisc.toMap("partyId", partyId));
+			String managerName = managerGv.getString("firstName") + " " + managerGv.getString("lastName");
+			new Label(managerName).setParent(row);
+			GenericValue statusGv = delegator.findByPrimaryKey("StatusItem", UtilMisc.toMap("statusId", gv.getString("statusId")));
+			String statusId = statusGv.getString("description");
+			new Label(gv.getString("reason")).setParent(row);
+			//new Label(gv.getString("applicationDate")).setParent(row);
+			java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("dd-MM-yyyy");
+			new Label(sdf.format(gv.getDate("applicationDate"))).setParent(row);
+			//new Label(UtilDateTime.formatDate(new Date(gv.getDate("applicationDate")).getTime())).setParent(row);
+			//new Label(UtilDateTime.formatDate(UtilDateTime.getDayStart(gv.getTimestamp("applicationDate")))).setParent(row);
+			new Label(sdf.format(gv.getDate("terminationDate"))).setParent(row);
+			new Label(statusId).setParent(row);
+			new Label(gv.getString("exitType")).setParent(row);
+			//termination form
+
+            if(isAdmin){
+                    Toolbarbutton terminationButtonToolbarButton = new Toolbarbutton();
+            terminationButtonToolbarButton.setLabel("Print Form");
+			terminationButtonToolbarButton.setParent(row);
+			if(gv.getString("exitType").equals("Termination") && gv.getString("statusId").equals("ET_ADM_APPROVED")){
+                terminationButtonToolbarButton.addEventListener("onClick", new EventListener() {
+                public void onEvent(Event event) throws Exception {
+                String    positionId;
+                GenericValue postionGv = org.ofbiz.humanresext.util.HumanResUtil.getEmplPositionForParty(gv.getString("partyId"),delegator);
+                if(postionGv!=null){
+                    positionId = (String)postionGv.getString("emplPositionId");
+                }
+                Executions.getCurrent().sendRedirect("/control/authorityToTerminateForm?partyId=" + gv.getString("partyId") + "&positionId=" + positionId ,"_new");
+                }
+
+                });
+			}else{
+                terminationButtonToolbarButton.setDisabled(true);
+			}
+            }
+
+
+
+			//termination form end
+
+			new Label(gv.getString("noticePeriod")).setParent(row);
+			new Label(gv.getString("settlementType")).setParent(row);
+			if (gv.getDouble("unusedLeaves") != null) {
+				Integer unUsedLeaves = gv.getDouble("unusedLeaves").intValue();
+				new Label((unUsedLeaves.toString())).setParent(row);
+			} else {
+				new Label("").setParent(row);
+			}
+			
+			if (gv.getDouble("encashLeaves") != null) {
+				Integer unUsedLeaves1 = gv.getDouble("encashLeaves").intValue();
+				new Label((unUsedLeaves1.toString())).setParent(row);
+			} else {
+				new Label("").setParent(row);
+			}
+	
+			new Label(gv.getString("managerComment")).setParent(row);
+			new Label(gv.getString("adminComment")).setParent(row);
+			Map arg = new HashMap();
+			arg.put("gv", gv);
+			if (isManager) {
+				if (gv.getString("statusId").equals("ET_SUBMITTED"))
+					row.addEventListener("onDoubleClick", new EventListener() {
+						public void onEvent(Event event) throws Exception {
+							Window win = (Window) Executions.createComponents(
+									"/zul/employmentTermination/processTerminationApplication.zul", null, arg);
+							win.doModal();
+						}
+					});
+			}
+			
+		//	if (!isManager) {
+			if(isAdmin){
+				if (gv.getString("statusId").equals("ET_MGR_APPROVED")) {
+					row.addEventListener("onDoubleClick", new EventListener() {
+						public void onEvent(Event event) throws Exception {
+							Window win = (Window) Executions.createComponents(
+									"/zul/employmentTermination/processTerminationApplication.zul", null, arg);
+							win.doModal();
+						}
+					});
+				}
+			}
+			if(gv.getString("updatedBy") != null){
+				org.ofbiz.entity.GenericValue personGV1 = delegator.findByPrimaryKey("Person",UtilMisc.toMap("partyId", gv.getString("updatedBy")));
+				new Label(personGV1.getString("firstName") + " " + personGV1.getString("lastName")).setParent(row);
+				}else{
+					new Label("").setParent(row);
+				}
+				String lastUpdatedDate = null;
+		         if (gv.getTimestamp("lastUpdatedStamp") != null){
+					lastUpdatedDate = formater.format(gv.getTimestamp("lastUpdatedStamp"));
+					new Label(lastUpdatedDate.toString()).setParent(row);
+				}else{
+					new Label("").setParent(row);
+				}
+			 
+	
+				//new Label(gv.getRelatedOne("EMPTERSTATUS").toString()).setParent(row);
+				//new Label((gv.getTimestamp("updateDate").getTime()).toString()).setParent(row);
+				
+	        
+			 
+		}
+		
+	}
+	
+	RowRenderer tableRenderer = new MyRowRenderer();
+]]>
+</zscript>
+		<separator />
+		<panel id="results" >
+			<panelchildren>
+				<h:table width="100%" style="border:0px" cellspacing="0px" cellpadding="0px">
+					<h:tr>
+						<h:td width="90%">
+							<label value="${c:l('HRMS_SEARCHRESULTS') }"></label>
+						</h:td>
+						<h:td width="10%" style="text-align:right">
+							<paging id="paging" />
+						</h:td>
+					</h:tr>
+				</h:table>
+				<grid width="100%" id="dataGrid" rowRenderer="${tableRenderer}">
+					<columns menupopup="auto">
+						<column label="Resignation Id" onDrop="move(event.dragged)" draggable="col" droppable="col" sortDirection="ascending" />
+						<column label="Employee Id" onDrop="move(event.dragged)" draggable="col" droppable="col" />
+						<column label="Employee Name" onDrop="move(event.dragged)" draggable="col" droppable="col" />
+						<column label="Manager Name" onDrop="move(event.dragged)" draggable="col" droppable="col" />
+						<column label="Resignation Reason" onDrop="move(event.dragged)" draggable="col" droppable="col" width="130px"/>
+						<column label="Application Date" onDrop="move(event.dragged)" draggable="col" droppable="col" />
+						<column label="Exit Date" onDrop="move(event.dragged)" draggable="col" droppable="col" />
+						<column label="Application Status" onDrop="move(event.dragged)" draggable="col" droppable="col" />
+						<column label="Exit Type" onDrop="move(event.dragged)" draggable="col" droppable="col" />
+                        <column label="Authority to Terminate" onDrop="move(event.dragged)" draggable="col" droppable="col" if="${isAdmin}"/>
+						<column label="Notice Period" onDrop="move(event.dragged)" draggable="col" droppable="col" visible="false" />
+						  <column label="Settlement Type" visible="false" />
+						<column label="Remaining Leaves" onDrop="move(event.dragged)" draggable="col" droppable="col" visible="false" />
+						<column label="Encash Leaves" onDrop="move(event.dragged)" draggable="col" droppable="col" visible="false" />
+						<column label="Manager Comments" onDrop="move(event.dragged)" draggable="col" droppable="col" visible="false" />
+						<column label="Admin Comments" onDrop="move(event.dragged)" draggable="col" droppable="col" visible="false" />
+						<column label="Updated By" visible="false" />
+					    <column label="Updated Date" visible="false" />
+					</columns>
+				</grid>
+			</panelchildren>
+		</panel>
+		<zscript><![CDATA[
+	void move(Component dragged) {
+		if (dragged.getClass().getName().endsWith("Column")) {
+			int maxRows = dragged.getGrid().getRows().getChildren().size();
+			int i = dragged.getParent().getChildren().indexOf(dragged);
+			int j = self.getParent().getChildren().indexOf(self);
+
+			//move celles for each row 
+			for (int k = 0; k < maxRows; k++)
+				self.getGrid().getCell(k, j).parent.insertBefore(self.getGrid().getCell(k, i), self.getGrid().getCell(k, j));
+		}
+
+		self.parent.insertBefore(dragged, self);
+	}
+	
+	Events.postEvent("onClick", searchPanel.getFellow("searchPerCompany"), null);
+]]></zscript>
+	</window>
+</zk>

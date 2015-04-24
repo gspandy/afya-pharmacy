@@ -1,0 +1,148 @@
+<?init class="org.zkoss.zk.ui.util.Composition"
+arg0="/WEB-INF/layout/template.zul"?>
+<zk xmlns:n="http://www.zkoss.org/2005/zk/native">
+
+
+		<window id="partyWindow" width="100%" height="100%" self="@{define(content)}" apply="com.ndz.controller.CreateParty"  >
+			<panel>
+			<panelchildren>
+			<tabbox>
+				<tabs>
+					<tab label="Personal Information" />
+					<tab label="Roles" />
+					<tab label="Security" />
+				</tabs>
+				<tabpanels>
+					<tabpanel>
+						<n:table>
+							<n:tr>
+								<n:td>
+									<n:span>FirstName:</n:span>
+								</n:td>
+								<n:td>
+									<textbox id="firstName" tooltip="First Name" />
+									</n:td>
+								<n:td>
+									<n:span>MiddleName:</n:span>
+								</n:td>
+								<n:td>
+									<textbox id="middleName" tooltip="Middle Name"/>
+								</n:td>
+								<n:td>
+									<n:span>LastName:</n:span>
+								</n:td>
+								<n:td>
+									<textbox id="lastName" tooltip="Last Name"/>
+									
+								</n:td>
+							</n:tr>
+                            <n:tr>
+                            <n:td> <n:span>DepartmentName</n:span></n:td>
+                            <n:td><listbox id="listPartyGroup" 
+									mold="select" >
+									
+								</listbox> </n:td>
+                            </n:tr>
+                            <n:tr>
+                            <n:td>
+									<n:span>UserName:</n:span>
+								</n:td>
+								<n:td>
+									<textbox id="userName" tooltip="Last Name"/>
+									
+								</n:td>
+                            </n:tr>
+                            <n:tr>
+                            <n:td>
+                            <n:span>Password:</n:span>
+								</n:td>
+								<n:td>
+									<textbox id="password" tooltip="Last Name" type="password"/>
+									
+								</n:td>
+                            </n:tr>
+                            <n:tr>
+                            <n:td>
+                            <n:span>Verify Password:</n:span>
+								</n:td>
+								<n:td>
+									<textbox id="verifyPassword" tooltip="Last Name" type="password"/>
+									
+								</n:td>
+                            </n:tr>
+                            <n:tr>
+                            <n:td>
+                            <n:span>Position Id:</n:span>
+								</n:td>
+								<n:td>
+									<textbox id="positionId" tooltip="Position Id" type="password" />
+									
+								</n:td>
+                            </n:tr>
+                           
+							</n:table>
+					</tabpanel>
+					<tabpanel>
+					
+					<n:table>
+					<n:tr>
+                            <n:td> <n:span>PartyRole</n:span></n:td>
+                            <n:td><listbox id="listPartyRole"
+									mold="select">
+									
+								</listbox> </n:td>
+                            </n:tr>
+                            
+					</n:table>
+					
+					</tabpanel>
+					<tabpanel>
+					
+					<n:table>
+					<n:tr>
+                            <n:td> <n:span>SecurityGroup</n:span></n:td>
+                            <n:td><listbox id="listsecurityGroup"
+									mold="select">
+									
+								</listbox> </n:td>
+                            </n:tr>
+                           
+					</n:table>
+					
+					</tabpanel>
+				</tabpanels>
+				
+			</tabbox>
+			<button id="createParty" label="Create" apply="com.ndz.controller.CreatePartyButtonController"/>
+			</panelchildren>
+			</panel>
+			<panel>
+			<panelchildren>
+			<window >
+			<n:table>
+			<n:tr>
+			<n:td>
+			<n:span>Employee ID</n:span>
+			</n:td>
+			<n:td>
+			<textbox id="partyId" tooltip="Employee Id" type="text"/>
+			</n:td>
+			</n:tr>
+			<n:tr>
+			<n:td>
+			<n:span>EmployeePosition Type ID</n:span>
+			</n:td>
+			<n:td>
+			<listbox id="positionTypeId" tooltip="positionTypeId" mold="select"/>
+			</n:td>
+			</n:tr>
+			</n:table>
+			<button id="LookUpEmployee" label="LookUp" />
+			</window>
+			</panelchildren>
+			</panel>			
+			
+			
+		</window>
+	
+</zk>

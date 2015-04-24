@@ -1,0 +1,202 @@
+<?component name="findbox1" macroURI="../macros/textfindMacro.zul" id="macro4"?>
+<?component name="findbox" macroURI="../macros/textfindMacro.zul" id="macro3"?>
+<?component name="findbox2" macroURI="../macros/textfindMacro.zul" id="macro2"?>
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<zk>
+	<zscript>
+	com.ndz.controller.SearchController controller = new com.ndz.controller.SearchController();
+	com.ndz.zkoss.GenericValueRenderer listItemRenderer = new com.ndz.zkoss.GenericValueRenderer(
+			new String[] { "partyId", "firstName", "lastName" });
+	Toolbarbutton createAnnouncement = arg.get("createAnnouncement");
+</zscript>
+	<window id="searchPanel" position="center" apply="${controller}">
+		<caption label="Announcement" style="font-weight:bold">
+		</caption>
+		<custom-attributes entityName="Person" companyWide="true">
+		</custom-attributes>
+		<separator />
+
+		<zscript>
+	import org.ofbiz.entity.*;
+	GenericDelegator delegator = com.ndz.zkoss.util.HrmsInfrastructure.getDelegator();//GenericDelegator.getGenericDelegator("default");
+	List persons = delegator.findList("Person",null,null,null,null,false);
+	personsArray = persons.toArray(new GenericValue[persons.size()]);
+	SimpleListModel personsList = new SimpleListModel(personsArray);
+	public class PersonItemRenderer implements ListitemRenderer {
+
+		public PersonItemRenderer() {
+		}
+
+		public void render(Listitem li, Object data) {
+			if (data instanceof GenericValue) {
+				GenericValue val = (GenericValue) data;
+				li.setLabel(val.getString("partyId"));
+				li.setLabel(val.getString("firstName"));
+				li.setValue(val.getString("partyId"));
+			}
+		}
+	}
+	ListitemRenderer personItemRenderer = new PersonItemRenderer();
+</zscript>
+		<hbox>
+			<div style="margin-top:5px">
+				<label value="Send To" style="font-weight:bold;" />
+			</div>
+			<radiogroup id="announcementType" orient="horizontal">
+				<radio id="newPos" selected="true" value="all">
+					<attribute name="onCheck">
+	Div div = (Div) searchPanel.getFellow("showDiv");
+	div.setVisible(false);
+	Events.postEvent("onClick", searchPerCompany, null);
+</attribute>
+				</radio>
+				<label value="All" />
+				<radio id="replcePos" selected="false" checked="false"
+					apply="${controller}" value="selectemployee">
+					<attribute name="onCheck">
+	Div div = (Div) searchPanel.getFellow("showDiv");
+	div.setVisible(true);
+	Events.postEvent("onClick", searchPerCompany, null);
+</attribute>
+				</radio>
+				<label value="Selected Employee" />
+			</radiogroup>
+		</hbox>
+		<div id="showDiv" visible="false">
+			<separator />
+			<vbox>
+				<findbox2 
+					fieldLabel="${c:l('FormFieldTitle_EmployeeId') }" name="partyId"
+					type="text" cols="40" />
+
+				<findbox1 fieldLabel="${c:l('FirstName') }"
+					name="firstName" type="text" cols="40" />
+
+				<findbox fieldLabel="${c:l('FormFieldTitle_LastName') }"
+					name="lastName" type="text" cols="40" />
+			</vbox>
+			<separator />
+			<box align="center" width="100%">
+				<hbox>
+					<button mold="os" label="${c:l('HumanResSearch') }"
+						id="searchPerCompany" onClick="results.setVisible(true)" />
+					<button label="${c:l('HRMS_ResetButton') }"
+						onClick='Events.postEvent("onClick",createAnnouncement,null)' />
+				</hbox>
+			</box>
+			<div id="results">
+				<paging id="paging" width="98%" pageSize="10" />
+				<listbox id="dataGrid"
+					itemRenderer="${listItemRenderer}" width="98%" checkmark="true"
+					multiple="true" mold="paging">
+					<listhead>
+						<listheader label="Employee ID" id="empId"></listheader>
+						<listheader label="First Name" />
+						<listheader label="Last Name" />
+					</listhead>
+				</listbox>
+			</div>
+		</div>
+		<separator height="20px" />
+		<div width="100%">
+			<hbox>
+				<div width="150px" align="right"
+					style="margin-right:4px">
+					<label value="${c:l('HumanResAnnouncement') }"
+						id="announcementLabel" style="font-weight:bold" />
+					<label value="*" style="color:red" />
+				</div>
+				<textbox id="announcementDescrip" width="600px"
+					height="100px" multiline="true">
+				</textbox>
+			</hbox>
+		</div>
+		<separator />
+		<hbox>
+
+			<div width="150px" align="right" style="margin-right:4px">
+				<label value="From Date" />
+				<label value="*" style="color:red" />
+			</div>
+			<datebox id="fromDate"  width="150px"
+				readonly="true" />
+
+
+			<div>
+				<label value="Thru Date" />
+				<label value="*" style="color:red" />
+			</div>
+			<datebox id="thruDate"  width="150px"
+				readonly="true" />
+		</hbox>
+		<separator />
+		<zscript><![CDATA[
+	import com.ndz.zkoss.HrmsUtil;
+	void validate() {
+		java.util.Date todayDate = new java.util.Date();
+		java.util.Date fDate = fromDate.getValue();
+
+		java.util.Date tDate = thruDate.getValue();
+
+		//if ((dataGrid.getSelectedItem()) == null){
+		//throw new WrongValueException(dataGrid, "Please Select EmployeeId");
+		//}
+
+	if ("selectemployee".equals(announcementType.getSelectedItem()
+		.getValue()) && (dataGrid.getSelectedItem()) == null)
+			throw new WrongValueException(empId, "Please Select Employee");
+		//Messagebox.show("Please Select Employee","Warning",1,null);
+	
+		//if ( (String)empId.getValue()==""||org.apache.commons.lang.StringUtils.isEmpty((String) empId.getValue()))
+		//	Messagebox.show("Please Select Employee","Error",1,null);
+		//	throw new WrongValueException(empId, "Please Select Employee");
+
+		
+		
+
+		if ((announcementDescrip.getValue()).equals("")) {
+			throw new WrongValueException(announcementDescrip,
+					"Announcement Required");
+			
+		}
+
+		if (fromDate.getValue() == null) {
+			throw new WrongValueException(fromDate, "From Date Required");
+		}
+
+		if (HrmsUtil.dateCompare(todayDate, fDate) == 1) {
+			throw new WrongValueException(fromDate,
+					"From Date Must Be Current Or Future Date");
+		}
+
+		if (thruDate.getValue() == null) {
+			throw new WrongValueException(thruDate, "Thru Date Required");
+		}
+		if (HrmsUtil.dateCompare(todayDate, tDate) == 1) {
+			throw new WrongValueException(thruDate,
+					"Thru Date Must Be Current Or Future Date");
+		}
+		if (HrmsUtil.dateCompare(fDate, tDate) == 1) {
+			throw new WrongValueException(thruDate,
+					"Thru Date Must Be Greater Than Or Equal To From Date");
+		}
+	}
+]]></zscript>
+		<box align="center" width="100%">
+			<hbox>
+				<button id="btnSaveLeaveType" label="${c:l('btnSave') }"
+					onClick='validate();com.ndz.controller.GlobalHrSettingAnnouncement.sendAnnouncement(event);Events.postEvent("onClick",searchPanel.getParent().getFellow("createAnnouncement"),null)'>
+					<custom-attributes controller="${controller}" />
+				</button>
+				<button id="btnCancelLeaveType" label="Cancel"
+					href="/control/main">
+					<attribute name="onClick">
+	Events.postEvent("onClick",
+			searchPanel.getParent().getFellow("searchAnnouncementNew"), null);
+</attribute>
+				</button>
+			</hbox>
+			<separator height="15px" />
+		</box>
+	</window>
+</zk>

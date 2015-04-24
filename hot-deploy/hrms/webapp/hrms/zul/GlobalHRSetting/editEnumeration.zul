@@ -1,0 +1,147 @@
+<zk>
+<zscript><![CDATA[
+		Map map = Executions.getCurrent().getArg();
+		String id =(String) map.get(0);
+		String mapLabel = (String) map.get(1);
+		String description1 = "Search" + " " + mapLabel +" " +"Using";
+		String hiddenValue = (String) map.get(2);
+		]]>
+		</zscript>
+	<window id="addEnumerationWindow" closable="true" width="45%"
+		height="45%" border="normal" maximizable="true">
+		
+		<caption label="Edit ${mapLabel }"
+			/>
+		<separator height="20px" />
+		
+				<textbox id="enumId" maxlength="20" readonly="true" visible="false" />
+				<label id="enumIdLabel" visible="false"/>
+				<textbox id="sequenceId" visible="false"/>
+		<hbox visible="false">
+			<textbox id="enumTypeId" value="${hiddenValue }" ></textbox>
+		</hbox>
+		<zscript>
+                 <![CDATA[
+	                  void addUser(){
+	                	  String claimType=enumCode.getValue();
+		                 String description=description.getValue();
+	                  }
+                  ]]>
+       </zscript>
+		<separator />
+		<hbox>
+			<div align="right" width="170px">
+				<label id="label2" value="${mapLabel } "
+					style="font-weight:bold" /><label value="*" style="color:red" />
+			</div>
+			<div align="right">
+				<textbox id="enumCode" maxlength="50" />
+				<zscript>		
+						
+	<![CDATA[
+	import org.zkoss.util.resource.Labels;
+	import org.zkoss.util.resource.Labels;
+	public void enumCodeValidation(Textbox comp) throws WrongValueException {
+		String value = comp.getValue();
+		if (value == "") {
+			throw new WrongValueException(comp,label2.getValue()+" Required");
+		}
+		boolean isNotString = true;
+		isNotString = org.ofbiz.base.util.UtilValidate.isAlphanumeric(value) || value.contains("_")||value.contains(".")||value.contains(" ");
+		System.out.println("\n\n\n\n\n\n\n"+isNotString);
+		if (!isNotString) {
+			throw new WrongValueException(comp, label2.getValue()+ " "+"can not be special characters/blank space. Only _ and . are allowed");
+		}
+	}
+]]>
+</zscript>
+			</div>
+		</hbox>
+		<separator />
+		<hbox>
+					<zscript>		
+						
+	<![CDATA[
+	import org.zkoss.util.resource.Labels;
+	import org.zkoss.util.resource.Labels;
+	public void sequenceValidation(Textbox comp) throws WrongValueException {
+		String value = comp.getValue();
+		if (value == "") {
+			throw new WrongValueException(comp,label3.getValue()+" Required");
+		}
+		boolean isNotString = true;
+		isNotString = org.ofbiz.base.util.UtilValidate.isAlphanumeric(value) || value.contains("_")||value.contains(".");
+		System.out.println("\n\n\n\n\n\n\n"+isNotString);
+		if (!isNotString) {
+			throw new WrongValueException(comp, label3.getValue()+ " " +"can not be special characters/blank space. Only _ and . are allowed");
+		}
+	}
+]]>
+</zscript>
+		</hbox>
+		<separator />
+		<hbox>
+			<div align="right" width="170px">
+				<label id="label4" value="Description" style="font-weight:bold" /><label value="*" style="color:red" />
+			</div>
+			<div align="right">
+				<textbox id="description" rows="3" cols="30" maxlength="190" />
+						<zscript>		
+						
+	<![CDATA[
+	import org.zkoss.util.resource.Labels;
+	import org.zkoss.util.resource.Labels;
+	public void descriptionValidation(Textbox comp) throws WrongValueException {
+		String value = comp.getValue();
+		if (value == "") {
+			throw new WrongValueException(comp,label4.getValue()+" Required");
+		}
+		boolean isNotString = true;
+		isNotString = org.ofbiz.base.util.UtilValidate.isAlphanumeric(value) || value.contains("_")||value.contains(".")||value.contains(" ");
+		System.out.println("\n\n\n\n\n\n\n"+isNotString);
+		if (!isNotString) {
+			throw new WrongValueException(comp, label4.getValue()+" "+"can not be special characters/blank space. Only _ and . are allowed");
+		}
+	}
+]]>
+</zscript>
+			</div>
+		</hbox>
+		<separator />
+		<zscript>
+		 void validate(){
+		 	String enumIdStr = enumId.getValue();
+		 	if(enumIdStr.equals("")){
+		 		throw new WrongValueException(enumId,label1.getValue()+" "+"Required");
+		 	}
+		 	
+		 	
+		 	String enumCodeStr = enumCode.getValue();
+		 	enumCodeValidation(enumCode);
+		 	
+		 	if(enumCodeStr.equals("")){
+		 		throw new WrongValueException(enumCode,label2.getValue()+" "+"Required");
+		 	}
+		 	
+		 	
+		 	String descriptionStr = description.getValue();
+		 	descriptionValidation(description);
+		 	if(descriptionStr.equals("")){
+		 		throw new WrongValueException(description,label4.getValue()+" "+"Required");
+		 	}
+		 }
+		</zscript>
+		<hbox>
+			<div align="right" width="300px">
+				<button id="add" label="Update"
+					onClick='validate();com.ndz.controller.BudgetManagementController.updateEnumeration(event);
+					Component searchButtonComp = Path.getComponent("/searchPanel//searchPerCompany");
+					if(searchButtonComp != null)
+					    Events.postEvent("onClick", searchButtonComp, null);
+					addEnumerationWindow.detach();' />
+				<button id="cancel" label="Cancel"
+					onClick="addEnumerationWindow.detach();" />
+			</div>
+		</hbox>
+	</window>
+</zk>

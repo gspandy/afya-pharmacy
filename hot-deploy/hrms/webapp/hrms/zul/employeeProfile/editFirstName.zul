@@ -1,0 +1,30 @@
+<?component name="profileField" macroURI="../macros/profileField.zul" id="profileMacro"?>
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<zk>
+	<zscript>
+	String partyId = (String) userLogin.get("partyId");
+	org.ofbiz.entity.GenericDelegator delegator = (org.ofbiz.entity.GenericDelegator) requestScope
+			.get("delegator");
+	org.ofbiz.entity.GenericValue person = null;
+	person = delegator.findByPrimaryKey("Person", org.ofbiz.base.util.UtilMisc
+			.toMap("partyId", partyId));
+</zscript>
+	<window title="${c:l('Edit First Name') }" id="editPersonFieldWindow" border="normal" height="20%" width="25%" closable="true">
+	<separator height="10px"/>
+		<hbox>
+			<div align="left">
+				<label id="labelId"></label>
+			</div>
+			<div align="right">
+				<textbox id="textboxId"></textbox>
+			</div>
+		</hbox>
+		<separator />
+		<hbox>
+			<div align="right" width="200px">
+				<button label="${c:l('HRMS_UPDATE') }" forward="onClick=onEvent"/>
+				<button label="${c:l('HRMS_CANCEL') }" onClick="editPersonFieldWindow.detach()" />
+			</div>
+		</hbox>
+	</window>
+</zk>

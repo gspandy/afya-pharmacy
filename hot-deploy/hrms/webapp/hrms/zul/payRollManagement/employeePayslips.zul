@@ -1,0 +1,209 @@
+<?page title="P" id="leavemgmt"?>
+<?component name="findbox" macroURI="../macros/textfindMacro.zul" id="macro1"?>
+<?component name="fromDatebox" macroURI="../macros/datefindMacro.zul" id="macro2"?>
+<?component name="thruDatebox" macroURI="../macros/datefindMacro.zul" id="macro3"?>
+<?component name="selectbox" macroURI="../macros/findselectbox.zul"?>
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<zk xmlns:n="http://www.zkoss.org/2005/zk/native">
+	<zscript>
+	<![CDATA[
+	import com.hrms.payroll.composer.PayslipComposer;
+	import org.ofbiz.base.util.*;
+	import org.zkoss.zk.ui.event.*;
+	PayslipComposer payslipController = new PayslipComposer();
+	GenericValue userLogin = (GenericValue) Executions.getCurrent().getDesktop().getSession().getAttribute("userLogin");
+	boolean isAdmin = security.hasPermission("HUMANRES_ADMIN", userLogin);
+	boolean isManager = security.hasPermission("HUMANRES_MGR", userLogin);
+	com.hrms.composer.TimesheetComposer timecomposer = new com.hrms.composer.TimesheetComposer();
+	com.hrms.composer.TimesheetComposer throughTimecomposer = new com.hrms.composer.TimesheetComposer();
+	org.ofbiz.entity.GenericDelegator delegator = com.ndz.zkoss.util.HrmsInfrastructure.getDelegator();//org.ofbiz.entity.GenericDelegator.getGenericDelegator("default");
+	Toolbarbutton paySlips = arg.get("paySlips");
+	if(isManager){
+		isManager = com.ndz.zkoss.HrmsUtil.isManagerViewSubOrdinatePayroll();
+	}
+]]>
+</zscript>
+	<window title="${c:l('HRMS_PAYSLIPS') }" border="normal" id="searchPanel" self="@{define(content)}" apply="${payslipController}">
+		<custom-attributes entityName="EmplPayslip" companyWide="true"></custom-attributes>
+		<separator />
+		<datebox id="periodFrom" visible="false" />
+		<datebox id="periodTo" visible="false" />
+		<n:table width="100%">
+			<n:tr>
+				<n:td style="text-align:right">
+					<label value="${c:l('FormFieldTitle_EmployeeId') }" if="${isAdmin||isManager}"/>
+				</n:td>
+				<n:td>
+				<hbox>
+					<employeebox id="employeeId" constraint="no empty:Employee Id Required" onSelect="executeOnSelect(self)"
+						if="${isAdmin||isManager}" onChange="executeOnSelect(self)" />
+					<div style="margin-top:2px">
+						<label id="employee"/>
+					</div>
+					</hbox>
+				</n:td>
+			</n:tr>
+			<n:tr>
+				<n:td style="text-align:right">
+					<label value="${c:l('Hrms_From') }" />
+				</n:td>
+				<n:td style="text-align:left">
+					<combobox id="monthCombo" model="${timecomposer.months}" itemRenderer="${renderer}" width="100px"
+						constraint="no empty:Month Required" readonly="true">
+					</combobox>
+					<combobox id="yearCombo" model="${timecomposer.years}" itemRenderer="${renderer}" width="100px"
+						constraint="no empty:Year Required" readonly="true">
+					</combobox>
+				</n:td>
+				<n:td style="text-align:right">
+					<label value="${c:l('HRMS_TO') }" />
+				</n:td>
+				<n:td>
+					<combobox id="thrumonthCombo" model="${throughTimecomposer.months}" itemRenderer="${renderer}" width="100px"
+						constraint="no empty:Month Required" readonly="true">
+					</combobox>
+					<combobox id="thruyearCombo" model="${throughTimecomposer.years}" itemRenderer="${renderer}" width="100px"
+						constraint="no empty:Year Required" readonly="true">
+					</combobox>
+				</n:td>
+			</n:tr>
+		</n:table>
+		<separator />
+		<zscript>
+					<![CDATA[
+	import java.util.Calendar;
+	Calendar cal = Calendar.getInstance();
+	void setFromDate() {
+		String month = (String) monthCombo.getSelectedItem().getValue();
+		String year = String.valueOf(yearCombo.getSelectedItem().getValue());
+		java.text.SimpleDateFormat formatter = new java.text.SimpleDateFormat("dd-MMMMM-yyyy");
+		Date fromdate = new Date(formatter.parse("01-" + month + "-" + year).getTime());
+		((Datebox) periodFrom).setValue(fromdate);
+	}
+	void setThruDate() {
+		String thrumonth = (String) thrumonthCombo.getSelectedItem().getValue();
+		String thruyear = String.valueOf(thruyearCombo.getSelectedItem().getValue());
+		java.text.SimpleDateFormat formatter = new java.text.SimpleDateFormat("dd-MMMMM-yyyy");
+		Date thrudate = new Date(formatter.parse("01-" + thrumonth + "-" + thruyear).getTime());
+		cal.setTime(thrudate);
+		int lastDay = cal.getActualMaximum(Calendar.DAY_OF_MONTH);
+		Date thruDate = new Date(formatter.parse(lastDay + "-" + thrumonth + "-" + thruyear).getTime());
+		((Datebox) periodTo).setValue(thruDate);
+	}
+	void validateForm() {
+		if (isAdmin || isManager) {
+			employeeId.getValue();
+		}
+		if (monthCombo.getSelectedItem() == null) {
+			throw new WrongValueException(monthCombo, "Month Required");
+		}
+		if (yearCombo.getSelectedItem() == null) {
+			throw new WrongValueException(yearCombo, "Year Required");
+		}
+		if (thrumonthCombo.getSelectedItem() == null) {
+			throw new WrongValueException(thrumonthCombo, "Month Required");
+		}
+		if (thruyearCombo.getSelectedItem() == null) {
+			throw new WrongValueException(thruyearCombo, "Year Required");
+		}
+		if (new Integer(yearCombo.getValue()) > new Integer(thruyearCombo.getValue()))
+			throw new WrongValueException(thruyearCombo, "To Year Must be After From Year");
+		setFromDate();
+		setThruDate();
+	}
+]]>
+					</zscript>
+		<box width="100%" height="30px" align="center">
+			<hbox>
+				<button label="${c:l('HRMS_SearchButton') }" onClick="validateForm();payslipPanel.setVisible(true);payslipPanel.setFocus(true)"
+					id="searchPayslip">
+				</button>
+				<button label="${c:l('HRMS_ResetButton') }" onClick='Events.postEvent("onClick",paySlips,null)'></button>
+			</hbox>
+		</box>
+
+		<zscript><![CDATA[
+	import org.ofbiz.entity.GenericValue;
+	import com.ndz.zkoss.util.CurrencyFormatter;
+	class TableRowRenderer implements RowRenderer {
+
+		TableRowRenderer() {
+		}
+
+		public void render(Row row, Object data) {
+			GenericValue paySlip = (GenericValue) data;
+			Toolbarbutton toolBtn = new Toolbarbutton();
+			toolBtn.setLabel(paySlip.getString("payslipId"));
+			toolBtn.setParent(row);
+			String payslipId =  paySlip.getString("payslipId")  ;
+			String s = "window.open('ViewPayslipPdf?payslipId=" +payslipId+ "&partyId=" + paySlip.getString("partyId") +"')";
+			toolBtn.addEventListener("onClick", new org.zkoss.zk.ui.event.EventListener() {
+
+				public void onEvent(Event event) throws Exception {
+					Clients.evalJavaScript(s);
+				}
+			});
+			
+			new Label(UtilDateTime.formatDate(paySlip.getDate("periodFrom"))).setParent(row);
+			new Label(UtilDateTime.formatDate(paySlip.getDate("periodTo"))).setParent(row);
+			
+			java.sql.Connection conn = org.ofbiz.entity.jdbc.ConnectionFactory.getConnection(paySlip.getDelegator().getGroupHelperName("org.ofbiz"));
+			java.sql.ResultSet	rs = conn.createStatement().executeQuery("SELECT SUM(AMOUNT) FROM empl_payslip_head where payslip_Id = "+payslipId +" and is_Cr='Y'");
+			rs.next();
+			double amount = rs.getDouble(1);
+			rs.close();
+			conn.close();
+			
+			Label label = new Label(CurrencyFormatter.format(amount));
+			label.setParent(row);
+			label.setStyle("text-align:right");
+
+			new Label(CurrencyFormatter.format(paySlip.getBigDecimal("taxTotal").doubleValue())).setParent(row);
+
+			new Label(CurrencyFormatter.format(paySlip.getBigDecimal("headTotal").doubleValue()
+					- paySlip.getBigDecimal("taxTotal").doubleValue())).setParent(row);
+			
+			row.setTooltiptext("Click on Payslip Id to Display the Payslip");
+
+		}
+	}
+	RowRenderer tableRenderer = new TableRowRenderer();
+	public void executeOnSelect(Combobox cb) {
+		if (cb.getSelectedItem() != null) {
+			employee.setValue(cb.getSelectedItem().getDescription());
+			payslipController.setEmployeeId(cb.getValue());
+		}
+	}
+	]]></zscript>
+
+		<separator height="15px" />
+		<panel id="payslipPanel" visible="true">
+			<caption></caption>
+			<panelchildren>
+				<n:table width="100%" style="border:0px" cellspacing="0px" cellpadding="0px">
+					<n:tr>
+						<n:td>
+							<label value="${c:l('HRMS_SEARCHRESULTS') }"></label>
+						</n:td>
+						<n:td width="10%" style="text-align:center">
+							<paging id="payslipPaginal" pageSize="12" totalSize="@{payslipController.totalSize}" style="text-align:right" />
+						</n:td>
+					</n:tr>
+				</n:table>
+
+
+				<separator height="5px"></separator>
+				<grid width="100%" id="dataGrid" rowRenderer="${tableRenderer}" model="@{payslipController.payslips}">
+					<columns menupopup="auto">
+						<column label="${c:l('HRMS_PAYSLIP_ID') }" />
+						<column label="${c:l('HRMS_PERIOD_FROM') }" />
+						<column label="${c:l('HRMS_PERIOD_TO') }" />
+						<column label="${c:l('HRMS_HEAD_TOTAL') }" align="right" />
+						<column label="${c:l('HRMS_TAX_TOTAL') }" align="right" />
+						<column label="${c:l('HRMS_NET_SALARY') }" align="right" />
+					</columns>
+				</grid>
+			</panelchildren>
+		</panel>
+	</window>
+</zk>

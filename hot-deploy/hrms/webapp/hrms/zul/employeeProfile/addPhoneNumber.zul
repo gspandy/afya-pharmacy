@@ -1,0 +1,101 @@
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<zk>
+	<zscript>
+		String partyId = (String) Executions.getCurrent().getArg().get("partyId");
+	</zscript>
+	<window id="addPhoneNumber" title="${c:l('HRMS_ADD_PHONE_NUMBER') }" width="40%" height="40%" closable="true" contentStyle="overflow:auto"
+		border="normal" maximizable="true">
+		<separator height="15px" />
+		<textbox id="partyId" value="${partyId}" visible="false"/>
+		<hbox visible="true">
+			<div width="150px" style="margin-right:5px" align="right">
+				<label value="${c:l('FormFieldTitle_phoneNumberType') }:"/>
+				<label value="*" style="color:red"/>
+			</div>
+			<listbox id="contactMechPurposeTypeId" mold="select" onSelect="Clients.closeErrorBox(self);">
+				<listitem value="" />
+				<listitem label="${c:l('ListBox_MainHomePhoneNumber') }" value="PHONE_HOME" id="PHONE_HOME"/>
+				<listitem label="${c:l('ListBox_MainMobilePhoneNumber') }" value="PHONE_MOBILE" id="PHONE_MOBILE"/>
+				<listitem label="${c:l('ListBox_MainWorkPhoneNumber') }" value="PHONE_WORK" id="PHONE_WORK"/>
+				<listitem label="${c:l('ListBox_PrimaryPhoneNumber') }" value="PRIMARY_PHONE" id="PRIMARY_PHONE"/>
+				<listitem label="${c:l('ListBox_EmergencyContactNumber') }" value="EMERGENCY_PHONE_NUMBER" id="EMERGENCY_PHONE_NUMBER"/>
+			</listbox>
+			<zscript><![CDATA[
+				List partyContactMechPurpose = com.ndz.zkoss.util.HrmsInfrastructure.getDelegator().findByAnd("PartyContactMechPurpose",org.ofbiz.base.util.UtilMisc.toMap("partyId",partyId.getValue()));//org.ofbiz.entity.GenericDelegator.getGenericDelegator("default").findByAnd("PartyContactMechPurpose",org.ofbiz.base.util.UtilMisc.toMap("partyId",partyId.getValue()));
+				for(org.ofbiz.entity.GenericValue partyContactMechPurposeGV : partyContactMechPurpose){
+					Component comp = contactMechPurposeTypeId.getFellowIfAny(partyContactMechPurposeGV.getString("contactMechPurposeTypeId"));
+					if(comp != null){
+						Listitem li = (Listitem) (comp);
+						li.detach();
+					}
+				}
+			]]>
+			</zscript>
+		</hbox>
+		<separator />
+		<hbox>
+			<div align="right" width="150px" style="margin-right:5px">
+				<label value="${c:l('FormFieldTitle_CountryCode') }:" style="font-weight:bold"/>
+			</div>
+			<div align="left" width="150px" style="margin-right:5px">
+				<textbox id="countryCode" maxlength="8" />
+			</div>
+		</hbox>
+		<separator />
+		<hbox>
+			<div align="right" width="150px" style="margin-right:5px">
+				<label value="${c:l('FormFieldTitle_AreaCode') }:" style="font-weight:bold"/>
+			</div>
+			<div align="left" width="150px" style="margin-right:5px">
+				<textbox id="areaCode" maxlength="10" />
+			</div>
+		</hbox>
+		<separator />
+		<hbox>
+			<div align="right" width="150px" style="margin-right:5px">
+				<label value="${c:l('FormFieldTitle_PhoneNumber') }:" style="font-weight:bold"/>
+				<label value="*" style="color:red" />
+			</div>
+			<div align="left" width="150px" style="margin-right:5px">
+				<textbox id="contactNumber" maxlength="15" constraint="no empty: ${c:l('HRMS_REQUIRED_PHONE_NUMBER') }" />
+			</div>
+		</hbox>
+		<separator />
+		<hbox visible="false">
+			<div align="right" width="150px" style="margin-right:5px">
+				<label value="${c:l('FormFieldTitle_allowSolicitation') }:" style="font-weight:bold"/>
+			</div>
+			<div align="left" width="150px" style="margin-right:5px">
+				<listbox id="allowSolicitation" mold="select" visible="false">
+					<listitem label="${c:l('ListBox_Yes') }" value="Y" selected="true" />
+				</listbox>
+			</div>
+		</hbox>
+		<separator />
+		<zscript>
+			import org.zkoss.util.resource.Labels;
+			void validate() {
+			if(com.ndz.zkoss.HrmsUtil.listboxValidation(contactMechPurposeTypeId)){
+				throw new WrongValueException(contactMechPurposeTypeId, Labels.getLabel("HRMS_REQUIRED_PHONE_NUMBER_TYPE"));
+			}
+				String contactNumberString = contactNumber.getValue();
+				if (!(org.ofbiz.base.util.UtilValidate.isInteger(contactNumberString))) {
+					throw new WrongValueException(contactNumber, Labels.getLabel("HRMS_PHONE_NUMBER_MUST_BE_NUMERIC"));
+				}
+				if (!(org.ofbiz.base.util.UtilValidate.isInteger(countryCode.getValue()))) {
+					throw new WrongValueException(countryCode, Labels.getLabel("HRMS_COUNTRY_CODE_MUST_BE_NUMERIC"));
+				}
+				if (!(org.ofbiz.base.util.UtilValidate.isInteger(areaCode.getValue()))) {
+					throw new WrongValueException(areaCode, Labels.getLabel("HRMS_AREA_CODE_MUST_BE_NUMERIC"));
+				}
+			}
+		</zscript>
+		<hbox>
+			<div align="right" width="265px" style="margin-right:5px">
+				<button label="${c:l('btnSave') }"
+					onClick='validate();com.ndz.controller.UpdateEmployeeProfileController.addPhoneNumber(event);Events.postEvent("onClick",Path.getComponent("/personPostalAddressWindow//phoneNumberTab"),null);addPhoneNumber.detach();' />
+				<button label="${c:l('ButtonCancel') }" onClick="addPhoneNumber.detach()" />
+			</div>
+		</hbox>
+	</window>
+</zk>

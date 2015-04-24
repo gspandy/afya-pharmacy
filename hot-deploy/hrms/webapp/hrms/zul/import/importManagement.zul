@@ -1,0 +1,43 @@
+<?init class="org.zkoss.zk.ui.util.Composition" arg0="/WEB-INF/layout/templateWestCollapsible.zul"?>
+<?page title="HRMS-Import" id="importgmgmt"?>
+<?link rel="icon" type="image/x-icon" href="/images/companyLogo.png"?>
+<zk xmlns:n="http://www.zkoss.org/2005/zk/native">
+
+	<zscript>
+	<![CDATA[
+	import org.ofbiz.entity.GenericDelegator;
+	import java.security.Security;
+	import org.ofbiz.entity.GenericValue;
+	GenericValue userLogin = (GenericValue) Executions.getCurrent().getDesktop().getSession().getAttribute("userLogin");
+	boolean isAdmin = security.hasPermission("HUMANRES_ADMIN", userLogin);
+	boolean isManager = security.hasPermission("HUMANRES_MGR", userLogin);
+	public void openWindow(Toolbarbutton button, String s) {
+		Div div = (Div) button.getFellowIfAny("content", true);
+		if (div.getFirstChild() != null)
+			div.getFirstChild().detach();
+		Window win = (Window) Executions.createComponents(s, div, null);
+		List children = menus.getChildren();
+		for (int i = 0; i < children.size(); i++) {
+			children.get(i).setStyle("color:#249");
+		}
+		button.setStyle("color:#D87700");
+	}
+]]>
+</zscript>
+	<div width="100%" self="@{define(westContent)}" if="${isAdmin}">
+		<cell width="18%">
+			<groupbox mold="3d">
+				<caption label="Import"></caption>
+				<vbox id="menus">
+					<toolbarbutton id="button1" label="Employee" style="color:#D87700" onClick='openWindow(self,"importEmployee.zul")' if="${isAdmin}"/>
+					<toolbarbutton id="button2" label="Salary" style="" onClick='openWindow(self,"importSalary.zul")' if="${isAdmin}"/>
+				</vbox>
+			</groupbox>
+		</cell>
+	</div>
+
+	<div id="content" self="@{define(content)}" if="${isAdmin}">
+		<include src="importEmployee.zul"></include>
+	</div>
+
+</zk>

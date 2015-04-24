@@ -1,0 +1,313 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="sampleInventoryReport" pageWidth="595" pageHeight="742" columnWidth="535" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<style name="Title" forecolor="#FFFFFF" fontName="Times New Roman" fontSize="50" isBold="false" pdfFontName="Times-Bold"/>
+	<style name="SubTitle" forecolor="#CCCCCC" fontName="Times New Roman" fontSize="18" isBold="false" pdfFontName="Times-Roman"/>
+	<style name="Column header" forecolor="#666666" fontName="Times New Roman" fontSize="14" isBold="true" pdfFontName="Times-Roman"/>
+	<style name="Detail" mode="Transparent" fontName="Times New Roman" pdfFontName="Times-Roman"/>
+	<parameter name="headOfficeImg" class="java.lang.String"/>
+	<parameter name="verticalLineImg" class="java.lang.String"/>
+	<parameter name="logoImageUrl" class="java.lang.String"/>
+	<parameter name="companyPostalAddr" class="java.lang.String"/>
+	<parameter name="companyName" class="java.lang.String"/>
+	<parameter name="address1" class="java.lang.String"/>
+	<parameter name="address2" class="java.lang.String"/>
+	<parameter name="postalCode" class="java.lang.String"/>
+	<parameter name="city" class="java.lang.String"/>
+	<parameter name="stateProvinceAbbr" class="java.lang.String"/>
+	<parameter name="countryName" class="java.lang.String"/>
+	<parameter name="telephoneNumber" class="java.lang.String"/>
+	<parameter name="faxNumber" class="java.lang.String"/>
+	<parameter name="email" class="java.lang.String"/>
+	<parameter name="companyRegNo" class="java.lang.String"/>
+	<parameter name="vatRegNo" class="java.lang.String"/>
+	<parameter name="tpinNo" class="java.lang.String"/>
+	<field name="emplPerfReviewId" class="java.lang.String"/>
+	<field name="partyId" class="java.lang.String"/>
+	<field name="perfReviewSectionId" class="java.lang.String"/>
+	<field name="attributeId" class="java.lang.String"/>
+	<field name="selfRating" class="java.lang.String"/>
+	<field name="selfComment" class="java.lang.String"/>
+	<field name="attributeName" class="java.lang.String"/>
+	<field name="attributeDesc" class="java.lang.String"/>
+	<field name="sectionName" class="java.lang.String"/>
+	<field name="sectionDesc" class="java.lang.String"/>
+	<field name="weightage" class="java.lang.String"/>
+	<field name="reviewerId" class="java.lang.String"/>
+	<field name="rating" class="java.lang.String"/>
+	<field name="reviewerComment" class="java.lang.String"/>
+	<field name="comments" class="java.lang.String"/>
+	<field name="feedback" class="java.lang.String"/>
+	<field name="overallRating" class="java.lang.String"/>
+	<background>
+		<band />
+	</background>
+	<title>
+		<band height="45" >
+			<frame>
+				<reportElement style="Title" mode="Opaque" x="1" y="14" width="556" height="20" backcolor="#000000"/>
+				<staticText>
+					<reportElement style="SubTitle" mode="Transparent" x="220" y="1" width="120" height="18" forecolor="#FFFFFF" backcolor="#66FF66"/>
+					<textElement markup="none">
+						<font size="14"/>
+					</textElement>
+					<text><![CDATA[Performance Review]]></text>
+				</staticText>
+			</frame>
+		</band>
+	</title>
+	<pageHeader>
+		<band height="130">
+			<image>
+				<reportElement x="0" y="0" width="110" height="65"/>
+				<imageExpression><![CDATA[$P{logoImageUrl}]]></imageExpression>
+			</image>
+			<image>
+				<reportElement x="90" y="3" width="80" height="65"/>
+				<imageExpression><![CDATA[$P{headOfficeImg}]]></imageExpression>
+			</image>
+			<textField isBlankWhenNull="true">
+				<reportElement x="132" y="8" width="153" height="65"/>
+				<textElement markup="html">
+					<font fontName="Calibri" size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{companyName} + "<br/>" + $P{address1} + "<br/>" + $P{companyPostalAddr}]]></textFieldExpression>
+			</textField>
+			<image>
+				<reportElement x="285" y="2" width="14" height="65"/>
+				<imageExpression><![CDATA[$P{verticalLineImg}]]></imageExpression>
+			</image>
+			<textField isBlankWhenNull="true">
+				<reportElement x="292" y="7" width="140" height="35"/>
+				<textElement markup="html">
+					<font fontName="Calibri" size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{telephoneNumber}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="292" y="18" width="140" height="35"/>
+				<textElement markup="html">
+					<font fontName="Calibri" size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{faxNumber}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="292" y="29" width="140" height="35"/>
+				<textElement markup="html">
+					<font fontName="Calibri" size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{email}]]></textFieldExpression>
+			</textField>
+			<image>
+				<reportElement x="430" y="2" width="14" height="65"/>
+				<imageExpression><![CDATA[$P{verticalLineImg}]]></imageExpression>
+			</image>
+			<textField isBlankWhenNull="true">
+				<reportElement x="438" y="7" width="118" height="35"/>
+				<textElement markup="html">
+					<font fontName="Calibri" size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{companyRegNo}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="438" y="18" width="118" height="35"/>
+				<textElement markup="html">
+					<font fontName="Calibri" size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{vatRegNo}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="438" y="29" width="118" height="35"/>
+				<textElement markup="html">
+					<font fontName="Calibri" size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{tpinNo}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement positionType="FixRelativeToBottom" x="0" y="70" width="555" height="1" forecolor="#C0C0C0"/>
+				<graphicElement>
+					<pen lineWidth="1.0" lineStyle="Solid" lineColor="#959595"/>
+				</graphicElement>
+			</line>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band/>
+	</columnHeader>
+	<detail>
+		<band height="216" >
+			<textField>
+				<reportElement x="2" y="63" width="98" height="20"/>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{selfRating}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="154" y="63" width="399" height="30"/>
+				<textElement markup="html"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{selfComment}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="6" y="150" width="98" height="20"/>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{rating}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="154" y="150" width="399" height="34"/>
+				<textElement markup="html"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{reviewerComment}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement mode="Transparent" x="95" y="-20" width="160" height="20" forecolor="#000000" backcolor="#CC6600"/>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{sectionName}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement style="Column header" mode="Transparent" x="0" y="-20" width="92" height="20" forecolor="#000000" backcolor="#66FF66"/>
+				<textElement markup="none">
+					<font size="10" isBold="false"/>
+				</textElement>
+				<text><![CDATA[Section Name]]></text>
+			</staticText>
+			<textField>
+				<reportElement style="Column header" mode="Transparent" x="265" y="-20" width="122" height="20" forecolor="#333333" backcolor="#000000"/>
+				<textElement markup="none">
+					<font size="10" isBold="false"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["Attribute Name"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement mode="Transparent" x="390" y="-20" width="165" height="20" backcolor="#CCCCCC"/>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{attributeName}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement mode="Opaque" x="1" y="31" width="100" height="20" forecolor="#000000" backcolor="#FFFFFF"/>
+				<textElement markup="none"/>
+				<textFieldExpression class="java.lang.String"><![CDATA["Employee Rating"]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement mode="Opaque" x="154" y="31" width="100" height="20" backcolor="#FFFFFF"/>
+				<textElement markup="none"/>
+				<text><![CDATA[Employee Comments]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="0" y="117" width="98" height="20" backcolor="#FFFFFF"/>
+				<textElement markup="none"/>
+				<text><![CDATA[Manager Rating]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="154" y="117" width="100" height="20" backcolor="#FFFFFF"/>
+				<textElement markup="none"/>
+				<text><![CDATA[Manager Comments]]></text>
+			</staticText>
+			<line>
+				<reportElement positionType="FixRelativeToBottom" x="0" y="30" width="555" height="1"/>
+				<graphicElement>
+					<pen lineWidth="0.5" lineColor="#999999"/>
+				</graphicElement>
+			</line>
+			<line>
+				<reportElement positionType="FixRelativeToBottom" x="0" y="51" width="555" height="1"/>
+				<graphicElement>
+					<pen lineWidth="0.5" lineColor="#999999"/>
+				</graphicElement>
+			</line>
+			<line>
+				<reportElement positionType="FixRelativeToBottom" x="1" y="138" width="555" height="1"/>
+				<graphicElement>
+					<pen lineWidth="0.5" lineColor="#999999"/>
+				</graphicElement>
+			</line>
+			<line>
+				<reportElement positionType="FixRelativeToBottom" x="0" y="116" width="555" height="1"/>
+				<graphicElement>
+					<pen lineWidth="0.5" lineColor="#999999"/>
+				</graphicElement>
+			</line>
+			<line>
+				<reportElement positionType="FixRelativeToBottom" x="0" y="0" width="555" height="1" forecolor="#990033"/>
+				<graphicElement>
+					<pen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</graphicElement>
+			</line>
+		</band>
+	</detail>
+	<columnFooter>
+		<band height="16" />
+	</columnFooter>
+	<pageFooter>
+		<band height="29" >
+			<frame>
+				<reportElement mode="Opaque" x="0" y="1" width="555" height="24" forecolor="#D0B48E" backcolor="#000000"/>
+				<textField evaluationTime="Report">
+					<reportElement style="Column header" x="513" y="0" width="40" height="20" forecolor="#FFFFFF"/>
+					<textElement verticalAlignment="Middle">
+						<font size="10" isBold="false"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA[" " + $V{PAGE_NUMBER}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement style="Column header" x="433" y="0" width="80" height="20" forecolor="#FFFFFF"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font size="10" isBold="false"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA["Page "+$V{PAGE_NUMBER}+" of"]]></textFieldExpression>
+				</textField>
+				<textField pattern="EEEEE dd MMMMM yyyy">
+					<reportElement style="Column header" x="2" y="1" width="197" height="20" forecolor="#FFFFFF"/>
+					<textElement verticalAlignment="Middle">
+						<font size="10" isBold="false"/>
+					</textElement>
+					<textFieldExpression class="java.util.Date"><![CDATA[new java.util.Date()]]></textFieldExpression>
+				</textField>
+			</frame>
+		</band>
+	</pageFooter>
+	<summary>
+		<band height="167" >
+			<staticText>
+				<reportElement mode="Opaque" x="98" y="80" width="100" height="20" backcolor="#FFFFFF"/>
+				<textElement markup="none"/>
+				<text><![CDATA[Hr Feedback]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="209" y="80" width="324" height="43"/>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{feedback}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement mode="Opaque" x="98" y="123" width="100" height="20" backcolor="#FFFFFF"/>
+				<textElement markup="none"/>
+				<text><![CDATA[Overall Rating]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="209" y="123" width="100" height="20"/>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{overallRating}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="209" y="37" width="324" height="43"/>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{comments}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement style="Column header" mode="Opaque" x="6" y="9" width="547" height="20" forecolor="#000000" backcolor="#FFFFFF"/>
+				<textElement markup="none"/>
+				<text><![CDATA[Hr Section]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="95" y="37" width="100" height="20" backcolor="#FFFFFF"/>
+				<textElement markup="none"/>
+				<text><![CDATA[Hr Comments]]></text>
+			</staticText>
+			<line>
+				<reportElement positionType="FixRelativeToBottom" x="0" y="28" width="555" height="1"/>
+				<graphicElement>
+					<pen lineWidth="0.5" lineColor="#999999"/>
+				</graphicElement>
+			</line>
+		</band>
+	</summary>
+</jasperReport>

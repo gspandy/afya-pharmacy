@@ -1,0 +1,211 @@
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<zk>
+	<window id="editLeaveLimitWindow" width="45%" position="center"
+		height="57%" closable="true" border="normal" maximizable="true">
+		<caption label="${c:l('HRMS_EDITLEAVELIMIT')}"></caption>
+		<separator height="10px" />
+		<hbox visible="false">
+			<div align="right" width="150px">
+				<label value="Employee Id"
+					style="font-weight:bold" />
+			</div>
+			<div align="left">
+				<label id="emplId" />
+			</div>
+		</hbox>
+		<separator />
+		<hbox visible="true">
+			<div align="right" width="150px">
+				<label value="Leave Limit Id"
+					style="font-weight:bold" />
+			</div>
+			<div align="left">
+				<label id="leaveId" />
+			</div>
+		</hbox>
+		<separator />
+		<hbox>
+			<div align="right" width="150px">
+				<label value="${c:l('HRMS_POSITIONTYPE') }"
+					style="font-weight:bold" />
+				<!--<label value="*" style="color:red" />-->
+			</div>
+			<div align="left">
+				<listbox id="emplPosTypeId" mold="select" />
+			</div>
+		</hbox>
+				<separator />
+        <hbox>
+            <div align="right" width="140px">
+                <label value="Employee Type" />
+                <label value="*" style="color:red" />
+            </div>
+
+            <div>
+                <radiogroup id="emp_administration" name="emp_administration">
+                    <radio id="emp_administration_administrative"
+                           label="${c:l('FormFieldTitle_administrative')}"
+                           selected="true" value="Administrative" style="margin-left:5px;font-weight: bold;font-size:10px;">
+                    </radio>
+                    <radio id="emp_administration_non_administrative"
+                           label="${c:l('FormFieldTitle_nonadministrative') }"
+                           selected="false" checked="false" value="Non-Administrative"
+                           style="margin-left:30px;font-weight: bold;font-size:10px;">
+                    </radio>
+                </radiogroup>
+            </div>
+        </hbox>
+        <separator />
+        <hbox>
+            <div align="right" width="150px">
+                <label value="${c:l('FormFieldTitle_positionCategories') }" />
+                <label value="*" style="color:red" />
+            </div>
+            <zscript>
+                <![CDATA[
+                            ListModelList positionCategoriesArr = new ListModelList(Arrays.asList(new String[] {"Employees","Management","Expatriates"}));
+                          ]]>
+            </zscript>
+            <div align="left">
+                <combobox id="positionCategories" name="positionCategories"
+                          model="${positionCategoriesArr}"></combobox>
+            </div>
+        </hbox>
+        <separator />
+		<hbox>
+			<div align="right" width="150px">
+				<label value="Leave Type"
+					style="font-weight:bold" /><label value="*" style="color:red" />
+			</div>
+			<div align="left">
+				<listbox id="leaveTypeId" mold="select" />
+			</div>
+		</hbox>
+		<separator />
+<zscript>
+	import org.zkoss.util.resource.Labels;
+        Constraint dateConstraint = new Constraint() {
+	                import org.zkoss.util.resource.Labels;
+                    public void validate(Component comp, Object value) throws WrongValueException {
+                    if (value == null){
+                        if(comp.getId().equals("fromDate")){
+                            throw new WrongValueException(comp, "From Date Required");
+                        }else{
+                            throw new WrongValueException(comp, "Thru Date Required");
+                        }
+                    }
+                    java.util.Date now = new java.util.Date();
+     	}
+     	}
+</zscript>
+		<hbox>
+			<div align="right" width="150px">
+				<label value="${c:l('HumanResLeaveSummaryFromDate') }"
+					style="font-weight:bold" /><label value="*" style="color:red" />
+			</div>
+			<div align="left">
+				<datebox id="fromDate" constraint="${dateConstraint }" onChange="Clients.closeErrorBox(self)"/>
+			</div>
+		</hbox>
+		<separator />
+		<hbox>
+			<div align="right" width="150px">
+				<label value="${c:l('HumanResLeaveSummaryThruDate') }"
+					style="font-weight:bold" /><label value="*" style="color:red" />
+			</div>
+			<div align="left">
+				<datebox id="thruDate" constraint="${dateConstraint }" onChange="Clients.closeErrorBox(self)"/>
+			</div>
+		</hbox>
+		<zscript>
+	import org.zkoss.util.resource.Labels;
+Constraint throughDateConstraint = new Constraint() {
+ 		
+     	public void validate(Component comp, Object value) throws WrongValueException {
+		     	if (value != null){
+		     	 java.util.Date prevDate = ((java.util.Date) editLeaveLimitWindow.getFellow("thruDate").getValue());
+		        	if (prevDate.compareTo((java.util.Date)value) == 1){
+						throw new WrongValueException(comp,Labels.getLabel("HumanResApplyLeaveThruDateMustBeAfterFromDate"));
+					}	
+		     	}else{
+			throw new WrongValueException(comp, "Thru Date Required");
+			}
+			}
+     	
+ }
+</zscript>
+		<separator />
+		<hbox>
+			<div align="right" width="150px">
+				<label value="${c:l('Hrms_LeaveDays') }" style="font-weight:bold"/><label value="*" style="color:red" />
+			</div>
+			<div align="left">
+				<textbox id="noOfDays" constraint="no empty:Leave Days Required" />
+			</div>
+            <div align="left">
+                <combobox id="fractionalPartForLeave" name="fractionalPartForLeave" value="0.0" readonly="true">
+                    <comboitem label="0.0" value="0.0"></comboitem>
+                    <comboitem label="0.5" value="0.5"></comboitem>
+                </combobox>
+            </div>
+		</hbox>
+		<separator />
+		<hbox>
+			<div align="right" width="150px">
+				<label value="${c:l('Hrms_Comment') }"
+					style="font-weight:bold" />
+			</div>
+			<div align="left">
+				<textbox id="comment" rows="3" cols="50" />
+			</div>
+		</hbox>
+		<separator />
+		<zscript>
+		void validate(){
+            Comboitem positionCategoriesList = positionCategories.getSelectedItem();
+            if(positionCategoriesList == null){
+            throw new WrongValueException(positionCategories, "Position Category Required");
+            }
+            Date fromDateValue = (Date)fromDate.getValue();
+            Date thruDateValue = (Date) thruDate.getValue();
+            if(thruDateValue.before(fromDateValue)){
+            throw new WrongValueException(thruDate, "Thru Date must be after From Date");
+            }
+		<!-- Listitem emplPosTypeIdListItem = emplPosTypeId.getSelectedItem();
+		 if(emplPosTypeIdListItem == null)
+		 		throw new WrongValueException(emplPosTypeId,"Position Type Required");-->
+		 Listitem leaveTypeIdListItem = leaveTypeId.getSelectedItem();
+		 if(leaveTypeIdListItem == null)
+		 		throw new WrongValueException(leaveTypeId,"Leave Type Required");
+		 fromDate.getValue();
+		 thruDate.getValue();
+		 String noOfDaysString = noOfDays.getValue();
+		 if(!(UtilValidate.isInteger(noOfDaysString)))
+		 		throw new WrongValueException(noOfDays,"Leave Days Must Be Integer Type");
+		}
+		</zscript>
+		<hbox>
+			<div align="right" width="260px">
+				<button id="updateLeaveLimit" label="Save" onClick="validate();"
+					mold="os">
+					<zscript>
+	import org.ofbiz.base.util.*;
+	import org.zkoss.zk.ui.event.EventListener;
+updateLeaveLimit.addEventListener("onClick", new EventListener() {
+	public void onEvent(Event event) throws Exception {
+		com.ndz.controller.ConfigureLeaveManagementController
+				.updateLeaveLimit(event);
+Events.postEvent("onClick$searchPerCompany",editLeaveLimitWindow.getPage().getFellow("searchPanel"),null);
+		editLeaveLimitWindow.detach();
+	}
+});
+</zscript>
+				</button>
+
+				<button id="cancelLoan" label="Close" mold="os"
+					onClick="editLeaveLimitWindow.detach()" />
+			</div>
+		</hbox>
+
+	</window>
+</zk>

@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- screens xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="http://ofbiz.apache.org/dtds/widget-screen.xsd" -->
+
+<screens xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+        xsi:noNamespaceSchemaLocation="http://www.ofbiz.org/dtds/widget-screen.xsd">
+      
+   
+	 <screen name="AdminViewClaimScreen">
+		<section>
+			<actions>
+				<entity-condition list="claims" entity-name="MaxClaimDetail"></entity-condition>
+				<set field="tabButtonItem" value="AdminViewClaim" />
+			</actions>
+			<widgets>
+				<decorator-screen name="ClaimDecorator" location="${parameters.mainDecoratorLocation}">
+					<decorator-section name="body">
+						<screenlet id="AdminViewClaimPanel" title="${uiLabelMap.ViewClaim}" collapsible="true">
+                            <include-form name="AdminFindClaimForm"
+									location="component://humanresext/widget/forms/ClaimsForms.xml" />
+                        </screenlet>						
+						<include-form name="AdminFindClaimResultsForm"
+									location="component://humanresext/widget/forms/ClaimsForms.xml" />
+						<!--  <link target="listClaims.pdf" text="ExportClaims"></link>-->
+					</decorator-section>
+				</decorator-screen>
+			</widgets>
+		</section>
+	</screen>
+	
+	<screen name="ApplyClaimScreen">
+		<section>
+			<actions>				
+				<set field="tabButtonItem" value="ApplyClaim" />
+			</actions>		
+			<widgets>
+				<decorator-screen name="ClaimDecorator" location="${parameters.mainDecoratorLocation}">
+					<decorator-section name="body">
+						<screenlet id="ApplyClaimPanel" title="${uiLabelMap.ApplyClaim}" collapsible="true" tab-menu-name="menuScreen">
+                            <include-form name="ApplyClaimForm"
+									location="component://humanresext/widget/forms/ClaimsForms.xml" />
+                        </screenlet>	
+					</decorator-section>
+				</decorator-screen>
+			</widgets>
+		</section>
+	</screen>
+	
+	<screen name="ReimbursementSlipScreen">
+		<section>
+			<actions>
+				<entity-condition list="reimbursements" entity-name="MaxClaimDetail"></entity-condition>
+				<set field="tabButtonItem" value="ReimbursementSlip" />
+			</actions>
+			<widgets>
+				<decorator-screen name="ClaimDecorator" location="${parameters.mainDecoratorLocation}">
+					<decorator-section name="body">
+						<screenlet id="ReimbursementSlipPanel" title="${uiLabelMap.ReimbursementSlip}" collapsible="true">
+                            <include-form name="ReimbursementSearchForm"
+									location="component://humanresext/widget/forms/ClaimsForms.xml" />
+                        </screenlet>						
+						<include-form name="ReimbursementSlipForm"
+									location="component://humanresext/widget/forms/ClaimsForms.xml" />
+					</decorator-section>
+				</decorator-screen>
+			</widgets>
+		</section>
+	</screen>
+	
+	<screen name="AdminProcessClaimScreen">
+		<section>
+			<actions>
+				<set field="layoutSettings.javaScripts[]" value="/humanresext/images/claim.js"/>
+				<entity-condition list="claims" entity-name="ClaimDetail"></entity-condition>
+			</actions>
+			<widgets>
+				<decorator-screen name="ClaimDecorator" location="${parameters.mainDecoratorLocation}">
+					<decorator-section name="body">
+						<screenlet id="AdminProcessClaimPanel" title="${uiLabelMap.AdminProcessClaim}" collapsible="true">
+                            <include-form name="AdminProcessClaimForm"
+									location="component://humanresext/widget/forms/ClaimsForms.xml" />
+                        </screenlet>						
+					</decorator-section>
+				</decorator-screen>
+			</widgets>
+		</section>
+	</screen>
+	
+	<screen name="ClaimLimitScreen">
+		<section>
+			<!--  <actions><entity-condition list="claimLimits" entity-name="ClaimLimit"></entity-condition></actions>-->
+			<actions>
+				<set field="tabButtonItem" value="ClaimLimit" />
+			</actions>
+			<widgets>
+				<decorator-screen name="ClaimDecorator" location="${parameters.mainDecoratorLocation}">
+					<decorator-section name="body">
+						<screenlet id="FindClaimLimitPanel" title="${uiLabelMap.FindClaimLimit}" collapsible="true">
+                            <include-form name="ClaimLimitSearchForm"
+									location="component://humanresext/widget/forms/ClaimsForms.xml" />
+                        </screenlet>
+                        	<include-form name="ClaimLimitForm"
+									location="component://humanresext/widget/forms/ClaimsForms.xml" />						
+					</decorator-section>
+				</decorator-screen>
+			</widgets>
+		</section>
+	</screen>
+	
+	<screen name="EditClaimLimitScreen">
+		<section>
+			<actions>
+				<set field="tabButtonItem" value="EditClaimLimit" />
+			</actions>		
+			<widgets>
+				<decorator-screen name="ClaimDecorator" location="${parameters.mainDecoratorLocation}">
+					<decorator-section name="body">
+						<screenlet id="EditClaimLimitPanel" title="${uiLabelMap.EditClaimLimit}" collapsible="true">
+                            <include-form name="EditClaimLimitForm"
+									location="component://humanresext/widget/forms/ClaimsForms.xml" />
+                        </screenlet>
+					</decorator-section>
+				</decorator-screen>
+			</widgets>
+		</section>
+	</screen>
+	
+	<!-- 
+	 <screen name="FindClaimScreen">
+		<section>
+			<widgets>
+				<decorator-screen name="ClaimDecorator" location="${parameters.mainDecoratorLocation}">
+					<decorator-section name="body">
+						<screenlet id="FindClaimPanel" title="${uiLabelMap.FindClaim}" collapsible="true">
+                            <include-form name="FindClaimForm"
+									location="component://humanresext/widget/forms/ClaimsForms.xml" />
+                        </screenlet>
+                        <include-form name="FindClaimResultsForm"
+									location="component://humanresext/widget/forms/ClaimsForms.xml" />	
+					</decorator-section>
+				</decorator-screen>
+			</widgets>
+		</section>
+	</screen>
+	   
+      
+    <screen name="ViewClaimScreen">
+		<section>
+			<widgets>
+				<decorator-screen name="ClaimDecorator" location="${parameters.mainDecoratorLocation}">
+					<decorator-section name="body">
+						<screenlet id="ViewClaimPanel" title="${uiLabelMap.ViewClaim}" collapsible="true">
+                            <include-form name="ViewClaimForm"
+									location="component://humanresext/widget/forms/ClaimsForms.xml" />
+                        </screenlet>
+                        <include-form name="ClaimDetailsForm"
+									location="component://humanresext/widget/forms/ClaimsForms.xml" />	
+					</decorator-section>
+				</decorator-screen>
+			</widgets>
+		</section>
+	</screen>
+	 -->
+	
+</screens>

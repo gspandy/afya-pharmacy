@@ -1,0 +1,18 @@
+<?init class="org.zkoss.zk.ui.util.Composition"
+arg0="/WEB-INF/layout/template.zul"?>
+
+<?component name="findbox" macroURI="macros/textfindMacro.zul"?>
+<?component name="finddatebox" macroURI="macros/datefindMacro.zul"?>
+<?component name="selectbox" macroURI="macros/findselectbox.zul"?>
+
+<zk>
+	<zscript>
+	import com.ndz.controller.*;
+	String[] values = new String[] { "Casual", "Earned" };
+	LeaveSummarySearchController controller = new LeaveSummarySearchController();
+</zscript>
+
+	<window self="@{define(content)}" title="Leave Management" apply="${controller}">
+
+	</window>
+</zk>

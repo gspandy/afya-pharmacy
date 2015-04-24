@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<site-conf xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="http://ofbiz.apache.org/dtds/site-conf.xsd">
+
+	<!-- Account Entry Requests -->
+	<request-map uri="MyAccounts">
+		<security https="true" auth="true" />
+		<response name="success" type="view" value="MyAccounts" />
+	</request-map>
+
+	<request-map uri="updateAccountForm">
+		<security https="true" auth="true" />
+		<response name="success" type="view" value="UpdateAccount" />
+	</request-map>
+
+	<request-map uri="updateAccount">
+		<security https="true" auth="true" />
+		<event type="service" invoke="sfaext.updateAccount" />
+		<response name="success" type="request-redirect" value="viewAccount">
+            <redirect-parameter name="partyId"/>
+		</response>
+	</request-map>
+
+	<request-map uri="FindAccounts">
+		<security https="true" auth="true" />
+		<response name="success" type="view" value="FindAccounts" />
+	</request-map>
+	<request-map uri="NewAccounts">
+		<security https="true" auth="true" />
+		<response name="success" type="view" value="NewAccounts" />
+	</request-map>
+
+	<request-map uri="viewAccount">
+		<security https="true" auth="true" />
+		<response name="success" type="view" value="ViewAccount" />
+	</request-map>
+
+	<request-map uri="createAccount">
+		<security https="true" auth="true" />
+		<event type="service" invoke="sfaext.createAccount" />
+		<response name="success" type="request-redirect" value="viewAccount">
+			<redirect-parameter name="partyId"/>
+		</response>
+		<response name="error" type="view" value="NewAccounts" />
+	</request-map>
+
+	<request-map uri="deactivateAccount">
+		<security https="true" auth="true" />
+		<event type="service" invoke="sfaext.deactivateAccount" />
+		<response name="success" type="request-redirect" value="viewAccount" />
+	</request-map>
+
+	<request-map uri="mergeAccountsForm">
+		<security https="true" auth="true" />
+		<response name="success" type="view" value="mergeAccountsForm" />
+	</request-map>
+	<request-map uri="confirmMergeAccountsForm">
+		<security https="true" auth="true" />
+		<event type="service" invoke="sfaext.validateMergeCrmParties" />
+		<response name="success" type="view" value="confirmMergeAccountsForm" />
+		<response name="error" type="request-redirect" value="mergeAccountsForm" />
+	</request-map>
+	<request-map uri="mergeAccounts">
+		<security https="true" auth="true" />
+		<event type="service" invoke="sfaext.mergeCrmParties" />
+		<response name="success" type="request-redirect" value="viewAccount" />
+		<response name="error" type="request-redirect" value="mergeAccountsForm" />
+	</request-map>
+	
+	<request-map uri="LookupAccounts">
+		<security https="true" auth="true" />
+		<response name="success" type="view" value="LookupAccounts" />
+	</request-map>
+
+	<request-map uri="reassignAccountResponsibleParty"> 
+        <security https="true" auth="true"/>
+        <event type="service" invoke="sfaext.reassignAccountResponsibleParty"/>
+        <response name="success" type="request-redirect" value="viewAccount"/>
+        <response name="error" type="view" value="ViewAccount"/>
+    </request-map>
+
+	<request-map uri="assignContactToAccount">
+		<security https="true" auth="true" />
+		<event type="service" invoke="sfaext.assignContactToAccount" />
+		<response name="success" type="request-redirect" value="viewAccount">
+			<redirect-parameter name="partyId"/>
+		</response>
+		<response name="error" type="view" value="ViewAccount"/>
+	</request-map>
+
+	<request-map uri="removeContactFromAccount">
+		<security https="true" auth="true" />
+		<event type="service" invoke="sfaext.removeContactFromAccount" />
+		<response name="success" type="request-redirect" value="viewAccount">
+			<redirect-parameter name="partyId"/>
+		</response>
+		<response name="error" type="view" value="ViewAccount"/>
+	</request-map>
+
+	<request-map uri="assignContactToAccount">
+		<security https="true" auth="true" />
+		<event type="service" invoke="sfaext.assignContactToAccount" />
+		<response name="success" type="request-redirect" value="viewAccount">
+			<redirect-parameter name="partyId"/>
+		</response>
+		<response name="error" type="view" value="ViewContact"/>
+	</request-map>
+
+	<view-map name="ViewAccount" type="screen"
+		page="component://sfaext/widget/AccountScreens.xml#ViewAccount" />
+	<view-map name="FindAccounts" type="screen"
+		page="component://sfaext/widget/AccountScreens.xml#FindAccounts" />
+	<view-map name="NewAccounts" type="screen"
+		page="component://sfaext/widget/AccountScreens.xml#createAccount" />
+	<view-map name="MyAccounts" type="screen"
+		page="component://sfaext/widget/AccountScreens.xml#MyAccounts" />
+	
+	<view-map name="UpdateAccount" type="screen"
+		page="component://sfaext/widget/AccountScreens.xml#updateAccountForm" />
+    
+    <view-map name="LookupAccounts" type="screen"
+		page="component://sfaext/widget/AccountScreens.xml#LookupAccounts" />
+	
+</site-conf>

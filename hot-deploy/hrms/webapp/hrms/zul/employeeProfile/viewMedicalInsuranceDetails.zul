@@ -1,0 +1,118 @@
+<?component name="profileField" macroURI="../macros/profileField.zul" id="profileMacro"?>
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<zk xmlns="http://www.zkoss.org/2005/zul"
+    xmlns:h="http://www.w3.org/1999/xhtml"
+    xmlns:w="http://www.zkoss.org/2005/zk/client"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:n="http://www.zkoss.org/2005/zk/native"
+    xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
+    <zscript>
+        <![CDATA[
+		    String employeeId = (String) Executions.getCurrent().getArg().get("partyId");
+			Toolbarbutton editMedicalInsuranceButton = (Toolbarbutton)Executions.getCurrent().getArg().get("medicalInsuranceBtn");
+			com.ndz.controller.EmployeePolicyDetailViewComposer employeeInsuranceDetailViewComposer = new com.ndz.controller.EmployeePolicyDetailViewComposer();
+			boolean isAdmin = (Boolean)Executions.getCurrent().getArg().get("isAdmin");
+		 ]]>
+    </zscript>
+    <window apply="${employeeInsuranceDetailViewComposer}">
+        <div align="center"
+             if="${employeeInsuranceDetailViewComposer.activePrimaryPolicyGv == null &amp;&amp; isAdmin}">
+            <label value="${c:l('HRMS_VMID_NO_ACTIVE_POLICY_EXISTS_FOR_EMP_MSG') }"
+                   style="font-weight: bold;color: red;align: center;margin-top: 5px"/>
+        </div>
+        <groupbox closable="false" forEach="${employeeInsuranceDetailViewComposer.employeePolicyDetailVos}">
+            <caption label="${c:l('HRMS_MemberId') }: ${each.memberId}"
+                     style="font-family:Verdana, Tahoma, Arial, Helvetica, sans-serif;font-weight:bold;font-size:10px;"/>
+            <toolbarbutton label="${c:l('HRMS_EDIT') }" image="/images/icon/update.png" style="font-weight:bold"
+                           id="${each.policyId}" visible="${isAdmin}"
+                           onClick="employeeInsuranceDetailViewComposer.openUpdateWindow(self.getId(),employeeId,editMedicalInsuranceButton)"/>
+            <toolbarbutton label="${c:l('HRMS_ADD_DEPENDENTS') }" image="/images/icon/update.png"
+                           visible="${each.validToHaveDependant &amp;&amp; isAdmin &amp;&amp; each.active}"
+                           onClick="employeeInsuranceDetailViewComposer.openDependantWindow(editMedicalInsuranceButton)"/>
+            <h:table CELLSPACING="20" width="100%">
+                <h:thead style="text-align:center">
+                    <label visible="${!each.active &amp;&amp;each.validToHaveDependant}" value="Policy got expired .Please extend/ add new policy detail"
+                           style="font-weight: bold;color: red;align: center;margin-top: 5px"/>
+                </h:thead>
+                <h:tr>
+                    <h:td width="16%" style="text-align:right">
+                        <label value="${c:l('HRMS_RELATONSHIP') } :" style="font-weight:bold"/>
+                    </h:td>
+                    <h:td style="text-align:left">
+                        <label style="font-weight:regular" value="${each.relationshipName}"/>
+                    </h:td>
+                    <h:td width="16%" style="text-align:right">
+                        <label value="${c:l('HRMS_MEMBER_NAME') } :" style="font-weight:bold"/>
+                    </h:td>
+                    <h:td style="text-align:left">
+                        <label style="font-weight:regular" value="${each.memberName}"/>
+
+                    </h:td>
+                    <h:td width="16%" style="text-align:right">
+                        <label value="${c:l('HRMS_AGE') } :" style="font-weight:bold"/>
+                    </h:td>
+                    <h:td style="text-align:left">
+                        <label style="font-weight:regular" value="${each.age}"/>
+                    </h:td>
+                </h:tr>
+                <h:tr>
+
+                    <h:td width="16%" style="text-align:right">
+                        <label value="${c:l('HRMS_Gender') } :" style="font-weight:bold"/>
+                    </h:td>
+                    <h:td style="text-align:left">
+                        <label style="font-weight:regular" value="${each.gender}"/>
+                    </h:td>
+                    <h:td width="16%" style="text-align:right">
+                        <label value="${c:l('HRMS_INSURANCE_ID') } :" style="font-weight:bold"/>
+                    </h:td>
+                    <h:td style="text-align:left">
+                        <label style="font-weight:regular" value="${each.insuranceId}"/>
+                    </h:td>
+                    <h:td width="16%" style="text-align:right">
+                        <label value="${c:l('HRMS_INSURANCE_COMPANY') } :" style="font-weight:bold"/>
+                    </h:td>
+                    <h:td style="text-align:left">
+                        <label style="font-weight:regular" value="${each.insuranceCompany}"/>
+                    </h:td>
+                </h:tr>
+                <h:tr>
+                    <h:td width="16%" style="text-align:right">
+                        <label value="${c:l('HRMS_PRIMARY_BENIFICIARY') } :" style="font-weight:bold"/>
+                    </h:td>
+                    <h:td style="text-align:left">
+                        <label style="font-weight:regular" value="${each.primaryBenificiary}"/>
+                    </h:td>
+                    <h:td width="16%" style="text-align:right">
+                        <label value="${c:l('HRMS_POLICY_NUMBER') } :" style="font-weight:bold"/>
+                    </h:td>
+                    <h:td style="text-align:left">
+                        <label style="font-weight:regular" value="${each.policyNumber}"/>
+                    </h:td>
+                    <h:td width="16%" style="text-align:right">
+                        <label value="${c:l('HRMS_POLICY_HOLDER') } :" style="font-weight:bold"/>
+                    </h:td>
+                    <h:td style="text-align:left">
+                        <label style="font-weight:regular" value="${each.policyHolder}"/>
+                    </h:td>
+                </h:tr>
+                <h:tr>
+                    <h:td width="16%" style="text-align:right">
+                        <label value="${c:l('HRMS_VALID_FROM') } :" style="font-weight:bold"/>
+                    </h:td>
+                    <h:td style="text-align:left">
+                        <label style="font-weight:regular" value="${each.validFrom}"/>
+                    </h:td>
+                    <h:td width="16%" style="text-align:right">
+                        <label value="${c:l('HRMS_VALID_THRU') } :" style="font-weight:bold"/>
+                    </h:td>
+                    <h:td style="text-align:left">
+                        <label style="font-weight:regular" value="${each.validThru}"/>
+                    </h:td>
+                </h:tr>
+
+            </h:table>
+        </groupbox>
+
+    </window>
+</zk>

@@ -1,0 +1,189 @@
+<?component name="positionTypebox" macroURI="../macros/textfindMacro.zul" id="macro2"?>
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<zk>
+	<zscript>
+		import org.ofbiz.entity.*;
+		import org.ofbiz.base.util.*;
+		import org.zkoss.*;
+		GenericValue  gv = (GenericValue)Executions.getCurrent().getArg().get("gv");
+		String interviewerId = (String)gv.getString("interviewerId");
+		String candidateId = (String)gv.getString("partyId");
+		GenericValue userLogin = (GenericValue) Executions.getCurrent()
+				.getDesktop().getSession().getAttribute("userLogin");
+		GenericDelegator delegator = userLogin.getDelegator();
+		List interviewPerformanceList = delegator.findByAnd("PerformanceNote",UtilMisc.toMap("interviewerId",interviewerId));
+		GenericValue  interviewPerformanceNoteGv = org.ofbiz.entity.util.EntityUtil.getFirst(interviewPerformanceList);
+		java.sql.Timestamp communicationDateType = (java.sql.Timestamp) interviewPerformanceNoteGv
+				.getTimestamp("communicationDate");
+		Date communicationDate =null;
+		if(communicationDateType!=null){ 
+		communicationDate=new Date(communicationDateType.getTime());
+		}
+		java.sql.Timestamp communicationTimeType = (java.sql.Timestamp) interviewPerformanceNoteGv
+				.getTimestamp("communicationTime");
+		Date communicationTime = null;
+		if(communicationTimeType!=null){
+		communicationTime=new Date(communicationTimeType.getTime());
+		}
+		String comment =null;
+		comment=(String) interviewPerformanceNoteGv.getString("comments");
+		Integer rating =0;
+		String ratingType = (String)interviewPerformanceNoteGv.getString("performanceRating");
+		rating = new Integer(ratingType);
+		java.sql.Timestamp scheduleDateType = (java.sql.Timestamp) performanceNoteGv
+				.getTimestamp("fromDate");
+		Date scheduleDate = new Date(scheduleDateType.getTime());
+		java.sql.Timestamp scheduleTimeType = (java.sql.Timestamp) performanceNoteGv
+				.getTimestamp("scheduleTime");
+		Date scheduleTime = new Date(scheduleTimeType.getTime());
+		List status = null;
+		status = delegator.findByAnd("StatusItem", UtilMisc.toMap("statusTypeId",
+				"PERF_NOTE_STATUS"));
+		status.add(0, null);
+		statusArray = status.toArray(new GenericValue[status.size()]);
+		SimpleListModel statusList = new SimpleListModel(statusArray);
+		Map map = Executions.getCurrent().getArg();
+		String statusId = (String) interviewPerformanceNoteGv.getString("statusId");
+		public class StatusItemRenderer implements ListitemRenderer {
+	
+			public StatusItemRenderer() {
+			}
+	
+			public void render(Listitem li, Object data) {
+				if (data instanceof GenericValue) {
+					GenericValue val = (GenericValue) data;
+					li.setLabel(val.getString("description"));
+					li.setValue(val.getString("statusId"));
+					if (statusId.equals(val.getString("statusId")))
+						li.setSelected(true);
+				}
+			}
+		}
+		ListitemRenderer statusItemRenderer = new StatusItemRenderer();
+	</zscript>
+	<window width="45%" height="70%" id="addPerformanceWindow"
+		title="${c:l('HumanResAddPerfNote') }" border="normal" closable="true"
+		contentStyle="overflow:auto" maximizable="true">
+		<separator height="30px" />
+		<textbox id="prospectRole" value="PROSPECT" visible="false" />
+		<hbox>
+			<div align="right" width="150px">
+				<label value="${c:l('HRMS_INTERVIEWEE_NAME') }"
+					style="font-weight:bold" />
+			</div>
+			<div align="left" width="130px">
+				<label id="candidateName" value="${intervieweeName}"/>
+			</div>
+		</hbox>
+		<textbox id="candidateId" visible="false" />
+		<textbox id="applicationId" visible="false" />
+		<separator />
+		<hbox>
+			<div align="right" width="150px">
+				<label value="${c:l('HRMS_SCHEDULED_DATE') }" style="font-weight:bold" />
+			</div>
+			<div align="left" width="130px">
+				<datebox id="fromDate" visible="true" readonly="true"
+					style="background:none;border:0px" buttonVisible="false" />
+			</div>
+		</hbox>
+		<separator />
+		<hbox>
+			<div align="right" width="150px">
+				<label value="${c:l('HRMS_SCHEDULED_TIME') }" style="font-weight:bold" />
+			</div>
+			<div align="left" width="130px">
+				<timebox id="scheduledDate"
+					style="background:none;border:0px" buttonVisible="false"
+					readonly="true" />
+			</div>
+		</hbox>
+		<separator />
+		<hbox visible="false">
+			<div align="right" width="150px">
+				<label value="${c:l('HRMS_STATUS') }" style="font-weight:bold" />
+			</div>
+			<div align="left" width="50px">
+				<label id="statusId" />
+			</div>
+		</hbox>
+		<separator />
+		<hbox>
+			<div align="right" width="150px">
+				<label value="${c:l('HRMS_STATUS') }" style="font-weight:bold" />
+			</div>
+			<div align="left" width="50px">
+				<listbox id="finalstatusId" mold="select"
+					model="${statusList}" itemRenderer="${statusItemRenderer}" />
+			</div>
+		</hbox>
+		<separator />
+		<hbox>
+			<div align="right" width="150px">
+				<label value="${c:l('HRMS_INTERVIEWER_ID') }" style="font-weight:bold" />
+			</div>
+			<div align="left">
+				<label id="interviewerId" />
+			</div>
+		</hbox>
+		<separator />
+		<hbox>
+			<div align="right" width="150px">
+				<label value="${c:l('HRMS_COMMUNICATION_DATE') }"
+					style="font-weight:bold" />
+				<label value="*" style="color:red"></label>
+			</div>
+			<div align="left" width="50px">
+				<datebox id="communicationDate"
+					constraint="no empty: ${c:l('HRMS_REQUIRED_COMMUNICATION_DATE') }" />
+			</div>
+		</hbox>
+		<separator />
+		<separator />
+		<hbox>
+			<div align="right" width="150px">
+				<label value="${c:l('HRMS_COMMUNICATION_TIME') }"
+					style="font-weight:bold" />
+				<label value="*" style="color:red"></label>
+			</div>
+			<div align="left" width="50px">
+				<datebox id="communicationTime"
+					constraint="no empty: ${c:l('HRMS_REQUIRED_COMMUNICATION_TIME') }" />
+			</div>
+		</hbox>
+		<separator />
+		<hbox>
+			<div align="right" width="150px">
+				<label value="${c:l('HumanResOverallRating') }" style="font-weight:bold" />
+				<label value="*" style="color:red"></label>
+
+			</div>
+			<div align="left" width="120px">
+				<spinner id="rating" buttonVisible="true"
+					constraint="no empty: ${c:l('HRMS_RATING_REQUIRED') }" />
+			</div>
+		</hbox>
+		<separator />
+		<hbox>
+			<div align="right" width="150px">
+				<label value="${c:l('HRMS_COMMENT') }" style="font-weight:bold" />
+				<label value="*" style="color:red"></label>
+
+			</div>
+			<div align="left" width="50px">
+				<textbox id="comment" multiline="true" cols="50"
+					rows="4" constraint="no empty: ${c:l('HRMS_REQUIRED_COMMENT') }" />
+			</div>
+		</hbox>
+		<separator />
+		<hbox>
+			<div align="right" width="270px">
+				<button label="${c:l('HRMS_ADD') }"
+					onClick="com.ndz.controller.EmployeeRequisitionController.addPerformanceNote(event);addPerformanceWindow.detach();" />
+				<button label="${c:l('HRMS_CANCEL') }"
+					onClick="addPerformanceWindow.detach();" />
+			</div>
+		</hbox>
+		<separator />
+	</window>
+</zk>

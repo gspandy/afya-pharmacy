@@ -1,0 +1,450 @@
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<?init class="org.zkoss.zkplus.databind.AnnotateDataBinderInit" arg0="./createPositionWindow"?>
+<zk xmlns="http://www.zkoss.org/2005/zul"
+    xmlns:h="http://www.w3.org/1999/xhtml"
+    xmlns:w="http://www.zkoss.org/2005/zk/client"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:n="http://www.zkoss.org/2005/zk/native"
+    xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
+	<zscript>
+	<![CDATA[
+	import org.ofbiz.entity.*;
+	import org.ofbiz.entity.condition.*;
+	import org.ofbiz.base.util.*;
+    import com.ndz.controller.*;
+	GenericValue userLogin = (GenericValue) Executions.getCurrent()
+			.getDesktop().getSession().getAttribute("userLogin");
+	GenericDelegator delegator = userLogin.getDelegator();
+	List departments = null;
+	try {
+		departments = delegator.findList("DepartmentPosition",null,null,null,null,false);
+	} catch (GenericEntityException e) {
+	}
+	List positionTypeList = delegator.findList("EmplPositionType",null,null,null,null,false);
+	positionTypeList.add(0, null);
+	positionTypeArray = positionTypeList
+			.toArray(new GenericValue[positionTypeList.size()]);
+	SimpleListModel positionTypeModel = new SimpleListModel(positionTypeArray);
+	List positionstatusList = delegator.findByAnd("StatusItem",
+			UtilMisc.toMap("statusTypeId", "EMPL_POSITION_STATUS"));
+	positionstatusList.add(0, null);
+	statusArray = positionstatusList
+			.toArray(new GenericValue[positionstatusList.size()]);
+	SimpleListModel statusModel = new SimpleListModel(statusArray);
+
+	public class PositionTypeItemRenderer implements ListitemRenderer {
+
+		public PositionTypeItemRenderer() {
+		}
+
+		public void render(Listitem li, Object data) {
+			if (data instanceof GenericValue) {
+				GenericValue val = (GenericValue) data;
+				li.setLabel(val.getString("description"));
+				li.setValue(val.getString("emplPositionTypeId"));
+			}
+		}
+	}
+
+        public class DivisionItemRenderer implements ComboitemRenderer {
+
+            public DivisionItemRenderer() {
+            }
+
+            public void render(Comboitem li, Object data) {
+                java.util.Map val = (java.util.Map) data;
+                li.setLabel(val.get("divisionName"));
+                li.setValue(val.get("divisionId"));
+            }
+        }
+    ComboitemRenderer divisionComboItemRenderer = new DivisionItemRenderer();
+	ListitemRenderer positionTypeItemRenderer = new PositionTypeItemRenderer();
+	public class StatusItemRenderer implements ListitemRenderer {
+
+		public StatusItemRenderer() {
+		}
+
+		public void render(Listitem li, Object data) {
+			if (data instanceof GenericValue) {
+				GenericValue val = (GenericValue) data;
+				li.setLabel(val.getString("description"));
+				li.setValue(val.getString("statusId"));
+
+			}
+
+		}
+	}
+	ListitemRenderer statusItemRenderer = new StatusItemRenderer();
+	com.ndz.zkoss.GenericValueRenderer listItemRenderer = new com.ndz.zkoss.GenericValueRenderer(new String[] { "budgetId", "budgetTypeId" });
+	Set fieldToSelect = new HashSet();
+	fieldToSelect.add("responsibilityTypeId");
+	fieldToSelect.add("description");
+	List employeeResponsibility = null;
+	employeeResponsibility = delegator.findList("ResponsibilityType", null,
+			fieldToSelect, null, null, false);
+	employeeResponsibilityArray = employeeResponsibility
+			.toArray(new GenericValue[employeeResponsibility.size()]);
+	SimpleListModel responsibilityList = new SimpleListModel(
+			employeeResponsibilityArray);
+	public class ResponsibilityItemRenderer implements ListitemRenderer {
+
+		public ResponsibilityItemRenderer() {
+		}
+
+		public void render(Listitem li, Object data) {
+			if (data instanceof GenericValue) {
+				GenericValue val = (GenericValue) data;
+				li.setLabel(val.getString("description"));
+				li.setValue(val.getString("responsibilityTypeId"));
+			}
+		}
+	}
+	ListitemRenderer responsibilityItemRenderer = new ResponsibilityItemRenderer();
+
+
+        EmployeeManagementController employeeManagementController = new EmployeeManagementController();
+   ]]>
+</zscript>
+	<window id="createPositionWindow" width="60%" height="90%"
+		position="center" closable="true" border="normal"
+		contentStyle="overflow:auto" apply="${employeeManagementController}">
+		<caption label="Create Position" />
+		<separator height="10px" />
+		<hbox>
+			<div align="right" width="165px">
+				<label value="Department" style="font-weight:bold" />
+				<label value="*" style="color:red" />
+			</div>
+
+			<div width="300px" align="left">
+				<combobox readonly="true" id="partyId" onSelect="employeeManagementController.setDivisionsForADepartment(self.getSelectedItem())">
+					<comboitem forEach="${departments}" label='${each.departmentName}' description="${each.departmentId}"
+						value="${each.departmentId}">
+						<attribute name="onCreate">
+						  GenericValue depPos = delegator.findByPrimaryKey("DepartmentPosition",UtilMisc.toMap("departmentId",self.getValue()));
+						  GenericValue loc = delegator.findByPrimaryKey("Location",UtilMisc.toMap("locationId",depPos.getString("locationId")));
+                            if(loc!=null)
+						  self.setDescription(loc.getString("locationName"));
+						</attribute>
+					</comboitem>
+				</combobox>
+			</div>
+		</hbox>
+		<separator />
+        <hbox>
+            <div align="right" width="165px">
+                <label value="Division" style="font-weight:bold" />
+                <label value="*" style="color:red" />
+            </div>
+
+            <div width="300px" align="left">
+                <combobox readonly="true" constraint="no empty:Division required"  model="@{employeeManagementController.divisionsForADepartment,load-after='partyId.onSelect'}" id="divisionId" itemRenderer="${divisionComboItemRenderer}"/>
+
+            </div>
+        </hbox>
+        <separator />
+		<hbox>
+
+			<div align="right" width="165px">
+				<label value="Position Type" style="font-weight:bold" />
+				<label value="*" style="color:red" />
+			</div>
+			<div align="left">
+				<listbox id="emplPositionTypeId" mold="select"
+					model="${positionTypeModel}"
+					itemRenderer="${positionTypeItemRenderer}"
+					onSelect="Clients.closeErrorBox(self)" />
+
+			</div>
+		</hbox>
+		<separator />
+		<hbox>
+			<div align="right" width="165px">
+				<label value="Position Responsibility"
+					style="font-weight:bold" />
+				<label value="*" style="color:red" />
+			</div>
+			<div align="left" width="450px">
+				<paging id="responsibilityPaging" pageSize="5"
+					pageIncrement="1" />
+				<listbox id="responsibilityTypeId" mold="paging"
+					itemRenderer="${responsibilityItemRenderer}"
+					model="${responsibilityList}"
+					onSelect="Clients.closeErrorBox(self)" checkmark="true"
+					multiple="true" pagingPosition="top"
+					paginal="${responsibilityPaging}" />
+			</div>
+		</hbox>
+		<separator />
+		<hbox>
+			<div align="right" width="165px">
+				<label value="Position Status" style="font-weight:bold" />
+				<label style="color:red" value="*" />
+			</div>
+			<div align="left">
+				<listbox id="statusId" mold="select"
+					model="${statusModel}" itemRenderer="${statusItemRenderer}"
+					onSelect="Clients.closeErrorBox(self)">
+				</listbox>
+			</div>
+		</hbox>
+		<separator />
+		<hbox>
+			<div align="right" width="165px">
+				<label value="Estimated From Date"
+					style="font-weight:bold" />
+				<label value="*" style="color:red" />
+			</div>
+			<div align="left">
+				<datebox id="estimatedFromDate"
+					constraint="no empty:Estimated From Date Required" />
+			</div>
+			<div align="right" width="180px">
+				<label value="Estimated Thru Date"
+					style="font-weight:bold" />
+			</div>
+			<div align="left" width="130px">
+				<datebox id="estimatedThruDate" />
+			</div>
+		</hbox>
+		<separator />
+		<hbox>
+			<div align="right" width="165px">
+				<label value="Actual From Date"
+					style="font-weight:bold" />
+			</div>
+			<div align="left">
+				<datebox id="actualFromDate" />
+			</div>
+			<div align="right" width="180px">
+				<label value="Actual Thru Date"
+					style="font-weight:bold" />
+			</div>
+			<div align="left" width="130px">
+				<datebox id="actualThruDate" />
+			</div>
+		</hbox>
+		<separator />
+		<hbox visible="false">
+			<div align="right" width="165px">
+				<label value="Budget Id" style="font-weight:bold" />
+			</div>
+			<div align="left">
+				<bandbox id="budgetId">
+					<bandpopup>
+						<paging id="budgetPaging" width="425px"
+							pageSize="10" pageIncrement="1" />
+						<listbox id="budgetListbox" width="425px"
+							onSelect="budgetId.value=self.selectedItem.label; budgetId.close();"
+							itemRenderer="${listItemRenderer}" mold="paging"
+							paginal="${budgetPaging}">
+							<listhead>
+								<listheader label="Budget Id"
+									style="font-weight:bold" />
+								<listheader label="Budget Type Id"
+									style="font-weight:bold" />
+							</listhead>
+						</listbox>
+					</bandpopup>
+				</bandbox>
+				<zscript>
+				<![CDATA[
+	import org.ofbiz.entity.*;
+	import org.zkoss.zul.*;
+	GenericDelegator delegator = com.ndz.zkoss.util.HrmsInfrastructure.getDelegator();//GenericDelegator.getGenericDelegator("default");
+	Set fieldToSelect = new HashSet();
+	fieldToSelect.add("budgetTypeId");
+	fieldToSelect.add("budgetId");
+	List budgetList = null;
+	budgetList = delegator.findList("Budget", null, fieldToSelect, null, null,
+			false);
+	budgetArray = budgetList.toArray(new GenericValue[budgetList.size()]);
+	SimpleListModel budgetModel = new SimpleListModel(budgetArray);
+	Listbox budgetLstbox = (Listbox) createPositionWindow
+			.getFellow("budgetListbox");
+	budgetLstbox.setModel(budgetModel);
+	com.ndz.zkoss.GenericValueRenderer budgetItemRenderer = new com.ndz.zkoss.GenericValueRenderer(
+			new String[] { "budgetItemSeqId", "budgetItemTypeId", "amount" });
+]]>
+				</zscript>
+			</div>
+
+			<div align="right">
+				<label value="Budget Item Seq Id"
+					style="font-weight:bold" />
+			</div>
+			<div align="left">
+				<bandbox id="budgetItemSeqId">
+					<bandpopup>
+						<paging id="budgetItemPaging" width="425px"
+							pageSize="10" pageIncrement="1" />
+						<listbox id="budgetItemListbox" width="425px"
+							onSelect="budgetItemSeqId.value=self.selectedItem.label; budgetItemSeqId.close();"
+							itemRenderer="${budgetItemRenderer}" mold="paging"
+							paginal="${budgetItemPaging}">
+							<listhead>
+								<listheader label="Budget Item Seq Id"
+									style="font-weight:bold" />
+								<listheader label="Budget Item Type Id"
+									style="font-weight:bold" />
+								<listheader label="Amount"
+									style="font-weight:bold" />
+							</listhead>
+						</listbox>
+					</bandpopup>
+				</bandbox>
+			</div>
+			<zscript>
+				<![CDATA[
+	import org.ofbiz.entity.*;
+	import org.zkoss.zul.*;
+	GenericDelegator delegator1 = com.ndz.zkoss.util.HrmsInfrastructure.getDelegator();//GenericDelegator.getGenericDelegator("default");
+	Set budgetItemSelect = new HashSet();
+	budgetItemSelect.add("budgetItemTypeId");
+	budgetItemSelect.add("budgetItemSeqId");
+	budgetItemSelect.add("amount");
+	List budgetItemList = null;
+	budgetItemList = delegator1.findList("BudgetItem", null, budgetItemSelect,
+			null, null, false);
+	budgetItemArray = budgetItemList.toArray(new GenericValue[budgetItemList
+			.size()]);
+	SimpleListModel budgetItemModel = new SimpleListModel(budgetItemArray);
+	Listbox budgetItemLstbox = (Listbox) createPositionWindow
+			.getFellow("budgetItemListbox");
+	budgetItemLstbox.setModel(budgetItemModel);
+]]>
+				</zscript>
+		</hbox>
+		<separator />
+		<hbox>
+			<div align="right" width="165px">
+				<label value="Salary Flag" style="font-weight:bold" />
+			</div>
+			<div align="left" width="130px">
+				<listbox id="salaryFlag" mold="select">
+					<listitem label="Yes" value="Y" selected="true"></listitem>
+					<listitem label="No" value="N"></listitem>
+				</listbox>
+			</div>
+			<div align="right">
+				<label value="Exempt Flag" style="font-weight:bold" />
+			</div>
+			<div align="right" width="65px">
+				<listbox id="exemptFlag" mold="select">
+					<listitem label="Yes" value="Y"></listitem>
+					<listitem label="No" value="N" selected="true"></listitem>
+				</listbox>
+			</div>
+		</hbox>
+		<separator />
+		<hbox>
+			<div align="right" width="165px">
+				<label value="Fulltime Flag" style="font-weight:bold" />
+			</div>
+			<div align="left">
+				<listbox id="fullTimeFlag" mold="select">
+					<listitem label="Yes" value="Y" selected="true"></listitem>
+					<listitem label="No" value="N"></listitem>
+				</listbox>
+			</div>
+			<div align="right" width="180px">
+				<label value="Temporary Flag" style="font-weight:bold" />
+			</div>
+			<div align="left">
+				<listbox id="temporaryFlag" mold="select">
+					<listitem label="Yes" value="Y"></listitem>
+					<listitem label="No" value="N" selected="true"></listitem>
+				</listbox>
+			</div>
+		</hbox>
+		<separator />
+		<hbox>
+			<div align="right" width="165px">
+				<label value="Additional Responsibility"
+					style="font-weight:bold">
+				</label>
+			</div>
+			<div align="left">
+				<textbox id="responsibilitySubType" rows="4"
+					cols="50">
+				</textbox>
+			</div>
+		</hbox>
+		<separator />
+		<zscript>
+		<![CDATA[
+	void validateForm() {
+		if (UtilValidate.isEmpty(partyId.getValue())) {
+			throw new WrongValueException(partyId, "Department Name Required");
+		}
+		
+		if (emplPositionTypeId.getSelectedItem() == null) {
+			throw new WrongValueException(emplPositionTypeId,
+					"Position Type Required");
+		}
+		if (emplPositionTypeId.getSelectedItem() != null) {
+			String emplPosId = (String) emplPositionTypeId.getSelectedItem()
+					.getLabel();
+			if (emplPosId.equals("")) {
+				throw new WrongValueException(emplPositionTypeId,
+						"Position Type Required");
+			}
+		}
+		if (responsibilityTypeId.getSelectedItem() == null) {
+			throw new WrongValueException(responsibilityTypeId,
+					"Position Responsibility Required");
+		}
+
+		if (statusId.getSelectedItem() == null||org.apache.commons.lang.StringUtils.isEmpty((String)statusId.getSelectedItem().getValue())) {
+			throw new WrongValueException(statusId, "Position Status Required");
+		}
+
+		if (statusId.getSelectedItem().getValue().equals("EMPL_POS_FULFILLED")) {
+			throw new WrongValueException(statusId,
+					"You can't create the Position with Status as Fulfilled");
+			//createPositionButton.setDisable(true);
+
+		}
+		if (statusId.getSelectedItem() != null) {
+			String statusStr = (String) statusId.getSelectedItem().getLabel();
+			if (statusStr.equals("")) {
+				throw new WrongValueException(statusId,
+						"Position Status Required");
+			}
+
+		}
+		estimatedFromDate.getValue();
+		if (estimatedThruDate.getValue() != null) {
+			if (com.ndz.zkoss.HrmsUtil.dateCompare(
+					estimatedFromDate.getValue(), estimatedThruDate.getValue()) == 1) {
+				throw new WrongValueException(estimatedThruDate,
+						"Estimated Thru Date Must Be Greater Than Or Equal To Estimated From Date");
+			}
+		}
+		if (actualThruDate.getValue() != null) {
+			if (actualFromDate.getValue() == null) {
+				throw new WrongValueException(actualFromDate,
+						"Actual From Date Required");
+			}
+			if (com.ndz.zkoss.HrmsUtil.dateCompare(actualFromDate.getValue(),
+					actualThruDate.getValue()) == 1) {
+				throw new WrongValueException(actualThruDate,
+						"Actual Thru Date Must Be Greater Than Or Equal To Actual From Date");
+			}
+		}
+	}
+]]>
+		</zscript>
+		<hbox>
+			<div align="right" width="300px">
+				<button id="createPositionButton" label="Save"
+					onClick='Component componentPath = Path.getComponent("/searchPanel//searchPerCompany");
+						validateForm();com.ndz.controller.EmployeeManagementController.createPosition(event);if(componentPath != null)
+						Events.postEvent("onClick", componentPath, null);createPositionWindow.detach();' />
+				<button id="CancelButton"
+					label="${c:l('ButtonCancel') }"
+					onClick="createPositionWindow.detach()" />
+			</div>
+		</hbox>
+	</window>
+</zk>

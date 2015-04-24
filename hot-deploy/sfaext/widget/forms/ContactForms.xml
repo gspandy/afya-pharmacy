@@ -1,0 +1,388 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+Licensed to the Apache Software Foundation (ASF) under one
+or more contributor license agreements.  See the NOTICE file
+distributed with this work for additional information
+regarding copyright ownership.  The ASF licenses this file
+to you under the Apache License, Version 2.0 (the
+"License"); you may not use this file except in compliance
+with the License.  You may obtain a copy of the License at
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing,
+software distributed under the License is distributed on an
+"AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+KIND, either express or implied.  See the License for the
+specific language governing permissions and limitations
+under the License.
+-->
+
+<forms xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+        xsi:noNamespaceSchemaLocation="http://ofbiz.apache.org/dtds/widget-form.xsd">
+    
+    <form name="ListContacts" type="list" list-name="partyList" list-entry-name="partyRow" paginate-target="FindContact"
+        odd-row-style="alternate-row" default-table-style="basic-table hover-bar" separate-columns="true">
+        <row-actions>
+            <entity-one entity-name="Person" value-field="person">
+                <field-map field-name="partyId" from-field="partyRow.partyId"/>
+            </entity-one>
+            <entity-one entity-name="PartyType" value-field="partyType">
+                <field-map field-name="partyTypeId" from-field="partyRow.partyTypeId"/>
+            </entity-one>
+        </row-actions>
+        <field name="partyId" title="${uiLabelMap.PartyPartyId}">
+            <hyperlink target="viewprofile?partyId=${partyRow.partyId}" description="${partyRow.partyId}"/>
+        </field>
+        <field name="partyName" title="${uiLabelMap.PartyName}"><display description="${person.lastName}, ${person.firstName}"/></field>
+        <field name="export">
+            <hyperlink target="createVCardFromContact?partyId=${partyRow.partyId}" description="${uiLabelMap.SfaVCard}"/>
+        </field>
+    </form>
+    
+     <form name="createContactForm" type="single" target="createContact" title="" 
+        default-title-style="tableheadtext" default-widget-style="inputbox" default-tooltip-style="tabletext">
+        <field name="firstName" title="${uiLabelMap.PartyFirstName}" position="1" title-style="requiredField" required-field="true"><text size="30" maxlength="100"/></field>
+        <field name="lastName" title="${uiLabelMap.PartyLastName}" position="2" title-style="requiredField" required-field="true"><text size="30" maxlength="100"/></field>
+        <field name="firstNameLocal" title="${uiLabelMap.CrmFirstNameLocal}" position="1"><text size="30" maxlength="100"/></field>
+        <field name="lastNameLocal" title="${uiLabelMap.CrmLastNameLocal}" position="2"><text size="30" maxlength="100"/></field>
+        <field name="personalTitle" title="${uiLabelMap.CrmSalutation}" position="1"><text size="30" maxlength="100"/></field>
+        <field name="birthDate" title="${uiLabelMap.PartyBirthDate}" position="2"><date-time type="date"/></field>
+        <field name="generalProfTitle" title="${uiLabelMap.CrmTitle}" position="1"><text size="30" maxlength="100"/></field>
+        <field name="departmentName" title="${uiLabelMap.CrmDepartment}" position="2"><text size="30" maxlength="100"/></field>
+        <field name="accountPartyId" title="${uiLabelMap.CrmInitialAccount}" position="1">
+            <lookup target-form-name="LookupAccounts" size="20" maxlength="20"/>
+        </field>
+        <field name="preferredCurrencyUomId" title="${uiLabelMap.CrmPreferredCurrency}" position="2">
+            <drop-down allow-empty="true" current="selected" no-current-selected-key="${configProperties.defaultCurrencyUomId}">
+                <entity-options description="${uomId} - ${description}" entity-name="Uom" key-field-name="uomId">
+                    <entity-constraint name="uomTypeId" operator="equals" value="CURRENCY_MEASURE"/>
+                    <entity-order-by field-name="description"/>
+                </entity-options>
+            </drop-down>
+        </field>
+        <field name="industryEnumId" title="${uiLabelMap.SfaExtIndustry}" position="1">
+            <drop-down allow-empty="true">
+                 <entity-options description="${description}" entity-name="Enumeration" key-field-name="enumId">
+                 	<entity-constraint name="enumTypeId" operator="equals" value="PARTY_INDUSTRY"/>
+                    <entity-order-by field-name="description"/>
+               </entity-options>
+            </drop-down>
+        </field>
+        <field name="marketingCampaignId" title="${uiLabelMap.CrmMarketingCampaign}" position="2">
+            <drop-down allow-empty="true">
+                <entity-options description="${campaignName}" entity-name="MarketingCampaign" key-field-name="marketingCampaignId">
+                </entity-options>
+            </drop-down>
+        </field>
+        <field name="description" title="${uiLabelMap.CommonDescription}" position="1"><textarea/></field>
+        <field name="importantNote" title="${uiLabelMap.CrmImportantNote}" position="2"><textarea/></field>
+        <!-- <field name=" " widget-area-style="formSectionHeader" widget-style="formSectionHeaderTitle"><display description="${uiLabelMap.PartyContactInformation}"/> </field> -->
+        <field name="contactInformationTitle" title="${uiLabelMap.PartyContactInformation}" title-area-style="group-label-12"><display/></field>
+        <field name="primaryPhoneCountryCode" title="${uiLabelMap.PartyCountryCode}" position="1"><text size="6" maxlength="10" default-value="${configProperties.defaultCountryCode}"/></field>
+        <field name="primaryPhoneAreaCode" title="${uiLabelMap.PartyAreaCode}" position="2"><text size="6" maxlength="10"/></field>
+        <field name="primaryPhoneNumber" title="${uiLabelMap.PartyPhoneNumber}" position="1"><text size="10" maxlength="20"/></field>
+        <field name="primaryPhoneExtension" title="${uiLabelMap.PartyExtension}" position="2"><text size="10" maxlength="20"/></field>
+        <field name="primaryPhoneAskForName" title="${uiLabelMap.CrmPhoneAskForName}" position="1"><text size="30" maxlength="60"/></field>
+        <field name="primaryEmail" title="${uiLabelMap.PartyEmailAddress}" position="2"><text size="50" maxlength="60"/></field>
+        <!-- general correspondence postal address -->
+        <!-- <field name="" widget-area-style="formSectionHeader" widget-style="formSectionHeaderTitle"><display description="${uiLabelMap.CrmPrimaryAddress}"/> </field> -->
+        <field name="primaryAddressTitle" title="${uiLabelMap.CrmPrimaryAddress}" title-area-style="group-label-12"><display/></field>
+        <field name="generalToName" title="${uiLabelMap.PartyToName}" position="1"><text size="30" maxlength="100"/></field>
+        <field name="generalAttnName" title="${uiLabelMap.PartyAttentionName}" position="2"><text size="30" maxlength="100"/></field>
+        <field name="generalAddress1" title="${uiLabelMap.PartyAddressLine1}" position="1"><text size="30" maxlength="100"/></field>
+        <field name="generalAddress2" title="${uiLabelMap.PartyAddressLine2}" position="2"><text size="30" maxlength="100"/></field>
+        <field name="generalCountryGeoId" title="${uiLabelMap.CommonCountry}" position="1">
+             <drop-down allow-empty="false" no-current-selected-key="${defaultCountryGeoId}">
+                <entity-options entity-name="Geo" key-field-name="geoId" description="${geoName}">
+                    <entity-constraint name="geoTypeId" value="COUNTRY"/>
+                    <entity-order-by field-name="geoName"/>
+                </entity-options>
+            </drop-down>  
+        </field>
+        <field name="generalStateProvinceGeoId" position="2" title="${uiLabelMap.CommonState}">
+            <drop-down allow-empty="true">
+                <entity-options entity-name="Geo" key-field-name="geoId" description="${geoId} - ${geoName}">
+                    <entity-constraint name="geoTypeId" operator="in" value="STATE,PROVINCE"/>
+                    <entity-order-by field-name="geoId"/>
+                </entity-options>
+            </drop-down>
+        </field>
+        <!-- <field name="generalCountryGeoId" title="${uiLabelMap.CommonCountry}" position="1" event="onChange" action="opentaps.swapStatesInDropdown(this,'generalStateProvinceGeoId')">
+            <drop-down allow-empty="true" current="selected" no-current-selected-key="${configProperties.defaultCountryGeoId}">
+                <entity-options description="${geoName}" entity-name="Geo" key-field-name="geoId">
+                    <entity-constraint name="geoTypeId" operator="equals" value="COUNTRY"/>
+                    <entity-order-by field-name="geoName"/>
+                </entity-options>
+            </drop-down>
+        </field>
+        <field name="generalStateProvinceGeoId" title="${uiLabelMap.PartyState}" position="2">
+            <drop-down allow-empty="true" current="selected" no-current-selected-key="${configProperties.defaultCountryGeoId}">
+                <entity-options description="${geoName}" entity-name="GeoAssocAndGeoTo" key-field-name="geoId">
+                    <entity-constraint name="geoAssocTypeId" operator="equals" value="REGIONS"/>
+                    <entity-constraint name="geoIdFrom" operator="equals" value="${configProperties.defaultCountryGeoId}"/>                    
+                </entity-options>
+            </drop-down>
+        </field> -->
+        <field name="generalCity" title="${uiLabelMap.PartyCity}" position="1"><text size="30" maxlength="100"/></field>
+        <field name="generalPostalCode" title="${uiLabelMap.PartyZipCode}" position="2"><text size="30" maxlength="100"/></field>
+        <field name="generalPostalCodeExt" title="${uiLabelMap.CrmPostalCodeExt}" position="1"><text size="10" maxlength="100"/></field>
+
+        <field name="submitButton" title="${uiLabelMap.CrmCreateContact}" widget-style="btn btn-success"><submit button-type="button"/></field>
+    </form>
+    
+   <form name="updateContactForm" type="single" target="updateContact" title="" default-map-name="partySummary" 
+        default-title-style="tableheadtext" default-widget-style="inputbox" default-tooltip-style="tabletext">
+        <field name="partyId"><hidden/></field>
+        <field name="firstName" title="${uiLabelMap.PartyFirstName}" position="1" title-style="requiredField"><text size="30" maxlength="100"/></field>
+        <field name="lastName" title="${uiLabelMap.PartyLastName}" position="2" title-style="requiredField"><text size="30" maxlength="100"/></field>
+        <field name="firstNameLocal" title="${uiLabelMap.CrmFirstNameLocal}" position="1"><text size="30" maxlength="100"/></field>
+        <field name="lastNameLocal" title="${uiLabelMap.CrmLastNameLocal}" position="2"><text size="30" maxlength="100"/></field>
+        <field name="personalTitle" title="${uiLabelMap.CrmSalutation}" position="1"><text size="30" maxlength="100"/></field>
+        <field name="birthDate" title="${uiLabelMap.PartyBirthDate}" position="2"><date-time type="date"/></field>
+        <field name="generalProfTitle" title="${uiLabelMap.CrmTitle}" position="1"><text size="30" maxlength="100"/></field>
+        <field name="departmentName" title="${uiLabelMap.CrmDepartment}" position="2"><text size="30" maxlength="100"/></field>
+        <!-- <field name="accountPartyId" title="${uiLabelMap.CrmInitialAccount}" position="1">
+            <lookup target-form-name="LookupAccounts" size="20" maxlength="20"/>
+        </field> -->
+        <field name="preferredCurrencyUomId" title="${uiLabelMap.CrmPreferredCurrency}" position="1">
+            <drop-down allow-empty="true" current="selected" no-current-selected-key="${configProperties.defaultCurrencyUomId}">
+                <entity-options description="${uomId} - ${description}" entity-name="Uom" key-field-name="uomId">
+                    <entity-constraint name="uomTypeId" operator="equals" value="CURRENCY_MEASURE"/>
+                    <entity-order-by field-name="description"/>
+                </entity-options>
+            </drop-down>
+        </field>
+        <!-- <field name="industryEnumId" title="${uiLabelMap.SfaExtIndustry}" position="1">
+            <drop-down allow-empty="true">
+                 <entity-options description="${description}" entity-name="Enumeration" key-field-name="enumId">
+                     <entity-constraint name="enumTypeId" operator="equals" value="PARTY_INDUSTRY"/>
+                    <entity-order-by field-name="description"/>
+               </entity-options>
+            </drop-down>
+        </field> -->
+        <field name="description" title="${uiLabelMap.CommonDescription}" position="1"><textarea/></field>
+        <field name="importantNote" title="${uiLabelMap.CrmImportantNote}" position="2"><textarea/></field>
+        <field name="submitButton" title="${uiLabelMap.CrmUpdateContact}" widget-style="btn btn-success"><submit button-type="button"/></field>
+
+   </form>
+   
+    <form name="MergeContacts" type="single"  target="confirmMergeContacts">
+        <actions>
+            <set field="roleTypeId" value="CONTACT"/>
+            <set field="partyTypeId" value="PERSON"/>
+            <set field="lookupFlag" value="Y"/>
+            <service service-name="findParty" auto-field-map="true"/>
+        </actions>
+        <field name="partyIdTo" title="${uiLabelMap.CrmToContact}" position="1">
+          	<lookup target-form-name="LookupSfaContact"></lookup>
+        </field>
+        <field name="partyIdFrom" title="${uiLabelMap.CrmFromContact}" position="2">
+            <lookup target-form-name="LookupSfaContact"></lookup>
+        </field>
+        <field name="submitButton" position="3" title="${uiLabelMap.SfaMergeContacts}" widget-style="buttontext" tooltip-style="button-text"><submit button-type="text-link"/></field>
+    </form>
+    
+    
+     <form name="ConfirmMergeContacts" type="single"  target="mergeContacts">
+        <actions>
+            <set field="roleTypeId" value="CONTACT"/>
+            <set field="partyTypeId" value="PERSON"/>
+            <set field="lookupFlag" value="Y"/>
+            <set field="partyId" from-field="parameters.partyIdTo"/>
+            <service service-name="findParty" auto-field-map="true"/>
+        </actions>
+        <field name="partyIdTo" title="${uiLabelMap.CrmToContact}" position="1">
+          	<lookup target-form-name="LookupSfaContact"></lookup>
+        </field>
+        <field name="partyId" title="${uiLabelMap.CrmToContact}" position="1">
+          	<hidden/>
+        </field>
+        <field name="partyIdFrom" title="${uiLabelMap.CrmFromContact}" position="1">
+            <lookup target-form-name="LookupSfaContact"></lookup>
+        </field>
+        <field name="submitButton" position="1" title="${uiLabelMap.SfaMergeContacts}" widget-style="buttontext" tooltip-style="button-text"><submit button-type="text-link"/></field>
+    </form>
+    
+    <form name="CreateContactFromVCard" type="upload" target="createContactFromVCard" header-row-style="header-row" default-table-style="basic-table">
+        <field name="infile" title="${uiLabelMap.SfaUploadVCard}"><file/></field>
+        <field name="serviceName"><hidden value="createContact"/></field>
+        <field name="submitButton" title="${uiLabelMap.CommonUpload}" widget-style="btn btn-success"><submit button-type="button"/></field>
+    </form>
+  
+    <form name="QuickAddContact" type="single" target="quickAddContact">
+        <field name="firstName"  title="${uiLabelMap.CommonFirst} ${uiLabelMap.CommonName}*" widget-style="required"><text size="15"/></field>
+        <field name="lastName" title="${uiLabelMap.CommonLast} ${uiLabelMap.CommonName}*" widget-style="required"><text size="15"/></field>
+        <field name="emailAddress" title="${uiLabelMap.CommonEmail}"><text size="15"/></field>
+        <field name="quickAdd"><hidden value="Y"/></field>
+        <field name="submitButton"><submit/></field>
+    </form>  
+
+	<form name="ViewContactForm" type="single" target="" default-map-name="partySummary">
+		<field name="firstName" title="${uiLabelMap.PartyFirstName}" position="1" title-style="requiredField"><display/></field>
+        <field name="lastName" title="${uiLabelMap.PartyLastName}" position="2" title-style="requiredField"><display/></field>
+        <field name="firstNameLocal" title="${uiLabelMap.CrmFirstNameLocal}" position="1"><display/></field>
+        <field name="lastNameLocal" title="${uiLabelMap.CrmLastNameLocal}" position="2"><display/></field>
+        <field name="personalTitle" title="${uiLabelMap.CrmSalutation}" position="1"><display/></field>
+        <field name="birthDate" title="${uiLabelMap.PartyBirthDate}" position="2"><display/></field>
+        <field name="generalProfTitle" title="${uiLabelMap.CrmTitle}" position="1"><display/></field>
+        <field name="departmentName" title="${uiLabelMap.CrmDepartment}" position="2"><display/></field>
+        <field name="preferredCurrencyUomId" title="${uiLabelMap.CrmPreferredCurrency}" position="1">
+           <display/>
+        </field>
+        <!-- <field name="accountPartyId" title="${uiLabelMap.CrmInitialAccount}" position="1">
+            <display/>
+        </field> -->
+        <field name="description" title="${uiLabelMap.CommonDescription}" position="2"><display/></field>
+        <field name="importantNote" title="${uiLabelMap.CrmImportantNote}" position="1"><display/></field>
+	</form>
+	
+	<form name="ListOpportunitiesForContact" list-name="opportunities" list-entry-name="opportunityRow" target="" type="list" paginate-target="viewLead" paginate-size-field="1" paginate="true"
+        odd-row-style="alternate-row" default-table-style="basic-table hover-bar">
+    	<actions>
+    		<entity-condition entity-name="PartyRelationshipAndSalesOpportunity"  list="opportunities">
+    			<condition-list combine="and">
+	    			<condition-expr field-name="roleTypeIdFrom" value="CONTACT"/>
+					<condition-expr field-name="partyIdFrom" value="${parameters.partyId}"/>
+    			</condition-list>
+    		</entity-condition>
+    	</actions>
+    	<row-actions>
+    		<entity-one entity-name="SalesOpportunity" value-field="opportunityRow">
+    			<field-map  field-name="salesOpportunityId" from-field="opportunityRow.salesOpportunityId"/>
+    		</entity-one>
+    	</row-actions>
+    	<field name="salesOpportunityId"><display description="${opportunityRow.salesOpportunityId}"></display> </field>
+    	<field name="opportunityName"><display description="${opportunityRow.opportunityName}"></display> </field>
+    	<field name="estimatedAmount"> <display description="${opportunityRow.estimatedAmount}" currency="INR" type="currency"></display> </field>
+    	<field name="estimatedCloseDate"><display description="${opportunityRow.estimatedCloseDate}" type="date"></display> </field>
+    </form>
+    
+     <form name="LookupContact" type="single" target="LookupContacts"
+        header-row-style="header-row" default-table-style="basic-table">
+        <field name="partyId" title="${uiLabelMap.PartyPartyId}"><text-find/></field>
+        <field name="firstName" title="${uiLabelMap.PartyPartyFirstName}"> <text-find/> </field>
+        <field name="lastName" title="${uiLabelMap.PartyPartyLastName}"><text-find/></field>
+        <field name="noConditionFind"><hidden value="Y"/><!-- if this isn't there then with all fields empty no query will be done --></field> 
+        <field name="submitButton" title="${uiLabelMap.CommonFind}"><submit button-type="button"/></field>
+    </form>
+    
+    <form name="ListLookupContact" type="list" list-name="listIt" paginate-target="LookupContacts"
+        odd-row-style="alternate-row" default-table-style="basic-table hover-bar">
+        <actions>
+		 <set field="parameters.partyIdTo" value="${userLogin.partyId}"/>
+		 <set field="parameters.roleTypeIdFrom" value="CONTACT"/>         
+         <service service-name="performFind" result-map="result" result-map-list="listIt">
+            <field-map field-name="inputFields" from-field="parameters"/>
+            <field-map field-name="entityName" value="PartyFromSummaryByRelationship"/>
+          </service>
+        </actions>
+       <field name="partyId" title="${uiLabelMap.PartyPartyId}" widget-style="btn btn-link">
+            <hyperlink also-hidden="false" target-type="plain" description="${partyId}" target="javascript:set_value('${partyId}')"/>
+        </field>
+		<field name="firstName"><display/></field>
+		<field name="lastName"><display/></field>
+    </form>
+    
+    <form name="ListAccountsForContact" type="list" list-name="accounts" target="" paginate-target="viewContact" paginate="true"
+        odd-row-style="alternate-row" default-table-style="basic-table hover-bar">
+    	<actions>
+    		<entity-condition entity-name="PartyToSummaryByRelationship"  list="accounts">
+    			<condition-list combine="and">
+	    			<condition-expr field-name="roleTypeIdFrom" value="CONTACT"/>
+	    			<condition-expr field-name="partyRelationshipTypeId" value="CONTACT_REL_INV"/>
+	    			<condition-expr field-name="partyIdFrom" from-field="parameters.partyId"/>
+    			</condition-list>
+    		</entity-condition>
+    	</actions>
+		<field name="groupName" widget-style="linktext" title="${uiLabelMap.CrmAccountName}" widget-area-style="fieldWidth50pct"
+            use-when="(isLookup!=void) &amp;&amp; (isLookup!=null) &amp;&amp; (isLookup.equals(&quot;true&quot;))">
+            <hyperlink also-hidden="false" target-type="plain" description="${groupName} (${partyId})" target="javascript:set_value('${partyId}')"/>
+        </field>
+        <field name="groupName" widget-style="linktext" title="${uiLabelMap.CrmAccountName}" widget-area-style="fieldWidth50pct"
+            use-when="(isLookup==void) || (isLookup==null) || !(isLookup.equals(&quot;true&quot;))">
+            <hyperlink description="${groupName} (${partyId})" target="viewAccount?partyId=${partyId}"/>
+        </field>
+        <field name="primaryPostalAddressId" title="${uiLabelMap.CommonCity}">
+          <display description="${primaryCity} ${primaryStateProvinceGeoId}" />
+        </field>
+        <field name="primaryEmailId" title="${uiLabelMap.CrmPrimaryEmail}">
+          <display description="${primaryEmail}" />
+        </field>
+        <field name="primaryTelecomNumberId" title="${uiLabelMap.CrmPrimaryPhone}">
+          <display description="${primaryCountryCode} ${primaryAreaCode} ${primaryContactNumber}" />
+        </field>
+    </form>
+    
+    
+ 	<form name="viewResponsibleFor" type="single" default-map-name="responsibleParty" default-table-style="basic-table-2" default-widget-style="form"> 
+        <field name="partyId" title="${uiLabelMap.CrmPersonResponsibleFor}" title-style="requiredField" widget-style="tabletext">
+            <display description="${responsibleParty.firstName} ${responsibleParty.lastName}"/>
+        </field>
+    </form>
+
+    <!-- form to reassign the person responsible TODO: for now we just enter the partyIdTo -->
+    <form name="reassignToForm" type="single" target="reassignContactResponsibleParty?partyId=${parameters.partyId}">
+        <field name="contactPartyId"><hidden value="${parameters.partyId}"/></field>
+        <field name="newPartyId" title="${uiLabelMap.CrmReassignTo}" title-style="tableheadtext" widget-style="inputbox">
+            <lookup target-form-name="LookupTeamMembers" size="20" maxlength="20"/>
+        </field>
+        <field name="submitButton" title="${uiLabelMap.CrmReassign}" widget-style="btn btn-success"><submit button-type="button"/></field>
+    </form>
+    
+    
+     <form name="ContactSearchForm" type="single" target="FindContacts">
+      	<field name="firstName" title="${uiLabelMap.PartyFirstName}"> <text-find></text-find> </field>
+    	<field name="lastName" title="${uiLabelMap.PartyLastName}"> <text-find></text-find> </field>
+        <field name="submitButton" title="${uiLabelMap.CommonSearch}" widget-style="btn btn-primary"><submit button-type="button"/></field>
+    </form>
+
+	
+    <form name="ListContactsForAccount" type="list" list-name="contactsListIt"
+    	header-row-style="header-row-2" default-table-style="basic-table hover-bar">
+    	<actions>
+    		<entity-condition entity-name="PartyFromSummaryByRelationship" filter-by-date="true">
+    			<condition-list>
+    				<condition-expr field-name="roleTypeIdTo" value="ACCOUNT"/>
+    				<condition-expr field-name="roleTypeIdFrom" value="CONTACT"/>
+    				<condition-expr field-name="partyRelationshipTypeId" value="CONTACT_REL_INV"/>
+    				<condition-expr field-name="partyIdTo" value="${partyId}"/>
+    			</condition-list>
+    		</entity-condition>
+    	</actions>
+        <field name="name" widget-style="linktext" title="${uiLabelMap.CrmContactName}" widget-area-style="fieldWidth50pct"
+            use-when="(isLookup!=void)&amp;&amp;(isLookup!=null)&amp;&amp;(isLookup.equals(&quot;true&quot;))">
+            <hyperlink also-hidden="false" target-type="plain" description="${groupName} ${firstName} ${lastName} (${partyId})" target="javascript:set_value('${partyId}')"/>
+        </field>
+        <field name="name" widget-style="linktext" title="${uiLabelMap.CrmContactName}" widget-area-style="fieldWidth50pct"
+            use-when="(isLookup==void) || (isLookup==null) || !(isLookup.equals(&quot;true&quot;))">
+            <hyperlink description="${groupName} ${firstName} ${lastName} (${partyId})" target="viewContact?partyId=${partyId}"/>
+        </field>
+        <field name="primaryPostalAddressId" title="${uiLabelMap.CommonCity}">
+          <display description="${primaryCity} ${primaryStateProvinceGeoId}" />
+        </field>
+        <field name="primaryEmailId" title="${uiLabelMap.CrmPrimaryEmail}">
+          <display description="${primaryEmail}" />
+        </field>
+        <field name="primaryTelecomNumberId" title="${uiLabelMap.CrmPrimaryPhone}">
+          <display description="${primaryCountryCode} ${primaryAreaCode} ${primaryContactNumber}" />
+        </field>
+        <!-- since this form is re-usable, define hasContactRemoveAbility when the Remove option should be visible -->
+        <field name="Remove" title="${uiLabelMap.FormFieldTitle_actionEnumId}" use-when="hasContactRemoveAbility==true" widget-style="btn btn-mini btn-danger">
+            <hyperlink description="${uiLabelMap.CommonRemove}" target="removeContactFromAccount?partyId=${parameters.partyId}&amp;contactPartyId=${partyId}&amp;accountPartyId=${parameters.partyId}"/>
+        </field>
+    </form>   
+
+    <!-- form to assign a contact to an account -->
+    <form name="assignAccountToContactForm" type="single" target="assignAccountToContact"
+        default-title-style="tableheadtext" default-widget-style="tabletext" default-tooltip-style="tabletext">
+        <field name="partyId"><hidden value="${parameters.partyId}"/></field> <!-- this one allows the form to return to viewContact with the correct partyId -->
+        <field name="contactPartyId"><hidden value="${parameters.partyId}"/></field>
+        <field name="accountPartyId" position="1" title="${uiLabelMap.CrmNewAccount}" widget-style="inputBox">
+            <lookup target-form-name="LookupAccounts" size="20" maxlength="20"/>
+        </field>
+        <field name="submitButton" title="${uiLabelMap.CrmAssign}" widget-style="btn btn-success"><submit button-type="button"/></field>
+    </form>
+
+  
+</forms>

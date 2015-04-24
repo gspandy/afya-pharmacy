@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<site-conf xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="http://ofbiz.apache.org/dtds/site-conf.xsd">
+
+	<request-map uri="leadsMain">
+		<security https="true" auth="true" />
+		<response name="success" type="view" value="leadsMain" />
+	</request-map>
+	<request-map uri="FindLeads">
+		<security https="true" auth="true" />
+		<response name="success" type="view" value="FindLeads" />
+	</request-map>
+	<request-map uri="duplicateLeadForm">
+        <security https="true" auth="true"/>
+        <response name="success" type="view" value="duplicateLeadForm"/>
+    </request-map>
+    
+	<request-map uri="createLeadForm">
+		<security https="true" auth="true" />
+		<response name="success" type="view" value="CreateLeadForm" />
+	</request-map>
+	<request-map uri="createLead">
+		<security https="true" auth="true" />
+		<event type="service" invoke="sfaext.createLead" />
+		<response name="success" type="view" value="ViewLead" />
+		<response name="error" type="view" value="CreateLeadForm" />
+	</request-map>
+	<request-map uri="viewLead">
+		<security https="true" auth="true" />
+		<response name="success" type="view" value="ViewLead" />
+	</request-map>
+	<request-map uri="updateLeadForm">
+		<security https="true" auth="true" />
+		<response name="success" type="view" value="UpdateLeadForm" />
+	</request-map>
+	<request-map uri="updateLead">
+		<security https="true" auth="true" />
+		<event type="service" invoke="sfaext.updateLead" />
+		<response name="success" type="request-redirect" value="viewLead">
+			<redirect-parameter name="partyId" />
+		</response>
+	</request-map>
+	<request-map uri="convertLeadForm">
+		<security https="true" auth="true" />
+		<response name="success" type="view" value="ConvertLead" />
+	</request-map>
+	<request-map uri="convertLead">
+		<security https="true" auth="true" />
+		<event type="service" invoke="sfaext.convertLead" />
+		<response name="success" type="view" value="ViewLead" />
+		<response name="error" type="view" value="ConvertLead" />
+	</request-map>
+	<request-map uri="CloneLead">
+		<security https="true" auth="true" external-view="false" />
+		<response type="view" name="success" value="CloneLead" />
+	</request-map>
+    <request-map uri="mergeLeadsForm">
+        <security https="true" auth="true"/>
+        <response name="success" type="view" value="mergeLeadsForm"/>
+    </request-map>
+    <request-map uri="confirmMergeLeadsForm">
+        <security https="true" auth="true"/>
+        <event type="service" invoke="sfaext.validateMergeCrmParties"/>
+        <response name="success" type="view" value="confirmMergeLeadsForm"/>
+        <response name="error" type="request-redirect" value="mergeLeadsForm"/>
+    </request-map>
+    <request-map uri="mergeLeads">
+        <security https="true" auth="true"/>
+        <event type="service" invoke="sfaext.mergeCrmParties"/>
+        <response name="success" type="request-redirect" value="viewLead"/>
+        <response name="error" type="request-redirect" value="mergeLeadsForm"/>
+    </request-map>
+	<request-map uri="confirmMergeLeads">
+		<security https="true" auth="true" />
+		<event type="service" invoke="sfaext.validateMergeCrmParties" />
+		<response name="success" type="view" value="confirmMergeLeadsForm" />
+		<response name="error" type="request-redirect" value="MergeLeads" />
+	</request-map>
+	<request-map uri="createLeadFromVCard">
+		<security https="true" auth="true" />
+		<event type="service" invoke="sfaext.importVCard" />
+		<response name="success" type="view" value="ViewLead" />
+		<!--
+			What would be the view in case a vCard has more than one contact
+		-->
+		<response name="error" type="view" value="CreateLeadFromVCard" />
+	</request-map>
+	<request-map uri="quickAddLead">
+		<security https="true" auth="true" />
+		<event type="service" invoke="sfaext.createLead" />
+		<response name="success" type="view" value="ViewLead" />
+	</request-map>
+	<request-map uri="updateLeadStatus">
+		<security https="false" auth="true" />
+		<event type="service" invoke="setPartyStatus" />
+		<response name="success" type="request-redirect" value="viewLead" />
+	</request-map>
+	<request-map uri="addLeadDataSource">
+		<event type="service" invoke="sfaext.addLeadDataSource" />
+		<response name="success" type="request" value="updateLeadForm" />
+	</request-map>
+	<request-map uri="removeLeadDataSource">
+		<event type="service" invoke="sfaext.removeLeadDataSource" />
+		<response name="success" type="request" value="updateLeadForm" />
+	</request-map>
+	<request-map uri="addLeadMarketingCampaign">
+		<event type="service" invoke="sfaext.addLeadMarketingCampaign" />
+		<response name="success" type="request" value="updateLeadForm" />
+	</request-map>
+	<request-map uri="removeLeadMarketingCampaign">
+		<event type="service" invoke="sfaext.removeLeadMarketingCampaign" />
+		<response name="success" type="request" value="updateLeadForm" />
+	</request-map>
+	
+	<request-map uri="LookupLeads">
+        <security https="true" auth="true"/>
+        <response name="success" type="view" value="LookupLeads"/>
+    </request-map>
+    <request-map uri="reassignLeadResponsibleParty"> 
+        <security https="true" auth="true"/>
+        <event type="service" invoke="sfaext.reassignLeadResponsibleParty"/>
+        <response name="success" type="request-redirect" value="viewLead"/>
+        <response name="error" type="view" value="ViewLead"/>
+    </request-map>
+	
+	<request-map uri="deleteLead"> 
+        <security https="true" auth="true"/>
+        <event type="service" invoke="sfaext.deleteLead"/>
+        <response name="success" type="request-redirect-noparam" value="leadsMain"/>
+        <response name="error" type="view" value="ViewLead"/>
+    </request-map>
+
+   	<view-map name="leadsMain" type="screen"
+		page="component://sfaext/widget/LeadScreens.xml#MyLeads" />
+   	<view-map name="ViewLead" type="screen"
+		page="component://sfaext/widget/LeadScreens.xml#ViewLead" />
+   	<view-map name="FindLeads" type="screen"
+		page="component://sfaext/widget/LeadScreens.xml#FindLeads" />
+	<view-map name="CreateLeadForm" type="screen"
+		page="component://sfaext/widget/LeadScreens.xml#CreateLead" />
+	<view-map name="CloneLead" type="screen"
+		page="component://sfaext/widget/LeadScreens.xml#CloneLead" />
+	<view-map name="ConvertLead" type="screen"
+		page="component://sfaext/widget/LeadScreens.xml#ConvertLead" />
+	<view-map name="MergeLeads" type="screen"
+		page="component://sfaext/widget/LeadScreens.xml#MergeLeads" />
+	<view-map name="confirmMergeLeadsForm" type="screen"
+		page="component://sfaext/widget/LeadScreens.xml#confirmMergeLeads" />
+	<view-map name="CreateLeadFromVCard" type="screen"
+		page="component://sfaext/widget/LeadScreens.xml#CreateLeadFromVCard" />
+   	<view-map name="UpdateLeadForm" type="screen"
+		page="component://sfaext/widget/LeadScreens.xml#UpdateLeadForm" />
+	<view-map name="MyLeads" type="screen"
+		page="component://sfaext/widget/LeadScreens.xml#MyLeads" />
+	<view-map name="MyTeamLeads" type="screen"
+		page="component://sfaext/widget/LeadScreens.xml#MyTeamLeads" />
+	<view-map name="LookupLeads" type="screen"
+		page="component://sfaext/widget/LeadScreens.xml#LookupLeads" />
+	<view-map name="duplicateLeadForm" type="screen" page="component://sfaext/widget/LeadScreens.xml#duplicateLeadForm"/>
+   
+
+</site-conf>

@@ -1,0 +1,295 @@
+<?component name="findbox" macroURI="/zul/macros/findBox.zul" id="macro1"?>
+<?component name="fromDatebox" macroURI="/zul/macros/fromDateMacro.zul" id="macro2"?>
+<?component name="thruDatebox" macroURI="/zul/macros/thruDateMacro.zul" id="macro3"?>
+<?component list="${leaveTypesList}" renderer="${leaveTypeItemRenderer}" name="selectbox" macroURI="/zul/macros/findselectbox.zul" id="macro4" ?>
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<zk xmlns:h="http://www.zkoss.org/2005/zk/native">
+	<zscript>
+	import com.ndz.controller.*;
+	import org.ofbiz.entity.*;
+	import org.ofbiz.base.util.*;
+	List leaveTypes = null;
+	GenericDelegator delegator = com.ndz.zkoss.util.HrmsInfrastructure.getDelegator();//GenericDelegator.getGenericDelegator("default");
+leaveTypes = delegator.findByAnd("Enumeration", UtilMisc.toMap("enumTypeId", "LEAVE_TYPE"));
+leaveTypes.add(0, null);
+leaveTypesArray = leaveTypes.toArray(new GenericValue[leaveTypes.size()]);
+	SimpleListModel leaveTypesList = new SimpleListModel(leaveTypesArray);
+	public class LeaveTypeItemRenderer implements ListitemRenderer {
+
+		public LeaveTypeItemRenderer() {
+		}
+
+		public void render(Listitem li, Object data) {
+		if (data instanceof GenericValue) {
+			GenericValue val = (GenericValue) data;
+			li.setLabel(val.getString("description"));
+			li.setValue(val.getString("enumId"));
+		}
+		}
+	}
+	ListitemRenderer leaveTypeItemRenderer = new LeaveTypeItemRenderer();
+	SearchController controller = new SearchController();
+	Button myLeaveBtn = arg.get("myLeaveBtn");
+</zscript>
+	<window id="searchPanel" apply="${controller}" onCreate="activateSearch()">
+		<custom-attributes entityName="EmplLeave"></custom-attributes>
+		<separator height="10px"></separator>
+		<div style="margin-left:120px">
+			<h:table>
+				<h:tr>
+					<h:td style="text-align:left">
+						<findbox fieldLabel="${c:l('HumanResLeaveSummaryId') }" name="leaveId" type="text" cols="20" />
+					</h:td>
+					<h:td>
+						<selectbox value="${values}" fieldLabel="${c:l('HumanResLeaveSummaryType') }" name="leaveTypeId" />
+					</h:td>
+				</h:tr>
+				<h:tr>
+					<h:td>
+						<fromDatebox fieldLabel="${c:l('HumanResLeaveSummaryFromDate') }" name="fromDate" type="date" />
+					</h:td>
+					<h:td style="text-align:left">
+						<thruDatebox fieldLabel="${c:l('HumanResLeaveSummaryThruDate') }" name="thruDate" type="date" />
+					</h:td>
+				</h:tr>
+                <h:tr>
+                    <h:td style="text-align:left" >
+                        <hbox>
+                            <div width="150px" align="right">
+                                <label value="${c:l('HRMS_EmployeeId') }" visible="true" if="${isManager}"/>
+                            </div>
+                            <div align="left" style="margin-left:8px">
+                                <employeebox id="partyId_searchfld" visible="true" if="${isManager}">
+                                    <attribute name="onChange"><![CDATA[
+                                        controller.employeeId=self.getValue();
+						]]></attribute>
+                                </employeebox>
+                            </div>
+                        </hbox>
+                    </h:td>
+                </h:tr>
+			</h:table>
+		</div>
+		<box width="100%" height="30px" align="center">
+			<hbox>
+				<button label="${c:l('HumanResSearch') }" mold="os" id="searchButton"
+					onClick="results.setVisible(true);results.setFocus(true)">
+				</button>
+				<button label="${c:l('HRMS_ResetButton') }" onClick='Events.postEvent("onClick",myLeaveBtn,null)' />
+			</hbox>
+		</box>
+		<zscript>
+	void activateSearch() {
+	Events.postEvent("onClick", searchButton, null);
+	}
+</zscript>
+		<zscript><![CDATA[
+	import org.zkoss.util.resource.Labels;
+	import org.ofbiz.base.util.*;
+	import org.zkoss.zk.ui.event.EventListener;
+	LeaveManagementController leaveManagementController = new LeaveManagementController();
+	class MyRowRenderer implements RowRenderer {
+
+		MyRowRenderer() {
+		}
+
+		public void render(Row row, Object data) {
+		org.ofbiz.entity.GenericValue gv = ((org.ofbiz.entity.GenericValue) data);
+
+		new Label(gv.getString("leaveId")).setParent(row);
+
+		org.ofbiz.entity.GenericValue personGV = delegator.findByPrimaryKey("Person", UtilMisc.toMap("partyId", gv
+				.getString("partyId")));
+		new Label(gv.getString("partyId") + " " + "-" + " " + personGV.getString("firstName") + " "
+				+ personGV.getString("lastName")).setParent(row);
+		org.ofbiz.entity.condition.EntityCondition condition = org.ofbiz.entity.condition.EntityCondition
+				.makeCondition("enumId", org.ofbiz.entity.condition.EntityOperator.EQUALS, gv.getString("leaveTypeId"));
+		List statusItemList = delegator.findList("Enumeration", condition, null, null, null, false);
+		GenericValue statusItemGV = (GenericValue) statusItemList.get(0);
+		new Label(statusItemGV.getString("description")).setParent(row);
+
+		List statusIdList = delegator
+				.findByAnd("StatusItem", UtilMisc.toMap("statusId", gv.getString("leaveStatusId")));
+		GenericValue statusIdGV = (GenericValue) statusIdList.get(0);
+		new Label(statusIdGV.getString("description")).setParent(row);
+		//new Label(gv.getString("leaveStatusId")).setParent(row);
+		 java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("dd-MM-yyyy");
+			new Label(sdf.format((gv.getTimestamp("fromDate")).getTime()).toString()).setParent(row);
+			new Label(sdf.format((gv.getTimestamp("thruDate")).getTime()).toString()).setParent(row);
+
+		//new Label(new Date((gv.getTimestamp("fromDate")).getTime()).toString()).setParent(row);
+		//new Label(new Date((gv.getTimestamp("thruDate")).getTime()).toString()).setParent(row);
+		Double paidDaysDouble = gv.getDouble("paidDays");
+		Double unpaidDaysDouble = gv.getDouble("unpaidDays");
+		Double unpaidDaysDouble1 = 0.0;
+		if (gv.getDouble("unpaidDays") != null) {
+			unpaidDaysDouble1 = gv.getDouble("unpaidDays");
+		}
+		Double daysOnLeave = paidDaysDouble + unpaidDaysDouble1;
+		/* Integer daysOnLeaveInt = 0;
+		daysOnLeaveInt = daysOnLeave.intValue();*/
+		if (paidDaysDouble != null) {
+			//new Label((daysOnLeaveInt.toString())).setParent(row);
+			new Label(daysOnLeave.toString()).setParent(row);
+		} else {
+			new Label("").setParent(row);
+		}
+		if (paidDaysDouble != null) {
+			if (!(gv.getString("leaveStatusId").equals("LT_MGR_REJECTED"))
+					&& !(gv.getString("leaveStatusId").equals("LT_ADM_REJECTED"))
+					&& !(gv.getString("leaveStatusId").equals("LT_SAVED"))
+					&& !(gv.getString("leaveStatusId").equals("LT_SUBMITTED"))) {
+				/* Integer paidDaysInt = paidDaysDouble.intValue();
+				new Label((paidDaysInt.toString())).setParent(row); */
+				new Label(paidDaysDouble.toString()).setParent(row);
+			} else {
+				new Label("").setParent(row);
+			}
+		} else {
+			new Label("").setParent(row);
+		}
+
+		if (unpaidDaysDouble != null) {
+			if (!(gv.getString("leaveStatusId").equals("LT_MGR_REJECTED"))
+					&& !(gv.getString("leaveStatusId").equals("LT_ADM_REJECTED"))) {
+				/* Integer unpaidDaysInt = unpaidDaysDouble.intValue();
+				new Label((unpaidDaysInt.toString())).setParent(row); */
+				new Label(unpaidDaysDouble.toString()).setParent(row);
+			} else {
+				new Label("").setParent(row);
+			}
+		} else {
+			new Label("").setParent(row);
+		}
+		if (gv.getString("description") != null) {
+			new Label(gv.getString("description")).setParent(row);
+		} else {
+			new Label("").setParent(row);
+		}
+		if (gv.getString("contactAddress") != null) {
+			new Label(gv.getString("contactAddress")).setParent(row);
+		} else {
+			new Label("").setParent(row);
+		}
+		if (gv.getString("contactNumber") != null) {
+			new Label(gv.getLong("contactNumber").toString()).setParent(row);
+		} else {
+			new Label("").setParent(row);
+		}
+		if (gv.getString("mgrComment") != null) {
+			new Label(gv.getString("mgrComment")).setParent(row);
+		} else {
+			new Label("").setParent(row);
+		}
+		if (gv.getString("adminComment") != null) {
+			new Label(gv.getString("adminComment")).setParent(row);
+		} else {
+			new Label("").setParent(row);
+		}
+		if (gv.getString("updatedBy") != null) {
+			org.ofbiz.entity.GenericValue personGV1 = delegator.findByPrimaryKey("Person", UtilMisc.toMap("partyId", gv
+					.getString("updatedBy")));
+			new Label(personGV1.getString("firstName") + " " + personGV1.getString("lastName")).setParent(row);
+		} else {
+			new Label("").setParent(row);
+		}
+
+		String updatedDate = null;
+		if (gv.getTimestamp("lastUpdatedStamp") != null) {
+			java.text.SimpleDateFormat formater = new java.text.SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
+			updatedDate = formater.format(gv.getTimestamp("lastUpdatedStamp"));
+			new Label(updatedDate.toString()).setParent(row);
+			//new Label((gv.getTimestamp("updateDate").getTime()).toString()).setParent(row);
+		} else {
+			new Label("").setParent(row);
+		}
+
+		if ((gv.getString("leaveStatusId")).equals("LT_SAVED")) {
+			Button btn = new com.ndz.zkoss.HrmsButton();
+			btn.setParent(row);
+			btn.setLabel("Delete");
+			btn.setTooltiptext("Click here to delete");
+			btn.setSclass("btnDelete");
+			btn.addEventListener("onClick", new EventListener() {
+
+				public void onEvent(Event event) throws Exception {
+				leaveManagementController.deleteLeave(event, gv, searchButton);
+				}
+			});
+		} else {
+			new Label("").setParent(row);
+		}
+		row.setTooltiptext("Double Click TO Edit/Submit");
+		if (gv.getString("leaveStatusId").equals("LT_SAVED")) {
+			row.addEventListener("onDoubleClick", new EventListener() {
+
+				public void onEvent(Event event) throws Exception {
+				leaveManagementController.showLeaveWindow(event, gv);
+				}
+			});
+		}
+		}
+	}
+	RowRenderer tableRenderer = new MyRowRenderer();
+]]></zscript>
+		<div id="results" visible="false">
+			<h:table style="border:0px" cellspacing="0px" cellpadding="0px">
+				<h:tr>
+					<h:td width="90%">
+						<label value="${c:l('HRMS_SEARCHRESULTS') }"></label>
+					</h:td>
+					<h:td width="10%" style="text-align:right">
+						<paging id="paging" />
+					</h:td>
+				</h:tr>
+			</h:table>
+			<grid id="dataGrid" rowRenderer="${tableRenderer}">
+				<columns menupopup="auto">
+					<column label="${c:l('HumanResLeaveSummaryId')}" />
+					<column label="Employee Id - Name" onDrop="move(event.dragged)" draggable="col" droppable="col" />
+					<column label="${c:l('HumanResLeaveSummaryType')}" onDrop="move(event.dragged)" draggable="col"
+						droppable="col" />
+					<column label="${c:l('HumanResLeaveSummaryStatus')}" onDrop="move(event.dragged)" draggable="col"
+						droppable="col" />
+					<column label="${c:l('HumanResLeaveSummaryFromDate') }" onDrop="move(event.dragged)" draggable="col"
+						droppable="col" />
+					<column label="${c:l('HumanResLeaveSummaryThruDate') }" onDrop="move(event.dragged)" draggable="col"
+						droppable="col" />
+					<column label="Days On Leave" onDrop="move(event.dragged)" draggable="col" droppable="col" />
+					<column label="Paid Days" onDrop="move(event.dragged)" draggable="col" droppable="col" />
+					<column label="Unpaid Days" onDrop="move(event.dragged)" draggable="col" droppable="col" visible="true" />
+					<column label="Reason For Leave" onDrop="move(event.dragged)" draggable="col" droppable="col"
+						visible="false" />
+					<column label="Contact Address" onDrop="move(event.dragged)" draggable="col" droppable="col"
+						visible="false" />
+					<column label="Contact Number" onDrop="move(event.dragged)" draggable="col" droppable="col"
+						visible="false" />
+					<column label="Manager Comments" onDrop="move(event.dragged)" draggable="col" droppable="col"
+						visible="false" />
+					<column label="Admin Comments" onDrop="move(event.dragged)" draggable="col" droppable="col"
+						visible="false" />
+					<column label="Updated By" onDrop="move(event.dragged)" draggable="col" droppable="col" visible="false" />
+					<column label="Updated Date" onDrop="move(event.dragged)" draggable="col" droppable="col"
+						visible="false" />
+					<column label="Action" onDrop="move(event.dragged)" draggable="col" droppable="col" />
+				</columns>
+			</grid>
+		</div>
+		<zscript><![CDATA[
+	void move(Component dragged) {
+	if (dragged.getClass().getName().endsWith("Column")) {
+		int maxRows = dragged.getGrid().getRows().getChildren().size();
+		int i = dragged.getParent().getChildren().indexOf(dragged);
+		int j = self.getParent().getChildren().indexOf(self);
+
+		//move celles for each row 
+		for (int k = 0; k < maxRows; k++)
+			self.getGrid().getCell(k, j).parent
+					.insertBefore(self.getGrid().getCell(k, i), self.getGrid().getCell(k, j));
+	}
+
+	self.parent.insertBefore(dragged, self);
+	}
+]]></zscript>
+	</window>
+</zk>

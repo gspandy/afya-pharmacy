@@ -1,0 +1,345 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" 
+name="requisition" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20">
+	
+	<parameter name="headOfficeImg" class="java.lang.String"/>
+	<parameter name="verticalLineImg" class="java.lang.String"/>
+	<parameter name="logoImageUrl" class="java.lang.String"/>
+	<parameter name="companyPostalAddr" class="java.lang.String"/>
+	<parameter name="companyName" class="java.lang.String"/>
+	<parameter name="address1" class="java.lang.String"/>
+	<parameter name="address2" class="java.lang.String"/>
+	<parameter name="postalCode" class="java.lang.String"/>
+	<parameter name="city" class="java.lang.String"/>
+	<parameter name="stateProvinceAbbr" class="java.lang.String"/>
+	<parameter name="countryName" class="java.lang.String"/>
+	<parameter name="telephoneNumber" class="java.lang.String"/>
+	<parameter name="faxNumber" class="java.lang.String"/>
+	<parameter name="email" class="java.lang.String"/>
+	<parameter name="companyRegNo" class="java.lang.String"/>
+	<parameter name="vatRegNo" class="java.lang.String"/>
+	<parameter name="tpinNo" class="java.lang.String"/>
+	<field name="requisitionId" class="java.lang.String"/>
+	<field name="approverPositionId" class="java.lang.String"/>
+	<field name="partyId" class="java.lang.String"/>
+	<field name="positionType" class="java.lang.String"/>
+	<field name="statusId" class="java.lang.String"/>
+	<field name="numberOfPosition" class="java.lang.Long"/>
+	<field name="qualification" class="java.lang.String"/>
+	<field name="minExprience" class="java.lang.Long"/>
+	<field name="maxExprience" class="java.lang.Long"/>
+	<field name="jobTitle" class="java.lang.String"/>
+	<field name="jobDescription" class="java.lang.String"/>
+	<field name="roleDetails" class="java.lang.String"/>
+	<field name="softSkills" class="java.lang.String"/>
+	<field name="justificationForHiring" class="java.lang.String"/>
+	<field name="minimumSalary" class="java.math.BigDecimal"/>
+	<field name="maximumSalary" class="java.math.BigDecimal"/>
+	<field name="reqRaisedByDept" class="java.lang.String"/>
+	<field name="fromDate" class="java.sql.Timestamp"/>
+	<field name="thruDate" class="java.sql.Timestamp"/>
+	<field name="hodComment" class="java.lang.String"/>
+	<field name="adminComment" class="java.lang.String"/>
+	<field name="requisitionType" class="java.lang.String"/>
+	<field name="replacementpositionId" class="java.lang.String"/>
+	<field name="locationId" class="java.lang.String"/>
+	<field name="budgetId" class="java.lang.String"/>
+	<field name="budgetItemSeqId" class="java.lang.String"/>
+	<field name="uomId" class="java.lang.String"/>
+	<field name="enumId" class="java.lang.String"/>
+	<background>
+		<band />
+	</background>
+	<title>
+		<band height="50" isSplitAllowed="true">
+			<rectangle radius="0">
+				<reportElement mode="Opaque" x="0" y="0" width="555"
+					height="35" backcolor="#000000" forecolor="#FFFFFF" positionType="FixRelativeToTop"
+					isPrintRepeatedValues="true" isRemoveLineWhenBlank="false"
+					isPrintInFirstWholeBand="false" isPrintWhenDetailOverflows="false" />
+				<graphicElement />
+			</rectangle>
+			<staticText>
+				<reportElement mode="Transparent" x="0" y="0" width="555"
+					height="35" forecolor="#FFFFFF" backcolor="#006699" positionType="FixRelativeToTop"
+					isPrintRepeatedValues="true" isRemoveLineWhenBlank="false"
+					isPrintInFirstWholeBand="false" isPrintWhenDetailOverflows="false" />
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="styled">
+					<font size="20" isBold="true" isItalic="true" isUnderline="false"
+						isPdfEmbedded="false" pdfEncoding="Cp1250" isStrikeThrough="false" />
+				</textElement>
+				<text><![CDATA[Requisition]]></text>
+
+			</staticText>
+		</band>
+	</title>
+	<pageHeader>
+		<band height="100">
+			<image>
+				<reportElement x="0" y="0" width="110" height="65"/>
+				<imageExpression><![CDATA[$P{logoImageUrl}]]></imageExpression>
+			</image>
+			<image>
+				<reportElement x="90" y="3" width="80" height="65"/>
+				<imageExpression><![CDATA[$P{headOfficeImg}]]></imageExpression>
+			</image>
+			<textField isBlankWhenNull="true">
+				<reportElement x="132" y="8" width="153" height="65"/>
+				<textElement markup="html">
+					<font fontName="Calibri" size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{companyName} + "<br/>" + $P{address1} + "<br/>" + $P{companyPostalAddr}]]></textFieldExpression>
+			</textField>
+			<image>
+				<reportElement x="285" y="2" width="14" height="65"/>
+				<imageExpression><![CDATA[$P{verticalLineImg}]]></imageExpression>
+			</image>
+			<textField isBlankWhenNull="true">
+				<reportElement x="292" y="7" width="140" height="35"/>
+				<textElement markup="html">
+					<font fontName="Calibri" size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{telephoneNumber}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="292" y="18" width="140" height="35"/>
+				<textElement markup="html">
+					<font fontName="Calibri" size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{faxNumber}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="292" y="29" width="140" height="35"/>
+				<textElement markup="html">
+					<font fontName="Calibri" size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{email}]]></textFieldExpression>
+			</textField>
+			<image>
+				<reportElement x="430" y="2" width="14" height="65"/>
+				<imageExpression><![CDATA[$P{verticalLineImg}]]></imageExpression>
+			</image>
+			<textField isBlankWhenNull="true">
+				<reportElement x="438" y="7" width="118" height="35"/>
+				<textElement markup="html">
+					<font fontName="Calibri" size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{companyRegNo}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="438" y="18" width="118" height="35"/>
+				<textElement markup="html">
+					<font fontName="Calibri" size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{vatRegNo}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="438" y="29" width="118" height="35"/>
+				<textElement markup="html">
+					<font fontName="Calibri" size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{tpinNo}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement positionType="FixRelativeToBottom" x="0" y="70" width="555" height="1" forecolor="#C0C0C0"/>
+				<graphicElement>
+					<pen lineWidth="1.0" lineStyle="Solid" lineColor="#959595"/>
+				</graphicElement>
+			</line>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band />
+	</columnHeader>
+	<detail>
+		<band height="523" >
+			<staticText>
+				<reportElement x="0" y="34" width="155" height="20"/>
+				<textElement textAlignment="Right" markup="none">
+					<font fontName="Serif" size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Job Title]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="175" y="34" width="380" height="20"/>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{jobTitle}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement mode="Opaque" x="0" y="0" width="555" height="25" forecolor="#FFFFFF" backcolor="#FFFFFF"/>
+				<textElement markup="none"/>
+			</textField>
+			<staticText>
+				<reportElement x="0" y="0" width="155" height="20"/>
+				<textElement textAlignment="Right" markup="none">
+					<font fontName="SansSerif" size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Requisition Id]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="175" y="0" width="380" height="20" forecolor="#000000"/>
+				<textElement>
+					<font size="11" isBold="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{requisitionId}]]></textFieldExpression>
+			</textField>
+			
+			<staticText>
+				<reportElement x="0" y="17" width="155" height="20"/>
+				<textElement textAlignment="Right" markup="none">
+					<font fontName="SansSerif" size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Status]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="175" y="17" width="380" height="20" forecolor="#000000"/>
+				<textElement>
+					<font size="11" isBold="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{statusId}]]></textFieldExpression>
+			</textField>
+			
+			<staticText>
+				<reportElement x="0" y="54" width="155" height="20"/>
+				<textElement textAlignment="Right" markup="none">
+					<font fontName="Serif" size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Minimum Experience]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="175" y="54" width="380" height="20"/>
+				<textElement/>
+				<textFieldExpression class="java.lang.Long"><![CDATA[$F{minExprience}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="0" y="74" width="155" height="20"/>
+				<textElement textAlignment="Right" markup="none">
+					<font fontName="Serif" size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Maximum Experience]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="175" y="74" width="380" height="20"/>
+				<textElement/>
+				<textFieldExpression class="java.lang.Long"><![CDATA[$F{maxExprience}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="0" y="94" width="155" height="20"/>
+				<textElement textAlignment="Right" markup="none">
+					<font fontName="Serif" size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Minimum CTC]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="175" y="94" width="62" height="20"/>
+				<textElement/>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{minimumSalary}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="0" y="114" width="155" height="20"/>
+				<textElement textAlignment="Right" markup="none">
+					<font fontName="Serif" size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Maximum CTC]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="175" y="114" width="62" height="20"/>
+				<textElement/>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{maximumSalary}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="236" y="94" width="230" height="20"/>
+				<textElement markup="none"/>
+				<text><![CDATA[lacs per annum]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="237" y="114" width="230" height="20"/>
+				<textElement markup="none"/>
+				<text><![CDATA[lacs per annum]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="134" width="155" height="20"/>
+				<textElement textAlignment="Right" markup="none">
+					<font fontName="Serif" size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[No Of Position]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="175" y="134" width="291" height="20"/>
+				<textElement/>
+				<textFieldExpression class="java.lang.Long"><![CDATA[$F{numberOfPosition}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="0" y="154" width="155" height="20"/>
+				<textElement textAlignment="Right" markup="none">
+					<font fontName="Serif" size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Job Description]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="175" y="154" width="380" height="71"/>
+				<textElement markup="html"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{jobDescription}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="0" y="225" width="155" height="20"/>
+				<textElement textAlignment="Right" markup="none">
+					<font fontName="Serif" size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Role Details]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="175" y="225" width="380" height="73"/>
+				<textElement markup="html"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{roleDetails}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="0" y="298" width="155" height="20"/>
+				<textElement textAlignment="Right" markup="none">
+					<font fontName="Serif" size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Qualification]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="175" y="298" width="380" height="78"/>
+				<textElement markup="html"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{qualification}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="0" y="376" width="155" height="20"/>
+				<textElement textAlignment="Right" markup="none">
+					<font fontName="Serif" size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Soft Skills]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="175" y="376" width="380" height="73"/>
+				<textElement markup="html"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{softSkills}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="0" y="449" width="155" height="20"/>
+				<textElement textAlignment="Right" markup="none">
+					<font fontName="Serif" size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Justification For Hiring]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="175" y="449" width="380" height="71"/>
+				<textElement markup="html"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{justificationForHiring}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band height="45" />
+	</columnFooter>
+	<pageFooter>
+		<band height="54" />
+	</pageFooter>
+	<summary>
+		<band height="42" />
+	</summary>
+</jasperReport>

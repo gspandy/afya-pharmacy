@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project name="OFBiz - HRMS Component" default="jar" basedir=".">
+    <import file="../../common.xml"/>
+
+    <!-- ================================================================== -->
+    <!-- Initialization of all property settings                            -->
+    <!-- ================================================================== -->
+
+    <property environment="env"/>
+    <property name="desc" value="HRMS Component"/>
+    <property name="name" value="ofbiz-hrms"/>
+    <property name="ofbiz.home.dir" value="../.."/>
+    <property name="src.dir" value="src"/>
+    <property name="dtd.dir" value="dtd"/>
+    <property name="lib.dir" value="webapp/hrms/WEB-INF/lib"/>
+    <property name="build.dir" value="webapp/hrms/WEB-INF/lib"/>
+
+    <path id="local.class.path">
+        <fileset dir="webapp/hrms/WEB-INF/lib" includes="*.jar"/>
+		<fileset dir="../../applications/content/build/lib" includes="*.jar"/>
+        <fileset dir="../../framework/base/lib/commons" includes="*.jar"/>
+        <fileset dir="../../framework/base/lib/j2eespecs" includes="*.jar"/>
+		<fileset dir="../../framework/base/lib/commons" includes="*.jar"/>
+        <fileset dir="../../framework/base/lib/j2eespecs" includes="*.jar"/>
+		<fileset dir="../../framework/base/lib" includes="*.jar"/>
+        <fileset dir="../../framework/base/build/lib" includes="*.jar"/>
+        <fileset dir="../../framework/entity/lib" includes="*.jar"/>
+        <fileset dir="../../framework/entity/build/lib" includes="*.jar"/>
+        <fileset dir="../../framework/security/build/lib" includes="*.jar"/>
+        <fileset dir="../../framework/service/lib" includes="*.jar"/>
+        <fileset dir="../../framework/service/build/lib" includes="*.jar"/>
+        <fileset dir="../../framework/minilang/build/lib" includes="*.jar"/>
+        <fileset dir="../../framework/widget/build/lib" includes="*.jar"/>
+        <fileset dir="../../framework/webapp/lib" includes="*.jar"/>
+        <fileset dir="../../framework/webapp/build/lib" includes="*.jar"/>
+    	<fileset dir="../humanresext/build/lib" includes="*.jar"/>
+		<fileset dir="../smebiz-common/build/lib" includes="*.jar"/>
+		<fileset dir="../../applications/accounting/build/lib" includes="*.jar"/>
+    </path>
+
+    <!-- ================================================================== -->
+    <!-- Compilation of the source files                                                                                                                         -->
+    <!-- ================================================================== -->
+
+    <target name="classes" depends="prepare">
+        <echo message="========================Building HRMS Application ==========================="/>        
+		<javac16/>		
+    </target>
+	
+	<target name="jar" depends="classes">
+	 <echo message="========================Building HRMS JAR ==========================="/>  
+        <main-jar/>
+		<copy todir="webapp\hrms\WEB-INF\lib" overwrite="true">
+            <fileset file="build\lib\ofbiz-hrms.jar" />
+        </copy>
+    </target>
+
+    <!-- ================================================================== -->
+    <!-- Build JavaDoc                                                      -->
+    <!-- ================================================================== -->
+
+    <target name="docs" depends="prepare-docs">
+        <javadoc packagenames="org.ofbiz.hrms.*"
+                 classpathref="local.class.path"
+                 destdir="${build.dir}/javadocs"
+                 Windowtitle="Open for Business - ${desc}">
+            <sourcepath path="${src.dir}"/>
+        </javadoc>
+    </target>
+</project>

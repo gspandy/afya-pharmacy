@@ -1,0 +1,304 @@
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<zk>
+	<zscript>
+		<![CDATA[
+			import org.ofbiz.base.util.*;
+			import org.ofbiz.entity.*;
+			import org.ofbiz.entity.condition.EntityExpr;
+			import org.ofbiz.entity.condition.EntityOperator;
+			import org.ofbiz.entity.condition.EntityCondition;
+			import java.util.*;
+			import org.zkoss.zul.*;
+			import org.zkoss.util.resource.Labels;
+			GenericValue gv = (GenericValue) Executions.getCurrent().getArg().get("gv");
+			String agencyId = null;
+			String agencyName = null;
+			String agencyEmailId = null;
+			String contactNumber = null;
+			String locationId = null;
+			String userLoginId = null;
+			String oldPassword = null;
+			String emailContactMechId = null;
+			String phoneContactMechId = null;
+			if (gv != null) {
+				agencyId = (String) gv.getString("agencyId");
+				agencyName = (String) gv.getString("agencyName");
+				agencyEmailId = (String) gv.getString("emailAddress");
+				contactNumber = (String) gv.getString("contactNumber");
+				locationId = (String) gv.getString("locationId");
+				userLoginId = (String) gv.getString("userLoginId");
+				oldPassword = (String) gv.getString("password");
+				emailContactMechId = (String) gv.getString("emailContactMechId");
+				phoneContactMechId = (String) gv
+						.getString("contactNumberContactMechId");
+			}
+			GenericDelegator delegator = com.ndz.zkoss.util.HrmsInfrastructure.getDelegator();//GenericDelegator.getGenericDelegator("default");
+			EntityCondition countryCondition = EntityCondition.makeCondition("geoTypeId",
+					EntityOperator.EQUALS, "COUNTRY");
+			Set fieldToSelect = new HashSet();
+			fieldToSelect.add("locationId");
+			fieldToSelect.add("locationName");
+			List locations = delegator.findList("Location", null, fieldToSelect, null,
+					null, false);
+			locations.add(0, null);
+			locationsArray = locations.toArray(new GenericValue[locations.size()]);
+			SimpleListModel locationList = new SimpleListModel(locationsArray);
+			public class LocationItemRenderer implements ListitemRenderer {
+		
+				public LocationItemRenderer() {
+				}
+		
+				public void render(Listitem li, Object data) {
+					if (data instanceof GenericValue) {
+						GenericValue val = (GenericValue) data;
+						li.setLabel(val.getString("locationName"));
+						li.setValue(val.getString("locationId"));
+						if (locationId.equals(val.get("locationId"))) {
+							li.setSelected(true);
+						}
+					}
+				}
+			}
+			ListitemRenderer locationItemRenderer = new LocationItemRenderer();
+		]]>
+	</zscript>
+	<window title="${c:l('HRMS_EDIT_RECRUITMENT_AGENCY') }" width="40%" height="55%"
+		closable="true" id="editConsultantWindow" border="normal"
+		contentStyle="overflow:auto">
+		<textbox id="phoneContactMechId" value="${phoneContactMechId}"
+			visible="false">
+		</textbox>
+		<textbox id="emailContactMechId" value="${emailContactMechId}"
+			visible="false">
+		</textbox>
+		<separator height="10px" />
+		<hbox>
+			<div align="right" width="160px">
+				<label value="${c:l('HRMS_AGENCY_ID') }" style="font-weight:bold" />
+			</div>
+			<div align="right">
+				<label value="${agencyId}"></label>
+				<textbox id="consultantId" constraint="no empty: ${c:l('HRMS_REQUIRED_AGENCY_ID') }" value="${agencyId}" visible="false" />
+			</div>
+		</hbox>
+		<separator />
+		<hbox>
+			<div align="right" width="170px">
+				<label value="${c:l('HRMS_AGENCY_NAME') }" style="font-weight:bold" />
+				<label value="*" style="color:red" />
+			</div>
+			<div align="left" width="130px">
+				<textbox id="consultantName" constraint="no empty: ${c:l('HRMS_REQUIRED_AGENCY_NAME') }" cols="40" value="${agencyName}" />
+			</div>
+		</hbox>
+		<separator />
+		<hbox>
+			<div align="right" width="170px">
+				<label value="${c:l('HRMS_AGENCY_LOCATION') }" style="font-weight:bold" />
+				<label value="*" style="color:red" />
+			</div>
+			<div align="left" width="130px">
+				<listbox id="locationId" mold="select"
+					model="${locationList}" itemRenderer="${locationItemRenderer}"
+					onSelect="Clients.closeErrorBox(self)" />
+			</div>
+		</hbox>
+		<separator />
+		<hbox>
+			<div align="right" width="170px">
+				<label value="${c:l('HRMS_CONTACT_EMAIL_ID') }"
+					style="font-weight:bold" />
+				<label value="*" style="color:red" />
+			</div>
+			<div align="left" width="130px">
+				<textbox id="emailId" cols="40"
+					constraint="/^[a-zA-Z][\w\.-]*[a-zA-Z0-9]@[a-zA-Z0-9][\w\.-]*[a-zA-Z0-9]\.[a-zA-Z][a-zA-Z\.]*[a-zA-Z]$/: ${c:l('HRMS_NO_BLANK_EMAIL_ID') }"
+					onChange="emaiIdlExist()" value="${agencyEmailId}" />
+			</div>
+		</hbox>
+		<separator />
+		<hbox>
+			<div align="right" width="170px">
+				<label value="${c:l('FormFieldTitle_ContactNumber') }" style="font-weight:bold" />
+				<label value="*" style="color:red" />
+			</div>
+			<zscript>		
+				<![CDATA[
+					import org.zkoss.util.resource.Labels;
+					import org.zkoss.util.resource.Labels;
+					public void contactNumberValidate(Textbox comp) throws WrongValueException {
+						String value = comp.getValue();
+						if (value == "") {
+							throw new WrongValueException(comp,
+									Labels.getLabel("HRMS_PHONE_NUMBER_CANNOT_BE_LEFT_BLANK"));
+						}
+						boolean isNotInteger = true;
+						isNotInteger = UtilValidate.isInteger(value);
+						if (!isNotInteger) {
+							throw new WrongValueException(comp,
+									Labels.getLabel("HRMS_PHONE_NUMBER_MUST_BE_CONSISTS_OF_DIGIT_ONLY"));
+						}
+					}
+					public void userLoginIdValidate(Textbox comp) throws WrongValueException {
+						String value = comp.getValue();
+						if (value == "") {
+							throw new WrongValueException(comp, Labels.getLabel("HRMS_REQUIRED_USER_NAME"));
+						}
+						if (value != "") {
+							int length = value.length();
+							if (length < 5) {
+								throw new WrongValueException(comp,
+										Labels.getLabel("HRMS_REQUIRED_ATLEAST_5_CHARACTER"));
+							}
+						}
+					}
+					public void passwordValidate(Textbox comp) throws WrongValueException {
+						String value = comp.getValue();
+						if (value == "" && agencyId == null) {
+							throw new WrongValueException(comp, Labels.getLabel("HRMS_REQUIRED_PASSWORD"));
+						}
+						if (value != "") {
+							int length = value.length();
+							if (length < 5) {
+								throw new WrongValueException(comp,
+										Labels.getLabel("HRMS_REQUIRED_ATLEAST_5_CHARACTER"));
+							}
+						}
+					}
+					public void verifyPasswordValidate(Textbox comp) throws WrongValueException {
+						String value = comp.getValue();
+						if (value == "" && agencyId == null) {
+							throw new WrongValueException(comp, Labels.getLabel("HRMS_REQUIRED_VERIFY_PASSWORD"));
+						}
+						if (value != "") {
+							int length = value.length();
+							if (length < 5) {
+								throw new WrongValueException(comp,
+										Labels.getLabel("HRMS_REQUIRED_ATLEAST_5_CHARACTER"));
+							}
+						}
+					}
+				]]>
+			</zscript>
+			<div align="left" width="130px">
+				<textbox id="contactNumber" constraint="no empty" value="${contactNumber}" />
+			</div>
+		</hbox>
+		<separator />
+		<hbox>
+			<div align="right" width="170px">
+				<label value="${c:l('FormFieldTitle_UserLoginId') }" style="font-weight:bold" />
+				<label value="*" style="color:red" id="userLoginLabel" visible="false" />
+			</div>
+			<div align="left" >
+				<hbox>
+					<label value="${userLoginId}" id="userLoginIdLabel"/>
+				</hbox>
+			</div>
+		</hbox>
+		<separator />
+		<hbox>
+			<div align="right" width="170px">
+				<label value="${c:l('FormFieldTitle_EmployeeAssociatePassword') }"
+					style="font-weight:bold" />
+			</div>
+			<div align="left" width="130px">
+				<label id="currentPassword" value="${oldPassword}" visible="false"/>
+				<label id="cancelPasswordEdit" value="${c:l('HRMS_CANCEL') }" style="cursor: pointer;color:blue;font-weight:bold;"
+					onClick="self.setVisible(false);showPassword.setVisible(false);editPassword.setVisible(true);" visible="false">
+				</label>
+				<label id="editPassword" value="${c:l('Hrms_Edit') }" style="cursor: pointer;display: inline-block;color:blue;font-weight:bold;"
+					onClick="self.setVisible(false);showPassword.setVisible(true);cancelPasswordEdit.setVisible(true);">
+				</label>
+			</div>
+		</hbox>
+		<separator />
+		<div id="showPassword" visible="false">
+			<hbox>
+				<div align="right" width="170px">
+					<label value="${c:l('HRMS_NEWPASSWORD') }"
+						style="font-weight:bold" />
+					<label value="*" style="color:red" />
+				</div>
+				<div align="left" width="130px">
+					<textbox id="password" type="password"/>
+				</div>
+			</hbox>
+			<separator />
+			<hbox>
+				<div align="right" width="170px">
+					<label value="${c:l('FormFieldTitle_EmployeeAssociateVerifyPassword') }"
+						style="font-weight:bold" />
+					<label value="*" style="color:red" />
+				</div>
+				<div align="left" width="130px">
+					<textbox id="verifyPassword" type="password" />
+				</div>
+			</hbox>
+		</div>
+		<zscript>
+			<![CDATA[
+				import org.ofbiz.entity.*;
+				import org.ofbiz.base.util.*;
+				void validatePassword() {
+					String passwordStr = password.getValue();
+					String verifyPasswordStr = verifyPassword.getValue();
+					if (!(passwordStr.equals(verifyPasswordStr))) {
+						throw new WrongValueException(verifyPassword,
+								Labels.getLabel("HRMS_PASSWORD_AND_VERIFY_PASSWORD_MUST_BE_SAME"));
+					}
+				}
+				void agencyIdExist() {
+					GenericDelegator delegator = com.ndz.zkoss.util.HrmsInfrastructure.getDelegator();//GenericDelegator.getGenericDelegator("default");
+					String consulId = consultantId.getValue();
+					List agencyIdList = delegator.findByAnd("PartyGroup", UtilMisc.toMap(
+							"partyId", consulId));
+					if (agencyIdList.size() > 0) {
+						throw new WrongValueException(consultantId, Labels.getLabel("HRMS_DUPLICATE_AGENCY_ID"));
+					}
+				}
+				void emaiIdlExist() {
+					GenericDelegator delegator = com.ndz.zkoss.util.HrmsInfrastructure.getDelegator();//GenericDelegator.getGenericDelegator("default");
+					String email = emailId.getValue();
+					List emaiIdlList = delegator.findByAnd("ContactMech", UtilMisc.toMap(
+							"infoString", email));
+					if (emaiIdlList.size() > 0) {
+						throw new WrongValueException(emailId, Labels.getLabel("HRMS_EMAIL_ID_NOT_AVAILABLE"));
+					}
+				}
+			]]>
+		</zscript>
+		<zscript>
+			<![CDATA[
+				void validateForm() {
+					consultantName.getValue();
+					if (locationId.getSelectedItem() == null||org.apache.commons.lang.StringUtils.isEmpty((String)locationId.getSelectedItem().getValue())) {
+						throw new WrongValueException(locationId,
+								Labels.getLabel("HRMS_REQUIRED_AGENCY_LOCATION"));
+					}
+				//	Object leaveTypeObj = locationId.getSelectedItem();
+				//	if (leaveTypeObj == null) {
+					//	throw new WrongValueException(locationId, Labels.getLabel("HRMS_REQUIRED_LOCATION_NAME"));
+					//}
+					emailId.getValue();
+					if(UtilValidate.isNotEmpty(password.getValue())){
+						passwordValidate(password);
+						verifyPasswordValidate(verifyPassword);
+						validatePassword();
+					}
+					
+				}
+			]]>
+		</zscript>
+		<separator />
+		<hbox>
+			<div align="right" width="280px">
+				<button label="${c:l('btnSave') }" id="save"
+					onClick='validateForm();com.ndz.controller.EmployeeRequisitionController.updateConsultant(event);Events.postEvent("onClick",Path
+				.getComponent("/searchPanel//searchPerCompany"),null);editConsultantWindow.detach();' />
+				<button label="${c:l('ButtonCancel') }" id="cancel"
+					onClick="editConsultantWindow.detach();" />
+			</div>
+		</hbox>
+	</window>
+</zk>

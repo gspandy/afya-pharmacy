@@ -1,0 +1,89 @@
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<zk>
+	<zscript>
+		<![CDATA[
+			import org.ofbiz.entity.*;
+			GenericDelegator delegator = com.ndz.zkoss.util.HrmsInfrastructure.getDelegator();//GenericDelegator.getGenericDelegator("default");
+			GenericValue gv = (GenericValue) Executions.getCurrent().getArg().get("gv");
+			String requestTypeId = (String) gv.getString("requestTypeId");
+			String description = (String) gv.getString("description");
+			String proirity = (String) gv.getString("priority");
+			String purpose = (String) gv.getString("requestTypePurpose");
+			List priorityList = null;
+			priorityList = delegator.findList("PriorityType",null,null,null,null,false);
+			SimpleListModel model = new SimpleListModel(priorityList);
+			ListitemRenderer listitemrenderer = new ListitemRenderer() {
+				public void render(Listitem li, Object data) {
+					if (data instanceof GenericValue) {
+						GenericValue val = (GenericValue) data;
+						li.setLabel(val.getString("description"));
+						li.setValue(val.getString("priorityTypeId"));
+						if (proirity.equals(val.getString("priorityTypeId")))
+							li.setSelected(true);
+					}
+				}
+			};
+		]]>
+	</zscript>
+	<window id="editRequsetTypeWindow" closable="true" width="40%" height="45%" border="normal" contentStyle="overflow:auto"
+		maximizable="true">
+		<caption label="${c:l('HRMS_EDIT_REQUEST_TYPE') }"></caption>
+		<separator height="15px" />
+		<hbox>
+			<div align="right" width="150px">
+				<label value="${c:l('HRMS_REQUEST_TYPE_ID') }"></label>
+			</div>
+			<div align="left">
+				<label style="font-weight:regular" value="${requestTypeId}"></label>
+				<textbox id="requestTypeIdTextBox" visible="false" value="${requestTypeId}"></textbox>
+			</div>
+		</hbox>
+		<separator />
+		<hbox>
+			<div align="right" width="150px">
+				<label value="${c:l('HRMS_DESCRIPTION') }"></label>
+				<label value="*" style="color:red"></label>
+			</div>
+			<div align="left">
+				<textbox id="descriptionTextBox" constraint="no empty: ${c:l('HRMS_REQUIRED_DESCRIPTION') }" value="${description}" rows="2" cols="30" maxlength="250"></textbox>
+			</div>
+		</hbox>
+		<separator />
+		<hbox>
+			<div align="right" width="150px">
+				<label value="${c:l('HRMS_PRIORITY') }"></label>
+				<label value="*" style="color:red"></label>
+			</div>
+			<div align="left">
+				<listbox id="priorityListBox" model="${model}" itemRenderer="${listitemrenderer}" mold="select"></listbox>
+			</div>
+		</hbox>
+		<separator />
+		<hbox>
+			<div align="right" width="150px">
+				<label value="${c:l('HRMS_PURPOSE') }"></label>
+				<label value="*" style="color:red"></label>
+			</div>
+			<div align="left">
+				<textbox id="purposeTextBox" rows="2" cols="30" constraint="no empty: ${c:l('HRMS_REQUIRED_PURPOSE') }" value="${purpose}" maxlength="250"></textbox>
+			</div>
+		</hbox>
+		<separator />
+		<zscript>
+			<![CDATA[
+				void validateForm() {
+					descriptionTextBox.getValue();
+					purposeTextBox.getValue();
+				}
+			]]>
+		</zscript>
+		<hbox>
+			<div width="275px" align="right">
+				<button id="save" label="${c:l('btnSave') }"
+					onClick='validateForm();com.hrms.composer.EmployeeRequestComposer.editRequestType(event);Events.postEvent("onClick",Path.getComponent("/searchPanel/searchButton"),null);editRequsetTypeWindow.detach()'>
+				</button>
+				<button id="close" label="${c:l('ButtonCancel') }" onClick="editRequsetTypeWindow.detach()"></button>
+			</div>
+		</hbox>
+	</window>
+</zk>

@@ -1,0 +1,202 @@
+<?component name="positionTypebox" macroURI="../macros/textfindMacro.zul" id="macro2"?>
+<?component name="depNamebox" macroURI="../macros/textfindMacro.zul" id="macro3"?>
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<zk xmlns="http://www.zkoss.org/2005/zul"
+    xmlns:h="http://www.w3.org/1999/xhtml"
+    xmlns:w="http://www.zkoss.org/2005/zk/client"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:n="http://www.zkoss.org/2005/zk/native"
+    xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
+	<zscript>
+	import org.ofbiz.entity.*;
+	import org.ofbiz.entity.condition.*;
+	import org.zkoss.util.resource.Labels;
+	GenericValue	userLogin	= (GenericValue) Executions.getCurrent().getDesktop().getSession().getAttribute("userLogin");
+	GenericDelegator	delegator	= userLogin.getDelegator();
+	Set	employeePositionTypeToDisplay	= new HashSet();
+	employeePositionTypeToDisplay.add("emplPositionTypeId");
+	employeePositionTypeToDisplay.add("description");
+	List	employeePositionType	= null;
+	employeePositionType = delegator.findList("EmplPositionType", null, employeePositionTypeToDisplay, null, null, false);
+	employeePositionType.add(0, null);
+	employeePositionTypeArray = employeePositionType.toArray(new GenericValue[employeePositionType.size()]);
+	SimpleListModel	employeePositionTypes	= new SimpleListModel(employeePositionTypeArray);
+	public class EmplPosTypeItemRenderer implements ListitemRenderer {
+
+		public EmplPosTypeItemRenderer() {
+		}
+
+		public void render( Listitem li, Object data ) {
+			if (data instanceof GenericValue) {
+				GenericValue val = (GenericValue) data;
+				li.setLabel(val.getString("description"));
+				li.setValue(val.getString("emplPositionTypeId"));
+			}
+		}
+	}
+	ListitemRenderer	emplPosTypeItemRenderer	= new EmplPosTypeItemRenderer();
+</zscript>
+	<window id="allocateLeaveWindow" width="45%" height="60%"
+		position="center" closable="true" maximizable="true"
+		apply="com.ndz.controller.ConfigureLeaveManagementController"
+		border="normal" contentStyle="overflow:auto">
+		<caption label="${c:l('HumanResAllocateLeave') }" />
+		<separator height="20px" />
+		<hbox>
+			<div align="right" width="150px">
+				<label value="${c:l('HRMS_POSITIONTYPE')}"
+					style="font-weight:bold" />
+				<!--<label value="*" style="color:red" />-->
+			</div>
+			<div align="left">
+				<listbox id="positionType" mold="select"
+					itemRenderer="${emplPosTypeItemRenderer}"
+					model="${employeePositionTypes}"
+					onSelect="Clients.closeErrorBox(self)" />
+			</div>
+		</hbox>
+		<separator />
+        <hbox>
+            <div align="right" width="140px">
+                <label value="Employee Type" />
+                <label value="*" style="color:red" />
+            </div>
+
+            <div>
+                <radiogroup id="emp_administration" name="emp_administration">
+                    <radio id="emp_administration_administrative"
+                           label="${c:l('FormFieldTitle_administrative')}"
+                           selected="true" value="Administrative" style="margin-left:5px;font-weight: bold;font-size:10px;">
+                    </radio>
+                    <radio id="emp_administration_non_administrative"
+                           label="${c:l('FormFieldTitle_nonadministrative') }"
+                           selected="false" checked="false" value="Non-Administrative"
+                           style="margin-left:30px;font-weight: bold;font-size:10px;">
+                    </radio>
+                </radiogroup>
+            </div>
+        </hbox>
+        <separator />
+        <hbox>
+            <div align="right" width="150px">
+                <label value="${c:l('FormFieldTitle_positionCategories') }" />
+                <label value="*" style="color:red" />
+            </div>
+            <zscript>
+                <![CDATA[
+                            ListModelList positionCategoriesArr = new ListModelList(Arrays.asList(new String[] {"Employees","Management","Expatriates"}));
+                          ]]>
+            </zscript>
+            <div align="left">
+                <combobox id="positionCategories" name="positionCategories"
+                          model="${positionCategoriesArr}"></combobox>
+            </div>
+        </hbox>
+        <separator />
+		<hbox>
+			<div align="right" width="150px">
+				<label value="${c:l('HumanResLeaveSummaryType') }"
+					style="font-weight:bold" />
+				<label value="*" style="color:red" />
+			</div>
+			<div>
+				<listbox id="applyLeaveType" name="applyLeaveType"
+					mold="select" onSelect="Clients.closeErrorBox(self)">
+				</listbox>
+			</div>
+		</hbox>
+		<separator />
+		<hbox>
+			<div align="right" width="150px">
+				<label value="${c:l('HumanResLeaveSummaryFromDate') }"
+					style="font-weight:bold" />
+				<label value="*" style="color:red" />
+			</div>
+			<div align="left">
+				<datebox id="allocateLeaveBeginYear"
+					name="allocateLeaveBeginYear" buttonVisible="true"  />
+
+			</div>
+
+		</hbox>
+		<separator />
+        <hbox>
+            <div align="right" width="150px">
+                <label value="${c:l('HumanResLeaveSummaryThruDate') }"
+                       style="font-weight:bold" />
+                <label value="*" style="color:red" />
+            </div>
+            <div align="left">
+                <datebox id="allocateLeaveEndYear" buttonVisible="true"
+                         name="allocateLeaveEndYear"  />
+            </div>
+        </hbox>
+        <separator/>
+		<hbox>
+			<div align="right" width="150px">
+				<label value="${c:l('Hrms_LeaveDays') }" width="100px"
+					style="font-weight:bold" />
+				<label value="*" style="color:red" />
+			</div>
+			<div align="left">
+				<textbox id="allocateleaveDays" name="allocateleaveDays"
+					constraint="no empty:Leave Days Required" />
+			</div>
+            <div align="left">
+                <combobox id="fractionalPartForLeave" name="fractionalPartForLeave" value="0.0" readonly="true">
+                    <comboitem label="0.0" value="0.0"></comboitem>
+                    <comboitem label="0.5" value="0.5"></comboitem>
+                </combobox>
+            </div>
+		</hbox>
+		<separator />
+		<hbox>
+			<div align="right" width="150px">
+				<label value="${c:l('Hrms_Comment') }"
+					style="font-weight:bold" />
+			</div>
+			<div align="left">
+				<textbox id="allocateleaveComment"
+					name="allocateleaveComment" rows="4" cols="55" />
+			</div>
+		</hbox>
+		<zscript>
+	void validate() {
+            Date allocateLeaveBeginYearValue = allocateLeaveBeginYear.getValue();
+            if(allocateLeaveBeginYearValue == null){
+            throw new WrongValueException(allocateLeaveBeginYear, "From Date required");
+            }
+            Date allocateLeaveEndYearValue = allocateLeaveEndYear.getValue();
+            if(allocateLeaveEndYearValue == null){
+            throw new WrongValueException(allocateLeaveEndYear, "Thru Date required");
+            }
+            if(allocateLeaveEndYearValue.before(allocateLeaveBeginYearValue)){
+            throw new WrongValueException(allocateLeaveEndYear, "Thru Date must be after From Date");
+            }
+		/* Listitem positionTypesListitem = positionType.getSelectedItem();
+		if (positionTypesListitem == null)
+			throw new WrongValueException(positionType, "Position Type Required"); */
+		Listitem applyLeaveTypeListitem = applyLeaveType.getSelectedItem();
+		if (applyLeaveTypeListitem == null)
+			throw new WrongValueException(applyLeaveType, "Leave Type Required");
+		String allocateleaveDaysString = allocateleaveDays.getValue();
+		if (!(org.ofbiz.base.util.UtilValidate.isInteger(allocateleaveDaysString)))
+			throw new WrongValueException(allocateleaveDays, "Leave Days Must Be Numeric");
+        Comboitem positionCategoriesList = positionCategories.getSelectedItem();
+            if(positionCategoriesList == null){
+            throw new WrongValueException(positionCategories, "Position Category Required");
+            }
+		
+	}
+</zscript>
+		<separator />
+		<div align="right" width="272px">
+			<button id="assignLeaveButton"
+				label="${c:l('Hrms_Assign') }" onClick="validate();"
+				forward="onClick=onEvent" />
+			<button id="assignLeaveCancelButton"
+				label="${c:l('ButtonCancel') }"
+				onClick="allocateLeaveWindow.detach()" />
+		</div>
+	</window>
+</zk>

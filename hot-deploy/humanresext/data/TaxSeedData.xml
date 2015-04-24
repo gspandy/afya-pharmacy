@@ -1,0 +1,298 @@
+<!-- tax forms for accounting preferences -->
+<entity-engine-xml>    
+<Enumeration description="Form 16 (Indian Income Tax)" enumCode="Form16" enumId="IND_IT_FORM16" sequenceId="08" enumTypeId="TAX_FORMS"/>
+<Enumeration description="Form 16 Annexure (Indian Income Tax)" enumCode="Form16AX" enumId="IND_IT_FORM16AX" sequenceId="09" enumTypeId="TAX_FORMS"/>
+<Enumeration description="Form 12BA (Indian Income Tax)" enumCode="Form12BA" enumId="IND_IT_FORM12BA" sequenceId="10" enumTypeId="TAX_FORMS"/>
+  
+
+<!--<TaxSlab geoId="IND" personType="MALE" taxType="INCOME_TAX_RATE" slabMin="0" slabMax="150000" taxRate="0" fromDate="2009-04-01"/>
+<TaxSlab geoId="IND" personType="MALE" taxType="INCOME_TAX_RATE" slabMin="150001" slabMax="300000" taxRate="10" fromDate="2009-04-01"/>
+<TaxSlab geoId="IND" personType="MALE" taxType="INCOME_TAX_RATE" slabMin="300001" slabMax="500000" taxRate="20" fromDate="2009-04-01"/>
+<TaxSlab geoId="IND" personType="MALE" taxType="INCOME_TAX_RATE" slabMin="500001" slabMax="999999999999" taxRate="30" fromDate="2009-04-01" />
+<TaxSlab geoId="IND" personType="ALL" taxType="SURCHARGE" slabMin="1000001" slabMax="999999999999" taxRate="10" fromDate="2009-04-01"/>
+<TaxSlab geoId="IND" personType="ALL" taxType="PRIM_EDU_CESS" slabMin="0" slabMax="999999999999" taxRate="2" fromDate="2009-04-01"/>
+<TaxSlab geoId="IND" personType="ALL" taxType="HIGHER_EDU_CESS" slabMin="0" slabMax="999999999999" taxRate="1" fromDate="2009-04-01" />
+<TaxSlab geoId="IND" personType="FEMALE" taxType="INCOME_TAX_RATE" slabMin="0" slabMax="180000" taxRate="0" fromDate="2009-04-01"/>
+<TaxSlab geoId="IND" personType="FEMALE" taxType="INCOME_TAX_RATE" slabMin="180001" slabMax="300000" taxRate="10" fromDate="2009-04-01"/>
+<TaxSlab geoId="IND" personType="FEMALE" taxType="INCOME_TAX_RATE" slabMin="300001" slabMax="500000" taxRate="20" fromDate="2009-04-01"/>
+<TaxSlab geoId="IND" personType="FEMALE" taxType="INCOME_TAX_RATE" slabMin="500001" slabMax="999999999999" taxRate="30" fromDate="2009-04-01"/>
+<TaxSlab geoId="IND" personType="SENIOR" taxType="INCOME_TAX_RATE" slabMin="0" slabMax="225000" taxRate="0" fromDate="2009-04-01"/>
+<TaxSlab geoId="IND" personType="SENIOR" taxType="INCOME_TAX_RATE" slabMin="225001" slabMax="300000" taxRate="10" fromDate="2009-04-01"/>
+<TaxSlab geoId="IND" personType="SENIOR" taxType="INCOME_TAX_RATE" slabMin="300001" slabMax="500000" taxRate="20" fromDate="2009-04-01"/>
+<TaxSlab geoId="IND" personType="SENIOR" taxType="INCOME_TAX_RATE" slabMin="500001" slabMax="999999999999" taxRate="30" fromDate="2009-04-01"/>
+<TaxSlab geoId="IND" personType="ALL" taxType="PROFESSIONAL_TAX_RATE" slabMin="5000" slabMax="7999" taxRate="60" fromDate="2009-04-01"/>
+<TaxSlab geoId="IND" personType="ALL" taxType="PROFESSIONAL_TAX_RATE" slabMin="8000" slabMax="9999" taxRate="100" fromDate="2009-04-01"/>
+<TaxSlab geoId="IND" personType="ALL" taxType="PROFESSIONAL_TAX_RATE" slabMin="10000" slabMax="14999" taxRate="150" fromDate="2009-04-01"/>
+<TaxSlab geoId="IND" personType="ALL" taxType="PROFESSIONAL_TAX_RATE" slabMin="15000" slabMax="999999999999" taxRate="200" fromDate="2009-04-01"/>
+-->
+<!--<TaxSlab geoId="IND" personType="MALE" taxType="INCOME_TAX_RATE" slabMin="0" slabMax="150000" taxRate="0" fromDate="2010-04-01"/>
+<TaxSlab geoId="IND" personType="MALE" taxType="INCOME_TAX_RATE" slabMin="150001" slabMax="300000" taxRate="10" fromDate="2010-04-01"/>
+<TaxSlab geoId="IND" personType="MALE" taxType="INCOME_TAX_RATE" slabMin="300001" slabMax="500000" taxRate="20" fromDate="2010-04-01"/>
+<TaxSlab geoId="IND" personType="MALE" taxType="INCOME_TAX_RATE" slabMin="500001" slabMax="999999999999" taxRate="30" fromDate="2010-04-01" />
+<TaxSlab geoId="IND" personType="ALL" taxType="SURCHARGE" slabMin="1000001" slabMax="999999999999" taxRate="10" fromDate="2010-04-01"/>
+<TaxSlab geoId="IND" personType="ALL" taxType="PRIM_EDU_CESS" slabMin="0" slabMax="999999999999" taxRate="2" fromDate="2010-04-01"/>
+<TaxSlab geoId="IND" personType="ALL" taxType="HIGHER_EDU_CESS" slabMin="0" slabMax="999999999999" taxRate="1" fromDate="2010-04-01" />
+<TaxSlab geoId="IND" personType="FEMALE" taxType="INCOME_TAX_RATE" slabMin="0" slabMax="180000" taxRate="0" fromDate="2010-04-01"/>
+<TaxSlab geoId="IND" personType="FEMALE" taxType="INCOME_TAX_RATE" slabMin="180001" slabMax="300000" taxRate="10" fromDate="2010-04-01"/>
+<TaxSlab geoId="IND" personType="FEMALE" taxType="INCOME_TAX_RATE" slabMin="300001" slabMax="500000" taxRate="20" fromDate="2010-04-01"/>
+<TaxSlab geoId="IND" personType="FEMALE" taxType="INCOME_TAX_RATE" slabMin="500001" slabMax="" taxRate="30" fromDate="2010-04-01"/>
+<TaxSlab geoId="IND" personType="SENIOR" taxType="INCOME_TAX_RATE" slabMin="0" slabMax="225000" taxRate="0" fromDate="2010-04-01"/>
+<TaxSlab geoId="IND" personType="SENIOR" taxType="INCOME_TAX_RATE" slabMin="225001" slabMax="300000" taxRate="10" fromDate="2010-04-01"/>
+<TaxSlab geoId="IND" personType="SENIOR" taxType="INCOME_TAX_RATE" slabMin="300001" slabMax="500000" taxRate="20" fromDate="2010-04-01"/>
+<TaxSlab geoId="IND" personType="SENIOR" taxType="INCOME_TAX_RATE" slabMin="500001" slabMax="999999999999" taxRate="30" fromDate="2010-04-01"/>
+<TaxSlab geoId="IND" personType="ALL" taxType="PROFESSIONAL_TAX_RATE" slabMin="5000" slabMax="7999" taxRate="60" fromDate="2010-04-01"/>
+<TaxSlab geoId="IND" personType="ALL" taxType="PROFESSIONAL_TAX_RATE" slabMin="8000" slabMax="9999" taxRate="100" fromDate="2010-04-01"/>
+<TaxSlab geoId="IND" personType="ALL" taxType="PROFESSIONAL_TAX_RATE" slabMin="10000" slabMax="14999" taxRate="150" fromDate="2010-04-01"/>
+<TaxSlab geoId="IND" personType="ALL" taxType="PROFESSIONAL_TAX_RATE" slabMin="15000" slabMax="999999999999" taxRate="200" fromDate="2010-04-01"/>
+-->
+<TaxSlab geoId="IND" personType="MALE" taxType="INCOME_TAX_RATE" slabMin="0" slabMax="180000" taxRate="0" fromDate="2011-04-01"/>
+<TaxSlab geoId="IND" personType="MALE" taxType="INCOME_TAX_RATE" slabMin="180001" slabMax="500000" taxRate="10" fromDate="2011-04-01"/>
+<TaxSlab geoId="IND" personType="MALE" taxType="INCOME_TAX_RATE" slabMin="500001" slabMax="800000" taxRate="20" fromDate="2011-04-01"/>
+<TaxSlab geoId="IND" personType="MALE" taxType="INCOME_TAX_RATE" slabMin="800001" slabMax="999999999999" taxRate="30" fromDate="2011-04-01" />
+<TaxSlab geoId="IND" personType="ALL" taxType="SURCHARGE" slabMin="1000001" slabMax="999999999999" taxRate="0" fromDate="2011-04-01"/>
+<TaxSlab geoId="IND" personType="ALL" taxType="PRIM_EDU_CESS" slabMin="0" slabMax="999999999999" taxRate="2" fromDate="2011-04-01"/>
+<TaxSlab geoId="IND" personType="ALL" taxType="HIGHER_EDU_CESS" slabMin="0" slabMax="999999999999" taxRate="1" fromDate="2011-04-01" />
+<TaxSlab geoId="IND" personType="FEMALE" taxType="INCOME_TAX_RATE" slabMin="0" slabMax="190000" taxRate="0" fromDate="2011-04-01"/>
+<TaxSlab geoId="IND" personType="FEMALE" taxType="INCOME_TAX_RATE" slabMin="190001" slabMax="500000" taxRate="10" fromDate="2011-04-01"/>
+<TaxSlab geoId="IND" personType="FEMALE" taxType="INCOME_TAX_RATE" slabMin="500001" slabMax="800000" taxRate="20" fromDate="2011-04-01"/>
+<TaxSlab geoId="IND" personType="FEMALE" taxType="INCOME_TAX_RATE" slabMin="800001" slabMax="999999999999" taxRate="30" fromDate="2011-04-01"/>
+<TaxSlab geoId="IND" personType="SENIOR" taxType="INCOME_TAX_RATE" slabMin="0" slabMax="225000" taxRate="0" fromDate="2011-04-01"/>
+<TaxSlab geoId="IND" personType="SENIOR" taxType="INCOME_TAX_RATE" slabMin="225001" slabMax="500000" taxRate="10" fromDate="2011-04-01"/>
+<TaxSlab geoId="IND" personType="SENIOR" taxType="INCOME_TAX_RATE" slabMin="500001" slabMax="800000" taxRate="20" fromDate="2011-04-01"/>
+<TaxSlab geoId="IND" personType="SENIOR" taxType="INCOME_TAX_RATE" slabMin="800001" slabMax="999999999999" taxRate="30" fromDate="2011-04-01"/>
+<TaxSlab geoId="IND" personType="ALL" taxType="PROFESSIONAL_TAX_RATE" slabMin="5000" slabMax="7999" taxRate="60" fromDate="2011-04-01"/>
+<TaxSlab geoId="IND" personType="ALL" taxType="PROFESSIONAL_TAX_RATE" slabMin="8000" slabMax="9999" taxRate="100" fromDate="2011-04-01"/>
+<TaxSlab geoId="IND" personType="ALL" taxType="PROFESSIONAL_TAX_RATE" slabMin="10000" slabMax="14999" taxRate="150" fromDate="2011-04-01"/>
+<TaxSlab geoId="IND" personType="ALL" taxType="PROFESSIONAL_TAX_RATE" slabMin="15000" slabMax="999999999999" taxRate="200" fromDate="2011-04-01"/>
+
+<!--  
+<TaxCategory categoryId="9008" categoryName="HRA" geoId="IND" description="Total House Rent paid in a year" />
+<TaxCategory categoryId="9009" categoryName="Transport/Conveyance" geoId="IND" description="Annual Conveyance Allowed"/>
+<TaxCategory categoryId="9001" categoryName="Section80C" geoId="IND" description="Section 80C"/>
+<TaxCategory categoryId="9002" categoryName="Section80D" geoId="IND" description="Section 80D"/>
+<TaxCategory categoryId="9003" categoryName="Section80DD" geoId="IND" description="Section 80DD"/>
+<TaxCategory categoryId="9004" categoryName="Section80G" geoId="IND" description="Donations"/>
+<TaxCategory categoryId="9005" categoryName="Section80E" geoId="IND" description="Education Loans"/>
+<TaxCategory categoryId="9006" categoryName="Section80U" geoId="IND" description="Section 80U"/>
+<TaxCategory categoryId="9007" categoryName="Deductionus24" geoId="IND" description="Declaration for the purpose of deduction u/s 24 of Income Tax Act, 1961"/>
+-->
+
+<TaxItemType itemTypeId="NUMERIC" description="Number" />
+<TaxItemType itemTypeId="DATE" description="Date Time" />
+<TaxItemType itemTypeId="TEXT" description="Text" />
+<TaxItemType itemTypeId="LONGTEXT" description="Long Text" />
+<TaxItemType itemTypeId="BOOLEAN" description="Boolean" />
+
+<TaxItemGroup itemGroupId="DEDUCTIONS" description="Deductions from the Net Income. " />
+<TaxItemGroup itemGroupId="EXEMPTIONS" description="Amount Exempted from the Allowance recieved." />
+<TaxItemGroup itemGroupId="PERQUISITES" description="Perquisites and Fringe Benefits given to employee in lieu of salary" />
+
+<TaxCategory categoryId="9001" categoryName="Section80C"
+	geoId="IND" description="Section 80C" maxAmount="100000" fromDate="2008-01-01 00:00:00.000"
+	thruDate="2011-12-31 00:00:00.000" createdBy="admin" />
+
+<TaxCategory categoryId="9002" categoryName="Section80D"
+	geoId="IND" description="Section 80D" maxAmount="10000"  minAmount="0" fromDate="2008-01-01 00:00:00.000"
+	thruDate="2011-12-31 00:00:00.000" createdBy="admin" />
+
+<TaxCategory categoryId="9003" categoryName="Section80DD"
+	geoId="IND" description="Section 80DD" maxAmount="10000" minAmount="0" fromDate="2008-01-01 00:00:00.000"
+	thruDate="2011-12-31 00:00:00.000" createdBy="admin" />
+
+<TaxCategory categoryId="9004" categoryName="Section80G"
+	geoId="IND" description="Donations" maxAmount="10000"  minAmount="0" fromDate="2008-01-01 00:00:00.000"
+	thruDate="2011-12-31 00:00:00.000" createdBy="admin" />
+
+<TaxCategory categoryId="9005" categoryName="Section80E"
+	geoId="IND" description="Education Loans" maxAmount="10000"  minAmount="0" 
+	fromDate="2008-01-01 00:00:00.000" thruDate="2011-12-31 00:00:00.000"
+	createdBy="admin" />
+
+<TaxCategory categoryId="9006" categoryName="Section80U"
+	geoId="IND" description="Section 80U" maxAmount="10000"   minAmount="0" fromDate="2008-01-01 00:00:00.000"
+	thruDate="2011-12-31 00:00:00.000" createdBy="admin" />
+
+<TaxCategory categoryId="9007" categoryName="Deductionus24"
+	geoId="IND"
+	description="Declaration for the purpose of deduction u/s 24 of Income Tax Act, 1961"
+	maxAmount="150000"  minAmount="0"  fromDate="2008-01-01 00:00:00.000" 
+	createdBy="admin" />
+
+<TaxCategory categoryId="9008" categoryName="Perquisites"
+	geoId="IND"
+	description="Perquisites and Fringe Benefits given to employee in lieu of salary"
+	maxAmount="999999999999999"  minAmount="0"  fromDate="2008-01-01 00:00:00.000" 
+	createdBy="admin" />
+	
+<TaxCategory categoryId="9009" categoryName="Conveyance"
+	geoId="IND"
+	description="Yearly Conveyance Allowed"
+	maxAmount="9600"  minAmount="0"  fromDate="2008-01-01 00:00:00.000" 
+	createdBy="admin" />
+
+<TaxCategory categoryId="9010" categoryName="HRA"
+	geoId="IND"
+	description="Total House Rent paid in a year. The receipt of the Rent should be presented to the Fincance along with the Employee ID not later than 05/02 of a Financial Year."
+	maxAmount="999999999999999"  minAmount="0"  fromDate="2008-01-01 00:00:00.000" 
+	createdBy="admin" />	
+	
+<TaxItem itemId="9001" categoryId="9001" itemName="LIC PREMIUM" itemGroupId="DEDUCTIONS"
+	itemTypeId="NUMERIC" description="LIC Premium" minAmount="0"
+	maxAmount="100000" fromDate="2008-01-01 00:00:00.000" thruDate="2011-12-31 00:00:00.000"
+	createdBy="admin" />
+
+<TaxItem itemId="9002" categoryId="9001" itemName="PPF" itemGroupId="DEDUCTIONS"
+	itemTypeId="NUMERIC" description="PPF" minAmount="0" maxAmount="100000"
+	  fromDate="2008-01-01 00:00:00.000" thruDate="2011-12-31 00:00:00.000"
+	createdBy="admin" />
+
+<TaxItem itemId="9003" categoryId="9001" itemName="NSCs" itemGroupId="DEDUCTIONS"
+	itemTypeId="NUMERIC" description="National Security Certificates"
+	minAmount="0" maxAmount="100000" fromDate="2008-01-01 00:00:00.000"
+	thruDate="2011-12-31 00:00:00.000" createdBy="admin" />
+
+<TaxItem itemId="9004" categoryId="9001" itemName="INTEREST ON NSCs" itemGroupId="DEDUCTIONS"
+	itemTypeId="NUMERIC" description="Interest Earned on NCSs" minAmount="0"
+	maxAmount="100000" fromDate="2008-01-01 00:00:00.000" thruDate="2011-12-31 00:00:00.000"
+	createdBy="admin" />
+
+<TaxItem itemId="9005" categoryId="9001" itemName="ULIP" itemGroupId="DEDUCTIONS"
+	itemTypeId="NUMERIC" description="ULIP" minAmount="0" maxAmount="100000"
+	fromDate="2008-01-01 00:00:00.000" thruDate="2011-12-31 00:00:00.000"
+	createdBy="admin" />
+
+<TaxItem itemId="9006" categoryId="9001" itemName="ELSS" itemGroupId="DEDUCTIONS"
+	itemTypeId="NUMERIC" description="Equity Linked Saving Scheme"
+	minAmount="0" maxAmount="100000" fromDate="2008-01-01 00:00:00.000"
+	thruDate="2011-12-31 00:00:00.000" createdBy="admin" />
+
+<TaxItem itemId="9007" categoryId="9001" itemName="Mutual Fund" itemGroupId="DEDUCTIONS"
+	itemTypeId="NUMERIC" description="Notified or Tax Saving Mutual Funds"
+	minAmount="0" maxAmount="100000" fromDate="2008-01-01 00:00:00.000"
+	thruDate="2011-12-31 00:00:00.000" createdBy="admin" />
+
+<TaxItem itemId="9008" categoryId="9001" itemName="INFRASTRUCTURE BONDS" itemGroupId="DEDUCTIONS"
+	itemTypeId="NUMERIC" description="Infrastructure Bonds" minAmount="0"
+	maxAmount="100000" fromDate="2008-01-01 00:00:00.000" thruDate="2011-12-31 00:00:00.000"
+	createdBy="admin" />
+
+<TaxItem itemId="9009" categoryId="9001" itemName="Loan Principal" itemGroupId="DEDUCTIONS"
+	itemTypeId="NUMERIC"
+	description="Principal on housing loan (including stamp duty, registration fees &amp; other expenses incurred for the purpose of transfer of property to the assessee)."
+	minAmount="0" maxAmount="100000" fromDate="2008-01-01 00:00:00.000"
+	thruDate="2011-12-31 00:00:00.000" createdBy="admin" />
+
+<TaxItem itemId="9010" categoryId="9001" itemName="EDUCATION FEES" itemGroupId="DEDUCTIONS"
+	itemTypeId="NUMERIC" description="Child Education Fees" minAmount="0"
+	maxAmount="100000" fromDate="2008-01-01 00:00:00.000" thruDate="2011-12-31 00:00:00.000"
+	createdBy="admin" />
+
+<TaxItem itemId="9011" categoryId="9001"
+	itemName="80CCC-PREMIUM PAID UNDER PENSION POLICY" itemTypeId="NUMERIC" itemGroupId="DEDUCTIONS"
+	description="ULIP" minAmount="0" maxAmount="100000" fromDate="2008-01-01 00:00:00.000"
+	thruDate="2011-12-31 00:00:00.000" createdBy="admin" />
+
+<TaxItem itemId="9012" categoryId="9001" itemName="DEPOSITS" itemGroupId="DEDUCTIONS"
+	itemTypeId="NUMERIC"
+	description="Term deposits for a fixed period of not less than 5 years with a scheduled bank"
+	minAmount="0" maxAmount="100000" fromDate="2008-01-01 00:00:00.000"
+	thruDate="2011-12-31 00:00:00.000" createdBy="admin" />
+
+<TaxItem itemId="9014" categoryId="9002"
+	itemName="MEDICAL/HEALTH INSURANCE PREMIUM" itemTypeId="NUMERIC" itemGroupId="DEDUCTIONS"
+	description="Money paided for Health or Medical Insurance Plan."
+	minAmount="0" maxAmount="10000" fromDate="2008-01-01 00:00:00.000"
+	thruDate="2011-12-31 00:00:00.000" createdBy="admin" />
+
+
+<TaxItem itemId="9015" categoryId="9003"
+	itemName="MAINTENANCE INCLUDING MEDICAL TREATMENT OF HANDICAPPED DEPENDENT"
+	itemTypeId="NUMERIC" itemGroupId="DEDUCTIONS"
+	description="Maintenance including medical treatment of handicapped dependent."
+	minAmount="0" maxAmount="10000" fromDate="2008-01-01 00:00:00.000"
+	thruDate="2011-12-31 00:00:00.000" createdBy="admin" />
+
+<TaxItem itemId="9016" categoryId="9004" itemName="DONATION TO CERTAIN FUNDS"
+	itemTypeId="NUMERIC" itemGroupId="DEDUCTIONS" description="Donation to certain funds"
+	minAmount="0" maxAmount="10000" fromDate="2008-01-01 00:00:00.000"
+	thruDate="2011-12-31 00:00:00.000" createdBy="admin" />
+
+<TaxItem itemId="9017" categoryId="9005" itemName="INTEREST ON EDUCATION LOAN"
+	itemTypeId="NUMERIC" itemGroupId="DEDUCTIONS" description="Interest on education loan."
+	minAmount="0" maxAmount="10000" fromDate="2008-01-01 00:00:00.000"
+	thruDate="2011-12-31 00:00:00.000" createdBy="admin" />
+
+<TaxItem itemId="9018" categoryId="9006"
+	itemName="DEDUCTION IN RESPECT OF DISABILITY" itemTypeId="NUMERIC" itemGroupId="DEDUCTIONS"
+	description="Deduction in respect of disability" minAmount="0"
+	maxAmount="10000" fromDate="2008-01-01 00:00:00.000" thruDate="2011-12-31 00:00:00.000"
+	createdBy="admin" />
+
+
+<TaxItem itemId="9019" categoryId="9007" itemName="Property Address"
+	itemTypeId="LONGTEXT" description="ADDRESS OF PROPERTY PURCHASED/CONSTRUCTED"
+	fromDate="2008-01-01 00:00:00.000" thruDate="2011-12-31 00:00:00.000" 
+	 minAmount="0" maxAmount="0" createdBy="admin" />
+	
+
+<TaxItem itemId="9020" categoryId="9007" itemName="SELF OCCUPIED"
+	itemTypeId="BOOLEAN" description="Is it Self Occupied?" fromDate="2008-01-01 00:00:00.000"
+	thruDate="2011-12-31 00:00:00.000" createdBy="admin" minAmount="0" maxAmount="0"/>
+
+<TaxItem itemId="9021" categoryId="9007" itemName="LETOUT"
+	itemTypeId="BOOLEAN" description="Is it LETOUT?" fromDate="2008-01-01 00:00:00.000"
+	thruDate="2011-12-31 00:00:00.000" createdBy="admin" minAmount="0" maxAmount="0"/>
+
+<TaxItem itemId="9022" categoryId="9007" itemName="VACANT"
+	itemTypeId="BOOLEAN" description="Is it VACANT?" fromDate="2008-01-01 00:00:00.000"
+	thruDate="2011-12-31 00:00:00.000" createdBy="admin" minAmount="0" maxAmount="0"/>
+
+<TaxItem itemId="9023" categoryId="9007" itemName="HOUSING LOAN TAKEN FROM"
+	itemTypeId="TEXT" description="HOUSING LOAN TAKEN FROM" fromDate="2008-01-01 00:00:00.000"
+	thruDate="2011-12-31 00:00:00.000" createdBy="admin" minAmount="0" maxAmount="0"/>
+
+<TaxItem itemId="9024" categoryId="9007" itemName="Construction Loan"
+	itemTypeId="BOOLEAN" description="Is Loan for Construction?" fromDate="2008-01-01 00:00:00.000"
+	thruDate="2011-12-31 00:00:00.000" createdBy="admin" minAmount="0" maxAmount="0"/>
+
+<TaxItem itemId="9025" categoryId="9007" itemName="Purchase Loan"
+	itemTypeId="BOOLEAN" description="Is Loan for Purchase" fromDate="2008-01-01 00:00:00.000"
+	thruDate="2011-12-31 00:00:00.000" createdBy="admin" minAmount="0" maxAmount="0"/>
+
+<TaxItem itemId="9026" categoryId="9007"
+	itemName="DATE ON WHICH CONSTRUCTION IS / WILL BE COMPLETED"
+	itemTypeId="DATE" description="Date on which construction is / will be completed?"
+	fromDate="2008-01-01 00:00:00.000" thruDate="2011-12-31 00:00:00.000"
+	createdBy="admin" minAmount="0" maxAmount="0"/>
+
+<TaxItem itemId="9027" categoryId="9007"
+	itemName="DATE OF POSSESSION OF PROPERTY" itemTypeId="DATE"
+	description="DATE OF POSSESSION OF PROPERTY" fromDate="2008-01-01 00:00:00.000"
+	thruDate="2011-12-31 00:00:00.000" createdBy="admin" minAmount="0" maxAmount="0"/>
+
+<TaxItem itemId="9028" categoryId="9007" itemName="OWNERSHIP"
+	itemTypeId="BOOLEAN" description="Is Join Loan?" fromDate="2008-01-01 00:00:00.000"
+	thruDate="2011-12-31 00:00:00.000" createdBy="admin" minAmount="0" maxAmount="0"/>
+
+<TaxItem itemId="9029" categoryId="9007"
+	itemName="AMOUNT OF INTEREST FOR THE FINANCIAL YEAR" itemTypeId="NUMERIC"  itemGroupId="DEDUCTIONS"
+	description="Amount of interest for the financial year" fromDate="2008-01-01 00:00:00.000"
+	thruDate="2011-12-31 00:00:00.000" createdBy="admin"  minAmount="0" maxAmount="150000"/>
+
+<TaxItem itemId="9030" categoryId="9007"
+	itemName="Amount of interest for pre construction period" itemTypeId="NUMERIC" itemGroupId="DEDUCTIONS"
+	description="Amount of interest for pre construction period" minAmount="0" maxAmount="150000" fromDate="2008-01-01 00:00:00.000"
+	thruDate="2011-12-31 00:00:00.000" createdBy="admin" />
+
+<TaxItem itemId="9032" categoryId="9010"
+	itemName="Annual Rent Paid" itemTypeId="NUMERIC" itemGroupId="EXEMPTIONS"
+	description="Acutal Annual Rent Paid" minAmount="0" maxAmount="99999" fromDate="2008-01-01 00:00:00.000"
+	thruDate="2011-12-31 00:00:00.000" createdBy="admin" />
+	 
+<!-- <ValidTaxDecl validTaxDeclId="9999" hrName="FY08-09" geoId="IND" startDate="2008-04-01" 
+	endDate="2009-01-15" modificationType="Monthly" modifyLatestBy="21"/>
+		 
+<ValidTaxDecl validTaxDeclId="10000" hrName="FY09-10" geoId="IND" startDate="2009-04-01" 
+	endDate="2010-01-15" modificationType="Monthly" modifyLatestBy="21"/> -->
+	
+</entity-engine-xml>

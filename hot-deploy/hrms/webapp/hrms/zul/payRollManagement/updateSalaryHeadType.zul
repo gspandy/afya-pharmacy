@@ -1,0 +1,56 @@
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<zk>
+	<window id="UpdateSalaryHeadTypeWindow" width="50%"
+		position="center" closable="true" border="normal" maximizable="true">
+		<separator height="30px" />
+		<hbox>
+			<div align="right" width="150px" style="margin-right:5px">
+				<label value="${c:l('HRMS_SALARY_HEAD_TYPE') }" />
+			</div>
+			<div width="150px" align="left">
+				<label id="salaryHeadTypeIdLabel" />
+			</div>
+			<div width="297px" align="left">
+				<textbox id="salaryHeadTypeId" name="salaryHeadTypeid"
+					width="150px" visible="false" />
+			</div>
+		</hbox>
+
+		<separator height="10px" />
+
+		<hbox>
+			<div align="right" width="150px" style="margin-right:5px">
+				<label value="${c:l('FormFieldTitle_description') }" /><label value="*" style="color:red" />
+			</div>
+			<div width="297px" align="left">
+				<textbox id="description" name="description" rows="3" constraint="no empty:Description Required"
+					cols="30" maxlength="180" />
+			</div>
+		</hbox>
+		<separator height="25px" />
+		<hbox>
+			<div align="right" width="265px">
+				<button id="updateSalaryHeadType" label="${c:l('btnSave') }"
+					 mold="os" onClick="description.getValue();">
+					<zscript>
+						<![CDATA[
+	import org.ofbiz.base.util.*;
+	import org.zkoss.zk.ui.event.EventListener;
+	com.ndz.controller.SalaryHeadTypeManagementController SalaryHeadTypeController = new com.ndz.controller.SalaryHeadTypeManagementController();
+updateSalaryHeadType.addEventListener("onClick", new EventListener() {
+	public void onEvent(Event event) throws Exception {
+		SalaryHeadTypeController.EditSalaryHeadType(event);
+		Events.postEvent("onClick$searchPerCompany",UpdateSalaryHeadTypeWindow.getPage().getFellow("searchPanel"),null);
+		UpdateSalaryHeadTypeWindow.detach();
+	}
+});
+]]>
+</zscript>
+				</button>
+				<button id="cancelPayGrade" label="${c:l('ButtonCancel') }"  mold="os"
+					onClick="UpdateSalaryHeadTypeWindow.detach()" />
+			</div>
+		</hbox>
+<separator height="25px" />
+	</window>
+</zk>

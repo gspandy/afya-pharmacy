@@ -1,0 +1,112 @@
+<?component name="findbox" macroURI="../macros/textfindMacro.zul" id="macro1"?>
+<?component name="findbox1" macroURI="../macros/textfindMacro.zul" id="macro2"?>
+<?page title="Secure Page" id="SalaryHeadType"?>
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<zk xmlns:h="http://www.zkoss.org/2005/zk/native">
+	<zscript>
+		<![CDATA[
+	import com.ndz.controller.*;
+	import org.ofbiz.entity.*;
+	import java.util.*;
+	import com.ndz.controller.EmployeeStatusType;
+	SearchController controller = new SearchController();
+	Tab emplstatus = arg.get("emplstatus");
+	
+]]>
+		</zscript>
+	<window id="searchPanel" border="normal" if="${isAdmin }" apply="${controller}">
+		<custom-attributes entityName="StatusItem" CompanyWide="true"></custom-attributes>
+		<textbox visible="false" id="statusTypeId_1adminfld" value="EMPL_STATUS"/>
+		<caption label="Employee Status">
+			<div align="right">
+				<toolbarbutton label="New"
+					image="/images/icon/update.png" style="color:#FFFFFF">
+					<attribute name="onClick" >
+						{
+							final Window win = (Window) Executions.createComponents(
+									"/zul/GlobalHRSetting/newStatusType.zul", null, null);
+						}
+					</attribute>
+				</toolbarbutton>
+				<toolbarbutton label="Edit" visible="false" 
+					image="/images/icon/update.png" style="color:#FFFFFF">
+					<attribute name="onClick">
+						{
+							final Window win = (Window) Executions.createComponents(
+									"/zul/GlobalHRSetting/validStatusChange.zul", null, null);
+						}
+					</attribute>
+				</toolbarbutton>
+			</div>
+		</caption>
+		<div style="margin:10px;" align="center">
+			<findbox fieldLabel="Description" name="description" type="text" cols="40" />
+			<button label="Search" id="searchPerCompany" />
+			<button label="Reset" onClick='Events.postEvent("onClick",emplstatus,null)'/>
+		</div>
+		<separator height="15px" />
+		<zscript>
+				<![CDATA[
+	import org.ofbiz.base.util.*;
+	class MyRowRenderer implements RowRenderer {
+		MyRowRenderer() {
+		}
+		public void render(Row row, Object data) {
+			org.ofbiz.entity.GenericValue gv = ((org.ofbiz.entity.GenericValue) data);
+			new Label(gv.getString("description")).setParent(row);
+			java.sql.Timestamp fromDate = (java.sql.Timestamp) gv.getTimestamp("lastUpdatedStamp");
+			Date fDate = new Date(fromDate.getTime());
+			new Label(fDate.toString()).setParent(row);
+			row.addEventListener("onDoubleClick",
+					new org.zkoss.zk.ui.event.EventListener() {
+						public void onEvent(Event event) throws Exception {
+							Executions.createComponents("/zul/GlobalHRSetting/employeeStatusTypeEdit.zul",null,gv);
+						}
+					});
+			row.setTooltiptext("Double Click To Edit");
+			Button btn = new com.ndz.zkoss.HrmsButton();
+			btn.setParent(row);
+			btn.setMold("os");
+			btn.setLabel("Delete");
+			btn.setTooltiptext("Click here to delete");
+			btn.setSclass("btnDelete");
+			btn.addEventListener("onClick",
+					new org.zkoss.zk.ui.event.EventListener() {
+						public void onEvent(Event event) throws Exception {
+							EmployeeStatusType.delete(event,gv);
+						}
+					});
+		}
+	}
+	RowRenderer tableRenderer = new MyRowRenderer();
+]]>
+</zscript>
+
+		<panel id="results" visible="true">
+			<panelchildren>
+			<h:table width="100%" style="border:0px" cellspacing="0px" cellpadding="0px">
+				<h:tr>
+					<h:td width="80%">
+						<label value="${c:l('HRMS_SEARCHRESULTS') }" ></label>
+					</h:td>
+					<h:td width="20%" style="text-align:right">
+						<paging id="paging" width="100%"/>
+					</h:td>
+				</h:tr>
+			</h:table>
+			<div id="enumdiv" style="overflow: auto;" height="200px">
+			<grid id="dataGrid" rowRenderer="${tableRenderer}">
+				<columns menupopup="auto">
+					<column label="Description" />
+					<column label="Updated Date" />
+					<column label="Action" />
+				</columns>
+			</grid>
+			</div>
+			</panelchildren>
+		</panel>
+		<zscript>
+		Events.postEvent("onClick",searchPerCompany,null);
+		</zscript>
+	</window>
+</zk>

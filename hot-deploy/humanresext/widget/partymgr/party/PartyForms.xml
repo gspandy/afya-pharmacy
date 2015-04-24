@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<forms xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="http://ofbiz.apache.org/dtds/widget-form.xsd">
+
+    <form name="ViewPartyPerson" type="single" default-map-name="lookupPerson">
+    	
+		<field name="firstName"> <display/> </field>
+		<field name="lastName" position="2"> <display/> </field>
+		<field name="gender">
+			<display></display>
+		</field>
+		<field name="birthDate" position="2"> <display/> </field> 
+		<field name="maritalStatus" position="2"><display/></field>
+		<field name="passportNumber" position="1"><display/></field>
+		<field name="passportExpireDate" position="1"><display/></field>
+		<field name="religion" position="1"><display/></field>
+		<field name="nationality" position="2"><display/></field>
+		<field name="spouseName"><display/></field>
+		<field name="fatherName"><display/></field>
+		<field name="bloodGroup"><display/></field>
+		<field name="height"><display/></field>
+		<field name="caste"><display/></field>
+		<field name="identificationMark"><display/></field>
+    </form>
+
+</forms>    

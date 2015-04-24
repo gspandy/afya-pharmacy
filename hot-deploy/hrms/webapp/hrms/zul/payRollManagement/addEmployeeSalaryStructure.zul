@@ -1,0 +1,374 @@
+<?init class="org.zkoss.zk.ui.util.Composition" arg0="/WEB-INF/layout/templateWestCollapsible.zul"?>
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<?component name="positionTypebox" macroURI="../macros/textfindMacro.zul" id="macro4"?>
+<?component name="findbox1" macroURI="../macros/textfindMacro.zul" id="macro1"?>
+<?component name="fromDatebox" macroURI="../macros/datefindMacro.zul" id="macro2"?>
+<?component name="thruDatebox" macroURI="../macros/datefindMacro.zul" id="macro3"?>
+<zk xmlns:n="http://www.zkoss.org/2005/zk/native">
+	<zscript>
+		<![CDATA[
+	import org.ofbiz.entity.*;
+	import java.util.*;
+	import org.ofbiz.entity.condition.*;
+	import org.ofbiz.entity.GenericDelegator;
+	import org.ofbiz.base.util.*;
+	import org.ofbiz.entity.condition.EntityCondition;
+	import com.ndz.controller.*;
+	import com.ndz.component.party.PartyRoleRenderer;
+	import org.ofbiz.entity.*;
+	import java.util.*;
+	import org.ofbiz.entity.condition.*;
+	import org.ofbiz.entity.GenericDelegator;
+	import org.ofbiz.base.util.*;
+	import java.util.List;
+	import java.util.Set;
+	import org.ofbiz.entity.GenericValue;
+	import org.zkoss.zul.Listitem;
+	import org.zkoss.zul.ListitemRenderer;
+	import com.ndz.zkoss.GenericValueRenderer;
+	import javax.servlet.http.HttpServletRequest;
+	import javax.servlet.http.HttpServletResponse;
+	import org.ofbiz.entity.GenericEntityException;
+	import org.zkoss.zk.ui.util.GenericForwardComposer;
+	import com.nthdimenzion.humanres.payroll.SalaryBean;
+	import java.util.Calendar;
+	Map Arguments = Executions.getCurrent().getArg();
+	String salaryStructureId = (String) Executions.getCurrent().getParameter("salaryStructureId");
+	EntityCondition condition2 = EntityCondition.makeCondition("salaryStructureId", EntityOperator.EQUALS, salaryStructureId);
+	EntityCondition condition1 = EntityCondition.makeCondition("salaryComputationTypeId", EntityOperator.NOT_EQUAL, "FORMULA");
+	EntityCondition condition = EntityCondition.makeCondition(condition1, EntityOperator.AND, condition2);
+	List head = delegator.findList("SalaryStructureHeadDetail", condition, null, null, null, false);
+	String salaryFrequency = com.nthdimenzion.humanres.payroll.PayrollHelper.getSalaryFrequencyForCompany(delegator);
+
+	System.out.println("Salary Frequency " + salaryFrequency);
+
+	Calendar cal = Calendar.getInstance();
+
+	List frequencies, allMonths = UtilDateTime.getMonthNames(Locale.getDefault());
+	if ("BIWEEKLY".equals(salaryFrequency)) {
+		System.out.println("SalFrequency " + salaryFrequency);
+		frequencies = new ArrayList(24);
+		for (int i = 0; i < allMonths.size(); i++) {
+			frequencies.add("01-" + allMonths.get(i));
+			frequencies.add("15-" + allMonths.get(i));
+		}
+	} else {
+		frequencies = allMonths;
+	}
+]]>
+</zscript>
+
+	<groupbox self="@{define(westContent)}" mold="3d" id="payrollMain">
+		<caption label="Payroll" />
+		<vbox>
+			<toolbarbutton label="${c:l('HRMS_SALARY_HEAD') }" id="salaryHead">
+				<attribute name="onClick">
+	Executions.sendRedirect("/control/PayRoll?id=salaryHead");
+	unselectedToolbarbuttonColor(self);
+	selectedToolbarbuttonColor(self);
+</attribute>
+			</toolbarbutton>
+			<toolbarbutton label="${c:l('HRMS_EXEMPTION_FOR_SALARY_HEAD') }" id="exemtionForSalaryHead">
+				<attribute name="onClick">
+	Executions.sendRedirect("/control/PayRoll?id=exemtionForSalaryHead");
+	unselectedToolbarbuttonColor(self);
+	selectedToolbarbuttonColor(self);
+</attribute>
+			</toolbarbutton>
+
+			<toolbarbutton label="${c:l('HRMS_CONDITIONS') }">
+				<attribute name="onClick">
+	Executions.sendRedirect("/control/PayRoll");
+	unselectedToolbarbuttonColor(self);
+	selectedToolbarbuttonColor(self);
+</attribute>
+			</toolbarbutton>
+			<toolbarbutton label="${c:l('HRMS_ACTION') }" id="action">
+				<attribute name="onClick">
+	Executions.sendRedirect("/control/PayRoll?id=action");
+	unselectedToolbarbuttonColor(self);
+	selectedToolbarbuttonColor(self);
+</attribute>
+			</toolbarbutton>
+			<toolbarbutton label="${c:l('HRMS_RULES') }" id="rules">
+				<attribute name="onClick">
+	Executions.sendRedirect("/control/PayRoll?id=rules");
+	unselectedToolbarbuttonColor(self);
+	selectedToolbarbuttonColor(self);
+</attribute>
+			</toolbarbutton>
+
+			<toolbarbutton label="${c:l('HRMS_SALARY_STRUCTURE') }" id="salaryStructure">
+				<attribute name="onClick">
+	Executions.sendRedirect("/control/PayRoll?id=salaryStructure");
+	unselectedToolbarbuttonColor(self);
+	selectedToolbarbuttonColor(self);
+</attribute>
+			</toolbarbutton>
+			<toolbarbutton label="${c:l('HRMS_TAX') }" id="tax">
+				<attribute name="onClick">
+	Executions.sendRedirect("/control/PayRoll?id=tax");
+	unselectedToolbarbuttonColor(self);
+	selectedToolbarbuttonColor(self);
+</attribute>
+			</toolbarbutton>
+			<toolbarbutton label="${c:l('HRMS_EMPLOYEE_SALARY_STRUCTURE') }" id="empSalaryStructure">
+				<attribute name="onClick">
+	Executions.sendRedirect("/control/PayRoll?id=empSalaryStructure");
+	unselectedToolbarbuttonColor(self);
+	selectedToolbarbuttonColor(self);
+</attribute>
+			</toolbarbutton>
+
+
+		</vbox>
+	</groupbox>
+
+	<window title="${c:l('HRMS_SALARY_STRUCTURE') }" border="none" id="addEmplSalStructure" self="@{define(content) }" onCreate="closeWest();">
+		<separator height="10px"></separator>
+		<zscript>
+	void closeWest() {
+		West west = (West) addEmplSalStructure.getParent().getFellow("westCollapsible");
+		west.setOpen(false);
+	}
+</zscript>
+
+
+		<n:form method="post" name="generateReportForm" action="/hrms/control/HRMSCalculateEmplSal" id="updateForm">
+			<separator height="20px"></separator>
+			<div>
+
+				<div align="right" width="50px" style="margin-right:5px"></div>
+				<separator height="20px"></separator>
+
+				<hbox>
+					<div align="right" width="400px" style="margin:5px">
+						<label value="${c:l('HRMS_EmployeeId') }" />
+						<label value="*" style="color:red"></label>
+					</div>
+					<div align="left">
+						<employeeprospectbox name="partyId" id="employeeBox" constraint="no empty:Employee Id Required" onChange="validateEmployee();"></employeeprospectbox>
+					</div>
+					<div>
+						<label id="nameOfParty" value=""></label>
+					</div>
+					<div>
+						<label id="positionforsal" value="" style="color:red"></label>
+					</div>
+				</hbox>
+			</div>
+
+			<separator height="10px"></separator>
+
+			<zscript>
+		<![CDATA[
+	String selectedPartyId = null;
+	List partyRole = null;
+	String roleTypeId = null;
+	List offerHeadList = null;
+	GenericValue offerGV = null;
+	String offerIdgenerated = null;
+	List offerStatusList = null;
+	GenericValue offerStatusGV = null;
+	EntityCondition cond = null;
+	String offerIdFound = null;
+	boolean visibility = false;
+	void validateEmployee() {
+		Comboitem listItem = employeeBox.getSelectedItem();
+		selectedPartyId = listItem != null ? listItem.getValue() : null;
+		GenericDelegator delegator = com.ndz.zkoss.util.HrmsInfrastructure.getDelegator();//GenericDelegator.getGenericDelegator("default");
+	    GenericValue userLogin = (GenericValue) Executions.getCurrent()
+		.getDesktop().getSession().getAttribute("userLogin");
+
+          List prospectPosTypeList = null;
+          List  prospectList=null; 
+          String positionType=null;
+          offerHbox.setVisible(false);
+		  String positionId = null;
+		  
+		  GenericValue salStructure = delegator.findByPrimaryKey("SalaryStructure", UtilMisc.toMap("salaryStructureId", salaryStructureId.getValue()));
+	      String positionTypeForSalary = salStructure.getString("positionId");
+		  GenericValue positionGV = null;
+		  if(selectedPartyId != null)
+		  	positionGV = org.ofbiz.humanresext.util.HumanResUtil.getEmplPositionForParty(selectedPartyId, delegator);
+			if (UtilValidate.isNotEmpty(positionGV)) {
+				positionType = positionGV.getString("emplPositionTypeId");
+			}else{
+	          prospectList = delegator.findByAnd("MaxOfferDetail", UtilMisc.toMap("partyId",selectedPartyId));//,"statusId","OF_GENERATED"
+	          GenericValue prospectGv = org.ofbiz.entity.util.EntityUtil.getFirst(prospectList);
+	          if(prospectGv!=null){
+	        	  positionforsal.setValue("");
+	        	if(com.ndz.zkoss.HrmsUtil.isRejectedOrWithdrawn(prospectGv.getString("offerId"))){
+	        		SubmitAttachEmployee.setDisabled(true);
+	    			positionforsal.setValue("Offer is Withdrawn/Rejected. Cannot attach Salary Structure.");
+	    			return;
+	        	}else{
+	        		SubmitAttachEmployee.setDisabled(false);
+	    			positionforsal.setValue("");
+		       	  	String offerIdVal=prospectGv.getString("offerId");
+		       		offertextbox.setVisible(visibility);
+		       		offerId.setValue(offerIdVal);
+		       		offerQ.setValue(offerIdVal);
+		       		offerHbox.setVisible(true);
+			        String  requisitionId = prospectGv.getString("requisitionId");
+			        GenericValue requistionGV = delegator.findOne("EmployeeRequisition",UtilMisc.toMap("requisitionId",requisitionId),false);
+			        positionType = requistionGV.getString("positionType");
+	        	}
+	          }else{
+	        	  positionforsal.setValue("Cannot attach Salary Structure; Offer is not generated."); 
+	        	  return;
+	          }
+          }
+		
+		if (!positionTypeForSalary.equals(positionType)) {
+			SubmitAttachEmployee.setDisabled(true);
+			positionforsal.setValue("Position Type Mismatch.");
+		} else {
+			positionforsal.setValue(null);
+			SubmitAttachEmployee.setDisabled(false);
+			warningmessage.setVisible(false);
+			offerIdFound = null;
+		}
+		
+		//if (!emplPosType.equals(positionTypeForSalary)) {
+		//	SubmitAttachEmployee.setDisabled(true);
+
+			//positionforsal.setValue("Position Type Mismatch.");
+			//return;
+	//	}
+	
+
+		
+		GenericValue PersonGV = delegator.findByPrimaryKey("Person", UtilMisc.toMap("partyId", selectedPartyId));
+		String nameOFParty = PersonGV != null ? PersonGV.getString("firstName") : "";
+		String nameOFPartyLast = PersonGV != null ? PersonGV.getString("lastName") : "";
+		String nameOFPartyFull = PersonGV != null ? nameOFParty + " " + nameOFPartyLast : "";
+		if (nameOFPartyFull != null)
+			nameOfParty.setValue(nameOFPartyFull);
+
+	}
+	String positionTypeForSalary = null;
+]]>
+</zscript>
+
+			<div>
+
+
+
+
+
+				<hbox align="center" forEach="${head}" visible="true">
+					<div align="right" width="400px">
+						<label value="${each.hrName}" />
+						<label value="*" style="color:red"></label>
+					</div>
+					<div align="left" width="1px"></div>
+					<div>
+						<longbox name="head_${each.salaryStructureHeadId}" width="150px" style="margin:10px" 
+							id="head_${each.salaryStructureHeadId}">
+						</longbox>
+					</div>
+					<div align="left" width="37px">
+						<label value="${each.currencyUomId}" />
+					</div>
+					<div align="left" width="400px">
+						<label value="* (${each.salaryComputationTypeId},${each.salaryHeadTypeId})"
+							style="float:left;text-align:left;display: block" />
+					</div>
+				</hbox>
+			</div>
+			<separator height="10px"></separator>
+			<div>
+				<hbox align="center">
+					<div align="right" width="400px">
+						<label value="${c:l('HRMS_FROMDATE') }"  />
+						<label value="*" style="color:red"></label>
+					</div>
+					<div align="right" width="165px">
+						<datebox name="fromDate" width="150px" id="fromDate" constraint="no past:From Date Cannot be Past"></datebox>
+					</div>
+				</hbox>
+				<separator></separator>
+				<hbox align="center" visible="${visibility}" id="offertextbox">
+					<div align="right" width="390px">
+						<label value="${c:l('HRMS_OFFER_ID') }"  />
+					</div>
+					<div align="right" width="185px">
+						<textbox name="offerQ" width="150px" id="offerQ" style="margin:10px" readonly="true"></textbox>
+					</div>
+
+				</hbox>
+				<div align="center">
+					<hbox>
+						<toolbarbutton label="${c:l('HRMS_SALARY_CAN_NOT_ATTACHED') }" id="warningmessage"
+							visible="false" style="color:red" href="/control/requisitionManagement">
+						</toolbarbutton>
+					</hbox>
+				</div>
+
+				<hbox align="center" id="offerHbox" visible="false">
+					<div align="right" width="390px">
+						<label value="${c:l('HRMS_OFFER_ID') }"  />
+					</div>
+					<div align="right" width="185px">
+						<textbox name="offerId" width="150px" id="offerId" style="margin:10px" visible="true" readonly="true"></textbox>
+					</div>
+					<div visible="false">
+						<textbox name="salaryStructureId" width="150px" id="salaryStructureId" value="${salaryStructureId}"
+							style="margin:10px" visible="false">
+						</textbox>
+					</div>
+
+				</hbox>
+			</div>
+			<div visible="false">
+				<textbox name="mode" width="150px" value="edit" style="margin:10px"></textbox>
+			</div>
+
+			<zscript>
+	<![CDATA[
+	void validateForm() {
+		employeeBox.getSelectedItem().getValue();
+		Long salaryAttached = null;
+		for (int i = 0; i < head.size(); i++) {
+			GenericValue gvList = (GenericValue) head.get(i);
+
+			String stHeadId = gvList.getString("salaryStructureHeadId");
+			String newStHeadId = "head_" + stHeadId;
+			String salaryHeadName = gvList.getString("hrName");
+			salaryAttached = (Long) ((Longbox) addEmplSalStructure.getFellow(newStHeadId)).getValue();
+			if(salaryAttached == null){
+				throw new WrongValueException((Longbox) addEmplSalStructure.getFellow(newStHeadId)," "+salaryHeadName+" "+"Required");
+			}
+			if(UtilValidate.isNegativeInteger(salaryAttached.toString())){
+				throw new WrongValueException((Longbox) addEmplSalStructure.getFellow(newStHeadId)," "+salaryHeadName+" "+"Cannot be Negative");
+			}
+		}
+		fromDate.getValue();
+		if (fromDate.getValue() == null) {
+			throw new WrongValueException(fromDate, "From Date Required");
+		}
+	}
+]]>
+		</zscript>
+			<separator height="30px"></separator>
+			<box width="100%" height="30px" align="center">
+				<hbox style="margin-top:10px;margin-bottom:10px;margin-left:10px">
+					<button id="SubmitAttachEmployee" label="${c:l('HRMS_SUBMIT') }" mold="os" onClick='validateForm();Clients.submitForm("updateForm")'>
+					</button>
+					<button id="cancel" label="${c:l('HRMS_CANCEL') }" mold="os">
+						<attribute name="onClick" >
+			<![CDATA[
+	{
+		Executions.sendRedirect("/control/PayRoll?id=salaryStructure");
+	}
+]]>
+</attribute>
+					</button>
+				</hbox>
+			</box>
+
+		</n:form>
+	</window>
+
+</zk>

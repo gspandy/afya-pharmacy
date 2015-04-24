@@ -1,0 +1,112 @@
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<zk>
+	<window border="none">
+		<caption label="Working Days" style="font-weight:bold" >
+		<div align="right" if="${isAdmin}">
+					<toolbarbutton label="Add NonWorking Days" id="addWorkingDays"
+						image="/images/icon/update.png" style="color:#FFFFFF!important;font-weight:bold">
+						<attribute name="onClick" >
+	{
+		final Window win = (Window) Executions.createComponents("/zul/GlobalHRSetting/publicHolidayAddNonWorkingDays.zul", null, null);
+		win.doModal();
+	}
+</attribute>
+					</toolbarbutton>
+				</div>
+		</caption>
+		<zscript>
+	import org.ofbiz.entity.*;
+	import org.ofbiz.entity.condition.*;
+	GenericDelegator	delegator	= com.ndz.zkoss.util.HrmsInfrastructure.getDelegator();//GenericDelegator.getGenericDelegator("default");
+	List	hrWeekDayList	= delegator.findList("hr_Weekday", null, null, null, null, false);
+</zscript>
+		<div align="center">
+				<hbox visible="false" id="sunday" align="right" width="100%" style="background-color:#EBECE4;margin-right:30px;margin-top:8px" >
+					<label value="Sunday">
+					<attribute name="onCreate">
+					EntityCondition condition = EntityCondition.makeCondition("hr_day",EntityOperator.EQUALS,self.getValue());
+					List	hrWeekDayList	= delegator.findList("hr_Weekday",condition,null,null,null,false);
+					GenericValue hrWeekDayGV =(GenericValue) hrWeekDayList.get(0);
+					String value = hrWeekDayGV.getString("isWorking");
+					if(value.equals("Y"))
+					sunday.setVisible(true);
+					</attribute>
+					</label>
+				</hbox>
+				<hbox visible="false" id="monday" align="right" width="100%" style="background-color:#EBECE4;margin-right:30px;margin-top:8px" >
+					<label  value="Monday">
+					<attribute name="onCreate">
+					EntityCondition condition = EntityCondition.makeCondition("hr_day",EntityOperator.EQUALS,self.getValue());
+					List	hrWeekDayList	= delegator.findList("hr_Weekday",condition,null,null,null,false);
+					GenericValue hrWeekDayGV =(GenericValue) hrWeekDayList.get(0);
+					String value = hrWeekDayGV.getString("isWorking");
+					if(value.equals("Y"))
+					monday.setVisible(true);
+					</attribute>
+					</label>
+				</hbox>
+				<hbox visible="false" id="tueday" align="right" width="100%" style="background-color:#EBECE4;margin-right:30px;margin-top:8px" >
+					<label  value="Tuesday">
+					<attribute name="onCreate">
+					EntityCondition condition = EntityCondition.makeCondition("hr_day",EntityOperator.EQUALS,self.getValue());
+					List	hrWeekDayList	= delegator.findList("hr_Weekday",condition,null,null,null,false);
+					GenericValue hrWeekDayGV =(GenericValue) hrWeekDayList.get(0);
+					String value = hrWeekDayGV.getString("isWorking");
+					if(value.equals("Y"))
+					tueday.setVisible(true);
+					</attribute>
+					</label>
+				</hbox>
+				<hbox visible="false" id="wednesday" align="right" width="100%" style="background-color:#EBECE4;margin-right:30px;margin-top:8px" >
+					<label  value="Wednesday">
+					<attribute name="onCreate">
+					EntityCondition condition = EntityCondition.makeCondition("hr_day",EntityOperator.EQUALS,self.getValue());
+					List	hrWeekDayList	= delegator.findList("hr_Weekday",condition,null,null,null,false);
+					GenericValue hrWeekDayGV =(GenericValue) hrWeekDayList.get(0);
+					String value = hrWeekDayGV.getString("isWorking");
+					if(value.equals("Y"))
+					wednesday.setVisible(true);
+					</attribute>
+					</label>
+				</hbox>
+				<hbox visible="false" id="thursday" align="right" width="100%" style="background-color:#EBECE4;margin-right:30px;margin-top:8px" >
+					<label  value="Thursday">
+					<attribute name="onCreate">
+					EntityCondition condition = EntityCondition.makeCondition("hr_day",EntityOperator.EQUALS,self.getValue());
+					List	hrWeekDayList	= delegator.findList("hr_Weekday",condition,null,null,null,false);
+					GenericValue hrWeekDayGV =(GenericValue) hrWeekDayList.get(0);
+					String value = hrWeekDayGV.getString("isWorking");
+					if(value.equals("Y"))
+					thursday.setVisible(true);
+					</attribute>
+					</label>
+				</hbox>
+				<hbox visible="false" id="friday" align="right" width="100%" style="background-color:#EBECE4;margin-right:30px;margin-top:8px" >
+					<label  value="Friday">
+					<attribute name="onCreate">
+					EntityCondition condition = EntityCondition.makeCondition("hr_day",EntityOperator.EQUALS,self.getValue());
+					List	hrWeekDayList	= delegator.findList("hr_Weekday",condition,null,null,null,false);
+					GenericValue hrWeekDayGV =(GenericValue) hrWeekDayList.get(0);
+					String value = hrWeekDayGV.getString("isWorking");
+					if(value.equals("Y"))
+					friday.setVisible(true);
+					</attribute>
+					</label>
+				</hbox>
+				<hbox visible="false" id="saturday" align="right" width="100%" style="background-color:#EBECE4;margin-right:30px;margin-top:8px" >
+					<label  value="Saturday">
+					<attribute name="onCreate">
+					EntityCondition condition = EntityCondition.makeCondition("hr_day",EntityOperator.EQUALS,self.getValue());
+					List	hrWeekDayList	= delegator.findList("hr_Weekday",condition,null,null,null,false);
+					GenericValue hrWeekDayGV =(GenericValue) hrWeekDayList.get(0);
+					String value = hrWeekDayGV.getString("isWorking");
+					if(value.equals("Y"))
+					saturday.setVisible(true);
+					</attribute>
+					</label>
+				</hbox>
+		</div>
+
+
+	</window>
+</zk>

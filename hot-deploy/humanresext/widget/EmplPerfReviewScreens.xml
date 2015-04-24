@@ -1,0 +1,385 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<screens xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="http://ofbiz.apache.org/dtds/widget-screen.xsd">
+
+	<screen name="EmployeeAppraisalDecorator">
+		<section>
+			<actions>
+				<set field="leftbarScreenName" value="AppraisalLeftBar" />
+				<set field="leftbarScreenLocation"
+					value="component://humanresext/widget/EmplPerfReviewScreens.xml" />
+				<set field="MainColumnStyle" value="leftonly" />
+				<set field="headerItem" value="PerfReview" />
+			</actions>
+			<widgets>
+				<decorator-screen name="main-decorator"
+					location="${parameters.mainDecoratorLocation}">
+					<decorator-section name="body">
+						<section>
+							<widgets>
+								<platform-specific>
+                                    <html><html-template location="component://humanresext/webapp/humanresext/appraisal/PerfReviewTabBar.ftl"/></html>
+                                </platform-specific>
+								<decorator-section-include name="body" />
+							</widgets>
+						</section>
+					</decorator-section>
+				</decorator-screen>
+			</widgets>
+		</section>
+	</screen>
+
+	<screen name="AppraisalLeftBar">
+		<section>
+			<widgets>
+				<container style="left">
+					<include-screen name="PerfReviewSections"
+						location="component://humanresext/widget/EmplPerfReviewScreens.xml" />
+					<include-screen name="PerfReviewSummary"
+						location="component://humanresext/widget/EmplPerfReviewScreens.xml" />
+				</container>
+			</widgets>
+		</section>
+	</screen>
+
+	<screen name="PerfReviewSections">
+		<section>
+			<widgets>
+				<platform-specific>
+					<html>
+						<html-template
+							location="component://humanresext/webapp/humanresext/appraisal/PerfReviewSections.ftl" />
+					</html>
+				</platform-specific>
+
+			</widgets>
+		</section>
+	</screen>
+	
+	<screen name="PerfReviewSummary">
+		<section>
+			<widgets>
+				<platform-specific>
+					<html>
+						<html-template
+							location="component://humanresext/webapp/humanresext/appraisal/PerfReviewSummary.ftl" />
+					</html>
+				</platform-specific>
+
+			</widgets>
+		</section>
+	</screen>
+
+
+
+	<screen name="EnablePerfReview">
+		<section>
+			<actions>
+				<set field="titleProperty" value="EmployeeAppraisal" />
+				<set field="headerItem" value="PerfReview" />
+			</actions>
+			<widgets>
+				<decorator-screen name="main-decorator"
+					location="${parameters.mainDecoratorLocation}">
+					<decorator-section name="body">
+						<screenlet
+							title="${uiLabelMap.HumaresInitiateAppraisal}">
+							<section>
+								<widgets>
+									<platform-specific>
+										<html>
+											<html-template
+												location="component://humanresext/webapp/humanresext/appraisal/EnablePerfReview.ftl" />
+										</html>
+									</platform-specific>
+								</widgets>
+							</section>
+						</screenlet>
+					</decorator-section>
+				</decorator-screen>
+			</widgets>
+		</section>
+	</screen>
+
+	<screen name="SelectTemplates">
+		<section>
+			<actions>
+				<set field="headerItem" value="PerfReview" />
+				<script
+					location="component://humanresext/webapp/humanresext/WEB-INF/actions/PopulateTemplates.groovy" />
+			</actions>
+			<widgets>
+				<decorator-screen name="main-decorator"
+					location="${parameters.mainDecoratorLocation}">
+					<decorator-section name="body">
+						<screenlet
+							title="${uiLabelMap.HumaresSelectTemplates}">
+							<section>
+								<widgets>
+									<platform-specific>
+										<html>
+											<html-template
+												location="component://humanresext/webapp/humanresext/appraisal/SelectTemplates.ftl" />
+										</html>
+									</platform-specific>
+								</widgets>
+							</section>
+						</screenlet>
+					</decorator-section>
+				</decorator-screen>
+			</widgets>
+		</section>
+	</screen>
+
+	<screen name="EditAnnouncement">
+		<section>
+			<actions>
+				<set field="headerItem" value="PerfReview" />
+			</actions>
+			<widgets>
+				<decorator-screen name="main-decorator"
+					location="${parameters.mainDecoratorLocation}">
+					<decorator-section name="body">
+						<screenlet
+							title="${uiLabelMap.HumaresSelectTemplates}">
+							<section>
+								<widgets>
+									<platform-specific>
+										<html>
+											<html-template
+												location="component://humanresext/webapp/humanresext/appraisal/EditAnnouncement.ftl" />
+										</html>
+									</platform-specific>
+								</widgets>
+							</section>
+						</screenlet>
+					</decorator-section>
+				</decorator-screen>
+			</widgets>
+		</section>
+	</screen>
+
+
+	<screen name="ConfirmPerfReview">
+		<section>
+			<widgets>
+				<decorator-screen name="main-decorator"
+					location="${parameters.mainDecoratorLocation}">
+					<decorator-section name="body">
+						<screenlet
+							title="${uiLabelMap.HumaresSelectTemplates}">
+							<section>
+								<widgets>
+									<platform-specific>
+										<html>
+											<html-template
+												location="component://humanresext/webapp/humanresext/appraisal/ConfirmPerfReview.ftl" />
+										</html>
+									</platform-specific>
+								</widgets>
+							</section>
+						</screenlet>
+					</decorator-section>
+				</decorator-screen>
+			</widgets>
+		</section>
+	</screen>
+	<screen name="PerfReview">
+		<section>
+			<actions>
+				<set field="titleProperty" value="EmployeeAppraisal" />
+				<set field="headerItem" value="PerfReview" />
+				<script
+					location="component://humanresext/webapp/humanresext/WEB-INF/actions/CheckSelfPrefReview.groovy" />
+				<entity-condition entity-name="EmplPerfReviewManagerView" list="listForApproval" use-cache="false">
+	            	<condition-list combine="and">
+	            		<condition-expr field-name="reviewerId" operator="equals"
+						from-field="userLogin.partyId" />
+						<condition-list combine="or">
+	            		 	<condition-expr field-name="statusType" operator="equals" value="PERF_REVIEW_PENDING"/>
+	            		 	<condition-expr field-name="statusType" operator="equals" value="PERF_REVIEW_IN_PROGRESS"/>
+	            		 	<condition-expr field-name="statusType" operator="equals" value="PERF_REVIEW_DISAGREE"/>
+	            		</condition-list>
+	            	</condition-list>
+            	</entity-condition>
+            	<entity-condition entity-name="EmplPerfReview" list="listIt" >
+            		<condition-expr  field-name="partyId" operator="equals" from-field="userLogin.partyId"/>
+            	</entity-condition>
+			</actions>
+			
+			<widgets>
+				<decorator-screen name="main-decorator"
+					location="${parameters.mainDecoratorLocation}">
+					<decorator-section name="body">
+						<screenlet title="${uiLabelMap.Appraisal}">
+							<section>
+								<widgets>
+									<platform-specific>
+										<html>
+											<html-template
+												location="component://humanresext/webapp/humanresext/appraisal/PerfReviewList.ftl" />
+										</html>
+									</platform-specific>
+									<screenlet id="ListEmplPerfReviews"
+										title="My Performance Reviews"
+										collapsible="true">
+										<!-- <include-form name="ListEmplPerfReviews"
+											location="component://humanresext/widget/forms/PerfReviewForms.xml" />
+										-->
+										<platform-specific>
+											<html>
+												<html-template
+													location="component://humanresext/webapp/humanresext/appraisal/MyPerfReviews.ftl" />
+											</html>
+										</platform-specific>
+									</screenlet>
+									<section>
+										<condition>
+											<if-has-permission permission="HUMANRES" action="_MGR"/>
+										</condition>
+										<widgets>
+									<screenlet id="EmplPerfReviewForApproval"
+										title="Employee Performance For Approval"
+										collapsible="true">
+										<!-- <include-form name="ListEmplPerfReviewForApproval"
+											location="component://humanresext/widget/forms/PerfReviewForms.xml" />
+										-->
+										<platform-specific>
+											<html>
+												<html-template
+													location="component://humanresext/webapp/humanresext/appraisal/PerfReviewsForApproval.ftl" />
+											</html>
+										</platform-specific>
+									</screenlet>
+									</widgets>
+									</section>
+									<include-screen name="ListEmplPerfReviewForClose" location="component://humanresext/widget/EmplPerfReviewScreens.xml"/>
+								</widgets>
+							</section>
+						</screenlet>
+					</decorator-section>
+				</decorator-screen>
+			</widgets>
+		</section>
+	</screen>
+	
+	<screen name="ListEmplPerfReviewForClose">
+			<section>
+				<condition>
+					<if-has-permission permission="HUMANRES" action="_ADMIN"/>
+				</condition>
+				<actions>
+						<set field="departmentId" from-field="departmentId"/>
+						<entity-condition entity-name="PerfPositionAndDepartmentView" list="listForClose">
+							<condition-list>
+						 		<condition-expr  field-name="departmentId" operator="equals" from-field="departmentId" />
+						 		<condition-expr field-name="statusType" operator="equals" value="PERF_REVIEW_AGREED"/>
+							</condition-list>
+						</entity-condition>
+				</actions>
+				<widgets>
+					<screenlet id="EmplPerfReviewForApproval"
+						title="Employee Performance For Closure"
+						collapsible="true">
+						<!-- <include-form name="ListEmplPerfReviewForClose"
+									location="component://humanresext/widget/forms/PerfReviewForms.xml" />
+						 -->
+						 	<platform-specific>
+								<html>
+									<html-template
+										location="component://humanresext/webapp/humanresext/appraisal/PerfReviewsForClosure.ftl" />
+								</html>
+							</platform-specific>
+					</screenlet>				
+				</widgets>
+			</section>
+	</screen>
+
+	<screen name="EditPerfReview">
+		<section>
+			<actions>
+				<set field="titleProperty" value="EmployeeAppraisal" />
+				<set field="headerItem" value="PerfReview" />
+				<script
+					location="component://humanresext/webapp/humanresext/WEB-INF/actions/LoadAttributes.groovy" />
+			</actions>
+			<widgets>
+				<decorator-screen name="EmployeeAppraisalDecorator"
+					location="component://humanresext/widget/EmplPerfReviewScreens.xml">
+					<decorator-section name="body">
+						<section>
+							<widgets>
+								<platform-specific>
+									<html>
+										<html-template
+											location="component://humanresext/webapp/humanresext/appraisal/SelfAppraisal.ftl" />
+									</html>
+								</platform-specific>
+								<include-screen name="ReviewForClose" location="component://humanresext/widget/EmplPerfReviewScreens.xml"/>
+							</widgets>
+						</section>
+					</decorator-section>
+				</decorator-screen>
+			</widgets>
+		</section>
+	</screen>
+	
+	<screen name="ReviewForClose">
+		<section>
+			<condition>
+					<or>
+						<if-has-permission permission="HUMANRES" action="_ADMIN"/>
+						<if-compare field="status" operator="equals" value="PERF_REVIEW_COMPLETE"/>
+					</or>
+			</condition>
+			<actions>
+				<set field="reviewId" value="reviewId"	/>
+			</actions>
+			<widgets>
+				<screenlet id="EmplPerfReviewForCose"
+						title="HR Section"
+						collapsible="true">
+						<platform-specific>
+							<html>
+								<html-template
+									location="component://humanresext/webapp/humanresext/appraisal/hrAppraisal.ftl" />
+							</html>
+						</platform-specific>
+				</screenlet>
+			</widgets>
+		</section>
+	</screen>
+	
+		
+	<screen name="ReviewView">
+		<section>
+			<actions>
+				<set field="titleProperty" value="EmployeeAppraisal" />
+				<set field="headerItem" value="PerfReview" />
+				<script
+					location="component://humanresext/webapp/humanresext/WEB-INF/actions/LoadAttributes.groovy" />
+			</actions>
+			<widgets>
+				<decorator-screen name="EmployeeAppraisalDecorator"
+					location="component://humanresext/widget/EmplPerfReviewScreens.xml">
+					<decorator-section name="body">
+						<section>
+							<widgets>
+								<platform-specific>
+									<html>
+										<html-template
+											location="component://humanresext/webapp/humanresext/appraisal/ReviewerView.ftl" />
+									</html>
+								</platform-specific>
+							</widgets>
+						</section>
+
+					</decorator-section>
+				</decorator-screen>
+			</widgets>
+		</section>
+	</screen>
+	
+	
+</screens>

@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<services xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.ofbiz.org/dtds/services.xsd">
+    <description>SFA Accounts Services</description>
+    <vendor>Nthdimenzion</vendor>
+    <version>1.0</version>
+
+ 	<service name="sfaext.createContact" engine="java" location="com.smebiz.sfa.contacts.ContactsServices" invoke="createContact">
+        <description>Creates an Contact, which is a combination of Party, Person, and PartySupplementalData.
+            Contacts can be created by anyone with CRMSFA_CONTACT_CREATE permission.</description>
+        <implements service="sfaext.createBasicContactInfoForParty"/> 
+        <!-- Party and Person fields -->
+        <attribute name="firstName" type="String" mode="IN" optional="false"/>
+        <attribute name="lastName" type="String" mode="IN" optional="false"/>
+        <attribute name="firstNameLocal" type="String" mode="IN" optional="true"/>
+        <attribute name="lastNameLocal" type="String" mode="IN" optional="true"/>
+        <attribute name="personalTitle" type="String" mode="IN" optional="true"/>
+        <attribute name="birthDate" type="java.sql.Date" mode="IN" optional="true"/>
+        <attribute name="preferredCurrencyUomId" type="String" mode="IN" optional="true"/>
+        <attribute name="description" type="String" mode="IN" optional="true"/>
+        <attribute name="marketingCampaignId" type="String" mode="IN" optional="true"/> <!-- initial marketing campaign -->
+        <!-- PartySupplementalData fields -->
+        <attribute name="generalProfTitle" type="String" mode="IN" optional="true"/>
+        <attribute name="departmentName" type="String" mode="IN" optional="true"/>
+        <attribute name="partyId" type="String" mode="OUT" optional="false"/>
+        <attribute name="importantNote" type="String" mode="IN" optional="true"/>
+        <!-- necessary for chaining with assignContactToAccount -->
+        <attribute name="accountPartyId" type="String" mode="INOUT" optional="true"/>
+        <attribute name="contactPartyId" type="String" mode="OUT" optional="false"/>
+    </service>
+
+    <service name="sfaext.updateContact" engine="java" location="com.smebiz.sfa.contacts.ContactsServices" invoke="updateContact">
+        <description>Updates a Contact. The userLogin must have CRMSFA_CONTACT_UPDATE permission on this partyId</description>
+        <!-- Party and Person fields -->
+        <attribute name="partyId" type="String" mode="INOUT" optional="false"/>
+        <attribute name="firstName" type="String" mode="IN" optional="false"/>
+        <attribute name="lastName" type="String" mode="IN" optional="false"/>
+        <attribute name="firstNameLocal" type="String" mode="IN" optional="true"/>
+        <attribute name="lastNameLocal" type="String" mode="IN" optional="true"/>
+        <attribute name="personalTitle" type="String" mode="IN" optional="true"/>
+        <attribute name="birthDate" type="java.sql.Date" mode="IN" optional="true"/>
+        <attribute name="preferredCurrencyUomId" type="String" mode="IN" optional="true"/>
+        <attribute name="description" type="String" mode="IN" optional="true"/>
+        <!-- PartySupplementalData fields -->
+        <attribute name="generalProfTitle" type="String" mode="IN" optional="true"/>
+        <attribute name="departmentName" type="String" mode="IN" optional="true"/>
+        <attribute name="importantNote" type="String" mode="IN" optional="true"/>
+    </service>
+
+    <service name="sfaext.assignContactToAccount" engine="java" location="com.smebiz.sfa.contacts.ContactsServices" invoke="assignContactToAccount">
+        <description>Assigns a Contact (partyId) to an Account (accountPartyId) provided the userLogin has CRMSFA_ACCOUNT_UPDATE permission on this account.</description>
+        <attribute name="contactPartyId" type="String" mode="IN" optional="false"/>
+        <attribute name="accountPartyId" type="String" mode="IN" optional="false"/>
+    </service>
+
+    <service name="sfaext.removeContactFromAccount" engine="java" location="com.smebiz.sfa.contacts.ContactsServices" invoke="removeContactFromAccount">
+        <description>Removes a Contact (partyId) from an Account (accountPartyId) provided the userLogin has CRMSFA_ACCOUNT_UPDATE permission on this account.</description>
+        <attribute name="contactPartyId" type="String" mode="IN" optional="false"/>
+        <attribute name="accountPartyId" type="String" mode="IN" optional="false"/>
+    </service>
+
+    <service name="sfaext.reassignContactResponsibleParty" engine="java"
+        location="com.smebiz.sfa.contacts.ContactsServices" invoke="reassignContactResponsibleParty" auth="true">
+        <description>Reassigns the person RESPONSIBLE_FOR an contact</description>
+        <attribute name="contactPartyId" type="String" mode="IN" optional="false"/>
+        <attribute name="newPartyId" type="String" mode="IN" optional="false"/>
+    </service>
+
+    <service name="sfaext.deactivateContact" engine="java" location="com.smebiz.sfa.contacts.ContactsServices" invoke="deactivateContact">
+        <description>Deactivates an accout by expiring all party relationships with the contact. 
+            Checks if userLogin has permission CRMSFA_CONTACT_DEACTIVATE on the contact.</description>
+        <attribute name="partyId" type="String" mode="IN" optional="false"/>
+        <attribute name="expireDate" type="Timestamp" mode="IN" optional="true"/>
+    </service>
+
+</services>
+    

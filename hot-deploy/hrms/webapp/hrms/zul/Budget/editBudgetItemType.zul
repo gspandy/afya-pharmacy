@@ -1,0 +1,47 @@
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<zk>
+	<zscript>
+	import org.ofbiz.entity.*;
+GenericValue gv = Executions.getCurrent().getArg().get("gv");
+	String budgetItemTypeId = gv.getString("budgetItemTypeId");
+	String parentTypeId = gv.getString("parentTypeId") == null?"":gv.getString("parentTypeId");
+	String description = gv.getString("description")
+</zscript>
+	<window id="editBudgetItemTypeWindow" closable="true" width="40%"
+		height="40%" border="normal" maximizable="true">
+		<caption label="${c:l('FormFieldTitle_editBudgetItemType') }"/>
+		<separator height="20px" />
+		<hbox>
+			<div align="right" width="150px">
+				<label value="${c:l('FormFieldTitle_budgetTypeId') }" style="font-weight:bold" />
+			</div>
+			<div align="left">
+				<textbox id="budgetItemTypeId" visible="false"
+					value="${budgetItemTypeId}" />
+				<label value="${budgetItemTypeId}"></label>
+			</div>
+		</hbox>
+	
+		<separator />
+		<hbox>
+			<div align="right" width="150px">
+				<label value="${c:l('FormFieldTitle_description') }" style="font-weight:bold" /><label value="*" style="color:red" />
+			</div>
+			<div align="right">
+				<textbox id="description" rows="3" cols="30"
+					constraint="no empty:Description Required"
+					value="${description}" />
+			</div>
+		</hbox>
+		<separator />
+		<hbox>
+			<div align="right" width="270px">
+				<button id="update" label="${c:l('btnSave') }"
+					onClick='description.getValue();com.ndz.controller.BudgetManagementController.updateBudgetItemType(event);Events.postEvent("onClick", Path
+				.getComponent("/searchPanel//searchButton"), null);editBudgetItemTypeWindow.detach();' />
+				<button id="cancel" label="${c:l('ButtonCancel') }"
+					onClick="editBudgetItemTypeWindow.detach();" />
+			</div>
+		</hbox>
+	</window>
+</zk>

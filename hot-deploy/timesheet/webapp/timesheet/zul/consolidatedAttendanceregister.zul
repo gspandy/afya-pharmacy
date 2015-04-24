@@ -1,0 +1,84 @@
+<?page title="Consolidated View" contentType="text/html;charset=UTF-8"?>
+<zk xmlns:n="http://www.zkoss.org/2005/zk/native">
+    <!--<style src="/images/mainCSS.css"/>-->
+    <style>
+        .class1 A:link {text-decoration: none} .class1 A:visited {text-decoration: none} .class1 A:active {text-decoration: none} .class1
+        A:hover {text-decoration: underline; color: red;}
+
+        .class2 A:link {text-decoration: underline overline} .class2 A:visited {text-decoration: underline overline} .class2 A:active
+        {text-decoration: underline overline} .class2 A:hover {text-decoration: underline; color: green;}
+    </style>
+    <hlayout id="templateBorderlayout" height="10%">
+        <n:table width="100%">
+            <n:form name="form" id="form" method="POST">
+            </n:form>
+
+            <n:tr height="5px">
+                <n:td/>
+                <n:td height="5px" width="100%" style="text-align:right;height:5px">
+                    <image src="/images/p_profile.gif" tooltiptext="Profile" style="cursor:pointer !important;cursor:hand" />
+                    <toolbarbutton label='${sessionScope["person"].firstName} ${sessionScope["person"].lastName}' if="${isOrgMemeber }"/>
+                    <toolbarbutton label='${sessionScope["person"].firstName} ${sessionScope["person"].lastName}' if="${!isOrgMemeber}"/>
+                </n:td>
+                <n:td width="5px" style="text-align:right">
+                </n:td>
+            </n:tr>
+            <n:tr>
+                <n:td valign="top" width="15%"  style="margin-bottom :10px;">
+                    <image id="companyLogo" src="/images/companyLogo.png" width="60px" style="margin-top:-22px"/>
+                </n:td>
+            </n:tr>
+        </n:table>
+    </hlayout>
+    <grid id="attendanceGrid" model="@load(vm.attendanceEntryDtoList)" apply="org.zkoss.bind.BindComposer" viewModel="@id('vm') @init('com.zpc.timesheet.view.ConsolidatedAttendanceregisterVM')" fixedLayout="false" vflex="1" height="90%">
+
+        <auxhead children="@load(vm.auxHeaders)">
+            <template name="children" var="auxHeader">
+                <auxheader align="center" label="@load(auxHeader.auxHeaderLabel)" colspan="@load(auxHeader.colspan)" style="background-color: #088ccd;color: #fff;font-family: Verdana,Tahoma,Arial,Helvetica,sans-serif;font-size: 12px;font-style: normal;font-weight: bold;line-height: 24px;overflow: hidden;padding: 1px 1px 1px;"/>
+                <!--<auxheader align="center" label="@load(header)" if="@load(header) eq 'Summaries'" colspan="26" style="background-color: #088ccd;color: #fff;font-family: Verdana,Tahoma,Arial,Helvetica,sans-serif;font-size: 12px;font-style: normal;font-weight: bold;line-height: 24px;overflow: hidden;padding: 1px 1px 1px;"/>-->
+            </template>
+        </auxhead>
+        <columns children="@load(vm.columnNames)">
+            <template name="children" var="columnName">
+                <column label="@load(columnName)" style="background-color: #088ccd;color: #fff;font-family: Verdana,Tahoma,Arial,Helvetica,sans-serif;font-size: 12px;font-style: normal;font-weight: bold;line-height: 24px;overflow: hidden;padding: 1px 1px 1px;"/>
+            </template>
+        </columns>
+        <template name="model" var="attendanceEntry">
+            <row>
+                <label value="@load(attendanceEntry.totalDays)"/>
+                <label value="@load(attendanceEntry.comments)"/>
+                <label value="@load(attendanceEntry.employeeId)"/>
+                <cell><label value="@load(attendanceEntry.firstName)"/><label value="  "/><label value="@load(attendanceEntry.lastName)"/></cell>
+                <label forEach="${attendanceEntry.finalValues}" value="${each}" />
+                <label value="@load(attendanceEntry.NOverTimeSummary)"/>
+                <label value="@load(attendanceEntry.DOvertimeSummary)"/>
+                <label value="@load(attendanceEntry.absent)"/>
+                <label value="@load(attendanceEntry.suspension)"/>
+                <label value="@load(attendanceEntry.absentAndSuspension)"/>
+                <label value="@load(attendanceEntry.compLeave)"/>
+                <label value="@load(attendanceEntry.annualLeave)"/>
+                <label value="@load(attendanceEntry.annualPassageLeave)"/>
+                <label value="@load(attendanceEntry.specialLeave)"/>
+                <label value="@load(attendanceEntry.sickLeave)"/>
+                <label value="@load(attendanceEntry.maternityLeave)"/>
+                <label value="@load(attendanceEntry.otherUnpaidLeave)"/>
+                <label value="@load(attendanceEntry.present)"/>
+                <label value="@load(attendanceEntry.presentOnFreeDay)"/>
+                <label value="@load(attendanceEntry.awayOnDuty)"/>
+                <label value="@load(attendanceEntry.standby)"/>
+                <label value="@load(attendanceEntry.freedays)"/>
+                <label value="@load(attendanceEntry.terminated)"/>
+                <label value="@load(attendanceEntry.resigned)"/>
+                <label value="@load(attendanceEntry.transferred)"/>
+                <label value="@load(attendanceEntry.deserted)"/>
+                <label value="@load(attendanceEntry.wrongDepartment)"/>
+                <label value="@load(attendanceEntry.excessFreeDays)"/>
+                <label value="@load(attendanceEntry.SDPresent)"/>
+                <label value="@load(attendanceEntry.SDPresentOnFreeDay)"/>
+                <label value="@load(attendanceEntry.SDTransferredAndPresent)"/>
+                <label value="@load(attendanceEntry.SDWrongDepartmentAndPresent)"/>
+                <label value="@load(attendanceEntry.totalShiftDifferential)"/>
+            </row>
+        </template>
+    </grid>
+</zk>

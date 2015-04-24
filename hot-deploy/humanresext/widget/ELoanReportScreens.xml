@@ -1,0 +1,225 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<screens xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+        xsi:noNamespaceSchemaLocation="http://ofbiz.apache.org/dtds/widget-screen.xsd">
+  
+  	<screen name="ELoanReports">
+		<section>
+			<actions>
+				<set field="layoutSettings.javaScripts[]"
+					value="/smeVisualTheme/images/export.js" global="true" />
+				<set field="tabButtonItem" value="ELoanReports" />
+			</actions>
+			<widgets>
+				<decorator-screen name="ELoanDecorator" location="${parameters.mainDecoratorLocation}">
+					<decorator-section name="body">
+						<platform-specific>
+								<html>
+									<html-template-decorator location="component://humanresext/webapp/humanresext/eloan/eloanreports.ftl">
+										<html-template-decorator-section name="ListELoan">
+											<include-screen name="ListELoan"/>
+										</html-template-decorator-section>
+								  		<html-template-decorator-section name="ELoanSlipReport">
+											<include-screen name="ELoanSlipReport"/>
+										</html-template-decorator-section>
+										<html-template-decorator-section name="ELoanLimitsReport">
+											<include-screen name="ELoanLimitsReport"/>
+										</html-template-decorator-section>
+									</html-template-decorator>
+								</html>
+							</platform-specific>
+					</decorator-section>
+				</decorator-screen>
+			</widgets>
+		</section>
+	</screen>
+    
+   <screen name="ListELoan">
+		<section>
+			<condition>
+                <if-has-permission permission="HUMANRES" action="_ADMIN"/>
+            </condition>
+			<widgets>
+				<screenlet title="${uiLabelMap.ListELoanReport}">
+					<include-form name="ListELoanForm" location="component://humanresext/widget/forms/ELoanReportForms.xml" />
+				</screenlet>
+			</widgets>
+		</section>
+	</screen>
+	
+    <screen name="ListELoanPDF">
+        <section>
+            <actions>
+                <property-map resource="AccountingUiLabels" map-name="uiLabelMap" global="true"/>
+                <set field="titleProperty" value="ELoan List"/>
+                <set field="viewIndex" from-field="parameters.VIEW_INDEX" type="Integer" default-value="0"/>
+                <set field="viewSize" from-field="parameters.VIEW_SIZE" type="Integer" default-value="1000"/>
+                <set field="pageLayoutName" value="simple-landscape"/>
+                <set field="layoutSettings.documentTitle" value="${uiLabelMap.ELoanReport}" />
+                <entity-condition entity-name="MaxELoanDetail" list="eloanList">
+                    <condition-list combine="and">
+                        <condition-expr field-name="loanId" operator="equals"  from-field="parameters.loanId" ignore-if-empty="true"/>
+                        <condition-expr field-name="partyId" operator="equals"  from-field="parameters.partyId" ignore-if-empty="true"/>
+                        <condition-expr field-name="statusId" operator="equals"  from-field="parameters.statusId" ignore-if-empty="true"/>
+                        <condition-expr field-name="loanType" operator="equals"  from-field="parameters.loanType" ignore-if-empty="true"/>
+                        <condition-expr field-name="currencyUomId" operator="equals"  from-field="parameters.currencyUomId" ignore-if-empty="true"/>
+                        <condition-expr field-name="fromDate" operator="greater-equals" from-field="parameters.fromDate" ignore-if-empty="true"/>
+                        <condition-expr field-name="thruDate" operator="less-equals" from-field="parameters.thruDate" ignore-if-empty="true"/>
+                 		<condition-expr field-name="mgrPositionId" operator="equals"  from-field="parameters.mgrPositionId" ignore-if-empty="true"/>
+                  	</condition-list>
+                </entity-condition>
+            </actions>
+            <widgets>
+                <decorator-screen name="SimpleDecorator" location="component://common/widget/CommonScreens.xml">
+                    <decorator-section name="body">
+                        <include-form name="ELoanResultsForm" location="component://humanresext/widget/forms/ELoanReportForms.xml" />
+                    </decorator-section>
+                </decorator-screen>
+            </widgets>
+        </section>
+    </screen>
+    
+	<screen name="ListELoanXls">
+        <section>
+            <actions>
+				<set field="layoutSettings.documentTitle" value="${uiLabelMap.StatusReport}" />
+                 <entity-condition entity-name="MaxELoanDetail" list="loanList">
+                    <condition-list combine="and">
+                        <condition-expr field-name="loanId" operator="equals"  from-field="parameters.loanId" ignore-if-empty="true"/>
+                        <condition-expr field-name="partyId" operator="equals"  from-field="parameters.partyId" ignore-if-empty="true"/>
+                        <condition-expr field-name="statusId" operator="equals"  from-field="parameters.statusId" ignore-if-empty="true"/>
+                        <condition-expr field-name="loanType" operator="equals"  from-field="parameters.loanType" ignore-if-empty="true"/>
+                        <condition-expr field-name="currencyUomId" operator="equals"  from-field="parameters.currencyUomId" ignore-if-empty="true"/>
+                        <condition-expr field-name="fromDate" operator="greater-equals" from-field="parameters.fromDate" ignore-if-empty="true"/>
+                        <condition-expr field-name="thruDate" operator="less-equals" from-field="parameters.thruDate" ignore-if-empty="true"/>
+                  		<condition-expr field-name="mgrPositionId" operator="equals"  from-field="parameters.mgrPositionId" ignore-if-empty="true"/>
+                  	</condition-list>
+                </entity-condition>
+            </actions>
+			<widgets>
+				<include-form name="FindELoanResultsForm" location="component://humanresext/widget/forms/ELoanReportForms.xml" />
+			</widgets>
+        </section>
+	</screen>
+
+  	 <screen name="ELoanSlipReport">
+		<section>
+			<condition>
+                <if-has-permission permission="HUMANRES" action="_USER"/>
+            </condition>
+			<widgets>
+				<screenlet title="${uiLabelMap.ELoanSlipReport}">
+					<include-form name="ELoanSlipSearchForm" location="component://humanresext/widget/forms/ELoanReportForms.xml" />
+				</screenlet>
+			</widgets>
+		</section>
+	</screen>
+	
+    <screen name="ELoanSlipPDF">
+        <section>
+            <actions>
+                <property-map resource="AccountingUiLabels" map-name="uiLabelMap" global="true"/>
+                <set field="titleProperty" value="ELoan List"/>
+                <set field="viewIndex" from-field="parameters.VIEW_INDEX" type="Integer" default-value="0"/>
+                <set field="viewSize" from-field="parameters.VIEW_SIZE" type="Integer" default-value="1000"/>
+                <set field="pageLayoutName" value="simple-landscape"/>
+                <set field="layoutSettings.documentTitle" value="${uiLabelMap.ELoanReport}" />
+                <entity-condition entity-name="MaxELoanDetail" list="loanList">
+                    <condition-list combine="and">
+                        <condition-expr field-name="loanId" operator="equals"  from-field="parameters.loanId" ignore-if-empty="true"/>
+                        <condition-expr field-name="partyId" operator="equals"  from-field="parameters.partyId" ignore-if-empty="true"/>
+                        <condition-expr field-name="fromDate" operator="greater-equals" from-field="parameters.fromDate" ignore-if-empty="true"/>
+                        <condition-expr field-name="thruDate" operator="less-equals" from-field="parameters.thruDate" ignore-if-empty="true"/>
+                  	</condition-list>
+                </entity-condition>
+            </actions>
+            <widgets>
+                <decorator-screen name="SimpleDecorator" location="component://common/widget/CommonScreens.xml">
+                    <decorator-section name="body">
+                        <include-form name="ELoanSlipForm" location="component://humanresext/widget/forms/ELoanReportForms.xml" />
+                    </decorator-section>
+                </decorator-screen>
+            </widgets>
+        </section>
+    </screen>
+    
+	<screen name="ELoanSlipXLS">
+        <section>
+            <actions>
+				<set field="layoutSettings.documentTitle" value="${uiLabelMap.ReibursementSlipReport}" />
+                  <entity-condition entity-name="MaxELoanDetail" list="loanList">
+                    <condition-list combine="and">
+                        <condition-expr field-name="loanId" operator="equals"  from-field="parameters.loanId" ignore-if-empty="true"/>
+                        <condition-expr field-name="partyId" operator="equals"  from-field="parameters.partyId" ignore-if-empty="true"/>
+                        <condition-expr field-name="fromDate" operator="greater-equals" from-field="parameters.fromDate" ignore-if-empty="true"/>
+                        <condition-expr field-name="thruDate" operator="less-equals" from-field="parameters.thruDate" ignore-if-empty="true"/>
+                  	</condition-list>
+                </entity-condition>
+            </actions>
+			<widgets>
+				<include-form name="ELoanSlipForm" location="component://humanresext/widget/forms/ELoanReportForms.xml" />
+			</widgets>
+        </section>
+	</screen>
+
+	 <screen name="ELoanLimitsReport">
+		<section>
+			<condition>
+                <if-has-permission permission="HUMANRES" action="_ADMIN"/>
+            </condition>
+			<widgets>
+				<screenlet title="${uiLabelMap.ELoanLimitsReport}">
+					<include-form name="ELoanLimitSearchForm" location="component://humanresext/widget/forms/ELoanReportForms.xml" />
+				</screenlet>
+			</widgets>
+		</section>
+	</screen>
+	
+    <screen name="ELoanLimitsPDF">
+        <section>
+            <actions>
+                <property-map resource="AccountingUiLabels" map-name="uiLabelMap" global="true"/>
+                <set field="titleProperty" value="ELoan Limits"/>
+                <set field="viewIndex" from-field="parameters.VIEW_INDEX" type="Integer" default-value="0"/>
+                <set field="viewSize" from-field="parameters.VIEW_SIZE" type="Integer" default-value="1000"/>
+                <set field="pageLayoutName" value="simple-landscape"/>
+                <set field="layoutSettings.documentTitle" value="${uiLabelMap.ELoanLimitReport}" />
+                <entity-condition entity-name="ELoanLimit" list="limitList">
+                    <condition-list combine="and">
+                        <condition-expr field-name="emplPositionTypeId" operator="equals"  from-field="parameters.emplPositionTypeId" ignore-if-empty="true"/>
+                        <condition-expr field-name="loanType" operator="equals"  from-field="parameters.loanType" ignore-if-empty="true"/>
+                  	</condition-list>
+                </entity-condition>
+            </actions>
+            <widgets>
+                <decorator-screen name="SimpleDecorator" location="component://common/widget/CommonScreens.xml">
+                    <decorator-section name="body">
+                        <include-form name="ELoanLimitForm" location="component://humanresext/widget/forms/ELoanReportForms.xml" />
+                    </decorator-section>
+                </decorator-screen>
+            </widgets>
+        </section>
+    </screen>
+    
+	<screen name="ELoanLimitsXLS">
+        <section>
+            <actions>
+                <set field="layoutSettings.documentTitle" value="${uiLabelMap.ELoanLimitsReport}" />
+                <entity-condition entity-name="ELoanLimit" list="limitList">
+                    <condition-list combine="and">
+                        <condition-expr field-name="emplPositionTypeId" operator="equals"  from-field="parameters.emplPositionTypeId" ignore-if-empty="true"/>
+                        <condition-expr field-name="loanType" operator="equals"  from-field="parameters.loanType" ignore-if-empty="true"/>
+                  	</condition-list>
+                </entity-condition>
+            </actions>
+            <widgets>
+                <decorator-screen name="SimpleDecorator" location="component://common/widget/CommonScreens.xml">
+                    <decorator-section name="body">
+                        <include-form name="ELoanLimitForm" location="component://humanresext/widget/forms/ELoanReportForms.xml" />
+                    </decorator-section>
+                </decorator-screen>
+            </widgets>
+        </section>
+	</screen>
+	
+</screens>

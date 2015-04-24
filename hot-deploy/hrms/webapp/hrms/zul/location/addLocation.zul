@@ -1,0 +1,214 @@
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<zk>
+	<zscript>
+	import org.ofbiz.base.util.*;
+	import org.ofbiz.entity.*;
+	import org.ofbiz.entity.condition.EntityExpr;
+	import org.ofbiz.entity.condition.EntityOperator;
+	import org.ofbiz.entity.condition.EntityCondition;
+	import java.util.*;
+	import org.zkoss.zul.*;
+	GenericDelegator delegator = com.ndz.zkoss.util.HrmsInfrastructure.getDelegator();//GenericDelegator.getGenericDelegator("default");
+	EntityCondition countryCondition = EntityCondition.makeCondition("geoTypeId",
+			EntityOperator.EQUALS, "COUNTRY");
+	Set fieldToSelect = new HashSet();
+	fieldToSelect.add("geoName");
+	fieldToSelect.add("geoId");
+	List geos = delegator.findList("Geo", countryCondition, fieldToSelect,
+			null, null, false);
+	geos.add(0, null);
+	geosArray = geos.toArray(new GenericValue[geos.size()]);
+	SimpleListModel geoList = new SimpleListModel(geosArray);
+	SimpleListModel selectCountry(Listitem geoItem) {
+
+		List states = delegator.findByAnd("GeoAssocAndGeoTo", UtilMisc.toMap(
+				"geoIdFrom", geoItem.getValue()));
+		states.add(0, null);
+		statesArray = states.toArray(new GenericValue[states.size()]);
+		SimpleListModel stateList = new SimpleListModel(statesArray);
+		return stateList;
+
+	}
+	public class GeoItemRenderer implements ListitemRenderer {
+
+		public GeoItemRenderer() {
+		}
+
+		public void render(Listitem li, Object data) {
+			if (data instanceof GenericValue) {
+				GenericValue val = (GenericValue) data;
+				li.setLabel(val.getString("geoName"));
+				li.setValue(val.getString("geoId"));
+			}
+		}
+	}
+	ListitemRenderer geoItemRenderer = new GeoItemRenderer();
+</zscript>
+	<window id="addLocationDiv" width="50%" height="60%" border="normal" maximizable="true" closable="true">
+		<caption label="${c:l('HRMS_ADD_LOCATION')}" />
+		<separator height="15px" />
+		<hbox>
+			<div align="right" width="170px" style="margin-right:5px">
+				<label value="${c:l('HRMS_LOCATION_NAME')}:" style="font-weight:bold" /><label value="*" style="color:red" />
+			</div>
+			<div align="left" width="150px" style="margin-right:5px">
+				<textbox id="locationName" width="250px" />
+					
+					<zscript>		
+						
+	<![CDATA[
+	import org.zkoss.util.resource.Labels;
+	import org.zkoss.util.resource.Labels;
+	public void nameValidation(Textbox comp) throws WrongValueException {
+		String value = comp.getValue();
+		if (value == "") {
+			throw new WrongValueException(comp, "Location Name  Required");
+		}
+		boolean isNotString = true;
+		isNotString = UtilValidate.isAlphabetic(value);
+		if (!isNotString) {
+			throw new WrongValueException(comp, "Location Name should be only Characters");
+		}
+		
+		List locationList = delegator.findByAnd("Location",UtilMisc.toMap("locationName",value));
+		if(UtilValidate.isNotEmpty(locationList)){
+			throw new WrongValueException(comp,"Location Name already exists.");
+		}
+		
+	}
+]]>
+</zscript>
+					
+			</div>
+		</hbox>
+		<separator />
+		<hbox>
+			<div align="right" width="170px" style="margin-right:5px">
+				<label value="${c:l('FormFieldTitle_Address1')}:" style="font-weight:bold" /><label value="*" style="color:red" />
+			</div>
+			<div align="left" width="150px" style="margin-right:5px">
+				<textbox id="address1" cols="37" rows="3"
+					constraint="no empty:Address1 Required" maxlength="255" />
+			</div>
+		</hbox>
+		<separator />
+		<hbox>
+			<div align="right" width="170px" style="margin-right:5px">
+				<label value="${c:l('FormFieldTitle_Address2')}:" style="font-weight:bold" />
+			</div>
+			<div align="left" width="150px" style="margin-right:5px">
+				<textbox id="address2" cols="37" rows="3" maxlength="255" />
+			</div>
+		</hbox>
+		<separator />
+		<hbox>
+			<div align="right" width="170px" style="margin-right:5px">
+				<label value="${c:l('FormFieldTitle_City')}:" style="font-weight:bold" /><label value="*" style="color:red" />
+			</div>
+			<div align="left" width="150px" style="margin-right:5px">
+				<textbox id="city" width="250px"/>
+					<zscript>		
+						
+	<![CDATA[
+	import org.zkoss.util.resource.Labels;
+	import org.zkoss.util.resource.Labels;
+	import com.ndz.zkoss.HrmsUtil;
+	public void cityValidation(Textbox comp) throws WrongValueException {
+		String value = 	HrmsUtil.stripWhitespace(comp.getValue());
+		if (value == "") {
+			throw new WrongValueException(comp, "City Name  Required");
+		}
+		boolean isnumeric=HrmsUtil.checkAnyNumber(value);
+		boolean isSpecial=HrmsUtil.checkSpecialCharacter(value);
+		if (isnumeric || isSpecial) {
+			throw new WrongValueException(comp, "City Name should be only Characters");
+		}
+	}
+]]>
+</zscript>
+			</div>
+		</hbox>
+		<separator />
+		<vbox>
+			<hbox>
+				<div align="right" width="170px"
+					style="margin-right:5px">
+					<label value="${c:l('FormFieldTitle_Country')}:" style="font-weight:bold" /><label value="*" style="color:red" />
+				</div>
+				<div align="left" width="150px"
+					style="margin-right:5px">
+					<listbox id="countryGeoId" mold="select"
+						itemRenderer="${geoItemRenderer}" model="${geoList}"
+						onSelect="Clients.closeErrorBox(self);stateProvinceGeoId.setModel(selectCountry(self.selectedItem));" />
+				</div>
+			</hbox>
+			<hbox>
+				<div align="right" width="170px"
+					style="margin-right:5px">
+					<label value="${c:l('FormFieldTitle_State')}:" style="font-weight:bold" /><label value="*" style="color:red" />
+				</div>
+				<div align="left" width="170px"
+					style="margin-right:5px">
+					<listbox id="stateProvinceGeoId" mold="select"
+						itemRenderer="${geoItemRenderer}"
+						onSelect="Clients.closeErrorBox(self)" />
+				</div>
+			</hbox>
+		</vbox>
+		<zscript>
+		<![CDATA[
+	public void postalCodeValidate(Textbox comp) throws WrongValueException {
+		String value = comp.getValue();
+		boolean isNotInteger = true;
+		isNotInteger = UtilValidate.isInteger(value);
+		if (!isNotInteger) {
+			throw new WrongValueException(comp,
+					"Postal Code Must Be Numeric");
+		}
+	}
+]]>
+		</zscript>
+		<separator />
+		<hbox>
+			<div align="right" width="170px" style="margin-right:5px">
+				<label value="${c:l('FormFieldTitle_PostalCode')}:" style="font-weight:bold" /><label value="*" style="color:red" />
+			</div>
+			<div align="left" width="150px" style="margin-right:5px">
+				<textbox id="postalCode" width="250px"
+					constraint="no empty:Postal Code Required" maxlength="60" />
+			</div>
+		</hbox>
+		<separator />
+		<zscript>
+		<![CDATA[
+	import org.zkoss.zk.ui.event.EventListener;
+	void validateForm() {
+		nameValidation(locationName);
+		address1.getValue();
+		cityValidation(city);
+		if (countryGeoId.getSelectedItem() == null||org.apache.commons.lang.StringUtils.isEmpty((String)countryGeoId.getSelectedItem().getValue())){
+			throw new WrongValueException(countryGeoId, "Country Name Required");
+		}
+		if (stateProvinceGeoId.getSelectedItem() == null) {
+			throw new WrongValueException(stateProvinceGeoId,
+					"State Name Required");
+		}
+		postalCodeValidate(postalCode);
+	}
+]]>
+		</zscript>
+		<hbox>
+			<div align="right" width="298px">
+				<button label="${c:l('HRMS_SaveButton')}" id="savePostalAddress"
+					onClick='validateForm();com.ndz.controller.LocationManagementController.addLocation(event);
+					Component componentPaths = Path.getComponent("/searchPanel//searchButton");
+					if(componentPaths != null)
+					Events.postEvent("onClick", componentPaths, null);
+				addLocationDiv.detach();'>
+				</button>
+				<button label="${c:l('HRMS_CancelButton')}"
+					onClick="addLocationDiv.detach();" />
+			</div>
+		</hbox>
+	</window>
+</zk>

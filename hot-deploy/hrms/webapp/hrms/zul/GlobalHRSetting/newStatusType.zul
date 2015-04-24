@@ -1,0 +1,34 @@
+<zk>
+	<window title="Employee Status" id="employeeStatusType" mode="modal"
+		apply="com.ndz.controller.EmployeeStatusType" width="400px"
+		height="170px" position="center" closable="true" border="normal" >
+		<separator></separator>
+		<hbox style="margin-top:5px">
+			<div width="150px" align="right">
+				<label value="Description" /><label value="*" style="color:red"/>
+			</div>
+			<div width="150px" align="left">
+
+				<textbox id="description"  constraint="no empty:Description Required"></textbox>
+			</div>
+		</hbox>
+		<separator height="20px"></separator>
+		<hbox style="margin-top:5px">
+			<div align="right" width="265px">
+				<button id="btnCreate" label="Save"  onClick="validate();"/>
+				<button id="btnClose" label="Close"  onClick="employeeStatusType.detach()"/>
+			</div>
+
+		</hbox>
+		
+		<zscript>
+		void validate(){
+		org.ofbiz.entity.GenericDelegator delegator = com.ndz.zkoss.util.HrmsInfrastructure.getDelegator();//org.ofbiz.entity.GenericDelegator.getGenericDelegator("default");
+		String des = description.getValue();
+		List statusItem = delegator.findByAnd("StatusItem",org.ofbiz.base.util.UtilMisc.toMap("statusTypeId", "EMPL_STATUS", "description",des));
+		if(org.ofbiz.base.util.UtilValidate.isNotEmpty(statusItem))
+			throw new WrongValueException(description,"Description already exists");
+		}
+		</zscript>
+	</window>
+</zk>

@@ -1,0 +1,86 @@
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<zk>
+	<zscript>
+	import org.ofbiz.base.util.*;
+	import java.util.*;
+	import org.ofbiz.entity.*;
+	import org.zkoss.zul.*;
+	import org.ofbiz.entity.condition.*;
+	import org.ofbiz.base.util.*;
+	String trainingId = Executions.getCurrent().getParameter("trainingId");
+	GenericDelegator delegator = com.ndz.zkoss.util.HrmsInfrastructure.getDelegator();//GenericDelegator.getGenericDelegator("default");
+	GenericValue trainings = null;
+	trainings = delegator.findByPrimaryKey("Training", UtilMisc.toMap(
+			"trainingId", trainingId));
+</zscript>
+	<window id="viewCompanyTrainingWindow" border="normal"
+		style="border:5px solid maroon;" height="400px" width="100%"
+		contentStyle="overflow:auto" self="@{define(content)}">
+		<caption label="${c:l('HRMS_VIEWTRAINING') }" style="font-weight:bold" />
+		<separator height="30px" />
+		<hbox>
+			<div align="right" width="130px" style="margin-right:5px">
+				<label value="${c:l('FormFieldTitle_trainingId') }:" style="font-weight:bold" />
+			</div>
+			<div align="left" width="150px" style="margin-right:5px">
+				<label id="trainingId" value="${trainings.trainingId}" />
+			</div>
+		</hbox>
+		<separator />
+		<hbox>
+			<div align="right" width="130px" style="margin-right:5px">
+				<label value="${c:l('FormFieldTitle_trainingName') }:" style="font-weight:bold" />
+			</div>
+			<div align="left" width="150px" style="margin-right:5px">
+				<label id="trainingName"
+					value="${trainings.trainingName}" />
+			</div>
+		</hbox>
+		<separator />
+		<hbox>
+			<div align="right" width="130px" style="margin-right:5px">
+				<label value="${c:l('FormFieldTitle_trainingType') }:" style="font-weight:bold" />
+			</div>
+			<div align="left" width="150px" style="margin-right:5px">
+				<label value="${trainings.trainingClassTypeId}" />
+			</div>
+		</hbox>
+		<separator />
+		<hbox>
+			<div align="right" width="130px" style="margin-right:5px">
+				<label value="${c:l('FormFieldTitle_description') }:" style="font-weight:bold" />
+			</div>
+			<div align="left" width="150px" style="margin-right:5px">
+				<label id="description"
+					value="${trainings.description}" />
+			</div>
+		</hbox>
+		<separator />
+		<hbox>
+			<div align="right" width="130px" style="margin-right:5px">
+				<label value="${c:l('HRMS_STARTDATE') }:" style="font-weight:bold" />
+			</div>
+			<div align="left" width="150px" style="margin-right:5px">
+				<label id="estimatedStartDate"
+					value="${trainings.estimatedStartDate}" />
+			</div>
+
+		</hbox>
+		<separator />
+		<hbox>
+			<div align="right" width="130px" style="margin-right:5px">
+				<label value="${c:l('HRMS_ENDDATE') }:" style="font-weight:bold" />
+			</div>
+			<div align="left" width="150px" style="margin-right:5px">
+				<label id="estimatedCompletionDate"
+					value="${trainings.estimatedCompletionDate}" />
+			</div>
+		</hbox>
+		<separator />
+		<hbox>
+			<div align="right" width="188px">
+				<button label="${c:l('HRMS_BackButton') }" href="/control/day" />
+			</div>
+		</hbox>
+	</window>
+</zk>

@@ -1,0 +1,687 @@
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<?component name="positionTypebox" macroURI="../macros/textfindMacro.zul" id="macro1"?>
+<?component name="positionTypebox" macroURI="../macros/textfindMacro.zul" id="macro2"?>
+<?component name="positionTypebox1" macroURI="../macros/textfindMacro.zul" id="macro3"?>
+<?component name="positionTypebox2" macroURI="../macros/textfindMacro.zul" id="macro4"?>
+
+<zk>
+	<zscript>
+	import org.ofbiz.entity.*;
+	import java.util.*;
+	GenericDelegator delegator = com.ndz.zkoss.util.HrmsInfrastructure.getDelegator();//GenericDelegator.getGenericDelegator("default");
+</zscript>
+
+	<window id="AddPayrollConditionWindow" width="43%" height="43%"
+		title="${c:l('HRMS_ADD_PAYROLL_CONDITION') }" position="center" closable="true" maximizable="true"
+		border="normal"
+		apply="com.ndz.controller.PayrollConditionManagementController">
+		<zscript>
+	void togglebandbox() {
+		String bandBoxId = (String) actionList1.getSelectedItem().getAttribute("bandBoxId");
+		employeeAttribute.setVisible(false);
+		bandboxtaxItem.setVisible(false);
+		bandboxcondition.setVisible(false);
+		bandboxAction.setVisible(false);
+		bandboxSalary.setVisible(false);
+		textinput.setVisible(false);
+		if(bandBoxId != null){
+		 ((Bandbox) AddPayrollConditionWindow.getFellow(bandBoxId)).setVisible(true);
+		 ((Bandbox) AddPayrollConditionWindow.getFellow(bandBoxId)).setConstraint("no empty:Operand One value required");
+		 }
+
+	}
+	void togglebandbox2() {
+		String bandBoxId2 = (String) actionList2.getSelectedItem().getAttribute("bandBoxId2");
+		employeeAttribute2.setVisible(false);
+		bandboxtaxItem2.setVisible(false);
+		bandboxcondition2.setVisible(false);
+		bandboxAction2.setVisible(false);
+		bandboxSalary2.setVisible(false);
+		textinput1.setVisible(false);
+		if(bandBoxId2 != null){
+		 ((Bandbox) AddPayrollConditionWindow.getFellow(bandBoxId2)).setVisible(true);
+		 ((Bandbox) AddPayrollConditionWindow.getFellow(bandBoxId2)).setConstraint("no empty:Operand Two value required");
+		 }
+
+	}
+</zscript>
+
+		<separator height="30px" />
+		<hbox>
+			<div align="right" width="150px" style="margin-right:5px">
+				<label value="${c:l('HRMS_CONDITION_NAME') }" />
+				<label value="*" style="color:red" />
+			</div>
+			<div width="297px" align="left">
+				<textbox id="conditionName" name="conditionName"
+					constraint="no empty:Condition Name Required" width="130px" />
+			</div>
+		</hbox>
+		<separator height="10px" />
+		<hbox>
+			<hbox>
+				<div align="right" width="150px"
+					style="margin-right:5px">
+					<label value="${c:l('HRMS_OPERAND_ONE') }" />
+					<label value="*" style="color:red" />
+				</div>
+			</hbox>
+			<div width="175px" align="left">
+				<listbox id="actionList1" name="operator" mold="select"
+					width="135px" onSelect="togglebandbox()">
+					<listitem value="" label=""></listitem>
+					<listitem value="textinput" label="${c:l('HRMS_INPUT') }">
+						<custom-attributes bandBoxId="textinput" />
+					</listitem>
+					<listitem value="empl" label="${c:l('HRMS_EMPLOYEE_ATTRIBUTE') }">
+						<custom-attributes bandBoxId="employeeAttribute" />
+					</listitem>
+					<listitem value="taxdecl" label="${c:l('HRMS_TAX_ITEM') }">
+						<custom-attributes bandBoxId="bandboxtaxItem" />
+					</listitem>
+					<listitem value="condition" label="${c:l('HRMS_CONDITIONS') }">
+						<custom-attributes bandBoxId="bandboxcondition" />
+					</listitem>
+					<listitem value="actions" label="${c:l('HRMS_ACTIONS') }">
+						<custom-attributes bandBoxId="bandboxAction" />
+					</listitem>
+					<listitem value="salary" label="${c:l('HRMS_SALARY_HEAD') }">
+						<custom-attributes bandBoxId="bandboxSalary" />
+					</listitem>
+				</listbox>
+			</div>
+			<!-- BANDBOX EMPLOYEE ATTRIBUTE -->
+			<bandbox id="employeeAttribute" visible="false">
+				<bandpopup>
+					<listbox width="200px"
+						onSelect="showEmpl(self.selectedItem);employeeAttribute.close();">
+						<listhead>
+							<listheader label="${c:l('HumanResPerfReviewAttributeName') }" />
+							<listheader label="${c:l('HRMS_DESCRIPTION') }" />
+						</listhead>
+						<listitem id="city">
+							<listcell label="${c:l('HRMS_UPPERCASE_CITY') }" />
+							<listcell label="${c:l('HRMS_EMPLOYEE_PRIMARY_ADDRESS') }" />
+						</listitem>
+						<listitem id="gender">
+							<listcell label="${c:l('HRMS_UPPERCASE_GENDER') }" />
+							<listcell label="${c:l('HRMS_EMPLOYEES_GENDER') } " />
+						</listitem>
+						<listitem id="ctc">
+							<listcell label="${c:l('HRMS_CTC') }" />
+							<listcell label="${c:l('HRMS_EMPLOYEES_GROSS_SALARY') } " />
+						</listitem>
+					</listbox>
+				</bandpopup>
+			</bandbox>
+			<bandbox id="textinput" buttonVisible="false" visible="false" readonly="false">
+			</bandbox>
+
+			<zscript>
+	com.ndz.zkoss.GenericValueRenderer listItemRendererTax1 = new com.ndz.zkoss.GenericValueRenderer(
+			new String[] { "itemId", "categoryId", "itemName" });
+	org.ofbiz.entity.condition.EntityCondition condition = null;
+	void populate() {
+		if (!((itemId1.getValue()).equals(""))) {
+			condition = org.ofbiz.entity.condition.EntityCondition
+					.makeCondition("itemId",
+							org.ofbiz.entity.condition.EntityOperator.LIKE,
+							itemId1.getValue());
+		}
+		List TaxItemList12 = delegator.findList("TaxItem", condition, null,
+				null, null, false);
+		Object taxItemList = TaxItemList12
+				.toArray(new GenericValue[TaxItemList12.size()]);
+		SimpleListModel modelTax1 = new SimpleListModel(TaxItemList12);
+		TaxItemList1.setModel(modelTax1);
+
+	}
+</zscript>
+
+			<bandbox id="bandboxtaxItem" visible="false">
+				<bandpopup>
+
+					<vbox>
+						<hbox align="start">
+							<label value="${c:l('HRMS_ITEM_ID') }"></label>
+							<textbox id="itemId1" />
+
+							<button label="${c:l('HumanResSearch') }"
+								onClick="populate();" />
+						</hbox>
+					</vbox>
+					<paging id="bandboxtaxPaging" width="425px"
+						pageSize="10" pageIncrement="1" />
+					<listbox id="TaxItemList1" width="425px"
+						onSelect="show(self.selectedItem); bandboxtaxItem.close();"
+						itemRenderer="${listItemRendererTax1}" mold="paging"
+						paginal="${bandboxtaxPaging}" visible="true">
+						<listhead>
+							<listheader label="${c:l('HRMS_ITEM_ID') }" />
+							<listheader label="${c:l('HRMS_CATEGORY_NAME') }" />
+							<listheader label="${c:l('HRMS_ITEM_NAME') }" />
+						</listhead>
+					</listbox>
+				</bandpopup>
+			</bandbox>
+
+			<zscript>
+	com.ndz.zkoss.GenericValueRenderer listItemRendererConditions = new com.ndz.zkoss.GenericValueRenderer(
+			new String[] { "conditionId", "conditionName" });
+	org.ofbiz.entity.condition.EntityCondition condition2 = null;
+	void populateCondition() {
+		if (!((conditionId1.getValue()).equals(""))) {
+			condition2 = org.ofbiz.entity.condition.EntityCondition
+					.makeCondition("conditionId",
+							org.ofbiz.entity.condition.EntityOperator.LIKE,
+							conditionId1.getValue());
+		}
+
+		List ConditionList12 = delegator.findList("PayrollCondition",
+				condition2, null, null, null, false);
+		Object conditionItemList = ConditionList12
+				.toArray(new GenericValue[ConditionList12.size()]);
+		SimpleListModel modelCondition1 = new SimpleListModel(ConditionList12);
+		ConditionList1.setModel(modelCondition1);
+	}
+</zscript>
+			<bandbox id="bandboxcondition" visible="false">
+				<bandpopup>
+					<vbox>
+						<hbox align="start">
+							<label value="${c:l('HRMS_CONDITION_ID') }"></label>
+							<textbox id="conditionId1" />
+
+							<button label="${c:l('HumanResSearch') }"
+								onClick="populateCondition() ;" />
+						</hbox>
+					</vbox>
+					<paging id="bandboxConditionPaging" width="425px"
+						pageSize="10" pageIncrement="1" />
+					<listbox id="ConditionList1" width="425px"
+						onSelect="showBandBoxcond(self.selectedItem); bandboxcondition.close();"
+						itemRenderer="${listItemRendererConditions}" mold="paging"
+						paginal="${bandboxConditionPaging}" visible="true">
+						<listhead>
+							<listheader label="${c:l('HRMS_CONDITION_ID') }" />
+							<listheader label="${c:l('HRMS_CONDITION_NAME') }" />
+						</listhead>
+					</listbox>
+				</bandpopup>
+			</bandbox>
+
+			<zscript>
+	com.ndz.zkoss.GenericValueRenderer listItemRendererActions = new com.ndz.zkoss.GenericValueRenderer(
+			new String[] { "actionId", "actionName" });
+	org.ofbiz.entity.condition.EntityCondition condition3 = null;
+	void populateActionList() {
+		if (!((actionId1.getValue()).equals(""))) {
+			condition3 = org.ofbiz.entity.condition.EntityCondition
+					.makeCondition("actionId",
+							org.ofbiz.entity.condition.EntityOperator.LIKE,
+							actionId1.getValue());
+		}
+
+		List ActionList12 = delegator.findList("PayrollAction", condition3,
+				null, null, null, false);
+		Object actionItemList = ActionList12
+				.toArray(new GenericValue[ActionList12.size()]);
+		SimpleListModel modelAction1 = new SimpleListModel(ActionList12);
+		ActionList1.setModel(modelAction1);
+
+	}
+</zscript>
+			<bandbox id="bandboxAction" visible="false">
+				<bandpopup>
+					<vbox>
+						<hbox align="start">
+							<label value="${c:l('HRMS_ACTION_ID') }"></label>
+							<textbox id="actionId1" />
+
+							<button label="${c:l('HumanResSearch') }"
+								onClick="populateActionList() ;" />
+						</hbox>
+					</vbox>
+					<paging id="bandboxActionPaging" width="425px"
+						pageSize="10" pageIncrement="1" />
+					<listbox id="ActionList1" width="425px"
+						onSelect="showBandBoxAction(self.selectedItem); bandboxAction.close();"
+						itemRenderer="${listItemRendererActions}" mold="paging"
+						paginal="${bandboxActionPaging}" visible="true">
+						<listhead>
+							<listheader label="${c:l('HRMS_ACTION_ID') }" />
+							<listheader label="${c:l('HRMS_ACTION_NAME') }" />
+						</listhead>
+					</listbox>
+				</bandpopup>
+			</bandbox>
+
+			<zscript>
+	com.ndz.zkoss.GenericValueRenderer listItemRendererSalaryHead = new com.ndz.zkoss.GenericValueRenderer(
+			new String[] { "salaryHeadId", "hrName", "geoId",
+					"salaryHeadTypeId" });
+	org.ofbiz.entity.condition.EntityCondition condition4 = null;
+	void populateSalaryList() {
+		if (!((salaryHeadId1.getValue()).equals(""))) {
+			condition4 = org.ofbiz.entity.condition.EntityCondition
+					.makeCondition("salaryHeadId",
+							org.ofbiz.entity.condition.EntityOperator.LIKE,
+							salaryHeadId1.getValue());
+		}
+
+		List SalaryHeadList12 = delegator.findList("SalaryHead", condition4,
+				null, null, null, false);
+		Object salaryHeadItemList = SalaryHeadList12
+				.toArray(new GenericValue[SalaryHeadList12.size()]);
+		SimpleListModel modelSalaryHead1 = new SimpleListModel(SalaryHeadList12);
+		SalaryHeadList1.setModel(modelSalaryHead1);
+
+	}
+</zscript>
+			<bandbox id="bandboxSalary" visible="false">
+				<bandpopup>
+					<vbox>
+						<hbox align="start">
+							<label value="${c:l('HRMS_SALARY_HEAD_ID') }"></label>
+							<textbox id="salaryHeadId1" />
+
+							<button label="${c:l('HumanResSearch') }"
+								onClick="populateSalaryList() ;" />
+						</hbox>
+					</vbox>
+					<paging id="bandboxSalaryHeadPaging" width="525px"
+						pageSize="10" pageIncrement="1" />
+					<listbox id="SalaryHeadList1" width="525px"
+						onSelect="showBandBoxSalary(self.selectedItem); bandboxSalary.close();"
+						itemRenderer="${listItemRendererSalaryHead}" mold="paging"
+						paginal="${bandboxSalaryHeadPaging}" visible="true">
+						<listhead>
+							<listheader label="${c:l('HRMS_SALARY_HEAD_ID') }" />
+							<listheader label="${c:l('HRMS_SALARY_HEAD') }" />
+							<listheader label="${c:l('HRMS_GEO_ID') }" />
+							<listheader label="${c:l('HRMS_SALARY_HEAD_TYPE') }" />
+						</listhead>
+					</listbox>
+				</bandpopup>
+			</bandbox>
+		</hbox>
+		<separator />
+		<hbox>
+			<div align="right" width="150px" style="margin-right:5px">
+				<label value="${c:l('HRMS_OPERAND_TWO') }" />
+				<label value="*" style="color:red" />
+			</div>
+			<div width="175px" align="left">
+				<listbox id="actionList2" name="operator" mold="select"
+					width="135px" onSelect="togglebandbox2()">
+					<listitem value="" label=""></listitem>
+					<listitem value="textinput1" label="${c:l('HRMS_INPUT') }">
+						<custom-attributes bandBoxId2="textinput1" />
+					</listitem>
+					<listitem value="empl" label="${c:l('HRMS_EMPLOYEE_ATTRIBUTE') }">
+						<custom-attributes
+							bandBoxId2="employeeAttribute2" />
+					</listitem>
+					<listitem value="taxdecl" label="${c:l('HRMS_TAX_ITEM') }">
+						<custom-attributes bandBoxId2="bandboxtaxItem2" />
+					</listitem>
+					<listitem value="condition" label="${c:l('HRMS_CONDITIONS') }">
+						<custom-attributes
+							bandBoxId2="bandboxcondition2" />
+					</listitem>
+					<listitem value="actions" label="${c:l('HRMS_ACTIONS') }">
+						<custom-attributes bandBoxId2="bandboxAction2" />
+					</listitem>
+					<listitem value="salary" label="${c:l('HRMS_SALARY_HEAD') }">
+						<custom-attributes bandBoxId2="bandboxSalary2" />
+					</listitem>
+				</listbox>
+			</div>
+			<!-- BANDBOX EMPLOYEE ATTRIBUTE -->
+			<bandbox id="employeeAttribute2" visible="false">
+				<bandpopup>
+					<listbox width="200px"
+						onSelect="showEmpl2(self.selectedItem);employeeAttribute2.close();">
+						<listhead>
+							<listheader label="${c:l('HumanResPerfReviewAttributeName') }" />
+							<listheader label="${c:l('HRMS_DESCRIPTION') }" />
+						</listhead>
+						<listitem id="city2">
+							<listcell label="${c:l('HRMS_UPPERCASE_CITY') }" />
+							<listcell label="${c:l('HRMS_EMPLOYEE_PRIMARY_ADDRESS') }" />
+						</listitem>
+						<listitem id="gender2">
+							<listcell label="${c:l('HRMS_UPPERCASE_GENDER') }" />
+							<listcell label="${c:l('HRMS_EMPLOYEES_GENDER') } " />
+						</listitem>
+						<listitem id="ctc2">
+							<listcell label="${c:l('HRMS_CTC') }" />
+							<listcell label="${c:l('HRMS_EMPLOYEES_GROSS_SALARY') } " />
+						</listitem>
+					</listbox>
+				</bandpopup>
+			</bandbox>
+
+			<bandbox id="textinput1" buttonVisible="false"
+				visible="false" readonly="false">
+			</bandbox>
+
+			<zscript>
+	com.ndz.zkoss.GenericValueRenderer listItemRendererTax2 = new com.ndz.zkoss.GenericValueRenderer(
+			new String[] { "itemId", "categoryId", "itemName" });
+	org.ofbiz.entity.condition.EntityCondition condition8 = null;
+	void populateTaxItem() {
+		if (!((itemId2.getValue()).equals(""))) {
+			condition8 = org.ofbiz.entity.condition.EntityCondition
+					.makeCondition("itemId",
+							org.ofbiz.entity.condition.EntityOperator.LIKE,
+							itemId2.getValue());
+		}
+		List TaxItemList21 = delegator.findList("TaxItem", condition8, null,
+				null, null, false);
+		Object taxItemList = TaxItemList21
+				.toArray(new GenericValue[TaxItemList21.size()]);
+		SimpleListModel modelTax2 = new SimpleListModel(TaxItemList21);
+		TaxItemList2.setModel(modelTax2);
+
+	}
+</zscript>
+			<bandbox id="bandboxtaxItem2" visible="false">
+				<bandpopup>
+					<vbox>
+						<hbox align="start">
+							<label value="${c:l('HRMS_ITEM_ID') }"></label>
+							<textbox id="itemId2" />
+
+							<button label="${c:l('HumanResSearch') }"
+								onClick="populateTaxItem() ;" />
+						</hbox>
+					</vbox>
+					<paging id="bandboxtaxPaging2" width="425px"
+						pageSize="10" pageIncrement="1" />
+					<listbox id="TaxItemList2" width="425px"
+						onSelect="show2(self.selectedItem); bandboxtaxItem2.close();"
+						itemRenderer="${listItemRendererTax2}" mold="paging"
+						paginal="${bandboxtaxPaging}" visible="true">
+						<listhead>
+							<listheader label="${c:l('HRMS_ITEM_ID') }" />
+							<listheader label="${c:l('HRMS_CATEGORY_NAME') }" />
+							<listheader label="${c:l('HRMS_ITEM_NAME') }" />
+						</listhead>
+					</listbox>
+				</bandpopup>
+			</bandbox>
+			<zscript>
+	com.ndz.zkoss.GenericValueRenderer listItemRendererConditions1 = new com.ndz.zkoss.GenericValueRenderer(
+			new String[] { "conditionId", "conditionName" });
+	org.ofbiz.entity.condition.EntityCondition condition7 = null;
+	void populateCondition1() {
+		if (!((conditionId2.getValue()).equals(""))) {
+			condition7 = org.ofbiz.entity.condition.EntityCondition
+					.makeCondition("conditionId",
+							org.ofbiz.entity.condition.EntityOperator.LIKE,
+							conditionId2.getValue());
+		}
+
+		List ConditionList21 = delegator.findList("PayrollCondition",
+				condition7, null, null, null, false);
+		Object conditionItemList = ConditionList21
+				.toArray(new GenericValue[ConditionList21.size()]);
+		SimpleListModel modelCondition2 = new SimpleListModel(ConditionList21);
+		ConditionList2.setModel(modelCondition2);
+	}
+</zscript>
+			<bandbox id="bandboxcondition2" visible="false">
+				<bandpopup>
+					<vbox>
+						<hbox align="start">
+							<label value="${c:l('HRMS_CONDITION_ID') }"></label>
+							<textbox id="conditionId2" />
+
+							<button label="${c:l('HumanResSearch') }"
+								onClick="populateCondition1() ;" />
+						</hbox>
+					</vbox>
+					<paging id="bandboxConditionPaging2" width="425px"
+						pageSize="10" pageIncrement="1" />
+					<listbox id="ConditionList2" width="425px"
+						onSelect="showBandBoxcond2(self.selectedItem); bandboxcondition2.close();"
+						itemRenderer="${listItemRendererConditions1}" mold="paging"
+						paginal="${bandboxConditionPaging2}" visible="true">
+						<listhead>
+							<listheader label="${c:l('HRMS_CONDITION_ID') }" />
+							<listheader label="${c:l('HRMS_CONDITION_NAME') }" />
+						</listhead>
+					</listbox>
+				</bandpopup>
+			</bandbox>
+
+			<zscript>
+	com.ndz.zkoss.GenericValueRenderer listItemRendererActions1 = new com.ndz.zkoss.GenericValueRenderer(
+			new String[] { "actionId", "actionName" });
+	org.ofbiz.entity.condition.EntityCondition condition6 = null;
+	void populateActionList1() {
+		if (!((actionId2.getValue()).equals(""))) {
+			condition6 = org.ofbiz.entity.condition.EntityCondition
+					.makeCondition("actionId",
+							org.ofbiz.entity.condition.EntityOperator.LIKE,
+							actionId2.getValue());
+		}
+
+		List ActionList21 = delegator.findList("PayrollAction", condition6,
+				null, null, null, false);
+		Object actionItemList = ActionList21
+				.toArray(new GenericValue[ActionList21.size()]);
+		SimpleListModel modelAction2 = new SimpleListModel(ActionList21);
+		ActionList2.setModel(modelAction2);
+	}
+</zscript>
+			<bandbox id="bandboxAction2" visible="false">
+				<bandpopup>
+					<vbox>
+						<hbox align="start">
+							<label value="${c:l('HRMS_ACTION_ID') }"></label>
+							<textbox id="actionId2" />
+
+							<button label="${c:l('HumanResSearch') }"
+								onClick="populateActionList1() ;" />
+						</hbox>
+					</vbox>
+					<paging id="bandboxActionPaging2" width="425px"
+						pageSize="10" pageIncrement="1" />
+					<listbox id="ActionList2" width="525px"
+						onSelect="showBandBoxAction2(self.selectedItem); bandboxAction2.close();"
+						itemRenderer="${listItemRendererActions1}" mold="paging"
+						paginal="${bandboxActionPaging2}" visible="true">
+						<listhead>
+							<listheader label="${c:l('HRMS_ACTION_ID') }" />
+							<listheader label="${c:l('HRMS_ACTION_NAME') }" />
+						</listhead>
+					</listbox>
+				</bandpopup>
+			</bandbox>
+
+			<zscript>
+	com.ndz.zkoss.GenericValueRenderer listItemRendererSalaryHead1 = new com.ndz.zkoss.GenericValueRenderer(
+			new String[] { "salaryHeadId", "hrName", "geoId",
+					"salaryHeadTypeId" });
+	org.ofbiz.entity.condition.EntityCondition condition5 = null;
+	void populateSalaryList2() {
+		if (!((salaryHeadId2.getValue()).equals(""))) {
+			condition5 = org.ofbiz.entity.condition.EntityCondition
+					.makeCondition("salaryHeadId",
+							org.ofbiz.entity.condition.EntityOperator.LIKE,
+							salaryHeadId2.getValue());
+		}
+
+		List SalaryHeadList21 = delegator.findList("SalaryHead", condition5,
+				null, null, null, false);
+		Object salaryHeadItemList2 = SalaryHeadList21
+				.toArray(new GenericValue[SalaryHeadList21.size()]);
+		SimpleListModel modelSalaryHead2 = new SimpleListModel(SalaryHeadList21);
+		SalaryHeadList2.setModel(modelSalaryHead2);
+
+	}
+</zscript>
+
+			<bandbox id="bandboxSalary2" visible="false">
+				<bandpopup>
+					<vbox>
+						<hbox align="start">
+							<label value="${c:l('HRMS_SALARY_HEAD_ID') }"></label>
+							<textbox id="salaryHeadId2" />
+							<button label="${c:l('HumanResSearch') }"
+								onClick="populateSalaryList2() ;" />
+						</hbox>
+					</vbox>
+					<paging id="bandboxSalaryHeadPaging2" width="525px"
+						pageSize="10" pageIncrement="1" />
+					<listbox id="SalaryHeadList2" width="525px"
+						onSelect="showBandBoxSalary2(self.selectedItem); bandboxSalary2.close();"
+						itemRenderer="${listItemRendererSalaryHead1}" mold="paging"
+						paginal="${bandboxSalaryHeadPaging2}" visible="true">
+						<listhead>
+							<listheader label="${c:l('HRMS_SALARY_HEAD_ID') }" />
+							<listheader label="${c:l('HRMS_SALARY_HEAD') }" />
+							<listheader label="${c:l('HRMS_GEO_ID') }" />
+							<listheader label="${c:l('HRMS_SALARY_HEAD_TYPE') }" />
+						</listhead>
+					</listbox>
+				</bandpopup>
+			</bandbox>
+		</hbox>
+		<separator />
+
+		<separator height="10px" />
+		<hbox>
+			<div align="right" width="150px" style="margin-right:5px">
+				<label value="${c:l('HRMS_OPERATOR') }" width="100px" />
+				<label value="*" style="color:red" />
+			</div>
+			<div width="297px" align="left">
+				<listbox id="operator" name="operator" mold="select"
+					width="135px">
+					<listitem value=""></listitem>
+				</listbox>
+			</div>
+		</hbox>
+		<separator height="15px" />
+		<panel>
+			<panelchildren>
+				<hbox>
+					<div align="right" width="275px"
+						style="margin-top:5px">
+						<button id="AddPayrollActionCreateButton"
+							label="${c:l('Hrms_Create') }"
+							forward="onClick=onEvent"
+							onClick='validateForm();Events.postEvent("onClick", Path
+				.getComponent("/searchPanel//searchPerCompany"), null);' />
+						<button id="AddPayrollActionCancelButton"
+							label="${c:l('ButtonCancel') }"
+							onClick="AddPayrollConditionWindow.detach()" />
+					</div>
+				</hbox>
+			</panelchildren>
+		</panel>
+		<zscript>
+	import org.zkoss.zul.*;
+	void showEmpl(Listitem city) {
+		String cityValue = (String) city.getLabel();
+		Bandbox employeeAttribute = (Bandbox) AddPayrollConditionWindow
+				.getFellow("employeeAttribute");
+		String appendCity = "#EMPL.(" + cityValue + ")#";
+		employeeAttribute.setValue(appendCity);
+	}
+	void show(Listitem TaxItemList1) {
+		String lstValue = (String) TaxItemList1.getLabel();
+		Bandbox bandboxtaxItem = (Bandbox) AddPayrollConditionWindow
+				.getFellow("bandboxtaxItem");
+		String appendStr = "#TAXDECL.(" + lstValue + ")#";
+		bandboxtaxItem.setValue(appendStr);
+	}
+	void showBandBoxcond(Listitem ConditionList1) {
+		String condValue = (String) ConditionList1.getLabel();
+		Bandbox bandboxcondition = (Bandbox) AddPayrollConditionWindow
+				.getFellow("bandboxcondition");
+		String appendCond = "#CONDITION.(" + condValue + ")#";
+		bandboxcondition.setValue(appendCond);
+	}
+	void showBandBoxAction(Listitem ActionList1) {
+		String actionValue = (String) ActionList1.getLabel();
+		Bandbox bandboxAction = (Bandbox) AddPayrollConditionWindow
+				.getFellow("bandboxAction");
+		String appendAction = "#ACTION.(" + actionValue + ")#";
+		bandboxAction.setValue(appendAction);
+	}
+	void showBandBoxSalary(Listitem SalaryHeadList1) {
+		String salaryValue = (String) SalaryHeadList1.getLabel();
+		Bandbox bandboxSalary = (Bandbox) AddPayrollConditionWindow
+				.getFellow("bandboxSalary");
+		String appendSalary = "#SALARYHEAD.(" + salaryValue + ")#";
+		bandboxSalary.setValue(appendSalary);
+	}
+	void showEmpl2(Listitem city2) {
+		String cityValue2 = (String) city.getLabel();
+		Bandbox employeeAttribute2 = (Bandbox) AddPayrollConditionWindow
+				.getFellow("employeeAttribute2");
+		String appendCity2 = "#EMPL.(" + cityValue2 + ")#";
+		employeeAttribute2.setValue(appendCity2);
+	}
+	void show2(Listitem TaxItemList2) {
+		String lstValue2 = (String) TaxItemList2.getLabel();
+		Bandbox bandboxtaxItem2 = (Bandbox) AddPayrollConditionWindow
+				.getFellow("bandboxtaxItem2");
+		String appendStr2 = "#TAXDECL.(" + lstValue2 + ")#";
+		bandboxtaxItem2.setValue(appendStr2);
+	}
+	void showBandBoxcond2(Listitem ConditionList2) {
+		String condValue2 = (String) ConditionList2.getLabel();
+		Bandbox bandboxcondition2 = (Bandbox) AddPayrollConditionWindow
+				.getFellow("bandboxcondition2");
+		String appendCond2 = "#CONDITION.(" + condValue2 + ")#";
+		bandboxcondition2.setValue(appendCond2);
+	}
+	void showBandBoxAction2(Listitem ActionList2) {
+		String actionValue2 = (String) ActionList2.getLabel();
+		Bandbox bandboxAction2 = (Bandbox) AddPayrollConditionWindow
+				.getFellow("bandboxAction2");
+		String appendAction2 = "#ACTION.(" + actionValue2 + ")#";
+		bandboxAction2.setValue(appendAction2);
+	}
+	void showBandBoxSalary2(Listitem SalaryHeadList2) {
+		String salaryValue2 = (String) SalaryHeadList2.getLabel();
+		Bandbox bandboxSalary2 = (Bandbox) AddPayrollConditionWindow
+				.getFellow("bandboxSalary2");
+		String appendSalary2 = "#SALARYHEAD.(" + salaryValue2 + ")#";
+		bandboxSalary2.setValue(appendSalary2);
+	}
+	void validateForm() {
+		conditionName.getValue();
+		Listitem list1 = actionList1.getSelectedItem();
+		if (list1 == null || org.ofbiz.base.util.UtilValidate.isEmpty(list1.getValue())) {
+			throw new WrongValueException(actionList1, "Operand one Required");
+		}
+		String bandBoxId = (String) actionList1.getSelectedItem().getAttribute("bandBoxId");
+		if(bandBoxId != null){
+		 ((Bandbox) AddPayrollConditionWindow.getFellow(bandBoxId)).setConstraint("no empty:Operand One value required");
+		 ((Bandbox) AddPayrollConditionWindow.getFellow(bandBoxId)).getValue();
+		 }
+			
+		Listitem list2 = actionList2.getSelectedItem();
+		if (list2 == null || org.ofbiz.base.util.UtilValidate.isEmpty(list2.getValue())) {
+			throw new WrongValueException(actionList2, "Operand two Required");
+		}
+		String bandBoxId2 = (String) actionList2.getSelectedItem().getAttribute("bandBoxId2");
+		if(bandBoxId2 != null){
+		 ((Bandbox) AddPayrollConditionWindow.getFellow(bandBoxId2)).setConstraint("no empty:Operand Two value required");
+		 ((Bandbox) AddPayrollConditionWindow.getFellow(bandBoxId2)).getValue();
+		 }
+		Listitem operator1 = operator.getSelectedItem();
+		if (operator1 == null || org.ofbiz.base.util.UtilValidate.isEmpty(operator1.getValue())) {
+			throw new WrongValueException(operator, "Operator Required");
+		}
+	}
+</zscript>
+
+	</window>
+</zk>

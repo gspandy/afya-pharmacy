@@ -1,0 +1,255 @@
+<?component name="findbox1" macroURI="../macros/textfindMacro.zul" id="macro1"?>
+<?component name="findbox2" macroURI="../macros/textfindMacro.zul" id="macro2"?>
+<?component name="findbox3" macroURI="../macros/textfindMacro.zul" id="macro3"?>
+<?component name="findbox4" macroURI="../macros/textfindMacro.zul" id="macro4"?>
+<?component name="findbox5" macroURI="../macros/textfindMacro.zul" id="macro7"?>
+<?component name="periodFromDateBox" macroURI="../macros/datefindMacro.zul" id="macro5"?>
+<?component name="periodToDateBox" macroURI="../macros/datefindMacro.zul" id="macro6"?>
+
+<?page title="Secure Page" ?>
+
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<zk xmlns:h="http://www.zkoss.org/2005/zk/native">
+	<zscript>
+	<![CDATA[
+	import com.ndz.controller.*;
+	import com.ndz.controller.*;
+	import org.ofbiz.entity.GenericValue;
+	import javax.servlet.http.HttpServletRequest;
+	import org.ofbiz.entity.condition.EntityCondition;
+	import org.ofbiz.entity.condition.EntityOperator;
+	import org.ofbiz.humanresext.util.HumanResUtil;
+	import org.ofbiz.entity.GenericValue;
+	import org.ofbiz.base.util.UtilMisc;
+	import java.util.*;
+	import org.ofbiz.service.DispatchContext;
+	import org.ofbiz.security.Security;
+	import org.ofbiz.entity.GenericDelegator;
+	import org.ofbiz.entity.condition.EntityExpr;
+	SearchController controller = new SearchController();
+	GenericValue userLogin = (GenericValue) Executions.getCurrent()
+			.getDesktop().getSession().getAttribute("userLogin");
+	GenericDelegator delegator = com.ndz.zkoss.util.HrmsInfrastructure.getDelegator();//GenericDelegator.getGenericDelegator("default");
+	EntityCondition condition = EntityCondition.makeCondition("userLoginId",
+			EntityOperator.EQUALS, userLogin.getString("userLoginId"));
+	List SecurityList = delegator.findList("UserLoginSecurityGroup", condition,
+			null, null, null, false);
+	String securityGroupId = "";
+	boolean hasPermission = false;
+	boolean noPermission = false;
+	boolean showButton = false;
+	boolean donotshowButton = false;
+	for (GenericValue Security : SecurityList) {
+
+		securityGroupId = Security.getString("groupId");
+		if (securityGroupId != null) {
+			if (securityGroupId.equals("HUMANRES_MGR")
+					|| securityGroupId.equals("HUMANRES_ADMIN")
+					|| securityGroupId.equals("FULLADMIN")) {
+				hasPermission = true;
+				break;
+			}
+		}
+	}
+	if (hasPermission == true) {
+		showButton = true;
+		donotshowButton = false;
+	} else {
+		showButton = false;
+		donotshowButton = true;
+	}
+]]>
+</zscript>
+	<window title="${c:l('HRMS_EMPLOYEE_TDS') }" border="normal" id="searchPanel"
+		self="@{define(content)}" apply="${controller}"
+		contentStyle="background-color:#F5F5F5">
+		<custom-attributes
+			entityName="EmplMonthlyTaxdeductionAndPayslip" companyWide="true">
+		</custom-attributes>
+
+		<separator height="10px"></separator>
+
+		<box width="100%" height="30px">
+			<label value="${c:l('HRMS_FIND_TAX_DEDUCTIONS') }" style="margin:10px"></label>
+		</box>
+		<separator height="10px"></separator>
+
+		<div width="100%" align="left">
+			<hbox width="100%">
+				<vbox>
+					<div style="margin-left:4px">
+						<findbox5 fieldLabel="${c:l('FormFieldTitle_EmployeeId') }"
+							name="partyId" type="text" cols="37" />
+					</div>
+					<div style="margin-left:92px">
+						<label value="${c:l('HRMS_TAX_TYPE') }"
+							style="font-weight:bold" />
+						<listbox mold="select" id="taxType">
+							<listitem label="${c:l('HRMS_INCOME_TAX') }"
+								value="Income Tax" />
+							<listitem label="${c:l('HRMS_PROFESSIONAL_TAX') }"
+								value="Professional Tax" />
+						</listbox>
+					</div>
+
+
+					<periodFromDateBox fieldLabel="${c:l('HRMS_PERIOD_FROM') }"
+						name="periodFrom" type="date" />
+					<periodToDateBox fieldLabel="${c:l('HRMS_PERIOD_TO') }"
+						name="periodTo" type="date" />
+				</vbox>
+			</hbox>
+		</div>
+
+		<separator height="35px"></separator>
+
+		<box width="100%" height="30px" align="center">
+			<hbox>
+				<hbox>
+				<button label="${c:l('HumanResSearch') }"
+					onClick="results.setVisible(true);results.setFocus(true)"
+					id="searchPerCompany" visible="${showButton}">
+				</button>
+				<button label="${c:l('HumanResSearch') }"
+					onClick="results.setVisible(true);results.setFocus(true)"
+					id="searchButton" visible="${donotshowButton}">
+				</button>
+				<button label="${c:l('HRMS_ResetButton') }"
+					onClick="results.setVisible(false)">
+				</button>
+			</hbox>
+			</hbox>
+		</box>
+		<separator height="15px" />
+		<zscript>
+				<![CDATA[
+				         
+				         
+double truncate (double x)
+{
+    java.text.DecimalFormat df = new  java.text.DecimalFormat ("0.##");
+    String d = df.format (x);
+    System.out.println ("\tformatted: " + d);
+    d = d.replaceAll (",", ".");
+    Double dbl = new Double (d);
+    return dbl.doubleValue ();
+}
+	import org.ofbiz.base.util.*;
+	import java.sql.Timestamp;
+	import java.util.Date;
+	import java.util.HashSet;
+	import java.util.List;
+	import java.util.Map;
+	import java.util.Set;
+	import org.ofbiz.base.util.UtilMisc;
+	import org.ofbiz.entity.GenericDelegator;
+	import org.ofbiz.entity.GenericValue;
+	import org.ofbiz.entity.condition.EntityCondition;
+	import org.ofbiz.entity.condition.EntityExpr;
+	import org.ofbiz.entity.condition.EntityOperator;
+	import org.ofbiz.humanresext.util.HumanResUtil;
+	import org.ofbiz.service.GenericDispatcher;
+	import org.ofbiz.service.LocalDispatcher;
+	import org.zkoss.zhtml.Messagebox;
+	import org.zkoss.zk.ui.Component;
+	import org.zkoss.zk.ui.Executions;
+	import org.zkoss.zk.ui.event.Event;
+	import org.zkoss.zk.ui.event.Events;
+	import org.zkoss.zk.ui.util.GenericForwardComposer;
+	import org.zkoss.zul.Datebox;
+	import org.zkoss.zul.Listbox;
+	import org.zkoss.zul.Bandbox;
+	import org.zkoss.zul.Listitem;
+	import org.zkoss.zul.SimpleListModel;
+	import org.zkoss.zul.Textbox;
+	class MyRowRenderer implements RowRenderer {
+
+		MyRowRenderer() {
+		}
+
+		public void render(Row row, Object data) {
+			org.ofbiz.entity.GenericValue gv = ((org.ofbiz.entity.GenericValue) data);
+
+			String payslipId = gv.getString("payslipId");
+			EntityCondition condition = EntityCondition.makeCondition("payslipId",
+					EntityOperator.EQUALS, payslipId);
+			GenericDelegator delegator = com.ndz.zkoss.util.HrmsInfrastructure.getDelegator();//GenericDelegator.getGenericDelegator("default");
+			List SalaryHeadList = delegator.findList("EmplPayslip", condition,
+					null, null, null, false);
+			String partyName = "";
+			String periodFrom = "";
+			String periodTo = "";
+			String partyId = "";
+			String firstName = "";
+			String lastName = "";
+
+			if (SalaryHeadList != null) {
+				for (GenericValue SalaryHead : SalaryHeadList) {
+					periodFrom = SalaryHead.getString("periodFrom");
+					periodTo = SalaryHead.getString("periodTo");
+					partyId = SalaryHead.getString("partyId");
+					break;
+				}
+			}
+			EntityCondition condition1 =EntityCondition.makeCondition("partyId",
+					EntityOperator.EQUALS, partyId);
+			List PersonNameList = delegator.findList("Person", condition1,
+					null, null, null, false);
+
+			if (PersonNameList != null) {
+				for (GenericValue PersonName : PersonNameList) {
+					firstName = PersonName.getString("firstName");
+					lastName = PersonName.getString("lastName");
+
+					break;
+				}
+			}
+			if (firstName == null)
+				firstName = "";
+			if (lastName == null)
+				lastName = "";
+			partyName = firstName + " " + lastName;
+			System.out.println("\n\n\n\n payslipId:	" + payslipId);
+			String taxType = gv.getString("taxType");
+			String amount = gv.getString("amount");
+			double amountTotal = Double.valueOf(amount.trim()).doubleValue();
+
+			double truncatedtotalAmount=truncate(amountTotal);
+
+			new Label(payslipId).setParent(row);
+			new Label(partyName).setParent(row);
+			new Label(partyId).setParent(row);
+			new Label(taxType).setParent(row);
+			new Label(periodFrom).setParent(row);
+			new Label(periodTo).setParent(row);
+			new Label(String.valueOf(truncatedtotalAmount)).setParent(row);
+
+		}
+	}
+	RowRenderer tableRenderer = new MyRowRenderer();
+]]>
+</zscript>
+
+		<div id="results" visible="false">
+			<box width="100%" height="30px">
+				<label value="${c:l('HRMS_SEARCH_RESULTS') }" style="margin:10px"></label>
+			</box>
+			<separator height="10px"></separator>
+
+			<paging id="paging" width="100%" />
+			<separator height="5px"></separator>
+			<grid width="100%" id="dataGrid"
+				rowRenderer="${tableRenderer}">
+				<columns menupopup="auto">
+					<column label="${c:l('HRMS_PAYSLIP_ID') }" />
+					<column label="${c:l('Hrms_EmployeeName') }" />
+					<column label="${c:l('FormFieldTitle_EmployeeId') }" />
+					<column label="${c:l('HRMS_TAX_TYPE') }" />
+					<column label="${c:l('HRMS_PERIOD_FROM') }" />
+					<column label="${c:l('HRMS_PERIOD_TO') }" />
+					<column label="${c:l('FormFieldTitle_amount') }" />
+				</columns>
+			</grid>
+		</div>
+	</window>
+</zk>

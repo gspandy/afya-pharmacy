@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<entitymodel xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="http://www.ofbiz.org/dtds/entitymodel.xsd">
+	<!-- ========================================================= -->
+	<!-- ======================== Defaults ======================= -->
+	<!-- ========================================================= -->
+	<title>Entity of an Open For Business Project Component</title>
+	<description>Employee Loan Entity Model</description>
+	<copyright>NthDimenzion Solutions Pvt Limited</copyright>
+	<author>Pankaj</author>
+	<version>1.0</version>
+
+	<entity entity-name="ELoanHead" package-name="org.ofbiz.eloan"
+		title="Employee Loan Entity">
+		<field name="loanId" type="id-ne"></field>
+		<field name="partyId" type="id-ne"></field>
+		<field name="loanType" type="id-ne"></field>
+		<field name="currencyUomId" type="id"></field>
+		<field name="loanAmount" type="currency-double"></field>
+		<field name="emi" type="currency-double"></field>
+		<field name="interest" type="currency-double"></field>
+		<field name="hr_period" type="currency-double"></field>
+		<field name="applicationDate" type="date"></field>
+		<field name="acceptedAmount" type="currency-double"></field>
+		<field name="rejectedAmount" type="currency-double"></field>
+		<field name="mgrPositionId" type="id"></field>
+		<field name="fromDate" type="date"></field>
+		<field name="thruDate" type="date"></field>
+		<prim-key field="loanId" />
+		<relation rel-entity-name="Party" type="one" fk-name="FK_LN_PARTY">
+			<key-map field-name="partyId" />
+		</relation>
+		<relation rel-entity-name="Uom" type="one" fk-name="FK_LOAN_CCY">
+			<key-map field-name="currencyUomId" rel-field-name="uomId" />
+		</relation>
+		<relation rel-entity-name="Enumeration" type="one" fk-name="FK_LN_TY">
+			<key-map field-name="loanType" rel-field-name="enumId" />
+		</relation>
+	</entity>
+
+	<entity entity-name="ELoanStatus" package-name="org.ofbiz.eloan"
+		title="Employee Loan Status Entity">
+		<field name="lsId" type="id-ne"></field>
+		<field name="loanId" type="id-ne"></field>
+		<field name="statusId" type="id"></field>
+		<field name="hr_comment" type="description"></field>
+		<field name="updatedBy" type="id-ne"></field>
+		<field name="updateDate" type="date-time"></field>
+		<field name="fromDate" type="date"></field>
+		<field name="thruDate" type="date"></field>
+		<prim-key field="lsId" />
+		<relation rel-entity-name="ELoanHead" type="one" fk-name="FK_LN_ST">
+			<key-map field-name="loanId" />
+		</relation>
+		<relation rel-entity-name="Party" type="one" fk-name="FK_LN_ST_PARTY">
+			<key-map field-name="updatedBy" rel-field-name="partyId" />
+		</relation>
+		<relation rel-entity-name="StatusItem" type="one" fk-name="FK_LN_STAT_IT">
+			<key-map field-name="statusId" />
+		</relation>
+	</entity>
+
+	<entity entity-name="ELoanLimit" package-name="org.ofbiz.eloan"
+		title="Employee Loan Eligibility Entity">
+		<field name="limitId" type="id-ne"></field>
+		<field name="loanType" type="id-ne"></field>
+		<field name="emplPositionTypeId" type="id"></field>
+		<field name="currencyUomId" type="id"></field>
+		<field name="loanAmount" type="currency-double"></field>
+		<field name="interest" type="currency-double"></field>
+		<field name="hr_period" type="currency-double"></field>
+		<field name="expYrs" type="currency-double"></field>
+		<field name="hr_comment" type="description"></field>
+		<field name="updatedBy" type="name"></field>
+		<field name="fromDate" type="date"></field>
+		<field name="thruDate" type="date"></field>
+		<prim-key field="limitId" />
+		<relation type="one" fk-name="FK_LN_EMPPOS_TY"
+			rel-entity-name="EmplPositionType">
+			<key-map field-name="emplPositionTypeId" />
+		</relation>
+		<relation rel-entity-name="Uom" type="one" fk-name="FK_LN_LT_CCY">
+			<key-map field-name="currencyUomId" rel-field-name="uomId" />
+		</relation>
+		<relation rel-entity-name="Enumeration" type="one" fk-name="FK_ELMIT_LN_TY">
+			<key-map field-name="loanType" rel-field-name="enumId" />
+		</relation>
+	</entity>
+
+	<view-entity entity-name="ELoanDetail" package-name="org.ofbiz.eloan">
+		<member-entity entity-alias="LH" entity-name="ELoanHead" />
+		<member-entity entity-alias="LS" entity-name="ELoanStatus" />
+		<alias-all entity-alias="LH"></alias-all>
+		<alias-all entity-alias="LS"></alias-all>
+		<view-link entity-alias="LH" rel-entity-alias="LS">
+			<key-map field-name="loanId" />
+		</view-link>
+	</view-entity>
+
+	<view-entity entity-name="MaxLsId" package-name="org.ofbiz.eloan"
+		title="Max Employee Loan Status ID Entity">
+		<member-entity entity-alias="LS" entity-name="ELoanStatus"></member-entity>
+		<alias name="lsId" entity-alias="LS" col-alias="maxlsId"
+			function="max"></alias>
+		<alias name="loanId" entity-alias="LS" col-alias="loanId"
+			group-by="true"></alias>
+	</view-entity>
+
+	<!-- View with latest status of loan -->
+	<view-entity entity-name="MaxELoanDetail" package-name="org.ofbiz.eloan"
+		title="Employee Loan Detail Entity">
+		<member-entity entity-alias="LS" entity-name="ELoanStatus" />
+		<member-entity entity-alias="LH" entity-name="ELoanHead" />
+		<member-entity entity-alias="MLI" entity-name="MaxLsId" />
+		<alias-all entity-alias="LS">
+			<exclude field="fromDate" />
+			<exclude field="thruDate" />
+		</alias-all>
+		<alias-all entity-alias="LH" />
+		<view-link entity-alias="LS" rel-entity-alias="LH">
+			<key-map field-name="loanId" />
+		</view-link>
+		<view-link entity-alias="LS" rel-entity-alias="MLI">
+			<key-map field-name="lsId" />
+		</view-link>
+	</view-entity>
+
+	<view-entity entity-name="EMaxEloanDetail" package-name="org.ofbiz.eloan">
+		<member-entity entity-alias="LS" entity-name="ELoanStatus" />
+		<member-entity entity-alias="LH" entity-name="ELoanHead" />
+		<member-entity entity-alias="MLI" entity-name="MaxLsId" />
+		<member-entity entity-alias="EN" entity-name="Enumeration" />
+		
+		<member-entity entity-alias="PER" entity-name="Person"></member-entity>
+		<member-entity entity-alias="ST" entity-name="StatusItem"></member-entity>
+        <alias-all entity-alias="LS">
+            <exclude field="fromDate" />
+            <exclude field="thruDate" />
+        </alias-all>
+        <alias-all entity-alias="LH" />
+        <alias-all entity-alias="EN" />
+		<alias name="firstName" entity-alias="PER" field="firstName"/>
+		<alias name="lastName" entity-alias="PER" field="lastName"/>
+		<alias name="statusItemDescription" entity-alias="ST" field="description"/>
+		<view-link entity-alias="LS" rel-entity-alias="LH">
+			<key-map field-name="loanId" />
+		</view-link>
+		<view-link entity-alias="LS" rel-entity-alias="MLI">
+			<key-map field-name="lsId" />
+		</view-link>
+		<view-link entity-alias="LH" rel-entity-alias="EN">
+			<key-map rel-field-name="enumId" field-name="loanType" />
+		</view-link>
+		
+		<view-link rel-entity-alias="PER" entity-alias="LH">
+			<key-map rel-field-name="partyId" field-name="partyId" />
+		</view-link>
+		<view-link rel-entity-alias="ST" entity-alias="LS">
+			<key-map rel-field-name="statusId" field-name="statusId" />
+		</view-link>
+		
+		
+	</view-entity>
+
+</entitymodel>

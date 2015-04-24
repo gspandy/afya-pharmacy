@@ -1,0 +1,107 @@
+<?init class="org.zkoss.zk.ui.util.Composition"
+arg0="/WEB-INF/layout/template.zul"?>
+
+<?component name="findbox" macroURI="../macros/textfindMacro.zul" id="macro1"?>
+<?component name="findbox1" macroURI="../macros/textfindMacro.zul" id="macro4"?>
+<?component name="findbox2" macroURI="../macros/textfindMacro.zul" id="macro5"?>
+<?component name="findbox3" macroURI="../macros/textfindMacro.zul" id="macro6"?>
+<?component name="fromDatebox" macroURI="../macros/datefindMacro.zul" id="macro2"?>
+<?component name="thruDatebox" macroURI="../macros/datefindMacro.zul" id="macro3"?>
+<?component name="selectbox" macroURI="../macros/findselectbox.zul"?>
+<?page title="Secure Page" id="leavemgmt"?>
+
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<zk>
+	<zscript>
+	import com.ndz.controller.*;
+	SearchController controller = new SearchController();
+</zscript>
+	<window title="${c:l('HRMS_SEARCH_EMPLOYEE_SKILLS') }" border="normal"
+		id="searchPanel" self="@{define(content)}" apply="${controller}">
+		<custom-attributes entityName="PartySkill"></custom-attributes>
+
+		<div align="center" width="100%">
+			<vbox style="margin-top:5px;margin-right:50px">
+			<hbox>
+				<div>
+					<findbox1 fieldLabel="${c:l('FormFieldTitle_yearsExperience') }"
+						name="yearsExperience" type="text" cols="20" />
+						</div>
+						<div align="left" >
+					<findbox3 fieldLabel="${c:l('FormFieldTitle_skillLevel') }" name="skillLevel"
+						type="text" cols="20" />
+						</div>
+						</hbox>
+			</vbox>
+			</div>
+			<div align="center">
+			<vbox>
+				<hbox>
+					<findbox2 fieldLabel="${c:l('HumanResOverallRating') }" name="rating"
+						type="text" cols="20" />
+					<div width="508px"></div>
+				</hbox>
+			</vbox>
+			<button label="${c:l('HumanResSearch') }" mold="os" id="searchButton"></button>
+		</div>
+
+
+		<separator height="15px" tooltip="${c:l('HRMS_NEW') }"></separator>
+
+		<image src="/images/icon/add.png" height="25px">
+			<attribute name="onClick">
+	{
+		final Window win = (Window) Executions.createComponents(
+				"/zul/Skills/newEmployeeSkills.zul", null, null);
+		win.setMaximizable(true);
+		win.doModal();
+	}
+</attribute>
+		</image>
+
+
+
+
+
+
+
+		<zscript>
+	import org.ofbiz.base.util.*;
+	class MyRowRenderer implements RowRenderer {
+
+		MyRowRenderer() {
+		}
+
+		public void render(Row row, Object data) {
+			org.ofbiz.entity.GenericValue gv = ((org.ofbiz.entity.GenericValue) data);
+
+			new Label(gv.getString("partyId")).setParent(row);
+			new Label(gv.getString("yearsExperience")).setParent(row);
+
+			new Label(gv.getString("rating")).setParent(row);
+			new Label(gv.getString("skillLevel")).setParent(row);
+			//new Label(gv.getString("firstName")).setParent(row);
+			//new Label(gv.getString("lastName")).setParent(row);
+
+		}
+	}
+	RowRenderer tableRenderer = new MyRowRenderer();
+</zscript>
+		<paging id="paging" width="100%" />
+		<grid width="100%" id="dataGrid"
+			rowRenderer="${tableRenderer }">
+			<columns menupopup="auto">
+				<column label="${c:l('HRMS_EmployeeId') }" />
+
+				<column label="${c:l('FormFieldTitle_yearsExperience') }" />
+				<column label="${c:l('HumanResOverallRating') }" />
+				<column label="${c:l('FormFieldTitle_skillLevel') }" />
+				<!--<column label="First Name" />
+					<column label="Last Name" />
+				-->
+			</columns>
+
+		</grid>
+
+	</window>
+</zk>

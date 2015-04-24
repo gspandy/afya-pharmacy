@@ -1,0 +1,50 @@
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<zk>
+	<window id="newPerformanceRating" width="500px" title="${c:l('FormFieldTitle_AddNewPerformanceRating') }" border="normal"
+		position="center" apply="com.ndz.controller.GlobalHrSettingPerformanceRating" height="280px" maximizable="true" closable="true">
+		<hbox style="margin-top:20px">
+			<div width="100px" align="right">
+				<label value="${c:l('FormFieldTitle_rating') }" /><label value="*" style="color:red"/>
+			</div>
+			<div width="100px" align="left">
+				<textbox id="txtRating" constraint="no empty:Rating Required" ></textbox>
+			</div>
+		</hbox>
+		<hbox style="margin-top:8px">
+			<div width="100px" align="right">
+				<label value="${c:l('HumanResAllocateEmployeeDescription') }" /><label value="*" style="color:red"/>
+			</div>
+			<div width="100px" align="left">
+				<textbox id="txtBoxDescription" width="300px" height="60px" multiline="true" constraint="no empty:Description Required"></textbox>
+			</div>
+		</hbox>
+		<zscript>
+                 <![CDATA[
+	                  void addRating(){
+	                  org.ofbiz.entity.GenericDelegator delegator = com.ndz.zkoss.util.HrmsInfrastructure.getDelegator();//org.ofbiz.entity.GenericDelegator.getGenericDelegator("default");
+		List rateList = delegator.findByAnd("PerfRating", org.ofbiz.base.util.UtilMisc.toMap("rating",txtRating.getValue() ));
+		if (rateList.size()>0){
+			throw new WrongValueException(txtRating, "Rating Already Exists");
+		}
+		List descriptionList = delegator.findByAnd("PerfRating", org.ofbiz.base.util.UtilMisc.toMap("description",txtBoxDescription.getValue().trim() ));
+		if(descriptionList.size()>0){
+			throw new WrongValueException(txtBoxDescription, "Description Already Exists");
+		}
+           txtRating.getValue();
+           txtBoxDescription.getValue();
+           if(!(org.ofbiz.base.util.UtilValidate.isInteger(txtRating.getValue()))){
+          	 throw new WrongValueException(txtRating,"Rating Must Be Numeric");
+           }
+        }
+       ]]>
+       </zscript>
+		<hbox style="margin-top:8px">
+			<div align="right" width="155px">
+				<button id="btnSaveLeaveType" label="${c:l('btnSave') }"  onClick="addRating()"  />
+			</div>
+			<div>
+				<button id="btnCancelLeaveType" label="${c:l('ButtonCancel') }"  onClick="newPerformanceRating.detach()" />
+			</div>
+		</hbox>
+	</window>
+</zk>

@@ -1,0 +1,334 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<screens xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.ofbiz.org/dtds/widget-screen.xsd">
+
+    <screen name="contentList">
+        <section>
+        	<actions>
+        		<entity-condition list="content" entity-name="PartyContent">
+        			<condition-expr field-name="partyId" from-field="parameters.partyId"/>
+        		</entity-condition>
+        	</actions>
+            <widgets>
+                <container style="subSectionBlock">
+                    <platform-specific><html><html-template location="component://sfaext/webapp/sfaext/content/contentList.ftl"/></html></platform-specific>
+                </container>
+            </widgets>
+        </section>
+    </screen>
+
+	 <screen name="OpportunityContentList">
+        <section>
+        	<actions>
+        		<entity-condition list="content" entity-name="SalesOpportunityContent" distinct="true">
+        			<condition-expr field-name="salesOpportunityId" value="${parameters.salesOpportunityId}"/>
+        		</entity-condition>
+        	</actions>
+            <widgets>
+				<container style="subSectionBlock">
+                    <platform-specific><html><html-template location="component://sfaext/webapp/sfaext/content/contentList.ftl"/></html></platform-specific>
+                </container>
+				
+            </widgets>
+        </section>
+    </screen>
+
+    <!-- all non-party content forms should include-screen this one -->
+    <screen name="CommonContentForm">
+        <section>
+            <widgets>
+                <container style="form">
+                    <include-form name="${formName}" location="component://sfaext/widget/forms/ContentForms.xml"/>
+                </container>
+            </widgets>
+        </section>
+    </screen>
+
+    <!-- all party content forms hsould include-screen this one instead -->
+    <screen name="CommonPartyContentForm">
+        <section>
+            <actions>
+                <set field="partyId" from-field="parameters.partyId"/>
+                <set field="hasOperationPermission" value="_UPDATE"/>
+            </actions>
+            <widgets>
+                <include-screen name="CommonContentForm"/>
+            </widgets>
+        </section>
+    </screen>
+
+    <!-- Upload file screens -->
+
+    <screen name="uploadContentForAccount">
+        <section>
+            <actions>
+                <set field="pageTitleLabel" value="CrmUploadFile"/>
+                <set field="sectionHeaderUiLabel" value="CrmUploadFile"/>
+                <set field="hasModulePermission" value="CRMSFA_ACCOUNT"/>
+                <set field="formName" value="uploadContentForm"/>
+                <set field="formTarget" value="createContentForParty"/>
+                <set field="donePage" value="viewAccount"/>
+            </actions>
+            <widgets>
+                <decorator-screen name="main-section-decorator" location="component://sfaext/widget/AccountScreens.xml">
+                    <decorator-section name="section-body"><include-screen name="CommonPartyContentForm"/></decorator-section>
+                </decorator-screen>
+            </widgets>
+        </section>
+    </screen>
+
+    <screen name="uploadContentForLead">
+        <section>
+            <actions>
+                <set field="pageTitleLabel" value="CrmUploadFile"/>
+                <set field="sectionHeaderUiLabel" value="CrmUploadFile"/>
+                <set field="hasModulePermission" value="CRMSFA_LEAD"/>
+                <set field="roleTypeId" value="PROSPECT"/>
+                <set field="formName" value="uploadContentForm"/>
+                <set field="formTarget" value="createContentForParty"/>
+            </actions>
+            <widgets>
+                <decorator-screen name="main-section-decorator" location="component://sfaext/widget/LeadScreens.xml">
+                    <decorator-section name="section-body"><include-screen name="CommonPartyContentForm"/></decorator-section>
+                </decorator-screen>
+            </widgets>
+        </section>
+    </screen>
+
+    <screen name="uploadContentForContact">
+        <section>
+            <actions>
+                <set field="pageTitleLabel" value="CrmUploadFile"/>
+                <set field="sectionHeaderUiLabel" value="CrmUploadFile"/>
+                <set field="roleTypeId" value="CONTACT"/>
+                <set field="hasModulePermission" value="CRMSFA_CONTACT"/>
+                <set field="formName" value="uploadContentForm"/>
+                <set field="formTarget" value="createContentForParty"/>
+                <set field="donePage" value="viewContact"/>
+            </actions>
+            <widgets>
+                <decorator-screen name="main-section-decorator" location="component://sfaext/widget/ContactScreens.xml">
+                    <decorator-section name="section-body">
+                    <include-screen name="CommonPartyContentForm"/></decorator-section>
+                </decorator-screen>
+            </widgets>
+        </section>
+    </screen>
+    
+    <screen name="uploadContentForPartner">
+        <section>
+            <actions>
+                <set field="pageTitleLabel" value="CrmUploadFile"/>
+                <set field="sectionHeaderUiLabel" value="CrmUploadFile"/>
+                <set field="hasModulePermission" value="CRMSFA_PARTNER"/>
+                <set field="formName" value="uploadContentForm"/>
+                <set field="formTarget" value="createContentForParty"/>
+                <set field="donePage" value="viewPartner"/>
+            </actions>
+            <widgets>
+                <decorator-screen name="main-section-decorator" location="component://sfaext/widget/PartnerScreens.xml">
+                    <decorator-section name="section-body"><include-screen name="CommonPartyContentForm"/></decorator-section>
+                </decorator-screen>
+            </widgets>
+        </section>
+    </screen>
+
+    <screen name="uploadContentForCase">
+        <section>
+            <actions>
+                <set field="pageTitleLabel" value="CrmUploadFile"/>
+                <set field="sectionHeaderUiLabel" value="CrmUploadFile"/>
+                <set field="hasOperationPermission" value="_UPDATE"/>
+                <set field="formName" value="uploadContentForm"/>
+                <set field="formTarget" value="createContentForCase"/>
+                <set field="donePage" value="viewCase"/>
+                <set field="custRequestId" from-field="parameters.custRequestId"/>
+                <script location="component://sfaext/webapp/sfaext/WEB-INF/actions/security/checkComplexCaseSecurity.bsh"/>
+            </actions>
+            <widgets>
+                <decorator-screen name="main-section-decorator" location="component://sfaext/widget/screens/cases/CasesScreens.xml">
+                    <decorator-section name="section-body"><include-screen name="CommonContentForm"/></decorator-section>
+                </decorator-screen>
+            </widgets>
+        </section>
+    </screen>
+
+    <screen name="uploadContentForOpportunity">
+        <section>
+            <actions>
+                <set field="pageTitleLabel" value="CrmUploadFile"/>
+                <set field="sectionHeaderUiLabel" value="CrmUploadFile"/>
+                <set field="DONE_PAGE" value="viewOpportunity"/>
+                <set field="formName" value="uploadContentForm"/>
+                <set field="formTarget" value="createContentForOpportunity"/>
+                <set field="donePage" value="viewOpportunity"/>
+                <set field="salesOpportunityId" from-field="parameters.salesOpportunityId"/>
+            </actions>
+            <widgets>
+                <decorator-screen name="main-section-decorator" location="component://sfaext/widget/OpportunityScreens.xml">
+                    <decorator-section name="section-body"><include-screen name="CommonContentForm"/></decorator-section>
+                </decorator-screen>
+            </widgets>
+        </section>
+    </screen>
+
+    <screen name="uploadContentForActivity">
+        <section>
+            <actions>
+                <set field="pageTitleLabel" value="CrmUploadFile"/>
+                <set field="sectionHeaderUiLabel" value="CrmUploadFile"/>
+                <set field="hasOperationPermission" value="_VIEW"/>
+                <set field="formName" value="uploadContentForm"/>
+                <set field="formTarget" value="createContentForActivity"/>
+                <set field="donePage" value="viewActivity"/>
+                <set field="workEffortId" from-field="parameters.workEffortId"/>
+                <script location="component://sfaext/webapp/sfaext/WEB-INF/actions/security/checkComplexActivitySecurity.bsh"/>
+            </actions>
+            <widgets>
+                <decorator-screen name="main-section-decorator" location="component://sfaext/widget/screens/activities/ActivitiesScreens.xml">
+                    <decorator-section name="section-body"><include-screen name="CommonContentForm"/></decorator-section>
+                </decorator-screen>
+            </widgets>
+        </section>
+    </screen>
+
+    <!-- for updating, the contentTypeId is passed as a parameter and is either HYPERLINK or FILE, which determines the form to use -->
+
+    <screen name="updateContentForAccount">
+        <section>
+            <actions>
+                <set field="pageTitleLabel" value="CrmUpdateContent"/>
+                <set field="sectionHeaderUiLabel" value="CrmUpdateContent"/>
+                <set field="hasModulePermission" value="CRMSFA_ACCOUNT"/>
+                <set field="formName" value="updateContentForm"/>
+                <set field="formTarget" value="updateContentForParty"/>
+                <set field="donePage" value="viewAccount"/>
+                <script location="component://sfaext/webapp/sfaext/WEB-INF/actions/content/updateContentForm.groovy"/>
+            </actions>
+            <widgets>
+                <decorator-screen name="main-section-decorator" location="component://sfaext/widget/AccountScreens.xml">
+                    <decorator-section name="section-body"><include-screen name="CommonPartyContentForm"/></decorator-section>
+                </decorator-screen>
+            </widgets>
+        </section>
+    </screen>
+
+    <screen name="updateContentForLead">
+        <section>
+            <actions>
+                <set field="pageTitleLabel" value="CrmUpdateContent"/>
+                <set field="sectionHeaderUiLabel" value="CrmUpdateContent"/>
+                <set field="hasModulePermission" value="CRMSFA_LEAD"/>
+                <set field="formName" value="updateContentForm"/>
+                <set field="formTarget" value="updateContentForParty"/>
+                <set field="donePage" value="viewLead"/>
+            </actions>
+            <widgets>
+                <decorator-screen name="main-section-decorator" location="component://sfaext/widget/LeadScreens.xml">
+                    <decorator-section name="section-body"><include-screen name="CommonPartyContentForm"/></decorator-section>
+                </decorator-screen>
+            </widgets>
+        </section>
+    </screen>
+
+    <screen name="updateContentForContact">
+        <section>
+            <actions>
+                <set field="pageTitleLabel" value="CrmUpdateContent"/>
+                <set field="sectionHeaderUiLabel" value="CrmUpdateContent"/>
+                <set field="hasModulePermission" value="CRMSFA_CONTACT"/>
+                <set field="formName" value="updateContentForm"/>
+                <set field="formTarget" value="updateContentForParty"/>
+                <set field="donePage" value="viewContact"/>
+                <script location="component://sfaext/webapp/sfaext/WEB-INF/actions/content/updateContentForm.groovy"/>
+            </actions>
+            <widgets>
+                <decorator-screen name="main-section-decorator" location="component://sfaext/widget/ContactScreens.xml">
+                    <decorator-section name="section-body"><include-screen name="CommonPartyContentForm"/></decorator-section>
+                </decorator-screen>
+            </widgets>
+        </section>
+    </screen>
+
+    <screen name="updateContentForPartner">
+        <section>
+            <actions>
+                <set field="pageTitleLabel" value="CrmUpdateContent"/>
+                <set field="sectionHeaderUiLabel" value="CrmUpdateContent"/>
+                <set field="hasModulePermission" value="CRMSFA_PARTNER"/>
+                <set field="formName" value="updateContentForm"/>
+                <set field="formTarget" value="updateContentForParty"/>
+                <set field="donePage" value="viewPartner"/>
+                <script location="component://sfaext/webapp/sfaext/WEB-INF/actions/content/updateContentForm.groovy"/>
+            </actions>
+            <widgets>
+                <decorator-screen name="main-section-decorator" location="component://sfaext/widget/PartnerScreens.xml">
+                    <decorator-section name="section-body"><include-screen name="CommonPartyContentForm"/></decorator-section>
+                </decorator-screen>
+            </widgets>
+        </section>
+    </screen>
+
+    <screen name="updateContentForCase">
+        <section>
+            <actions>
+                <set field="pageTitleLabel" value="CrmUpdateContent"/>
+                <set field="sectionHeaderUiLabel" value="CrmUpdateContent"/>
+                <set field="hasOperationPermission" value="_UPDATE"/>
+                <set field="formName" value="updateContentForm"/>
+                <set field="formTarget" value="updateContentForCase"/>
+                <set field="donePage" value="viewCase"/>
+                <set field="custRequestId" from-field="parameters.custRequestId"/>
+                <script location="component://sfaext/webapp/sfaext/WEB-INF/actions/security/checkComplexCaseSecurity.bsh"/>
+                <script location="component://sfaext/webapp/sfaext/WEB-INF/actions/content/updateContentForm.groovy"/>
+            </actions>
+            <widgets>
+                <decorator-screen name="main-section-decorator" location="component://sfaext/widget/screens/cases/CasesScreens.xml">
+                    <decorator-section name="section-body"><include-screen name="CommonContentForm"/></decorator-section>
+                </decorator-screen>
+            </widgets>
+        </section>
+    </screen>
+
+    <screen name="updateContentForOpportunity">
+        <section>
+            <actions>
+                <set field="pageTitleLabel" value="CrmUpdateContent"/>
+                <set field="sectionHeaderUiLabel" value="CrmUpdateContent"/>
+                <set field="donePage" value="viewOpportunity"/>
+                <set field="formName" value="updateContentForm"/>
+                <set field="formTarget" value="updateContentForOpportunity"/>
+                <set field="donePage" value="viewOpportunity"/>
+                <set field="salesOpportunityId" from-field="parameters.salesOpportunityId"/>
+                <script location="component://sfaext/webapp/sfaext/WEB-INF/actions/content/updateContentForm.groovy"/>
+            </actions>
+            <widgets>
+                <decorator-screen name="main-section-decorator" location="component://sfaext/widget/OpportunityScreens.xml">
+                    <decorator-section name="section-body"><include-screen name="CommonContentForm"/></decorator-section>
+                </decorator-screen>
+            </widgets>
+        </section>
+    </screen>
+
+    <screen name="updateContentForActivity">
+        <section>
+            <actions>
+                <set field="pageTitleLabel" value="CrmUpdateContent"/>
+                <set field="sectionHeaderUiLabel" value="CrmUpdateContent"/>
+                <set field="hasOperationPermission" value="_VIEW"/>
+                <set field="formName" value="updateContentForm"/>
+                <set field="formTarget" value="updateContentForActivity"/>
+                <set field="donePage" value="viewActivity"/>
+                <set field="workEffortId" from-field="parameters.workEffortId"/>
+                <script location="component://sfaext/webapp/sfaext/WEB-INF/actions/security/checkComplexActivitySecurity.bsh"/>
+                <script location="component://sfaext/webapp/sfaext/WEB-INF/actions/content/updateContentForm.groovy"/>
+            </actions>
+            <widgets>
+                <decorator-screen name="main-section-decorator" location="component://sfaext/widget/screens/activities/ActivitiesScreens.xml">
+                    <decorator-section name="section-body"><include-screen name="CommonContentForm"/></decorator-section>
+                </decorator-screen>
+            </widgets>
+        </section>
+    </screen>
+
+</screens>

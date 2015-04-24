@@ -1,0 +1,266 @@
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<zk>
+<zscript>
+    import org.zkoss.util.resource.Labels;
+    import com.ndz.controller.*;
+    import org.ofbiz.entity.*;
+    import org.ofbiz.base.util.*;
+    import java.util.*;
+    GenericDelegator delegator =
+    com.ndz.zkoss.util.HrmsInfrastructure.getDelegator();//GenericDelegator.getGenericDelegator("default");
+    List partyGroups = null;
+    List partyCurrency=null;
+    String currencyId=null;
+    String description=null;
+    partyGroups=delegator.findByAnd("PartyGroup",UtilMisc.toMap("partyId","Company"));
+    if(partyGroups.size()>0){
+    GenericValue gv=(GenericValue)partyGroups.get(0);
+    currencyId=gv.getString("currencyType");
+    }
+    partyCurrency=delegator.findByAnd("Uom",UtilMisc.toMap("uomId",currencyId,"uomTypeId","CURRENCY_MEASURE"));
+    if(partyCurrency.size()>0){
+    GenericValue gv=(GenericValue)partyCurrency.get(0);
+    description=gv.getString("description");
+    }
+    Constraint dateConstraint = new Constraint() {
+    import org.zkoss.util.resource.Labels;
+    public void validate(Component comp, Object value) throws WrongValueException {
+    if (value == null){
+    throw new WrongValueException(comp, "From Date Required");
+    }
+    java.util.Date now = new java.util.Date();
+    }
+    }
+</zscript>
+<window id="allocateLoanWindow" width="680px" title="Allocate Loan"
+        height="450px" position="center" closable="true" maximizable="true"
+        apply="com.ndz.controller.ConfigureLoanManagementController"
+        border="normal">
+    <separator height="30px"/>
+    <hbox>
+        <div align="right" width="150px" style="margin-right:5px">
+            <label value="${c:l('Hrms_LoanType') }"/>
+            <label value="*" style="color:red"/>
+        </div>
+
+        <div>
+            <listbox id="allocateLoanType" mold="select"
+                     onSelect="Clients.closeErrorBox(self)">
+            </listbox>
+
+        </div>
+    </hbox>
+    <separator/>
+    <hbox>
+
+        <div align="right" width="150px" style="margin-right:5px">
+            <label value="${c:l('HumanResLeaveSummaryFromDate') }"/>
+            <label value="*" style="color:red"/>
+        </div>
+        <div align="left">
+            <datebox id="allocateFromDate" constraint="${dateConstraint}"
+                     onChange="Clients.closeErrorBox(self)"/>
+        </div>
+    </hbox>
+    <separator/>
+    <hbox>
+
+        <div align="right" width="150px" style="margin-right:5px">
+            <label value="${c:l('HumanResLeaveSummaryThruDate') }"/>
+            <label value="*" style="color:red"/>
+        </div>
+        <zscript>
+            import org.zkoss.util.resource.Labels;
+            Constraint throughDateConstraint = new Constraint() {
+
+            public void validate(Component comp, Object value) throws WrongValueException {
+            if (value != null){
+            java.util.Date prevDate = ((java.util.Date) allocateLoanWindow.getFellow("allocateFromDate").getValue());
+            if (prevDate.compareTo((java.util.Date)value) == 1){
+            throw new WrongValueException(comp,Labels.getLabel("HumanResApplyLeaveThruDateMustBeAfterFromDate"));
+            }
+            }else{
+            throw new WrongValueException(comp, "Thru Date Required");
+            }
+            }
+
+            }
+        </zscript>
+        <div align="left">
+            <datebox id="allocateThruDate" constraint="${throughDateConstraint}"
+                     onChange="Clients.closeErrorBox(self)"/>
+        </div>
+    </hbox>
+    <separator/>
+    <hbox>
+
+        <div align="right" width="150px" style="margin-right:5px">
+            <label value="Position Type"/>
+        </div>
+        <div width="297px" align="left">
+            <listbox id="allocatePositionType" mold="select"
+                     onSelect="Clients.closeErrorBox(self)">
+            </listbox>
+        </div>
+    </hbox>
+    <separator/>
+    
+    <separator />
+		
+        <hbox>
+            <div align="right" width="140px">
+                <label value="Employee Type" />
+                <label value="*" style="color:red" />
+            </div>
+
+            <div>
+                <radiogroup id="emp_administration" name="emp_administration">
+                    <radio id="emp_administration_administrative"
+                           label="${c:l('FormFieldTitle_administrative')}"
+                           selected="true" value="Administrative" style="margin-left:5px;font-weight: bold;font-size:10px;">
+                    </radio>
+                    <radio id="emp_administration_non_administrative"
+                           label="${c:l('FormFieldTitle_nonadministrative') }"
+                           selected="false" checked="false" value="Non-Administrative"
+                           style="margin-left:30px;font-weight: bold;font-size:10px;">
+                    </radio>
+                </radiogroup>
+            </div>
+        </hbox>
+        <separator />
+        <hbox>
+            <div align="right" width="150px">
+                <label value="${c:l('FormFieldTitle_positionCategories') }" />
+                <label value="*" style="color:red" />
+            </div>
+            <zscript>
+                <![CDATA[
+                            ListModelList positionCategoriesArr = new ListModelList(Arrays.asList(new String[] {"Employees","Management","Expatriates"}));
+                          ]]>
+            </zscript>
+            <div align="left">
+                <combobox id="positionCategories" name="positionCategories"
+                          model="${positionCategoriesArr}"></combobox>
+            </div>
+        </hbox>
+		<separator />
+    
+    
+    <hbox>
+        <div align="right" width="150px" style="margin-right:5px">
+            <hbox>
+                <label value="${c:l('Hrms_Currency') }" width="100px"/>
+                <label value="*" style="color:red"/>
+            </hbox>
+        </div>
+        <div width="297px" align="left">
+            <hbox>
+                <label id="allocateCurrencyDescription" value="${description}"></label>
+            </hbox>
+        </div>
+        <div align="right">
+            <textbox id="allocateCurrencyType" value="${currencyId}" visible="false"></textbox>
+        </div>
+    </hbox>
+    <separator/>
+    <hbox>
+        <div align="right" width="150px" style="margin-right:5px">
+            <label value="${c:l('Hrms_LoanAmount') }" width="100px"/>
+            <label value="*" style="color:red"/>
+        </div>
+        <div align="left">
+            <intbox id="allocateLoanAmount"
+                    constraint="no negative,no zero"/>
+        </div>
+    </hbox>
+    <separator/>
+    <hbox visible="false">
+        <div align="right" width="150px" style="margin-right:5px">
+            <label value="${c:l('Hrms_RateofInterest') }"
+                   width="100px"/>
+            <label value="*" style="color:red"/>
+        </div>
+        <div align="left">
+            <decimalbox id="interestPerAnnum" format="##.##" value="0.0" visible="false"
+                         constraint="no empty:Rate of Interest Required"/>
+        </div>
+    </hbox>
+    <separator/>
+    <hbox>
+        <div align="right" width="150px" style="margin-right:5px">
+            <label value="${c:l('Hrms_TenureinYears') }"
+                   width="100px"/>
+            <label value="*" style="color:red"/>
+        </div>
+        <div align="left">
+            <intbox id="tenureOfLoan"
+                    constraint="no negative,no zero"/>
+        </div>
+    </hbox>
+    <separator/>
+    <hbox visible="false">
+        <div align="right" width="150px" style="margin-right:5px">
+            <label value="Experience" width="100px"/>
+            <label value="*" style="color:red"/>
+        </div>
+        <div align="left">
+            <textbox id="exprienceRequired" value="0"/>
+        </div>
+    </hbox>
+    <separator/>
+    <hbox>
+        <div align="right" width="150px" style="margin-right:5px">
+            <label value="${c:l('Hrms_Comment') }" width="100px"/>
+        </div>
+        <div align="left">
+            <textbox id="allocateHRComment" rows="3" cols="66"/>
+        </div>
+    </hbox>
+    <separator/>
+    <zscript><![CDATA[
+	void validate() {
+		
+		
+		if(allocateLoanType.getSelectedItem() == null||org.apache.commons.lang.StringUtils.isEmpty((String)allocateLoanType.getSelectedItem().getValue())) {
+			throw new WrongValueException(allocateLoanType,"Loan Type Required");
+		}
+		
+	//	if(allocatePositionType.getSelectedItem() == null||org.apache.commons.lang.StringUtils.isEmpty((String)allocatePositionType.getSelectedItem().getValue())) {
+	//		throw new WrongValueException(allocatePositionType,"Position Type Required");
+	//	}
+		
+		Comboitem positionCategoriesList = positionCategories.getSelectedItem();
+        if(positionCategoriesList == null){
+            throw new WrongValueException(positionCategories, "Position Category Required");
+        }
+	//if(com.ndz.zkoss.HrmsUtil.listboxValidation(allocateLoanType) == null){
+			//throw new WrongValueException(allocateLoanType,"Loan Type Required");
+		//}
+		allocateFromDate.getValue();
+		allocateThruDate.getValue();
+		//if(com.ndz.zkoss.HrmsUtil.listboxValidation(allocatePositionType) == null){
+			//throw new WrongValueException(allocatePositionType,"Position Type Required");
+		//}
+		/*if(com.ndz.zkoss.HrmsUtil.listboxValidation(allocateCurrencyType) == null){
+			throw new WrongValueException(allocateCurrencyType,"Currency Required");
+		}*/
+		if(allocateLoanAmount.getValue() == null){
+			throw new WrongValueException(allocateLoanAmount,"Loan Amount Required");
+		}
+
+		interestPerAnnum.getValue();
+		com.ndz.zkoss.HrmsUtil.decimalboxValidation(interestPerAnnum,"Rate of Interest Must Be Numeric");
+		if(tenureOfLoan.getValue() == null){
+			throw new WrongValueException(tenureOfLoan,"Tenure In Years Required");
+		}
+
+	}
+	]]></zscript>
+    <div align="right" width="275px" style="margin-top:5px">
+        <button id="allocateLoanLimit" label="${c:l('btnSave') }"
+                onClick='validate();com.ndz.controller.ConfigureLoanManagementController.allocateLoanLimit(event);Events.postEvent("onClick",Path.getComponent("/searchPanel//searchPerCompany"),null);allocateLoanWindow.detach();'/>
+        <button id="cancel" label="${c:l('ButtonCancel') }"
+                onClick="allocateLoanWindow.detach()"/>
+    </div>
+</window>
+</zk>

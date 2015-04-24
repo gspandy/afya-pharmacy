@@ -1,0 +1,142 @@
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<?component name="fromDatebox" macroURI="../macros/fromDateMacro.zul" id="macro"?>
+<?component name="thruDatebox" macroURI="/zul/macros/thruDateMacro.zul" id="macro3"?>
+<?component name="findbox" macroURI="../macros/textfindMacro.zul" id="macro1"?>
+<zk xmlns:h="http://www.zkoss.org/2005/zk/native">
+	<zscript>
+	import com.ndz.controller.*;
+	import org.ofbiz.entity.*;
+	SearchController controller = new SearchController();
+	org.ofbiz.security.Security security = requestScope.get("security");
+	GenericValue userLogin = (GenericValue) Executions.getCurrent()
+			.getDesktop().getSession().getAttribute("userLogin");
+	boolean isAdmin = false;
+	isAdmin = security.hasPermission("HUMANRES_ADMIN", userLogin);
+	boolean isManager = false;
+	isManager = security.hasPermission("HUMANRES_MGR", userLogin);
+	Button publicHoliday = arg.get("publicHoliday");
+</zscript>
+	<window border="none" id="searchPanel" apply="${controller}">
+		<custom-attributes entityName="PublicHoliday"></custom-attributes>
+		<caption label="${c:l('HumanResPublicHoliday') }"
+			style="font-weight:bold">
+			<hbox>
+				<div align="right" if="${ isAdmin}">
+					<toolbarbutton label="New"
+						image="/images/icon/update.png"
+						style="color:#FFFFFF!important;font-weight:bold">
+						<attribute name="onClick" >
+							{
+								final Window win = (Window) Executions.createComponents(
+										"/zul/GlobalHRSetting/publicHolidayNew.zul", null, null);
+								win.doModal();
+						
+							}
+						</attribute>
+					</toolbarbutton>
+				</div>
+			</hbox>
+		</caption>
+		<div align="center">
+			<h:table>
+				<h:tr>
+					<h:td>
+						<findbox
+							fieldLabel="${c:l('FormFieldTitle_HolidayName') }"
+							name="description" type="text" cols="40" />
+					</h:td>
+				</h:tr>
+				<h:tr>
+					<h:td>
+						<fromDatebox fieldLabel="From Date" name="onDate"
+							type="text" cols="40" />
+					</h:td>
+				</h:tr>
+			</h:table>
+			<separator/>
+			<box width="100%" height="30px" align="center">
+				<hbox>
+					<button label="${c:l('HumanResSearch') }" mold="os"
+						id="searchButton"
+						onClick="results.setVisible(true);results.setFocus(true)">
+					</button>
+					<button label="${c:l('HRMS_ResetButton') }">
+						<attribute name="onClick">
+	Events.postEvent("onClick",publicHoliday,null);
+</attribute>
+					</button>
+				</hbox>
+			</box>
+		</div>
+		<zscript>
+	import org.zkoss.util.resource.Labels;
+	import com.ndz.controller.GlobalHrSettingPublicHoliday;
+	import org.ofbiz.base.util.*;
+	GlobalHrSettingPublicHoliday GlobalHrSettingPublicHoliday = new GlobalHrSettingPublicHoliday();
+	class MyRowRenderer implements RowRenderer {
+
+		MyRowRenderer() {
+		}
+
+		public void render(Row row, Object data) {
+			org.ofbiz.entity.GenericValue gv = ((org.ofbiz.entity.GenericValue) data);
+          java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("dd-MM-yyyy");
+        
+			Date fromDate = null;
+			if (gv.getString("onDate") != null) {
+				fromDate = new Date(gv.getTimestamp("onDate").getTime());
+				
+				if (fromDate != null) {
+				 new Label(sdf.format(fromDate)).setParent(row);
+					
+				} else {
+					new Label("").setParent(row);
+				}
+			}
+
+			new Label(gv.getString("description")).setParent(row);
+			Button btn = new com.ndz.zkoss.HrmsButton();
+			if (isAdmin)
+				btn.setParent(row);
+			btn.setLabel(Labels.getLabel("ButtonDelete"));
+			btn.setSclass("btnDelete");
+			btn.addEventListener("onClick",
+					new org.zkoss.zk.ui.event.EventListener() {
+						public void onEvent(Event event) throws Exception {
+							GlobalHrSettingPublicHoliday.delete(event,
+									gv.getTimestamp("onDate"));
+						}
+					});
+
+		}
+	}
+	RowRenderer tableRenderer = new MyRowRenderer();
+</zscript>
+		<div id="results" visible="false">
+			<h:table width="100%" style="border:0px" cellspacing="0px"
+				cellpadding="0px">
+				<h:tr>
+					<h:td width="90%">
+						<label value="${c:l('HRMS_SEARCHRESULTS') }"></label>
+					</h:td>
+					<h:td width="10%" style="text-align:right">
+						<paging id="paging" />
+					</h:td>
+				</h:tr>
+			</h:table>
+			<grid id="dataGrid"
+				rowRenderer="${tableRenderer }">
+				<columns menupopup="auto">
+					<column label="${c:l('FormFieldTitle_Date') }" />
+					<column
+						label="${c:l('FormFieldTitle_HolidayName') }" />
+					<column label="Action" width="100px"
+						if="${isAdmin }" />
+				</columns>
+			</grid>
+		</div>
+		<zscript>
+Events.postEvent("onClick",searchPanel.getFellow("searchButton"),null)
+</zscript>
+	</window>
+</zk>

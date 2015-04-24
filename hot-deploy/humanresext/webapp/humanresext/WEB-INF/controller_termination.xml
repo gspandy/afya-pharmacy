@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<site-conf xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="http://ofbiz.apache.org/dtds/site-conf.xsd">
+
+	<description>
+		Human Resources Employee Termination 
+	</description>
+	
+	<!-- Assign Leave to Each Employee for the Financial Year -->
+	<request-map uri="InitiateTermination">
+		<security https="true" auth="true" />
+		<response name="success" type="view" value="InitiateTermination" />
+	</request-map>
+	
+	<request-map uri="ViewTermination">
+		<security https="true" auth="true" />
+		<response name="success" type="view" value="ViewTermination" />
+	</request-map>
+	
+	<request-map uri="ProcessTermination">
+		<security https="true" auth="true" />
+		<response name="success" type="view" value="ProcessTermination" />
+	</request-map>
+	
+	<request-map uri="EmplSettlement">
+		<security https="true" auth="true" />
+		<response name="success" type="view" value="EmplSettlement" />
+	</request-map>
+
+	<request-map uri="createEmplTermination">
+		<security https="true" auth="true" />
+		<event type="service" invoke="createEmplTerminationService"/>
+		<response name="success" type="view" value="InitiateTermination"/>
+	</request-map>
+	
+	<request-map uri="updateEmplTermination">
+		<security https="true" auth="true" />
+		<event type="service" invoke="updateEmplTerminationService"/>
+		<response name="success" type="view" value="InitiateTermination"/>
+	</request-map>
+	
+	<request-map uri="submitEmplTermination">
+		<security https="true" auth="true" />
+		<event type="service" invoke="submitEmplTerminationService"/>
+		<response name="success" type="request-redirect" value="ViewTermination"/>
+		<response name="error" type="view" value="InitiateTermination"></response>
+	</request-map>
+	
+	<request-map uri="processEmplTermination">
+		<security https="true" auth="true" />
+		<event type="service" invoke="processEmplTerminationService"/>
+		<response name="success" type="request-redirect" value="ViewTermination"/>
+		<response name="error" type="view" value="ProcessTermination"></response>
+	</request-map>
+ 	
+ 	<view-map name="InitiateTermination" type="screen"
+		page="component://humanresext/widget/EmplTerminationScreens.xml#InitiateTerminationScreen" />
+ 	
+ 	<view-map name="ViewTermination" type="screen"
+		page="component://humanresext/widget/EmplTerminationScreens.xml#ViewTerminationScreen" />
+		
+	<view-map name="ProcessTermination" type="screen"
+		page="component://humanresext/widget/EmplTerminationScreens.xml#ProcessTerminationScreen" />
+		
+	<view-map name="EmplSettlement" type="screen"
+		page="component://humanresext/widget/EmplTerminationScreens.xml#EmplSettlementScreen" />
+
+</site-conf>

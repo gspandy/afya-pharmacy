@@ -1,0 +1,55 @@
+<?component name="findbox" macroURI="../macros/textfindMacro.zul" id="macro1"?>
+<?init class="org.zkoss.zkplus.databind.AnnotateDataBinderInit" root="./assignWindow"?>
+<zk>
+	<zscript>
+		<![CDATA[
+			import org.ofbiz.entity.*;
+			GenericDelegator delegator = com.ndz.zkoss.util.HrmsInfrastructure.getDelegator();//GenericDelegator.getGenericDelegator("default");
+			String requisitionId = (String) Executions.getCurrent().getArg().get(
+					"requisitionId");
+			com.ndz.controller.SearchController controller = new com.ndz.controller.SearchController();
+			List recruitmentAgencyList = null;
+			recruitmentAgencyList = delegator.findList("RecruitmentAgency",null,null,null,null,false);
+			SimpleListModel model = new SimpleListModel(recruitmentAgencyList);
+			com.ndz.zkoss.GenericValueRenderer listItemRenderer = new com.ndz.zkoss.GenericValueRenderer(
+					new String[] { "agencyId", "agencyName", "emailAddress",
+							"contactNumber" });
+		]]>
+	</zscript>
+	<window closable="true" width="45%" height="60%" border="normal" mode="modal"
+		id="assignWindow" contentStyle="overflow:auto" maximizable="true">
+		<caption label="${c:l('HRMS_ASSIGN_TO_AGENCY') }" style="font-weight:bold"></caption>
+		<textbox id="requisitionId" value="${requisitionId}"
+			visible="false">
+		</textbox>
+				<paging id="paging" width="100%" />
+				<listbox id="dataGrid"  width="100%" checkmark="true"
+					multiple="true" model="@{recruitmentAgencyList}">
+					<listhead>
+						<listheader label="${c:l('HRMS_AGENCY_ID') }" width="120px"/>
+						<listheader label="${c:l('HRMS_AGENCY_NAME') }" width="120px"/>
+						<listheader label="${c:l('HRMS_AGENCY_EMAIL_ADDRESS') }" width="120px"/>
+						<listheader label="${c:l('HRMS_AGENCY_CONTACT_NUMBER') }" width="120px"/>
+					</listhead>
+					<listitem self="@{each='reqGv'}" value="@{reqGv}">
+						<listcell label="@{reqGv.agencyId}"/>
+						<listcell label="@{reqGv.agencyName}"/>
+						<listcell label="@{reqGv.emailAddress}"/>
+						<listcell label="@{reqGv.contactNumber}"/>
+					</listitem>
+				</listbox>
+		<separator />
+		<div>
+			<box align="center" width="100%">
+				<hbox>
+					<button label="${c:l('HRMS_SEND') }" id="send"
+						onClick="com.ndz.controller.EmployeeRequisitionController.sendEmail(event)">
+					</button>
+					<button label="${c:l('HRMS_CANCEL') }" id="cancel"
+						onClick="assignWindow.detach();">
+					</button>
+				</hbox>
+			</box>
+		</div>
+	</window>
+</zk>

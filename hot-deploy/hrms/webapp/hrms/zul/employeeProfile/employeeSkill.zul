@@ -1,0 +1,157 @@
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<?xel-method prefix="st" name="getskillType"
+class="com.ndz.controller.UpdateEmployeeProfileController"
+signature="String getskillType(java.lang.String)"?>
+<zk>
+	<zscript>
+	<![CDATA[
+	     	import org.ofbiz.entity.*;
+	    	import org.zkoss.zk.ui.event.EventListener;
+	    	import org.ofbiz.entity.util.*;
+	    	import java.util.*;
+	    	import org.ofbiz.base.util.*;
+	    	import org.zkoss.util.resource.Labels;
+	Map map = Executions.getCurrent().getArg();
+	String partyId = (String) map.get("partyId");
+	GenericValue userLogin = (GenericValue) Executions.getCurrent().getDesktop().getSession().getAttribute("userLogin");
+	org.ofbiz.entity.GenericDelegator delegator = (org.ofbiz.entity.GenericDelegator) requestScope
+			.get("delegator");
+	org.ofbiz.entity.condition.EntityCondition condition = org.ofbiz.entity.condition.EntityCondition.makeCondition(
+			"partyId", org.ofbiz.entity.condition.EntityOperator.EQUALS,
+			partyId);
+	java.util.List skills = null;
+	skills = delegator.findList("PartySkill", condition, null, null, null,
+			false);
+	Map arg1 = new HashMap();
+	arg1.put("partyId", partyId);
+	boolean sameUser = Executions.getCurrent().getArg().get("sameUser");
+	org.ofbiz.security.Security security = requestScope.get("security");
+	boolean isAdmin = security.hasPermission("HUMANRES_ADMIN", userLogin);
+	boolean isManager = security.hasPermission("HUMANRES_MGR", userLogin);
+	boolean anyOne = false;
+	boolean isVisible = true;
+    String managerpositionid=null;
+	String emplpositionid=null;
+	String employeeId = Executions.getCurrent().getParameter("partyId"); 
+	String manageremployeeId=userLogin.getString("partyId");
+    List manager=delegator.findByAnd("EmplPositionFulfillment",UtilMisc.toMap("partyId",manageremployeeId));
+    if(manager.size()>0)
+    {
+    	 managerpositionid=(String)EntityUtil.getFirst(manager).getString("emplPositionId");		
+    }
+    List employee=delegator.findByAnd("EmplPositionFulfillment",UtilMisc.toMap("partyId",employeeId));
+    if(employee.size()>0)
+    {
+     emplpositionid=(String)EntityUtil.getFirst(employee).getString("emplPositionId"); 	
+    }
+  /*  if(isManager)
+	{
+		if(manageremployeeId.equals(partyId))
+		{
+			isVisible = true;
+			
+		}
+		else
+		{
+		List result=delegator.findByAnd("EmplPositionReportingStruct",UtilMisc.toMap("emplPositionIdReportingTo",managerpositionid,"emplPositionIdManagedBy",emplpositionid));
+		if(result.size()==0)
+		{
+			isVisible = false;
+		}
+		}			
+   }*/
+   if(com.ndz.zkoss.HrmsUtil.checkAccess(userLogin,security)){
+	   isVisible = true;
+	   
+   }
+   else
+   {
+	   isVisible = false;
+	   
+   }
+	if (isAdmin || isManager || sameUser) {
+		anyOne = true;
+	}
+]]>
+</zscript>
+	<window id="personSkillWindow"
+		apply="com.ndz.controller.UpdateEmployeeProfileController">
+		<label value="${partyId}" visible="false" />
+		<groupbox style="background:#f3f3ec;" closable="false"
+			forEach="${skills}">
+			<caption style="font-weight:bold">
+				<!--<toolbarbutton label="${c:l('HRMS_EDIT') }" id="${each.skillTypeId}" 
+					image="/images/icon/update.png" style="font-weight:bold"
+					if="${anyOne}"
+					onClick="com.ndz.controller.UpdateEmployeeProfileController.showEditSkillWindow(self.id,partyId)">
+				</toolbarbutton>-->
+				<toolbarbutton label="${c:l('ButtonDelete') }" id="${each.skillTypeId}"
+					image="/images/icon/delete_image.gif" style="font-weight:bold"
+					if="${isVisible}"
+					onClick="com.ndz.controller.UpdateEmployeeProfileController.SkillDelete(self.id,partyId,event)">
+				</toolbarbutton>
+			</caption>
+			<hbox>
+				<div align="right" width="130px"
+					style="margin-right:5px">
+					<label value="${c:l('HumanResSkillType') }" style="font-weight:bold" />
+				</div>
+				<div align="left" width="150px"
+					style="margin-right:5px">
+					<label value="${st:getskillType(each.skillTypeId)}" />
+				</div>
+			</hbox>
+			<separator />
+			<hbox>
+				<div align="right" width="130px"
+					style="margin-right:5px">
+					<label value="${c:l('HRMS_YrsOfExprience') }"
+						style="font-weight:bold" />
+				</div>
+				<div align="left" width="150px"
+					style="margin-right:5px">
+					<label value="${each.yearsExperience}" />
+				</div>
+			</hbox>
+			<separator />
+			<hbox>
+				<div align="right" width="130px"
+					style="margin-right:5px">
+					<label value="${c:l('FormFieldTitle_rating') }" style="font-weight:bold" />
+				</div>
+				<div align="left">
+					<label value="${each.rating}" />
+				</div>
+			</hbox>
+			<separator></separator>
+			
+			<hbox>
+				<div align="right" width="130px"
+					style="margin-right:5px">
+					<label value="${c:l('FormFieldTitle_skillLevel') }" style="font-weight:bold" />
+				</div>
+				<div align="left">
+					<label value="${each.skillLevel}">
+						<attribute name="onCreate">
+	if ((self.getValue()).equals("1")) {
+		self.setValue(Labels.getLabel("ListBox_Beginner"));
+	}
+	if ((self.getValue()).equals("2")) {
+		self.setValue(Labels.getLabel("ListBox_Intermediate"));
+	}
+	if ((self.getValue()).equals("3")) {
+		self.setValue(Labels.getLabel("ListBox_Expert"));
+	}
+	if ((self.getValue()).equals("4")) {
+		self.setValue(Labels.getLabel("ListBox_Uber"));
+	}
+</attribute>
+					</label>
+				</div>
+			</hbox>
+			<separator />
+			
+		</groupbox>
+	</window>
+
+</zk>

@@ -1,0 +1,360 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<screens xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="http://ofbiz.apache.org/dtds/widget-screen.xsd">
+
+	<screen name="ViewQualifyingService">
+		<section>
+			<actions>
+				<set field="tabButtonItem" value="EditSectionIII"/>
+			</actions>
+			<widgets>
+				<decorator-screen name="CommonPartyDecorator"
+					location="${parameters.mainDecoratorLocation}">
+					<decorator-section name="body">
+						<screenlet title="${uiLabelMap.PreviousQualifyingService}"
+							navigation-menu-name="prevServiceRec" id="prevServiceSec">
+							<include-menu name="prevServiceRec"
+								location="component://humanresext/widget/Menus.xml" />
+							<include-form
+								location="component://humanresext/widget/forms/ServiceRegisterForms.xml"
+								name="ListPartyPreviousQual" />
+						</screenlet>
+						<screenlet title="${uiLabelMap.foreignService}"
+							navigation-menu-name="foreignServiceRec" id="foreignServiceRec">
+							<include-menu name="foreignServiceRec"
+								location="component://humanresext/widget/Menus.xml" />
+							<include-form
+								location="component://humanresext/widget/forms/ServiceRegisterForms.xml"
+								name="ListPartyForeignService" />
+						</screenlet>
+					</decorator-section>
+				</decorator-screen>
+			</widgets>
+		</section>
+	</screen>
+
+	<screen name="NewPartyPreviousQual">
+		<section>
+			<actions>
+				<set field="tabButtonItem" value="EditSectionIII"/>
+			</actions>
+			<widgets>
+				<decorator-screen name="CommonPartyDecorator"
+					location="${parameters.mainDecoratorLocation}">
+					<decorator-section name="body">
+						<include-form
+							location="component://humanresext/widget/forms/ServiceRegisterForms.xml"
+							name="NewPartyPreviousQual" />
+					</decorator-section>
+				</decorator-screen>
+			</widgets>
+		</section>
+	</screen>
+
+	<screen name="EditPartyPreviousQual">
+		<section>
+			<actions>
+				<set field="tabButtonItem" value="EditSectionIII"/>
+			</actions>
+			<widgets>
+				<decorator-screen name="CommonPartyDecorator"
+					location="${parameters.mainDecoratorLocation}">
+					<decorator-section name="body">
+						<include-form
+							location="component://humanresext/widget/forms/ServiceRegisterForms.xml"
+							name="EditPartyPreviousQual" />
+					</decorator-section>
+				</decorator-screen>
+			</widgets>
+		</section>
+	</screen>
+
+	<screen name="NewPartyForeignService">
+		<section>
+			<actions>
+				<set field="tabButtonItem" value="EditSectionIII"/>
+			</actions>
+			<widgets>
+				<decorator-screen name="CommonPartyDecorator"
+					location="${parameters.mainDecoratorLocation}">
+					<decorator-section name="body">
+						<include-form
+							location="component://humanresext/widget/forms/ServiceRegisterForms.xml"
+							name="NewPartyForeignService" />
+					</decorator-section>
+				</decorator-screen>
+			</widgets>
+		</section>
+	</screen>
+
+	<screen name="EditPartyForeignService">
+		<section>
+			<actions>
+				<set field="tabButtonItem" value="EditSectionIII"/>
+			</actions>
+			<widgets>
+				<decorator-screen name="CommonPartyDecorator"
+					location="${parameters.mainDecoratorLocation}">
+					<decorator-section name="body">
+						<include-form
+							location="component://humanresext/widget/forms/ServiceRegisterForms.xml"
+							name="EditPartyForeignService" />
+					</decorator-section>
+				</decorator-screen>
+			</widgets>
+		</section>
+	</screen>
+
+	<screen name="ServiceRegisterLeaveScreen">
+		<section>
+			<actions>
+			<set field="tabButtonItem" value="PartyLTC" />
+			</actions>
+			<widgets>
+				<decorator-screen name="CommonPartyDecorator"
+					location="${parameters.mainDecoratorLocation}">
+					<decorator-section name="body">
+						<include-screen name="ServiceRegisterLeave"/>
+					</decorator-section>
+				</decorator-screen>
+			</widgets>
+		</section>
+	</screen>
+
+	<screen name="SelectCertificate">
+		<section>
+			<actions>
+				<set field="tabButtonItem" value="Certificates"/>
+			</actions>
+			<widgets>
+				<decorator-screen name="CommonPartyDecorator"
+					location="${parameters.mainDecoratorLocation}">
+					<decorator-section name="body">
+						<include-form
+							location="component://humanresext/widget/forms/ServiceRegisterForms.xml"
+							name="SelectCertificate" />
+					</decorator-section>
+				</decorator-screen>
+			</widgets>
+		</section>
+	</screen>
+
+	<screen name="EditCertificate">
+		<section>
+			<actions>
+				<set field="tabButtonItem" value="Certificates"/>
+			</actions>
+			<widgets>
+				<decorator-screen name="CommonPartyDecorator"
+					location="${parameters.mainDecoratorLocation}">
+					<decorator-section name="body">
+						<include-form
+							location="component://humanresext/widget/forms/ServiceRegisterForms.xml"
+							name="EditCertificate" />
+					</decorator-section>
+				</decorator-screen>
+			</widgets>
+		</section>
+	</screen>
+
+	<screen name="PrintServiceRegister">
+		<section>
+			<actions>
+			<script
+					location="component://humanresext/webapp/humanresext/WEB-INF/actions/serviceregister/BioData.groovy" />
+				<entity-one value-field="person" entity-name="Person">
+					<field-map field-name="partyId" value="${parameters.partyId}"/>
+				</entity-one>
+				<set field="person" from-field="person"/>
+				<set field="partyId" from-field="parameters.partyId"/>
+				
+				<entity-condition list="partyQuals" entity-name="PartyQual">
+					<condition-expr field-name="partyId" from-field="partyId"/>
+				</entity-condition>
+				
+				 <entity-one entity-name="Content" value-field="familyPhoto">
+				 	<field-map field-name="contentId" value="10001"/>
+				 </entity-one>
+				 
+				 <entity-condition list="payGrades" entity-name="PartyPayGradeView">
+				 	<condition-expr field-name="partyId" from-field="partyId"/>
+				 </entity-condition>
+			</actions>
+			<widgets>
+				<decorator-screen name="SimpleDecorator" location="component://common/widget/CommonScreens.xml">
+					<decorator-section name="body">
+						<platform-specific>
+							<html>
+								<html-template location="component://humanresext/webapp/humanresext/serviceregister/biodata.ftl"/>
+							</html>
+						</platform-specific>
+						<label style="h1" text="II- CERTIFICATE AND ATTESTATION"></label>
+						<horizontal-separator></horizontal-separator>
+						<platform-specific>
+							<html>
+								<html-template location="component://humanresext/webapp/humanresext/serviceregister/print.ftl"/>
+							</html>
+						</platform-specific>
+																		
+						<label style="h1" text="III-Previous Qalifying Service and Foreign Service"></label>
+						<horizontal-separator style="hr"></horizontal-separator>
+						<label style="h1" text="(a) Previous qualifying service"></label>
+						<include-form
+									location="component://humanresext/widget/forms/ServiceRegisterForms.xml"
+									name="ListPartyPreviousQual" />
+						<label style="h1" text="(b) Foreign Services"></label>
+						<include-form
+									location="component://humanresext/widget/forms/ServiceRegisterForms.xml"
+									name="ListPartyForeignService" />
+						
+						<platform-specific>
+							<html>
+								<html-template location="component://humanresext/webapp/humanresext/serviceregister/verificationOfService.ftl"/>
+							</html>
+						</platform-specific>
+				
+						<horizontal-separator style="hr"></horizontal-separator>						
+						
+						<label style="sectionText" text="Earned Leave"></label>
+						<include-screen name="ServiceRegisterLeave"/>
+						
+						
+						<label text="Part - VI" style="sectionText"/>
+						<horizontal-separator></horizontal-separator>
+						<label text="Particulars of Leave travel concession availed." style="sectionText"></label>
+						<include-form
+								location="component://humanresext/widget/forms/ServiceRegisterForms.xml"
+								name="PrintPartyLTC" />
+						
+						<label text="Particulars of Home Town travel concession availed." style="sectionText"></label>		
+						<include-form
+								location="component://humanresext/widget/forms/ServiceRegisterForms.xml"
+								name="PrintPartyHTLTC" />
+					</decorator-section>
+				</decorator-screen>	
+			</widgets>
+		</section>
+	</screen>
+	
+	<screen name="ServiceRegisterLeave">
+		<section>
+			<actions>
+				<script
+					location="component://humanresext/webapp/humanresext/WEB-INF/actions/serviceregister/EarnedLeave.groovy" />
+			</actions>
+			<widgets>
+				<platform-specific>
+					<html>
+						<html-template
+							location="component://humanresext/webapp/humanresext/serviceregister/leavescreen.ftl" />
+					</html>
+				</platform-specific>
+			</widgets>
+		</section>
+	</screen>
+
+
+<screen name="NewPartyLTC">
+		<section>
+			<actions>
+				<set field="tabButtonItem" value="PartyLTC"/>
+			</actions>
+			<widgets>
+				<decorator-screen name="CommonPartyDecorator"
+					location="${parameters.mainDecoratorLocation}">
+					<decorator-section name="body">
+						<include-form
+							location="component://humanresext/widget/forms/ServiceRegisterForms.xml"
+							name="NewPartyLTC" />
+					</decorator-section>
+				</decorator-screen>
+			</widgets>
+		</section>
+	</screen>
+
+
+	<screen name="EditPartyLTC">
+		<section>
+			<actions>
+				<set field="tabButtonItem" value="PartyLTC"/>
+			</actions>
+			<widgets>
+				<decorator-screen name="CommonPartyDecorator"
+					location="${parameters.mainDecoratorLocation}">
+					<decorator-section name="body">
+						<include-form
+							location="component://humanresext/widget/forms/ServiceRegisterForms.xml"
+							name="EditPartyLTC" />
+					</decorator-section>
+				</decorator-screen>
+			</widgets>
+		</section>
+	</screen>
+	
+	<screen name="NewPartyHTLTC">
+		<section>
+			<actions>
+				<set field="tabButtonItem" value="PartyLTC"/>
+			</actions>
+			<widgets>
+				<decorator-screen name="CommonPartyDecorator"
+					location="${parameters.mainDecoratorLocation}">
+					<decorator-section name="body">
+						<include-form
+							location="component://humanresext/widget/forms/ServiceRegisterForms.xml"
+							name="NewPartyHTLTC" />
+					</decorator-section>
+				</decorator-screen>
+			</widgets>
+		</section>
+	</screen>
+
+	<screen name="EditPartyHTLTC">
+		<section>
+			<actions>
+				<set field="tabButtonItem" value="PartyLTC"/>
+			</actions>
+			<widgets>
+				<decorator-screen name="CommonPartyDecorator"
+					location="${parameters.mainDecoratorLocation}">
+					<decorator-section name="body">
+						<include-form
+							location="component://humanresext/widget/forms/ServiceRegisterForms.xml"
+							name="EditPartyHTLTC" />
+					</decorator-section>
+				</decorator-screen>
+			</widgets>
+		</section>
+	</screen>
+	
+	<screen name="ViewLTC">
+		<section>
+			<actions>
+				<set field="tabButtonItem" value="PartyLTC"/>
+			</actions>
+			<widgets>
+				<decorator-screen name="CommonPartyDecorator"
+					location="${parameters.mainDecoratorLocation}">
+					<decorator-section name="body">
+						<screenlet title="${uiLabelMap.HumanresLeaveTravelConcessionAvailed}"
+							navigation-menu-name="ltc" id="ltc">
+							<include-menu name="ltc"
+								location="component://humanresext/widget/Menus.xml" />
+							<include-form
+								location="component://humanresext/widget/forms/ServiceRegisterForms.xml"
+								name="ListPartyLTC" />
+						</screenlet>
+						<screenlet title="${uiLabelMap.HumanresHomeTownTravelConcessionAvailed}"
+							navigation-menu-name="htltc" id="htltc">
+							<include-menu name="htltc"
+								location="component://humanresext/widget/Menus.xml" />
+							<include-form
+								location="component://humanresext/widget/forms/ServiceRegisterForms.xml"
+								name="ListPartyHTLTC" />
+						</screenlet>
+					</decorator-section>
+				</decorator-screen>
+			</widgets>
+		</section>
+	</screen>
+</screens>

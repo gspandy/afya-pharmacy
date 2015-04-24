@@ -1,0 +1,132 @@
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<zk>
+	<window id="UpdateTaxCategoryWindow" width="50%" position="center"
+		closable="true" border="normal" maximizable="true">
+		<separator height="10px" />
+		<hbox>
+			<div align="right" width="185px" style="margin-right:5px">
+				<label value="${c:l('HRMS_CATEGORY_ID') }" />
+				<label id="categoryId" />
+
+			</div>
+			<div align="left" width="300px" style="margin-right:5px">
+			</div>
+		</hbox>
+		<separator height="10px" />
+		<hbox>
+			<div align="right" width="150px" style="margin-right:5px">
+				<label value="${c:l('HRMS_CATEGORY_NAME') }" />
+				<label value="*" style="color:red" />
+			</div>
+
+			<div align="left" width="300px" style="margin-right:5px">
+				<textbox id="categoryName"
+					constraint="no empty:Category Name Id Required" />
+			</div>
+		</hbox>
+		<separator height="10px" />
+		<hbox>
+			<div align="right" width="150px" style="margin-right:5px">
+				<label value="${c:l('HRMS_GEO_ID') }" />
+				<label value="*" style="color:red" />
+			</div>
+
+			<div align="left" width="300px" style="margin-right:5px">
+				<textbox id="geoId"
+					constraint="no empty:Country Geo Id Required" />
+			</div>
+		</hbox>
+		<separator height="10px" />
+		<hbox>
+			<div align="right" width="150px" style="margin-right:5px">
+				<label value="${c:l('HRMS_MIN_AMOUNT') }" />
+				<label value="*" style="color:red" />
+			</div>
+
+			<div align="left" width="300px" style="margin-right:5px">
+				<textbox id="minAmount"
+					constraint="no empty:Minimum Amount Required" />
+			</div>
+		</hbox>
+		<separator height="10px" />
+		<hbox>
+			<div align="right" width="150px" style="margin-right:5px">
+				<label value="${c:l('HRMS_MAX_AMOUNT') }" />
+				<label value="*" style="color:red" />
+			</div>
+
+			<div align="left" width="300px" style="margin-right:5px">
+				<textbox id="maxAmount"
+					constraint="no empty:Maximum Amount Required" />
+			</div>
+		</hbox>
+		<separator height="10px" />
+		<hbox>
+			<div align="right" width="150px" style="margin-right:5px">
+				<label value="${c:l('FormFieldTitle_description') }" />
+			</div>
+
+
+			<div align="left" width="300px" style="margin-right:5px">
+				<textbox id="description" />
+			</div>
+		</hbox>
+		<separator height="10px" />
+		<hbox>
+			<div align="right" width="150px" style="margin-right:5px">
+				<label value="${c:l('HumanResLeaveSummaryFromDate') }" />
+				<label value="*" style="color:red" />
+			</div>
+
+			<div align="left" width="300px" style="margin-right:5px">
+				<datebox id="fromDate"
+					constraint="no empty:From Date Required" width="143px"/>
+			</div>
+		</hbox>
+		<separator height="10px" />
+		<hbox>
+			<div align="right" width="150px" style="margin-right:5px">
+				<label value="${c:l('HumanResLeaveSummaryThruDate') }" />
+				<label value="*" style="color:red" />
+			</div>
+
+
+			<div align="left" width="300px" style="margin-right:5px">
+				<datebox id="thruDate"
+					constraint="no empty:Thru Date Required" width="143px"/>
+			</div>
+		</hbox>
+
+		<separator height="20px" />
+		<hbox>
+			<div align="right" width="260px">
+				<button id="updateTaxCategory" label="${c:l('HRMS_SaveButton') }"
+					 mold="os"
+					onClick="validateForm();com.ndz.controller.TaxCategoryManagementController.EditTaxCategory(event)">
+
+				</button>
+				<button id="cancelTaxCategoryStructure" label="${c:l('ButtonCancel') }"
+					 mold="os"
+					onClick="UpdateTaxCategoryWindow.detach()" />
+			</div>
+		</hbox>
+		<separator height="20px"></separator>
+		<zscript>
+	void validateForm() {
+		String s=org.ofbiz.base.util.UtilValidate.stripWhitespace(categoryName.getValue());
+		if(com.ndz.zkoss.HrmsUtil.checkSpecialCharacter(s)){
+		throw new WrongValueException(categoryName,"Special Characters Are Not Allowed Except Space Character");
+		}		
+		geoId.getValue();
+		if(!com.ndz.zkoss.HrmsUtil.isInteger(minAmount.getValue())){
+		throw new WrongValueException(minAmount,"Only Numeric Value Allowed");
+		}
+		if(!com.ndz.zkoss.HrmsUtil.isInteger(maxAmount.getValue())){
+		throw new WrongValueException(maxAmount,"Only Numeric Value Allowed");
+		}
+		fromDate.getValue();
+		thruDate.getValue();
+	}
+</zscript>
+	</window>
+</zk>

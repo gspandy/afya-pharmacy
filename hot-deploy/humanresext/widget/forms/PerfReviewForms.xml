@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+Licensed to the Apache Software Foundation (ASF) under one
+or more contributor license agreements.  See the NOTICE file
+distributed with this work for additional information
+regarding copyright ownership.  The ASF licenses this file
+to you under the Apache License, Version 2.0 (the
+"License"); you may not use this file except in compliance
+with the License.  You may obtain a copy of the License at
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing,
+software distributed under the License is distributed on an
+"AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+KIND, either express or implied.  See the License for the
+specific language governing permissions and limitations
+under the License.
+-->
+
+<forms xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="http://ofbiz.apache.org/dtds/widget-form.xsd">
+    <form name="FindPerfReviews" type="single" target="FindPerfReviews" header-row-style="header-row" default-table-style="basic-table">
+        <auto-fields-entity entity-name="PerfReview" default-field-type="find"/>
+        <field name="noConditionFind"><hidden value="Y"/></field>
+        <field name="perfReviewId"><lookup target-form-name="LookupPerfReview"/></field>
+        <field name="employeeRoleTypeId"><hidden/></field>
+        <field name="managerRoleTypeId"><hidden/></field>
+        <field name="employeePartyId"><lookup target-form-name="LookupPartyName"/></field>
+        <field name="managerPartyId"><lookup target-form-name="LookupPartyName"/></field>
+        <field name="paymentId" title="${uiLabelMap.FormFieldTitle_paymentId}"><lookup target-form-name="LookupPayment"/></field>
+        <field name="emplPositionId" title="${uiLabelMap.FormFieldTitle_emplPositionId}"><lookup target-form-name="LookupEmplPosition"/></field>
+        <field name="searchButton" widget-style="smallSubmit"><submit button-type="button"/></field>
+    </form>
+    <form name="ListEmplPerfReviews" type="list" title="" separate-columns="true" default-entity-name="EmplPerfReview" list-name="listIt" paginate-target="FindPerfReviews" paginate="true"
+        odd-row-style="alternate-row" header-row-style="header-row-2" default-table-style="basic-table hover-bar">
+        <actions>
+            <entity-condition entity-name="EmplPerfReview" list="listIt" >
+            	<condition-expr  field-name="partyId" operator="equals" from-field="userLogin.partyId"/>
+            </entity-condition>
+        </actions>  
+        <field name="emplPerfReviewId" title="${uiLabelMap.HumanResEmplPerfReviewId}">
+            <hyperlink also-hidden="false" description="${emplPerfReviewId}" target="editPerfReview?reviewId=${emplPerfReviewId}"/>
+        </field>
+        <field name="overallRating" title="${uiLabelMap.HumanResOverallRating}"><display/></field>
+        <field name="statusType" title="${uiLabelMap.HumanResPerfReviewStatus}"><display/></field>
+        <field name="lastUpdatedStamp" title="${uiLabelMap.HumanResSubmittedOn}"><display/></field>
+    
+    </form>     
+    
+     <form name="ListEmplPerfReviewForApproval" type="list" title="" separate-columns="true" default-entity-name="EmplPerfReview" 
+     	list-name="listForApproval" paginate-target="newPerfReview" paginate="true" 
+        odd-row-style="alternate-row" header-row-style="header-row-2" default-table-style="basic-table hover-bar">
+        <actions>
+            <entity-condition entity-name="EmplPerfReview" list="listForApproval" use-cache="false">
+            	<condition-list combine="and">
+            		 <condition-expr  field-name="appraiserPartyId" operator="equals" from-field="userLogin.partyId"/>
+            		<condition-list combine="or">
+            		 	<condition-expr field-name="statusType" operator="equals" value="PERF_REVIEW_PENDING"/>
+            		 	<condition-expr field-name="statusType" operator="equals" value="PERF_REVIEW_IN_PROGRESS"/>
+            		 	<condition-expr field-name="statusType" operator="equals" value="PERF_REVIEW_DISAGREE"/>
+            		</condition-list>
+            	</condition-list>
+            </entity-condition>
+        </actions> 
+        <field name="perfReviewId" title="${uiLabelMap.HumanResPerfReviewId}"><display/></field> 
+        <field name="partyId" title="${uiLabelMap.HumanResEmployeeId}"><display/></field>
+        <field name="appraiserPartyId" title="${uiLabelMap.HumanResReviewerId}"><display/></field>
+        <field name="statusType" title="${uiLabelMap.HumanResPerfReviewStatus}"><display/></field>
+        <field name="lastUpdatedStamp" title="${uiLabelMap.HumanResSubmittedOn}"><display/></field>
+    	<field name="emplPerfReviewId" title="${uiLabelMap.HumanResEmplPerfReviewId}">
+            <hyperlink also-hidden="false" description="${emplPerfReviewId}" target="reviewerView?reviewId=${emplPerfReviewId}"/>
+        </field>
+    </form>     
+    
+    <form name="ListEmplPerfReviewForClose" type="list" title="" 
+    	default-entity-name="PerfPositionAndDepartmentView" 
+     	list-name="listForClose" paginate-target="newPerfReview" paginate="true" 
+        odd-row-style="alternate-row" header-row-style="header-row-2" 
+        default-table-style="basic-table hover-bar">
+        <actions>
+            <entity-condition entity-name="PerfPositionAndDepartmentView" list="listForClose">
+            	<condition-list>
+          		 	<condition-expr  field-name="departmentId" operator="equals" from-field="departmentId"/>
+          		 	<condition-expr field-name="statusType" operator="equals" value="PERF_REVIEW_AGREED"/>
+            	</condition-list>
+            </entity-condition>
+        </actions> 
+        <field name="partyId" title="${uiLabelMap.HumanResEmployeeId}"><display/></field>
+        <field name="statusType" title="${uiLabelMap.HumanResPerfReviewStatus}"><display/></field>
+        <field name="lastUpdatedStamp" title="${uiLabelMap.HumanResSubmittedOn}"><display/></field>
+    	<field name="emplPerfReviewId" title="${uiLabel.HumanResEmplPerfReviewId}" widget-style="linktext">
+            <hyperlink also-hidden="false" description="${emplPerfReviewId}" target="editPerfReview?reviewId=${emplPerfReviewId}"/>
+        </field>
+    </form>     
+    
+    
+    <form name="EditPerfReview" type="single" target="updatePerfReview" title="" default-map-name="perfReview"
+        header-row-style="header-row" default-table-style="basic-table">
+        <alt-target use-when="perfReview==null" target="createPerfReview"/>
+        <auto-fields-service service-name="updatePerfReview" map-name="perfReview"/>
+        <field name="perfReviewId" use-when="perfReview==null" tooltip="${uiLabelMap.CommonRequired}" widget-style="required"><lookup target-form-name="LookupPerfReview"/></field>
+        <field name="perfReviewId" use-when="perfReview!=null" tooltip="${uiLabelMap.CommonNotModifRecreat}"><display/></field>
+        <field name="employeePartyId" use-when="perfReview==null" tooltip="${uiLabelMap.CommonRequired}" widget-style="required"><lookup target-form-name="LookupPartyName"/></field>
+        <field name="employeePartyId" use-when="perfReview!=null" tooltip="${uiLabelMap.CommonNotModifRecreat}"><display/></field>
+        <field name="employeeRoleTypeId"><hidden value="EMPLOYEE"/></field>
+        <field name="managerPartyId"><lookup target-form-name="LookupPartyName"/></field>
+        <field name="managerRoleTypeId">
+            <drop-down allow-empty="true">
+                <entity-options entity-name="RoleType" description="${description}" key-field-name="roleTypeId"/>
+            </drop-down>
+        </field>
+        <field name="paymentId" title="${uiLabelMap.FormFieldTitle_paymentId}"><lookup target-form-name="LookupPayment"/></field>
+        <field name="emplPositionId" title="${uiLabelMap.FormFieldTitle_emplPositionId}"><lookup target-form-name="LookupEmplPosition"/></field>
+        <field name="submitButton" use-when="perfReview==null" title="${uiLabelMap.CommonCreate}" widget-style="smallSubmit"><submit button-type="button"/></field>        
+        <field name="submitButton" use-when="perfReview!=null" title="${uiLabelMap.CommonUpdate}" widget-style="smallSubmit"><submit button-type="button"/></field>
+    </form>        
+    <form name="ListPerfReviewItems" type="list" target="updatePerfReviewItem" title="updatePerfReviewItem" paginate-target="findPerfReviewItems"
+        odd-row-style="alternate-row" header-row-style="header-row-2" default-table-style="basic-table hover-bar">
+        <actions>
+            <entity-condition entity-name="PerfReviewItem">
+                <condition-expr field-name="perfReviewId" from-field="perfReviewId"/>
+                <order-by field-name="perfReviewItemSeqId"/>
+            </entity-condition>
+        </actions>
+        <auto-fields-service default-field-type="display" service-name="updatePerfReviewItem"/>        
+        <field name="perfReviewItemSeqId" widget-style="linktext">
+            <hyperlink also-hidden="false" description="${perfReviewItemSeqId}" target="EditPerfReviewItem?perfReviewItemSeqId=${perfReviewItemSeqId}&amp;employeePartyId=${employeePartyId}&amp;employeeRoleTypeId=${employeeRoleTypeId}&amp;perfReviewId=${perfReviewId}"/>
+        </field>
+        <field name="deleteLink" title="${uiLabelMap.CommonDelete}" widget-style="buttontext">
+            <hyperlink target="deletePerfReviewItem?perfReviewId=${perfReviewId}&amp;employeePartyId=${employeePartyId}&amp;employeeRoleTypeId=${employeeRoleTypeId}&amp;perfReviewItemSeqId=${perfReviewItemSeqId}" description="${uiLabelMap.CommonDelete}" also-hidden="false"/>
+        </field>
+    </form>      
+    <form name="AddPerfReviewItem" type="single" target="createPerfReviewItem" title=""
+        header-row-style="header-row" default-table-style="basic-table">
+        <auto-fields-service service-name="createPerfReviewItem"/>
+        <field name="perfReviewId"><hidden/></field>
+        <field name="perfReviewItemSeqId"><ignored/></field>        
+        <field name="employeePartyId"><hidden/></field>
+        <field name="employeeRoleTypeId"><hidden/></field>
+        <field name="perfReviewItemTypeId">
+            <drop-down allow-empty="false">
+                <entity-options description="${description}" key-field-name="perfReviewItemTypeId" entity-name="PerfReviewItemType">
+                    <entity-order-by field-name="description"/>
+                </entity-options>
+            </drop-down>
+        </field>
+        <field name="perfRatingTypeId">
+            <drop-down allow-empty="false">
+                <entity-options description="${description}" key-field-name="perfRatingTypeId" entity-name="PerfRatingType">
+                    <entity-order-by field-name="description"/>
+                </entity-options>
+            </drop-down>
+        </field>
+        <field name="submitButton" title="${uiLabelMap.CommonCreate}"><submit button-type="button"/></field>
+    </form>
+    
+</forms>

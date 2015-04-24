@@ -1,0 +1,74 @@
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<zk>
+	<window id="updatePreferences" width="500px"
+		title="${c:l('HRMS_UPDATE_PREFERENCES') }" position="center" closable="true"
+		height="300px">
+
+		<hbox>
+
+			<hbox style="margin-top:5px">
+				<div width="150px" align="right">
+					<label value="${c:l('HRMS_EMPLOYEE_ID') }" />
+				</div>
+				<div>
+
+					<label id="partyId" value="${partyId}"></label>
+				</div>
+			</hbox>
+		</hbox>
+
+		<separator></separator>
+		<hbox visible="true">
+			<hbox style="margin-top:5px">
+				<div width="150px" align="right">
+					<label value="${c:l('FormFieldTitle_bankName') }" />
+				</div>
+				<div width="100px" align="left">
+					<textbox id="bankName"></textbox>
+				</div>
+			</hbox>
+		</hbox>
+		<separator></separator>
+		<hbox>
+			<hbox style="margin-top:5px" align="end">
+				<div width="150px" align="right">
+					<label value="${c:l('HRMS_BANK_ACCOUNT_NUMBER') }" />
+				</div>
+				<div width="100px" align="left">
+					<textbox id="bankAccountNumber"></textbox>
+				</div>
+			</hbox>
+		</hbox>
+		<separator></separator>
+		<hbox style="margin-top:5px">
+			<div width="150px" align="right">
+				<label value="${c:l('HRMS_PAN_NUMBER') }" />
+			</div>
+			<div width="100px" align="left">
+				<textbox id="panNumber"></textbox>
+			</div>
+		</hbox>
+		<separator></separator>
+		<hbox style="margin-top:5px">
+			<div width="150px" align="right">
+				<label value="${c:l('HRMS_PF_ACCOUNT_NUMBER') }" />
+			</div>
+			<div width="100px" align="left">
+				<textbox id="pfAccountNumber"></textbox>
+			</div>
+		</hbox>
+		<separator></separator>
+		<hbox style="margin-top:5px">
+			<div align="right" width="215px">
+				<button id="btnEdit" label="${c:l('HRMS_UPDATE') }" width="100px"
+					onClick='com.ndz.controller.SalaryStructureManagementController.updateEmployeePreferences(event);
+				Events.postEvent("onClick$searchPerCompany",updatePreferences.getPage().getFellow("searchPanel"),null);
+			updatePreferences.detach()' />
+			</div>
+			<div>
+				<button id="btnCancel" label="${c:l('ButtonCancel') }"
+					width="100px" onClick="updatePreferences.detach()" />
+			</div>
+		</hbox>
+	</window>
+</zk>

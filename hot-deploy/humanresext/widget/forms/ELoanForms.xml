@@ -1,0 +1,281 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<forms xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+        xsi:noNamespaceSchemaLocation="http://www.ofbiz.org/dtds/widget-form.xsd">
+        
+	<!-- Common form for finding existing employee loans -->
+	<form name="AdminFindELoanForm" type="single" default-map-name="parameters" target="AdminViewELoan">
+		<field name="partyId"><lookup target-form-name="LookupPartyName" default-value="${parameters.userLogin.partyId}"/></field>
+      	<field name="loanId" entity-name="ELoanHead" field-name="loanId"><text></text></field>
+		<field name="fromDate"> <date-find type="date"/> </field>
+		<field name="thruDate"> <date-find type="date"/> </field>
+		<field name="statusId" title="Loan Status">
+			<drop-down allow-empty="true">
+      			<entity-options description="${description}" entity-name="StatusItem" key-field-name="statusId">
+      				<entity-constraint name="statusTypeId" value="ELOAN_STATUS"/>
+                	<entity-order-by field-name="description"/>
+      			</entity-options>
+      		</drop-down>
+		</field>
+		<field name="loanType">
+      		<drop-down allow-empty="true">
+      			<entity-options description="${description}" entity-name="Enumeration" key-field-name="enumId">
+      				<entity-constraint name="enumTypeId" value="ELOAN_TYPE"/>
+                	<entity-order-by field-name="description"/>
+      			</entity-options>
+      		</drop-down>
+      	</field>
+        <field name="submitButton" title="Search"><submit button-type="button"/></field>
+	</form>
+
+	<!-- Common form for showing existing loans -->
+	<form name="AdminFindELoanResultsForm" type="list" list-name="listIt"
+	 odd-row-style="alternate-row" header-row-style="header-row-2"
+				 default-table-style="basic-table hover-bar">
+		<actions>
+			<script location="component://humanresext/webapp/eloan/filterLoan.groovy"/>
+		</actions>
+		<row-actions>
+			<set field="isLoggedInUser" value="${partyId==userLogin.partyId}"/> <!-- The loan is of logged in user  -->
+		</row-actions>
+		<auto-fields-entity entity-name="MaxELoanDetail" default-field-type="display"/>
+		<field name="statusId" title="Loan Status">
+			<display-entity entity-name="StatusItem" description="${description}"  key-field-name="statusId" />
+		</field>
+		<field name="loanType">
+      		<display-entity entity-name="Enumeration" description="${description}"  key-field-name="enumId"/>
+      	</field>
+      	
+      	<!-- If loan is of user, manager or admin logged in then allow processing it -->
+	 	<field name="ViewELoan" widget-style="smallSubmit" use-when="${!isProcessAllowed || isLoggedInUser}">
+			<hyperlink target="ApplyELoan?loanId=${loanId}&amp;statusId=${statusId}" description="View ELoan"/>
+	 	</field>
+	 	<field name="ProcessELoan" widget-style="smallSubmit" use-when="${isProcessAllowed &amp;&amp; !isLoggedInUser}">
+			<!-- If loan is not of logged in manager and admin then allow processing it -->
+			<hyperlink target="AdminProcessELoan?loanId=${loanId}&amp;statusId=${statusId}" description="Process ELoan"/>
+	 	</field>
+	</form>
+	
+    <!-- Form for Applying Loan by Employee-->
+	<form name="ApplyELoanForm" type="single" target="createELoan" default-map-name="loanMap">
+		<actions>
+			<set field="partyId" value="${userLogin.partyId}"/>
+			<set field="loanId" from-field="parameters.loanId"/>
+			<set field="statusId" from-field="parameters.statusId"/>
+			<service service-name="fetchELoanComment" result-map="result"></service>
+			<entity-one entity-name="ELoanHead" value-field="loanMap">
+				<field-map field-name="loanId" from-field="loanId"/>
+			</entity-one>
+			<script location="component://humanresext/webapp/humanresext/WEB-INF/actions/EmployeeInfo.groovy"/>
+			<set field="mgrPositionId" from-field="mgrPositionId"/>
+		</actions>
+		<alt-target use-when="loanId!=null" target="updateELoan"/>
+      	<field name="partyId" title="Employee ID" > <hidden/> </field>
+      	<field name="loanId" use-when="loanId!=null"><display></display></field>
+      	<field name="mgrPositionId"><text/></field>
+      	<field name="statusId" map-name="result" title="ELoan Status">
+			<display-entity entity-name="StatusItem" description="${description}"  key-field-name="statusId" />
+		</field>
+      	<field name="loanType">
+    	  	<drop-down allow-empty="true">
+      			<entity-options description="${description}" entity-name="Enumeration" key-field-name="enumId">
+      				<entity-constraint name="enumTypeId" value="ELOAN_TYPE"/>
+                	<entity-order-by field-name="description"/>
+      			</entity-options>
+      		</drop-down>
+      	</field>
+      	<field name="fromDate"><date-time type="date"/></field>
+      	<field name="thruDate"><date-time type="date"/> </field>
+      	<field name="applicationDate"><date-time type="date"/> </field>
+      	<field name="currencyUomId" title="${uiLabelMap.CommonCurrency}">
+            <drop-down no-current-selected-key="INR" allow-empty="false"> <!--   "${defaultCurrencyUomId}"> -->
+                <entity-options description="${uomId} - ${description}" entity-name="Uom" key-field-name="uomId">
+                    <entity-constraint name="uomTypeId" operator="equals" value="CURRENCY_MEASURE"/>
+                    <entity-order-by field-name="uomId"/>                    
+                </entity-options>
+            </drop-down>
+        </field>
+        <field name="loanAmount"><text/></field>
+      	<field name="emi"><text/></field>
+      	<field name="period" title="Tenure in Years"><text/></field>
+      	<field name="interest" title="Rate of Interest"><display/></field>
+      	<field name="hr_comment" map-name="result"><textarea rows="2"/></field>
+      	<field name="saveButton" title="Save" tooltip="Please save the changes before submitting."><submit button-type="button"/></field>
+      	<field name="submitButton" title="Apply For Approval" widget-style="smallSubmit" use-when="statusId!=CL_SUBMITTED">
+      		<hyperlink target="submitELoan?loanId=${parameters.loanId}&amp;statusId=${statusId}" description="Submit"/>
+      	</field>
+    </form>
+	
+	<!-- Admin form for processing loans by Admin and Manager -->
+ 	<form name="AdminProcessELoanForm" type="single" target="processELoan" default-map-name="loanMap">
+		<actions>
+			<set field="loanId" from-field="parameters.loanId"/>
+			<set field="statusId" from-field="parameters.statusId"/>
+			<set field="loanAmount" from-field="parameters.loanAmount"/>
+			<service service-name="fetchELoanComment" result-map="result"></service>
+			<entity-one entity-name="ELoanHead" value-field="loanMap">
+				<field-map field-name="loanId" from-field="loanId"/>
+			</entity-one>
+			<script location="component://humanresext/webapp/eloan/processELoanStatus.groovy"/>
+			<set field="approver" from-field="approver"/>
+			
+			<!-- Fetch ELoan Limit corresponding to this loan type and position -->
+			<script location="component://humanresext/webapp/eloan/getELoanLimit.groovy"/>
+			<set field="lLimit" from-field="lLimit"/>
+		</actions>
+      	<field name="partyId" title="Employee ID" ><display></display></field>
+      	<field name="partyName" title="Employee Name"><display description="${partyName}"></display></field>
+      	<field name="loanId"><display></display></field>
+      	<field name="loanType"> 
+      		<display-entity entity-name="Enumeration" description="${description}"  key-field-name="enumId"/>
+      	</field>
+      	<field name="fromDate"><display/></field>
+      	<field name="thruDate"><display/></field>
+      	<field name="applicationDate"><display/></field>
+      	<field name="currencyUomId" title="${uiLabelMap.CommonCurrency}">
+            <text default-value="${loanMap.currencyUomId}"></text>
+        </field>
+        <field name="statusId" title="ELoan Status"  map-name="result" tooltip="Present status of loan">
+			<display-entity entity-name="StatusItem" also-hidden="true" description="${description}"  key-field-name="statusId" />
+		</field>
+        <field name="loanAmount" title="Applied Loan Amount"><display/></field>
+        <field name="lLimit" map-name="data" title="ELoan Limit" tooltip="Advised ELoan Limit for this Position and ELoan Type"><display/></field>
+      	<field name="emi" tooltip="EMI will be populated from rate of interest p.a. and period in years"><display/></field>
+      	<field name="period" title="Tenure in Years"><text/></field>
+      	<field name="interest" title="Rate of Interest per annum"><text/></field>
+      	<field name="acceptedAmount" title="Accepted Loan Amount"><text default-value="${loanMap.amount}" /></field>
+      	<field name="rejectedAmount" tooltip="Rejected Amount = Amount - Accepted Amount"><text default-value="0"/></field>
+      	<field name="hr_comment"><textarea rows="2"/></field>
+      	<field name="approveButton" title="Approve" widget-style="smallSubmit" event="onClick" action="javascript:submitForm(this.form,'${approver}_APPROVED');">
+      		<submit button-type="button"/>
+      	</field>
+      	<field name="rejectButton" title="Reject" widget-style="smallSubmit" event="onClick" action="javascript:submitForm(this.form,'${approver}_REJECTED');">
+      		<submit button-type="button"/>
+      	</field>
+    </form>
+    
+	<form name="EMISearchForm" type="single" default-map-name="parameters" target="Reimbursement">
+        <field name="partyId"><hidden value="${parameters.userLogin.partyId}"/> </field>
+      	<field name="loanId" entity-name="MaxELoanDetail" field-name="loanId"><text></text></field>
+		<field name="fromDate"> <date-find type="date"/> </field>
+		<field name="thruDate"> <date-find type="date"/> </field>
+        <field name="submitButton" title="Search"><submit button-type="button"/></field>
+    </form>
+    
+	<form name="EMISlipForm" type="list" separate-columns="true" list-name="listIt" odd-row-style="alternate-row">
+		<actions>	
+			<service service-name="performFind" result-map-list="listIt"> 
+				<field-map field-name="inputFields" from-field="parameters"/>
+				<field-map field-name="entityName" value="MaxELoanDetail"/>
+				<field-map field-name="noConditionFind" value="N"/>
+			</service>
+			<entity-condition entity-name="MaxELoanDetail">
+				<condition-list combine="and">
+					<condition-expr field-name="statusId" operator="not-equals" value="CL_SAVED"/>
+					<condition-expr field-name="statusId" operator="not-equals" value="CL_SUBMITTED"/>
+					<condition-expr field-name="statusId" operator="not-equals" value="CL_MGR_APPROVED"/>
+				</condition-list>
+			</entity-condition>
+		</actions>
+		<auto-fields-entity entity-name="MaxELoanDetail" default-field-type="display"/>
+		<field name="lsId"><hidden/></field>
+		<field name="loanType" title="ELoan Type">
+			<display-entity entity-name="Enumeration" description="${description}"  key-field-name="enumId" />
+		</field>
+		<field name="statusId" title="ELoan Status">
+			<display-entity entity-name="StatusItem" description="${description}"  key-field-name="statusId" />
+		</field>	
+    </form>
+    
+  
+    <form name="ELoanLimitSearchForm" type="single" default-map-name="parameters" target="ELoanLimit">      
+		<field name="emplPositionTypeId" title="Position"> 
+			<drop-down allow-empty="true">
+      			<entity-options cache="false" description="${description}" entity-name="EmplPositionType" 
+      																	key-field-name="emplPositionTypeId">
+                	 <entity-order-by field-name="emplPositionTypeId"/>
+      			</entity-options>
+      		</drop-down>
+        </field>
+		<field name="loanType">
+      		<drop-down allow-empty="true">
+      			<entity-options description="${description}" entity-name="Enumeration" key-field-name="enumId">
+      				<entity-constraint name="enumTypeId" value="ELOAN_TYPE"/>
+                	<entity-order-by field-name="description"/>
+      			</entity-options>
+      		</drop-down>
+      	</field>
+      	<field name="searchButton" widget-style="smallSubmit"><submit button-type="button"/> </field>        
+    </form>
+    
+    <form name="ELoanLimitForm" type="list"  separate-columns="true" list-name="listIt"  
+    		paginate="true" odd-row-style="alternate-row" header-row-style="header-row-2" 
+				 default-table-style="basic-table hover-bar"  default-sort-field-asc-style="sort-order-asc">
+				 
+		<actions>
+			
+			<service service-name="performFind" result-map-list="listIt"> 
+				<field-map field-name="inputFields" from-field="parameters"/>
+				<field-map field-name="entityName" value="ELoanLimit"/>
+				<field-map field-name="noConditionFind" value="Y"/>
+				<field-map field-name="orderBy" value="emplPositionTypeId"/>
+			</service>
+			
+		</actions>
+		<auto-fields-entity entity-name="ELoanLimit" default-field-type="display"/>
+		<field name="loanType">
+      			<display-entity description="${description}" entity-name="Enumeration" key-field-name="enumId"/>     
+		</field>
+		<field name="limitId"><hyperlink  description="${limitId}" target="EditELoanLimit?limitId=${limitId}"/></field>
+    </form>
+    
+    <form name="EditELoanLimitForm" type="single" target="createELoanLimit" default-map-name="loanLimitMap">
+		<actions>
+			<set field="limitId" from-field="parameters.limitId"/>
+<!--			<set field="loanType" from-field="parameters.loanType"/>-->
+			<set field="emplPositionTypeId" from-field="parameters.emplPositionTypeId"/>
+			<entity-one entity-name="ELoanLimit" value-field="loanLimitMap">
+				<field-map field-name="limitId" from-field="limitId"/>
+				<select-field field-name="loanAmount" />
+				<select-field field-name="interest"/>
+				<select-field field-name="period"/>
+			</entity-one>
+		</actions>
+		<alt-target use-when="limitId!=null" target="updateELoanLimit"/>
+      	<field name="limitId" title="Limit ID" use-when="limitId!=null"><display></display></field> 
+      	
+      	<field name="loanType">
+			<drop-down allow-empty="false">
+      			<entity-options description="${description}" entity-name="Enumeration" key-field-name="enumId">
+      				<entity-constraint name="enumTypeId" value="ELOAN_TYPE"/>
+                	<entity-order-by field-name="description"/>
+      			</entity-options>
+      		</drop-down>
+		</field>
+
+      	<field name="emplPositionTypeId" title="Position"> 
+			<drop-down allow-empty="false">
+      			<entity-options cache="false" description="${description}" entity-name="EmplPositionType" key-field-name="emplPositionTypeId">
+                	 <entity-order-by field-name="emplPositionTypeId"/>
+      			</entity-options>
+      		</drop-down>
+        </field>  	
+        <field name="fromDate"> <date-time type="date"/> </field>
+		<field name="thruDate"> <date-time type="date"/> </field>
+      	<field name="currencyUomId" title="${uiLabelMap.CommonCurrency}">
+            <drop-down no-current-selected-key="INR"> <!--   "${defaultCurrencyUomId}"> -->
+                <entity-options description="${uomId} - ${description}" entity-name="Uom" key-field-name="uomId">
+                    <entity-constraint name="uomTypeId" operator="equals" value="CURRENCY_MEASURE"/>
+                    <entity-order-by field-name="uomId"/>                    
+                </entity-options>
+            </drop-down>
+        </field>
+        <field name="loanAmount"><text default-value="${ELoanLimit.loanAmount}"/></field>
+        <field name="interest"  title="Rate of Interest per annum" ><text default-value="9999" /></field>
+        <field name="period" title="Teure of Loan" tooltip="In Years"><text default-value="${ELoanLimit.period}"/></field>
+        <field name="expYrs" title="Experience Required" tooltip="Eligibility in Years"><text default-value="0"/></field>
+        <field name="claimType"><hidden value="blank"/></field>
+        <field name="comment"><textarea rows="2"/></field>
+      	<field name="saveButton" title="Save"><submit button-type="button"/></field>
+    </form>
+   
+</forms>

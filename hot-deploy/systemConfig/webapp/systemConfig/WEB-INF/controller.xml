@@ -1,0 +1,376 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!-- Licensed to the Apache Software Foundation (ASF) under one or more contributor license agreements. See the NOTICE file distributed with this work for additional 
+	information regarding copyright ownership. The ASF licenses this file to you under the Apache License, Version 2.0 (the "License"); you may not use this file except 
+	in compliance with the License. You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0 Unless required by applicable law or agreed to 
+	in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See 
+	the License for the specific language governing permissions and limitations under the License. -->
+
+<site-conf xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://ofbiz.apache.org/dtds/site-conf.xsd">
+	<include location="component://common/webcommon/WEB-INF/common-controller.xml" />
+	<include location="component://common/webcommon/WEB-INF/portal-controller.xml" />
+	<include location="component://commonext/webapp/WEB-INF/controller.xml" />
+	<description>Catalog Module Site Configuration File</description>
+	<owner>Copyright 2001-2009 The Apache Software Foundation</owner>
+
+	<handler name="service-multi" type="request" class="org.ofbiz.webapp.event.ServiceMultiEventHandler" />
+	<handler name="groovy" type="request" class="org.ofbiz.webapp.event.GroovyEventHandler" />
+
+	<firstvisit></firstvisit>
+	<!-- Events to run on every request before security (chains exempt) -->
+	<!-- <preprocessor> </preprocessor> -->
+	<!-- Events to run on every request after all other processing (chains exempt) -->
+	<!-- <postprocessor> <event name="test" type="java" path="org.ofbiz.webapp.event.TestEvent" invoke="test"/> </postprocessor> -->
+	
+	
+	
+	<request-map uri="main">
+		<security https="true" auth="true" />
+		<response name="success" type="request-redirect" value="AdjustmentTypeGlAccounts" />
+	</request-map>
+	
+	<!-- Linking OrderAdjustmentType with GLAccount -->
+	<request-map uri="AdjustmentTypeGlAccounts">
+		<security https="true" auth="true" />
+		<response name="success" type="view" value="AdjustmentTypeGlAccounts" />
+		<response name="error" type="view" value="AdjustmentTypeGlAccounts" />
+	</request-map>
+	
+	<request-map uri="createOrderAdjustmentType">
+		<security https="true" auth="true" />
+		<event type="java" path="org.ofbiz.product.catalog.AdjustmentTypeGlAccounts" invoke="createOrderAdjustmentType" />
+		<response name="success" type="view" value="AdjustmentTypeGlAccounts" />
+		<response name="error" type="view" value="AdjustmentTypeGlAccounts" />
+	</request-map>
+
+	<request-map uri="EditAdjustmentTypeGlAccounts">
+		<security https="true" auth="true" /> 
+		<event type="service" invoke="addOrderAdjustmentGlAccount" />
+		<response name="success" type="view" value="EditAdjustmentTypeGlAccounts" />
+		<response name="error" type="view" value="EditAdjustmentTypeGlAccounts" />
+	</request-map>
+	
+	<request-map uri="UpdateAdjustmentTypeGlAccounts">
+		<security https="true" auth="true" />
+			<event type="java" path="org.ofbiz.product.catalog.AdjustmentTypeGlAccounts" invoke="updateOrderAdjustmentType" />
+		<response name="success" type="view" value="AdjustmentTypeGlAccounts" />
+		<response name="error" type="view" value="EditAdjustmentTypeGlAccounts" />
+	</request-map>
+	
+	<request-map uri="DeleteOrderAdjustmentType">
+		<security https="true" auth="true" />
+		<event type="java" path="org.ofbiz.product.catalog.AdjustmentTypeGlAccounts" invoke="deleteOrderAdjustmentType" />
+		<response name="success" type="view" value="AdjustmentTypeGlAccounts" />
+		<response name="error" type="view" value="AdjustmentTypeGlAccounts" />
+	</request-map>
+	
+	<request-map uri="GlAccounts">
+		<security https="true" auth="true" />
+		<response name="success" type="view" value="GlAccounts" />
+		<response name="error" type="view" value="GlAccounts" />
+	</request-map>
+
+	<request-map uri="createNewGlAccount">
+		<security https="true" auth="true" />
+		<event type="java" path="org.ofbiz.product.catalog.AdjustmentTypeGlAccounts" invoke="createGlAccount" />
+		<response name="success" type="view" value="GlAccounts" />
+		<response name="error" type="view" value="GlAccounts" />
+	</request-map>
+	
+	<request-map uri="EditGlAccounts">
+		<security https="true" auth="true" />
+		<response name="success" type="view" value="EditGlAccount" />
+		<response name="error" type="view" value="EditGlAccount" />                  
+	</request-map>
+	
+	<request-map uri="UpdateGlAccounts">
+		<security https="true" auth="true" />
+		<event type="java" path="org.ofbiz.product.catalog.AdjustmentTypeGlAccounts" invoke="UpdateGlAccount" />
+		<response name="success" type="view" value="GlAccounts" />
+		<response name="error" type="view" value="GlAccounts" />
+	</request-map>
+
+	<request-map uri="DeleteGlAccounts">
+		<security https="true" auth="true" />
+		<event type="java" path="org.ofbiz.product.catalog.AdjustmentTypeGlAccounts" invoke="deleteGlAccount" />
+		<response name="success" type="view" value="GlAccounts" />
+		<response name="error" type="view" value="GlAccounts" />
+	</request-map>
+	
+	<request-map uri="deleteAdjustmentTypeGlAccount">
+		<security https="true" auth="true" />
+		<event type="service" invoke="deleteAdjustmentTypeGlAccount" />
+		<response name="success" type="view" value="AdjustmentTypeGlAccounts" />
+		<response name="error" type="view" value="AdjustmentTypeGlAccounts" />
+	</request-map> 
+		
+	<!-- ================ Product GlAccounts Requests ================= -->
+	<request-map uri="EditProductGlAccounts">
+		<security https="true" auth="true" />
+		<response name="success" type="view" value="EditProductGlAccounts" />
+	</request-map>
+	<request-map uri="createProductGlAccount">
+		<security https="true" auth="true" />
+		<event type="service" path="" invoke="createProductGlAccount" />
+		<response name="success" type="view" value="EditProductGlAccounts" />
+		<response name="error" type="view" value="EditProductGlAccounts" />
+	</request-map>
+	<request-map uri="updateProductGlAccount">
+		<security https="true" auth="true" />
+		<event type="service" path="" invoke="updateProductGlAccount" />
+		<response name="success" type="view" value="EditProductGlAccounts" />
+		<response name="error" type="view" value="EditProductGlAccounts" />
+	</request-map>
+	<request-map uri="deleteProductGlAccount">
+		<security https="true" auth="true" />
+		<event type="service" path="" invoke="deleteProductGlAccount" />
+		<response name="success" type="view" value="EditProductGlAccounts" />
+		<response name="error" type="view" value="EditProductGlAccounts" />
+	</request-map>
+	
+	<request-map uri="voucherList">
+		<security https="true" auth="true" />
+		<response name="success" type="view" value="voucherList" />
+	</request-map>
+	
+	<request-map uri="createVoucherList">
+		<security https="true" auth="true" />
+		<event type="groovy" path="component://product/webapp/catalog/store/" invoke="createVoucher.groovy" />
+		<response name="success" type="view" value="voucherList" />
+	</request-map>
+	
+	<request-map uri="deleteVoucherList">
+		<security https="true" auth="true" />
+		<event type="service" path="" invoke="deleteVoucherList" />
+		<response name="success" type="view" value="voucherList" />
+	</request-map>
+	
+	 <!-- TaxAuthority Requests -->
+    <request-map uri="FindTaxAuthority"><security https="true" auth="true"/><response name="success" type="view" value="FindTaxAuthority"/></request-map>
+     <request-map uri="EditTaxAuthority"><security https="true" auth="true"/><response name="success" type="view" value="EditTaxAuthority"/></request-map>
+    <request-map uri="createTaxAuthority">
+        <security https="true" auth="true"/>
+        <event type="service" path="" invoke="createTaxAuthority"/>
+        <response name="success" type="view" value="EditTaxAuthority"/>
+        <response name="error" type="view" value="EditTaxAuthority"/>
+    </request-map>
+    <request-map uri="updateTaxAuthority">
+        <security https="true" auth="true"/>
+        <event type="service" path="" invoke="updateTaxAuthority"/>
+        <response name="success" type="view" value="EditTaxAuthority"/>
+        <response name="error" type="view" value="EditTaxAuthority"/>
+    </request-map>
+       <request-map uri="EditTaxAuthorityCategories"><security https="true" auth="true"/><response name="success" type="view" value="EditTaxAuthorityCategories"/></request-map>
+    <request-map uri="createTaxAuthorityCategory">
+        <security https="true" auth="true"/>
+        <event type="service" path="" invoke="createTaxAuthorityCategory"/>
+        <response name="success" type="view" value="EditTaxAuthorityCategories"/>
+        <response name="error" type="view" value="EditTaxAuthorityCategories"/>
+    </request-map>
+    <request-map uri="updateTaxAuthorityCategory">
+        <security https="true" auth="true"/>
+        <event type="service" path="" invoke="updateTaxAuthorityCategory"/>
+        <response name="success" type="view" value="EditTaxAuthorityCategories"/>
+        <response name="error" type="view" value="EditTaxAuthorityCategories"/>
+    </request-map>
+    <request-map uri="deleteTaxAuthorityCategory">
+        <security https="true" auth="true"/>
+        <event type="service" path="" invoke="deleteTaxAuthorityCategory"/>
+        <response name="success" type="view" value="EditTaxAuthorityCategories"/>
+        <response name="error" type="view" value="EditTaxAuthorityCategories"/>
+    </request-map>
+    
+     <request-map uri="EditTaxAuthorityAssocs"><security https="true" auth="true"/><response name="success" type="view" value="EditTaxAuthorityAssocs"/></request-map>
+    <request-map uri="createTaxAuthorityAssoc">
+        <security https="true" auth="true"/>
+        <event type="service" path="" invoke="createTaxAuthorityAssoc"/>
+        <response name="success" type="view" value="EditTaxAuthorityAssocs"/>
+        <response name="error" type="view" value="EditTaxAuthorityAssocs"/>
+    </request-map>
+    <request-map uri="updateTaxAuthorityAssoc">
+        <security https="true" auth="true"/>
+        <event type="service" path="" invoke="updateTaxAuthorityAssoc"/>
+        <response name="success" type="view" value="EditTaxAuthorityAssocs"/>
+        <response name="error" type="view" value="EditTaxAuthorityAssocs"/>
+    </request-map>
+    <request-map uri="deleteTaxAuthorityAssoc">
+        <security https="true" auth="true"/>
+        <event type="service" path="" invoke="deleteTaxAuthorityAssoc"/>
+        <response name="success" type="view" value="EditTaxAuthorityAssocs"/>
+        <response name="error" type="view" value="EditTaxAuthorityAssocs"/>
+    </request-map>
+    
+     <request-map uri="EditTaxAuthorityGlAccounts"><security https="true" auth="true"/><response name="success" type="view" value="EditTaxAuthorityGlAccounts"/></request-map>
+    <request-map uri="createTaxAuthorityGlAccount">
+        <security https="true" auth="true"/>
+        <event type="service" path="" invoke="createTaxAuthorityGlAccount"/>
+        <response name="success" type="view" value="EditTaxAuthorityGlAccounts"/>
+        <response name="error" type="view" value="EditTaxAuthorityGlAccounts"/>
+    </request-map>
+    <request-map uri="deleteTaxAuthorityGlAccount">
+        <security https="true" auth="true"/>
+        <event type="service" path="" invoke="deleteTaxAuthorityGlAccount"/>
+        <response name="success" type="view" value="EditTaxAuthorityGlAccounts"/>
+        <response name="error" type="view" value="EditTaxAuthorityGlAccounts"/>
+    </request-map>
+     <request-map uri="EditTaxAuthorityRateProducts"><security https="true" auth="true"/><response name="success" type="view" value="EditTaxAuthorityRateProducts"/></request-map>
+    <request-map uri="createTaxAuthorityRateProduct">
+        <security https="true" auth="true"/>
+        <event type="service" path="" invoke="createTaxAuthorityRateProduct"/>
+        <response name="success" type="view" value="EditTaxAuthorityRateProducts"/>
+        <response name="error" type="view" value="EditTaxAuthorityRateProducts"/>
+    </request-map>
+    <request-map uri="updateTaxAuthorityRateProduct">
+        <security https="true" auth="true"/>
+        <event type="service" path="" invoke="updateTaxAuthorityRateProduct"/>
+        <response name="success" type="view" value="EditTaxAuthorityRateProducts"/>
+        <response name="error" type="view" value="EditTaxAuthorityRateProducts"/>
+    </request-map>
+    <request-map uri="deleteTaxAuthorityRateProduct">
+        <security https="true" auth="true"/>
+        <event type="service" path="" invoke="deleteTaxAuthorityRateProduct"/>
+        <response name="success" type="view" value="EditTaxAuthorityRateProducts"/>
+        <response name="error" type="view" value="EditTaxAuthorityRateProducts"/>
+    </request-map>
+
+    <request-map uri="ListTaxAuthorityParties"><security https="true" auth="true"/><response name="success" type="view" value="ListTaxAuthorityParties"/></request-map>
+    <request-map uri="deleteTaxAuthorityPartyInfo">
+        <security https="true" auth="true"/>
+        <event type="service" path="" invoke="deletePartyTaxAuthInfo"/>
+        <response name="success" type="view" value="ListTaxAuthorityParties"/>
+        <response name="error" type="view" value="ListTaxAuthorityParties"/>
+    </request-map>
+    <request-map uri="EditTaxAuthorityPartyInfo"><security https="true" auth="true"/><response name="success" type="view" value="EditTaxAuthorityPartyInfo"/></request-map>
+    <request-map uri="createTaxAuthorityPartyInfo">
+        <security https="true" auth="true"/>
+        <event type="service" path="" invoke="createPartyTaxAuthInfo"/>
+        <response name="success" type="view" value="EditTaxAuthorityPartyInfo"/>
+        <response name="error" type="view" value="EditTaxAuthorityPartyInfo"/>
+    </request-map>
+    <request-map uri="updateTaxAuthorityPartyInfo">
+        <security https="true" auth="true"/>
+        <event type="service" path="" invoke="updatePartyTaxAuthInfo"/>
+        <response name="success" type="view" value="EditTaxAuthorityPartyInfo"/>
+        <response name="error" type="view" value="EditTaxAuthorityPartyInfo"/>
+    </request-map>
+    
+      <!-- GlAccount requests -->
+       <request-map uri="AssignGlAccount">
+        <security https="true" auth="true"/>
+        <response name="success" type="view" value="AssignGlAccount"/>
+    </request-map>
+       <request-map uri="EditGlobalGlAccount">
+        <security https="true" auth="true"/>
+        <response name="success" type="view" value="EditGlobalGlAccount"/>
+    </request-map>
+     <request-map uri="FindGlobalGlAccount">
+        <security https="true" auth="true"/>
+        <response name="success" type="view" value="FindGlobalGlAccount"/>
+    </request-map>
+    
+     <request-map uri="globalGLSettings">
+        <security auth="true" https="true"/>
+        <response type="view" name="success" value="FindGlobalGlAccount"/>
+    </request-map>
+     <request-map uri="GlAccountNavigate">
+        <security https="true" auth="true"/>
+        <response name="success" type="view" value="GlAccountNavigate"/>
+    </request-map>
+     <request-map uri="createGlAccount">
+        <security https="true" auth="true"/>
+        <event type="service" invoke="createGlAccount"/>
+        <response name="success" type="view" value="GlAccountNavigate"/>
+        <response name="error" type="view" value="GlAccountNavigate"/>
+    </request-map>
+    <request-map uri="updateGlAccount">
+        <security https="true" auth="true"/>
+        <event type="service" invoke="updateGlAccount"/>
+        <response name="success" type="view" value="GlAccountNavigate"/>
+        <response name="error" type="view" value="GlAccountNavigate"/>
+    </request-map>
+     <request-map uri="createGlAccountOrganization">
+        <security https="true" auth="true"/>
+        <event type="service" invoke="createGlAccountOrganization"/>
+        <response name="success" type="view" value="ListGlAccountOrganization"/>
+        <response name="error" type="view" value="ListGlAccountOrganization"/>
+    </request-map>
+     <request-map uri="ListGlAccountOrganization"><security https="true" auth="true"/><response name="success" type="view" value="ListGlAccountOrganization"/></request-map>
+      <request-map uri="updateGlAccountOrganization">
+        <security https="true" auth="true"/>
+        <event type="service" invoke="updateGlAccount"/>
+        <response name="success" type="view" value="ListGlAccountOrganization"/>
+        <response name="error" type="view" value="ListGlAccountOrganization"/>
+    </request-map>
+    
+     <!-- ================ Administratvie Requests ================ -->
+      <request-map uri="AdminMain">
+        <security https="true" auth="true"/>
+        <response name="success" type="view" value="PartyAcctgPreference"/>
+    </request-map>
+     <request-map uri="PartyAcctgPreference">
+        <security https="true" auth="true"/>
+        <response name="success" type="view" value="PartyAcctgPreference"/>
+    </request-map>
+    <request-map uri="createPartyAcctgPreference">
+        <security https="true" auth="true"/>
+        <event type="service" invoke="createPartyAcctgPreference"/>
+        <response name="success" type="view" value="PartyAcctgPreference"/>
+        <response name="error" type="view" value="PartyAcctgPreference"/>
+    </request-map>
+
+    <request-map uri="updatePartyAcctgPreference">
+        <security https="true" auth="true"/>
+        <event type="service" invoke="updatePartyAcctgPreference"/>
+        <response name="success" type="view" value="PartyAcctgPreference"/>
+        <response name="error" type="view" value="PartyAcctgPreference"/>
+    </request-map>
+     <request-map uri="createExciseTaxAuthorities">
+        <security https="true" auth="true"/>
+		<event type="simple" path="component://commonext/script/org/ofbiz/setup/SetupEvents.xml" invoke="createExciseTaxAuthorities" />
+        <response name="success" type="view" value="PartyAcctgPreference"/>
+        <response name="error" type="view" value="PartyAcctgPreference"/>
+    </request-map>
+    
+        <!-- ================ Entity Lookup Requests ================= -->
+    <request-map uri="LookupProductCategory"><security auth="true" https="true"/><response name="success" type="view" value="LookupProductCategory"/></request-map>
+    <request-map uri="LookupGeo"><security auth="true" https="true"/><response name="success" type="view" value="LookupGeo"/></request-map>
+    <request-map uri="LookupPartyName"><security auth="true" https="true"/><response name="success" type="view" value="LookupPartyName"/></request-map>
+    <request-map uri="LookupGlAccount"><security auth="true" https="true"/><response name="success" type="view" value="LookupGlAccount"/></request-map>
+    <request-map uri="LookupProductStore"><security auth="true" https="true"/><response name="success" type="view" value="LookupProductStore"/></request-map>
+	
+	<!-- View Mappings -->
+	<view-map name="EditProductGlAccounts" type="screen" page="component://systemConfig/widget/systemConfig/ProductScreens.xml#EditProductGlAccounts" />
+		<view-map name="EditGlAccount" type="screen" page="component://systemConfig/widget/systemConfig/ConfigScreens.xml#EditGlAccount" />
+	
+	<!-- Web Analytics View -->
+	<view-map name="AdjustmentTypeGlAccounts" type="screen" page="component://systemConfig/widget/systemConfig/ConfigScreens.xml#AdjustmentTypeGlAccounts" />
+	<view-map name="EditAdjustmentTypeGlAccounts" type="screen" page="component://systemConfig/widget/systemConfig/ConfigScreens.xml#EditAdjustmentTypeGlAccounts" />
+	<view-map name="GlAccounts" type="screen" page="component://systemConfig/widget/systemConfig/ConfigScreens.xml#GlAccounts" />
+	<view-map name="voucherList" type="screen" page="component://systemConfig/widget/systemConfig/ConfigScreens.xml#VoucherList" />
+	
+	 <!-- TaxAuthority -->
+     <view-map name="FindTaxAuthority" type="screen" page="component://systemConfig/widget/systemConfig/TaxAuthorityScreens.xml#FindTaxAuthority"/>
+     <view-map name="EditTaxAuthority" type="screen" page="component://systemConfig/widget/systemConfig/TaxAuthorityScreens.xml#EditTaxAuthority"/>
+     <view-map name="EditTaxAuthorityCategories" type="screen" page="component://systemConfig/widget/systemConfig/TaxAuthorityScreens.xml#EditTaxAuthorityCategories"/>
+     <view-map name="EditTaxAuthorityAssocs" type="screen" page="component://systemConfig/widget/systemConfig/TaxAuthorityScreens.xml#EditTaxAuthorityAssocs"/>
+     <view-map name="EditTaxAuthorityGlAccounts" type="screen" page="component://systemConfig/widget/systemConfig/TaxAuthorityScreens.xml#EditTaxAuthorityGlAccounts"/>
+     <view-map name="EditTaxAuthorityRateProducts" type="screen" page="component://systemConfig/widget/systemConfig/TaxAuthorityScreens.xml#EditTaxAuthorityRateProducts"/>
+     <view-map name="ListTaxAuthorityParties" type="screen" page="component://systemConfig/widget/systemConfig/TaxAuthorityScreens.xml#ListTaxAuthorityParties"/>
+     <view-map name="EditTaxAuthorityPartyInfo" type="screen" page="component://systemConfig/widget/systemConfig/TaxAuthorityScreens.xml#EditTaxAuthorityPartyInfo"/>
+      
+     <!-- Lookup mappings -->
+     <view-map name="LookupProductCategory" type="screen" page="component://product/widget/catalog/LookupScreens.xml#LookupProductCategory"/>
+     <view-map name="LookupGeo" type="screen" page="component://common/widget/LookupScreens.xml#LookupGeo"/>
+     <view-map name="LookupPartyName" type="screen" page="component://party/widget/partymgr/LookupScreens.xml#LookupPartyName"/>
+     <view-map name="LookupGlAccount" type="screen" page="component://accounting/widget/LookupScreens.xml#LookupGlAccount"/>
+     <view-map name="LookupProductStore" type="screen" page="component://product/widget/catalog/LookupScreens.xml#LookupProductStore"/>
+     
+      <!-- GlAccount, GlJournalEntry, AcctgTrans -->
+       <view-map name="EditGlobalGlAccount" type="screen" page="component://systemConfig/widget/systemConfig/ConfigScreens.xml#AddGlAccount"/>
+       <view-map name="FindGlobalGlAccount" type="screen" page="component://systemConfig/widget/systemConfig/ConfigScreens.xml#ListGlAccounts"/>
+       <view-map name="GlAccountNavigate" type="screen" page="component://systemConfig/widget/systemConfig/ConfigScreens.xml#GlAccountNavigate"/>
+       <view-map name="AssignGlAccount" type="screen" page="component://systemConfig/widget/systemConfig/ConfigScreens.xml#AssignGlAccount"/>
+       
+       <!-- administrative pages -->
+        <view-map name="ListGlAccountOrganization" type="screen" page="component://systemConfig/widget/systemConfig/ConfigScreens.xml#ListGlAccountOrganization"/>
+          <view-map name="PartyAcctgPreference" type="screen" page="component://systemConfig/widget/systemConfig/ConfigScreens.xml#PartyAcctgPreference"/>
+</site-conf>

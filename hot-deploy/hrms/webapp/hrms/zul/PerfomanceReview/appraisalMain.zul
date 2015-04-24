@@ -1,0 +1,133 @@
+<?init class="org.zkoss.zk.ui.util.Composition" arg0="/WEB-INF/layout/templateWestCollapsible.zul"?>
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<?component name="findbox" macroURI="../macros/textfindMacro.zul" id="macro4"?>
+<?component name="findbox1" macroURI="../macros/textfindMacro.zul" id="macro3"?>
+<?component name="findbox2" macroURI="../macros/textfindMacro.zul" id="macro5"?>
+<?component name="fromDatebox" macroURI="../macros/datefindMacro.zul" id="macro2"?>
+<?component name="thruDatebox" macroURI="../macros/datefindMacro.zul" id="macro1"?>
+<?page title="Performance Review" id="settingsapprisalmgmt"?>
+<?link rel="icon" type="image/x-icon" href="/images/companyLogo.png"?>
+<zk>
+	<window width="100%" height="100%" border="normal"
+		id="appraisalMain" style="margin-right:2px;" self="@{define(westContent)}">
+		<caption label="Performance Review"/>
+		<separator height="10px" />
+		<toolbarbutton label="Performance Plan Section"
+			sclass="toolbarHyperlink" id="toolbarbuttonPerformancePlanSection">
+			<attribute name="onClick">
+	Div div = (Div) performanceReviewMain.getFellow("appendGroupbox");
+	Component firstChild = div.getFirstChild();
+	if (firstChild != null) {
+		div.removeChild(firstChild);
+	}
+	Window win = (Window) Executions.createComponents(
+			"/zul/GlobalHRSetting/performancePlanSections.zul", null, org.ofbiz.base.util.UtilMisc.toMap("toolbarbuttonPerformancePlanSection",toolbarbuttonPerformancePlanSection));
+	div.appendChild(win);
+	unselectedToolbarbuttonColor(self);
+	selectedToolbarbuttonColor(self);
+</attribute>
+		</toolbarbutton>
+		<separator />
+		<toolbarbutton label="${c:l('HRMS_PERFORMANCE_PLAN_ATTRIBUTE') }"
+			sclass="toolbarHyperlink"
+			id="toolbarbuttonPerformancePlanAttribute">
+			<attribute name="onClick">
+	Div div = (Div) performanceReviewMain.getFellow("appendGroupbox");
+	Component firstChild = div.getFirstChild();
+	if (firstChild != null) {
+		div.removeChild(firstChild);
+	}
+	Window win = (Window) Executions.createComponents(
+			"/zul/GlobalHRSetting/performancePlanAttributes.zul", null,org.ofbiz.base.util.UtilMisc.toMap("toolbarbuttonPerformancePlanAttribute",toolbarbuttonPerformancePlanAttribute));
+	div.appendChild(win);
+	unselectedToolbarbuttonColor(self);
+	selectedToolbarbuttonColor(self);
+</attribute>
+		</toolbarbutton>
+		<separator />
+		<toolbarbutton label="${c:l('HumanResPerfRating') }"
+			id="performanceRating">
+			<attribute name="onClick">
+	Div div = (Div) performanceReviewMain.getFellow("appendGroupbox");
+	Component firstChild = div.getFirstChild();
+	if (firstChild != null) {
+		div.removeChild(firstChild);
+	}
+	Window winDiv1 = (Window) Executions.createComponents(
+			"/zul/GlobalHRSetting/performanceRating.zul", null,org.ofbiz.base.util.UtilMisc.toMap("performanceRating",performanceRating));
+	div.appendChild(winDiv1);
+	unselectedToolbarbuttonColor(self);
+	selectedToolbarbuttonColor(self);
+</attribute>
+		</toolbarbutton>
+		<separator />
+		<toolbarbutton label="${c:l('HRMS_PERFORMANCE_PLAN_AND_POSITION') }"
+			sclass="toolbarHyperlink" id="toolBarButtonPerformancePlan">
+			<attribute name="onClick">
+	Div div = (Div) performanceReviewMain.getFellow("appendGroupbox");
+	Component firstChild = div.getFirstChild();
+	if (firstChild != null) {
+		div.removeChild(firstChild);
+	}
+	Window win = (Window) Executions.createComponents(
+			"/zul/PerfomanceReview/performancePlan.zul", null,org.ofbiz.base.util.UtilMisc.toMap("toolBarButtonPerformancePlan",toolBarButtonPerformancePlan));
+	div.appendChild(win);
+	unselectedToolbarbuttonColor(self);
+	selectedToolbarbuttonColor(self);
+</attribute>
+		</toolbarbutton>
+		<toolbarbutton label="${c:l('HRMS_HIDDEN_CREATEPERFORMANCEPLAN') }"
+			visible="false" sclass="toolbarHyperlink"
+			id="creatPerformancePlanAndPosition">
+			<attribute name="onClick">
+	Div div = (Div) performanceReviewMain.getFellow("appendGroupbox");
+	Component firstChild = div.getFirstChild();
+	if (firstChild != null) {
+		div.removeChild(firstChild);
+	}
+	Window win = (Window) Executions.createComponents(
+			"/zul/PerfomanceReview/performancePlanCreateNew.zul", null, null);
+	div.appendChild(win);
+</attribute>
+		</toolbarbutton>
+		<separator />
+		<toolbarbutton label="${c:l('HRMS_ENABLE_APPRAISAL') }"
+			sclass="toolbarHyperlink" id="enableAppraisalToolbarButton">
+			<attribute name="onClick">
+	Div div = (Div) performanceReviewMain.getFellow("appendGroupbox");
+	Component firstChild = div.getFirstChild();
+	if (firstChild != null) {
+		div.removeChild(firstChild);
+	}
+	Window win = (Window) Executions.createComponents(
+			"/zul/PerfomanceReview/enableAppraisal.zul", null, null);
+	div.appendChild(win);
+	unselectedToolbarbuttonColor(self);
+	selectedToolbarbuttonColor(self);
+</attribute>
+		</toolbarbutton>
+	</window>
+
+	<window id="performanceReviewMain" self="@{define(content)}">
+		<div id="appendGroupbox">
+
+		</div>
+	</window>
+	<zscript>
+	Div div = (Div) performanceReviewMain.getFellow("appendGroupbox");
+	Component firstChild = div.getFirstChild();
+	if (firstChild != null) {
+		div.removeChild(firstChild);
+	}
+	String idAppraisal = sessionScope.get("idAppraisal");
+	if (org.ofbiz.base.util.UtilValidate.isNotEmpty(idAppraisal)) {
+		Events.postEvent("onClick", appraisalMain.getFellow(idAppraisal), null);
+		Toolbarbutton tb = (Toolbarbutton) appraisalMain.getFellow(idAppraisal);
+	} else {
+		Events.postEvent("onClick",
+				appraisalMain.getFellow("toolbarbuttonPerformancePlanSection"),
+				null);
+	}
+</zscript>
+
+</zk>

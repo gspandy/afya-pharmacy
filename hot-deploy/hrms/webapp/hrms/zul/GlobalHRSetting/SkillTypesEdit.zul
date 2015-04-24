@@ -1,0 +1,39 @@
+<zk>
+	<window id="editSkillTypes" width="500px"  title="${c:l('PageTitleEditSkillType') }" border="normal"
+		position="center" height="200px" apply="com.ndz.controller.AddnewSkillTypes"  closable="true" maximizable="true" >
+		<hbox style="margin-top:15px">
+			<div width="100px" align="right">
+				<label value="Skill Type Id" />
+			</div>
+			<div width="100px" align="left">
+				<textbox id="txtBoxSkillTypeId" readonly="true"></textbox>
+			</div>
+		</hbox>
+		
+		<hbox style="margin-top:15px">
+			<div width="100px" align="right">
+				<label value="${c:l('HumanResAllocateEmployeeDescription') }" /><label value="*" style="color:red" />
+			</div>
+			<div width="100px" align="left">
+				<textbox id="txtBoxDescription" width="300px" height="60px" multiline="true" constraint="no empty:Description Required" maxlength="180"></textbox>
+			</div>
+		</hbox>
+		<zscript>
+                 <![CDATA[
+	                  void addUser(){
+		                 String abc=txtBoxDescription.getValue();
+	                  }
+                  ]]>
+       </zscript>
+		<hbox style="margin-top:15px">
+			<div align="right" width="205px">
+				<button id="btnEdit" onClick="addUser()" label="${c:l('btnSave') }"  />
+			</div>
+			
+			<div>
+				<button id="btnCancel"
+					label="${c:l('ButtonCancel') }"  onClick="editSkillTypes.detach()" />
+			</div>
+		</hbox>
+	</window>
+</zk>

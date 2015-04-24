@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<services xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="http://ofbiz.apache.org/dtds/services.xsd">
+    <description>Incident Component Services</description>
+    <vendor>OFBiz</vendor>
+    <version>1.0</version>
+
+    <!-- ======================================== -->
+    <!-- Incident Services -->
+    <!-- ======================================== -->
+    <service name="createIssueHeader" default-entity-name="IssueHeader" engine="simple"
+                location="component://issuetracking/script/org/ofbiz/issuetracking/IssueServices.xml" invoke="createIssueHeader" >
+        <description>Create an IssueHeader</description>
+
+        <auto-attributes include="pk" mode="INOUT" optional="true"/>
+        <auto-attributes include="nonpk" mode="IN" optional="true"/>
+    </service>
+    
+    <service name="createIssueNote" default-entity-name="IssueNote" engine="simple"
+                location="component://issuetracking/script/org/ofbiz/issuetracking/IssueServices.xml" invoke="createIssueNote" >
+        <description>Create an IssueNote</description>
+
+        <auto-attributes include="pk" mode="OUT" optional="false"/>
+        <auto-attributes include="nonpk" mode="IN" optional="true"/>
+    </service>
+    
+    <service name="createIssueHistory" default-entity-name="IssueHistory" engine="simple"
+                location="component://issuetracking/script/org/ofbiz/issuetracking/IssueServices.xml" invoke="createIssueHistory" >
+        <description>Append To History</description>
+
+        <auto-attributes include="pk" mode="INOUT" optional="true"/>
+        <auto-attributes include="nonpk" mode="IN" optional="true"/>
+    </service>
+    
+    <service name="createIssueCategory" default-entity-name="IssueCategory" engine="simple"
+                location="component://issuetracking/script/org/ofbiz/issuetracking/IssueServices.xml" invoke="createIssueCategory" >
+        <description></description>
+        <auto-attributes include="pk" mode="INOUT" optional="true"/>
+        <auto-attributes include="nonpk" mode="IN" optional="true"/>
+    </service>
+
+    <service name="createIssueSubCategory" default-entity-name="IssueSubCategory" engine="simple"
+                location="component://issuetracking/script/org/ofbiz/issuetracking/IssueServices.xml" invoke="createIssueSubCategory" >
+        <description></description>
+        <auto-attributes include="pk" mode="INOUT" optional="true"/>
+        <auto-attributes include="nonpk" mode="IN" optional="true"/>
+    </service>
+
+    <service name="findIssue" engine="java"
+        location="org.ofbiz.issuetracking.services.IssueServices" invoke="findIssue">
+        <description>Find Issue for Inbox</description>
+        <attribute name="issueList" type="List" mode="OUT" optional="false"/>
+    </service>
+    
+    <service name="notifyIssueStatusChange" engine="java"
+        location="org.ofbiz.issuetracking.services.IssueServices" invoke="notifyIssueStatusChange">
+        <description>notifyIssueStatusChange</description>
+        <attribute name="issueId" mode="IN" type="java.lang.String" optional="false"/>
+        <attribute name="issueStatusId" mode="IN" type="java.lang.String" optional="false"/>
+        <attribute name="issueCategoryId" mode="IN" type="java.lang.String" optional="false"/>
+        <attribute name="createdBy" mode="IN" type="java.lang.String" optional="false"/>
+        <attribute name="assignedTo" mode="IN" type="java.lang.String" optional="true"/>
+    </service>
+    
+    <service name="createIssueAttachment" default-entity-name="IssueAttachment" engine="simple"
+                location="component://issuetracking/script/org/ofbiz/issuetracking/IssueServices.xml" invoke="createIssueAttachment" >
+        <description>Append To Attachment</description>
+        <auto-attributes include="pk" mode="OUT" optional="false"/>
+        <auto-attributes include="nonpk" mode="IN" optional="true"/>
+    </service>
+</services>

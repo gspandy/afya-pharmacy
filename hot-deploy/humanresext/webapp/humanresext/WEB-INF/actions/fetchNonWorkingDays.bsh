@@ -1,0 +1,17 @@
+import org.ofbiz.entity.GenericDelegator;
+import org.ofbiz.entity.GenericEntityException;
+import org.ofbiz.entity.GenericValue;
+
+GenericDelegator delegator = (GenericDelegator)request.getAttribute("delegator");
+weekdays = delegator.findAll("hr_Weekday");
+
+for(GenericValue hr_weekday : weekdays){
+
+	if(hr_weekday.get("isWorking").equals("N"))
+		weekdaySelected = "true";
+	else
+		weekdaySelected = "false";
+
+	context.put(hr_weekday.get("hr_day"),weekdaySelected);
+//	context.put(weekday.get("day"),weekday.get("isWorking"));	
+	}

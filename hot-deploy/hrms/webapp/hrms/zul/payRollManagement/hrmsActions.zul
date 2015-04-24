@@ -1,0 +1,165 @@
+<?component name="findbox1" macroURI="../macros/textFindIgnoreCase.zul" id="macro1"?>
+<?component name="findbox2" macroURI="../macros/textfindMacro.zul" id="macro2"?>
+<?component name="findbox3" macroURI="../macros/textfindMacro.zul" id="macro3"?>
+<?component name="findbox4" macroURI="../macros/textfindMacro.zul" id="macro4"?>
+<?component name="findbox5" macroURI="../macros/textfindMacro.zul" id="macro5"?>
+<?component name="findbox6" macroURI="../macros/textfindMacro.zul" id="macro6"?>
+<?component name="findbox7" macroURI="../macros/textfindMacro.zul" id="macro7"?>
+<?component name="findbox8" macroURI="../macros/textfindMacro.zul" id="macro8"?>
+<?component name="findbox9" macroURI="../macros/textfindMacro.zul" id="macro9"?>
+
+<?page title="Secure Page" id="PayrollCondition"?>
+
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<zk xmlns:h="http://www.zkoss.org/2005/zk/native">
+	<zscript>
+	<![CDATA[
+	import com.ndz.controller.*;
+	SearchController controller = new SearchController();
+	Toolbarbutton action = arg.get("action");
+]]>
+</zscript>
+	<window id="searchPanel" apply="${controller}">
+		<custom-attributes entityName="PayrollAction" CompanyWide="true">
+		</custom-attributes>
+
+		<caption label="${c:l('HRMS_ACTIONS') }" style="font-weight:bold">
+		<div align="right">
+			<toolbarbutton label="${c:l('HumanResNewEmployee') }"
+				image="/images/icon/update.png" style="color:#FFFFFF">
+				<attribute name="onClick" >
+	{
+		final Window win = (Window) Executions.createComponents(
+				"/zul/payRollManagement/hrmsAddActions.zul", null, null);
+		win.setMaximizable(true);
+		win.doModal();
+	}
+</attribute>
+			</toolbarbutton>
+		</div>
+		</caption>
+		
+
+<separator/>
+
+		
+		<h:table>
+				<h:tr>
+				<h:td>
+						<findbox1 fieldLabel="${c:l('HRMS_ACTION_ID') }" name="actionId"
+							type="text" cols="20" />
+</h:td>
+			
+			<h:td>
+					<findbox2 fieldLabel="${c:l('HRMS_ACTION_NAME') }" name="actionName"
+						type="text" cols="20" />
+						</h:td>
+</h:tr>
+		</h:table>
+
+		<separator></separator>
+
+		<box width="100%" height="30px" align="center">
+			<hbox>
+				<button label="${c:l('HumanResSearch') }" mold="os"
+					onClick="results.setVisible(true);results.setFocus(true)"
+					id="searchPerCompany">
+				</button>
+				<button label="${c:l('HRMS_ResetButton') }" mold="os"
+					onClick='Events.postEvent("onClick",action,null)'>
+				</button>
+			</hbox>
+		</box>
+		<separator height="15px" />
+		<zscript>
+				<![CDATA[
+	import org.ofbiz.base.util.*;
+	import org.zkoss.zk.ui.event.EventListener;
+	class MyRowRenderer implements RowRenderer {
+
+		MyRowRenderer() {
+		}
+
+		public void render(Row row, Object data) {
+			org.ofbiz.entity.GenericValue gv = ((org.ofbiz.entity.GenericValue) data);
+			String actionId = gv.getString("actionId");
+			String actionName = gv.getString("actionName");
+			String operandOne = gv.getString("operandOne");
+			String operandOneType = gv.getString("operandOneType");
+			String operandTwo = gv.getString("operandTwo");
+			String operandTwoType = gv.getString("operandTwoType");
+			String operatorId = gv.getString("operatorId");
+
+			new Label(actionId).setParent(row);
+			new Label(actionName).setParent(row);
+			new Label(operandOne).setParent(row);
+			new Label(operatorId).setParent(row);
+			new Label(operandTwo).setParent(row);
+			row.setTooltiptext("Double Click To Edit");
+			//----------------------------------------------------------------					
+
+			row.addEventListener("onDoubleClick", new EventListener() {
+				public void onEvent(Event event) throws Exception {
+					PayrollActionManagementController.editPayrollActionWindow(
+							event, gv);
+				}
+			});
+			//----------------------------------------------------------------
+
+			Button btn = new com.ndz.zkoss.HrmsButton();
+			btn.setParent(row);
+			btn.setMold("os");
+			btn.setLabel("Delete");
+			btn.setTooltiptext("Click here to delete");
+			btn.setSclass("btnDelete");
+			btn.addEventListener("onClick", new EventListener() {
+				public void onEvent(Event event) throws Exception {
+					Messagebox.show("Do You Want To Delete this Record?", "Warning", Messagebox.YES|Messagebox.NO,Messagebox.QUESTION,
+						     new org.zkoss.zk.ui.event.EventListener() {
+						         public void onEvent(Event evt) {
+						                 if ("onYes".equals(evt.getName())) {
+					PayrollActionManagementController.DeletePayrollAction(
+							event, actionId);
+						                 }}});
+				}
+			});
+			//----------------------------------------------------------------										
+		}
+	}
+	RowRenderer tableRenderer = new MyRowRenderer();
+]]>
+</zscript>
+
+	<panel id="results" visible="false">
+			<panelchildren>
+				<h:table width="100%" style="border:0px"
+					cellspacing="0px" cellpadding="0px">
+					<h:tr>
+						<h:td width="80%">
+							<label
+								value="${c:l('HRMS_SEARCHRESULTS') }">
+							</label>
+						</h:td>
+						<h:td width="20%" style="text-align:right">
+							<paging id="paging" width="100%" />
+						</h:td>
+					</h:tr>
+				</h:table>
+			<grid width="100%" id="dataGrid"
+				rowRenderer="${tableRenderer}">
+				<columns menupopup="auto">
+					<column label="${c:l('HRMS_ACTION_ID') }" />
+					<column label="${c:l('HRMS_ACTION_NAME') }" />
+					<column label="${c:l('HRMS_OPERAND_ONE') }" />
+					<column label="${c:l('HRMS_OPERATOR') }" />
+					<column label="${c:l('HRMS_OPERAND_TWO') }" />
+					<column label="${c:l('HRMS_ACTION') }" align="center"/>
+				</columns>
+			</grid>
+		</panelchildren>
+		</panel>
+		<zscript>
+		Events.postEvent("onClick",searchPerCompany,null);
+		</zscript>
+	</window>
+</zk>

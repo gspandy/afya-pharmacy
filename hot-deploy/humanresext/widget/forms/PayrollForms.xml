@@ -1,0 +1,1274 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<forms xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="http://ofbiz.apache.org/dtds/widget-form.xsd">
+	<form name="AddSalaryHeadType" type="single" target="CreateSalaryHeadType">
+		<field name="salaryHeadTypeId" title="${uiLabelMap.CommonName}"
+			required-field="true">
+			<text />
+		</field>
+		<field name="description">
+			<textarea />
+		</field>
+		<field name="submit" title="${uiLabelMap.CommonCreate}">
+			<submit />
+		</field>
+	</form>
+
+	<form name="ListSalaryHeadTypes" type="list" separate-columns="true"
+		target="UpdateSalaryHeadType" list-name="listIt" paginate-target="SalaryHeadTypes"
+		paginate="true" odd-row-style="alternate-row" header-row-style="header-row-2"
+		default-table-style="basic-table hover-bar">
+		<actions>
+			<entity-condition entity-name="SalaryHeadType" />
+		</actions>
+		<field name="salaryHeadTypeId">
+			<display />
+		</field>
+		<field name="description">
+			<textarea />
+		</field>
+		<field name="submit" title="${uiLabelMap.CommonUpdate}">
+			<submit />
+		</field>
+		<field name="delete" title="${uiLabelMap.CommonDelete}"
+			widget-style="buttontext">
+			<hyperlink
+				target="DeleteSalaryHeadType?salaryHeadTypeId=${salaryHeadTypeId}"
+				description="${uiLabelMap.CommonDelete}" />
+		</field>
+	</form>
+
+	<form name="AddSalaryHead" type="single" target="CreateSalaryHead"
+		default-widget-style="inputBox">
+		<field name="hrName" title="${uiLabelMap.CommonName}"
+			required-field="true">
+			<text />
+		</field>
+		<field name="isCr" title="Credit">
+			<drop-down current="selected">
+				<option key="Y" description="YES" />
+				<option key="N" description="NO" />
+			</drop-down>
+		</field>
+		<field name="salaryHeadTypeId" title="${uiLabelMap.HumanResSalaryHeadType}"
+			required-field="true">
+			<drop-down>
+				<entity-options description="${salaryHeadTypeId}"
+					entity-name="SalaryHeadType" />
+			</drop-down>
+		</field>
+		<field name="geoId" required-field="true">
+			<lookup target-form-name="LookupGeo"></lookup>
+		</field>
+		<field name="isTaxable">
+			<drop-down current="selected">
+				<option key="Y" description="YES" />
+				<option key="N" description="NO" />
+			</drop-down>
+		</field>
+		<field name="isMandatory">
+			<drop-down current="selected">
+				<option key="Y" description="YES" />
+				<option key="N" description="NO" />
+			</drop-down>
+		</field>
+		<field name="currencyUomId" title="${uiLabelMap.CommonCurrency}">
+			<drop-down no-current-selected-key="${defaultCurrencyUomId}">
+				<entity-options key-field-name="uomId"
+					description="${abbreviation} - ${description}" entity-name="Uom">
+					<entity-constraint name="uomTypeId" operator="equals"
+						value="CURRENCY_MEASURE" />
+					<entity-order-by field-name="abbreviation" />
+				</entity-options>
+			</drop-down>
+		</field>
+		<field name="salaryComputationTypeId" title="Computation Type">
+			<drop-down current="selected">
+				<entity-options description="${description}"
+					entity-name="SalaryComputationType" key-field-name="salaryComputationTypeId" />
+			</drop-down>
+		</field>
+		<field name="submit" title="${uiLabelMap.CommonCreate}">
+			<submit />
+		</field>
+	</form>
+
+
+	<form name="FindSalaryHead" type="single" target="FindSalaryHead"
+		default-table-style="basic-table hover-bar">
+		<auto-fields-entity entity-name="SalaryHead"
+			default-field-type="find" />
+		<field name="submit" title="${uiLabelMap.CommonFind}">
+			<submit />
+		</field>
+	</form>
+
+
+	<form name="ListSalaryHeads" type="list" separate-columns="true"
+		target="UpdateSalaryHead" extends="AddSalaryHead" list-name="listIt"
+		paginate-target="SalaryHeads" paginate="true" default-entity-name="SalaryHead"
+		odd-row-style="alternate-row" header-row-style="header-row-2"
+		default-table-style="basic-table hover-bar">
+		<actions>
+			<entity-condition entity-name="SalaryHead" />
+		</actions>
+		<field name="salaryHeadId">
+			<hidden />
+		</field>
+		<field name="submit" title="${uiLabelMap.CommonUpdate}">
+			<submit />
+		</field>
+		<field name="delete" title="${uiLabelMap.CommonDelete}"
+			widget-style="buttontext">
+			<hyperlink target="DeleteSalaryHead?salaryHeadId=${salaryHeadId}"
+				description="${uiLabelMap.CommonDelete}" />
+		</field>
+	</form>
+
+	<form name="FindSalaryStructure" type="single" target="FindSalaryStructure">
+		<field name="hrName">
+			<text-find />
+		</field>
+		<field name="geoId">
+			<lookup target-form-name="LookupGeo" />
+		</field>
+		<field name="salaryFrequencyTypeId" title="Frequency Type">
+			<drop-down>
+				<entity-options description="${description}"
+					key-field-name="salaryFrequencyTypeId" cache="false" entity-name="SalaryFrequencyType"></entity-options>
+			</drop-down>
+		</field>
+		<field name="fromDate" title="From Date">
+			<date-find />
+		</field>
+		<field name="thruDate" title="Thru Date">
+			<date-find />
+		</field>
+		<field name="noConditionFind">
+			<hidden value="Y" />
+		</field>
+		<field name="submit" title="${uiLabelMap.CommonFind}">
+			<submit />
+		</field>
+	</form>
+
+	<form name="ListSalaryStructures" type="list" target="FindSalaryStructure"
+		list-name="listIt" separate-columns="true" paginate-target="CreateSalaryStructure"
+		paginate="true" odd-row-style="alternate-row" header-row-style="header-row-2"
+		default-table-style="basic-table hover-bar">
+		<actions>
+			<service service-name="performFind" result-map="result"
+				result-map-list="listIt">
+				<field-map field-name="inputFields" from-field="parameters" />
+				<field-map field-name="entityName" value="SalaryStructure" />
+			</service>
+		</actions>
+		<auto-fields-entity entity-name="SalaryStructure"
+			default-field-type="display" />
+
+		<field name="attachEmployee" widget-style="buttontext">
+			<hyperlink
+				target="AttachEmployeeToStructure?salaryStructureId=${salaryStructureId}"
+				description="Attach Employee" />
+		</field>
+		<field name="edit" title="${uiLabelMap.CommonEdit}"
+			widget-style="buttontext">
+			<hyperlink
+				target="EditSalaryStructure?salaryStructureId=${salaryStructureId}"
+				description="${uiLabelMap.CommonEdit}" />
+		</field>
+		<field name="delete" title="${uiLabelMap.CommonDelete}"
+			widget-style="buttontext">
+			<hyperlink
+				target="DeleteSalaryStructure?salaryStructureId=${salaryStructureId}"
+				description="${uiLabelMap.CommonDelete}" />
+		</field>
+	</form>
+
+	<form name="SalaryStructureForm" type="single" target="UpdateSalaryStructure"
+		default-map-name="salary">
+		<actions>
+			<entity-one entity-name="SalaryStructure" value-field="salary" />
+		</actions>
+		<alt-target use-when="salary==null" target="CreateSalaryStructure" />
+		<field use-when="salary!=null" name="salaryStructureId" title="Id">
+			<display />
+		</field>
+		<field name="hrName">
+			<text />
+		</field>
+		<field name="geoId">
+			<lookup target-form-name="LookupGeo" />
+		</field>
+		<field name="salaryFrequencyTypeId" title="Frequency Type">
+			<drop-down>
+				<entity-options description="${description}"
+					key-field-name="salaryFrequencyTypeId" cache="false" entity-name="SalaryFrequencyType"></entity-options>
+			</drop-down>
+		</field>
+		<field name="currencyUomId" title="${uiLabelMap.CommonCurrency}">
+			<drop-down no-current-selected-key="${defaultCurrencyUomId}">
+				<entity-options key-field-name="uomId"
+					description="${abbreviation} - ${description}" entity-name="Uom">
+					<entity-constraint name="uomTypeId" operator="equals"
+						value="CURRENCY_MEASURE" />
+					<entity-order-by field-name="abbreviation" />
+				</entity-options>
+			</drop-down>
+		</field>
+		<field name="positionId">
+			<text />
+		</field>
+		<field name="fromDate" title="From Date">
+			<date-time />
+		</field>
+		<field name="thruDate" title="Thru Date">
+			<date-time />
+		</field>
+		<field name="submit" title="${uiLabelMap.CommonNext}">
+			<submit />
+		</field>
+	</form>
+
+	<form name="AddedSalaryHeadsForm" type="multi"
+		target="RemoveHeadsFromStructure?salaryStructureId=${parameters.salaryStructureId}"
+		list-name="addedSalaryHeads" separate-columns="true" paginate-target="FindSalaryStructure"
+		paginate="true" use-row-submit="true" odd-row-style="alternate-row"
+		header-row-style="header-row-2" default-table-style="basic-table hover-bar">
+		<field name="salaryStructureId">
+			<hidden />
+		</field>
+		<field name="fromDate">
+			<hidden value="${parameters.fromDate}" />
+		</field>
+		<field name="_rowSubmit" title="${uiLabelMap.CommonSelect}">
+			<check />
+		</field>
+		<field name="hrName">
+			<display also-hidden="false" />
+		</field>
+		<field name="salaryHeadId">
+			<hidden />
+		</field>
+		<field name="salaryHeadTypeId">
+			<display also-hidden="false" />
+		</field>
+		<field name="submitButton" title="${uiLabelMap.CommonRemove}">
+			<submit />
+		</field>
+	</form>
+
+	<form name="UnaddedSalaryHeadsForm" type="multi"
+		target="AddHeadsToStructure?salaryStructureId=${parameters.salaryStructureId}&amp;fromDate=${parameters.fromDate}"
+		list-name="unaddedSalaryHeads" separate-columns="true"
+		paginate-target="FindSalaryStructure" paginate="true" odd-row-style="alternate-row"
+		header-row-style="header-row-2" default-table-style="basic-table hover-bar"
+		use-row-submit="true">
+		<field name="_rowSubmit" title="${uiLabelMap.CommonSelect}">
+			<check />
+		</field>
+		<field name="hrName">
+			<display also-hidden="false" />
+		</field>
+		<field name="salaryHeadId">
+			<hidden />
+		</field>
+		<field name="salaryHeadTypeId">
+			<display also-hidden="false" />
+		</field>
+		<field name="submitButton" title="${uiLabelMap.CommonAdd}">
+			<submit />
+		</field>
+	</form>
+
+	<form name="EditCondition" type="single" target="CreatePayrollCondition"
+		default-widget-style="inputBox">
+		<field name="conditionName">
+			<text />
+		</field>
+		<field name="operandOne">
+			<lookup target-form-name="LookupControl" />
+		</field>
+		<field name="operandTwo">
+			<lookup target-form-name="LookupControl" />
+		</field>
+		<field name="operatorId" title="Operator">
+			<drop-down current="selected">
+				<entity-options description="${operatorId}"
+					entity-name="PayrollOpEnumeration">
+					<entity-constraint name="operatorType" operator="equals"
+						value="LOGICAL" />
+				</entity-options>
+			</drop-down>
+		</field>
+		<field name="submitButton" title="${uiLabelMap.CommonCreate}">
+			<submit />
+		</field>
+	</form>
+
+	<form name="EditAction" type="single" target="CreatePayrollAction"
+		default-widget-style="inputBox">
+		<field name="actionName">
+			<text />
+		</field>
+		<field name="operandOne">
+			<lookup target-form-name="LookupControl" />
+		</field>
+		<field name="operandTwo">
+			<lookup target-form-name="LookupControl" />
+		</field>
+		<field name="operatorId" title="Operator">
+			<drop-down current="selected">
+				<entity-options description="${operatorId}"
+					entity-name="PayrollOpEnumeration">
+					<entity-constraint name="operatorType" operator="equals"
+						value="ARITHMETIC" />
+				</entity-options>
+			</drop-down>
+		</field>
+		<field name="submitButton" title="${uiLabelMap.CommonCreate}">
+			<submit />
+		</field>
+	</form>
+
+	<form name="FindAction" type="single" target="FindAction"
+		default-table-style="basic-table hover-bar">
+		<auto-fields-entity entity-name="PayrollAction"
+			default-field-type="find" />
+		<field name="submit" title="${uiLabelMap.CommonFind}">
+			<submit />
+		</field>
+	</form>
+
+	<form name="FindCondition" type="single" target="FindCondition"
+		default-table-style="basic-table hover-bar">
+		<auto-fields-entity entity-name="PayrollCondition"
+			default-field-type="find" />
+		<field name="submit" title="${uiLabelMap.CommonFind}">
+			<submit />
+		</field>
+	</form>
+
+	<form name="ListConditions" type="list" target="UpdatePayrollCondition"
+		list-name="listIt" paginate-target="FindCondition" paginate="true"
+		separate-columns="true" odd-row-style="alternate-row"
+		header-row-style="header-row-2" default-table-style="basic-table hover-bar">
+		<actions>
+			<entity-condition entity-name="PayrollCondition">
+				<condition-expr field-name="conditionId" operator="not-equals"
+					value="NA" />
+			</entity-condition>
+		</actions>
+		<field name="conditionId">
+			<display />
+		</field>
+		<field name="conditionName">
+			<text />
+		</field>
+		<field name="operandOne">
+			<text />
+		</field>
+		<field name="operatorId" title="Operator">
+			<drop-down current="selected">
+				<entity-options description="${operatorId}"
+					entity-name="PayrollOpEnumeration">
+					<entity-constraint name="operatorType" operator="equals"
+						value="LOGICAL" />
+				</entity-options>
+			</drop-down>
+		</field>
+		<field name="operandTwo">
+			<text />
+		</field>
+
+		<field name="submit" title="${uiLabelMap.CommonUpdate}">
+			<submit />
+		</field>
+		<field name="delete" title="${uiLabelMap.CommonDelete}"
+			widget-style="buttontext">
+			<hyperlink target="DeletePayrollCondition?conditionId=${conditionId}"
+				description="${uiLabelMap.CommonDelete}" />
+		</field>
+	</form>
+
+	<form name="ListActions" type="list" target="UpdatePayrollAction"
+		list-name="listIt" paginate-target="SalaryHeadTypes" paginate="true"
+		separate-columns="true" odd-row-style="alternate-row"
+		header-row-style="header-row-2" default-table-style="basic-table hover-bar">
+		<actions>
+			<entity-condition entity-name="PayrollAction" />
+		</actions>
+		<field name="actionId">
+			<display />
+		</field>
+		<field name="actionName">
+			<text />
+		</field>
+		<field name="operandOne">
+			<text />
+		</field>
+
+		<field name="operatorId" title="Operator">
+			<drop-down current="selected">
+				<entity-options description="${operatorId}"
+					entity-name="PayrollOpEnumeration">
+					<entity-constraint name="operatorType" operator="equals"
+						value="ARITHMETIC" />
+				</entity-options>
+			</drop-down>
+		</field>
+		<field name="operandTwo">
+			<text />
+		</field>
+
+		<field name="submit" title="${uiLabelMap.CommonUpdate}">
+			<submit />
+		</field>
+		<field name="delete" title="${uiLabelMap.CommonDelete}"
+			widget-style="buttontext">
+			<hyperlink target="DeletePayrollAction?actionId=${actionId}"
+				description="${uiLabelMap.CommonDelete}" />
+		</field>
+	</form>
+
+	<form name="RuleForm" type="single" target="CreateRule">
+		<actions>
+			<entity-one entity-name="PayrollRule" value-field="rule" />
+		</actions>
+		<alt-target use-when="rule!=null" target="UpdateRule" />
+		<field use-when="rule!=null" name="ruleId">
+			<display />
+		</field>
+		<field name="ruleName" title="${uiLabelMap.CommonName}">
+			<text default-value="${rule.ruleName}" />
+		</field>
+		<field name="ruleDescription" title="${uiLabelMap.CommonDescription}">
+			<text default-value="${rule.ruleDescription}" />
+		</field>
+		<field name="aggregateFunc">
+			<drop-down current="selected">
+				<option key="" description="" />
+				<option key="MIN" description="Minimum" />
+				<option key="MAX" description="Maximum" />
+				<option key="SUM" description="Sum" />
+			</drop-down>
+		</field>
+		<field name="defaultValue">
+			<text />
+		</field>
+		<field name="ignoreZero">
+			<drop-down current="first-in-list">
+				<option key="" description="" />
+				<option key="Y" description="Y" />
+				<option key="N" description="N" />
+			</drop-down>
+		</field>
+		<field name="fromDate">
+			<date-time />
+		</field>
+		<field name="thruDate">
+			<date-time />
+		</field>
+		<field use-when="rule==null" name="submit" title="${uiLabelMap.CommonCreate}">
+			<submit />
+		</field>
+		<field use-when="rule!=null" name="submit" title="${uiLabelMap.CommonUpdate}">
+			<submit />
+		</field>
+	</form>
+
+	<form name="FindRules" type="single" target="Rules">
+		<auto-fields-entity entity-name="PayrollRule"
+			default-field-type="find" />
+		<field name="noConditionFind">
+			<hidden value="Y" />
+		</field>
+		<field name="submit" title="${uiLabelMap.CommonFind}">
+			<submit />
+		</field>
+	</form>
+
+	<form name="ListRules" type="list" target="Rules" list-name="listIt"
+		separate-columns="true" paginate-target="FindSalaryStructure"
+		paginate="true" odd-row-style="alternate-row" header-row-style="header-row-2"
+		default-table-style="basic-table hover-bar">
+		<actions>
+			<service service-name="performFind" result-map="result"
+				result-map-list="listIt">
+				<field-map field-name="inputFields" from-field="parameters" />
+				<field-map field-name="entityName" value="PayrollRule" />
+			</service>
+		</actions>
+		<field name="ruleId" title="Rule ID">
+			<display />
+		</field>
+		<field name="ruleName" title="${uiLabelMap.CommonName}">
+			<display />
+		</field>
+		<field name="ruleDescription" title="${uiLabelMap.CommonDescription}">
+			<display />
+		</field>
+		<field name="aggregateFunc" use-when="aggregateFunc!=null">
+			<display />
+		</field>
+		<field name="aggregateFunc" use-when="aggregateFunc==null">
+			<display description="" />
+		</field>
+		<field name="edit" title="${uiLabelMap.CommonEdit}"
+			widget-style="buttontext">
+			<hyperlink target="EditRule?ruleId=${ruleId}" description="${uiLabelMap.CommonEdit}" />
+		</field>
+		<field name="delete" title="${uiLabelMap.CommonDelete}"
+			widget-style="buttontext">
+			<hyperlink target="DeleteRule?ruleId=${ruleId}"
+				description="${uiLabelMap.CommonDelete}" />
+		</field>
+	</form>
+
+	<form name="ListRuleAssociations" type="list" target="DeleteRuleConditionAction"
+		list-name="listIt" separate-columns="true" paginate-target="FindSalaryStructure"
+		paginate="true" odd-row-style="alternate-row" header-row-style="header-row-2"
+		default-table-style="basic-table hover-bar">
+		<actions>
+			<entity-condition entity-name="RuleDetail">
+				<condition-expr field-name="ruleId" value="${parameters.ruleId}" />
+			</entity-condition>
+		</actions>
+		<field name="ruleId">
+			<hidden />
+		</field>
+		<field name="conditionId">
+			<display />
+		</field>
+		<field name="conditionName">
+			<display also-hidden="false" />
+		</field>
+		<field name="actionId">
+			<display />
+		</field>
+		<field name="actionName">
+			<display also-hidden="false" />
+		</field>
+		<field name="submit" title="${uiLabelMap.CommonDelete}">
+			<submit />
+		</field>
+	</form>
+
+	<form name="SalaryHeadOptions" type="single" target="SalaryHeadOptionsController">
+		<field name="salaryStructureId">
+			<hidden value="${parameters.salaryStructureId}" />
+		</field>
+		<field name="fromDate">
+			<hidden value="${parameters.fromDate_o_0}" />
+		</field>
+		<field name="salaryStructureHeadId" title="Assign Formula to Salary Head"
+			event="onchange" action="javascript:this.form.submit();">
+			<drop-down>
+				<option description="---" key="" />
+				<entity-options description="${hrName}"
+					key-field-name="salaryStructureHeadId" entity-name="SalaryStructureHeadDetail">
+					<entity-constraint name="salaryStructureId"
+						value="${parameters.salaryStructureId}" />
+					<entity-constraint name="salaryComputationTypeId"
+						value="FORMULA" />
+				</entity-options>
+			</drop-down>
+		</field>
+	</form>
+
+	<form name="SalaryHeadSlabOptions" type="single"
+		target="SalaryHeadOptionsController">
+		<field name="salaryStructureId">
+			<hidden value="${parameters.salaryStructureId}" />
+		</field>
+		<field name="fromDate">
+			<hidden value="${parameters.fromDate_o_0}" />
+		</field>
+		<field name="salaryStructureHeadId" title="Assign Slab for Salary Head"
+			event="onchange" action="javascript:this.form.submit();">
+			<drop-down>
+				<option description="---" key="" />
+				<entity-options description="${name}" key-field-name="salaryStructureHeadId"
+					entity-name="SalaryStructureHeadDetail">
+					<entity-constraint name="salaryStructureId"
+						value="${parameters.salaryStructureId}" />
+					<entity-constraint name="salaryComputationTypeId"
+						value="SLAB" />
+				</entity-options>
+			</drop-down>
+		</field>
+
+	</form>
+
+	<form name="AttachFormulaToHead" type="single" target="CreatePayrollHeadRule">
+		<field name="salaryStructureId">
+			<hidden value="${parameters.salaryStructureId}" />
+		</field>
+		<field name="salaryStructureHeadId">
+			<hidden value="${parameters.salaryStructureHeadId}" />
+		</field>
+		<field name="ruleId">
+			<lookup target-form-name="LookupPayrollRule" />
+		</field>
+		<field name="fromDate">
+			<date-time />
+		</field>
+		<field name="thruDate">
+			<date-time />
+		</field>
+		<field name="submit">
+			<submit />
+		</field>
+	</form>
+
+	<form name="ListPayrollHeadRules" type="list" target="DeleteRuleConditionAction"
+		list-name="listIt" separate-columns="true" odd-row-style="alternate-row"
+		header-row-style="header-row-2" default-table-style="basic-table hover-bar">
+		<actions>
+			<entity-condition entity-name="PayrollHeadRuleDetail">
+				<condition-expr field-name="salaryStructureHeadId"
+					value="${parameters.salaryStructureHeadId}" />
+			</entity-condition>
+		</actions>
+		<field name="ruleId">
+			<display />
+		</field>
+		<field name="ruleName">
+			<display />
+		</field>
+		<field name="ruleDescription">
+			<display />
+		</field>
+	</form>
+
+	<form name="AttachRuleToSalaryHead" title="" type="single"
+		target="createRuleAndSalaryHeadAssoc">
+		<field name="salaryHeadId">
+			<lookup target-form-name="LookupSalaryHead" />
+		</field>
+		<field name="ruleId">
+			<lookup target-form-name="LookupPayrollRule" />
+		</field>
+		<field name="submitButton" title="${uiLabelMap.CommonSubmit}"
+			widget-style="smallSubmit">
+			<submit />
+		</field>
+	</form>
+
+	<form name="ListSalaryHeadRules" title="" type="list" list-name="listIt"
+		target="ListSalaryHeadRules" separate-columns="true" odd-row-style="alternate-row"
+		header-row-style="header-row" default-table-style="basic-table hover-bar">
+		<actions>
+			<entity-condition entity-name="SalaryHeadRule" list="listIt"></entity-condition>
+		</actions>
+		<field name="salaryHeadId" id-name="1" title="Salary Head">
+			<display-entity entity-name="SalaryHead"
+				description="${name} - ${salaryHeadTypeId}"></display-entity>
+		</field>
+		<field name="ruleId" title="Rule Description">
+			<display-entity entity-name="PayrollRule" description="${ruleDescription}"></display-entity>
+		</field>
+		<field name="delete" title="${uiLabelMap.CommonDelete}"
+			widget-style="buttontext">
+			<hyperlink
+				target="deleteRuleAndSalaryHeadAssoc?salaryHeadId=${salaryHeadId}&amp;ruleId=${ruleId}"
+				description="${uiLabelMap.CommonDelete}" />
+		</field>
+	</form>
+
+	<form name="FindPaySlips" title="" type="single" target="FindPayslip"
+		separate-columns="true" default-table-style="basic-table">
+
+		<field name="partyId"
+			use-when="${bsh:security.hasEntityPermission(&quot;HUMANRES&quot;,&quot;_ADMIN&quot;,session);}">
+			<lookup target-form-name="LookupPartyName" />
+		</field>
+		<field name="partyId"
+			use-when="${bsh:!security.hasEntityPermission(&quot;HUMANRES&quot;,&quot;_ADMIN&quot;,session);}">
+			<hidden value="${userLogin.partyId}" />
+		</field>
+		<field name="periodFrom" id-name="periodFrom" title="Period From">
+			<date-find />
+		</field>
+		<field name="periodTo" title="Period To">
+			<date-find />
+		</field>
+		<field name="noConditionFind">
+			<hidden value="Y" />
+		</field>
+
+		<field name="submitButton" title="${uiLabelMap.CommonFind}"
+			widget-style="smallSubmit">
+			<submit button-type="button" />
+		</field>
+	</form>
+
+	<form name="ListMyPaySlips" title="" type="list" list-name="listIt"
+		target="ListMyPaySlips" separate-columns="true" odd-row-style="alternate-row"
+		header-row-style="header-row-2" default-table-style="basic-table hover-bar">
+		<actions>
+			<service service-name="performFind" result-map="result"
+				result-map-list="listIt">
+				<field-map field-name="inputFields" from-field="parameters" />
+				<field-map field-name="entityName" value="EmplPayslip" />
+				<field-map field-name="orderBy" value="periodFrom" />
+			</service>
+		</actions>
+		<field name="payslipId" widget-style="buttontext">
+			<hyperlink also-hidden="false" target-type="plain"
+				description="${payslipId}" target="ViewPayslipPdf?payslipId=${payslipId}"
+				target-window="_blank" />
+		</field>
+		<field name="partyId">
+			<display />
+		</field>
+		<field name="paidOn">
+			<display />
+		</field>
+		<field name="periodFrom">
+			<display></display>
+		</field>
+		<field name="periodTo">
+			<display />
+		</field>
+		<field name="netSalary" title="Net Salary">
+			<display description="${bsh:(headTotal-taxTotal)}" />
+		</field>
+	</form>
+
+	<!--  Payslip Generation target="InitiatePayroll"-->
+	<form name="ManagePayroll" type="single" default-map-name="parameters"
+		target="reviewPayslipGen">
+		<!--  <alt-target use-when="emplId!=null" target="InitiatePayroll"/> -->
+		<field name="partyId"
+			tooltip="By default all employees will be selected if no input">
+			<lookup target-form-name="LookupPartyName"></lookup>
+		</field>
+		<field name="partyIdFrom" title="${uiLabelMap.HumanResPartyIdFrom}"
+			tooltip="Department/Group">
+			<drop-down allow-empty="true">
+				<entity-options entity-name="PartyRole" description="${partyId}"
+					key-field-name="partyId">
+					<entity-constraint name="roleTypeId" operator="equals"
+						value="INTERNAL_ORGANIZATIO" />
+				</entity-options>
+			</drop-down>
+		</field>
+		<field name="periodFrom" required-field="true"
+			tooltip="Start Date of Salary Payment for Month. It can vary depending upon Employees' working days in the month.">
+			<date-time type="date" />
+		</field>
+		<field name="periodTo" required-field="true"
+			tooltip="End Date of Salary Payment for Month. It can also vary depending upon Employees' working days in the month.">
+			<date-time type="date" />
+		</field>
+		<field name="linkToLMS" title="Use Leave Info">
+			<check></check>
+		</field>
+		<field name="submit" title="Next">
+			<submit />
+		</field>
+	</form>
+
+	<!-- Payslips will be generated for selected employees -->
+	<form name="ListPayslipEmployees" title="" type="multi" list-name="listIt"
+		target="runPayroll" use-row-submit="true" separate-columns="true"
+		odd-row-style="alternate-row" header-row-style="header-row-2"
+		default-table-style="basic-table hover-bar">
+		<actions>
+			<!--
+				<entity-condition entity-name="Employment" list="listIt">
+				<condition-expr field-name="roleTypeIdTo" value="EMPLOYEE"/>
+				</entity-condition>
+			-->
+			<set field="partyIdTo" value="${parameters.partyId}" />
+			<set field="linkToLMS" value="${parameters.linkToLMS}"
+				default-value="N" />
+			<script
+				location="component://humanresext/webapp/humanresext/WEB-INF/actions/payroll/getEmployeeIds.groovy" />
+		</actions>
+		<field name="partyId" title="Employee ID">
+			<text default-value="${partyIdTo}"></text>
+		</field>
+		<field name="partyName">
+			<display
+				description="${bsh:return(org.ofbiz.humanresext.util.HumanResUtil.getFullName(delegator, partyIdTo, null));}" />
+		</field>
+		<field name="periodFrom" title="Period From">
+			<date-time type="date" />
+		</field>
+		<field name="periodTo" title="Period To">
+			<date-time type="date" />
+		</field>
+		<field name="linkToLMS">
+			<hidden value="${linkToLMS}" />
+		</field>
+		<field name="_rowSubmit" title="${uiLabelMap.CommonSelect}">
+			<check />
+		</field>
+		<field name="submit" title="Run Payroll">
+			<submit />
+		</field>
+	</form>
+
+	<form name="FindTDS" title="" type="single" target="FindTDS"
+		separate-columns="true" default-table-style="basic-table">
+		<field name="partyId"
+			use-when="${bsh:security.hasEntityPermission(&quot;HUMANRES&quot;,&quot;_ADMIN&quot;,session);}">
+			<lookup target-form-name="LookupPartyName" default-value="${userLogin.partyId}" />
+		</field>
+		<field name="periodFrom" id-name="periodFrom" title="Period From">
+			<date-find />
+		</field>
+		<field name="periodTo" title="Period To">
+			<date-find />
+		</field>
+		<field name="taxType">
+			<drop-down current="first-in-list">
+				<option key="INCOMETAX" description="Income Tax" />
+				<option key="PROFESSIONALTAX" description="Professional Tax" />
+			</drop-down>
+		</field>
+		<field name="noConditionFind">
+			<hidden value="Y" />
+		</field>
+		<field name="submitButton" title="${uiLabelMap.CommonFind}"
+			widget-style="smallSubmit">
+			<submit button-type="button" />
+		</field>
+	</form>
+
+	<form name="ListTDS" title="" type="list" list-name="listIt"
+		target="ListTDS" separate-columns="true" odd-row-style="alternate-row"
+		header-row-style="header-row-2" default-table-style="basic-table hover-bar">
+		<actions>
+			<script
+				location="component://humanresext/webapp/humanresext/WEB-INF/actions/payroll/filterTDS.groovy" />
+		</actions>
+		<field name="payslipId" widget-style="buttontext">
+			<hyperlink also-hidden="false" target-type="plain"
+				description="${payslipId}" target="ViewPayslipPdf?payslipId=${payslipId}"
+				target-window="_blank" />
+		</field>
+		<field name="partyName">
+			<display
+				description="${bsh:return(org.ofbiz.humanresext.util.HumanResUtil.getFullName(delegator, partyId, null));}" />
+		</field>
+		<field name="partyId">
+			<display />
+		</field>
+		<field name="taxType">
+			<display />
+		</field>
+		<field name="periodFrom" id-name="periodFrom" title="Period From">
+			<display />
+		</field>
+		<field name="periodTo" title="Period To">
+			<display />
+		</field>
+		<field name="amount" title="Amount">
+			<display description="${amount}" type="currency" currency="${uiLabelMap.HumanResDefaultCurrency}" />
+		</field>
+	</form>
+
+	<!-- Total TDS for an employee in a period  target="findTotalTDS"-->
+	<form name="FindTotalTDS" title="" type="single" target="totalTDS.pdf"
+		target-window="_blank" separate-columns="true" default-table-style="basic-table">
+		<field name="partyId"
+			use-when="${bsh:security.hasEntityPermission(&quot;HUMANRES&quot;,&quot;_ADMIN&quot;,session);}">
+			<lookup target-form-name="LookupPartyName" default-value="${userLogin.partyId}" />
+		</field>
+		<field name="periodFrom">
+			<date-time type="date" />
+		</field>
+		<field name="periodTo">
+			<date-time type="date" />
+		</field>
+		<field name="taxType">
+			<drop-down current="first-in-list" no-current-selected-key="INCOMETAX">
+				<option key="INCOMETAX" description="Income Tax" />
+				<option key="PROFESSIONALTAX" description="Professional Tax" />
+			</drop-down>
+		</field>
+		<field name="exportType" title="Export Type">
+			<drop-down current="first-in-list">
+				<option key="pdf" description="PDF" />
+				<option key="xls" description="Excel" />
+			</drop-down>
+		</field>
+		<field name="submitButton" event="onClick"
+			action="javascript:invokeExport(this.form);" title="${uiLabelMap.CommonRun}"
+			widget-style="smallSubmit">
+			<submit button-type="button" />
+		</field>
+	</form>
+
+	<form name="TotalTDSForm" type="list" separate-columns="true"
+		list-name="listIt" odd-row-style="alternate-row" header-row-style="header-row-2"
+		default-table-style="basic-table hover-bar">
+		<actions>
+			<service service-name="findTotalTDS" result-map="tds">
+				<field-map field-name="partyId" from-field="parameters.partyId" />
+				<field-map field-name="periodFrom" from-field="parameters.periodFrom" />
+				<field-map field-name="periodTo" from-field="parameters.periodTo" />
+				<field-map field-name="taxType" from-field="parameters.taxType" />
+			</service>
+		</actions>
+		<field name="partyName">
+			<display
+				description="${bsh:return(org.ofbiz.humanresext.util.HumanResUtil.getFullName(delegator, partyId, null));}" />
+		</field>
+		<field name="partyId">
+			<display />
+		</field>
+		<field name="periodFrom" id-name="periodFrom" title="Period From">
+			<display description="${periodFrom}" />
+		</field>
+		<field name="periodTo" title="Period To">
+			<display description="${periodTo}" />
+		</field>
+		<field name="taxType">
+			<display />
+		</field>
+		<field name="amount">
+			<display description="${amount}" type="currency" currency="${uiLabelMap.HumanResDefaultCurrency}" />
+		</field>
+	</form>
+
+	<!-- Total PF for an employee in a period  target="findTotalPF"-->
+	<form name="FindTotalPF" title="" type="single" target="totalPF.pdf"
+		target-window="_blank" separate-columns="true" default-table-style="basic-table">
+		<field name="partyId"
+			use-when="${bsh:security.hasEntityPermission(&quot;HUMANRES&quot;,&quot;_ADMIN&quot;,session);}">
+			<lookup target-form-name="LookupPartyName" default-value="${userLogin.partyId}" />
+		</field>
+		<field name="periodFrom">
+			<date-time type="date" />
+		</field>
+		<field name="periodTo">
+			<date-time type="date" />
+		</field>
+		<field name="exportType" title="Export Type">
+			<drop-down current="first-in-list">
+				<option key="pdf" description="PDF" />
+				<option key="xls" description="Excel" />
+			</drop-down>
+		</field>
+		<field name="submitButton" event="onClick"
+			action="javascript:invokeExport(this.form);" title="${uiLabelMap.CommonRun}"
+			widget-style="smallSubmit">
+			<submit button-type="button" />
+		</field>
+	</form>
+
+	<form name="TotalPFForm" type="list" separate-columns="true"
+		list-name="listIt" odd-row-style="alternate-row" header-row-style="header-row-2"
+		default-table-style="basic-table hover-bar">
+		<actions>
+			<service service-name="findTotalPF" result-map="tds">
+				<field-map field-name="partyId" from-field="parameters.partyId" />
+				<field-map field-name="periodFrom" from-field="parameters.periodFrom" />
+				<field-map field-name="periodTo" from-field="parameters.periodTo" />
+			</service>
+		</actions>
+		<field name="partyName">
+			<display
+				description="${bsh:return(org.ofbiz.humanresext.util.HumanResUtil.getFullName(delegator, partyId, null));}" />
+		</field>
+		<field name="partyId">
+			<display />
+		</field>
+		<field name="employeeAmount">
+			<display />
+		</field>
+		<field name="epfDiff">
+			<display />
+		</field>
+		<field name="pensionAmount">
+			<display />
+		</field>
+		<field name="periodFrom" id-name="periodFrom" title="Period From">
+			<display description="${periodFrom}" />
+		</field>
+		<field name="periodTo" title="Period To">
+			<display description="${periodTo}" />
+		</field>
+		<!--  <field name="wages"><display/></field>		 -->
+	</form>
+
+	<form name="FindLoan" type="single" target="FindLoan"
+		separate-columns="true" default-table-style="basic-table">
+		<field name="partyId"
+			use-when="${bsh:security.hasEntityPermission(&quot;HUMANRES&quot;,&quot;_ADMIN&quot;,session);}">
+			<lookup target-form-name="LookupPartyName" />
+		</field>
+		<field name="partyId"
+			use-when="${bsh:!security.hasEntityPermission(&quot;HUMANRES&quot;,&quot;_ADMIN&quot;,session);}">
+			<hidden value="${userLogin.partyId}" />
+		</field>
+		<field name="description">
+			<text-find />
+		</field>
+		<field name="loanAmount">
+			<range-find />
+		</field>
+		<field name="fromDate">
+			<date-find />
+		</field>
+		<field name="thruDate">
+			<date-find />
+		</field>
+		<field name="noConditionFind">
+			<hidden value="Y" />
+		</field>
+		<field name="submitButton" title="${uiLabelMap.CommonFind}"
+			widget-style="smallSubmit">
+			<submit button-type="button" />
+		</field>
+	</form>
+
+	<form name="ListLoan" type="list" list-name="listIt" target="ListTDS"
+		paginate="true" header-row-style="header-row-2" separate-columns="true"
+		odd-row-style="alternate-row" default-table-style="basic-table hover-bar">
+		<actions>
+			<service service-name="performFind" result-map="result"
+				result-map-list="listIt">
+				<field-map field-name="inputFields" from-field="parameters" />
+				<field-map field-name="entityName" value="EmplLoan" />
+			</service>
+		</actions>
+		<field name="loanId">
+			<hyperlink target="ViewLoan?loanId=${loanId}" description="${loanId}" />
+		</field>
+		<field name="partyId">
+			<display />
+		</field>
+		<field name="loanAmount">
+			<display />
+		</field>
+		<field name="deductionAmount">
+			<display />
+		</field>
+		<field name="fromDate">
+			<display />
+		</field>
+		<field name="thruDate">
+			<display />
+		</field>
+	</form>
+
+	<form name="LoanForm" type="single" target="CreateLoan">
+		<field name="partyId">
+			<lookup target-form-name="LookupPartyname" />
+		</field>
+		<field name="description" title="${uiLabelMap.CommonDescription}">
+			<text />
+		</field>
+		<field name="loanAmount">
+			<text />
+		</field>
+		<field name="deductionAmount">
+			<text />
+		</field>
+		<field name="fromDate">
+			<date-time type="date" />
+		</field>
+		<field name="thruDate">
+			<date-time type="date" />
+		</field>
+		<field name="submit" title="${uiLabelMap.CommonCreate}">
+			<submit />
+		</field>
+	</form>
+
+	<form name="ViewLoan" type="single" target="">
+		<field name="loanId">
+			<display />
+		</field>
+		<field name="partyId">
+			<display />
+		</field>
+		<field name="loanAmount">
+			<display />
+		</field>
+		<field name="deductionAmount">
+			<display />
+		</field>
+		<field name="fromDate">
+			<display />
+		</field>
+		<field name="thruDate">
+			<display />
+		</field>
+		<field name="description" title="${uiLabelMap.CommonDescription}">
+			<display />
+		</field>
+	</form>
+
+	<form name="EditPreferences" type="single" target="UpdatePreferences">
+		<field name="partyId">
+			<hidden value="${partyId}" />
+		</field>
+		<field name="bankName">
+			<text />
+		</field>
+		<field name="bankAccountNumber">
+			<text />
+		</field>
+		<field name="panNumber">
+			<text />
+		</field>
+		<field name="pfAccountNumber" tooltip="Make sure it is correct!!">
+			<text />
+		</field>
+		<field name="submit" title="${uiLabelMap.CommonUpdate}">
+			<submit />
+		</field>
+	</form>
+
+	<form name="FindPreferences" type="single" target="FindPreferences"
+		separate-columns="true" default-table-style="basic-table">
+		<auto-fields-entity entity-name="Preferences"
+			default-field-type="find" />
+		<field name="noConditionFind">
+			<hidden value="Y" />
+		</field>
+		<field name="submitButton" title="${uiLabelMap.CommonFind}"
+			widget-style="smallSubmit">
+			<submit button-type="button" />
+		</field>
+	</form>
+
+	<form name="ListPreferences" type="list" list-name="listIt"
+		target="UpdatePreferences" paginate="true" header-row-style="header-row-2"
+		separate-columns="true" odd-row-style="alternate-row"
+		default-table-style="basic-table hover-bar">
+		<actions>
+			<service service-name="performFind" result-map="result"
+				result-map-list="listIt">
+				<field-map field-name="inputFields" from-field="parameters" />
+				<field-map field-name="entityName" value="Preferences" />
+			</service>
+		</actions>
+		<field name="partyId">
+			<display />
+		</field>
+		<field name="bankName">
+			<text />
+		</field>
+		<field name="bankAccountNumber">
+			<text />
+		</field>
+		<field name="panNumber">
+			<text />
+		</field>
+		<field name="submit" title="${uiLabelMap.CommonUpdate}">
+			<submit />
+		</field>
+	</form>
+
+	<form name="FindEmplSalStruc" type="single" target="FindEmplSal">
+		<field name="partyId">
+			<lookup target-form-name="LookupPartyName" default-value="${userLogin.partyId}" />
+		</field>
+		<!--
+			<field name="filterByDate" title="Should find current CTC only?"
+			tooltip="Y/N"><text default-value="Y"></text></field>
+		-->
+		<field name="fromDate">
+			<date-find type="date" />
+		</field>
+		<field name="submit" title="${uiLabelMap.CommonFind}">
+			<submit />
+		</field>
+	</form>
+
+	<form name="ListEmplSalStruc" type="list" list-name="listIt"
+		target="UpdateEmplSalStruc" paginate="true" paginate-target="FindEmplSalStruc"
+		header-row-style="header-row-2" separate-columns="true" odd-row-style="alternate-row"
+		default-table-style="basic-table hover-bar">
+		<actions>
+			<service service-name="performFind" result-map="result"
+				result-map-list="listIt">
+				<field-map field-name="inputFields" from-field="parameters" />
+				<field-map field-name="entityName" value="EmplSalDetail" />
+				<field-map field-name="noConditionFind" value="N" />
+				<field-map field-name="filterByDate" value="Y" />
+			</service>
+		</actions>
+		<field name="partyId">
+			<hidden />
+		</field>
+		<field name="salaryHeadId">
+			<display-entity also-hidden="true" entity-name="SalaryHead"
+				description="${name}"></display-entity>
+		</field>
+		<field name="amount">
+			<text />
+		</field>
+		<field name="fromDate">
+			<date-time type="date" />
+		</field>
+		<field name="thruDate">
+			<date-time type="date" />
+		</field>
+		<field name="submit" title="${uiLabelMap.CommonUpdate}">
+			<submit />
+		</field>
+	</form>
+
+	<form name="FindTaxDecl" type="single" target="FindTaxDecl">
+		<field name="partyId">
+			<lookup target-form-name="LookupPartyName" />
+		</field>
+		<field name="submit" title="${uiLabelMap.CommonFind}">
+			<submit />
+		</field>
+	</form>
+
+	<form name="ListTaxDecl" type="list" list-name="listIt" paginate="true"
+		paginate-target="FindTaxDecl" header-row-style="header-row-2"
+		separate-columns="true" odd-row-style="alternate-row"
+		default-table-style="basic-table hover-bar">
+		<actions>
+			<service service-name="performFind" result-map="result"
+				result-map-list="listIt">
+				<field-map field-name="inputFields" from-field="parameters" />
+				<field-map field-name="entityName" value="EmplTaxDecl" />
+			</service>
+		</actions>
+		<auto-fields-entity entity-name="EmplTaxDecl"
+			default-field-type="display" />
+	</form>
+
+
+	<form name="PayScaleHistory" type="list" target="" list-name="payScales"
+		header-row-style="header-row-2" odd-row-style="alternate-row"
+		default-table-style="basic-table hover-bar">
+		<actions>
+			<entity-condition entity-name="PartyPayGrade" list="payScales">
+				<condition-expr field-name="partyId" value="${userLogin.partyId}" />
+				<order-by field-name="createdStamp" />
+			</entity-condition>
+		</actions>
+		<row-actions>
+			<entity-one entity-name="SalaryStep" value-field="salStep">
+				<field-map field-name="payGradeId" />
+				<field-map field-name="salaryStepSeqId" />
+			</entity-one>
+		</row-actions>
+		<field name="payGradeId">
+			<display-entity entity-name="PayGrade" description="${gradeName}"></display-entity>
+		</field>
+		<field name="salaryStepSeqId">
+			<display description="${salStep.description}"></display>
+		</field>
+		<field name="revision">
+			<display></display>
+		</field>
+		<field name="createdStamp">
+			<display />
+		</field>
+	</form>
+</forms>

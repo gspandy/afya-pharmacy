@@ -1,0 +1,100 @@
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<zk>
+	<zscript>
+		<![CDATA[
+			import org.ofbiz.entity.*;
+			import com.ndz.zkoss.HrmsUtil;
+			import org.zkoss.util.resource.Labels;
+			GenericDelegator delegator = com.ndz.zkoss.util.HrmsInfrastructure.getDelegator();//GenericDelegator.getGenericDelegator("default");
+			List priorityList =null;
+			List orderBy = new ArrayList();
+			orderBy.add("orderId");
+			priorityList= delegator.findList("PriorityType",null,null,orderBy,null,false);
+			priorityList.add(0,null);
+			SimpleListModel model = new SimpleListModel(priorityList);
+			ComboitemRenderer priorityitemrenderer = new ComboitemRenderer() {
+				public void render(Comboitem ci, Object data){
+					if (data instanceof GenericValue) {
+						GenericValue val = (GenericValue) data;
+						ci.setLabel(val.getString("description"));
+						ci.setValue(val.getString("priorityTypeId"));
+					}
+				}
+			};
+			Component comp = (Component)Executions.getCurrent().getArg().get("toolbarBtn");
+		]]>
+	</zscript>
+	<window id="requestTypeWindow" closable="true" width="40%"
+		height="45%" border="normal" contentStyle="overflow:auto" maximizable="true">
+		<caption label="${c:l('HRMS_CREATE_REQUEST_TYPE') }"></caption>
+		<separator height="15px"/>
+		<hbox>
+			<div align="right" width="150px">
+				<label value="${c:l('HRMS_REQUEST_TYPE_ID') }"></label>
+				<label value="*" style="color:red"></label>
+			</div>
+			<div align="left">
+				<textbox id="requestTypeIdTextBox"
+					constraint="no empty: ${c:l('HRMS_CRT_REQUIRED_REQUEST_TYPE_ID') }" maxlength="20">
+				</textbox>
+			</div>
+		</hbox>
+		<separator />
+		<hbox>
+			<div align="right" width="150px">
+				<label value="${c:l('HRMS_DESCRIPTION') }"></label>
+				<label value="*" style="color:red"></label>
+			</div>
+			<div align="left">
+				<textbox id="descriptionTextBox" constraint="no empty: ${c:l('HRMS_REQUIRED_DESCRIPTION') }" rows="2" cols="30" maxlength="250"></textbox>
+			</div>
+		</hbox>
+		<separator />
+		<hbox>
+			<div align="right" width="150px">
+				<label value="${c:l('HRMS_PRIORITY') }"></label>
+				<label value="*" style="color:red"></label>
+			</div>
+			<div align="left">
+				<combobox id="priorityListBox" model="${model}" itemRenderer="${priorityitemrenderer}"
+					constraint="no empty: ${c:l('HRMS_CRT_REQUIRED_PRIORITY') }" readonly="true">
+				</combobox>
+			</div>
+		</hbox>
+		<separator />
+		<hbox>
+			<div align="right" width="150px">
+				<label value="${c:l('HRMS_PURPOSE') }"></label>
+				<label value="*" style="color:red"></label>
+			</div>
+			<div align="left">
+				<textbox id="purposeTextBox" rows="2" cols="30" constraint="no empty: ${c:l('HRMS_REQUIRED_PURPOSE') }" maxlength="250"></textbox>
+			</div>
+		</hbox>
+		<separator />
+		<zscript>
+			<![CDATA[
+				void validateForm(){
+					String s= requestTypeIdTextBox.getValue();
+					boolean b=com.ndz.zkoss.HrmsUtil.checkSpecialCharacter(s);
+					if(b)
+					{
+						throw new WrongValueException(requestTypeIdTextBox, Labels.getLabel("HRMS_SPECIAL_CHARACTER_NOT_ALLOWED"));
+					}
+					
+					descriptionTextBox.getValue();
+					priorityListBox.getValue();
+					purposeTextBox.getValue();
+				}
+			]]>
+		</zscript>
+		<hbox>
+			<div width="275px" align="right">
+				<button id="save" label="${c:l('btnSave') }" onClick='validateForm();Component componentPath = Path.getComponent("/searchPanel//searchButton");com.hrms.composer.EmployeeRequestComposer.createRequestType(event);if(componentPath != null)Events.postEvent("onClick",Path.getComponent("/searchPanel/searchButton"),null);requestTypeWindow.detach();'></button>
+				<button id="close" label="${c:l('ButtonCancel') }"
+					onClick="requestTypeWindow.detach()">
+				</button>
+			</div>
+		</hbox>
+	</window>
+</zk>

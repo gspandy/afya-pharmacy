@@ -1,0 +1,334 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+Licensed to the Apache Software Foundation (ASF) under one
+or more contributor license agreements.  See the NOTICE file
+distributed with this work for additional information
+regarding copyright ownership.  The ASF licenses this file
+to you under the Apache License, Version 2.0 (the
+"License"); you may not use this file except in compliance
+with the License.  You may obtain a copy of the License at
+	http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing,
+software distributed under the License is distributed on an
+"AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+KIND, either express or implied.  See the License for the
+specific language governing permissions and limitations
+under the License.
+-->
+
+<screens xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="http://ofbiz.apache.org/dtds/widget-screen.xsd">
+	
+	
+	<screen name="OpportunityDecorator">
+		<section>
+			<actions>
+				<set field="headerItem" value="main" />
+			</actions>
+			<widgets>
+				<decorator-screen name="main-decorator" location="${parameters.mainDecoratorLocation}">
+						<decorator-section name="body">
+							<include-menu location="component://sfaext/widget/SfaMenus.xml" name="OpportunityTabBar"/>
+							<decorator-section-include name="body"/>
+						</decorator-section>
+				</decorator-screen>
+			</widgets>
+		</section>
+	</screen>
+	
+	<screen name="OpportunitySubMenuDecorator">
+		<section>
+			<actions>
+				<set field="headerItem" value="main" />
+			</actions>
+			<widgets>
+				<decorator-screen name="main-decorator" location="${parameters.mainDecoratorLocation}">
+						<decorator-section name="body">
+							<include-menu location="component://sfaext/widget/SfaMenus.xml" name="OpportunitySubTabBar"/>
+							<decorator-section-include name="body"/>
+						</decorator-section>
+				</decorator-screen>
+			</widgets>
+		</section>
+	</screen>
+
+	<screen name="main-section-decorator">
+		<section>
+			<widgets>
+				<decorator-screen name="OpportunityDecorator">
+					<decorator-section name="body">
+						<container style="screenlet">
+							<container style="screenlet-title-bar">
+								<container style="h3"> <label text="${uiLabelMap.${sectionTitle}}" /></container>
+							</container>
+							<container  style="form">
+								<decorator-section-include name="section-body"/>
+							</container>
+						</container>
+					</decorator-section>
+				</decorator-screen>
+			</widgets>
+		</section>
+	</screen>
+	
+	<screen name="FindOpportunity">
+		<section>
+			<actions>
+				<set field="titleProperty" value="Find Opportunity"/>
+				<set field="tabButtonItem" value="FindOpportunity"/>
+			</actions>
+			<widgets>
+				<decorator-screen name="OpportunityDecorator">
+					<decorator-section name="body">
+						<container style="screenlet">
+							<container style="screenlet-title-bar">
+								<container style="h3"> <label text="${uiLabelMap.CrmFindOpportunity}" /></container>
+							</container>
+							<container  style="form">
+								<include-form name="FindOpportunity" location="component://sfaext/widget/forms/OpportunityForms.xml"/>
+							</container> 
+						</container>
+					
+						<container style="screenlet">
+							<container style="screenlet-title-bar">
+								<container style="h3"> <label text="${uiLabelMap.CrmSearchResults}" /></container>
+							</container>
+							<container style="form">
+								<include-form name="ListOpportunities" location="component://sfaext/widget/forms/OpportunityForms.xml"/>
+							</container>
+						</container>
+					</decorator-section>
+				</decorator-screen>
+			</widgets>
+		</section>
+	</screen>
+	
+	<screen name="createOpportunityForm">
+		<section>
+			<actions>
+				<!-- this screen is rather sophisticated, so we need a bsh to fiddle with the parameters
+				<script location="component://crmsfa/webapp/crmsfa/WEB-INF/actions/opportunities/createOpportunityForm.bsh"/>
+				 -->
+				<set field="layoutSettings.javaScripts[]" value="/images/Quotes.js" global="true"/>
+				<set field="titleProperty" value="sfaNewOpportunity"/>
+				<set field="tabButtonItem" value="CreateOpportunity"/>
+			</actions>
+			<widgets>
+				<decorator-screen name="main-decorator" location="${parameters.mainDecoratorLocation}">
+					<decorator-section name="body">
+						<container style="screenlet">
+							<container style="screenlet-title-bar">
+								<container style="h3"><label text="${uiLabelMap.CrmCreateOpportunity}" /></container>
+							</container>
+							<container  style="form">
+								<include-form name="createOpportunityForm" location="component://sfaext/widget/forms/OpportunityForms.xml"/>
+							</container>
+						</container>
+					</decorator-section>
+				</decorator-screen>
+			</widgets>
+		</section>
+	</screen>
+	
+	<screen name="EditOpportunityForm">
+		<section>
+			<actions>
+				<property-map resource="SFAEXTUiLabels" map-name="uiLabelMap" global="true"/>
+				<set field="titleProperty" value="CrmEditOpportunity"/>
+				<set field="pageTitleLabel" value="CrmEditOpportunity"/>
+				<set field="sectionHeaderUiLabel" value="CrmEditOpportunity"/>
+			</actions>
+			<widgets>
+				<decorator-screen name="main-decorator" location="${parameters.mainDecoratorLocation}">
+					<decorator-section name="body">
+						<container style="screenlet">
+							<container style="screenlet-title-bar">
+								<container style="h3"><label text="${uiLabelMap.CrmEditOpportunity}"/></container>
+							</container>
+							<container style="form">
+								<include-form name="createOpportunityForm" location="component://sfaext/widget/forms/OpportunityForms.xml"/>
+							</container>
+						</container>
+					</decorator-section>
+				</decorator-screen>
+			</widgets>
+		</section>
+	</screen>
+
+	<screen name="opportunityQuotes">
+		<section>
+			<!-- <condition><if-compare field="isAccountOpportunity" operator="equals" value="true" type="Boolean"/></condition> -->
+			<widgets>
+				<container style="screenlet">
+					<container style="screenlet-title-bar"><container style="h3"><label>${uiLabelMap.CrmQuotes}</label>
+					</container></container>
+
+					<!-- this form is specific to opportunities because the data needs to be pulled with display-entity -->
+					<include-form name="ListQuotes" location="component://sfaext/widget/forms/OpportunityForms.xml"/>
+
+					<!-- If the user can update opportunities, include the relevant form -->
+					<section>
+						<!-- <condition><if-compare field="hasUpdatePermission" operator="equals" value="true" type="Boolean"/></condition> -->
+						<widgets>
+							<include-form name="addQuoteToOpportunityForm" location="component://sfaext/widget/forms/OpportunityForms.xml"/>
+						</widgets>
+					</section>
+				</container>
+			</widgets>
+		</section>
+	</screen>
+
+	<screen name="opportunityContacts">
+		<section>
+			<condition><if-compare field="isAccountOpportunity" operator="equals" value="true" type="Boolean"/></condition>
+			<widgets>
+				<container style="screenlet">
+					<container style="screenlet-title-bar"><container style="h3"><label>${uiLabelMap.CrmContactList}</label>
+					</container></container>
+
+					<!-- this form is specific to opportunities because the data needs to be pulled with display-entity -->
+					<include-form name="ListContacts" location="component://sfaext/widget/forms/OpportunityForms.xml"/>
+
+					<!-- If the user can update opportunities, include the relevant form -->
+					<section>
+						<condition><if-compare field="hasUpdatePermission" operator="equals" value="true" type="Boolean"/></condition>
+						<widgets>
+							<include-form name="addContactToOpportunityForm" location="component://sfaext/widget/forms/OpportunityForms.xml"/>
+						</widgets>
+					</section>
+				</container>
+			</widgets>
+		</section>
+	</screen>
+
+	<screen name="ViewOpportunity">
+		<section>
+			<actions>
+				<property-map resource="SFAEXTUiLabels" map-name="uiLabelMap" global="true"/>
+				<set field="titleProperty" value="CrmViewOpportunity"/>
+				<set field="pageTitleLabel" value="CrmOpportunities"/>
+				<set field="editContactMechPage" value="opportunityEditContactMech"/>
+				<set field="donePage" value="viewOpportunity"/>
+				<set field="displayContactMechs" value="Y"/>
+				<script location="component://sfaext/webapp/sfaext/WEB-INF/actions/opportunities/viewOpportunity.groovy"/>
+			</actions>
+			<widgets>
+				<decorator-screen name="OpportunitySubMenuDecorator">
+					<decorator-section name="body">
+						<container style="screenlet">
+							<container style="screenlet-title-bar">
+								<container style="h3"><label text="${uiLabelMap.CrmOpportunities}"/></container>
+								<!-- <container style="subMenuBar">
+									<link name="edit" text="${uiLabelMap.CommonEdit}" style="subMenuButton" target="editOpportunityForm?salesOpportunityId=${parameters.salesOpportunityId}"></link>
+								</container> -->
+							</container>
+							<container style="form">
+								<include-form location="component://sfaext/widget/forms/OpportunityForms.xml" name="ViewOpportunity"/>
+							</container>
+						</container>
+						
+						<include-screen name="opportunityQuotes"/>
+
+						<include-screen name="opportunityContacts"/>
+
+						<container style="screenlet">
+							<include-screen location="component://sfaext/widget/ContentScreens.xml" name="OpportunityContentList"/>
+						</container>
+
+					</decorator-section>
+				</decorator-screen>  
+			</widgets>
+		</section>
+	</screen>
+
+	<screen name="MyOpportunities">
+		<section>
+			<actions>
+				<script location="component://sfaext/webapp/sfaext/WEB-INF/actions/opportunities/myOpportunities.groovy"/>
+				<set field="titleProperty" value="${VIEW_PREF}Opportunities"/>
+				<set field="tabButtonItem" value="${VIEW_PREF}Opportunities"/>
+			</actions>
+			<widgets>
+				<section>
+					<condition>
+						<if-compare field="parameters.viewPrefTypeId" operator="equals" value="my"/>
+					</condition>
+					<widgets>
+						<decorator-screen name="main-decorator" location="${parameters.mainDecoratorLocation}">
+							<decorator-section name="body">
+								<container style="screenlet">
+									<container style="screenlet-title-bar">
+										<container style="h3"> <label text="${uiLabelMap.CrmMyOpportunities}" /></container>
+									</container>
+									<!-- <include-form location="component://sfaext/widget/forms/OpportunityForms.xml" name="MyOpportunities"/> -->	
+									<platform-specific>
+										<html>
+							 				<html-template location="component://sfaext/webapp/sfaext/opportunity/myOpportunities.ftl"/>
+										</html>
+									</platform-specific>
+								</container>
+							</decorator-section>
+						</decorator-screen>  
+					</widgets>
+				</section>
+				<section>
+					<condition>
+						<if-compare field="parameters.viewPrefTypeId" operator="equals" value="team"/>
+					</condition>
+					<widgets>
+						<decorator-screen name="main-decorator" location="${parameters.mainDecoratorLocation}">
+							<decorator-section name="body">
+								<container style="screenlet">
+									<container style="screenlet-title-bar">
+										<container style="h3"> <label text="${uiLabelMap.CrmTeamsOpportunities}" /></container>
+									</container>
+									<!-- <include-form location="component://sfaext/widget/forms/OpportunityForms.xml" name="MyOpportunities"/> -->	
+									<platform-specific>
+										<html>
+											<html-template location="component://sfaext/webapp/sfaext/opportunity/myOpportunities.ftl"/>
+										</html>
+									</platform-specific>
+								</container>
+							</decorator-section>
+						</decorator-screen>
+					</widgets>
+				</section>
+			</widgets>
+		</section>
+	</screen>
+	
+	<screen name="LookupQuotes">
+		<section>
+			<!-- <condition>
+				<if-has-permission permission="ORDERMGR" action="_VIEW"/>
+			</condition> -->
+			<actions>
+				<script location="component://sfaext/webapp/sfaext/WEB-INF/actions/opportunities/findCustomerForOpportunity.groovy"/>
+				<property-map resource="SFAEXTUiLabels" map-name="uiLabelMap" global="true"/>
+				<set field="pageTitleLabel" value="CrmFindQuotes"/>
+				<set field="title" value="${uiLabelMap.CrmFindQuotes}"/>
+				<set field="sectionHeaderUiLabel" value="CrmFindQuotes"/>
+				<set field="salesOpportunityId" from-field="parameters.parm0"/>
+				<set field="customerPartyId" from-field="customerPartyId"/>
+				<set field="queryString" from-field="result.queryString"/>
+				<set field="viewIndex" from-field="parameters.VIEW_INDEX" type="Integer" default-value="0"/>
+				<set field="viewSize" from-field="parameters.VIEW_SIZE" type="Integer" default-value="20"/>
+				<!-- <set field="entityName" value="Quote"/>
+				<set field="searchFields" value="[quoteId, quoteName]"/>
+				<set field="displayFields" value="[quoteId, quoteName]"/> -->
+				<set field="findQuotesTarget" value="LookupQuotes"/>
+			</actions>
+			<widgets>
+				<decorator-screen name="LookupDecorator" location="component://common/widget/CommonScreens.xml">
+					<decorator-section name="search-options">
+						<include-form name="lookupQuote" location="component://sfaext/widget/forms/OpportunityForms.xml"/>
+					</decorator-section>
+					<decorator-section name="search-results">
+						<include-form name="listLookupQuote" location="component://sfaext/widget/forms/OpportunityForms.xml"/>
+					</decorator-section>
+				</decorator-screen>
+			</widgets>
+		</section>
+	</screen>
+
+</screens>

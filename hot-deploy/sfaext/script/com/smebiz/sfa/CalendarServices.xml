@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<simple-methods xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="http://ofbiz.apache.org/dtds/simple-methods.xsd">
+	
+	<simple-method method-name="addCRMEvent"  short-description="create CRM Event" parameter-map-name="parameters">
+		<log level="error">
+			<string> INSIDE ADD CRM EVENT </string>
+			<field field="parameters.eventName"/>
+		</log>
+		<make-value entity-name="CrmEvent" value-field="eventEntity" />
+		<set-nonpk-fields map="parameters" value-field="eventEntity" />
+		<sequenced-id sequence-name="CrmEvent" field="eventEntity.crmEventId" />
+		<create-value value-field="eventEntity" />
+
+		<make-value entity-name="WorkEffort" value-field="workEntity"/>
+		<sequenced-id sequence-name="WorkEffort" field="workEntity.workEffortId"/>
+		<set-nonpk-fields map="parameters" value-field="workEntity" />
+		<set field="workEntity.description" from-field="parameters.eventName"/> 
+		<set field="workEntity.crmEventId" from-field="eventEntity.crmEventId"/>
+		<set field="workEntity.workEffortPurposeTypeId" value="WEPT_PROJECT"/>
+		<set field="workEntity.scopeEnumId" value="WES_PRIVATE"/>
+		<set field="workEntity.priority" value="5" type="Long"/>
+		<set field="workEntity.workEffortTypeId" value="EVENT" type="PlainString"/>
+		<set field="workEntity.workEffortName" from-field="parameters.eventName"/>
+		<set field="workEntity.workEffortTypeId" value="EVENT" type="PlainString"/>
+		<create-value value-field="workEntity"/>
+
+		<make-value entity-name="WorkEffortPartyAssignment" value-field="assocEntity"/>
+		<set field="assocEntity.workEffortId" from-field="workEntity.workEffortId"/> 
+		<set field="assocEntity.partyId" from-field="parameters.partyId"/>
+		<set field="assocEntity.roleTypeId" value="_NA_"/>
+		<set field="assocEntity.fromDate" from-field="parameters.estimatedStartDate"/>
+		<create-value value-field="assocEntity"/>
+	</simple-method>
+
+	<simple-method method-name="updateCRMEvent"  short-description="update CRM Event" parameter-map-name="parameters">
+		<entity-one entity-name="CrmEvent" value-field="eventEntity"/>
+		<set-nonpk-fields value-field="eventEntity" map="parameters"/>
+		<store-value value-field="eventEntity"/>
+		<entity-condition entity-name="WorkEffort" list="workEfforts">
+			<condition-expr field-name="crmEventId" from-field="eventEntity.crmEventId"/>
+		</entity-condition>
+		<first-from-list entry="workEffort" list="workEfforts"/>
+		<set-nonpk-fields value-field="workEffort" map="parameters"/>
+		<set field="workEffort.workEffortName" from-field="parameters.eventName"/>
+		<store-value value-field="workEffort"/>
+	</simple-method>
+</simple-methods>

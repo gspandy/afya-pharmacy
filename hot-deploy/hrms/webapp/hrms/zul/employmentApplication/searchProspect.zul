@@ -1,0 +1,171 @@
+<?component name="findbox" macroURI="../macros/textfindMacro.zul" id="macro1"?>
+<?component name="findbox" macroURI="../macros/textfindMacro.zul" id="macro2"?>
+<?component name="findbox" macroURI="../macros/textfindMacro.zul" id="macro3"?>
+<?component name="fromDatebox" macroURI="../macros/datefindMacro.zul" id="macro2"?>
+<?component name="thruDatebox" macroURI="../macros/datefindMacro.zul" id="macro3"?>
+<?component name="selectbox" macroURI="../macros/findselectbox.zul" id="macro4"?>
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<zk xmlns:h="http://www.zkoss.org/2005/zk/native">
+	<zscript>
+		import com.ndz.controller.*;
+		import org.ofbiz.entity.GenericValue;
+		import org.zkoss.util.resource.Labels;
+		String[] values = new String[] { "", "MANAGER", "PROGRAMMER", "BIZ_ANALYST", "HOD", "SYS_ADMIN" };
+		SearchController controller = new SearchController();
+		GenericValue userLogin = (GenericValue) Executions.getCurrent().getDesktop().getSession().getAttribute("userLogin");
+		employeeId = userLogin.getString("partyId");
+		GenericValue employeePosIdGv = org.ofbiz.humanresext.util.HumanResUtil.getEmplPositionForParty(employeeId,delegator);
+		String employeePosId = null;
+		if (employeePosIdGv != null) {
+			employeePosId = employeePosIdGv.getString("emplPositionId");
+		}
+		boolean isAdmin = security.hasPermission("HUMANRES_ADMIN", userLogin);
+		Toolbarbutton prospectToolbarBtn = (Toolbarbutton)Executions.getCurrent().getArg().get("prospectBtn");
+	</zscript>
+	<window id="searchPanel" apply="${controller}" contentStyle="overflow:auto">
+		<custom-attributes entityName="PartyResume" companyWide="true"></custom-attributes>
+		<textbox visible="false" id="resumeStatus_1adminfld" value="1"></textbox>
+		<textbox visible="false" id="resumeStatus_searchfld" value="1"></textbox>
+		<textbox id="partyId_searchfld" visible="false" if="${!isAdmin}" />
+		<textbox id="partyId_1adminfld" visible="false" if="${isAdmin}" />
+		<separator height="10px" />
+		<div align="center">
+			<h:table>
+				<h:tr height="50px">
+					<h:td style="text-align:right">
+						<label value="${c:l('HRMS_CANDIDATE_ID') }" />
+					</h:td>
+					<h:td>
+						<div>
+							<prospectbox id="prospect" buttonVisible="false" width="200px">
+								<attribute name="onChange">
+									if (isAdmin) partyId_1adminfld.setValue(self.getValue());
+									if (!isAdmin) partyId_searchfld.setValue(self.getValue());
+								</attribute>
+							</prospectbox>
+						</div>
+					</h:td>
+				</h:tr>
+				<h:tr>
+					<h:td />
+					<h:td>
+						<div align="center">
+							<hbox>
+
+								<button label="${c:l('HRMS_SearchButton') }" mold="os" onClick="results.setVisible(true);results.setFocus(true)"
+									id="searchPerCompany">
+									<attribute name="onCreate">
+									Events.postEvent("onClick",self,null);
+								</attribute>
+								</button>
+								<button label="${c:l('HRMS_ResetButton') }" onClick='results.setVisible(false);Events.postEvent("onClick",prospectToolbarBtn,null)'></button>
+							</hbox>
+						</div>
+					</h:td>
+				</h:tr>
+			</h:table>
+		</div>
+		<zscript>
+			<![CDATA[
+				import org.ofbiz.base.util.*;
+				import org.zkoss.zk.ui.event.EventListener;
+				import org.ofbiz.entity.*;
+				class MyRowRenderer implements RowRenderer {
+
+					MyRowRenderer() {
+					}
+
+					public void render(Row row, Object data) {
+					GenericValue gv = ((GenericValue) data);
+					GenericValue person = null;
+					String partyId = gv.getString("partyId");
+					GenericDelegator delegator = com.ndz.zkoss.util.HrmsInfrastructure.getDelegator();//GenericDelegator.getGenericDelegator("default");
+					person = delegator.findByPrimaryKey("Person", UtilMisc.toMap("partyId", gv.getString("partyId")));
+					if(person!=null){
+					new Label(person.getString("firstName") + " " + person.getString("lastName")).setParent(row);
+					}else{
+					new Label("").setParent(row);
+					}
+					row.setTooltiptext("DoubleClick To Edit/Update");
+					row.addEventListener("onDoubleClick", new EventListener() {
+						public void onEvent(Event event) throws Exception {
+						Window window = (Window) Executions.createComponents("/zul/employmentApplication/editProspect.zul", null,
+								UtilMisc.toMap("partyId", gv.getString("partyId"), "gv", gv));
+						window.doModal();
+						}
+					});
+					new Label(gv.getString("partyId")).setParent(row);
+
+					List telecomNumberDetails = org.ofbiz.party.contact.ContactMechWorker.getPartyContactMechValueMaps(delegator,
+							gv.getString("partyId"), false, "TELECOM_NUMBER");
+					Object telecomNumberMap = null;
+					GenericValue contactNumberGv = null;
+					String contactNumber = null;
+					String phoneNumber = null;
+					if (UtilValidate.isNotEmpty(telecomNumberDetails) && telecomNumberDetails.size() > 0) {
+						telecomNumberMap = telecomNumberDetails.get(0);
+						contactNumberGv = (GenericValue) telecomNumberMap.get("telecomNumber");
+						contactNumber = (String) contactNumberGv.getString("contactNumber");
+						phoneNumber = contactNumber;
+					}
+					if (contactNumber != null) {
+						new Label(phoneNumber).setParent(row);
+					} else {
+						new Label("").setParent(row);
+					}
+					List emailAddressDetails = org.ofbiz.party.contact.ContactMechWorker.getPartyContactMechValueMaps(delegator,
+							partyId, false, "EMAIL_ADDRESS");
+					String emailAddress = null;
+					Object emailAddressMap = null;
+					GenericValue emailAddressGv = null;
+					if (UtilValidate.isNotEmpty(emailAddressDetails) && emailAddressDetails.size() > 0) {
+						emailAddressMap = emailAddressDetails.get(0);
+						emailAddressGv = (GenericValue) emailAddressMap.get("contactMech");
+						emailAddress = (String) emailAddressGv.get("infoString");
+					}
+					if (emailAddress != null) {
+						new Label(emailAddress).setParent(row);
+					} else {
+						new Label("").setParent(row);
+					}
+
+					Button downLoadBtn = new Button();
+					downLoadBtn.setLabel(Labels.getLabel("HRMS_DOWNLOAD"));
+					downLoadBtn.setTooltiptext(Labels.getLabel("HRMS_CLICK_TO_DOWNLOAD_RESUME"));
+					downLoadBtn.setParent(row);
+					downLoadBtn.setSclass("btnDownload btnStyle");
+					row.appendChild(downLoadBtn);
+					downLoadBtn.addEventListener("onClick", new EventListener() {
+						public void onEvent(Event event) throws Exception {
+						com.ndz.controller.EmployeeRequisitionController.downloadResume(event, gv);
+						}
+					});
+					}
+
+				}
+				RowRenderer tableRenderer = new MyRowRenderer();
+			]]>
+		</zscript>
+		<div id="results" visible="false">
+			<h:table width="100%" style="border:0px" cellspacing="0px" cellpadding="0px">
+				<h:tr>
+					<h:td width="90%">
+						<label value="${c:l('HRMS_SEARCHRESULTS') }"></label>
+					</h:td>
+					<h:td width="10%" style="text-align:right">
+						<paging id="paging" />
+					</h:td>
+				</h:tr>
+			</h:table>
+			<grid id="dataGrid" rowRenderer="${tableRenderer}" height="200px">
+				<columns menupopup="auto">
+					<column label="${c:l('HRMS_CANDIDATE_NAME') }" />
+					<column label="${c:l('HRMS_CANDIDATE_ID') }" />
+					<column label="${c:l('FormFieldTitle_ContactNumber') }" />
+					<column label="${c:l('HRMS_EMAILADDRESS') }" />
+					<column label="${c:l('HRMS_ACTION') }" />
+				</columns>
+			</grid>
+		</div>
+	</window>
+</zk>

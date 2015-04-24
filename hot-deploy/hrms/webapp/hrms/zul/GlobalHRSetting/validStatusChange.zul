@@ -1,0 +1,101 @@
+<zk>
+	<window title="Employee Valid Status" id="employeeValidStatus"
+		apply="com.ndz.controller.EmployeeStatusType" closable="true"
+		width="600px" height="200px" position="center" border="normal" mode="modal">
+
+		<zscript>
+<![CDATA[
+	import com.ndz.controller.*;
+	import com.ndz.component.party.PartyRoleRenderer;
+	import org.ofbiz.entity.*;
+	import java.util.*;
+	import org.ofbiz.entity.condition.*;
+	import org.ofbiz.entity.GenericDelegator;
+	import org.ofbiz.base.util.*;
+	import java.util.List;
+	import java.util.Set;
+	import org.ofbiz.entity.GenericValue;
+	import org.zkoss.zul.Listitem;
+	import org.zkoss.zul.ListitemRenderer;
+	import com.ndz.zkoss.GenericValueRenderer;
+	import javax.servlet.http.HttpServletRequest;
+	import javax.servlet.http.HttpServletResponse;
+	import org.ofbiz.entity.GenericEntityException;
+	import org.zkoss.zk.ui.util.GenericForwardComposer;
+	import com.nthdimenzion.humanres.payroll.SalaryBean;
+	import java.util.Calendar;
+	import java.text.DateFormat;
+	GenericDelegator delegator = com.ndz.zkoss.util.HrmsInfrastructure.getDelegator();//GenericDelegator.getGenericDelegator("default");
+	GenericValue userLogin = (GenericValue) session.getAttribute("userLogin");
+	String partyIdLoggedIn = userLogin.getString("partyId");
+	System.out.println("\n\n\n\n" + partyIdLoggedIn);
+	
+	ListitemRenderer itemRenderer=new com.ndz.zkoss.DropDownGenericValueAdapter("description");
+	
+
+]]>	
+</zscript>
+		<separator height="25px"></separator>
+		<hbox>
+			<hbox align="center" style="margin-left:50px">
+				<label value="Status From" /><label value="*" style="color:red"/>
+				<listbox id="statusFrom" mold="select" width="150px" onSelect="findList();Clients.closeErrorBox(self)"  itemRenderer="${itemRenderer}"></listbox>
+			</hbox>
+		<hbox>
+				<label value="Status To" /><label value="*" style="color:red"/>
+				<listbox id="statusTo" mold="select" itemRenderer="${itemRenderer}" onSelect="Clients.closeErrorBox(self)">
+				
+				</listbox>
+				
+				<zscript>
+	List emplStatusFrom = delegator.findByAnd("StatusItem", UtilMisc.toMap("statusTypeId", "EMPL_STATUS"));
+emplStatusFrom.add(0, null);
+SimpleListModel employeeStatusFrom = new SimpleListModel(emplStatusFrom);
+statusFrom.setModel(employeeStatusFrom);
+
+
+void findList(){
+    if(com.ndz.zkoss.HrmsUtil.listboxValidation(statusFrom) == true){
+       throw new WrongValueException(statusFrom,"Status From Required");
+    }
+	statusFrom.getSelectedItem();
+	List emplStatusTo = new LinkedList();
+	emplStatusTo.addAll(emplStatusFrom);
+	emplStatusTo.remove(statusFrom.getSelectedItem().getValue());
+	SimpleListModel employeeStatusTo = new SimpleListModel(emplStatusTo);
+	statusTo.setModel(employeeStatusTo);
+}
+</zscript>
+			</hbox>
+			
+		
+		</hbox>
+		
+		<separator height="20px"></separator>
+		<hbox >
+			<div width="120px" align="right" style="margin-left:1px">
+				<label value="Description" />
+			</div>
+			<div style="margin-left:10px">
+				<textbox id="description" cols="60" rows="3"></textbox>
+			</div>
+		</hbox>
+		<separator height="15px"></separator>
+		<zscript>
+		 void validate(){
+		   if(com.ndz.zkoss.HrmsUtil.listboxValidation(statusFrom) == true){
+		       throw new WrongValueException(statusFrom,"Status From Required");
+		    }
+		    if(com.ndz.zkoss.HrmsUtil.listboxValidation(statusTo) == true){
+		       throw new WrongValueException(statusTo,"Status To Required");
+		    }
+		 }
+		</zscript>
+		<hbox >
+			<div align="right" width="246px">
+				<button id="createValidStatus" label="Create" onClick="validate();"  />
+				<button id="buttonClose" label="Close" onClick="employeeValidStatus.detach()" />
+			</div>
+		</hbox>
+	</window>
+</zk>

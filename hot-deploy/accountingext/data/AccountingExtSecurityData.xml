@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<entity-engine-xml>
+    <SecurityPermission description="View operations in the AccountingExt Component." permissionId="ACCOUNTING_VIEW"/>
+    <SecurityPermission description="Create operations in the AccountingExt Component." permissionId="ACCOUNTING_CREATE"/>
+    <SecurityPermission description="Update operations in the AccountingExt Component." permissionId="ACCOUNTING_UPDATE"/>
+    <SecurityPermission description="Delete operations in the AccountingExt Component." permissionId="ACCOUNTING_DELETE"/>
+    <SecurityPermission description="ALL operations in the AccountingExt Component." permissionId="ACCOUNTING_ADMIN"/>
+    <SecurityGroupPermission groupId="FULLADMIN" permissionId="ACCOUNTING_ADMIN"/>
+    <SecurityGroupPermission groupId="FLEXADMIN" permissionId="ACCOUNTING_CREATE"/>
+    <SecurityGroupPermission groupId="FLEXADMIN" permissionId="ACCOUNTING_DELETE"/>
+    <SecurityGroupPermission groupId="FLEXADMIN" permissionId="ACCOUNTING_UPDATE"/>
+    <SecurityGroupPermission groupId="FLEXADMIN" permissionId="ACCOUNTING_VIEW"/>
+    <SecurityGroupPermission groupId="VIEWADMIN" permissionId="ACCOUNTING_VIEW"/>
+    <SecurityGroupPermission groupId="BIZADMIN" permissionId="ACCOUNTING_ADMIN"/>
+</entity-engine-xml>

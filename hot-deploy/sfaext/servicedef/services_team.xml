@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<services xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.ofbiz.org/dtds/services.xsd">
+    <description>CRM SFA Team Services</description>
+    <vendor>nthdimenzion</vendor>
+    <version>0.9</version>
+
+    <service name="sfaext.createTeam" engine="java" location="com.smebiz.sfa.teams.TeamServices" invoke="createTeam">
+        <description>Creates a team and assigns the userLogin as the team leader. Requires CRMSFA_TEAM_CREATE permission.</description>
+        <attribute name="groupName" type="String" mode="IN" optional="false"/>
+        <attribute name="comments" type="String" mode="IN" optional="true"/>
+        <attribute name="partyId" type="String" mode="OUT" optional="false"/>
+    </service>
+
+    <service name="sfaext.updateTeam" engine="java" location="com.smebiz.sfa.teams.TeamServices" invoke="updateTeam">
+        <description>Updates a team. Requires CRMSFA_TEAM_UPDATE permission on the team partyId.</description>
+        <attribute name="partyId" type="String" mode="IN" optional="false"/>
+        <attribute name="groupName" type="String" mode="IN" optional="false"/>
+        <attribute name="comments" type="String" mode="IN" optional="true"/>
+    </service>
+
+    <service name="sfaext.deactivateTeam" engine="java" location="com.smebiz.sfa.teams.TeamServices" invoke="deactivateTeam">
+        <description>Deactivates a team. Requires CRMSFA_TEAM_DEACTIVATE permission on the team.</description>
+        <attribute name="partyId" type="String" mode="IN" optional="false"/>
+    </service>
+ 
+    <service name="sfaext.assignTeamToAccount" engine="java" location="com.smebiz.sfa.teams.TeamServices" invoke="assignTeamToAccount">
+        <description>Assigns a team to an account. The userLogin must have CRMSFA_TEAM_ASSIGN permission on this account.</description>
+        <attribute name="accountPartyId" type="String" mode="IN" optional="false"/>
+        <attribute name="teamPartyId" type="String" mode="IN" optional="false"/>
+    </service>
+
+    <service name="sfaext.addTeamMember" engine="java" location="com.smebiz.sfa.teams.TeamServices" invoke="addTeamMember">
+        <description>Adds a team member to the specified account or account team. 
+            The userLogin must have CRMSFA_TEAM_ASSIGN permission on this account or team.</description>
+        <attribute name="teamMemberPartyId" type="String" mode="IN" optional="false"/>
+        <attribute name="accountTeamPartyId" type="String" mode="IN" optional="false"/>
+        <attribute name="securityGroupId" type="String" mode="IN" optional="false"/>
+    </service>
+    
+    <service name="sfaext.removeTeamMember" engine="java" location="com.smebiz.sfa.teams.TeamServices" invoke="removeTeamMember">
+        <description>Removes a team member from the specified account or account team. 
+            The userLogin must have CRMSFA_TEAM_ASSIGN permission on this account or account team.</description>
+        <attribute name="teamMemberPartyId" type="String" mode="IN" optional="false"/>
+        <attribute name="accountTeamPartyId" type="String" mode="IN" optional="false"/>
+    </service>
+
+    <service name="sfaext.setTeamMemberSecurityGroup" engine="java" location="com.smebiz.sfa.teams.TeamServices" invoke="setTeamMemberSecurityGroup">
+        <description>Changes a team member's security group (privilege). This only works on team members ASSIGNED_TO the account.
+            The userLogin must have CRMSFA_TEAM_UPDATE permission on this account or account team.</description>
+        <attribute name="teamMemberPartyId" type="String" mode="IN" optional="false"/>
+        <attribute name="accountTeamPartyId" type="String" mode="IN" optional="false"/>
+        <attribute name="securityGroupId" type="String" mode="IN" optional="false"/>
+    </service>
+
+    <service name="sfaext.sendTeamAssignmentNotificationEmails" engine="java" location="com.smebiz.sfa.teams.TeamServices" invoke="sendTeamAssignmentNotificationEmails">
+        <description>Calls sfaext.sendAccountTeamMemberNotificationEmails service for each account team member in order to send notification emails of team assignment to an account.</description>
+        <attribute name="teamPartyId" type="String" mode="IN" optional="false"/>
+        <attribute name="accountPartyId" type="String" mode="IN" optional="false"/>
+    </service>
+
+</services>
+
+

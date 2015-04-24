@@ -1,0 +1,240 @@
+<?init class="org.zkoss.zkplus.databind.AnnotateDataBinderInit" arg0="./applyLoanWindow"?>
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<zk>
+	<zscript>
+	import org.zkoss.util.resource.Labels;
+Constraint dateConstraint = new Constraint() {
+public void validate(Component comp, Object value) throws WrongValueException {
+        	if (value == null){
+				throw new WrongValueException(comp, "From Date Required");
+			}
+			java.util.Date now = new java.util.Date();
+     	}
+ }
+ 
+</zscript>
+<zscript>
+Date thruDate = null;
+		org.ofbiz.security.Security security = requestScope.get("security");
+		GenericValue userLogin = (GenericValue) Executions.getCurrent().getDesktop().getSession().getAttribute("userLogin");
+		GenericDelegator delegator = userLogin.getDelegator();
+		boolean isManager = false;
+		isManager = security.hasPermission("HUMANRES_MGR", userLogin);
+</zscript>
+
+	<window id="applyLoanWindow" width="600px" height="400px"
+		position="center" closable="true" 
+		apply="com.ndz.controller.ApplyLoanManagementController"
+		border="normal" maximizable="true">
+		<zscript>
+			void changeLoanPeriod(){
+     		if(applyLoanFromDate.getValue() != null){
+				thruDate = new Date(org.ofbiz.base.util.UtilDateTime.addYearsToTimestamp(new java.sql.Timestamp(applyLoanFromDate.getValue().getTime()),applyLoanTenureYear.intValue()).getTime());
+				}else{
+					throw new WrongValueException(applyLoanFromDate,"From Date is  Required");
+				}
+     	}
+		</zscript>
+		<separator height="15px" />
+		<caption label="${c:l('Hrms_ApplyLoan') }"
+			style="font-weight:bold;color:black" />
+		
+			<hbox visible="${isManager}">	
+			<div align="right" width="150px">
+				<label value="${c:l('HRMS_EMPLOYEE_ID') }" style="font-weight:bold;" />
+			</div>
+			<div align="left">
+				<employeebox id="employeeBox" visible="${isManager}"/>
+			</div>
+		</hbox>
+		<separator />
+		<hbox>
+			<div align="right" width="150px">
+				<label value="${c:l('Hrms_LoanType') }"
+					style="font-weight:bold" />
+				<label value="*" style="color:red" />
+			</div>
+			<div align="left">
+				<listbox id="applyLoanType" name="applyLoanType"
+					mold="select" onSelect="com.ndz.controller.ApplyLoanManagementController.loanTypeCurrency(self,employeeBox.getValue());Clients.closeErrorBox(self)">
+				</listbox>
+			</div>
+		</hbox>
+		<separator />
+		<hbox>
+			<div align="right" width="150px">
+				<label value="${c:l('HumanResLeaveSummaryFromDate') }"
+					style="font-weight:bold" />
+				<label value="*" style="color:red" />
+			</div>
+			<div width="90px" align="left">
+				<datebox id="applyLoanFromDate" name="applyLoanFromDate" readonly="true"
+					buttonVisible="true" compact="true"  
+					onChange="Clients.closeErrorBox(self)">
+					<attribute name="onBlur">
+					applyLoanTenureYear.setFocus(true);
+					changeLoanPeriod();
+					</attribute>
+								</datebox>	
+			</div>
+			</hbox>
+			<separator/>
+ <hbox>
+			<div align="right" width="150px">
+				<label value="${c:l('Hrms_TenureinYears') }"
+					style="font-weight:bold" />
+				<label value="*" style="color:red" />
+			</div>
+			<div align="left">
+				<intbox id="applyLoanTenureYear"
+					name="applyLoanTenureYear" constraint="no negative,no zero:Tenure In Years Should Be Greater Than Zero"
+										 maxlength="5">
+						
+					<attribute name="onBlur">
+					changeLoanPeriod();
+					</attribute>				 
+				</intbox>
+			</div>	
+		</hbox>
+			
+			
+
+		<separator />
+			<hbox>
+			<div align="right" width="150px">
+				<label value="${c:l('HumanResLeaveSummaryThruDate') }"
+					style="font-weight:bold" />
+				<label value="*" style="color:red" />
+			</div>
+			<div width="140px" align="left">
+				<datebox id="applyLoanThruDate" value="@{thruDate,load-after='applyLoanTenureYear.onBlur'}" buttonVisible="true"  disabled="true"
+					constraint="no past"
+					onChange="Clients.closeErrorBox(self)" />
+			</div>
+
+		</hbox>
+		<zscript><![CDATA[
+	import org.zkoss.util.resource.Labels;
+Constraint throughDateConstraint = new Constraint() {
+     	public void validate(Component comp, Object value) throws WrongValueException {
+		     	if (value != null){
+		     	 java.util.Date prevDate = ((java.util.Date) applyLoanWindow.getFellow("applyLoanFromDate").getValue());
+		     	 if(prevDate == null){
+		     	   throw new WrongValueException(applyLoanFromDate,"From Date Required");
+		     	 }
+		        	if (prevDate.compareTo((java.util.Date)value) == 1){
+						throw new WrongValueException(comp,Labels.getLabel("HumanResApplyLeaveThruDateMustBeAfterFromDate"));
+					}	
+		     	}
+			if(value == null){
+			throw new WrongValueException(comp, "Thru Date Required");
+			}
+			}
+     	
+ }
+]]></zscript>
+
+		<separator />
+<hbox>
+		
+			<div align="right" width="150px">
+				<label value="${c:l('Hrms_Currency') }"
+					style="font-weight:bold" />
+			</div>
+
+			<div width="300px" align="left">
+			<label id="applyLoanCurrencyLabel" style="font-weight: normal;font-style: normal;"/>
+			<label id="applyLoanCurrencyValue" visible="false"/>
+				<!--<listbox id="applyLoanCurrency" name="applyLoanCurrency"
+					mold="select" onSelect="Clients.closeErrorBox(self)">
+				</listbox>-->
+			</div>
+	
+</hbox>
+		<separator />
+
+	<hbox>
+			<div align="right" width="150px">
+				<label value="${c:l('Hrms_LoanAmount') }"
+					style="font-weight:bold" />
+				<label value="*" style="color:red" />
+			</div>
+			<div align="left">
+				<intbox id="applyLoanAmount" name="applyLoanAmount"
+					constraint="no negative,no zero:Loan Amount Should Be Greater Than Zero" />
+			</div>
+		
+</hbox>
+		<separator />
+
+		
+
+		 <hbox visible="true">
+			<div align="right" width="150px">
+				<label value="${c:l('HRMS_APPROVERCOMMENT') }"
+					style="font-weight:bold" />
+			</div>
+			<div align="left">
+				<textbox id="applyClaimHR_COMMENT"
+					name="applyClaimHR_COMMENT" rows="4" cols="55" maxlength="180"/>
+			</div>
+		</hbox>
+
+		<separator />
+		<zscript><![CDATA[
+		import com.ndz.zkoss.HrmsUtil;
+		import org.ofbiz.entity.*;
+		import com.ndz.controller.*;
+		import org.ofbiz.humanresext.util.HumanResUtil;
+	void validate() {
+		if(HrmsUtil.listboxValidation(applyLoanType) == true){
+			throw new WrongValueException(applyLoanType, "Loan Type Required");
+		}
+		
+		applyLoanFromDate.getValue();
+		applyLoanThruDate.getValue();
+		 java.util.Date now = new java.util.Date();
+		 java.util.Date fDate =  applyLoanFromDate.getValue();
+		if(applyLoanFromDate.getValue()==null){
+			  throw new WrongValueException(applyLoanFromDate,"From Date Required");
+		}
+		 if(now.compareTo(fDate)==1){
+		     throw new WrongValueException(applyLoanFromDate,"From Date cannot be past/current date");
+		     }
+		
+
+		if(applyLoanAmount.getValue() == null){
+		  throw new WrongValueException(applyLoanAmount, "Loan Amount Required");
+		}
+	  
+	    if(applyLoanTenureYear.getValue() == null){
+	      throw new WrongValueException(applyLoanTenureYear, "Tenure in Years Required");
+	    }
+	    GenericValue userLogin = (GenericValue) Executions.getCurrent().getDesktop().getSession().getAttribute("userLogin");
+	    //GenericValue emplPositionGv = HumanResUtil.getEmplPositionForParty(userLogin.getString("partyId"),userLogin.getDelegator());
+	   	String partyIdforTenure = org.ofbiz.base.util.UtilValidate.isEmpty(employeeBox.getValue()) ? userLogin.getString("partyId") : employeeBox.getValue();
+	  	GenericValue emplPositionGv = HumanResUtil.getEmplPositionForParty(partyIdforTenure,userLogin.getDelegator());
+	    String emplPosition = emplPositionGv == null?null:emplPositionGv.getString("emplPositionTypeId");
+	    if(ApplyLoanManagementController.checkTenureInYears(applyLoanType.getSelectedItem().getValue().toString(),
+	    		emplPosition,applyLoanTenureYear.getValue().toString(),partyIdforTenure)){
+	    	throw new WrongValueException(applyLoanTenureYear, "Tenure in Years Can Not Be Greater Than The Allocated Tenure in Years");
+	    }
+		
+	}
+	]]>
+</zscript>
+
+		<hbox>
+			<div align="right" width="260px">
+				<button id="applyClaimSaveButton"
+					label="${c:l('btnSave') }"
+					onClick='changeLoanPeriod();applyLoanThruDate.setValue(thruDate);validate();com.ndz.controller.ApplyLoanManagementController.applyLoan(event);applyLoanWindow.detach();'
+					mold="os" />
+
+				<button id="applyClaimCancelButton"
+					label="${c:l('ButtonCancel') }" onClick="applyLoanWindow.detach()"
+					mold="os" />
+			</div>
+		</hbox>
+	</window>
+</zk>

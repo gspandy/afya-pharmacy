@@ -1,0 +1,81 @@
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<zk>
+	<zscript>
+<![CDATA[
+	import com.ndz.controller.GlobalHrSettingPerformancePlanAttribute;
+	org.ofbiz.entity.GenericValue gv = arg.get("gv");
+	String section = arg.get("sectionName");
+	GlobalHrSettingPerformancePlanAttribute globalHrSettingPerformancePlanAttribute = new GlobalHrSettingPerformancePlanAttribute();
+	globalHrSettingPerformancePlanAttribute.setSelectedSection(section);
+]]>
+</zscript>
+	<window id="addNewPerformancePlanAttributes" width="600px"
+		title="Edit Performance Plan Attribute" border="normal"
+		position="center" closable="true" height="220px"
+		apply="${globalHrSettingPerformancePlanAttribute}"
+		maximizable="true">
+		<textbox id="txtattributeId" visible="false"></textbox>
+		<zscript>
+                 <![CDATA[
+	import org.zkoss.util.resource.Labels;
+	import org.zkoss.util.resource.Labels;
+	import com.ndz.zkoss.*;
+	public void nameValidation(Textbox comp) throws WrongValueException {
+		String value = comp.getValue();
+		if (org.ofbiz.base.util.UtilValidate.isEmpty(value)) {
+			throw new WrongValueException(comp, "Attribute Name Required");
+		}
+	}
+	void addUser() {
+		nameValidation(txtBoxAttributeName);
+		txtBoxDescription.getValue();
+	}
+]]>
+       </zscript>
+		<hbox style="margin-top:20px">
+			<div width="100px" align="right">
+				<label value="${c:l('HumanResPerfReviewSectionName') }"
+					style="font-weight: bold " />
+			</div>
+			<div align="left"
+				id="divListboxSectionName">
+				<label id="txtperfReviewSectionId"/>
+			</div>
+		</hbox>
+		<hbox style="margin-top:5px">
+			<div width="100px" align="right">
+				<label
+					value="${c:l('HumanResPerfReviewAttributeName')}" />
+				<label value="*" style="color:red" />
+			</div>
+			<div width="100px" align="left">
+				<textbox id="txtBoxAttributeName"
+					constraint="no empty:${c:l('Message_AttributeName') }">
+				</textbox>
+			</div>
+		</hbox>
+		<hbox style="margin-top:5px">
+			<div width="100px" align="right">
+				<label
+					value="${c:l('HumanResAllocateEmployeeDescription') }" />
+				<label value="*" style="color:red" />
+			</div>
+			<div width="100px" align="left">
+				<textbox id="txtBoxDescription" width="300px"
+					height="60px" multiline="true"
+					constraint="no empty:${c:l('Message_DescriptionMissing') }">
+				</textbox>
+			</div>
+		</hbox>
+		<hbox style="margin-top:5px">
+			<div align="right" width="205px">
+				<button id="btnEdit" label="${c:l('btnSave') }"
+					width="100px" onClick="addUser();globalHrSettingPerformancePlanAttribute.editPerfPlanAtt(event,gv);"  />
+			</div>
+			<div>
+				<button id="btnCancel" label="${c:l('ButtonCancel') }"
+					width="100px" onClick="addNewPerformancePlanAttributes.detach()" />
+			</div>
+		</hbox>
+	</window>
+</zk>

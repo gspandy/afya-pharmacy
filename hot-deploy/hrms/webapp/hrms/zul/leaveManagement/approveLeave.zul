@@ -1,0 +1,389 @@
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<?init class="org.zkoss.zkplus.databind.AnnotateDataBinderInit" root="./approveLeaveWindow"?>
+<zk xmlns:h="http://www.w3.org/1999/xhtml"
+	xmlns:a="http://www.zkoss.org/2005/zk/annotation"
+	xmlns:n="http://www.zkoss.org/2005/zk/native">
+	<zscript>
+	<![CDATA[
+	org.ofbiz.security.Security security = requestScope.get("security");
+	boolean isAdmin = security.hasPermission("HUMANRES_ADMIN", userLogin);
+	boolean isManager = security.hasPermission("HUMANRES_MGR", userLogin);
+	java.sql.Timestamp applyFromDate = arg.get("applyFromDate");
+	java.sql.Timestamp applyThruDate = arg.get("applyThruDate");
+	String savedEmployeeId = arg.get("savedEmployeeId");
+	String mgrPartyId = arg.get("mgrPartyId");
+	String status=arg.get("leaveStatus");
+	boolean both = false;
+    if(isAdmin && isManager)
+    	both=true;
+    ]]>
+</zscript>
+	<window id="approveLeaveWindow" width="75%" position="center" height="90%" closable="true" border="normal" maximizable="true">
+		<caption label="${c:l('HRMS_PROCESSLEAVE') }"></caption>
+		<hbox widths="40%,60%" width="100%">
+		<vbox>
+		<separator height="10px" />
+		<label id="permissionId" value="${isAdmin}" visible="false"></label>
+		<label id="permissionIdForBoth" value="${both}" visible="false"></label>
+		<hbox>
+			<div align="right" width="150px">
+				<label value="${c:l('HumanResLeaveSummaryId') }" style="font-weight:bold" />
+			</div>
+			<div align="left">
+				<label id="leaveId" />
+			</div> 
+		</hbox>
+		<hbox visible="false">
+			<div align="right" width="150px">
+				<label value="${c:l('FormFieldTitle_employeeEmployeeId') }" style="font-weight:bold" />
+			</div>
+			<div align="left">
+				<label id="employeeId" />
+			</div>
+		</hbox>
+		<separator />
+		<hbox>
+			<div align="right" width="150px">
+				<label value="Leave Type" style="font-weight:bold" />
+			</div>
+			<div align="left">
+				<label id="leaveTypeId" visible="false" />
+				<label id="leaveTypeIdView" />
+			</div>
+		</hbox>
+		<separator />
+		<hbox visible="false">
+			<div align="right" width="150px">
+				<label value="Availed Leave" style="font-weight:bold" />
+			</div>
+			<div align="left">
+				<label id="availedLeave" style="font-weight:regular" />
+			</div>
+		</hbox>
+			<hbox>
+				<div align="right" width="150px">
+					<label value="Previous Year Balance" style="font-weight:bold" />
+				</div>
+				<div align="left">
+					<label id="PYLeaveLimit" style="font-weight:regular" />
+				</div>
+			</hbox>
+			<separator />
+			<hbox>
+				<div align="right" width="150px">
+					<label value="Current Year Balance" style="font-weight:bold" />
+				</div>
+				<div align="left">
+					<label id="CYLeaveLimit" style="font-weight:regular" />
+				</div>
+			</hbox>
+			<separator />
+		<hbox visible="false">
+			<div align="right" width="150px">
+				<label value="Leave Limit" style="font-weight:bold" />
+			</div>
+			<div align="left">
+				<label id="leaveLimit" style="font-weight:regular" />
+			</div>
+		</hbox>
+		<hbox id="accLeaveHbox" visible="false">
+			<div align="right" width="150px">
+				<label value="Accrued leave" style="font-weight:bold" />
+			</div>
+			<div align="left">
+				<label id="totalAccrualLeaveLbl" style="font-weight:regular" />
+			</div>
+		</hbox>
+		<separator />
+		<hbox>
+			<div align="right" width="150px">
+				<label value="${c:l('HumanResLeaveSummaryFromDate') }" style="font-weight:bold" />
+
+			</div>
+			<div align="left">
+				<datebox id="fromDate" disabled="true" style="color:#000000" />
+			</div>
+		</hbox>
+		<separator />
+		<hbox>
+			<div align="right" width="150px">
+				<label value="${c:l('HumanResLeaveSummaryThruDate') }" style="font-weight:bold" />
+			</div>
+			<div align="left">
+				<datebox id="thruDate" disabled="true" onChange="Clients.closeErrorBox(self)" />
+			</div>
+		</hbox>
+		<separator />
+		<hbox>
+			<div align="right" width="150px">
+				<label value="${c:l('HumanResLeaveSummaryStatus') }" style="font-weight:bold" />
+			</div>
+			<div align="left">
+				<label id="leaveStatus" visible="false" />
+				<label id="leaveStatusView" multiline="false"/>
+			</div>
+		</hbox>
+		<separator />
+		<hbox>
+			<div align="right" width="150px">
+				<label value="Days On Leave" style="font-weight:bold" />
+			</div>
+			<div align="left">
+				<label id="emplLeaveDays" visible="true" />
+			</div>
+		</hbox>
+		</vbox>
+		<vbox style="margin-left:10px">
+		<separator/>
+		<vbox>
+		<zscript>
+		 	List emplLeaveList = com.ndz.zkoss.HrmsUtil.getSubOrdinatesLeaveInfo(mgrPartyId,savedEmployeeId,applyFromDate,applyThruDate,"LT_ADM_APPROVED");
+		 	List leaveStatusItem = com.ndz.zkoss.HrmsUtil.getLeaveStatus();
+		 	org.ofbiz.entity.GenericValue admAppGV = com.ndz.zkoss.HrmsUtil.delegator.findByPrimaryKey("StatusItem",org.ofbiz.base.util.UtilMisc.toMap("statusId","LT_ADM_APPROVED"));
+		</zscript>
+			<div align="left" width="150px">
+				<label value="Teams Leave Info" style="font-weight:bold" />
+			</div>
+			<hbox>
+				<div><label value="From Date"/> </div>
+				<div style="margin-left:4px"><datebox id="teamsFromDate" /></div>
+				<div style="margin-left:4px"><label value="Thru Date"/> </div>
+				<div style="margin-left:4px"><datebox id="teamsThruDate"/></div>
+				<div style="margin-left:4px"><label value="Status"/></div>
+				<div style="margin-left:4px">
+				<combobox readonly="true" id="statusCombobox" model="@{leaveStatusItem}" width="200px" selectedItem="@{admAppGV}">
+					<comboitem self="@{each='statusItem'}" label="@{statusItem.description}" value="@{statusItem}"/>
+				</combobox> 
+				</div>
+				
+				<div style="margin-left:4px">
+				<button label="Show">
+					<attribute name="onClick">
+					java.sql.Timestamp teamsFDate = null;
+					java.sql.Timestamp teamsTDate = null;
+					String selectedStatusId = null;
+					if(teamsFromDate.getValue() != null){
+						teamsFDate = new java.sql.Timestamp(teamsFromDate.getValue().getTime());
+					}
+					if(teamsThruDate.getValue() != null){
+						teamsTDate = new java.sql.Timestamp(teamsThruDate.getValue().getTime());
+					}
+					if(statusCombobox.getSelectedItem() != null)
+					 	selectedStatusId = statusCombobox.getSelectedItem().getValue().getString("statusId");
+						emplLeaveList = com.ndz.zkoss.HrmsUtil.getSubOrdinatesLeaveInfo(mgrPartyId,savedEmployeeId,teamsFDate,teamsTDate,selectedStatusId);
+						self.addForward("onClick",teamsLeave,"onReload");
+					</attribute>
+				</button>
+				</div>
+			</hbox>
+			<div align="left" height="200px" style="overflow: auto;">
+				<listbox id="teamsLeave" model="@{emplLeaveList,load-after='self.onReload'}">
+					<listhead>
+						<listheader label="Empl Id" width="100px"/>
+						<listheader label="Empl Name" width="200px"/>
+						<listheader label="From Date" width="100px"/>
+						<listheader label="Thru Date" width="100px"/>
+						<listheader label="Status" width="200px"/>
+					</listhead>
+					<listitem self="@{each='emplLeaveGv'}" value="@{emplLeaveGv,converter='com.ndz.zkoss.SubOrdinateLeaveInfoConverter'}">
+						
+					</listitem>
+				</listbox>
+			</div>
+		</vbox>
+		</vbox>
+		</hbox>
+		<separator />
+		<hbox>
+			<div align="right" width="150px">
+				<label value="${c:l('Hrms_PaidDays') }" style="font-weight:bold" />
+				<label value="*" style="color:red" />
+			</div>
+			<div align="left">
+				<textbox id="paidDays" onChange="setleavedays()" constraint="no empty : Paid Days Required"/>
+					<zscript>
+					<![CDATA[
+					         void setleavedays(){
+	if (!(org.ofbiz.base.util.UtilValidate.isInteger(paidDays.getValue()))) {
+		throw new WrongValueException(paidDays, "PaidDays Must Be Numeric Type");
+	}
+	/* org.ofbiz.entity.GenericDelegator delegator = com.ndz.zkoss.util.HrmsInfrastructure.getDelegator();//org.ofbiz.entity.GenericDelegator.getGenericDelegator("default");
+	java.sql.Timestamp fDate = new java.sql.Timestamp(fromDate.getValue().getTime());
+	java.sql.Timestamp tDate = new java.sql.Timestamp(thruDate.getValue().getTime());
+	int noOfDays = org.ofbiz.humanresext.util.HumanResUtil.getWorkingDaysBetween(fDate, tDate, delegator); */
+
+	/* if (Integer.parseInt(paidDays.getValue()) <= Integer.parseInt(emplLeaveDays.getValue())) {
+		Integer unPaid_Days = noOfDays - (Integer.parseInt(paidDays.getValue()));
+		unPaidDays.setValue(unPaid_Days.toString());
+	} else {
+		throw new WrongValueException(paidDays, "Paid Days Can't Be Greater Than Days On Leave");
+	} */
+
+	Double totalPaidDays = Integer.parseInt(paidDays.getValue()) + Double.parseDouble(fractionalPartForPaidLeave.getValue());
+    Double emplLeaveDays = Double.parseDouble(emplLeaveDays.getValue());
+	if (totalPaidDays <= emplLeaveDays) {
+		Double unPaid_Days = emplLeaveDays - totalPaidDays;
+		Integer unpaidDaysWholePart = unPaid_Days.intValue();
+		Double unpaidDaysFractionalPart = unPaid_Days - unPaid_Days.intValue();
+		unPaidDays.setValue(unpaidDaysWholePart.toString());
+		fractionalPartForUnpaidLeave.setValue(unpaidDaysFractionalPart.toString());
+	} else {
+		throw new WrongValueException(paidDays, "Paid Days Can't Be Greater Than Days On Leave");
+	}
+
+
+					         }
+]]>
+</zscript>
+				
+			</div>
+            <div align="left">
+                <combobox id="fractionalPartForPaidLeave"   onChange="setleavedays()">
+                    <comboitem label="0.0" value="0.0"></comboitem>
+                    <comboitem label="0.5" value="0.5"></comboitem>
+                </combobox>
+            </div>
+		</hbox>
+		<separator />
+		<hbox>
+			<div align="right" width="150px">
+				<label value="${c:l('Hrms_UnpaidDays') }" style="font-weight:bold" />
+				<label value="*" style="color:red" />
+			</div>
+			<div align="left">
+				<textbox id="unPaidDays" disabled="true" style="color:#000000" onCreate="setleavedays()"/>
+			</div>
+            <div align="left">
+                <combobox id="fractionalPartForUnpaidLeave"   disabled="true">
+                    <comboitem label="0.0" value="0.0"></comboitem>
+                    <comboitem label="0.5" value="0.5"></comboitem>
+                </combobox>
+            </div>
+		</hbox>
+		<separator />
+		
+		
+		<hbox>
+			<div align="right" width="150px">
+				<label value="Contact Number" style="font-weight:bold" />
+			</div>
+			<div align="left">
+				<textbox id="contactNumber" readonly="true"/>
+			</div>
+		</hbox>
+		<separator />
+		<separator />
+		<hbox>
+			<div align="right" width="150px">
+				<label value="Reason for Leave" style="font-weight:bold" />
+			</div>
+			<div align="left">
+				<textbox id="reasonFroLeave" rows="3" cols="50" readonly="true"/>
+			</div>
+		</hbox>
+		<separator />
+		<separator />
+		<hbox>
+			<div align="right" width="150px">
+				<label value="Contact Address" style="font-weight:bold" />
+			</div>
+			<div align="left">
+				<textbox id="contactAddress" rows="3" cols="50" readonly="true"/>
+			</div>
+		</hbox>
+		
+		
+		<separator />
+		<hbox>
+			<div align="right" width="150px">
+				<label value="Manager Comments" style="font-weight:bold" />
+			</div>
+			<div align="left">
+				<textbox id="mgrComment" rows="3" cols="50" />
+			</div>
+		</hbox>
+		<separator />
+		<hbox id="hboxAdminComment" visible="false">
+			<div align="right" width="150px">
+				<label value="Admin Comments" style="font-weight:bold" />
+			</div>
+			<div align="left">
+				<textbox id="adminComment" rows="3" cols="50" />
+			</div>
+		</hbox>
+		<separator />
+		<zscript><![CDATA[
+		            /*      
+		                  if(isAdmin){
+		                	 mgrComment.setReadonly(true);
+		                	  hboxAdminComment.setVisible(true);
+		                  }
+		            */
+		            
+		            if((isAdmin && !both) ||(both && "LT_MGR_APPROVED".equals(status))){
+		            	mgrComment.setReadonly(true);
+		       		}
+		       		if(isAdmin && "LT_MGR_APPROVED".equals(status)){
+		       		 hboxAdminComment.setVisible(true);
+		       		}
+		       		
+		       		void submitValidate(){
+		                	  if(isManager && "LT_SUBMITTED".equals(status)){
+			                	 if(org.ofbiz.base.util.UtilValidate.isEmpty(mgrComment.getValue())){
+			                		 throw new WrongValueException(mgrComment,"Manager Comments Required");
+			                	 }
+			                	 if(com.ndz.zkoss.HrmsUtil.checkSpaceValidation(mgrComment.getValue())){
+			                	 		throw new WrongValueException(mgrComment,"Manager Comments Required");
+			                	 	 }
+		                	  }
+		                	 if(isAdmin && "LT_MGR_APPROVED".equals(status)){
+		                		 if(org.ofbiz.base.util.UtilValidate.isEmpty(adminComment.getValue())){
+			                		 throw new WrongValueException(adminComment,"Admin Comments Required");
+			                	 } 
+		                		 if(com.ndz.zkoss.HrmsUtil.checkSpaceValidation(adminComment.getValue())){
+		                 	  		throw new WrongValueException(adminComment,"Admin Comments Required");
+		                 	  	 }
+		                	 }
+		                  }
+	void validate() {
+		java.util.Date valueFromDate = fromDate.getValue();
+		java.util.Date value = thruDate.getValue();
+		mgrComment.clearErrorMessage();
+		adminComment.clearErrorMessage();
+		if (value != null) {
+			java.util.Date prevDate = valueFromDate;
+			if (prevDate.compareTo(value) == 1) {
+				throw new WrongValueException(thruDate, "Thru Date Must be After From Date");
+			}
+		}
+			paidDays.getValue();
+		if ((paidDays.getValue()).charAt(0) == '-') {
+			throw new WrongValueException(paidDays, "PaidDays Cannot be negative");
+		}
+		if (!(org.ofbiz.base.util.UtilValidate.isInteger(paidDays.getValue()))) {
+			throw new WrongValueException(paidDays, "PaidDays Cannot be Decimal");
+		}
+		org.ofbiz.entity.GenericDelegator delegator = com.ndz.zkoss.util.HrmsInfrastructure.getDelegator();//org.ofbiz.entity.GenericDelegator.getGenericDelegator("default");
+		/* java.sql.Timestamp fDate = new java.sql.Timestamp(fromDate.getValue().getTime());
+		java.sql.Timestamp tDate = new java.sql.Timestamp(thruDate.getValue().getTime());
+		int noOfDays = org.ofbiz.humanresext.util.HumanResUtil.getWorkingDaysBetween(fDate, tDate, delegator);
+		if (Integer.parseInt(paidDays.getValue()) <= Integer.parseInt(emplLeaveDays.getValue())) {
+			Integer unPaid_Days = noOfDays - (Integer.parseInt(paidDays.getValue()));
+			unPaidDays.setValue(unPaid_Days.toString());
+		} else {
+			throw new WrongValueException(paidDays, "Paid Days Can't Be Greater Than Days On Leave");
+		}*/
+
+	}
+]]></zscript>
+		<hbox>
+			<div align="right" width="343px">
+				<button id="approveLeaveButton" onClick='validate()' label="${c:l('Hrms_Approve') }" mold="os" />
+				<button id="rejectLeaveButton" onClick="submitValidate()" label="${c:l('Hrms_Reject') }" mold="os" />
+				<button id="cancelButton" label="${c:l('ButtonCancel') }" mold="os" onClick="approveLeaveWindow.detach()" />
+				<button id="refresh" visible="false" onClick=';Events.postEvent("onClick", Path
+				.getComponent("/searchPanel//searchPerCompany"), null);approveLeaveWindow.detach()'/>
+			</div>
+		</hbox>
+	</window>
+</zk>

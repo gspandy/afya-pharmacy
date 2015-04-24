@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<site-conf xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="http://ofbiz.apache.org/dtds/site-conf.xsd">
+
+	<!-- Request Mappings -->
+	<request-map uri="opportunitiesMain">
+		<security https="true" auth="true" />
+		<response name="success" type="view" value="MyOpportunities" />
+	</request-map>
+
+	<request-map uri="FindOpportunity">
+		<security https="true" auth="true" />
+		<response name="success" type="view" value="FindOpportunity" />
+	</request-map>
+
+	<request-map uri="createOpportunityForm">
+		<security https="true" auth="true" />
+		<response name="success" type="view" value="CreateOpportunityForm" />
+	</request-map>
+
+	<request-map uri="createOpportunity">
+		<security https="true" auth="true" />
+		<event type="service" invoke="sfaext.createOpportunity" />
+		<response name="success" type="request" value="ViewOpportunity" />
+		<response name="error" type="view" value="CreateOpportunityForm" />
+	</request-map>
+
+	<request-map uri="editOpportunityForm">
+		<security https="true" auth="true" />
+		<response name="success" type="view" value="EditOpportunityForm" />
+	</request-map>
+
+	<request-map uri="updateOpportunity">
+		<security https="true" auth="true" />
+		<event type="service" invoke="sfaext.updateOpportunity" />
+		<response name="success" type="request" value="ViewOpportunity" />
+		<response name="error" type="view" value="CreateOpportunityForm" />
+	</request-map>
+
+	<request-map uri="ViewOpportunity">
+		<security https="true" auth="true" />
+		<response name="success" type="view" value="ViewOpportunity" />
+	</request-map>
+
+	<request-map uri="addContactToOpportunity">
+		<security https="true" auth="true" />
+		<event type="service" invoke="sfaext.addContactToOpportunity" />
+		<response name="success" type="request-redirect" value="ViewOpportunity">
+			<redirect-parameter name="salesOpportunityId"/>
+		</response>
+		<response name="error" type="view" value="ViewOpportunity"/>
+	</request-map>
+
+	<request-map uri="removeContactFromOpportunity">
+		<security https="true" auth="true" />
+		<event type="service" invoke="crmsfa.removeContactFromOpportunity" />
+		<response name="success" type="request-redirect" value="ViewOpportunity" />
+		<response name="error" type="view" value="viewOpportunity" />
+	</request-map>
+
+	<request-map uri="addQuoteToOpportunity">
+		<security https="true" auth="true"/>
+		<event type="service" invoke="sfaext.addQuoteToOpportunity"/>
+		<response name="success" type="request-redirect" value="ViewOpportunity">
+			<redirect-parameter name="salesOpportunityId"/>
+		</response>
+		<response name="error" type="request-redirect" value="ViewOpportunity">
+			<redirect-parameter name="salesOpportunityId"/>
+		</response>
+	</request-map>
+
+	<request-map uri="removeQuoteFromOpportunity">
+		<security https="true" auth="true"/>
+		<event type="service" invoke="sfaext.removeQuoteFromOpportunity"/>
+		<response name="success" type="request-redirect" value="ViewOpportunity">
+			<redirect-parameter name="salesOpportunityId"/>
+		</response>
+		<response name="error" type="request-redirect" value="ViewOpportunity">
+			<redirect-parameter name="salesOpportunityId"/>
+		</response>
+	</request-map>
+
+	<request-map uri="LookupQuotes">
+		<security https="true" auth="true"/>
+		<response name="success" type="view" value="LookupQuotes"/>
+	</request-map>
+
+	<request-map uri="LookupClients">
+		<security https="true" auth="true" />
+		<response name="success" type="view" value="LookupClients" />
+	</request-map>
+
+	<request-map uri="ViewQuote">
+		<security https="true" auth="true" />
+		<response name="success" type="view" value="ViewQuote" />
+	</request-map>
+
+	<!-- end of request mappings -->
+
+	<!-- View Mappings -->
+
+	<view-map name="CreateOpportunityForm" type="screen"
+		page="component://sfaext/widget/OpportunityScreens.xml#createOpportunityForm" />
+	<view-map name="FindOpportunity" type="screen"
+		page="component://sfaext/widget/OpportunityScreens.xml#FindOpportunity" />
+	<view-map name="ViewOpportunity" type="screen"
+		page="component://sfaext/widget/OpportunityScreens.xml#ViewOpportunity" />
+	<view-map name="EditOpportunityForm" type="screen"
+		page="component://sfaext/widget/OpportunityScreens.xml#EditOpportunityForm" />
+	<view-map name="MyOpportunities" type="screen"
+		page="component://sfaext/widget/OpportunityScreens.xml#MyOpportunities" />
+	<view-map name="TeamsOpportunities" type="screen"
+		page="component://sfaext/widget/OpportunityScreens.xml#TeamsOpportunities" />
+	<view-map name="LookupQuotes" type="screen" page="component://sfaext/widget/OpportunityScreens.xml#LookupQuotes"/>
+	<view-map name="LookupClients" type="screen" page="component://sfaext/widget/OpportunityScreens.xml#LookupClients"/>
+	<view-map name="ViewQuote" type="screen" page="component://order/widget/ordermgr/QuoteScreens.xml#ViewQuote" />
+
+	<!-- end of view mappings -->
+
+</site-conf>

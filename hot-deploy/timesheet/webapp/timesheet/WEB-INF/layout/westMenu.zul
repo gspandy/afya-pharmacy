@@ -1,0 +1,40 @@
+<zk id="westzk">
+    <style src="timesheet/css/mainCSSForZK7.css"/>
+    <window border="normal" apply="com.zpc.timesheet.view.CenterLayoutRenderer">
+        <caption label="Quick Links"></caption>
+        <groupbox mold="3d" width="100%" closable="false" if="${isAdmin}" hflex="1">
+            <vbox hflex="1">
+                <toolbarbutton id="manageSchedule" label="Manage Schedules"/>
+                <toolbarbutton id="manageTimesheet" label="Manage Timesheets"/>
+            </vbox>
+        </groupbox>
+
+        <groupbox mold="3d" width="100%" closable="false" if="${isManager}">
+            <vbox>
+                <toolbarbutton id="manageAttendanceRegisterSummary" label="Manage Attendance"/>
+            </vbox>
+        </groupbox>
+
+        <groupbox mold="3d" width="100%" closable="false" if="${isBothAdminAndManager}">
+            <vbox>
+                <toolbarbutton id="manageSchedule" label="Manage Schedules"/>
+                <toolbarbutton id="manageTimesheet" label="Manage Timesheets"/>
+                <toolbarbutton id="manageAttendanceRegisterSummary" label="Manage Attendance"/>
+            </vbox>
+        </groupbox>
+
+        <groupbox mold="3d" width="100%" closable="false" if="${isBothAdminAndTimekeeper}">
+            <vbox>
+                <toolbarbutton id="manageSchedule" label="Manage Schedules"/>
+                <toolbarbutton id="manageTimesheet" label="Manage Timesheets"/>
+                <toolbarbutton id="manageAttendanceRegisterSummary" label="Manage Attendance"/>
+            </vbox>
+        </groupbox>
+
+        <groupbox mold="3d" width="100%" closable="false" if="${isTimeKeeper}">
+            <vbox>
+                <toolbarbutton id="manageAttendanceRegisterSummary" label="Manage Attendance"/>
+            </vbox>
+        </groupbox>
+    </window>
+</zk>

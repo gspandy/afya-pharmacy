@@ -1,0 +1,21 @@
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<zk>
+	<window id="domainNameWindow">
+		<groupbox mold="3d"  closable="false">
+			<caption label="${c:l('HRMS_INTERNET_DOMAIN_NAME') }" style="font-weight:bold">
+				<toolbarbutton label="${c:l('HRMS_EDIT') }"
+					image="/images/icon/update.png" style="font-weight:bold"/>
+			</caption>
+					<div width="400px" style="margin-left:100px">
+						<hbox>
+							<label value="${c:l('HRMS_DOMAIN_NAME') }:"
+								style="font-weight:bold">
+							</label>
+							<label value=""
+								id="domainName">
+							</label>
+						</hbox>
+					</div>
+		</groupbox>
+	</window>
+</zk>
