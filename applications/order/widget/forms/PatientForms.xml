@@ -1,0 +1,360 @@
+<forms xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="http://ofbiz.apache.org/dtds/widget-form.xsd">
+
+    <form name="FindPatient" type="single" target="findPatient" title=""
+          default-title-style="tableheadtext" default-widget-style="tabletext" default-tooltip-style="tabletext">
+
+        <field name="civilId" id-name="civilId" position="1"><text/></field>
+        <field name="patientFirstName"  position="2"><text/></field>
+        <field name="afyaId"  position="1"><text/></field>
+        <field name="patientLastName"  position="2"><text/></field>
+        <field name="mobile"  position="1"><text/></field>
+        <field name="submitButton" title="${uiLabelMap.CommonFind}" widget-style="btn btn-primary">
+            <submit button-type="button"/>
+        </field>
+
+    </form>
+
+    <form name="PatientSearchResult" type="list" use-row-submit="true" target="findPatient" title="" list-name="listIt"
+          odd-row-style="alternate-row" header-row-style="header-row-2" default-table-style="basic-table hover-bar"
+          paginate-target="findPatient">
+    <actions>
+        <set field="entityName" value="Patient"/>
+        <service service-name="performFind" result-map="result" result-map-list="listIt">
+            <field-map field-name="inputFields" from-field="parameters"/>
+            <field-map field-name="entityName" from-field="entityName"/>
+            <field-map field-name="viewIndex" from-field="viewIndex"/>
+            <field-map field-name="viewSize" from-field="viewSize"/>
+        </service>
+    </actions>
+        <field name="civilId" id-name="civilId"><display/></field>
+        <field name="afyaId"><display/></field>
+        <field name="firstName" title="First Name"><display/></field>
+        <field name="middleName" title="Second Name"><display/></field>
+        <field name="mobilePhone"><display/></field>
+        <field name="submitButton" title="Select" widget-style="btn btn-mini btn-primary">
+            <hyperlink title="Select" text="Select">
+                <parameter param-name="patientId"/>
+            </hyperlink>
+        </field>
+
+        <field use-when="" name="editButton" action="editPatient" title="Select" widget-style="btn btn-mini btn-success">
+            <hyperlink target="patientinfo" description="Select" also-hidden="false">
+                <parameter param-name="patientId"/>
+            </hyperlink>
+        </field>
+    </form>
+
+
+    <form name="PatientInfo" type="single" target="savePatientInfo" default-map-name="patient"
+          title="" default-title-style="label control-label" default-table-style="tableext">
+
+        <actions>
+            <entity-condition entity-name="PatientInsurance">
+                <condition-expr field-name="patientId" from-field="parameters.patientId"></condition-expr>
+            </entity-condition>
+        </actions>
+        <field name="civilId" id-name="civilId" position="1"><text/></field>
+        <field name="afyaId" position="2"><text/></field>
+        <field title="Patient First Name" name="firstName" position="1"><text/></field>
+        <field title="Patient Second Name" name="secondName"  position="2"><text/></field>
+        <field title="Patient Third Name" name="thirdName"  position="3"><text/></field>
+        <field title="Patient Fourth Name" name="fourthName"  position="4"><text/></field>
+        <field name="mobile" position="1"><text/></field>
+        <field name="clinicName" position="2"><text/></field>
+        <!--<field name="clinicId"><text/></field>-->
+        <field name="doctorName" position="3"><text/></field>
+        <field name="patientType" id-name="patientType">
+            <drop-down>
+                <option key="CASH" description="Cash"/>
+                <option key="CORPORATE" description="Corporate"/>
+                <option key="INSURANCE" description="Insurance"/>
+            </drop-down>
+        </field>
+        <field name="selectHealthPolicyId">
+            <drop-down>
+                <entity-options entity-name="PatientInsurance" description="${healthPolicyName} - ${benefitPlanName} - ${policyNo}" key-field-name="healthPolicyId"></entity-options>
+            </drop-down>
+        </field>
+        <field name="address"><text/></field>
+        <field name="city" position="2"><text/></field>
+        <field name="state" position="3"><text/></field>
+        <field name="country" position="4"><text/></field>
+        <field name="submitButton" title="${uiLabelMap.CommonSubmit}"
+               widget-style="btn btn-primary"><submit button-type="button"/></field>
+    </form>
+
+
+    <form name="PatientRegistration" type="single" default-map-name="patient"
+          target="updatePatient" header-row-style="header-row" default-table-style="basic-table"
+          default-entity-name="Patient">
+
+        <alt-target target="registerPatient" use-when="patientId==null"/>
+        <field name="patientId">
+            <hidden/>
+        </field>
+        <field name="civilId" use-when="patient!=null" field-name="civilId" id-name="civilId">
+            <display/>
+        </field>
+        <field name="afyaId" use-when="patient!=null" position="1">
+            <display/>
+        </field>
+
+        <field name="civilId" use-when="patient==null" field-name="civilId" id-name="civilId">
+            <text/>
+        </field>
+        <field name="title" position="1">
+            <drop-down>
+                <option key="Ms" description="Ms"/>
+                <option key="Mrs" description="Mrs"/>
+                <option key="Miss" description="Miss"/>
+                <option key="Dr" description="Dr"/>
+                <option key="Sr" description="Sr"/>
+            </drop-down>
+        </field>
+        <field name="firstName" id-name="firstName">
+            <text/>
+        </field>
+        <field name="secondName" id-name="secondName">
+            <text/>
+        </field>
+        <field name="thirdName" id-name="thirdName">
+            <text/>
+        </field>
+        <field name="fourthName" id-name="fourthName">
+            <text/>
+        </field>
+        <field name="nationality" position="1" id-name="nationality">
+            <text/>
+        </field>
+        <field name="gender" position="2" id-name="gender">
+            <drop-down allow-empty="true">
+                <option key="M" description="Male"/>
+                <option key="F" description="Female"/>
+                <option key="NA" description="Not Applicable"/>
+            </drop-down>
+        </field>
+        <field name="religion" position="3">
+            <text/>
+        </field>
+        <field name="patientType">
+            <drop-down allow-empty="false">
+                <option key="CASH" description="Cash"/>
+                <option key="INSURANCE" description="Insurance"/>
+                <option key="CORPORATE" description="Corporate"/>
+            </drop-down>
+        </field>
+        <field name="maritalStatus" position="4">
+            <drop-down allow-empty="true">
+                <option key="ANNULLED" description="Annulled"/>
+                <option key="DIVORCED" description="Divorced"/>
+                <option key="DOMESTIC_PARTNER" description="Domestic Partner"/>
+                <option key="LEGALLY_SEPARATED" description="Legally Separated"/>
+                <option key="LIVING_TOGATHER" description="Living Togather"/>
+                <option key="MARRIED" description="Married"/>
+                <option key="OTHER" description="Other"/>
+                <option key="SEPARATED" description="Separated"/>
+                <option key="SINGLE" description="Single"/>
+                <option key="UNMARRIED" description="Unmarried"/>
+                <option key="WIDOWED" description="Widowed"/>
+            </drop-down>
+        </field>
+        <field name="dateOfBirth" position="1">
+            <date-time type="date"/>
+        </field>
+
+        <field name="bloodGroup" position="2" id-name="bloodGroup">
+            <drop-down allow-empty="true">
+                <option key="A" description="A"/>
+                <option key="B" description="B"/>
+                <option key="AB" description="AB"/>
+                <option key="O" description="O"/>
+            </drop-down>
+        </field>
+        <field name="rH" position="3" id-name="rh">
+            <drop-down allow-empty="true">
+                <option key="+" description="+"/>
+                <option key="-" description="-"/>
+            </drop-down>
+        </field>
+        <field name="emailAddress" position="1" id-name="emailId">
+            <text/>
+        </field>
+        <field name="homePhone" position="2" id-name="homePhone">
+            <text/>
+        </field>
+        <field name="officePhone" position="3" id-name="officePhone">
+            <text/>
+        </field>
+        <field name="mobilePhone" position="4" id-name="mobileNumber">
+            <text/>
+        </field>
+        <field name="address1" id-name="address">
+            <textarea/>
+        </field>
+        <field name="city" id-name="city">
+            <text/>
+        </field>
+        <field name="governorate" id-name="state">
+            <text/>
+            <!-- <drop-down>
+                 <entity-options entity-name="Geo" description="${geoName}" key-field-name="geoId">
+                     <entity-constraint name="geoTypeId" value="PROVINCE"/>
+                     <entity-constraint name="geoId" value="KWT"/>
+                 </entity-options>
+             </drop-down>-->
+        </field>
+        <field name="country" id-name="country">
+            <drop-down no-current-selected-key="KWT">
+                <entity-options entity-name="Geo" description="${geoName}" key-field-name="geoId">
+                    <entity-constraint name="geoTypeId" value="COUNTRY"/>
+                    <entity-order-by field-name="geoName"/>
+                </entity-options>
+            </drop-down>
+        </field>
+
+        <field use-when="patientId==null" name="createButton" title="Register" widget-style="btn btn-success">
+            <submit button-type="button"/>
+        </field>
+        <field use-when="patientId!=null" name="updateButton" title="Update" widget-style="btn btn-success">
+            <submit button-type="button"/>
+        </field>
+
+        <sort-order>
+            <field-group>
+                <sort-field name="civilId"/>
+            </field-group>
+
+            <field-group title="Basic Information">
+                <sort-field name="afyaId" position="1"/>
+                <sort-field name="title" position="1"/>
+                <sort-field name="firstName" position="2"/>
+                <sort-field name="secondName" position="3"/>
+                <sort-field name="thirdName" position="4"/>
+                <sort-field name="fourthName" position="5"/>
+                <sort-field name="dateOfBirth" position="1"/>
+                <sort-field name="bloodGroup" position="2"/>
+                <sort-field name="rH" position="3"/>
+                <sort-field name="nationality" position="1"/>
+                <sort-field name="patientType" position="2"/>
+                <sort-field name="gender" position="3"/>
+                <sort-field name="religion" position="4"/>
+                <sort-field name="maritalStatus" position="5"/>
+            </field-group>
+
+            <field-group title="Communication Details">
+                <sort-field name="emailAddress"/>
+                <sort-field name="homePhone"/>
+                <sort-field name="officePhone"/>
+                <sort-field name="mobilePhone"/>
+                <sort-field name="address1"/>
+                <sort-field name="city" position="2"/>
+                <sort-field name="governorate" position="3"/>
+                <sort-field name="country" position="4"/>
+            </field-group>
+        </sort-order>
+    </form>
+
+
+    <form name="PatientList" target="patientList" title="Patient List" type="list" list-name="patientList"
+          odd-row-style="alternate-row" header-row-style="header-row-2" default-table-style="basic-table hover-bar">
+        <field name="civilId">
+            <display/>
+        </field>
+        <field name="afyaId">
+            <display/>
+        </field>
+        <field name="firstName">
+            <display/>
+        </field>
+        <field name="secondName">
+            <display/>
+        </field>
+        <field name="gender">
+            <display/>
+        </field>
+        <field name="mobileNumber">
+            <display/>
+        </field>
+        <field name="emailAddress">
+            <display/>
+        </field>
+        <field use-when="" name="editButton" action="editPatient" title="Edit" widget-style="btn btn-mini btn-success">
+            <hyperlink target="editPatient" description="${uiLabelMap.CommonEdit}" also-hidden="false">
+                <parameter param-name="patientId"/>
+            </hyperlink>
+        </field>
+    </form>
+
+
+    <form name="InsuranceList" target="insuranceList" title="Insurance List" type="list" list-name="insuranceList"
+          odd-row-style="alternate-row" header-row-style="header-row-2" default-table-style="basic-table hover-bar">
+        <field name="groupName">
+            <display/>
+        </field>
+        <field name="policyNo">
+            <display/>
+        </field>
+        <field name="startDate">
+            <display/>
+        </field>
+        <field name="endDate">
+            <display/>
+        </field>
+        <field name="healthPolicyName">
+            <display/>
+        </field>
+        <field name="benefitPlanName">
+            <display/>
+        </field>
+        <field name="UHID">
+            <display/>
+        </field>
+        <field name="planName">
+            <display/>
+        </field>
+        <field use-when="" name="editButton" action="editPatient" title="Remove" widget-style="btn btn-mini btn-danger">
+            <hyperlink target="removeInsurance" description="${uiLabelMap.CommonRemove}" also-hidden="false">
+                <parameter param-name="healthPolicyId"/>
+                <parameter param-name="patientId"/>
+            </hyperlink>
+        </field>
+    </form>
+
+    <form name="AddInsurance" type="single" default-map-name="patient"
+          target="addInsurance" header-row-style="header-row" default-table-style="basic-table"
+          default-entity-name="PatientInsurance">
+
+        <!--<auto-fields-entity entity-name="PatientInsurance" default-field-type="edit"></auto-fields-entity>-->
+
+        <field name="patientId">
+            <hidden value="${parameters.patientId}"/>
+        </field>
+        <field name="groupName" id-name="groupName">
+            <drop-down></drop-down>
+        </field>
+        <field name="tpa" title="TPA" id-name="tpa" position="2">
+            <text disabled="true"/>
+        </field>
+        <field name="insuranceCompanies" position="3" id-name="insurances">
+            <drop-down>
+
+            </drop-down>
+        </field>
+
+        <field name="policyNo" id-name="policyNo"><text/></field>
+        <field name="startDate" id-name="startDate"><text/></field>
+        <field name="endDate" id-name="endDate"><text/></field>
+        <field name="healthPolicyId" id-name="healthPolicyId"><text/></field>
+        <field name="healthPolicyName" id-name="healthPolicyName"><text/></field>
+        <field name="benefitPlanId" id-name="benefitPlanId"><text/></field>
+        <field name="benefitPlanName" id-name="benefitPlanName"><text/></field>
+        <field name="benefitPlanName" id-name="benefitPlanNameDropDown">
+            <drop-down></drop-down>
+        </field>
+        <field name="uHID" id-name="uhid"><text disabled="true"/> </field>
+        <field name="createButton" title="Add Insurance" widget-style="btn btn-success">
+            <submit button-type="button"/>
+        </field>
+    </form>
+</forms>

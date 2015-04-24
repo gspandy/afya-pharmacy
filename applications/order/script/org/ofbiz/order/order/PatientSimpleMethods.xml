@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Licensed to the Apache Software Foundation (ASF) under one or more contributor license agreements. See the NOTICE file distributed with this work for additional 
+	information regarding copyright ownership. The ASF licenses this file to you under the Apache License, Version 2.0 (the "License"); you may not use this file except 
+	in compliance with the License. You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0 Unless required by applicable law or agreed to 
+	in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See 
+	the License for the specific language governing permissions and limitations under the License. -->
+<simple-methods xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://ofbiz.apache.org/dtds/simple-methods-v2.xsd">
+
+    <simple-method method-name="registerPatient" login-required="true" use-transaction="true" short-description="For Registering a new Patient">
+
+        <make-value entity-name="Patient" value-field="newPatient"/>
+        <set-nonpk-fields map="parameters" set-if-null="true" value-field="newPatient"/>
+        <sequenced-id field="newPatient.patientId" get-long-only="false" sequence-name="Patient"/>
+
+        <field-to-result field="newPatient.patientId" result-name="patientId"/>
+        <create-value do-cache-clear="true" or-store="false" value-field="newPatient"/>
+
+        <set field="serviceCtx.patientId" from-field="newPatient.patientId"/>
+
+        <call-service break-on-error="true" error-code="error" in-map-name="serviceCtx" include-user-login="true"
+                      require-new-transaction="false" service-name="registerPatientOnPortal" success-code="success"/>
+
+    </simple-method>
+
+    <simple-method method-name="updatePatient" login-required="true" use-transaction="true" short-description="For Updating Patient">
+
+        <entity-one entity-name="Patient" value-field="lookedUpValue">
+            <field-map field-name="patientId" from-field="parameters.patientId"/>
+        </entity-one>
+        <set-nonpk-fields map="parameters" set-if-null="true" value-field="lookedUpValue"/>
+
+        <field-to-result field="parameters.patientId" result-name="patientId"/>
+        <now-timestamp field="lookedUpValue.updatedDate"/>
+        <set field="lookedUpValue.updatedByUserLogin" from="userLogin.userLoginId" set-if-empty="true" set-if-null="false"/>
+        <store-value do-cache-clear="true" value-field="lookedUpValue"/>
+    </simple-method>
+
+
+    <simple-method method-name="addInsurance" login-required="true" use-transaction="true" short-description="For Registering a new Insurance for a Patient">
+        <log level="always" message=" ${parameters}"/>
+        <make-value entity-name="PatientInsurance" value-field="newEntity"/>
+        <set-nonpk-fields map="parameters" set-if-null="true" value-field="newEntity"/>
+        <set-pk-fields value-field="newEntity" map="parameters"></set-pk-fields>
+        <set field="newEntity.patientId" from-field="parameters.patientId"/>
+        <set field="newEntity.healthPolicyId" from-field="parameters.healthPolicyId"/>
+
+        <create-value do-cache-clear="true" or-store="false" value-field="newEntity"/>
+    </simple-method>
+
+    <simple-method method-name="removeInsurance" login-required="true" use-transaction="true" short-description="Remove a Insurance for a Patient">
+        <entity-one entity-name="PatientInsurance" value-field="lookedUpValue">
+            <field-map field-name="patientId" from-field="parameters.patientId"/>
+            <field-map field-name="healthPolicyId" from-field="parameters.healthPolicyId"/>
+        </entity-one>
+        <remove-value value-field="lookedUpValue"/>
+    </simple-method>
+
+</simple-methods>
