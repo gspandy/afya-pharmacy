@@ -1295,7 +1295,7 @@ the top of the main content area */
 /* ===== Screenlet Title Bar/Navigation Styles ===== */
 /* ================================================= */
 .screenlet-title-bar {
-	background-color:#088CCD;
+	background-color:#337AB7;
 	font-weight: bold;
 	min-height: 33px;
 }
@@ -1305,7 +1305,7 @@ the top of the main content area */
 	background: none;
 	color: #FFF;
 	font-weight: bold;
-	font-size: 1.4em;
+	font-size: 1.3em;
 }
 
 .screenlet-title-bar ul {
@@ -1337,7 +1337,7 @@ the top of the main content area */
 }
 
 .screenlet-title-bar .h3,.screenlet-title-bar .head4 {
-	font-size: 1.4em;
+	font-size: 1.2em;
 }
 
 .screenlet-title-bar .h3 a {

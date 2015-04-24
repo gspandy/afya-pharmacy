@@ -100,17 +100,17 @@
 		<div class="app-location">
 	  		<div class="location"><img src="/bootstrap/images/logo_afya.png" class="img-responsive" alt="" /></div>
 				<form method="post" action="<@ofbizUrl>login</@ofbizUrl>" name="loginform">
-					<input type="text" class="text"  name="USERNAME" value="User Name" onFocus="this.value = '';" onBlur="if (this.value == '') {this.value = 'User Name';}" />
+					<input type="text" class="text" name="USERNAME" value="User Name" onFocus="this.value = '';" onBlur="if (this.value == '') {this.value = 'User Name';}" />
 					<input type="password" name="PASSWORD" value="Password" onFocus="this.value = '';" onBlur="if (this.value == '') {this.value = 'Password';}" />
 					<#if ("Y" == useMultitenant)>
 						<input type="tenant-text" class="login_input" name="tenantId" value="${parameters.tenantId?if_exists}" onFocus="this.value = '';" onBlur="if (this.value == '') {this.value = '';}" />
 					</#if>
 					<div class="submit">
-						<input type="submit" value="Sign in">
+						<input type="submit" value="Login">
 					</div>
 					<div class="clear"></div>
 					<input type="hidden" name="JavaScriptEnabled" value="N" />
-					<div class="center" style="font-size: 1.2em;">
+					<div class="center" style="font-size: 1.3em;color: #858282;">
 						<a href="<@ofbizUrl>forgotPassword</@ofbizUrl>">Forgot your Password?</a>
 						<!--<h4><a href="#">New here? Sign Up</a></h4>-->
 						<div class="clear"></div>
