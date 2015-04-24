@@ -103,13 +103,13 @@ under the License.
             <link target="ViewFacilityInventoryByProduct">
                 <parameter param-name="facilityId" value="${parameters.facilityId}"/>
             </link>
-            <menu-item name="ViewFacilityInventoryByProduct" title="Find Inventory">
-                <condition>
+            <menu-item name="AllViewFacilityInventoryByProduct" title="Find Inventory">
+                <!-- <condition>
                     <or>
                         <if-has-permission permission="FACILITY_INVENTORY_EDIT"/>
                         <if-has-permission permission="FACILITY_INVENTORY_VIEW"/>
                     </or>
-                </condition>
+                </condition> -->
                 <link target="ViewFacilityInventoryByProduct">
                     <parameter param-name="facilityId" value="${parameters.facilityId}"/>
                 </link>
