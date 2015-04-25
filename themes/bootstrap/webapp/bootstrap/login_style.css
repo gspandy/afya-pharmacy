@@ -137,7 +137,7 @@ input[type="submit"]:hover {
   margin: 1em 0 1em 0;
 }
 .new h3 {
-  float:left;
+  float:center;
 }
 .new h3 a,.new h4 a {
   color:#78797C;

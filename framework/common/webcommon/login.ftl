@@ -46,9 +46,9 @@
   </div>
 </#if>
 
-<link href="/bootstrap/style.css" type="text/css" rel="stylesheet" />
+<#-- <link href="/bootstrap/style.css" type="text/css" rel="stylesheet" />
 
-<#-- <div class="bg_wrap">
+<div class="bg_wrap">
     <div class="header"> Afya Pharmacy </div>
     <div class="login_section">
      <div class="login_form_section">
@@ -111,8 +111,8 @@
 					</div>
 					<div class="clear"></div>
 					<input type="hidden" name="JavaScriptEnabled" value="N" />
-					<div class="center" style="font-size: 1.3em;color: #858282;">
-						<a href="<@ofbizUrl>forgotPassword</@ofbizUrl>">Forgot your Password?</a>
+					<div class="new">
+						<h3><a href="<@ofbizUrl>forgotPassword</@ofbizUrl>">Forgot your Password?</a></h3>
 						<!--<h4><a href="#">New here? Sign Up</a></h4>-->
 						<div class="clear"></div>
 					</div>
