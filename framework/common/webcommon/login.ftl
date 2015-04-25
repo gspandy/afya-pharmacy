@@ -82,7 +82,7 @@
 	<head>
 		<title>Afya Pharmacy: Login</title>
 		<link href="/bootstrap/login_style.css" type="text/css" rel="stylesheet" />
-		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 		<script type="application/x-javascript"> addEventListener("load", function() { setTimeout(hideURLbar, 0); }, false); function hideURLbar(){ window.scrollTo(0,1); } </script>
 		<!--webfonts-->
@@ -97,6 +97,7 @@
 		</style>
 	</head>
 	<body>
+		<p>&nbsp;</p>
 		<div class="app-location">
 	  		<div class="location"><img src="/bootstrap/images/logo_afya.png" class="img-responsive" alt="" /></div>
 				<form method="post" action="<@ofbizUrl>login</@ofbizUrl>" name="loginform">
@@ -106,7 +107,7 @@
 						<input type="tenant-text" class="login_input" name="tenantId" value="${parameters.tenantId?if_exists}" onFocus="this.value = '';" onBlur="if (this.value == '') {this.value = '';}" />
 					</#if>
 					<div class="submit">
-						<input type="submit" value="Login">
+						<input type="submit" value="Login" />
 					</div>
 					<div class="clear"></div>
 					<input type="hidden" name="JavaScriptEnabled" value="N" />
