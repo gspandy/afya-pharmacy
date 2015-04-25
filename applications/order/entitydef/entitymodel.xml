@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Licensed to the Apache Software Foundation (ASF) under one or more contributor license agreements. See the NOTICE file distributed with this work for additional 
-	information regarding copyright ownership. The ASF licenses this file to you under the Apache License, Version 2.0 (the "License"); you may not use this file except 
-	in compliance with the License. You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0 Unless required by applicable law or agreed to 
-	in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See 
+<!-- Licensed to the Apache Software Foundation (ASF) under one or more contributor license agreements. See the NOTICE file distributed with this work for additional
+	information regarding copyright ownership. The ASF licenses this file to you under the Apache License, Version 2.0 (the "License"); you may not use this file except
+	in compliance with the License. You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0 Unless required by applicable law or agreed to
+	in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See
 	the License for the specific language governing permissions and limitations under the License. -->
 
 <entitymodel xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://ofbiz.apache.org/dtds/entitymodel.xsd">
@@ -615,6 +615,10 @@
 		<field name="quantity" type="fixed-point" enable-audit-log="true"></field>
 		<field name="cancelQuantity" type="fixed-point"></field>
 		<field name="selectedAmount" type="fixed-point"></field>
+
+		<field name="copayAmount" type="fixed-point"></field>
+		<field name="deductableAmount" type="fixed-point"></field>
+
 		<field name="unitPrice" type="currency-amount" enable-audit-log="true"></field>
 		<field name="unitListPrice" type="currency-amount"></field>
 		<field name="unitAverageCost" type="currency-amount"></field>
@@ -1647,18 +1651,18 @@
 		</field>
 		<field name="customerReferenceId" type="id-long"><!-- for tax entries this is partyTaxId -->
 		</field>
-		<field name="primaryGeoId" type="id"><!-- for tax entries this is the primary jurisdiction Geo (the smallest or most local Geo that this tax is for, usually a 
+		<field name="primaryGeoId" type="id"><!-- for tax entries this is the primary jurisdiction Geo (the smallest or most local Geo that this tax is for, usually a
 				state/province, perhaps a county or a city) -->
 		</field>
 		<field name="secondaryGeoId" type="id"><!-- for tax entries this is the secondary jurisdiction Geo (usually a country, or other Geo that the primary is within) -->
 		</field>
-		<field name="exemptAmount" type="currency-amount"><!-- an amount that would normally apply, but not to this order; for tax exemption represents the what the tax would have 
+		<field name="exemptAmount" type="currency-amount"><!-- an amount that would normally apply, but not to this order; for tax exemption represents the what the tax would have
 				been -->
 		</field>
-		<field name="taxAuthGeoId" type="id"></field><!-- these taxAuth fields deprecate the primaryGeoId and secondaryGeoId fields and will be used with the newer tax 
+		<field name="taxAuthGeoId" type="id"></field><!-- these taxAuth fields deprecate the primaryGeoId and secondaryGeoId fields and will be used with the newer tax
 			calc stuff -->
 		<field name="taxAuthPartyId" type="id"></field>
-		<field name="overrideGlAccountId" type="id"><!-- used to specify the override or actual glAccountId used for the adjustment, avoids problems if configuration 
+		<field name="overrideGlAccountId" type="id"><!-- used to specify the override or actual glAccountId used for the adjustment, avoids problems if configuration
 				changes after initial posting, etc -->
 		</field>
 		<field name="includeInTax" type="indicator"></field>
@@ -3085,8 +3089,15 @@
 		<field name="visitId" type="id-ne"/>
 		<field name="clinicId" type="id-ne"/>
 		<field name="afyaId" type="id-ne"/>
-		<field name="patientFirstName" type="id-vlong-ne"/>
-		<field name="patientLastName" type="id-vlong-ne"/>
+		<field name="firstName" type="long-varchar"></field>
+		<field name="secondName" type="long-varchar"></field>
+		<field name="thirdName" type="long-varchar"></field>
+		<field name="fourthName" type="long-varchar"></field>
+
+		<field name="healthPolicyId" type="short-varchar"></field>
+		<field name="benefitPlanId" type="short-varchar"></field>
+		<field name="moduleId" type="short-varchar"></field>
+		<field name="moduleName" type="short-varchar"></field>
 		<field name="patientType" type="id-ne"/>
 		<field name="mobileNumber" type="id-ne"/>
 		<field name="visitDate" type="date"></field>
@@ -3095,10 +3106,59 @@
 		<field name="clinicName" type="id-vlong-ne"></field>
 		<prim-key field="orderId" />
 	</entity>
-	
+
 	<extend-entity entity-name="OrderItem">
 		<field name="rxFrequency" type="id-ne"/>
 		<field name="homeService" type="indicator"/>
 	</extend-entity>
 
+
+	<entity entity-name="Patient" package-name="org.ofbiz.order.order" title="Patient Details">
+		<field name="patientId" type="id"/>
+		<field name="civilId" type="short-varchar"></field>
+		<field name="afyaId" type="short-varchar"></field>
+		<field name="title" type="short-varchar"></field>
+		<field name="firstName" type="long-varchar"></field>
+		<field name="secondName" type="long-varchar"></field>
+		<field name="thirdName" type="long-varchar"></field>
+		<field name="fourthName" type="long-varchar"></field>
+		<field name="nationality" type="id-ne"/>
+		<field name="gender" type="short-varchar"></field>
+		<field name="religion" type="short-varchar"></field>
+		<field name="dateOfBirth" type="date"></field>
+		<field name="patientType" type="short-varchar"></field>
+		<field name="maritalStatus" type="short-varchar"></field>
+		<field name="bloodGroup" type="short-varchar"></field>
+		<field name="rH" type="short-varchar"></field>
+		<field name="emailAddress" type="short-varchar"></field>
+		<field name="homePhone" type="short-varchar"></field>
+		<field name="officePhone" type="short-varchar"></field>
+		<field name="mobilePhone" type="short-varchar"></field>
+		<field name="address1" type="long-varchar"></field>
+		<field name="address2" type="long-varchar"></field>
+		<field name="postalCode" type="short-varchar"></field>
+		<field name="city" type="short-varchar"></field>
+		<field name="governorate" type="short-varchar"></field>
+		<field name="country" type="short-varchar"></field>
+		<prim-key field="patientId" />
+	</entity>
+
+	<entity entity-name="PatientInsurance" package-name="org.ofbiz.order.order" title="Patient Details">
+		<field name="patientId" type="id"/>
+		<field name="groupName" type="short-varchar"></field>
+		<field name="policyNo" type="short-varchar"></field>
+		<field name="startDate" type="short-varchar"></field>
+		<field name="endDate" type="short-varchar"></field>
+		<field name="healthPolicyId" type="short-varchar"></field>
+		<field name="healthPolicyName" type="short-varchar"></field>
+		<field name="benefitPlanId" type="short-varchar"></field>
+		<field name="benefitPlanName" type="short-varchar"></field>
+		<field name="uHID" type="short-varchar"></field>
+		<field name="planName" type="short-varchar"></field>
+		<prim-key field="patientId" />
+		<prim-key field="healthPolicyId" />
+		<relation type="one" rel-entity-name="Patient">
+			<key-map field-name="patientId" />
+		</relation>
+	</entity>
 </entitymodel>

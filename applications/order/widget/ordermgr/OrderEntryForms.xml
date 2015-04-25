@@ -19,25 +19,6 @@ under the License.
 -->
 <forms xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://ofbiz.apache.org/dtds/widget-form.xsd">
 
-    <form name="PatientInfo" type="single" target="savePatientInfo" title="" default-title-style="label control-label" default-table-style="tableext">
-        <field name="patientFirstName"><text/></field>
-        <field name="patientLastName"><text/></field>
-        <field name="mobile"><text/></field>
-        <field name="afyaId"><text/></field>
-        <field name="clinicName"><text/></field>
-        <field name="clinicId"><text/></field>
-        <field name="doctorName"><text/></field>
-        <field name="patientType">
-            <drop-down>
-                <option key="CASH" description="Cash"/>
-                <option key="CORPORATE" description="Corporate"/>
-                <option key="INSURANCE" description="Insurance"/>
-            </drop-down>
-        </field>
-        <field name="address"><textarea/></field>
-        <field name="submitButton" title="${uiLabelMap.CommonSubmit}"
-               widget-style="btn btn-primary"><submit button-type="button"/></field>
-   </form>
 
     <form name="FindRequirements" type="single" target="RequirementsForSupplier" title=""
         default-title-style="tableheadtext" default-widget-style="tabletext" default-tooltip-style="tabletext">

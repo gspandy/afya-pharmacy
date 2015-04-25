@@ -48,6 +48,7 @@ import org.sme.order.util.OrderMgrUtil;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.MathContext;
 import java.sql.Timestamp;
@@ -102,6 +103,20 @@ public class ShoppingCartEvents {
         ShoppingCartItem cartItem = cart.findCartItem(index);
         cartItem.setItemGroup(itemGroupNumber, cart);
         return "success";
+    }
+
+    public static String routePatient(HttpServletRequest request, HttpServletResponse response){
+        ShoppingCart cart = getCartObject(request);
+        if(cart.getPatientInfo()==null){
+            return "searchPatient";
+        }
+        request.setAttribute("patientId",cart.getPatientInfo().getPatientId());
+        try {
+            response.sendRedirect("patientinfo?patientId="+cart.getPatientInfo().getPatientId());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return "null";
     }
 
     /**

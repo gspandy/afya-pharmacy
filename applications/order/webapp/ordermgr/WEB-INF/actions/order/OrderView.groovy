@@ -17,21 +17,21 @@
  * under the License.
  */
 
-import java.math.BigDecimal;
-import java.util.*;
-import java.sql.Timestamp;
-import org.ofbiz.entity.*;
-import org.ofbiz.entity.condition.*;
-import org.ofbiz.entity.util.*;
-import org.ofbiz.base.util.*;
-import org.ofbiz.base.util.collections.*;
-import org.ofbiz.order.order.*;
-import org.ofbiz.party.contact.*;
-import org.ofbiz.product.inventory.InventoryWorker;
-import org.ofbiz.product.catalog.CatalogWorker;
-import org.ofbiz.accounting.payment.*;
 
-import javolution.util.FastMap;
+import javolution.util.FastMap
+import org.ofbiz.accounting.payment.PaymentWorker
+import org.ofbiz.base.util.UtilMisc
+import org.ofbiz.base.util.UtilValidate
+import org.ofbiz.entity.GenericValue
+import org.ofbiz.entity.condition.EntityCondition
+import org.ofbiz.entity.condition.EntityOperator
+import org.ofbiz.entity.util.EntityFindOptions
+import org.ofbiz.entity.util.EntityUtil
+import org.ofbiz.order.order.OrderReadHelper
+import org.ofbiz.party.contact.ContactHelper
+import org.ofbiz.party.contact.ContactMechWorker
+import org.ofbiz.product.catalog.CatalogWorker
+import org.ofbiz.product.inventory.InventoryWorker
 
 orderId = parameters.orderId;
 context.orderId = orderId;
@@ -373,6 +373,18 @@ if (orderHeader) {
     if ("SALES_ORDER".equals(orderType)) {
         GenericValue orderRxHeader = delegator.findOne("OrderRxHeader",true,"orderId",orderId);
         context.orderRxHeader=orderRxHeader;
+
+        if(orderRxHeader.benefitPlanId!=null) {
+            List<GenericValue> patientInsuranceList = delegator.findList("PatientInsurance",EntityCondition.makeCondition("benefitPlanId", orderRxHeader.benefitPlanId),null,null,null,false);
+
+            GenericValue patientInsurance = EntityUtil.getFirst(patientInsuranceList);
+            println '************** '+ patientInsurance;
+
+            context.benefitPlanName = patientInsurance.benefitPlanName;
+            context.benefitPlanId=patientInsurance.benefitPlanId;
+            context.healthPolicyName = patientInsurance.healthPolicyName;
+            context.healthPolicyId=patientInsurance.healthPolicyId;
+        }
         context.returnHeaderTypeId = "CUSTOMER_RETURN";
         // also set the product store facility Id for sales orders
         productStore = orderHeader.getRelatedOne("ProductStore");

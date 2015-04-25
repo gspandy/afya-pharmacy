@@ -1,4 +1,5 @@
-/*******************************************************************************
+/**
+ * ****************************************************************************
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -6,18 +7,20 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
- *
+ * <p/>
  * http://www.apache.org/licenses/LICENSE-2.0
- *
+ * <p/>
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
  * KIND, either express or implied.  See the License for the
  * specific language governing permissions and limitations
  * under the License.
- *******************************************************************************/
+ * *****************************************************************************
+ */
 package org.ofbiz.order.order;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import freemarker.cache.FileTemplateLoader;
 import freemarker.template.*;
 import javolution.util.FastList;
@@ -53,11 +56,16 @@ import org.ofbiz.product.product.ProductWorker;
 import org.ofbiz.product.store.ProductStoreWorker;
 import org.ofbiz.security.Security;
 import org.ofbiz.service.*;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.client.RestTemplate;
 
 import javax.transaction.Transaction;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.*;
@@ -78,6 +86,7 @@ public class OrderServices {
     public static final int orderRounding = UtilNumber.getBigDecimalRoundingMode("order.rounding");
     public static Map<String, String> salesAttributeRoleMap = FastMap.newInstance();
     public static Map<String, String> purchaseAttributeRoleMap = FastMap.newInstance();
+    public static int salestaxFinalDecimals = UtilNumber.getBigDecimalScale("salestax.final.decimals");
 
     static {
         salesAttributeRoleMap.put("placingCustomerPartyId", "PLACING_CUSTOMER");
@@ -91,8 +100,6 @@ public class OrderServices {
         purchaseAttributeRoleMap.put("shipFromVendorPartyId", "SHIP_FROM_VENDOR");
         purchaseAttributeRoleMap.put("supplierAgentPartyId", "SUPPLIER_AGENT");
     }
-
-    public static int salestaxFinalDecimals = UtilNumber.getBigDecimalScale("salestax.final.decimals");
 
     private static boolean hasPermission(String orderId, GenericValue userLogin, String action, Security security,
                                          Delegator delegator) {
@@ -760,7 +767,7 @@ public class OrderServices {
             while (ocmi.hasNext()) {
                 GenericValue ocm = (GenericValue) ocmi.next();
                 ocm.set("orderId", orderId);
-                if(ocm.getString("contactMechId")!=null)
+                if (ocm.getString("contactMechId") != null)
                     toBeStored.add(ocm);
             }
         }
@@ -1034,30 +1041,107 @@ public class OrderServices {
             toBeStored.add(orderHeaderWorkEffort);
         }
 
+
+        BigDecimal totalCopayAmount = BigDecimal.ZERO;
+        BigDecimal totalDeductableAmount = BigDecimal.ZERO;
         try {
             // store line items, etc so that they will be there for the foreign key checks
 
-            PatientInfo patientInfo = (PatientInfo)context.get("patientDetails");
-            if(patientInfo!=null){
+            PatientInfo patientInfo = (PatientInfo) context.get("patientDetails");
+            if (patientInfo != null) {
                 Map presciptionData = UtilMisc.toMap("orderId", orderId, "visitId", patientInfo.getVisitId(), "clinicId", patientInfo.getClinicId(),
-                        "afyaId", patientInfo.getAfyaId(), "patientFirstName", patientInfo.getFirstName(), "patientLastName", patientInfo.getLastName(),
+                        "afyaId", patientInfo.getAfyaId(),
+                        "firstName", patientInfo.getFirstName(),
+                        "secondName", patientInfo.getSecondName(),
+                        "thirdName", patientInfo.getThirdName(),
+                        "fourthName", patientInfo.getFourthName(),
                         "visitDate", UtilDateTime.toSqlDate(patientInfo.getVisitDate()),
-                        "doctorName",patientInfo.getDoctorName(),
-                        "clinicName",patientInfo.getClinicName(),
+                        "doctorName", patientInfo.getDoctorName(),
+                        "clinicName", patientInfo.getClinicName(),
                         "patientType", patientInfo.getPatientType(),
-                        "mobileNumber", patientInfo.getMobile());
+                        "mobileNumber", patientInfo.getMobile(),
+                        "benefitPlanId", patientInfo.getBenefitId(),
+                        "healthPolicyId", patientInfo.getHealthPolicyId(),
+                        "moduleId", patientInfo.getModuleId(),
+                        "moduleName", patientInfo.getModuleName());
                 GenericValue genericValue = delegator.makeValidValue("OrderRxHeader", presciptionData);
                 toBeStored.add(genericValue);
+
+                String PORTAL_URL = UtilProperties.getPropertyValue("general.properties", "server.url", "5.9.249.197:7878");
+                RestTemplate restTemplate = new RestTemplate();
+                HttpHeaders headers = new HttpHeaders();
+                List<MediaType> mediaTypes = new ArrayList<MediaType>();
+                mediaTypes.add(MediaType.APPLICATION_JSON);
+                headers.setAccept(mediaTypes);
+                headers.setContentType(MediaType.APPLICATION_JSON);
+                String url = PORTAL_URL + "afya-portal/anon/insuranceMaster/getServiceOrModuleDataByServiceId" +
+                        "?moduleId=" + patientInfo.getModuleId();
+                ResponseEntity<String> responseEntity = restTemplate.getForEntity(url, String.class);
+                String response = responseEntity.getBody();
+
+                ObjectMapper mapper = new ObjectMapper();
+                Map responseAsMap = null;
+                try {
+                    responseAsMap = mapper.readValue(response, Map.class);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+
+                Map portalResponse = (Map) responseAsMap.get("moduleDetails");
+                if (portalResponse != null) {
+                    orderItemIter = orderItems.iterator();
+                    while (orderItemIter.hasNext()) {
+                        GenericValue orderItem = (GenericValue) orderItemIter.next();
+                        BigDecimal copayAmount = null, copayPercentage = null, deductableAmount = null, deductablePercentage = null;
+                        BigDecimal lineTotal = orderItem.getBigDecimal("quantity").setScale(OrderServices.orderDecimals, OrderServices.orderRounding).multiply(orderItem.getBigDecimal("unitPrice"));
+
+                        if (UtilValidate.isNotEmpty(portalResponse.get("copayAmount"))) {
+                            copayAmount = new BigDecimal(portalResponse.get("copayAmount").toString());
+                        }
+                        if (UtilValidate.isNotEmpty(portalResponse.get("copayPercentage"))) {
+                            copayPercentage = new BigDecimal(portalResponse.get("copayPercentage").toString());
+                            copayAmount = lineTotal.multiply(copayPercentage).divide(new BigDecimal(100)).setScale(orderDecimals, orderRounding);
+                        }
+                        if (UtilValidate.isNotEmpty(portalResponse.get("deductableAmount"))) {
+                            deductableAmount = new BigDecimal(portalResponse.get("deductableAmount").toString());
+                        }
+                        if (UtilValidate.isNotEmpty(portalResponse.get("deductablePercentage"))) {
+                            deductablePercentage = new BigDecimal(portalResponse.get("deductablePercentage").toString());
+                            deductableAmount = lineTotal.multiply(deductablePercentage).divide(new BigDecimal(100)).setScale(orderDecimals, orderRounding);
+                        }
+                        deductableAmount = deductableAmount.add(new BigDecimal(0.055));
+                        copayAmount = copayAmount.add(new BigDecimal(0.175));
+                        orderItem.set("copayAmount", copayAmount);
+                        orderItem.set("deductableAmount", deductableAmount);
+                        totalCopayAmount = totalCopayAmount.add(copayAmount);
+                        totalDeductableAmount = totalDeductableAmount.add(deductableAmount);
+                    }
+                }
             }
 
             if (context.get("grandTotal") != null && "SALES_ORDER".equals(orderTypeId)) {
-                BigDecimal grandTotal = (BigDecimal)context.get("grandTotal");
+                BigDecimal grandTotal = (BigDecimal) context.get("grandTotal");
+
                 String paymentPrefId = delegator.getNextSeqId("OrderPaymentPreference");
-                Map paymentPreference = UtilMisc.toMap("orderId", orderId, "orderPaymentPreferenceId",paymentPrefId,
-                        "paymentMethodTypeId",patientInfo.getPatientType(),
-                        "maxAmount",grandTotal,"statusId","PAYMENT_NOT_RECEIVED");
-                GenericValue genericValue = delegator.makeValidValue("OrderPaymentPreference", paymentPreference);
-                toBeStored.add(genericValue);
+
+                BigDecimal patientToPay = totalCopayAmount.add(totalDeductableAmount).setScale(orderDecimals,orderRounding);
+                if (patientToPay.compareTo(BigDecimal.ZERO)==1) {
+                    Map paymentPreference = UtilMisc.toMap("orderId", orderId, "orderPaymentPreferenceId", paymentPrefId,
+                            "paymentMethodTypeId", "INSURANCE".equals(patientInfo.getPatientType())?"PATIENT":patientInfo.getPatientType(),
+                            "maxAmount", patientToPay, "statusId", "PAYMENT_NOT_RECEIVED");
+                    GenericValue genericValue = delegator.makeValidValue("OrderPaymentPreference", paymentPreference);
+                    toBeStored.add(genericValue);
+                }
+                if(patientToPay.compareTo(BigDecimal.ZERO)==1) {
+                    BigDecimal insuranceAmount = grandTotal.subtract(patientToPay).setScale(orderDecimals, orderRounding);
+                    paymentPrefId = delegator.getNextSeqId("OrderPaymentPreference");
+                    Map paymentPreference = UtilMisc.toMap("orderId", orderId, "orderPaymentPreferenceId", paymentPrefId,
+                            "paymentMethodTypeId", "INSURANCE",
+                            "maxAmount", insuranceAmount, "statusId", "PAYMENT_NOT_RECEIVED");
+                    GenericValue genericValue = delegator.makeValidValue("OrderPaymentPreference", paymentPreference);
+                    toBeStored.add(genericValue);
+                }
 
             }
             delegator.storeAll(toBeStored);
@@ -1451,12 +1535,12 @@ public class OrderServices {
                 orderHeader.set("remainingSubTotal", remainingSubTotal);
                 try {
                     orderHeader.store();
-                    List<GenericValue> paymentPreferences = orh.getPaymentPreferences();
+                    /*List<GenericValue> paymentPreferences = orh.getPaymentPreferences();
                     GenericValue orderPaymentPreference = EntityUtil.getFirst(paymentPreferences);
                     if (orderPaymentPreference != null) {
                         orderPaymentPreference.set("maxAmount", updatedTotal);
                         orderPaymentPreference.store();
-                    }
+                    }*/
                 } catch (GenericEntityException e) {
                     String errMsg = "ERROR: Could not set grandTotal on OrderHeader entity: " + e.toString();
                     Debug.logError(e, errMsg, module);
@@ -5208,7 +5292,7 @@ public class OrderServices {
         String amountReceivedStr = (String) context.get("receivedAmount");
         //String receivedAmtRefNum = (String) context.get("receivedAmtRefNum");
         //String creditCardNumer = (String) context.get("creditCardNumer");
-        
+
         try {
             GenericValue opp =
                     delegator.findByPrimaryKey("OrderPaymentPreference",
@@ -5229,7 +5313,7 @@ public class OrderServices {
                 }
                 opp.set("amountReceived", amountReceived);
             } else {
-            	opp.set("amountReceived", BigDecimal.ZERO);
+                opp.set("amountReceived", BigDecimal.ZERO);
             }
 
             // The checkOutPaymentId is either a paymentMethodId or paymentMethodTypeId
@@ -6392,6 +6476,17 @@ public class OrderServices {
                         shippingOriginAddress = postalAddress;
                     else
                         shippingAddress = postalAddress;
+                }
+
+                if(shippingOriginAddress==null) {
+                    shippingOriginAddress =
+                            delegator.findOne("PostalAddress", false, "contactMechId",
+                                    "10002");
+                }
+                if(shippingAddress==null){
+                    shippingAddress =
+                            delegator.findOne("PostalAddress", false, "contactMechId",
+                                    "10002");
                 }
                 taxContext.put("shippingAddress", shippingAddress);
                 if ("PURCHASE_ORDER".equals(orderHeader.getString("orderType")))

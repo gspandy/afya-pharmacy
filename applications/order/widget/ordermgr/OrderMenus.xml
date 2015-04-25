@@ -18,6 +18,20 @@ specific language governing permissions and limitations
 under the License.
 -->
 <menus xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://ofbiz.apache.org/dtds/widget-menu.xsd">
+
+    <menu name="PatientMenu" title="">
+            <menu-item title="Insurance List" name="addInsurance">
+                <condition>
+                        <and>
+                            <if-compare field="patient.patientType" type="String"  operator="equals" value="INSURANCE"/>
+                        </and>
+                </condition>
+                <link target="insuranceList">
+                    <parameter param-name="patientId" from-field="patient.patientId"/>
+                </link>
+            </menu-item>
+    </menu>
+
     <menu name="OrderAppBar" title="${uiLabelMap.OrderManager}" extends="CommonAppBarMenu" extends-resource="component://common/widget/CommonMenus.xml">
      <actions>
            <script location="component://order/webapp/ordermgr/reports/RoleTypePermissions.groovy"/>
@@ -31,7 +45,6 @@ under the License.
                 </or>
             </condition>
             <link target="FindRequest"/>
-            
              <menu-item name="createRequest" title="Create New Request">
              <condition>
                     		<or>
@@ -134,7 +147,15 @@ under the License.
             </menu-item> -->
         
         </menu-item>
-
+        <menu-item name="patient" title="Patient List">
+            <link target="patientList"/>
+            <menu-item name="newPatient" title="New Patient">
+                <link target="newPatient"/>
+            </menu-item>
+            <menu-item name="patientList" title="Patient List">
+                <link target="patientList"/>
+            </menu-item>
+        </menu-item>
       <!--  <menu-item name="return" title="${uiLabelMap.OrderOrderReturns}">
             <condition>
                 <if-has-permission permission="ORDERMGR" action="_RETURN"/>

@@ -2329,12 +2329,92 @@
         <security https="true" auth="true"/>
         <response name="success" type="view" value="orderHelp" />
     </request-map>
+
+	<request-map uri="newPatient">
+		<security auth="true"/>
+		<response name="success" type="view" value="newpatient"/>
+	</request-map>
+
+	<request-map uri="registerPatient">
+		<security auth="true"/>
+		<event type="service" invoke="registerPatient"/>
+		<response name="success" type="view" value="newpatient"/>
+	</request-map>
+
+	<request-map uri="editPatient">
+		<security auth="true"/>
+		<response name="success" type="view" value="newpatient"/>
+	</request-map>
+
+	<request-map uri="updatePatient">
+		<security auth="true"/>
+		<event type="service" invoke="updatePatient"/>
+		<response name="success" type="request-redirect" value="editPatient">
+			<redirect-parameter name="patientId"/>
+		</response>
+	</request-map>
+
+	<request-map uri="patientList">
+		<security auth="true"/>
+		<response name="success" type="view" value="patientList"/>
+	</request-map>
+
+	<request-map uri="newInsurance">
+		<security auth="true"/>
+		<response name="success" type="view" value="addInsurance">
+		</response>
+	</request-map>
+
+	<request-map uri="addInsurance">
+		<security auth="true"/>
+		<event type="service" invoke="addInsurance"/>
+		<response name="success" type="request-redirect" value="insuranceList">
+			<redirect-parameter name="patientId"/>
+		</response>
+	</request-map>
+
+	<request-map uri="removeInsurance">
+		<security auth="true"/>
+		<event type="service" invoke="removeInsurance"/>
+		<response name="success" type="request-redirect" value="insuranceList">
+			<redirect-parameter name="patientId"/>
+		</response>
+	</request-map>
+
+	<request-map uri="insuranceList">
+		<security auth="true"/>
+		<response name="success" type="view" value="insuranceList"/>
+	</request-map>
+
+	<request-map uri="searchPatient">
+		<security auth="true"/>
+		<event type="java" path="org.ofbiz.order.shoppingcart.ShoppingCartEvents" invoke="routePatient" />
+		<response name="patientinfo" type="request-redirect" value="patientinfo">
+			<redirect-parameter name="patientId" from="parameters.patientId"/>
+		</response>
+		<response name="searchPatient" type="view" value="searchPatient"/>
+	</request-map>
+
+	<request-map uri="findPatient">
+		<security auth="true"/>
+		<response name="success" type="view" value="searchPatient"/>
+	</request-map>
+
 	<!-- end of request mappings -->
 
 	<!-- View Mappings -->
 	<view-map name="LookupProductCategory" type="screen" page="component://product/widget/catalog/LookupScreens.xml#LookupProductCategory" />
 
 	<view-map name="main" type="screen" page="component://order/widget/ordermgr/OrderViewScreens.xml#Main" />
+
+
+	<view-map name="newpatient" type="screen" page="component://order/widget/ordermgr/OrderViewScreens.xml#NewPatient" />
+	<view-map name="patientList" type="screen" page="component://order/widget/ordermgr/OrderViewScreens.xml#PatientList" />
+	<view-map name="addInsurance" type="screen" page="component://order/widget/ordermgr/OrderViewScreens.xml#AddInsurance" />
+	<view-map name="insuranceList" type="screen" page="component://order/widget/ordermgr/OrderViewScreens.xml#InsuranceList" />
+
+	<view-map name="searchPatient" type="screen" page="component://order/widget/ordermgr/OrderEntryScreens.xml#SearchPatient" />
+	<view-map name="searchPatientResult" type="screen" page="component://order/widget/ordermgr/OrderEntryScreens.xml#SearchPatientResult" />
 
 	<view-map name="orderstats" type="screen" page="component://order/widget/ordermgr/OrderViewScreens.xml#OrderStats" />
 	<view-map name="findorders" type="screen" page="component://order/widget/ordermgr/OrderViewScreens.xml#OrderFindOrder" />

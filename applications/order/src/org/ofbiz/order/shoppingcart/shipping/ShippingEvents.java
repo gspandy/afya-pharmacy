@@ -18,28 +18,16 @@
  *******************************************************************************/
 package org.ofbiz.order.shoppingcart.shipping;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import org.ofbiz.base.util.Debug;
-import org.ofbiz.base.util.GeneralException;
-import org.ofbiz.base.util.UtilMisc;
-import org.ofbiz.base.util.UtilValidate;
-import org.ofbiz.base.util.UtilProperties;
+import org.ofbiz.base.util.*;
 import org.ofbiz.entity.Delegator;
 import org.ofbiz.entity.GenericValue;
 import org.ofbiz.entity.condition.EntityCondition;
 import org.ofbiz.entity.condition.EntityConditionList;
-import org.ofbiz.entity.condition.EntityExpr;
 import org.ofbiz.entity.condition.EntityOperator;
 import org.ofbiz.entity.util.EntityUtil;
 import org.ofbiz.order.order.OrderReadHelper;
 import org.ofbiz.order.shoppingcart.ShoppingCart;
+import org.ofbiz.order.shoppingcart.product.ProductPromoWorker;
 import org.ofbiz.product.store.ProductStoreWorker;
 import org.ofbiz.service.GenericServiceException;
 import org.ofbiz.service.LocalDispatcher;
@@ -48,11 +36,11 @@ import org.ofbiz.service.ServiceUtil;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import org.ofbiz.order.shoppingcart.product.ProductPromoWorker;
 
 /**
  * ShippingEvents - Events used for processing shipping fees
@@ -158,6 +146,8 @@ public class ShippingEvents {
             return ServiceUtil.returnSuccess();
         }
 
+        shipmentMethodTypeId="NO_SHIPPING";
+        carrierPartyId="_NA_";
         if (shipmentMethodTypeId == null || carrierPartyId == null) {
             if ("SALES_ORDER".equals(orderTypeId)) {
                 errorMessageList.add("Please Select Your Shipping Method.");

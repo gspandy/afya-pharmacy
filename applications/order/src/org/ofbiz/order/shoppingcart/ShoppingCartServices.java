@@ -18,27 +18,11 @@
  *******************************************************************************/
 package org.ofbiz.order.shoppingcart;
 
-import java.math.BigDecimal;
-import java.math.MathContext;
-import java.sql.Timestamp;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-
 import javolution.util.FastList;
 import javolution.util.FastMap;
-
 import org.apache.commons.lang.math.NumberUtils;
-import org.ofbiz.base.util.Debug;
-import org.ofbiz.base.util.GeneralException;
-import org.ofbiz.base.util.UtilDateTime;
-import org.ofbiz.base.util.UtilFormatOut;
-import org.ofbiz.base.util.UtilMisc;
-import org.ofbiz.base.util.UtilProperties;
-import org.ofbiz.base.util.UtilValidate;
+import org.ofbiz.base.util.*;
 import org.ofbiz.entity.Delegator;
-import org.ofbiz.entity.GenericDelegator;
 import org.ofbiz.entity.GenericEntityException;
 import org.ofbiz.entity.GenericValue;
 import org.ofbiz.entity.condition.EntityCondition;
@@ -53,6 +37,14 @@ import org.ofbiz.service.DispatchContext;
 import org.ofbiz.service.GenericServiceException;
 import org.ofbiz.service.LocalDispatcher;
 import org.ofbiz.service.ServiceUtil;
+
+import java.math.BigDecimal;
+import java.math.MathContext;
+import java.sql.Timestamp;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 
 /**
  * Shopping Cart Services
@@ -211,8 +203,10 @@ public class ShoppingCartServices {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
-		String shippingOriginContactId = EntityUtil.getFirst(orderContacts).getString("contactMechId");
-        cart.setShippingOriginContactMechId(-1,shippingOriginContactId);
+        if(orderContacts!=null && orderContacts.size()>0) {
+            String shippingOriginContactId = EntityUtil.getFirst(orderContacts).getString("contactMechId");
+            cart.setShippingOriginContactMechId(-1, shippingOriginContactId);
+        }
         try {
             cart.setUserLogin(userLogin, dispatcher);
         } catch (CartItemModifyException e) {
@@ -335,6 +329,9 @@ public class ShoppingCartServices {
             cartShipInfo.shipAfterDate = orderItemShipGroup.getTimestamp("shipAfterDate");
             cartShipInfo.shipBeforeDate = orderItemShipGroup.getTimestamp("shipByDate");
             cartShipInfo.shipmentMethodTypeId = orderItemShipGroup.getString("shipmentMethodTypeId");
+            if(cartShipInfo.shipmentMethodTypeId==null){
+                cartShipInfo.shipmentMethodTypeId = "PICKUP";
+            }
             cartShipInfo.carrierPartyId = orderItemShipGroup.getString("carrierPartyId");
             cartShipInfo.supplierPartyId = orderItemShipGroup.getString("supplierPartyId");
             cartShipInfo.setMaySplit(orderItemShipGroup.getBoolean("maySplit"));

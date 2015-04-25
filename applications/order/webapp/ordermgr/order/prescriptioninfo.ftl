@@ -18,25 +18,29 @@ under the License.
 -->
 
 <#if orderRxHeader?has_content>
+<script>
+
+
+</script>
 <div class="screenlet">
     <div class="screenlet-title-bar">
         <ul>
             <li class="h3">&nbsp;${uiLabelMap.OrderContactInformation}</li>
-            <li class="expanded"><a onclick="javascript:toggleScreenlet(this, 'PatientInfoScreenletBody_${orderId}', 'true', '${uiLabelMap.CommonExpand}', '${uiLabelMap.CommonCollapse}');" title="Collapse">&nbsp;</a></li>
+            <li class="expanded"><a
+                    onclick="javascript:toggleScreenlet(this, 'PatientInfoScreenletBody_${orderId}', 'true', '${uiLabelMap.CommonExpand}', '${uiLabelMap.CommonCollapse}');"
+                    title="Collapse">&nbsp;</a></li>
         </ul>
         <br class="clear"/>
     </div>
     <div class="screenlet-body" id="PatientInfoScreenletBody_${orderId}">
         <table class="basic-table" cellspacing='0'>
             <tr>
-                <td align="right" valign="top" width="19%"><span class="label">Patient First Name</span></td>
+                <td align="right" valign="top" width="10%"><span class="label">First Name</span></td>
                 <td width="1%">&nbsp;</td>
-                <td valign="top" width="80%">${orderRxHeader.patientFirstName?if_exists}</td>
-            </tr>
-            <tr>
-                <td align="right" valign="top" width="19%"><span class="label">Patient Last Name</span></td>
+                <td valign="top" width="40%">${orderRxHeader.firstName?if_exists}</td>
+                <td align="right" valign="top" width="10%"><span class="label">Last Name</span></td>
                 <td width="1%">&nbsp;</td>
-                <td valign="top" width="80%">${orderRxHeader.patientLastName?if_exists}</td>
+                <td valign="top" width="40%">${orderRxHeader.secondName?if_exists}</td>
             </tr>
             <tr>
                 <td align="right" valign="top" width="19%"><span class="label">Mobile</span></td>
@@ -46,12 +50,10 @@ under the License.
             <tr>
                 <td align="right" valign="top" width="19%"><span class="label">Visit ID</span></td>
                 <td width="1%">&nbsp;</td>
-                <td valign="top" width="80%">${orderRxHeader.visitId?if_exists}</td>
-            </tr>
-            <tr>
+                <td valign="top" width="40%">${orderRxHeader.visitId?if_exists}</td>
                 <td align="right" valign="top" width="19%"><span class="label">Visit Date</span></td>
                 <td width="1%">&nbsp;</td>
-                <td valign="top" width="80%">${orderRxHeader.visitDate?if_exists}</td>
+                <td valign="top" width="40%">${orderRxHeader.visitDate?if_exists}</td>
             </tr>
             <tr>
                 <td align="right" valign="top" width="19%"><span class="label">Afya ID</span></td>
@@ -61,18 +63,28 @@ under the License.
             <tr>
                 <td align="right" valign="top" width="19%"><span class="label">Clinic Name</span></td>
                 <td width="1%">&nbsp;</td>
-                <td valign="top" width="80%">${orderRxHeader.clinicName?if_exists}</td>
-            </tr>
-            <tr>
+                <td valign="top" width="40%">${orderRxHeader.clinicName?if_exists}</td>
                 <td align="right" valign="top" width="19%"><span class="label">Doctor Name</span></td>
                 <td width="1%">&nbsp;</td>
-                <td valign="top" width="80%">${orderRxHeader.doctorName?if_exists}</td>
+                <td valign="top" width="40%">${orderRxHeader.doctorName?if_exists}</td>
             </tr>
             <tr>
                 <td align="right" valign="top" width="19%"><span class="label">Patient Type</span></td>
                 <td width="1%">&nbsp;</td>
                 <td valign="top" width="80%">${orderRxHeader.patientType?if_exists}</td>
             </tr>
+            <#if benefitPlanName?exists>
+                <tr>
+                    <td align="right" valign="top" width="19%"><span class="label">Benefit Plan</span></td>
+                    <td width="1%"><input type="hidden" value="${benefitPlanId}" id="benefitPlanId"/></td>
+                    <td valign="top" width="40%">${benefitPlanName?if_exists}</td>
+                </tr>
+                <tr>
+                    <td align="right" valign="top" width="19%"><span class="label">Module Name</span></td>
+                    <td width="1%"><input type="hidden" value="${benefitPlanId}" id="benefitPlanId"/></td>
+                    <td valign="top" width="40%">${orderRxHeader.moduleName?if_exists}</td>
+                </tr>
+            </#if>
         </table>
     </div>
 </div>
@@ -82,7 +94,9 @@ under the License.
     <div class="screenlet-title-bar">
         <ul>
             <li class="h3">&nbsp;${uiLabelMap.OrderActions}</li>
-            <li class="expanded"><a onclick="javascript:toggleScreenlet(this, 'ActionsScreenletBody_${orderId}', 'true', '${uiLabelMap.CommonExpand}', '${uiLabelMap.CommonCollapse}');" title="Collapse">&nbsp;</a></li>
+            <li class="expanded"><a
+                    onclick="javascript:toggleScreenlet(this, 'ActionsScreenletBody_${orderId}', 'true', '${uiLabelMap.CommonExpand}', '${uiLabelMap.CommonCollapse}');"
+                    title="Collapse">&nbsp;</a></li>
         </ul>
         <br class="clear"/>
     </div>
@@ -202,7 +216,7 @@ under the License.
                 <li><a href="<@ofbizUrl>cancelOrderItem?${paramString}</@ofbizUrl>" class="btn btn-danger btn-mini btn-link">${uiLabelMap.OrderCancelAllItems}</a></li>
                 <li><a href="<@ofbizUrl>editOrderItems?${paramString}</@ofbizUrl>" class="btn btn-mini btn-link">${uiLabelMap.OrderEditItems}</a></li>
             </#if>
-            <li><a href="<@ofbizUrl>loadCartFromOrder?${paramString}&amp;finalizeMode=init</@ofbizUrl>" class="btn btn-mini btn-link">${uiLabelMap.OrderCreateAsNewOrder}</a></li>
+            <#--<li><a href="<@ofbizUrl>loadCartFromOrder?${paramString}&amp;finalizeMode=init</@ofbizUrl>" class="btn btn-mini btn-link">${uiLabelMap.OrderCreateAsNewOrder}</a></li>-->
         <#-- <#if orderHeader.statusId == "ORDER_COMPLETED">
            <li><a href="<@ofbizUrl>loadCartForReplacementOrder?${paramString}</@ofbizUrl>" class="btn btn-mini btn-link">${uiLabelMap.OrderCreateReplacementOrder}</a></li>
          </#if>-->
