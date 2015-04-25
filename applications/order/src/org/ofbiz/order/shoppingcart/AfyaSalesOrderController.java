@@ -72,7 +72,7 @@ public class AfyaSalesOrderController {
 
             PatientInfo patientInfo = new PatientInfo();
             patientInfo.setAfyaId(prescription.getAfyaId());
-            patientInfo.setLastName(prescription.getLastName());
+            patientInfo.setThirdName(prescription.getLastName());
             patientInfo.setFirstName(prescription.getFirstName());
             patientInfo.setMobile(prescription.getMobile());
             patientInfo.setClinicId(prescription.getClinicId());
