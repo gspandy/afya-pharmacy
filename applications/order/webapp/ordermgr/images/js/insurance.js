@@ -30,14 +30,12 @@ $(document).ready(function () {
 
     $('#benefitPlanNameDropDown').change(function () {
         $('#benefitPlanId').val($(this).val());
-        alert($(this).find('option:selected').text());
+        ($(this).find('option:selected').text());
         $('#benefitPlanName').val($(this).find('option:selected').text());
     });
 
     $('#moduleId').change(function () {
-        alert($('#moduleId').val());
         $('#moduleName').val($(this).find('option:selected').text());
-        alert($('#moduleName').val());
     });
 
     $('#groupName').change(function () {
