@@ -91,56 +91,83 @@ under the License.
               </fieldset>
             </form>
             <form method="post" action="<@ofbizUrl>additem</@ofbizUrl>" name="quickaddform" style="margin: 0;" id="quickaddform">
-              <table border="0" style="width:100%">
-                <tr>
-                  <td align="right"><div>${uiLabelMap.ProductProductId} :</div></td>
-                  <td>
-                    <@htmlTemplate.lookupField formName="quickaddform" name="add_product_id" id="add_product_id" fieldFormName="LookupProduct" className="required"/><span><font color="red">*</font></span>
-                    <script language="JavaScript" type="text/javascript">ajaxAutoCompleter('add_product_id,<@ofbizUrl>LookupProduct</@ofbizUrl>,ajaxLookup=Y&amp;searchValueField=add_product_id', true);</script>
-                  </td>
-                </tr>
-                <tr>
-                  <td align="right"><div>${uiLabelMap.OrderQuantity} :</div></td>
-                  <td>
-                    <input type="text" size="6" class="quantity required" id="quantity" name="quantity" value="" onfocus="javascript:setQtyUom();"/><span><font color="red">*</font></span>
-                    <span id="qtyUom" style="font-weight: bold"/>
-                  </td>
-                </tr>
-                <tr>
-                  <td align="right"><div>${uiLabelMap.OrderDesiredDeliveryDate} :</div></td>
-                 <td>
-                    <div width="100%">
-                      <#if useAsDefaultDesiredDeliveryDate?exists> 
-                        <#assign value = defaultDesiredDeliveryDate>
-                      </#if>
-                      <@htmlTemplate.renderDateTimeField name="itemDesiredDeliveryDate" value="${value!''}" className="date" alert="" title="Format: MM/dd/yyyy" size="15" maxlength="10" id="item1" dateType="date-time" shortDateInput=true timeDropdownParamName="" defaultDateTimeString="" localizedIconTitle="" timeDropdown="" timeHourName="" classString="" hour1="" hour2="" timeMinutesName="" minutes="" isTwelveHour="" ampmName="" amSelected="" pmSelected="" compositeType="" formName=""/>
-                      <input type="checkbox" name="useAsDefaultDesiredDeliveryDate" value="true"<#if useAsDefaultDesiredDeliveryDate?exists> checked="checked"</#if>/>
-                      ${uiLabelMap.OrderUseDefaultDesiredDeliveryDate}
-                    </div>
-                  </td>
-                </tr>
-                <tr>
-                  <td align="right"><div>${uiLabelMap.CommonComment} :</div></td>
-                  <td>
-                    <div>
-                      <textarea cols="30" rows="2" wrap="hard" name="itemComment" onfocus="javascript:setQtyUom();">${defaultComment?if_exists}</textarea>
-                      <input type="checkbox" name="useAsDefaultComment" value="true" <#if useAsDefaultComment?exists>checked="checked"</#if> />
-                      ${uiLabelMap.OrderUseDefaultComment}
-                    </div>
-                  </td>
-                </tr>
-                <tr>
-                  <td></td>
-                  <td><input type="submit" class="btn btn-success" value="${uiLabelMap.OrderAddToOrder}"/></td>
-                </tr>
-              </table>
+              
+              <#if shoppingCart.getOrderType() == "SALES_ORDER">
+                <table border="0" style="width:100%">
+                  <tr>
+                    <td align="right"><div>${uiLabelMap.ProductProductId} :</div></td>
+                    <td width="25%">
+                      <@htmlTemplate.lookupField formName="quickaddform" name="add_product_id" id="add_product_id" fieldFormName="LookupProduct" className="required"/><span><font color="red">*</font></span>
+                      <script language="JavaScript" type="text/javascript">ajaxAutoCompleter('add_product_id,<@ofbizUrl>LookupProduct</@ofbizUrl>,ajaxLookup=Y&amp;searchValueField=add_product_id', true);</script>
+                    </td>
+                    <td align="right"><div>${uiLabelMap.OrderQuantity} :</div></td>
+                    <td width="25%">
+                      <input type="text" size="6" class="quantity required" id="quantity" name="quantity" value="" onfocus="javascript:setQtyUom();"/><span><font color="red">*</font></span>
+                      <span id="qtyUom" style="font-weight: bold"/>
+                    </td>
+                    <td><input type="submit" class="btn btn-success" value="${uiLabelMap.OrderAddToOrder}"/></td>
+                  </tr>
+                </table>
+              <#else>
+                <table border="0" style="width:100%">
+                  <tr>
+                    <td align="right"><div>${uiLabelMap.ProductProductId} :</div></td>
+                    <td width="15%">
+                      <@htmlTemplate.lookupField formName="quickaddform" name="add_product_id" id="add_product_id" fieldFormName="LookupProduct" className="required"/><span><font color="red">*</font></span>
+                      <script language="JavaScript" type="text/javascript">ajaxAutoCompleter('add_product_id,<@ofbizUrl>LookupProduct</@ofbizUrl>,ajaxLookup=Y&amp;searchValueField=add_product_id', true);</script>
+                    </td>
+                    <td align="right"><div>${uiLabelMap.OrderQuantity} :</div></td>
+                    <td>
+                      <input type="text" size="6" class="quantity required" id="quantity" name="quantity" value="" onfocus="javascript:setQtyUom();"/><span><font color="red">*</font></span>
+                      <span id="qtyUom" style="font-weight: bold"/>
+                    </td>
+                    <td align="right"><div>${uiLabelMap.OrderDesiredDeliveryDate} :</div></td>
+                    <td>
+                      <div width="100%">
+                        <#if useAsDefaultDesiredDeliveryDate?exists> 
+                          <#assign value = defaultDesiredDeliveryDate>
+                        </#if>
+                        <@htmlTemplate.renderDateTimeField name="itemDesiredDeliveryDate" value="${value!''}" className="date" alert="" title="Format: MM/dd/yyyy" size="15" maxlength="10" id="item1" dateType="date-time" shortDateInput=true timeDropdownParamName="" defaultDateTimeString="" localizedIconTitle="" timeDropdown="" timeHourName="" classString="" hour1="" hour2="" timeMinutesName="" minutes="" isTwelveHour="" ampmName="" amSelected="" pmSelected="" compositeType="" formName=""/>
+                      </div>
+                    </td>
+                    <td align="right"><div>${uiLabelMap.CommonComment} :</div></td>
+                    <td>
+                      <div>
+                        <textarea cols="30" rows="2" wrap="hard" name="itemComment" onfocus="javascript:setQtyUom();">${defaultComment?if_exists}</textarea>
+                      </div>
+                    </td>
+                    <td><input type="submit" class="btn btn-success" value="${uiLabelMap.OrderAddToOrder}"/></td>
+                  </tr>
+                  <tr>
+                    <td align="right">&nbsp;</td>
+                    <td>&nbsp;</td>
+                    <td align="right">&nbsp;</td>
+                    <td>&nbsp;</td>
+                    <td align="right">
+                      <div width="100%">
+                        <#if useAsDefaultDesiredDeliveryDate?exists> 
+                          <#assign value = defaultDesiredDeliveryDate>
+                        </#if>
+                        <input type="checkbox" name="useAsDefaultDesiredDeliveryDate" value="true"<#if useAsDefaultDesiredDeliveryDate?exists> checked="checked"</#if>/>&nbsp;
+                      </div>
+                    </td>
+                    <td>${uiLabelMap.OrderUseDefaultDesiredDeliveryDate}</td>
+                    <td align="right">
+                      <div>
+                        <input type="checkbox" name="useAsDefaultComment" value="true" <#if useAsDefaultComment?exists>checked="checked"</#if> />&nbsp;
+                      </div>
+                    </td>
+                    <td>${uiLabelMap.OrderUseDefaultComment}</td>
+                  </tr>
+                </table>
+              </#if>
             </form>
           </td>
         </tr>
       </table>
       <script>
-      		var form = document.quickaddform;
-     		jQuery(form).validate();
+        var form = document.quickaddform;
+        jQuery(form).validate();
       </script>
     </div>
 </div>

@@ -39,8 +39,8 @@ under the License.
           <#--<li class="disabled">${uiLabelMap.OrderFinalizeOrder}</li>-->
             <li class="disabled"><a href="<@ofbizUrl>searchPatient</@ofbizUrl>">Patient Info</a></li>
         <#else>
+            <li><a href="<@ofbizUrl>calcTax</@ofbizUrl>">${uiLabelMap.OrderQuickFinalizeOrder}</a></li>
             <li><a href="<@ofbizUrl>searchPatient</@ofbizUrl>">Patient Info</a></li>
-            <#--<li><a href="<@ofbizUrl>calcTax</@ofbizUrl>">${uiLabelMap.OrderQuickFinalizeOrder}</a></li>-->
         </#if>
       </#if>
 

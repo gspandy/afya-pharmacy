@@ -670,6 +670,20 @@ A IMG.imageborder {
     width: 49%;
 }
 
+.panellefthalf {
+    float: left;
+    height: 1%;
+    left: 0;
+    width: 45%;
+}
+
+.panelrighthalf {
+    float: right;
+    height: 1%;
+    right: 0;
+    width: 55%;
+}
+
 .leftclear {
 	clear: left;
 	height: 1%;
