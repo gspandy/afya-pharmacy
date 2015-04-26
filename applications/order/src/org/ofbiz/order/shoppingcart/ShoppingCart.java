@@ -3972,6 +3972,8 @@ public class ShoppingCart implements Iterable<ShoppingCartItem>, Serializable {
                 orderItem.set("quoteItemSeqId", item.getQuoteItemSeqId());
                 orderItem.set("statusId", status);
                 orderItem.set("homeService", item.isHomeService());
+                orderItem.set("authorized", item.isAuthorized());
+                orderItem.set("authorizationNumber", item.getAuthorizationNumber());
 
                 orderItem.set("shipBeforeDate", item.getShipBeforeDate());
                 orderItem.set("shipAfterDate", item.getShipAfterDate());
@@ -4209,12 +4211,43 @@ public class ShoppingCart implements Iterable<ShoppingCartItem>, Serializable {
                 remainingAmount = BigDecimal.ZERO;
             }
         }
+
+
+        Iterator<ShoppingCartItem> itemsIterator = this.iterator();
+        BigDecimal patientToPay = BigDecimal.ZERO;
+        BigDecimal grandTotal=BigDecimal.ZERO;
+        while (itemsIterator.hasNext()) {
+            ShoppingCartItem orderItem = itemsIterator.next();
+            BigDecimal lineTotal = orderItem.getQuantity().setScale(scale,rounding).multiply(orderItem.getDisplayPrice()).setScale(scale,rounding);
+            BigDecimal copayAmount = orderItem.getCopayAmount();
+            BigDecimal copayPercentage = orderItem.getCopayPercentage(),
+                    deductibleAmount = orderItem.getDeductibleAmount(),
+                    deductiblePercentage = orderItem.getDeductiblePercentage();
+
+            grandTotal=grandTotal.add(lineTotal);
+            boolean isAuthorized = orderItem.isAuthorized();
+            if (isAuthorized) {
+                patientToPay = patientToPay.add(copayAmount);
+                patientToPay = patientToPay.add(lineTotal.multiply(copayPercentage).setScale(scale, rounding).divide(new BigDecimal(100)).setScale(scale, rounding));
+
+                patientToPay = patientToPay.add(deductibleAmount);
+                patientToPay = patientToPay.add(lineTotal.multiply(deductiblePercentage).setScale(scale, rounding).divide(new BigDecimal(100)).setScale(scale, rounding));
+            } else {
+                patientToPay = patientToPay.add(lineTotal);
+            }
+        }
+        grandTotal=grandTotal.setScale(scale,rounding);
+        if(patientToPay.compareTo(grandTotal)==1){
+            patientToPay=grandTotal;
+        }
+        remainingAmount = grandTotal.subtract(patientToPay).setScale(scale, rounding);
         Iterator i = paymentInfo.iterator();
         while (i.hasNext()) {
             CartPaymentInfo inf = (CartPaymentInfo) i.next();
-            if (inf.amount == null) {
+            if("PATIENT".equals(inf.paymentMethodTypeId)) {
+                inf.amount = patientToPay;
+            }else if("INSURANCE".equals(inf.paymentMethodTypeId)){
                 inf.amount = remainingAmount;
-                remainingAmount = BigDecimal.ZERO;
             }
             allOpPrefs.addAll(inf.makeOrderPaymentInfos(delegator, this));
         }

@@ -59,7 +59,8 @@ under the License.
                                 <#assign orderItemType = orderItem.getRelatedOne("OrderItemType")?if_exists>
                                 <#assign productId = orderItem.productId?if_exists>
                                 <#if productId?exists && productId == "shoppingcart.CommentLine">
-                                    <td colspan="8" valign="top" class="label"> &gt;&gt; ${orderItem.itemDescription}</td>
+                                    <td colspan="8" valign="top" class="label"> &gt;&gt;  ${orderItem.itemDescription}
+                                    </td>
                                 <#else>
                                     <td colspan="8">
                                         <div class="order-item-description">
@@ -77,6 +78,7 @@ under the License.
                                             <#else>
                                                 ${orderItem.itemDescription?if_exists}
                                             </#if>
+
                                         </div>
                                         <div style="float:right;">
                                             <!-- <a href="/catalog/control/EditProduct?productId=${productId}&amp;externalLoginKey=${externalLoginKey}" class="btn" target="_blank">${uiLabelMap.ProductCatalog}</a> -->
@@ -88,6 +90,7 @@ under the License.
                                         </div>
                                     </td>
                                 </#if>
+
                             </tr>
                             <tr<#if itemClass == "1"> class="alternate-row"</#if>>
                                 <#if productId?exists && productId == "shoppingcart.CommentLine">
@@ -626,6 +629,7 @@ under the License.
                                                 &nbsp;( <b>${uiLabelMap.ProductQoh} = ${qohQuantityByFacility},
                                                 ${uiLabelMap.ProductAtp} = ${atpQuantityByFacility}</b> )
                                             </#if>
+
                                         </td>
                                         <td align="center" valign="top" nowrap="nowrap">
                                             <#if orderItem.homeService=='Y'> Yes <#else> No </#if>
@@ -687,6 +691,13 @@ under the License.
                                                     ${orderItemType.description} - ${orderItem.itemDescription?if_exists}
                                                 <#else>
                                                     ${orderItem.itemDescription?if_exists}
+                                                </#if>
+                                                <#if orderItem.authorized?exists && orderItem.authorized=="Y">
+                                                    <br/><span class="icon-ok" aria-hidden="true"></span>
+                                                        <label class="alert-success">Authorized</label>
+                                                <#else>
+                                                       <br/><span class="icon-star" aria-hidden="true"></span>
+                                                        <label class="alert-danger">Not Authorized</label>
                                                 </#if>
                                             </div>
                                         </td>

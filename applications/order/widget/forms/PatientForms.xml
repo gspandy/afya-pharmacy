@@ -347,14 +347,14 @@
         <field name="policyNo" id-name="policyNo"><text/></field>
         <field name="startDate" id-name="startDate"><text/></field>
         <field name="endDate" id-name="endDate"><text/></field>
-        <field name="healthPolicyId" id-name="healthPolicyId"><text/></field>
+        <field name="healthPolicyId" id-name="healthPolicyId"><hidden/></field>
         <field name="healthPolicyName" id-name="healthPolicyName"><text/></field>
-        <field name="benefitPlanId" id-name="benefitPlanId"><text/></field>
-        <field name="benefitPlanName" id-name="benefitPlanName"><text/></field>
+        <field name="benefitPlanId" id-name="benefitPlanId"><hidden/></field>
+        <field name="benefitPlanName" id-name="benefitPlanName"><hidden/></field>
         <field name="benefitPlanNameDropDown" title="Select Benefit Plan" id-name="benefitPlanNameDropDown">
             <drop-down></drop-down>
         </field>
-        <field name="uHID" id-name="uhid"><text disabled="true"/> </field>
+        <field name="uHID" id-name="uhid"><text/> </field>
         <field name="createButton" title="Add Insurance" widget-style="btn btn-success">
             <submit button-type="button"/>
         </field>

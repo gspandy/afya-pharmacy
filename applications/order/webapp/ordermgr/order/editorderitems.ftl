@@ -176,7 +176,8 @@ under the License.
 
                       <#-- now update/cancel reason and comment field -->
                       <#if orderItem.statusId != "ITEM_CANCELLED" && orderItem.statusId != "ITEM_COMPLETED" && ("Y" != orderItem.isPromo?if_exists)>
-                        <tr><td colspan="8"><span class="label">${uiLabelMap.OrderReturnReason}</span>
+                        <tr>
+                            <td colspan="4"><span class="label">${uiLabelMap.OrderReturnReason}</span>
                             <select name="irm_${orderItem.orderItemSeqId}">
                               <option value="">&nbsp;</option>
                               <#list orderItemChangeReasons as reason>
@@ -186,6 +187,16 @@ under the License.
                             <span class="label">${uiLabelMap.CommonComments}</span>
                             <input type="text" name="icm_${orderItem.orderItemSeqId}" value="" size="30" maxlength="60"/>
                             </td>
+                            <td colspan="3"><span class="label">Home Service</span>
+                                <input type="checkbox" name="ihm_${orderItem.orderItemSeqId}" value="Y" <#if orderItem.homeService?exists && orderItem.homeService=='Y'>checked='CHECKED'</#if>"/>
+                            </td>
+                            <#if orderItem.authorized?exists && orderItem.authorized!='Y'>
+                            <td colspan="3"><span class="label">Authorization</span>
+                                <input type="checkbox" name="iau_${orderItem.orderItemSeqId}" value="Y"/>
+                                <span class="label">Authorization Number</span>
+                                <input type="text" name="ian_${orderItem.orderItemSeqId}" value="" size="30" maxlength="60"/>
+                            </td>
+                            </#if>
                         </tr>
                       </#if>
                       <#assign orderItemAdjustments = delegator.findByAnd("OrderItemAdjustment","orderId",orderItem.orderId,"orderItemSeqId",orderItem.orderItemSeqId)>

@@ -20,7 +20,10 @@
  */
 package org.ofbiz.order.order;
 
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.introspect.VisibilityChecker;
 import freemarker.cache.FileTemplateLoader;
 import freemarker.template.*;
 import javolution.util.FastList;
@@ -56,9 +59,7 @@ import org.ofbiz.product.product.ProductWorker;
 import org.ofbiz.product.store.ProductStoreWorker;
 import org.ofbiz.security.Security;
 import org.ofbiz.service.*;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.web.client.RestTemplate;
 
 import javax.transaction.Transaction;
@@ -99,6 +100,82 @@ public class OrderServices {
         purchaseAttributeRoleMap.put("billFromVendorPartyId", "BILL_FROM_VENDOR");
         purchaseAttributeRoleMap.put("shipFromVendorPartyId", "SHIP_FROM_VENDOR");
         purchaseAttributeRoleMap.put("supplierAgentPartyId", "SUPPLIER_AGENT");
+    }
+
+    /**
+     * Service for resetting the OrderHeader grandTotal
+     */
+    public static Map resetGrandTotal(DispatchContext ctx, Map context) {
+        Delegator delegator = ctx.getDelegator();
+        // appears to not be used: GenericValue userLogin = (GenericValue) context.get("userLogin");
+        String orderId = (String) context.get("orderId");
+        GenericValue orderHeader = null;
+        try {
+            orderHeader = delegator.findByPrimaryKey("OrderHeader", UtilMisc.toMap("orderId", orderId));
+        } catch (GenericEntityException e) {
+            String errMsg = "ERROR: Could not set grantTotal on OrderHeader entity: " + e.toString();
+            Debug.logError(e, errMsg, module);
+            return ServiceUtil.returnError(errMsg);
+        }
+
+        if (orderHeader != null) {
+            OrderReadHelper orh = new OrderReadHelper(orderHeader);
+            BigDecimal currentTotal = orderHeader.getBigDecimal("grandTotal");
+            BigDecimal currentSubTotal = orderHeader.getBigDecimal("remainingSubTotal");
+
+            // get the new grand total
+            BigDecimal updatedTotal = orh.getOrderGrandTotal();
+
+            String productStoreId = orderHeader.getString("productStoreId");
+            String showPricesWithVatTax = null;
+            if (UtilValidate.isNotEmpty(productStoreId)) {
+                GenericValue productStore = null;
+                try {
+                    productStore =
+                            delegator.findByPrimaryKeyCache("ProductStore",
+                                    UtilMisc.toMap("productStoreId", productStoreId));
+                } catch (GenericEntityException e) {
+                    String errorMessage =
+                            UtilProperties.getMessage(resource_error, "OrderErrorCouldNotFindProductStoreWithID",
+                                    UtilMisc.toMap("productStoreId", productStoreId), (Locale) context.get("locale"))
+                                    + e.toString();
+                    Debug.logError(e, errorMessage, module);
+                    return ServiceUtil.returnError(errorMessage + e.getMessage() + ").");
+                }
+                showPricesWithVatTax = productStore.getString("showPricesWithVatTax");
+            }
+            BigDecimal remainingSubTotal = ZERO;
+            if (UtilValidate.isNotEmpty(productStoreId) && "Y".equalsIgnoreCase(showPricesWithVatTax)) {
+                // calculate subTotal as grandTotal + taxes - (returnsTotal + shipping of all items)
+                remainingSubTotal = updatedTotal.subtract(orh.getOrderReturnedTotal()).subtract(orh.getShippingTotal());
+            } else {
+                // calculate subTotal as grandTotal - returnsTotal - (tax + shipping of items not returned)
+                remainingSubTotal =
+                        updatedTotal.subtract(orh.getOrderReturnedTotal())
+                                .subtract(orh.getOrderNonReturnedTaxAndShipping());
+            }
+
+            if (currentTotal == null || currentSubTotal == null || updatedTotal.compareTo(currentTotal) != 0
+                    || remainingSubTotal.compareTo(currentSubTotal) != 0) {
+                orderHeader.set("grandTotal", updatedTotal);
+                orderHeader.set("remainingSubTotal", remainingSubTotal);
+                try {
+                    orderHeader.store();
+                    /*List<GenericValue> paymentPreferences = orh.getPaymentPreferences();
+                    GenericValue orderPaymentPreference = EntityUtil.getFirst(paymentPreferences);
+                    if (orderPaymentPreference != null) {
+                        orderPaymentPreference.set("maxAmount", updatedTotal);
+                        orderPaymentPreference.store();
+                    }*/
+                } catch (GenericEntityException e) {
+                    String errMsg = "ERROR: Could not set grandTotal on OrderHeader entity: " + e.toString();
+                    Debug.logError(e, errMsg, module);
+                    return ServiceUtil.returnError(errMsg);
+                }
+            }
+        }
+
+        return ServiceUtil.returnSuccess();
     }
 
     private static boolean hasPermission(String orderId, GenericValue userLogin, String action, Security security,
@@ -645,8 +722,29 @@ public class OrderServices {
 
         // set the order items
         Iterator oi = orderItems.iterator();
+        Map orderItemAndServiceMapping = new HashMap();
+
         while (oi.hasNext()) {
             GenericValue orderItem = (GenericValue) oi.next();
+            try {
+                String primaryProductCategoryId = orderItem.getRelatedOne("Product").getString("primaryProductCategoryId");
+                GenericValue productCategory = delegator.findOne("ProductCategory", false, "productCategoryId",
+                        primaryProductCategoryId);
+                if(productCategory!=null) {
+                    String mappedServices = productCategory.getString("services");
+                    if (mappedServices != null) {
+                        if (mappedServices.indexOf(",") != -1) {
+                            for (String serviceId : mappedServices.split(",")) {
+                                orderItemAndServiceMapping.put(serviceId, orderItem);
+                            }
+                        } else {
+                            orderItemAndServiceMapping.put(mappedServices, orderItem);
+                        }
+                    }
+                }
+            } catch (GenericEntityException e) {
+                e.printStackTrace();
+            }
             orderItem.set("orderId", orderId);
             toBeStored.add(orderItem);
 
@@ -1042,8 +1140,6 @@ public class OrderServices {
         }
 
 
-        BigDecimal totalCopayAmount = BigDecimal.ZERO;
-        BigDecimal totalDeductableAmount = BigDecimal.ZERO;
         try {
             // store line items, etc so that they will be there for the foreign key checks
 
@@ -1067,83 +1163,41 @@ public class OrderServices {
                 GenericValue genericValue = delegator.makeValidValue("OrderRxHeader", presciptionData);
                 toBeStored.add(genericValue);
 
-                String PORTAL_URL = UtilProperties.getPropertyValue("general.properties", "server.url", "5.9.249.197:7878");
-                RestTemplate restTemplate = new RestTemplate();
-                HttpHeaders headers = new HttpHeaders();
-                List<MediaType> mediaTypes = new ArrayList<MediaType>();
-                mediaTypes.add(MediaType.APPLICATION_JSON);
-                headers.setAccept(mediaTypes);
-                headers.setContentType(MediaType.APPLICATION_JSON);
-                String url = PORTAL_URL + "afya-portal/anon/insuranceMaster/getServiceOrModuleDataByServiceId" +
-                        "?moduleId=" + patientInfo.getModuleId();
-                ResponseEntity<String> responseEntity = restTemplate.getForEntity(url, String.class);
-                String response = responseEntity.getBody();
 
-                ObjectMapper mapper = new ObjectMapper();
-                Map responseAsMap = null;
-                try {
-                    responseAsMap = mapper.readValue(response, Map.class);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+                if ("INSURANCE".equals(patientInfo.getPatientType())) {
+                    Copayment copayment = getDeductibleAndCopayForProductCategories(delegator, patientInfo.getModuleId(), orderItemAndServiceMapping);
 
+                    Map<String, CopaymentDetail> serviceToCopaymentDetailMapping = new HashMap();
 
-                Map portalResponse = (Map) responseAsMap.get("moduleDetails");
-                if (portalResponse != null) {
-                    orderItemIter = orderItems.iterator();
-                    while (orderItemIter.hasNext()) {
-                        GenericValue orderItem = (GenericValue) orderItemIter.next();
-                        BigDecimal copayAmount = null, copayPercentage = null, deductableAmount = null, deductablePercentage = null;
-                        BigDecimal lineTotal = orderItem.getBigDecimal("quantity").setScale(OrderServices.orderDecimals, OrderServices.orderRounding).multiply(orderItem.getBigDecimal("unitPrice"));
+                    for (CopaymentDetail detail : copayment.getServiceDetails()) {
+                        serviceToCopaymentDetailMapping.put(detail.getServiceId(), detail);
+                    }
 
-                        if (UtilValidate.isNotEmpty(portalResponse.get("copayAmount"))) {
-                            copayAmount = new BigDecimal(portalResponse.get("copayAmount").toString());
+                    if (serviceToCopaymentDetailMapping != null) {
+
+                        Iterator<String> serviceIter = serviceToCopaymentDetailMapping.keySet().iterator();
+                        while (serviceIter.hasNext()) {
+                            String serviceId = serviceIter.next();
+                            CopaymentDetail copaymentDetail = serviceToCopaymentDetailMapping.get(serviceId);
+                            GenericValue orderItem = (GenericValue) orderItemAndServiceMapping.get(serviceId);
+                            orderItem.set("copayAmount", copaymentDetail.getCopayAmount());
+                            orderItem.set("copayPercentage", copaymentDetail.getCopayPercentage());
+                            orderItem.set("deductibleAmount", copaymentDetail.getDeductibleAmount());
+                            orderItem.set("deductiblePercentage", copaymentDetail.getDeductiblePercentage());
+                            orderItem.set("authorized", copaymentDetail.isAuthorization());
+                            orderItem.set("computeBy", copaymentDetail.getComputeBy());
                         }
-                        if (UtilValidate.isNotEmpty(portalResponse.get("copayPercentage"))) {
-                            copayPercentage = new BigDecimal(portalResponse.get("copayPercentage").toString());
-                            copayAmount = lineTotal.multiply(copayPercentage).divide(new BigDecimal(100)).setScale(orderDecimals, orderRounding);
-                        }
-                        if (UtilValidate.isNotEmpty(portalResponse.get("deductableAmount"))) {
-                            deductableAmount = new BigDecimal(portalResponse.get("deductableAmount").toString());
-                        }
-                        if (UtilValidate.isNotEmpty(portalResponse.get("deductablePercentage"))) {
-                            deductablePercentage = new BigDecimal(portalResponse.get("deductablePercentage").toString());
-                            deductableAmount = lineTotal.multiply(deductablePercentage).divide(new BigDecimal(100)).setScale(orderDecimals, orderRounding);
-                        }
-                        deductableAmount = deductableAmount.add(new BigDecimal(0.055));
-                        copayAmount = copayAmount.add(new BigDecimal(0.175));
-                        orderItem.set("copayAmount", copayAmount);
-                        orderItem.set("deductableAmount", deductableAmount);
-                        totalCopayAmount = totalCopayAmount.add(copayAmount);
-                        totalDeductableAmount = totalDeductableAmount.add(deductableAmount);
                     }
                 }
             }
 
+
             if (context.get("grandTotal") != null && "SALES_ORDER".equals(orderTypeId)) {
                 BigDecimal grandTotal = (BigDecimal) context.get("grandTotal");
-
-                String paymentPrefId = delegator.getNextSeqId("OrderPaymentPreference");
-
-                BigDecimal patientToPay = totalCopayAmount.add(totalDeductableAmount).setScale(orderDecimals,orderRounding);
-                if (patientToPay.compareTo(BigDecimal.ZERO)==1) {
-                    Map paymentPreference = UtilMisc.toMap("orderId", orderId, "orderPaymentPreferenceId", paymentPrefId,
-                            "paymentMethodTypeId", "INSURANCE".equals(patientInfo.getPatientType())?"PATIENT":patientInfo.getPatientType(),
-                            "maxAmount", patientToPay, "statusId", "PAYMENT_NOT_RECEIVED");
-                    GenericValue genericValue = delegator.makeValidValue("OrderPaymentPreference", paymentPreference);
-                    toBeStored.add(genericValue);
-                }
-                if(patientToPay.compareTo(BigDecimal.ZERO)==1) {
-                    BigDecimal insuranceAmount = grandTotal.subtract(patientToPay).setScale(orderDecimals, orderRounding);
-                    paymentPrefId = delegator.getNextSeqId("OrderPaymentPreference");
-                    Map paymentPreference = UtilMisc.toMap("orderId", orderId, "orderPaymentPreferenceId", paymentPrefId,
-                            "paymentMethodTypeId", "INSURANCE",
-                            "maxAmount", insuranceAmount, "statusId", "PAYMENT_NOT_RECEIVED");
-                    GenericValue genericValue = delegator.makeValidValue("OrderPaymentPreference", paymentPreference);
-                    toBeStored.add(genericValue);
-                }
-
+                List result = createOrderPaymentPreferences(delegator,  orderItems.iterator(), orderId, patientInfo.getPatientType(), grandTotal);
+                toBeStored.addAll(result);
             }
+
             delegator.storeAll(toBeStored);
 
             // START inventory reservation
@@ -1168,6 +1222,90 @@ public class OrderServices {
         }
 
         return successResult;
+    }
+
+    private static List createOrderPaymentPreferences(Delegator delegator, Iterator orderItemIter, String orderId, String patientType, BigDecimal grandTotal) {
+        BigDecimal patientToPay = BigDecimal.ZERO;
+        List toBeStored = new ArrayList();
+        while (orderItemIter.hasNext()) {
+            GenericValue orderItem = (GenericValue) orderItemIter.next();
+            BigDecimal lineTotal = orderItem.getBigDecimal("quantity").setScale(OrderServices.orderDecimals, OrderServices.orderRounding).multiply(orderItem.getBigDecimal("unitPrice"));
+            BigDecimal copayAmount = orderItem.getBigDecimal("copayAmount");
+            BigDecimal copayPercentage = orderItem.getBigDecimal("copayPercentage"),
+                    deductibleAmount = orderItem.getBigDecimal("deductibleAmount"),
+                    deductiblePercentage = orderItem.getBigDecimal("deductiblePercentage");
+
+            boolean isAuthorized = orderItem.getBoolean("authorized").booleanValue();
+            if (isAuthorized) {
+                patientToPay = patientToPay.add(copayAmount);
+                patientToPay = patientToPay.add(lineTotal.multiply(copayPercentage).setScale(orderDecimals, orderRounding).divide(new BigDecimal(100)).setScale(orderDecimals, orderRounding));
+
+                patientToPay = patientToPay.add(deductibleAmount);
+                patientToPay = patientToPay.add(lineTotal.multiply(deductiblePercentage).setScale(orderDecimals, orderRounding).divide(new BigDecimal(100)).setScale(orderDecimals, orderRounding));
+            } else {
+                patientToPay = lineTotal;
+            }
+        }
+
+        if(patientToPay.compareTo(grandTotal)==1){
+            patientToPay=grandTotal;
+        }
+        String paymentPrefId = delegator.getNextSeqId("OrderPaymentPreference");
+        Map paymentPreference = UtilMisc.toMap("orderId", orderId, "orderPaymentPreferenceId", paymentPrefId,
+                "paymentMethodTypeId", "INSURANCE".equals(patientType) ? "PATIENT" : patientType,
+                "maxAmount", patientToPay, "statusId", "PAYMENT_NOT_RECEIVED");
+        GenericValue genericValue = delegator.makeValidValue("OrderPaymentPreference", paymentPreference);
+        toBeStored.add(genericValue);
+
+        BigDecimal remainingAmount = grandTotal.subtract(patientToPay).setScale(orderDecimals, orderRounding);
+        if (remainingAmount.compareTo(BigDecimal.ZERO) == 1) {
+            paymentPrefId = delegator.getNextSeqId("OrderPaymentPreference");
+            paymentPreference = UtilMisc.toMap("orderId", orderId, "orderPaymentPreferenceId", paymentPrefId,
+                    "paymentMethodTypeId", "INSURANCE",
+                    "maxAmount", remainingAmount, "statusId", "PAYMENT_NOT_RECEIVED");
+            genericValue = delegator.makeValidValue("OrderPaymentPreference", paymentPreference);
+            toBeStored.add(genericValue);
+        }
+        return toBeStored;
+    }
+
+    private static Copayment getDeductibleAndCopayForProductCategories(Delegator delegator, String moduleId, Map orderItemAndServiceMapping) throws GenericEntityException {
+
+        Set<String> serviceIds = orderItemAndServiceMapping.keySet();
+        Map serviceToCopaymentDetailMapping = new HashMap();
+
+        String PORTAL_URL = UtilProperties.getPropertyValue("general.properties", "server.url", "5.9.249.197:7878");
+        RestTemplate restTemplate = new RestTemplate();
+        HttpHeaders headers = new HttpHeaders();
+        List<MediaType> mediaTypes = new ArrayList<MediaType>();
+        mediaTypes.add(MediaType.APPLICATION_JSON);
+        headers.setAccept(mediaTypes);
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        HttpEntity<String> requestEntity = new HttpEntity<String>(headers);
+        ObjectMapper mapper = new ObjectMapper();
+
+        String url = PORTAL_URL + "afya-portal/anon/insuranceMaster/getServiceOrModuleDataByServiceId?moduleId={moduleId}&serviceIds={serviceIds}";
+
+        String serviceParam = "";
+        for (String s : serviceIds) {
+            serviceParam = serviceParam.concat(s).concat(",");
+        }
+
+        serviceParam = serviceParam.substring(0, serviceParam.length() - 1);
+        System.out.println(serviceParam);
+
+        ResponseEntity<String> responseEntity = restTemplate.exchange(url, HttpMethod.GET, requestEntity, String.class, moduleId, serviceParam);
+        String response = responseEntity.getBody();
+        System.out.println(response);
+        mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
+        mapper.setVisibilityChecker(VisibilityChecker.Std.defaultInstance().withFieldVisibility(JsonAutoDetect.Visibility.ANY));
+        Copayment copayment = null;
+        try {
+            copayment = mapper.readValue(response, Copayment.class);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return copayment;
     }
 
     public static void reserveInventory(Delegator delegator, LocalDispatcher dispatcher, GenericValue userLogin,
@@ -1474,82 +1612,6 @@ public class OrderServices {
             }
         }
         return null;
-    }
-
-    /**
-     * Service for resetting the OrderHeader grandTotal
-     */
-    public static Map resetGrandTotal(DispatchContext ctx, Map context) {
-        Delegator delegator = ctx.getDelegator();
-        // appears to not be used: GenericValue userLogin = (GenericValue) context.get("userLogin");
-        String orderId = (String) context.get("orderId");
-        GenericValue orderHeader = null;
-        try {
-            orderHeader = delegator.findByPrimaryKey("OrderHeader", UtilMisc.toMap("orderId", orderId));
-        } catch (GenericEntityException e) {
-            String errMsg = "ERROR: Could not set grantTotal on OrderHeader entity: " + e.toString();
-            Debug.logError(e, errMsg, module);
-            return ServiceUtil.returnError(errMsg);
-        }
-
-        if (orderHeader != null) {
-            OrderReadHelper orh = new OrderReadHelper(orderHeader);
-            BigDecimal currentTotal = orderHeader.getBigDecimal("grandTotal");
-            BigDecimal currentSubTotal = orderHeader.getBigDecimal("remainingSubTotal");
-
-            // get the new grand total
-            BigDecimal updatedTotal = orh.getOrderGrandTotal();
-
-            String productStoreId = orderHeader.getString("productStoreId");
-            String showPricesWithVatTax = null;
-            if (UtilValidate.isNotEmpty(productStoreId)) {
-                GenericValue productStore = null;
-                try {
-                    productStore =
-                            delegator.findByPrimaryKeyCache("ProductStore",
-                                    UtilMisc.toMap("productStoreId", productStoreId));
-                } catch (GenericEntityException e) {
-                    String errorMessage =
-                            UtilProperties.getMessage(resource_error, "OrderErrorCouldNotFindProductStoreWithID",
-                                    UtilMisc.toMap("productStoreId", productStoreId), (Locale) context.get("locale"))
-                                    + e.toString();
-                    Debug.logError(e, errorMessage, module);
-                    return ServiceUtil.returnError(errorMessage + e.getMessage() + ").");
-                }
-                showPricesWithVatTax = productStore.getString("showPricesWithVatTax");
-            }
-            BigDecimal remainingSubTotal = ZERO;
-            if (UtilValidate.isNotEmpty(productStoreId) && "Y".equalsIgnoreCase(showPricesWithVatTax)) {
-                // calculate subTotal as grandTotal + taxes - (returnsTotal + shipping of all items)
-                remainingSubTotal = updatedTotal.subtract(orh.getOrderReturnedTotal()).subtract(orh.getShippingTotal());
-            } else {
-                // calculate subTotal as grandTotal - returnsTotal - (tax + shipping of items not returned)
-                remainingSubTotal =
-                        updatedTotal.subtract(orh.getOrderReturnedTotal())
-                                .subtract(orh.getOrderNonReturnedTaxAndShipping());
-            }
-
-            if (currentTotal == null || currentSubTotal == null || updatedTotal.compareTo(currentTotal) != 0
-                    || remainingSubTotal.compareTo(currentSubTotal) != 0) {
-                orderHeader.set("grandTotal", updatedTotal);
-                orderHeader.set("remainingSubTotal", remainingSubTotal);
-                try {
-                    orderHeader.store();
-                    /*List<GenericValue> paymentPreferences = orh.getPaymentPreferences();
-                    GenericValue orderPaymentPreference = EntityUtil.getFirst(paymentPreferences);
-                    if (orderPaymentPreference != null) {
-                        orderPaymentPreference.set("maxAmount", updatedTotal);
-                        orderPaymentPreference.store();
-                    }*/
-                } catch (GenericEntityException e) {
-                    String errMsg = "ERROR: Could not set grandTotal on OrderHeader entity: " + e.toString();
-                    Debug.logError(e, errMsg, module);
-                    return ServiceUtil.returnError(errMsg);
-                }
-            }
-        }
-
-        return ServiceUtil.returnSuccess();
     }
 
     /**
@@ -3958,7 +4020,9 @@ public class OrderServices {
         Map itemAttributesMap = (Map) context.get("itemAttributesMap");
         Map<String, String> itemEstimatedShipDateMap = (Map) context.get("itemShipDateMap");
         Map<String, String> itemEstimatedDeliveryDateMap = (Map) context.get("itemDeliveryDateMap");
-
+        Map<String,String> itemAuthMap= (Map)context.get("itemAuthMap");
+        Map<String,String> itemAuthNumberMap = (Map)context.get("itemAuthNumberMap");
+        Map<String,String> itemHomeServiceMap = (Map)context.get("itemHomeServiceMap");
         // obtain a shopping cart object for updating
         ShoppingCart cart = null;
         try {
@@ -4064,6 +4128,28 @@ public class OrderServices {
                                     + attrValue, module);
                         }
                     }
+                }
+
+                if (itemAuthMap != null) {
+                    String attrValue = null;
+                        attrValue = (String) itemAuthMap.get(itemSeqId);
+                    if (UtilValidate.isNotEmpty(attrValue)) {
+                        cartItem.setAuthorized("Y".equals(attrValue) ? true : false);
+                    }
+                }
+
+                if (itemAuthNumberMap != null) {
+                    String attrValue = null;
+                    attrValue = (String) itemAuthNumberMap.get(itemSeqId);
+                    if (UtilValidate.isNotEmpty(attrValue)) {
+                        cartItem.setAuthorizationNumber(attrValue);
+                    }
+                }
+
+                if (itemHomeServiceMap != null) {
+                    String attrValue = null;
+                    attrValue = (String) itemHomeServiceMap.get(itemSeqId);
+                    cartItem.setHomeService("Y".equals(attrValue)?true:false);
                 }
 
                 List<GenericValue> lineItemAdjs = cartItem.getAdjustments();
@@ -6478,12 +6564,12 @@ public class OrderServices {
                         shippingAddress = postalAddress;
                 }
 
-                if(shippingOriginAddress==null) {
+                if (shippingOriginAddress == null) {
                     shippingOriginAddress =
                             delegator.findOne("PostalAddress", false, "contactMechId",
                                     "10002");
                 }
-                if(shippingAddress==null){
+                if (shippingAddress == null) {
                     shippingAddress =
                             delegator.findOne("PostalAddress", false, "contactMechId",
                                     "10002");

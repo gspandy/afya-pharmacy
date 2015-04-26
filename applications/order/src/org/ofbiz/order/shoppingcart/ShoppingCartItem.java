@@ -138,6 +138,14 @@ public class ShoppingCartItem implements java.io.Serializable {
     private BigDecimal defaultProductPrice;
     private BigDecimal assessableAmount;
     private boolean homeService;
+    private boolean authorized;
+    private String authorizationNumber;
+
+
+    private BigDecimal copayAmount;
+    private BigDecimal copayPercentage;
+    private BigDecimal deductibleAmount;
+    private BigDecimal deductiblePercentage;
 
     /**
      * Makes a ShoppingCartItem for a purchase order item and adds it to the cart.
@@ -2513,6 +2521,22 @@ public class ShoppingCartItem implements java.io.Serializable {
         this.homeService=homeService;
     }
 
+    public boolean isAuthorized() {
+        return authorized;
+    }
+
+    public void setAuthorized(boolean authorized) {
+        this.authorized = authorized;
+    }
+
+    public String getAuthorizationNumber() {
+        return authorizationNumber;
+    }
+
+    public void setAuthorizationNumber(String authorizationNumber) {
+        this.authorizationNumber = authorizationNumber;
+    }
+
     public static String getPurchaseOrderItemDescription(GenericValue product, GenericValue supplierProduct, Locale locale) {
 
         String itemDescription = null;
@@ -2535,4 +2559,36 @@ public class ShoppingCartItem implements java.io.Serializable {
 	public void setDefaultProductPrice(BigDecimal defaultProductPrice) {
 	this.defaultProductPrice = defaultProductPrice;
 	}
+
+    public BigDecimal getDeductiblePercentage() {
+        return deductiblePercentage;
+    }
+
+    public void setDeductiblePercentage(BigDecimal deductiblePercentage) {
+        this.deductiblePercentage = deductiblePercentage;
+    }
+
+    public BigDecimal getDeductibleAmount() {
+        return deductibleAmount;
+    }
+
+    public void setDeductibleAmount(BigDecimal deductibleAmount) {
+        this.deductibleAmount = deductibleAmount;
+    }
+
+    public BigDecimal getCopayPercentage() {
+        return copayPercentage;
+    }
+
+    public void setCopayPercentage(BigDecimal copayPercentage) {
+        this.copayPercentage = copayPercentage;
+    }
+
+    public BigDecimal getCopayAmount() {
+        return copayAmount;
+    }
+
+    public void setCopayAmount(BigDecimal copayAmount) {
+        this.copayAmount = copayAmount;
+    }
 }

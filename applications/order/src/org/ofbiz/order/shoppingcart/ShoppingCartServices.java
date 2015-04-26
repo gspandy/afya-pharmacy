@@ -508,7 +508,12 @@ public class ShoppingCartServices {
                 cartItem.setShoppingList(item.getString("shoppingListId"), item.getString("shoppingListItemSeqId"));
                 cartItem.setIsModifiedPrice("Y".equals(item.getString("isModifiedPrice")));
                 cartItem.setName(item.getString("itemDescription"));
-
+                cartItem.setAuthorizationNumber(item.getString("authorizationNumber"));
+                cartItem.setAuthorized(item.getBoolean("authorized"));
+                cartItem.setCopayAmount(item.getBigDecimal("copayAmount") == null ? BigDecimal.ZERO : item.getBigDecimal("copayAmount"));
+                cartItem.setCopayPercentage(item.getBigDecimal("copayPercentage") == null ? BigDecimal.ZERO :item.getBigDecimal("copayPercentage"));
+                cartItem.setDeductibleAmount(item.getBigDecimal("deductibleAmount")== null ? BigDecimal.ZERO :item.getBigDecimal("deductibleAmount"));
+                cartItem.setDeductiblePercentage(item.getBigDecimal("deductiblePercentage")== null ? BigDecimal.ZERO :item.getBigDecimal("deductiblePercentage"));
                 // load order item attributes
                 List<GenericValue> orderItemAttributesList = null;
                 try {

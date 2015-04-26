@@ -617,7 +617,13 @@
 		<field name="selectedAmount" type="fixed-point"></field>
 
 		<field name="copayAmount" type="fixed-point"></field>
-		<field name="deductableAmount" type="fixed-point"></field>
+		<field name="copayPercentage" type="fixed-point"></field>
+		<field name="deductibleAmount" type="fixed-point"></field>
+		<field name="deductiblePercentage" type="fixed-point"></field>
+		<field name="calculateOnGross" type="indicator"></field>
+		<field name="authorized" type="indicator"></field>
+		<field name="authorizationNumber" type="id"></field>
+		<field name="computeBy" type="id"></field>
 
 		<field name="unitPrice" type="currency-amount" enable-audit-log="true"></field>
 		<field name="unitListPrice" type="currency-amount"></field>

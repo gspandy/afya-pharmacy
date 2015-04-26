@@ -161,6 +161,7 @@
 		<field name="productCategoryId" type="id-ne"></field>
 		<field name="productCategoryTypeId" type="id"></field>
 		<field name="primaryParentCategoryId" type="id"></field>
+		<field name="services" type="long-varchar"/>
 		<field name="categoryName" type="name"></field>
 		<field name="description" type="description"></field>
 		<field name="longDescription" type="very-long"></field>

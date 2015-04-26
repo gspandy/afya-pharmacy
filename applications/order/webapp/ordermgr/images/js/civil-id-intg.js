@@ -45,6 +45,9 @@ $(document).ready(function () {
                     } else if (attr == "country") {
                         $("#country").val(value);
                     }
+                    else if (attr == "uhid") {
+                        $("#uhid").val(value);
+                    }
                 });
             });
     })

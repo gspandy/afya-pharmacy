@@ -329,6 +329,9 @@ under the License.
         <attribute name="itemAttributesMap" type="Map" mode="IN" string-map-prefix="iam_" optional="true"/>
         <attribute name="itemShipDateMap" type="Map" mode="IN" string-map-prefix="isdm_" optional="true"/>
         <attribute name="itemDeliveryDateMap" type="Map" mode="IN" string-map-prefix="iddm_" optional="true"/>
+        <attribute name="itemAuthMap" type="Map" mode="IN" string-map-prefix="iau_" optional="true"/>
+        <attribute name="itemHomeServiceMap" type="Map" mode="IN" string-map-prefix="ihm_" optional="true"/>
+        <attribute name="itemAuthNumberMap" type="Map" mode="IN" string-map-prefix="ian_" optional="true"/>
         <attribute name="shoppingCart" type="org.ofbiz.order.shoppingcart.ShoppingCart" mode="OUT" optional="false"/>
     </service>
     <service name="loadCartForUpdate" engine="java" auth="true"
