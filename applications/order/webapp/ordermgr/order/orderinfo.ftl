@@ -38,6 +38,7 @@ under the License.
                 [&nbsp;<a href="<@ofbizUrl>order.pdf?orderId=${orderId}&amp;orderTypeId=${orderType?if_exists.get("orderTypeId", locale)}</@ofbizUrl>" target="_blank">PDF</a>&nbsp;]
             </#if>
         </li>
+        <li class="collapsed"><a onclick="javascript:toggleScreenlet(this, 'OrderInfoScreenletBody_${orderId}', 'true', '${uiLabelMap.CommonExpand}', '${uiLabelMap.CommonCollapse}');" title="Expand">&nbsp;</a></li>
           <#if currentStatus.statusId == "ORDER_APPROVED" && orderHeader.orderTypeId == "SALES_ORDER">
             <!-- <li class="h3"><a href="javascript:document.PrintOrderPickSheet.submit()">${uiLabelMap.FormFieldTitle_printPickSheet}</a>
               <form name="PrintOrderPickSheet" method="post" action="<@ofbizUrl>orderPickSheet.pdf</@ofbizUrl>">
@@ -127,7 +128,7 @@ under the License.
         </ul>
         <br class="clear"/>
     </div>
-    <div class="screenlet-body">
+    <div class="screenlet-body" id="OrderInfoScreenletBody_${orderId}" style="display: none;">
         <table class="basic-table" cellspacing='0'>
             <#if orderHeader.orderName?has_content>
             <tr>

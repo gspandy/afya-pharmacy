@@ -35,10 +35,13 @@ ${cardNumberDisplay?if_exists}
 
 <div class="screenlet">
 <div class="screenlet-title-bar">
-    <ul><li class="h3">&nbsp;${uiLabelMap.AccountingPaymentInformation}</li></ul>
+    <ul>
+        <li class="h3">&nbsp;${uiLabelMap.AccountingPaymentInformation}</li>
+        <li class="expanded"><a onclick="javascript:toggleScreenlet(this, 'OrderPaymentInfoScreenletBody_${orderId}', 'true', '${uiLabelMap.CommonExpand}', '${uiLabelMap.CommonCollapse}');" title="Collapse">&nbsp;</a></li>
+    </ul>
     <br class="clear"/>
 </div>
-<div class="screenlet-body">
+<div class="screenlet-body" id="OrderPaymentInfoScreenletBody_${orderId}">
 <table class="basic-table" cellspacing='0'>
 <#assign orderTypeId = orderReadHelper.getOrderTypeId()>
 <#if orderTypeId == "PURCHASE_ORDER">

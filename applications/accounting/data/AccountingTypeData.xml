@@ -720,6 +720,11 @@
 	<PaymentMethodType description="Financial Account" paymentMethodTypeId="FIN_ACCOUNT" />
 	<PaymentMethodType description="Billing Account" paymentMethodTypeId="EXT_BILLACT" />
     <PaymentMethodType description="Check" paymentMethodTypeId="COMPANY_CHECK"/>
+    <PaymentMethodType description="Cash" paymentMethodTypeId="CASH"/>
+    <PaymentMethodType description="Credit Card" paymentMethodTypeId="CREDIT_CARD"/>
+    <PaymentMethodType description="Corporate" paymentMethodTypeId="COPORATE"/>
+    <PaymentMethodType description="Insurance" paymentMethodTypeId="INSURANCE"/>
+    <PaymentMethodType description="Patient" paymentMethodTypeId="PATIENT"/>
 
 
 	<PaymentType description="Disbursement" hasTable="N" parentTypeId="" paymentTypeId="DISBURSEMENT" />

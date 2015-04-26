@@ -25,14 +25,12 @@ under the License.
 <div class="screenlet">
     <div class="screenlet-title-bar">
         <ul>
-            <li class="h3">&nbsp;${uiLabelMap.OrderContactInformation}</li>
-            <li class="expanded"><a
-                    onclick="javascript:toggleScreenlet(this, 'PatientInfoScreenletBody_${orderId}', 'true', '${uiLabelMap.CommonExpand}', '${uiLabelMap.CommonCollapse}');"
-                    title="Collapse">&nbsp;</a></li>
+            <li class="h3">&nbsp;Patient Information</li>
+            <li class="collapsed"><a onclick="javascript:toggleScreenlet(this, 'PatientInfoScreenletBody_${orderId}', 'true', '${uiLabelMap.CommonExpand}', '${uiLabelMap.CommonCollapse}');" title="Expand">&nbsp;</a></li>
         </ul>
         <br class="clear"/>
     </div>
-    <div class="screenlet-body" id="PatientInfoScreenletBody_${orderId}">
+    <div class="screenlet-body" id="PatientInfoScreenletBody_${orderId}" style="display: none;">
         <table class="basic-table" cellspacing='0'>
             <tr>
                 <td align="right" valign="top" width="10%"><span class="label">First Name</span></td>
@@ -73,7 +71,7 @@ under the License.
                 <td width="1%">&nbsp;</td>
                 <td valign="top" width="80%">${orderRxHeader.patientType?if_exists}</td>
             </tr>
-            <#if benefitPlanName?exists>
+            <#if benefitPlanName?has_content>
                 <tr>
                     <td align="right" valign="top" width="19%"><span class="label">Benefit Plan</span></td>
                     <td width="1%"><input type="hidden" value="${benefitPlanId}" id="benefitPlanId"/></td>
@@ -94,9 +92,7 @@ under the License.
     <div class="screenlet-title-bar">
         <ul>
             <li class="h3">&nbsp;${uiLabelMap.OrderActions}</li>
-            <li class="expanded"><a
-                    onclick="javascript:toggleScreenlet(this, 'ActionsScreenletBody_${orderId}', 'true', '${uiLabelMap.CommonExpand}', '${uiLabelMap.CommonCollapse}');"
-                    title="Collapse">&nbsp;</a></li>
+            <li class="expanded"><a onclick="javascript:toggleScreenlet(this, 'ActionsScreenletBody_${orderId}', 'true', '${uiLabelMap.CommonExpand}', '${uiLabelMap.CommonCollapse}');" title="Collapse">&nbsp;</a></li>
         </ul>
         <br class="clear"/>
     </div>

@@ -20,10 +20,11 @@ under the License.
     <div class="screenlet-title-bar">
       <ul>
         <li class="h3">Order Content</li>
+        <li class="collapsed"><a onclick="javascript:toggleScreenlet(this, 'OrderContentScreenletBody_${orderId}', 'true', '${uiLabelMap.CommonExpand}', '${uiLabelMap.CommonCollapse}');" title="Expand">&nbsp;</a></li>
       </ul>
       <br class="clear" />
     </div>
-    <div class="screenlet-body">
+    <div class="screenlet-body" id="OrderContentScreenletBody_${orderId}" style="display: none;">
           ${screens.render("component://order/widget/ordermgr/OrderViewScreens.xml#ContentList")}
       <hr />
       <div class="label">Attach Content</div>

@@ -40,10 +40,11 @@ under the License.
     <div class="screenlet-title-bar">
         <ul>
             <li class="h3">&nbsp;${uiLabelMap.OrderContactInformation}</li>
+            <li class="collapsed"><a onclick="javascript:toggleScreenlet(this, 'OrderContactInfoScreenletBody_${orderId}', 'true', '${uiLabelMap.CommonExpand}', '${uiLabelMap.CommonCollapse}');" title="Expand">&nbsp;</a></li>
         </ul>
         <br class="clear"/>
     </div>
-    <div class="screenlet-body">
+    <div class="screenlet-body" id="OrderContactInfoScreenletBody_${orderId}" style="display: none;">
         <table class="basic-table" cellspacing='0'>
             <tr>
                 <td align="right" valign="top" width="19%"><span class="label">&nbsp;${uiLabelMap.CommonName}</span>

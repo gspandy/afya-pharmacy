@@ -24,7 +24,7 @@ under the License.
       <ul>
         <li class="h3">&nbsp;${uiLabelMap.OrderNotes}</li>
         <#if orderHeader.orderTypeId == "SALES_ORDER">
-            <li class="expanded"><a onclick="javascript:toggleScreenlet(this, 'NotesScreenletBody_${orderId}', 'true', '${uiLabelMap.CommonExpand}', '${uiLabelMap.CommonCollapse}');" title="Collapse">&nbsp;</a></li>
+            <li class="collapsed"><a onclick="javascript:toggleScreenlet(this, 'NotesScreenletBody_${orderId}', 'true', '${uiLabelMap.CommonExpand}', '${uiLabelMap.CommonCollapse}');" title="Expand">&nbsp;</a></li>
         </#if>
         <#if security.hasEntityPermission("ORDERMGR", "_NOTE", session)>
           <li><a href="<@ofbizUrl>createnewnote?${paramString}</@ofbizUrl>">${uiLabelMap.OrderNotesCreateNew}</a></li>
@@ -32,7 +32,7 @@ under the License.
       </ul>
       <br class="clear"/>
     </div>
-    <div class="screenlet-body" id="NotesScreenletBody_${orderId}">
+    <div class="screenlet-body" id="NotesScreenletBody_${orderId}" style="display: none;">
       <table class="basic-table" cellspacing='0'>
         <tr>
           <td>
