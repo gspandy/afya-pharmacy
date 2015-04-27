@@ -59,14 +59,14 @@ under the License.
                 </entity-options>
             </drop-down>
         </field> 
-        <!-- <field position="1" name="primaryProductCategoryId" title="${uiLabelMap.ProductPrimaryCategory}">
+         <field position="1" name="primaryProductCategoryId" title="${uiLabelMap.ProductPrimaryCategory}">
             <drop-down allow-empty="true">
                 <entity-options entity-name="ProductCategoryAndMember" key-field-name="productCategoryId" description="${categoryName} [${productCategoryId}]">
                     <entity-constraint name="productId" env-name="product.productId"/>
                     <entity-order-by field-name="categoryName"/>
                 </entity-options>
             </drop-down>
-        </field>  -->
+        </field>
 
         <field position="1" name="internalName" title="${uiLabelMap.ProductInternalName}"><text size="30" maxlength="255"/></field>
         <field position="2" name="brandName" title="${uiLabelMap.ProductBrandName}" ><text size="30" maxlength="60"/></field>
