@@ -1285,7 +1285,6 @@ public class OrderServices {
         ObjectMapper mapper = new ObjectMapper();
 
         String url = PORTAL_URL + "afya-portal/anon/insuranceMaster/getServiceOrModuleDataByServiceId?moduleId={moduleId}&serviceIds={serviceIds}";
-
         String serviceParam = "";
         for (String s : serviceIds) {
             serviceParam = serviceParam.concat(s).concat(",");
