@@ -511,7 +511,8 @@ under the License.
         <field name="fromDate" title="${uiLabelMap.CommonFromDate}" position="1"></field>
         <field name="thruDate" title="${uiLabelMap.CommonThruDate}" position="2"></field>
         <field name="sequenceNum" title="${uiLabelMap.ProductSequenceNum}" position="1"></field>
-        <field name="comments" position="2"><textarea/></field>
+        <field name="comments" position="1"><textarea/></field>
+        <field name="services" position="2"><textarea/></field>
         <field name="submitButton" title="${uiLabelMap.CommonAdd}" widget-style="btn btn-success"><submit button-type="button"/></field>
         <sort-order>
             <sort-field name="productCategoryId"/>
@@ -520,6 +521,7 @@ under the License.
             <sort-field name="thruDate"/>
             <sort-field name="sequenceNum"/>
             <sort-field name="comments"/>
+            <sort-field name="services"/>
             <sort-field name="submitButton"/>
         </sort-order>
     </form>
@@ -537,6 +539,7 @@ under the License.
         <field name="sequenceNum" title="${uiLabelMap.ProductSequenceNum}" ></field>
         <field name="quantity" title="${uiLabelMap.ProductQuantity}" ></field>
         <field name="comments" title="${uiLabelMap.ProductComments}" ><textarea/></field>
+        <field name="services"><textarea/></field>
         <field name="submitButton" title="${uiLabelMap.CommonUpdate}" widget-style="btn btn-mini btn-success"><submit button-type="button"/></field>
         <field name="deleteLink" title="${uiLabelMap.FormFieldTitle_actionEnumId}" widget-style="btn btn-mini btn-danger">
             <hyperlink target="removeProductFromCategory" description="${uiLabelMap.CommonDelete}" also-hidden="false">
