@@ -1243,7 +1243,7 @@ public class OrderServices {
                 patientToPay = patientToPay.add(deductibleAmount);
                 patientToPay = patientToPay.add(lineTotal.multiply(deductiblePercentage).setScale(orderDecimals, orderRounding).divide(new BigDecimal(100)).setScale(orderDecimals, orderRounding));
             } else {
-                patientToPay = lineTotal;
+                patientToPay = patientToPay.add(lineTotal);
             }
         }
 
