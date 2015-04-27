@@ -191,6 +191,11 @@ jQuery.validator.addMethod("nospaces", function(value, element) {
                         <@htmlTemplate.lookupField value="${(productCategory.primaryParentCategoryId)?default('')}" formName="productCategoryForm" name="primaryParentCategoryId" id="primaryParentCategoryId" fieldFormName="LookupProductCategory"/>
                     </td>
                 </tr>
+                <tr>
+                    <td width="26%" align="right" class="label">Services</td>
+                    <td>&nbsp;</td>
+                    <td width="74%"><textarea name="services" cols="60" rows="2"><#if productCategory?has_content>${(productCategory.services)?if_exists}</#if></textarea></td>
+                </tr>
                 <#if productCategoryId?has_content>
                     <tr>
                         <td colspan="2">&nbsp;</td>
