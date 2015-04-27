@@ -38,7 +38,7 @@ if (salesManager || salesReprensentative ||requirementManager || purchaseManager
 		conditions.add(EntityCondition.makeCondition("statusId", EntityOperator.EQUALS, "REQ_PROPOSED"));
 			List<GenericValue> requirementHeaderList = new ArrayList<GenericValue>();
 		try {
-			requirementHeaderList = delegator.findList("Requirement", EntityCondition.makeCondition(conditions,EntityOperator.OR), null, null, null, false);
+			requirementHeaderList = delegator.findList("Requirement", EntityCondition.makeCondition(conditions,EntityOperator.OR), null, ["createdStamp DESC"], null, false);
 			
 			if(UtilValidate.isNotEmpty(requirementHeaderList)){
 				context.requirementsList =requirementHeaderList;
@@ -70,7 +70,7 @@ if (salesManager || salesReprensentative ||requirementManager || purchaseManager
 		conditions.add(EntityCondition.makeCondition(conditions1, EntityOperator.OR));
 		List<GenericValue> requirementHeaderList = new ArrayList<GenericValue>();
 		try {
-			requirementHeaderList = delegator.findList("Requirement", EntityCondition.makeCondition(conditions,EntityOperator.AND), null, null, null, false);
+			requirementHeaderList = delegator.findList("Requirement", EntityCondition.makeCondition(conditions,EntityOperator.AND), null, ["createdStamp DESC"], null, false);
 			if(UtilValidate.isNotEmpty(requirementHeaderList)){
 				context.requirementsList =requirementHeaderList;
 			}
@@ -86,7 +86,7 @@ if (salesManager || salesReprensentative ||requirementManager || purchaseManager
 	conditions.add(EntityCondition.makeCondition(conditions1, EntityOperator.OR));
 	List<GenericValue> requirementHeaderList = new ArrayList<GenericValue>();
 	try {
-		requirementHeaderList = delegator.findList("Requirement", EntityCondition.makeCondition(conditions,EntityOperator.AND), null, null, null, false);
+		requirementHeaderList = delegator.findList("Requirement", EntityCondition.makeCondition(conditions,EntityOperator.AND), null, ["createdStamp DESC"], null, false);
 		if(UtilValidate.isNotEmpty(requirementHeaderList)){
 			context.requirementsList =requirementHeaderList;
 		}

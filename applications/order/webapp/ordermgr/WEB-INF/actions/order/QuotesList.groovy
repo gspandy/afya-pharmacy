@@ -37,7 +37,7 @@ if (salesManager || salesReprensentative ||quoteManager || purchaseManager ||pur
 		conditions1.add(EntityCondition.makeCondition("statusId", EntityOperator.EQUALS, "QUO_CREATED"));
 		List<GenericValue> quoteHeaderList = new ArrayList<GenericValue>();
 		try {
-			quoteHeaderList = delegator.findList("Quote", EntityCondition.makeCondition(conditions1,EntityOperator.AND), null, null, null, false);
+			quoteHeaderList = delegator.findList("Quote", EntityCondition.makeCondition(conditions1,EntityOperator.AND), null, ["createdStamp DESC"], null, false);
 			if(UtilValidate.isNotEmpty(quoteHeaderList)){
 				context.quotesList =quoteHeaderList;
 			}
@@ -52,7 +52,7 @@ if (salesManager || salesReprensentative ||quoteManager || purchaseManager ||pur
 		conditions1.add(EntityCondition.makeCondition("statusId", EntityOperator.EQUALS, "QUO_CREATED"));
 		List<GenericValue> quoteHeaderList = new ArrayList<GenericValue>();
 		try {
-			quoteHeaderList = delegator.findList("Quote", EntityCondition.makeCondition(conditions1,EntityOperator.AND), null, null, null, false);
+			quoteHeaderList = delegator.findList("Quote", EntityCondition.makeCondition(conditions1,EntityOperator.AND), null, ["createdStamp DESC"], null, false);
 			if(UtilValidate.isNotEmpty(quoteHeaderList)){
 				context.quotesList =quoteHeaderList;
 			}
@@ -66,7 +66,7 @@ if (salesManager || salesReprensentative ||quoteManager || purchaseManager ||pur
 		conditions1.add(EntityCondition.makeCondition("statusId", EntityOperator.EQUALS, "QUO_CREATED"));	
 		List<GenericValue> quoteHeaderList = new ArrayList<GenericValue>();
 		try {
-			quoteHeaderList = delegator.findList("Quote", EntityCondition.makeCondition(conditions1,EntityOperator.AND), null, null, null, false);
+			quoteHeaderList = delegator.findList("Quote", EntityCondition.makeCondition(conditions1,EntityOperator.AND), null, ["createdStamp DESC"], null, false);
 			if(UtilValidate.isNotEmpty(quoteHeaderList)){
 				context.quotesList =quoteHeaderList;
 			}
@@ -79,7 +79,7 @@ if (salesManager || salesReprensentative ||quoteManager || purchaseManager ||pur
 	conditions1.add(EntityCondition.makeCondition("statusId", EntityOperator.EQUALS, "QUO_CREATED"));
 	List<GenericValue> quoteHeaderList = new ArrayList<GenericValue>();
 	try {
-		quoteHeaderList = delegator.findList("Quote", EntityCondition.makeCondition(conditions1,EntityOperator.AND), null, null, null, false);
+		quoteHeaderList = delegator.findList("Quote", EntityCondition.makeCondition(conditions1,EntityOperator.AND), null, ["createdStamp DESC"], null, false);
 		if(UtilValidate.isNotEmpty(quoteHeaderList)){
 			context.quotesList =quoteHeaderList;
 		}

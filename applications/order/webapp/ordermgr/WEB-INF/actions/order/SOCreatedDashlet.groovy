@@ -14,7 +14,7 @@ EntityCondition genericsCondition = EntityCondition.makeCondition( EntityConditi
 									EntityCondition.makeCondition("statusId", EntityOperator.EQUALS, "ORDER_CREATED") );
 
 // No role based restrictions
-salesOrderHeaders = delegator.findList("OrderHeader", genericsCondition, null, null, null, false);
+salesOrderHeaders = delegator.findList("OrderHeader", genericsCondition, null, ["orderDate DESC"], null, false);
 
 /*EntityCondition conditions = EntityCondition.makeCondition(genericsCondition,EntityOperator.AND,
 								EntityCondition.makeCondition("createdBy", EntityOperator.EQUALS, userLoginId));
