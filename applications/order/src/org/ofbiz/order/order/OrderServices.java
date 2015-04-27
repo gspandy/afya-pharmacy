@@ -722,7 +722,7 @@ public class OrderServices {
 
         // set the order items
         Iterator oi = orderItems.iterator();
-        Map orderItemAndServiceMapping = new HashMap();
+        Map<String, GenericValue> orderItemAndServiceMapping = new HashMap();
 
         while (oi.hasNext()) {
             GenericValue orderItem = (GenericValue) oi.next();
@@ -730,7 +730,7 @@ public class OrderServices {
                 String primaryProductCategoryId = orderItem.getRelatedOne("Product").getString("primaryProductCategoryId");
                 GenericValue productCategory = delegator.findOne("ProductCategory", false, "productCategoryId",
                         primaryProductCategoryId);
-                if(productCategory!=null) {
+                if (productCategory != null) {
                     String mappedServices = productCategory.getString("services");
                     if (mappedServices != null) {
                         if (mappedServices.indexOf(",") != -1) {
@@ -1163,10 +1163,9 @@ public class OrderServices {
                 GenericValue genericValue = delegator.makeValidValue("OrderRxHeader", presciptionData);
                 toBeStored.add(genericValue);
 
-
                 if ("INSURANCE".equals(patientInfo.getPatientType())) {
                     Copayment copayment = getDeductibleAndCopayForProductCategories(delegator, patientInfo.getModuleId(), orderItemAndServiceMapping);
-
+                    CopaymentDetail moduleDetail = copayment.getModuleDetails();
                     Map<String, CopaymentDetail> serviceToCopaymentDetailMapping = new HashMap();
 
                     for (CopaymentDetail detail : copayment.getServiceDetails()) {
@@ -1174,27 +1173,44 @@ public class OrderServices {
                     }
 
                     if (serviceToCopaymentDetailMapping != null) {
-
                         Iterator<String> serviceIter = serviceToCopaymentDetailMapping.keySet().iterator();
                         while (serviceIter.hasNext()) {
                             String serviceId = serviceIter.next();
                             CopaymentDetail copaymentDetail = serviceToCopaymentDetailMapping.get(serviceId);
                             GenericValue orderItem = (GenericValue) orderItemAndServiceMapping.get(serviceId);
-                            orderItem.set("copayAmount", copaymentDetail.getCopayAmount());
+                            BigDecimal lineTotal = orderItem.getBigDecimal("quantity").setScale(OrderServices.orderDecimals, OrderServices.orderRounding).multiply(orderItem.getBigDecimal("unitPrice"));
+
+                            if (copaymentDetail.getCopayAmount().compareTo(BigDecimal.ZERO) == 0 && copayment.getTotalCopayAmount().compareTo(BigDecimal.ZERO)==1)
+                                orderItem.set("copayAmount", copayment.getTotalCopayAmount());
+                            else {
+                                orderItem.set("copayAmount", copaymentDetail.getCopayAmount());
+                            }
+
                             orderItem.set("copayPercentage", copaymentDetail.getCopayPercentage());
-                            orderItem.set("deductibleAmount", copaymentDetail.getDeductibleAmount());
+
+                            if (copaymentDetail.getCopayAmount().compareTo(BigDecimal.ZERO) == 0 && copayment.getTotalDeductibleAmount().compareTo(BigDecimal.ZERO)==1)
+                                orderItem.set("deductibleAmount", copayment.getTotalDeductibleAmount());
+                            else
+                                orderItem.set("deductibleAmount", copaymentDetail.getDeductibleAmount());
+
                             orderItem.set("deductiblePercentage", copaymentDetail.getDeductiblePercentage());
+
                             orderItem.set("authorized", copaymentDetail.isAuthorization());
-                            orderItem.set("computeBy", copaymentDetail.getComputeBy());
+                            if (copaymentDetail.getComputeBy() != null)
+                                orderItem.set("computeBy", copaymentDetail.getComputeBy());
+                            else
+                                orderItem.set("computeBy", moduleDetail.getComputeBy());
+
                         }
                     }
+
                 }
             }
 
 
             if (context.get("grandTotal") != null && "SALES_ORDER".equals(orderTypeId)) {
                 BigDecimal grandTotal = (BigDecimal) context.get("grandTotal");
-                List result = createOrderPaymentPreferences(delegator,  orderItems.iterator(), orderId, patientInfo==null?"CASH":patientInfo.getPatientType(), grandTotal);
+                List result = createOrderPaymentPreferences(delegator, orderItems.iterator(), orderId, patientInfo == null ? "CASH" : patientInfo.getPatientType(), grandTotal);
                 toBeStored.addAll(result);
             }
 
@@ -1247,8 +1263,8 @@ public class OrderServices {
             }
         }
 
-        if(patientToPay.compareTo(grandTotal)==1){
-            patientToPay=grandTotal;
+        if (patientToPay.compareTo(grandTotal) == 1) {
+            patientToPay = grandTotal;
         }
         String paymentPrefId = delegator.getNextSeqId("OrderPaymentPreference");
         Map paymentPreference = UtilMisc.toMap("orderId", orderId, "orderPaymentPreferenceId", paymentPrefId,
@@ -1292,7 +1308,6 @@ public class OrderServices {
 
         serviceParam = serviceParam.substring(0, serviceParam.length() - 1);
         System.out.println(serviceParam);
-
         ResponseEntity<String> responseEntity = restTemplate.exchange(url, HttpMethod.GET, requestEntity, String.class, moduleId, serviceParam);
         String response = responseEntity.getBody();
         System.out.println(response);
@@ -4019,9 +4034,9 @@ public class OrderServices {
         Map itemAttributesMap = (Map) context.get("itemAttributesMap");
         Map<String, String> itemEstimatedShipDateMap = (Map) context.get("itemShipDateMap");
         Map<String, String> itemEstimatedDeliveryDateMap = (Map) context.get("itemDeliveryDateMap");
-        Map<String,String> itemAuthMap= (Map)context.get("itemAuthMap");
-        Map<String,String> itemAuthNumberMap = (Map)context.get("itemAuthNumberMap");
-        Map<String,String> itemHomeServiceMap = (Map)context.get("itemHomeServiceMap");
+        Map<String, String> itemAuthMap = (Map) context.get("itemAuthMap");
+        Map<String, String> itemAuthNumberMap = (Map) context.get("itemAuthNumberMap");
+        Map<String, String> itemHomeServiceMap = (Map) context.get("itemHomeServiceMap");
         // obtain a shopping cart object for updating
         ShoppingCart cart = null;
         try {
@@ -4131,7 +4146,7 @@ public class OrderServices {
 
                 if (itemAuthMap != null) {
                     String attrValue = null;
-                        attrValue = (String) itemAuthMap.get(itemSeqId);
+                    attrValue = (String) itemAuthMap.get(itemSeqId);
                     if (UtilValidate.isNotEmpty(attrValue)) {
                         cartItem.setAuthorized("Y".equals(attrValue) ? true : false);
                     }
@@ -4148,7 +4163,7 @@ public class OrderServices {
                 if (itemHomeServiceMap != null) {
                     String attrValue = null;
                     attrValue = (String) itemHomeServiceMap.get(itemSeqId);
-                    cartItem.setHomeService("Y".equals(attrValue)?true:false);
+                    cartItem.setHomeService("Y".equals(attrValue) ? true : false);
                 }
 
                 List<GenericValue> lineItemAdjs = cartItem.getAdjustments();

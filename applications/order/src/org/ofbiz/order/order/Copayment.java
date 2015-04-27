@@ -11,7 +11,8 @@ import java.util.List;
 public class Copayment {
     private BigDecimal totalCopayAmount;
 
-    private BigDecimal totalDeductableAmount;
+    @JsonProperty(value = "totalDeductableAmount")
+    private BigDecimal totalDeductibleAmount;
 
     private BigDecimal totalAuthorizationAmount;
 
@@ -29,12 +30,12 @@ public class Copayment {
         this.totalCopayAmount = totalCopayAmount;
     }
 
-    public BigDecimal getTotalDeductableAmount() {
-        return totalDeductableAmount;
+    public BigDecimal getTotalDeductibleAmount() {
+        return totalDeductibleAmount;
     }
 
-    public void setTotalDeductableAmount(BigDecimal totalDeductableAmount) {
-        this.totalDeductableAmount = totalDeductableAmount;
+    public void setTotalDeductibleAmount(BigDecimal totalDeductibleAmount) {
+        this.totalDeductibleAmount = totalDeductibleAmount;
     }
 
     public BigDecimal getTotalAuthorizationAmount() {
