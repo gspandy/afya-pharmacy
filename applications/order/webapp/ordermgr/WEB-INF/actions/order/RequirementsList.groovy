@@ -53,7 +53,7 @@ if (salesManager || salesReprensentative ||requirementManager || purchaseManager
 		conditions.add(EntityCondition.makeCondition("requirementTypeId", EntityOperator.EQUALS, "CUSTOMER_REQUIREMENT"));
 		List<GenericValue> requirementHeaderList = new ArrayList<GenericValue>();
 		try {
-			requirementHeaderList = delegator.findList("Requirement", EntityCondition.makeCondition(conditions,EntityOperator.AND), null, null, null, false);
+			requirementHeaderList = delegator.findList("Requirement", EntityCondition.makeCondition(conditions,EntityOperator.AND), null, ["createdStamp DESC"], null, false);
 			if(UtilValidate.isNotEmpty(requirementHeaderList)){
 				context.requirementsList =requirementHeaderList;
 			}

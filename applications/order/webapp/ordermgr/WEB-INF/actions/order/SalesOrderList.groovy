@@ -20,15 +20,15 @@ EntityCondition salesCondition = EntityCondition.makeCondition(genericsCondition
 								EntityCondition.makeCondition("orderTypeId", EntityOperator.EQUALS, "SALES_ORDER"));
 
 // No role based restrictions
-orderHeaderList = delegator.findList("OrderHeader", salesCondition, null, null, null, false);
+orderHeaderList = delegator.findList("OrderHeader", salesCondition, null, ["orderDate DESC"], null, false);
 
 /*EntityCondition conditions = EntityCondition.makeCondition(salesCondition,EntityOperator.AND,
 								EntityCondition.makeCondition("createdBy", EntityOperator.EQUALS, userLoginId));
 
-orderHeaderList = delegator.findList("OrderHeader", conditions, null, null, null, false);
+orderHeaderList = delegator.findList("OrderHeader", conditions, null, ["orderDate DESC"], null, false);
 
 if("admin".equals(partyId)){
-    orderHeaderList  = delegator.findList("OrderHeader", salesCondition, null, null, null, false);
+    orderHeaderList  = delegator.findList("OrderHeader", salesCondition, null, ["orderDate DESC"], null, false);
 }
 
 partyRelationshipList = delegator.findByAnd("PartyRelationship", ["partyIdTo" : partyId]);
@@ -50,6 +50,6 @@ if(partyList.contains("SALES_MGR")){
     isSubOrdinate = true;
 }
 if(isSubOrdinate == true)
-    orderHeaderList = delegator.findList("OrderHeader", managerCondition, null, null, null, false);*/
+    orderHeaderList = delegator.findList("OrderHeader", managerCondition, null, ["orderDate DESC"], null, false);*/
 
 context.orderHeaderList = orderHeaderList;

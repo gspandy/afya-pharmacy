@@ -20,15 +20,15 @@ EntityCondition salesReturnCondition = EntityCondition.makeCondition(genericsCon
 										EntityCondition.makeCondition("returnHeaderTypeId", EntityOperator.EQUALS, "CUSTOMER_RETURN"));
 
 // No role based restrictions
-salesReturn = delegator.findList("ReturnHeader", salesReturnCondition, null, null, null, false);
+salesReturn = delegator.findList("ReturnHeader", salesReturnCondition, null, ["createdStamp DESC"], null, false);
 
 /*EntityCondition conditions = EntityCondition.makeCondition(salesReturnCondition,EntityOperator.AND,
 								EntityCondition.makeCondition("createdBy", EntityOperator.EQUALS, userLoginId));
 
-salesReturn = delegator.findList("ReturnHeader", conditions, null, null, null, false);
+salesReturn = delegator.findList("ReturnHeader", conditions, null, ["createdStamp DESC"], null, false);
 
 if("admin".equals(partyId)){
-    salesReturn  = delegator.findList("ReturnHeader", salesReturnCondition, null, null, null, false);
+    salesReturn  = delegator.findList("ReturnHeader", salesReturnCondition, null, ["createdStamp DESC"], null, false);
 }
 
 partyRelationshipList = delegator.findByAnd("PartyRelationship", ["partyIdTo" : partyId]);
@@ -50,6 +50,6 @@ if(partyList.contains("SALES_MGR")){
     isSubOrdinate = true;
 }
 if(isSubOrdinate == true)
-    salesReturn = delegator.findList("ReturnHeader", managerCondition, null, null, null, false);*/
+    salesReturn = delegator.findList("ReturnHeader", managerCondition, null, ["createdStamp DESC"], null, false);*/
 
 context.salesReturn = salesReturn;

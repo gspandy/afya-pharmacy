@@ -19,15 +19,15 @@ EntityCondition purchaseCondition = EntityCondition.makeCondition(genericsCondit
 									EntityCondition.makeCondition("orderTypeId", EntityOperator.EQUALS, "PURCHASE_ORDER"));
 
 // No role based restrictions
-purchaseOrderHeaderList = delegator.findList("OrderHeader", purchaseCondition, null, null, null, false);
+purchaseOrderHeaderList = delegator.findList("OrderHeader", purchaseCondition, null, ["orderDate DESC"], null, false);
 
 /*EntityCondition conditions = EntityCondition.makeCondition(purchaseCondition,EntityOperator.AND,
 								EntityCondition.makeCondition("createdBy", EntityOperator.EQUALS, userLoginId));
 
-purchaseOrderHeaderList = delegator.findList("OrderHeader", conditions, null, null, null, false);
+purchaseOrderHeaderList = delegator.findList("OrderHeader", conditions, null, ["orderDate DESC"], null, false);
 
 if("admin".equals(partyId)){
-    purchaseOrderHeaderList = delegator.findList("OrderHeader", purchaseCondition, null, null, null, false);
+    purchaseOrderHeaderList = delegator.findList("OrderHeader", purchaseCondition, null, ["orderDate DESC"], null, false);
 }
 
 partyRelationshipList = delegator.findByAnd("PartyRelationship", ["partyIdTo" : partyId]);
@@ -49,6 +49,6 @@ if(partyList.contains("MANAGER")){
     isSubOrdinate = true;
 }
 if(isSubOrdinate == true)
-    purchaseOrderHeaderList = delegator.findList("OrderHeader", managerCondition, null, null, null, false);*/
+    purchaseOrderHeaderList = delegator.findList("OrderHeader", managerCondition, null, ["orderDate DESC"], null, false);*/
 
 context.purchaseOrderHeaderList = purchaseOrderHeaderList;

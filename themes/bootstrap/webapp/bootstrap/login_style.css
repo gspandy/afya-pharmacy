@@ -74,6 +74,22 @@ form {
 .location img {
   margin: 0em 0;
 }
+.eventMessage,.errorMessage {
+	background-color: #FFFFEE;
+	border: solid #000000 0.1em;
+	font-size: 1.1em;
+	font-weight: bold;
+	margin: 1em;
+	padding: 1em;
+}
+
+.eventMessage {
+	color: #000099;
+}
+
+.errorMessage {
+	color: #ff0000;
+}
 .app-location input[type="text"],.app-location input[type="password"] {
   width: 81.2%;
   padding: 1.1em 1em 1.1em 4em;

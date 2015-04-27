@@ -19,10 +19,10 @@ salesOrderHeaders = delegator.findList("OrderHeader", genericsCondition, null, [
 /*EntityCondition conditions = EntityCondition.makeCondition(genericsCondition,EntityOperator.AND,
 								EntityCondition.makeCondition("createdBy", EntityOperator.EQUALS, userLoginId));
 
-salesOrderHeaders = delegator.findList("OrderHeader", conditions, null, null, null, false);
+salesOrderHeaders = delegator.findList("OrderHeader", conditions, null, ["orderDate DESC"], null, false);
 
 if("admin".equals(partyId)){
-    salesOrderHeaders = delegator.findList("OrderHeader", genericsCondition, null, null, null, false);
+    salesOrderHeaders = delegator.findList("OrderHeader", genericsCondition, null, ["orderDate DESC"], null, false);
 }
 
 partyRelationshipList = delegator.findByAnd("PartyRelationship", ["partyIdTo" : partyId]);
@@ -44,6 +44,6 @@ if(partyList.contains("SALES_MGR")){
     isSubOrdinate = true;
 } 
 if(isSubOrdinate == true)
-    salesOrderHeaders = delegator.findList("OrderHeader", managerCondition, null, null, null, false);*/
+    salesOrderHeaders = delegator.findList("OrderHeader", managerCondition, null, ["orderDate DESC"], null, false);*/
 
 context.salesOrderHeaders = salesOrderHeaders;
