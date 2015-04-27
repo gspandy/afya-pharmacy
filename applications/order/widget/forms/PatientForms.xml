@@ -3,11 +3,11 @@
 
     <form name="FindPatient" type="single" target="findPatient" title=""
           default-title-style="tableheadtext" default-widget-style="tabletext" default-tooltip-style="tabletext">
-        <field name="civilId" id-name="civilId" position="1"><text/></field>
-        <field name="patientFirstName"  position="2"><text/></field>
-        <field name="afyaId"  position="1"><text/></field>
-        <field name="patientLastName"  position="2"><text/></field>
-        <field name="mobile"  position="1"><text/></field>
+        <field name="civilId" id-name="civilId" position="1"><text-find/></field>
+        <field name="firstName"  position="2"><text-find/></field>
+        <field name="afyaId"  position="1"><text-find/></field>
+        <field name="thirdName"  position="2"><text-find/></field>
+        <field name="mobilePhone"  position="1"><text/></field>
         <field name="submitButton" title="${uiLabelMap.CommonFind}" widget-style="btn btn-primary">
             <submit button-type="button"/>
         </field>
@@ -28,7 +28,7 @@
         <field name="civilId" id-name="civilId"><display/></field>
         <field name="afyaId"><display/></field>
         <field name="firstName" title="First Name"><display/></field>
-        <field name="middleName" title="Second Name"><display/></field>
+        <field name="thirdName" title="Third Name"><display/></field>
         <field name="mobilePhone"><display/></field>
         <field name="submitButton" widget-style="btn btn-mini btn-primary">
             <hyperlink title="Select" text="Select">
