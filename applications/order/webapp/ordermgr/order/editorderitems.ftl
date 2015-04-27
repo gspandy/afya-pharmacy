@@ -190,12 +190,14 @@ under the License.
                             <td colspan="3"><span class="label">Home Service</span>
                                 <input type="checkbox" name="ihm_${orderItem.orderItemSeqId}" value="Y" <#if orderItem.homeService?exists && orderItem.homeService=='Y'>checked='CHECKED'</#if>"/>
                             </td>
+                            <#if orderRxHeader?exists && orderRxHeader.patientType?exists && 'INSURANCE'==orderRxHeader.patientType>
                             <#if orderItem.authorized?exists && orderItem.authorized!='Y'>
                             <td colspan="3"><span class="label">Authorization</span>
                                 <input type="checkbox" name="iau_${orderItem.orderItemSeqId}" value="Y"/>
                                 <span class="label">Authorization Number</span>
                                 <input type="text" name="ian_${orderItem.orderItemSeqId}" value="" size="30" maxlength="60"/>
                             </td>
+                            </#if>
                             </#if>
                         </tr>
                       </#if>

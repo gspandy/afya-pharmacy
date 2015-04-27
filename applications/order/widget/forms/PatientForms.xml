@@ -343,7 +343,6 @@
 
             </drop-down>
         </field>
-
         <field name="policyNo" id-name="policyNo"><text/></field>
         <field name="startDate" id-name="startDate"><text/></field>
         <field name="endDate" id-name="endDate"><text/></field>

@@ -1194,7 +1194,7 @@ public class OrderServices {
 
             if (context.get("grandTotal") != null && "SALES_ORDER".equals(orderTypeId)) {
                 BigDecimal grandTotal = (BigDecimal) context.get("grandTotal");
-                List result = createOrderPaymentPreferences(delegator,  orderItems.iterator(), orderId, patientInfo.getPatientType(), grandTotal);
+                List result = createOrderPaymentPreferences(delegator,  orderItems.iterator(), orderId, patientInfo==null?"CASH":patientInfo.getPatientType(), grandTotal);
                 toBeStored.addAll(result);
             }
 

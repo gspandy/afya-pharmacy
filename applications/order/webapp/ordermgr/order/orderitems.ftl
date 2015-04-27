@@ -692,12 +692,14 @@ under the License.
                                                 <#else>
                                                     ${orderItem.itemDescription?if_exists}
                                                 </#if>
-                                                <#if orderItem.authorized?exists && orderItem.authorized=="Y">
-                                                    <br/><span class="icon-ok" aria-hidden="true"></span>
-                                                        <label class="alert-success">Authorized</label>
-                                                <#else>
-                                                       <br/><span class="icon-star" aria-hidden="true"></span>
-                                                        <label class="alert-danger">Not Authorized</label>
+                                                <#if  orderRxHeader?exists && orderRxHeader.patientType?exists && 'INSURANCE'==orderRxHeader.patientType>
+                                                    <#if orderItem.authorized?exists && orderItem.authorized=="Y">
+                                                        <br/><span class="icon-ok" aria-hidden="true"></span>
+                                                            <label class="alert-success">Authorized</label>
+                                                    <#else>
+                                                           <br/><span class="icon-star" aria-hidden="true"></span>
+                                                            <label class="alert-danger">Not Authorized</label>
+                                                    </#if>
                                                 </#if>
                                             </div>
                                         </td>
