@@ -11700,4 +11700,7 @@
     <property key="OrderReportSales">
         <value xml:lang="en">Sales Report</value>
     </property>
+    <property key="PatientInfo">
+        <value xml:lang="en">Patient Info</value>
+    </property>
 </resource>

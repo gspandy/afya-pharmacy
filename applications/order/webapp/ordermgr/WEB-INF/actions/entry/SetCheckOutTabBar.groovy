@@ -39,10 +39,11 @@ if ("PURCHASE_ORDER".equals(shoppingCart.getOrderType())) {
 if (shoppingCart.getShipGroupSize() > 1) {
     checkoutSteps.add([label : "OrderShipGroups", uri : "SetItemShipGroups", enabled : "Y"])
 }
-/*if ("SALES_ORDER".equals(shoppingCart.getOrderType())) {
-    checkoutSteps.add([label : "OrderOrderTerms", uri : "setOrderTerm", enabled : "Y"])
-    checkoutSteps.add([label : "AccountingPayment", uri : "setBilling", enabled : "Y"])
-}*/
+if ("SALES_ORDER".equals(shoppingCart.getOrderType())) {
+	checkoutSteps.add([label : "PatientInfo", uri : "searchPatient", enabled : "Y"])
+	/*checkoutSteps.add([label : "OrderOrderTerms", uri : "setOrderTerm", enabled : "Y"])
+    checkoutSteps.add([label : "AccountingPayment", uri : "setBilling", enabled : "Y"])*/
+}
 /*checkoutSteps.add([label : "PartyParties", uri : "setAdditionalParty", enabled : "Y"])*/
 checkoutSteps.add([label : "Adjustments", uri : "setAdjustment", enabled : "Y"])
 checkoutSteps.add([label : "OrderReviewOrder", uri : "confirmOrder", enabled : "Y"])
