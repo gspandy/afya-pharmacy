@@ -4,10 +4,10 @@
     <form name="FindPatient" type="single" target="findPatient" title=""
           default-title-style="tableheadtext" default-widget-style="tabletext" default-tooltip-style="tabletext">
         <field name="civilId" id-name="civilId" position="1"><text-find/></field>
-        <field name="firstName"  position="2"><text-find/></field>
-        <field name="afyaId"  position="1"><text-find/></field>
-        <field name="thirdName"  position="2"><text-find/></field>
-        <field name="mobilePhone"  position="1"><text/></field>
+        <field name="firstName" title="First Name" position="2"><text-find/></field>
+        <field name="afyaId" position="1"><text-find/></field>
+        <field name="thirdName" title="Last Name" position="2"><text-find/></field>
+        <field name="mobilePhone" position="1"><text/></field>
         <field name="submitButton" title="${uiLabelMap.CommonFind}" widget-style="btn btn-primary">
             <submit button-type="button"/>
         </field>
@@ -28,7 +28,7 @@
         <field name="civilId" id-name="civilId"><display/></field>
         <field name="afyaId"><display/></field>
         <field name="firstName" title="First Name"><display/></field>
-        <field name="thirdName" title="Third Name"><display/></field>
+        <field name="thirdName" title="Last Name"><display/></field>
         <field name="mobilePhone"><display/></field>
         <field name="submitButton" widget-style="btn btn-mini btn-primary">
             <hyperlink title="Select" text="Select">
@@ -53,10 +53,10 @@
         <field name="patientId"><hidden/></field>
         <field name="civilId" id-name="civilId" position="1"><text/></field>
         <field name="afyaId" position="2"><text/></field>
-        <field title="Patient First Name" name="firstName" position="1"><text/></field>
-        <field title="Patient Second Name" name="secondName"  position="2"><text/></field>
-        <field title="Patient Third Name" name="thirdName"  position="3"><text/></field>
-        <field title="Patient Fourth Name" name="fourthName"  position="4"><text/></field>
+        <field name="firstName" title="First Name" position="1"><text/></field>
+        <field name="secondName" title="Middle Name" position="2"><text/></field>
+        <field name="thirdName" title="Last Name" position="3"><text/></field>
+        <!-- <field name="fourthName" title="Patient Fourth Name" position="4"><text/></field> -->
         <field name="mobilePhone" position="1" parameter-name="mobile"><text/></field>
         <field name="clinicName" position="2"><text/></field>
         <!--<field name="clinicId"><text/></field>-->
@@ -114,18 +114,18 @@
                 <option key="Sr" description="Sr"/>
             </drop-down>
         </field>
-        <field name="firstName" id-name="firstName">
+        <field name="firstName" title="First Name" id-name="firstName">
             <text/>
         </field>
-        <field name="secondName" id-name="secondName">
+        <field name="secondName" title="Middle Name" id-name="secondName">
             <text/>
         </field>
-        <field name="thirdName" id-name="thirdName">
+        <field name="thirdName" title="Last Name" id-name="thirdName">
             <text/>
         </field>
-        <field name="fourthName" id-name="fourthName">
+        <!-- <field name="fourthName" id-name="fourthName">
             <text/>
-        </field>
+        </field> -->
         <field name="nationality" position="1" id-name="nationality">
             <text/>
         </field>
@@ -233,7 +233,7 @@
                 <sort-field name="firstName" position="2"/>
                 <sort-field name="secondName" position="3"/>
                 <sort-field name="thirdName" position="4"/>
-                <sort-field name="fourthName" position="5"/>
+                <!-- <sort-field name="fourthName" position="5"/> -->
                 <sort-field name="dateOfBirth" position="1"/>
                 <sort-field name="bloodGroup" position="2"/>
                 <sort-field name="rH" position="3"/>
@@ -266,10 +266,10 @@
         <field name="afyaId">
             <display/>
         </field>
-        <field name="firstName">
+        <field name="firstName" title="First Name">
             <display/>
         </field>
-        <field name="secondName">
+        <field name="thirdName" title="Last Name">
             <display/>
         </field>
         <field name="gender">

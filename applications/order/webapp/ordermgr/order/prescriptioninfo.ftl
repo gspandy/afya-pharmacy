@@ -38,7 +38,7 @@ under the License.
                 <td valign="top" width="40%">${orderRxHeader.firstName?if_exists}</td>
                 <td align="right" valign="top" width="10%"><span class="label">Last Name</span></td>
                 <td width="1%">&nbsp;</td>
-                <td valign="top" width="40%">${orderRxHeader.secondName?if_exists}</td>
+                <td valign="top" width="40%">${orderRxHeader.thirdName?if_exists}</td>
             </tr>
             <tr>
                 <td align="right" valign="top" width="19%"><span class="label">Mobile</span></td>
