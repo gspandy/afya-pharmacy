@@ -722,7 +722,7 @@ public class OrderServices {
 
         // set the order items
         Iterator oi = orderItems.iterator();
-        Map<String, GenericValue> orderItemAndServiceMapping = new HashMap();
+        Map<String, List<GenericValue>> orderItemAndServiceMapping = new HashMap<String, List<GenericValue>>();
 
         while (oi.hasNext()) {
             GenericValue orderItem = (GenericValue) oi.next();
@@ -735,10 +735,20 @@ public class OrderServices {
                     if (mappedServices != null) {
                         if (mappedServices.indexOf(",") != -1) {
                             for (String serviceId : mappedServices.split(",")) {
-                                orderItemAndServiceMapping.put(serviceId, orderItem);
+                                List oiList = (List) orderItemAndServiceMapping.get(serviceId);
+                                if (oiList == null) {
+                                    oiList = new ArrayList();
+                                }
+                                oiList.add(orderItem);
+                                orderItemAndServiceMapping.put(serviceId, oiList);
                             }
                         } else {
-                            orderItemAndServiceMapping.put(mappedServices, orderItem);
+                            List oiList = (List) orderItemAndServiceMapping.get(mappedServices);
+                            if (oiList == null) {
+                                oiList = new ArrayList();
+                            }
+                            oiList.add(orderItem);
+                            orderItemAndServiceMapping.put(mappedServices, oiList);
                         }
                     }
                 }
@@ -1177,30 +1187,36 @@ public class OrderServices {
                         while (serviceIter.hasNext()) {
                             String serviceId = serviceIter.next();
                             CopaymentDetail copaymentDetail = serviceToCopaymentDetailMapping.get(serviceId);
-                            GenericValue orderItem = (GenericValue) orderItemAndServiceMapping.get(serviceId);
-                            BigDecimal lineTotal = orderItem.getBigDecimal("quantity").setScale(OrderServices.orderDecimals, OrderServices.orderRounding).multiply(orderItem.getBigDecimal("unitPrice"));
-
-                            if (copaymentDetail.getCopayAmount().compareTo(BigDecimal.ZERO) == 0 && copayment.getTotalCopayAmount().compareTo(BigDecimal.ZERO) == 1)
-                                orderItem.set("copayAmount", copayment.getTotalCopayAmount());
-                            else {
-                                orderItem.set("copayAmount", copaymentDetail.getCopayAmount());
+                            List<GenericValue> orderItemList = (List) orderItemAndServiceMapping.get(serviceId);
+                            Iterator<GenericValue> orderItemListIter = orderItemList.iterator();
+                            boolean copayApplied = false;
+                            while (orderItemListIter.hasNext()) {
+                                GenericValue orderItem = orderItemListIter.next();
+                                if (!copayApplied) {
+                                    if (copaymentDetail.getCopayAmount().compareTo(BigDecimal.ZERO) == 0 && copayment.getTotalCopayAmount().compareTo(BigDecimal.ZERO) == 1)
+                                        orderItem.set("copayAmount", copayment.getTotalCopayAmount());
+                                    else {
+                                        orderItem.set("copayAmount", copaymentDetail.getCopayAmount());
+                                    }
+                                    orderItem.set("copayPercentage", copaymentDetail.getCopayPercentage());
+                                    orderItem.set("deductiblePercentage", copaymentDetail.getDeductiblePercentage());
+                                    if (copaymentDetail.getCopayAmount().compareTo(BigDecimal.ZERO) == 0 && copayment.getTotalDeductibleAmount().compareTo(BigDecimal.ZERO) == 1)
+                                        orderItem.set("deductibleAmount", copayment.getTotalDeductibleAmount());
+                                    else
+                                        orderItem.set("deductibleAmount", copaymentDetail.getDeductibleAmount());
+                                    if (copaymentDetail.getComputeBy() != null)
+                                        orderItem.set("computeBy", copaymentDetail.getComputeBy());
+                                    else
+                                        orderItem.set("computeBy", moduleDetail.getComputeBy());
+                                    copayApplied=true;
+                                }else{
+                                    orderItem.set("copayAmount", ZERO);
+                                    orderItem.set("deductiblePercentage", ZERO);
+                                    orderItem.set("deductibleAmount", ZERO);
+                                    orderItem.set("copayPercentage", ZERO);
+                                }
+                                orderItem.set("authorized", copaymentDetail.isAuthorization());
                             }
-
-                            orderItem.set("copayPercentage", copaymentDetail.getCopayPercentage());
-
-                            if (copaymentDetail.getCopayAmount().compareTo(BigDecimal.ZERO) == 0 && copayment.getTotalDeductibleAmount().compareTo(BigDecimal.ZERO) == 1)
-                                orderItem.set("deductibleAmount", copayment.getTotalDeductibleAmount());
-                            else
-                                orderItem.set("deductibleAmount", copaymentDetail.getDeductibleAmount());
-
-                            orderItem.set("deductiblePercentage", copaymentDetail.getDeductiblePercentage());
-
-                            orderItem.set("authorized", copaymentDetail.isAuthorization());
-                            if (copaymentDetail.getComputeBy() != null)
-                                orderItem.set("computeBy", copaymentDetail.getComputeBy());
-                            else
-                                orderItem.set("computeBy", moduleDetail.getComputeBy());
-
                         }
                     }
 
@@ -1288,7 +1304,6 @@ public class OrderServices {
     private static Copayment getDeductibleAndCopayForProductCategories(Delegator delegator, String moduleId, Map orderItemAndServiceMapping) throws GenericEntityException {
 
         Set<String> serviceIds = orderItemAndServiceMapping.keySet();
-        Map serviceToCopaymentDetailMapping = new HashMap();
 
         String PORTAL_URL = UtilProperties.getPropertyValue("general.properties", "server.url", "5.9.249.197:7878");
         RestTemplate restTemplate = new RestTemplate();
