@@ -33,7 +33,7 @@ public class AfyaSalesOrderController {
     private static final String CUSTOMER_PARTY_ID = "10000";
     private static final String SHIPPING_LOC_ID = "default.customer.contact.mech.default";
 
-    public static Map createSalesOrderForPrescription(HttpServletRequest request, HttpServletResponse response) {
+    public static String createSalesOrderForPrescription(HttpServletRequest request, HttpServletResponse response) {
         Map responseStatus = new HashMap();
         try {
             ObjectMapper mapper = new ObjectMapper();
@@ -86,16 +86,16 @@ public class AfyaSalesOrderController {
             CheckOutHelper checkOutHelper = new CheckOutHelper(dispatcher, dispatcher.getDelegator(), cart);
             java.util.Map orderCreate = checkOutHelper.createOrder(userLogin);
             String orderId = (String) orderCreate.get("orderId");
-            responseStatus.put("statusCode",200);
+            /*responseStatus.put("statusCode",200);
             responseStatus.put("orderId",orderId);
-            responseStatus.put("message","Order successfully placed.");
+            responseStatus.put("message","Order successfully placed.");*/
         } catch (Exception e) {
-            responseStatus.put("statusCode",500);
+            /*responseStatus.put("statusCode",500);
             responseStatus.put("message",e.getMessage());
             e.printStackTrace();
-            response.setStatus(500);
+            response.setStatus(500);*/
         }
-        return responseStatus;
+        return "success";
 
     }
 

@@ -21,7 +21,7 @@ import java.util.Map;
 public class PatientServices {
 
 
-    private static final String PORTAL_URL= UtilProperties.getPropertyValue("general.properties","server.url","5.9.249.197:7878");
+    private static final String PORTAL_URL= UtilProperties.getPropertyValue("general.properties","portal.server.url","5.9.249.197:7878");
 
     public static Map registerPatientOnPortal(DispatchContext ctx, Map context) {
 

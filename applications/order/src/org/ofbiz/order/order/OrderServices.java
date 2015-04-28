@@ -1190,31 +1190,40 @@ public class OrderServices {
                             List<GenericValue> orderItemList = (List) orderItemAndServiceMapping.get(serviceId);
                             Iterator<GenericValue> orderItemListIter = orderItemList.iterator();
                             boolean copayApplied = false;
+                            boolean deductibleApplied = false;
                             while (orderItemListIter.hasNext()) {
                                 GenericValue orderItem = orderItemListIter.next();
+                                orderItem.set("copayAmount", ZERO);
+                                orderItem.set("deductiblePercentage", ZERO);
+                                orderItem.set("deductibleAmount", ZERO);
+                                orderItem.set("copayPercentage", ZERO);
+
+                                //Override Copay Amount
                                 if (!copayApplied) {
                                     if (copaymentDetail.getCopayAmount().compareTo(BigDecimal.ZERO) == 0 && copayment.getTotalCopayAmount().compareTo(BigDecimal.ZERO) == 1)
                                         orderItem.set("copayAmount", copayment.getTotalCopayAmount());
                                     else {
                                         orderItem.set("copayAmount", copaymentDetail.getCopayAmount());
                                     }
-                                    orderItem.set("copayPercentage", copaymentDetail.getCopayPercentage());
-                                    orderItem.set("deductiblePercentage", copaymentDetail.getDeductiblePercentage());
+                                    System.out.println(" Copay Amount Applied " + orderItem.get("copayAmount"));
+                                    copayApplied = true;
+                                }
+
+                                orderItem.set("copayPercentage", copaymentDetail.getCopayPercentage());
+                                orderItem.set("deductiblePercentage", copaymentDetail.getDeductiblePercentage());
+                                if (!deductibleApplied) {
                                     if (copaymentDetail.getCopayAmount().compareTo(BigDecimal.ZERO) == 0 && copayment.getTotalDeductibleAmount().compareTo(BigDecimal.ZERO) == 1)
                                         orderItem.set("deductibleAmount", copayment.getTotalDeductibleAmount());
                                     else
                                         orderItem.set("deductibleAmount", copaymentDetail.getDeductibleAmount());
-                                    if (copaymentDetail.getComputeBy() != null)
-                                        orderItem.set("computeBy", copaymentDetail.getComputeBy());
-                                    else
-                                        orderItem.set("computeBy", moduleDetail.getComputeBy());
-                                    copayApplied=true;
-                                }else{
-                                    orderItem.set("copayAmount", ZERO);
-                                    orderItem.set("deductiblePercentage", ZERO);
-                                    orderItem.set("deductibleAmount", ZERO);
-                                    orderItem.set("copayPercentage", ZERO);
+                                    deductibleApplied = true;
+                                    System.out.println(" Deductible Amount Applied " + orderItem.get("deductibleAmount"));
                                 }
+                                if (copaymentDetail.getComputeBy() != null)
+                                    orderItem.set("computeBy", copaymentDetail.getComputeBy());
+                                else
+                                    orderItem.set("computeBy", moduleDetail.getComputeBy());
+
                                 orderItem.set("authorized", copaymentDetail.isAuthorization());
                             }
                         }
@@ -1267,16 +1276,22 @@ public class OrderServices {
                     deductibleAmount = orderItem.getBigDecimal("deductibleAmount"),
                     deductiblePercentage = orderItem.getBigDecimal("deductiblePercentage");
 
+            System.out.print(" Patient to Pay for Line Item " + lineTotal);
             boolean isAuthorized = orderItem.getBoolean("authorized").booleanValue();
             if (isAuthorized) {
+                BigDecimal deductibleAmountCal = lineTotal.multiply(deductiblePercentage).setScale(orderDecimals, orderRounding).divide(new BigDecimal(100)).setScale(orderDecimals, orderRounding);
+                if (deductibleAmountCal.compareTo(BigDecimal.ZERO) == 1) {
+                    lineTotal = lineTotal.subtract(deductibleAmountCal);
+                } else {
+                    patientToPay = patientToPay.add(deductibleAmount);
+                    lineTotal = lineTotal.subtract(deductibleAmount);
+                }
                 patientToPay = patientToPay.add(copayAmount);
                 patientToPay = patientToPay.add(lineTotal.multiply(copayPercentage).setScale(orderDecimals, orderRounding).divide(new BigDecimal(100)).setScale(orderDecimals, orderRounding));
-
-                patientToPay = patientToPay.add(deductibleAmount);
-                patientToPay = patientToPay.add(lineTotal.multiply(deductiblePercentage).setScale(orderDecimals, orderRounding).divide(new BigDecimal(100)).setScale(orderDecimals, orderRounding));
             } else {
                 patientToPay = patientToPay.add(lineTotal);
             }
+            System.out.println(" == "+patientToPay);
         }
 
         if (patientToPay.compareTo(grandTotal) == 1) {
@@ -1305,7 +1320,7 @@ public class OrderServices {
 
         Set<String> serviceIds = orderItemAndServiceMapping.keySet();
 
-        String PORTAL_URL = UtilProperties.getPropertyValue("general.properties", "server.url", "5.9.249.197:7878");
+        String PORTAL_URL = UtilProperties.getPropertyValue("general.properties", "portal.server.url", "5.9.249.197:7878");
         RestTemplate restTemplate = new RestTemplate();
         HttpHeaders headers = new HttpHeaders();
         List<MediaType> mediaTypes = new ArrayList<MediaType>();
