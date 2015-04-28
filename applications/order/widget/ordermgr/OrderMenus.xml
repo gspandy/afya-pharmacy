@@ -223,12 +223,12 @@ under the License.
                 </condition> -->
                 <link target="ProductwiseSalesReport"/>
             </menu-item>
-            <menu-item name="salesByProductReport" title="Sales">
+            <!-- <menu-item name="salesByProductReport" title="Sales">
                 <condition>
                     <if-has-permission permission="ORDERMGR_SALES_ENTRY"/>
                 </condition>
                 <link target="SalesByProductReport"/>
-            </menu-item>
+            </menu-item> -->
 
             <!--<menu-item name="comparativeOrderItemReport" title="Comparative Order Item">
                 <link target="ComparativeOrderItemReport"/>

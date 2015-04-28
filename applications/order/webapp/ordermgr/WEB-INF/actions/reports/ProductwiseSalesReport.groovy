@@ -50,6 +50,12 @@ String dynamicQuery = "";
 if(UtilValidate.isNotEmpty(productId)){ 
  	dynamicQuery = " AND OI.PRODUCT_ID=? ";
 }
+if(UtilValidate.isNotEmpty(clinicName)){
+	dynamicQuery = " AND ORXH.CLINIC_NAME=? ";
+}
+if(UtilValidate.isNotEmpty(doctorName)){
+	dynamicQuery = " AND ORXH.DOCTOR_NAME=? ";
+}
 if(UtilValidate.isNotEmpty(fromDate)){
 	dynamicQuery = dynamicQuery + " AND OH.ORDER_DATE>=? ";
 }
@@ -62,7 +68,7 @@ Connection conn = ConnectionFactory.getConnection(helperName);
 PreparedStatement statement = conn.prepareStatement("SELECT OI.`PRODUCT_ID` AS productId, \n" +
 	"\t (SELECT internal_name FROM PRODUCT P WHERE OI.`PRODUCT_ID`=P.`PRODUCT_ID` AND OH.`ORDER_ID`=OI.`ORDER_ID` AND OH.`ORDER_TYPE_ID`='SALES_ORDER' AND OH.`STATUS_ID`='ORDER_COMPLETED') AS productName, \n" +
 	"\t SUM(OIB.`QUANTITY`) AS quantity, SUM(OIB.`QUANTITY`*OIB.`AMOUNT`) AS totalAmount \n" +
-	"\t FROM order_header OH JOIN order_item OI ON OH.`ORDER_ID`=OI.`ORDER_ID` \n" +
+	"\t FROM order_header OH JOIN order_rx_header ORXH ON OH.`ORDER_ID`=ORXH.`ORDER_ID` JOIN order_item OI ON OH.`ORDER_ID`=OI.`ORDER_ID` \n" +
 	"\t JOIN order_item_billing OIB ON OI.`ORDER_ID`=OIB.`ORDER_ID` AND OI.`ORDER_ITEM_SEQ_ID`=OIB.`ORDER_ITEM_SEQ_ID` \n" +
 	"\t WHERE OH.`ORDER_TYPE_ID`='SALES_ORDER' AND OH.`STATUS_ID`='ORDER_COMPLETED' \n" +
 	dynamicQuery + "\t GROUP BY OI.`PRODUCT_ID` \n" +
@@ -72,6 +78,10 @@ PreparedStatement statement = conn.prepareStatement("SELECT OI.`PRODUCT_ID` AS p
 int countNo = 1;
 if(UtilValidate.isNotEmpty(productId))
 	statement.setString(countNo++, productId);
+if(UtilValidate.isNotEmpty(clinicName))
+	statement.setString(countNo++, clinicName);
+if(UtilValidate.isNotEmpty(doctorName))
+	statement.setString(countNo++, doctorName);
 if(UtilValidate.isNotEmpty(fromDate))
 	statement.setTimestamp(countNo++, fromDate);
 if(UtilValidate.isNotEmpty(thruDate))

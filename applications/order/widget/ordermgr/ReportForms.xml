@@ -514,6 +514,8 @@ under the License.
         <field name="productId" title="Product">
             <lookup target-form-name="LookupProductName"></lookup>
         </field>
+        <field name="clinicName" title="Clinic Name"><text/></field>
+        <field name="doctorName" title="Doctor Name"><text/></field>
         <field name="fromDate" title="${uiLabelMap.OrderReportFromDate}"><date-time type="date"/></field>
         <field name="thruDate" title="${uiLabelMap.OrderReportDeliveryThruDate}"><date-time type="date"/></field> 
         <field name="exportType" title="Export Type">

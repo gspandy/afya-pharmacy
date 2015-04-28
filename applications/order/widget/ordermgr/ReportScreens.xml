@@ -886,6 +886,8 @@ under the License.
                 <set field="viewSize" value="${parameters.VIEW_SIZE}" default-value="20" type="Integer"/>
                 <set field="viewIndex" value="${parameters.VIEW_INDEX}" default-value="0" type="Integer"/>
                 <set field="productId" from-field="parameters.productId" />
+                <set field="clinicName" from-field="parameters.clinicName" />
+                <set field="doctorName" from-field="parameters.doctorName" />
                 <set field="fromDate" from-field="parameters.fromDate" type="Timestamp"/>
                 <set field="thruDate" from-field="parameters.thruDate" type="Timestamp"/>
                 <script location="component://order/webapp/ordermgr/WEB-INF/actions/reports/ProductwiseSalesReport.groovy"/>
