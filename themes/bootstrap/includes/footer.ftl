@@ -56,13 +56,19 @@ under the License.
 </center>
 </#if>
 <div id="footer">
-  <p>${nowTimestamp?datetime?string.short} -
-  <a href="<@ofbizUrl>ListTimezones</@ofbizUrl>">${timeZone.getDisplayName(timeZone.useDaylightTime(), Static["java.util.TimeZone"].LONG, locale)}</a>
+  <!-- <p>
+    ${nowTimestamp?datetime?string.short} - <a href="<@ofbizUrl>ListTimezones</@ofbizUrl>">${timeZone.getDisplayName(timeZone.useDaylightTime(), Static["java.util.TimeZone"].LONG, locale)}</a>
   </p>
-  <!--<p><a href="http://jigsaw.w3.org/css-validator/"><img src="<@ofbizContentUrl>/images/vcss.gif</@ofbizContentUrl>" alt="Valid CSS!"/></a>
-  <a href="http://validator.w3.org/check?uri=referer"><img src="<@ofbizContentUrl>/images/valid-xhtml10.png</@ofbizContentUrl>" alt="Valid XHTML 1.0!"/></a></p>-->
   <p>
-  ${uiLabelMap.CommonCopyright} &copy; 2009-${nowTimestamp?string("yyyy")} NthDimenzion Solutions (P) Limited - <a href="http://www.nthdimenzion.com" target="_blank">www.nthdimenzion.com </a><br />
+    <a href="http://jigsaw.w3.org/css-validator/"><img src="<@ofbizContentUrl>/images/vcss.gif</@ofbizContentUrl>" alt="Valid CSS!"/></a>
+    <a href="http://validator.w3.org/check?uri=referer"><img src="<@ofbizContentUrl>/images/valid-xhtml10.png</@ofbizContentUrl>" alt="Valid XHTML 1.0!"/></a>
+  </p>
+  <p>
+    ${uiLabelMap.CommonCopyright} &copy; 2009-${nowTimestamp?string("yyyy")} NthDimenzion Solutions (P) Limited - <a href="http://www.nthdimenzion.com" target="_blank">www.nthdimenzion.com </a><br />
+  </p> -->
+  <p>
+    ${uiLabelMap.CommonPoweredBy} Afya - <a href="http://www.afyaarabia.com" target="_blank">www.afyaarabia.com</a>
+  </p>
 </div>
 <#if layoutSettings.VT_FTR_JAVASCRIPT?has_content>
 <#list layoutSettings.VT_FTR_JAVASCRIPT as javaScript>
