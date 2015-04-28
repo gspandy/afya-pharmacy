@@ -1180,7 +1180,7 @@ public class OrderServices {
                             GenericValue orderItem = (GenericValue) orderItemAndServiceMapping.get(serviceId);
                             BigDecimal lineTotal = orderItem.getBigDecimal("quantity").setScale(OrderServices.orderDecimals, OrderServices.orderRounding).multiply(orderItem.getBigDecimal("unitPrice"));
 
-                            if (copaymentDetail.getCopayAmount().compareTo(BigDecimal.ZERO) == 0 && copayment.getTotalCopayAmount().compareTo(BigDecimal.ZERO)==1)
+                            if (copaymentDetail.getCopayAmount().compareTo(BigDecimal.ZERO) == 0 && copayment.getTotalCopayAmount().compareTo(BigDecimal.ZERO) == 1)
                                 orderItem.set("copayAmount", copayment.getTotalCopayAmount());
                             else {
                                 orderItem.set("copayAmount", copaymentDetail.getCopayAmount());
@@ -1188,7 +1188,7 @@ public class OrderServices {
 
                             orderItem.set("copayPercentage", copaymentDetail.getCopayPercentage());
 
-                            if (copaymentDetail.getCopayAmount().compareTo(BigDecimal.ZERO) == 0 && copayment.getTotalDeductibleAmount().compareTo(BigDecimal.ZERO)==1)
+                            if (copaymentDetail.getCopayAmount().compareTo(BigDecimal.ZERO) == 0 && copayment.getTotalDeductibleAmount().compareTo(BigDecimal.ZERO) == 1)
                                 orderItem.set("deductibleAmount", copayment.getTotalDeductibleAmount());
                             else
                                 orderItem.set("deductibleAmount", copaymentDetail.getDeductibleAmount());
@@ -1274,7 +1274,7 @@ public class OrderServices {
         toBeStored.add(genericValue);
 
         BigDecimal remainingAmount = grandTotal.subtract(patientToPay).setScale(orderDecimals, orderRounding);
-        if (remainingAmount.compareTo(BigDecimal.ZERO) == 1) {
+        if (remainingAmount.compareTo(BigDecimal.ZERO) == 1 || "INSURANCE".equals(patientType)) {
             paymentPrefId = delegator.getNextSeqId("OrderPaymentPreference");
             paymentPreference = UtilMisc.toMap("orderId", orderId, "orderPaymentPreferenceId", paymentPrefId,
                     "paymentMethodTypeId", "INSURANCE",
