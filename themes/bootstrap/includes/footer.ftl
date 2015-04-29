@@ -56,7 +56,7 @@ under the License.
 </center>
 </#if>
 <div id="footer">
-  <!-- <p>
+  <#-- <p>
     ${nowTimestamp?datetime?string.short} - <a href="<@ofbizUrl>ListTimezones</@ofbizUrl>">${timeZone.getDisplayName(timeZone.useDaylightTime(), Static["java.util.TimeZone"].LONG, locale)}</a>
   </p>
   <p>

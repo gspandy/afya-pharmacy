@@ -41,22 +41,26 @@ under the License.
               <fo:table-body>
                 <fo:table-row><fo:table-cell border-style="solid" border-width="0.2pt" padding="1mm"><fo:block font-weight="bold">${uiLabelMap.OrderReturnFromAddress}</fo:block></fo:table-cell></fo:table-row>
                 <fo:table-row><fo:table-cell padding="1mm">
-	                 <fo:block>
-                     <#if fromPartyNameResult.fullName?has_content>${fromPartyNameResult.fullName}<#else/><#if postalAddressTo?exists><#if (postalAddressTo.toName)?has_content>${postalAddressTo.toName}</#if></#if></#if>
-                      </fo:block>
-                       <fo:block>
-                       <#if (contactOrgin.attnName)?has_content>${contactOrgin.attnName}</#if>
-                        </fo:block>
-                        <fo:block>
-	                    <#if (contactOrgin.address1)?has_content>${contactOrgin.address1?if_exists}</#if>
-	                    <#if (contactOrgin.address2)?has_content> ${contactOrgin.address2}</#if>
-	                    <#if (contactOrgin.city)?has_content>${contactOrgin.city?if_exists}</#if>
-	                    <#assign stateDescription1 = delegator.findOne("Geo", {"geoId" : contactOrgin.stateProvinceGeoId}, true)>
-	                    <#if (stateDescription1)?has_content>${stateDescription1.geoName?if_exists?lower_case}</#if>
-	                    <#if (contactOrgin.postalCode)?has_content>${contactOrgin.postalCode?if_exists}</#if>
-	                     <#assign countryDescription1 = delegator.findOne("Geo", {"geoId" : contactOrgin.countryGeoId}, true)>
-	                     <#if (countryDescription1)?has_content>${countryDescription1.geoName?if_exists}</#if>
-                  		 </fo:block>
+	              <fo:block>
+                    <#if fromPartyNameResult.fullName?has_content>${fromPartyNameResult.fullName}<#else/><#if postalAddressTo?exists><#if (postalAddressTo.toName)?has_content>${postalAddressTo.toName}</#if></#if></#if>
+                  </fo:block>
+                  <fo:block>
+                    <#if contactOrgin?has_content && (contactOrgin.attnName)?has_content>${contactOrgin.attnName}</#if>
+                  </fo:block>
+                  <fo:block>
+	                <#if contactOrgin?has_content && (contactOrgin.address1)?has_content>${contactOrgin.address1?if_exists}</#if>
+	                <#if contactOrgin?has_content && (contactOrgin.address2)?has_content> ${contactOrgin.address2?if_exists}</#if>
+	                <#if contactOrgin?has_content && (contactOrgin.city)?has_content>${contactOrgin.city?if_exists}</#if>
+	                <#if contactOrgin?has_content>
+	                  <#assign stateDescription1 = delegator.findOne("Geo", {"geoId" : contactOrgin.stateProvinceGeoId?if_exists}, true)>
+	                  <#if (stateDescription1)?has_content>${stateDescription1.geoName?if_exists?lower_case}</#if>
+	                </#if>
+	                <#if contactOrgin?has_content && (contactOrgin.postalCode)?has_content>${contactOrgin.postalCode?if_exists}</#if>
+                    <#if contactOrgin?has_content>
+	                  <#assign countryDescription1 = delegator.findOne("Geo", {"geoId" : contactOrgin.countryGeoId}, true)>
+	                  <#if (countryDescription1)?has_content>${countryDescription1.geoName?if_exists}</#if>
+	                </#if>
+                  </fo:block>
                 </fo:table-cell></fo:table-row>
               </fo:table-body>
             </fo:table>
@@ -70,22 +74,26 @@ under the License.
               <fo:table-body>
                 <fo:table-row><fo:table-cell padding="1mm" border-style="solid" border-width="0.2pt"><fo:block font-weight="bold">${uiLabelMap.OrderReturnToAddress}</fo:block></fo:table-cell></fo:table-row>
                 <fo:table-row><fo:table-cell padding="1mm">
-                  	<fo:block>
-	             		<#if toPartyNameResult.fullName?has_content>${toPartyNameResult.fullName},</#if><br/>
-	                   </fo:block>
-	                   <fo:block>
-	                    <#if (contactDestination.attnName)?has_content>${contactDestination.attnName}</#if>
-	                    </fo:block>
-	                    <fo:block>
-	                    <#if (contactDestination.address1)?has_content>${contactDestination.address1?if_exists}</#if>
-	                    <#if (contactDestination.address2)?has_content> ${contactDestination.address2}</#if>
-	                    <#if (contactDestination.city)?has_content>${contactDestination.city?if_exists}</#if>
-	                    <#assign stateDescription = delegator.findOne("Geo", {"geoId" : contactDestination.stateProvinceGeoId}, true)>
-	                    <#if (stateDescription)?has_content>${stateDescription.geoName?if_exists?lower_case}</#if>
-	                    <#if (contactDestination.postalCode)?has_content>${contactDestination.postalCode?if_exists}</#if>
-	                     <#assign countryDescription = delegator.findOne("Geo", {"geoId" : contactDestination.countryGeoId}, true)>
-	                     <#if (countryDescription)?has_content>${countryDescription.geoName?if_exists}</#if>
-	            </fo:block>	 
+                  <fo:block>
+	                <#if toPartyNameResult.fullName?has_content>${toPartyNameResult.fullName?if_exists}</#if><br/>
+	              </fo:block>
+	              <fo:block>
+	                <#if contactDestination?has_content && (contactDestination.attnName)?has_content>${contactDestination.attnName?if_exists}</#if>
+	              </fo:block>
+	              <fo:block>
+	                <#if contactDestination?has_content && (contactDestination.address1)?has_content>${contactDestination.address1?if_exists}</#if>
+	                <#if contactDestination?has_content && (contactDestination.address2)?has_content> ${contactDestination.address2?if_exists}</#if>
+	                <#if contactDestination?has_content && (contactDestination.city)?has_content>${contactDestination.city?if_exists}</#if>
+	                <#if contactDestination?has_content>
+	                  <#assign stateDescription = delegator.findOne("Geo", {"geoId" : contactDestination.stateProvinceGeoId?if_exists}, true)>
+	                  <#if (stateDescription)?has_content>${stateDescription.geoName?if_exists?lower_case}</#if>
+	                </#if>
+	                <#if contactDestination?has_content && (contactDestination.postalCode)?has_content>${contactDestination.postalCode?if_exists}</#if>
+	                <#if contactDestination?has_content>
+	                  <#assign countryDescription = delegator.findOne("Geo", {"geoId" : contactDestination.countryGeoId}, true)>
+	                  <#if (countryDescription)?has_content>${countryDescription.geoName?if_exists}</#if>
+	                </#if>
+	              </fo:block>
                 </fo:table-cell></fo:table-row>
               </fo:table-body>
             </fo:table>

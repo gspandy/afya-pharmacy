@@ -35,12 +35,12 @@ under the License.
           <li><a href="<@ofbizUrl>finalizeOrder?finalizeMode=purchase&amp;finalizeReqCustInfo=false&amp;finalizeReqShipInfo=false&amp;finalizeReqOptions=false&amp;finalizeReqPayInfo=false</@ofbizUrl>">${uiLabelMap.OrderFinalizeOrder}</a></li>
         </#if>
       <#else>
-        <#if shoppingCart.size() = 0>
-          <#--<li class="disabled">${uiLabelMap.OrderFinalizeOrder}</li>-->
-            <li class="disabled"><a href="<@ofbizUrl>searchPatient</@ofbizUrl>">Patient Info</a></li>
+        <#if (shoppingCart.size() > 0)>
+          <li><a href="<@ofbizUrl>calcTax</@ofbizUrl>">${uiLabelMap.OrderQuickFinalizeOrder}</a></li>
+          <li><a href="<@ofbizUrl>searchPatient</@ofbizUrl>">Patient Info</a></li>
         <#else>
-            <li><a href="<@ofbizUrl>calcTax</@ofbizUrl>">${uiLabelMap.OrderQuickFinalizeOrder}</a></li>
-            <li><a href="<@ofbizUrl>searchPatient</@ofbizUrl>">Patient Info</a></li>
+          <li class="disabled">${uiLabelMap.OrderQuickFinalizeOrder}</li>
+          <li class="disabled">Patient Info</li>
         </#if>
       </#if>
 
