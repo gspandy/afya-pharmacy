@@ -47,6 +47,7 @@ Timestamp fromDate = UtilValidate.isNotEmpty(fromDate) ? UtilDateTime.getDayStar
 Timestamp thruDate = UtilValidate.isNotEmpty(thruDate) ? UtilDateTime.getDayEnd(thruDate) : null;
 
 String dynamicQuery = "";
+String joinQuery = "";
 if(UtilValidate.isNotEmpty(productId)){ 
  	dynamicQuery = " AND OI.PRODUCT_ID=? ";
 }
@@ -62,14 +63,17 @@ if(UtilValidate.isNotEmpty(fromDate)){
 if(UtilValidate.isNotEmpty(thruDate)){
 	dynamicQuery = dynamicQuery + " AND OH.ORDER_DATE<=? ";
 }
+if(clinicName || doctorName){
+	joinQuery = " JOIN order_rx_header ORXH ON OH.`ORDER_ID`=ORXH.`ORDER_ID` ";
+}
 
 String helperName = delegator.getGroupHelperName("org.ofbiz");
 Connection conn = ConnectionFactory.getConnection(helperName);
 PreparedStatement statement = conn.prepareStatement("SELECT OI.`PRODUCT_ID` AS productId, \n" +
 	"\t (SELECT internal_name FROM PRODUCT P WHERE OI.`PRODUCT_ID`=P.`PRODUCT_ID` AND OH.`ORDER_ID`=OI.`ORDER_ID` AND OH.`ORDER_TYPE_ID`='SALES_ORDER' AND OH.`STATUS_ID`='ORDER_COMPLETED') AS productName, \n" +
 	"\t SUM(OIB.`QUANTITY`) AS quantity, SUM(OIB.`QUANTITY`*OIB.`AMOUNT`) AS totalAmount \n" +
-	"\t FROM order_header OH JOIN order_rx_header ORXH ON OH.`ORDER_ID`=ORXH.`ORDER_ID` JOIN order_item OI ON OH.`ORDER_ID`=OI.`ORDER_ID` \n" +
-	"\t JOIN order_item_billing OIB ON OI.`ORDER_ID`=OIB.`ORDER_ID` AND OI.`ORDER_ITEM_SEQ_ID`=OIB.`ORDER_ITEM_SEQ_ID` \n" +
+	"\t FROM order_header OH JOIN order_item OI ON OH.`ORDER_ID`=OI.`ORDER_ID` \n" +
+	joinQuery + "\t JOIN order_item_billing OIB ON OI.`ORDER_ID`=OIB.`ORDER_ID` AND OI.`ORDER_ITEM_SEQ_ID`=OIB.`ORDER_ITEM_SEQ_ID` \n" +
 	"\t WHERE OH.`ORDER_TYPE_ID`='SALES_ORDER' AND OH.`STATUS_ID`='ORDER_COMPLETED' \n" +
 	dynamicQuery + "\t GROUP BY OI.`PRODUCT_ID` \n" +
 	"\t ORDER BY OI.`PRODUCT_ID`;");

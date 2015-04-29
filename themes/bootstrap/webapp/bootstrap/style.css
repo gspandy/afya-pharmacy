@@ -755,8 +755,8 @@ A IMG.imageborder {
 	font-size: 1.6em;
 	font-weight: bold; */
 	color: #ffffee;
-	background-color: #088ccd;
-	border: 1px solid #088995;
+	background-color: #337ab7;
+	border: 1px solid #337abf;
 	min-height: 30px;
     padding-top: 10px;
     padding-left: 5px;
@@ -844,8 +844,8 @@ padding-right:5px;
 
 #column-container .h1 {
 	color: #ffffee;
-	background-color: #088ccd;
-	border: 1px solid #088995;
+	background-color: #337ab7;
+	border: 1px solid #337abf;
 	min-height: 30px;
 	padding-top: 10px;
 	padding-left: 5px;
@@ -853,8 +853,8 @@ padding-right:5px;
 }
 
 #column-container h1 {
-	background-color: #088ccd;
-	border: 1px solid #088995;
+	background-color: #337ab7;
+	border: 1px solid #337abf;
 	color: #ffffee;
 	font-size: 17px !important;
 	font-weight: bold;
@@ -864,8 +864,8 @@ padding-right:5px;
 }
 
 #column-container header1, #column-container .header1 {
-	background-color: #088ccd;
-	border: 1px solid #088995;
+	background-color: #337ab7;
+	border: 1px solid #337abf;
 	color: #ffffee;
 	font-size: 17px !important;
 	font-weight: bold;
@@ -1407,7 +1407,7 @@ the top of the main content area */
 /* ================================================= */
 .screenlet-title-bar-warning {
 	color: red;
-	background-color: #088CCD;
+	background-color: #337ab7;
 	font-size: 14px;
 	font-weight: bold;
 	//float: right;
