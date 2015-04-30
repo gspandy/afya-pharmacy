@@ -31,7 +31,7 @@
             <td><#if salesOrderRxHeader?has_content>${salesOrderRxHeader.clinicId?if_exists}</#if></td>
             <td><#if salesOrderRxHeader?has_content>${salesOrderRxHeader.visitId?if_exists}</#if></td>
             <td><#if salesOrderRxHeader?has_content>${Static["org.ofbiz.base.util.UtilDateTime"].toDateString(salesOrderRxHeader.visitDate, "dd/MM/yyyy")}</#if></td>
-            <td><#if salesOrderRxHeader?has_content>${salesOrderRxHeader.patientFirstName?if_exists} ${salesOrderRxHeader.patientLastName?if_exists}</#if></td>
+            <td><#if salesOrderRxHeader?has_content>${salesOrderRxHeader.firstName?if_exists} ${salesOrderRxHeader.thirdName?if_exists}</#if></td>
             <td class="align-text"><@ofbizCurrency amount=salesOrderHeader.grandTotal isoCode=salesOrderHeader.currencyUom/></td>
           </tr>
             <#-- toggle the row color -->

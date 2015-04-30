@@ -50,7 +50,7 @@ under the License.
             <td><#if orderRxHeader?has_content>${orderRxHeader.clinicId?if_exists}</#if></td>
             <td><#if orderRxHeader?has_content>${orderRxHeader.visitId?if_exists}</#if></td>
             <td><#if orderRxHeader?has_content>${Static["org.ofbiz.base.util.UtilDateTime"].toDateString(orderRxHeader.visitDate, "dd/MM/yyyy")}</#if></td>
-            <td><#if orderRxHeader?has_content>${orderRxHeader.patientFirstName?if_exists} ${orderRxHeader.patientLastName?if_exists}</#if></td>
+            <td><#if orderRxHeader?has_content>${orderRxHeader.firstName?if_exists} ${orderRxHeader.thirdName?if_exists}</#if></td>
             <td class="align-text"><@ofbizCurrency amount=orderHeader.grandTotal isoCode=orderHeader.currencyUom/></td>
             <#-- <td>
               <#assign trackingCodes = orderHeader.getRelated("TrackingCodeOrder")>

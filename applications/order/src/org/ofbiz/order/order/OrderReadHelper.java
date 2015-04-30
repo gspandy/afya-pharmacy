@@ -957,9 +957,26 @@ public class OrderReadHelper {
     public static BigDecimal getOrderItemDeductible(GenericValue orderItem) {
         BigDecimal deductibleAmount = orderItem.getBigDecimal("deductibleAmount");
         if (deductibleAmount.compareTo(BigDecimal.ZERO) == 0) {
-            BigDecimal deductiblePercentage = orderItem.getBigDecimal("deductiblePercentage");
-            BigDecimal lineTotal = getOrderItemQuantity(orderItem).multiply(orderItem.getBigDecimal("unitPrice")).setScale(scale, rounding);
-            deductibleAmount = deductiblePercentage.multiply(lineTotal).setScale(scale, rounding).divide(new BigDecimal(100)).setScale(scale, rounding);
+        	if(orderItem.getBigDecimal("deductiblePercentage") == null) {
+        		BigDecimal deductiblePercentage = BigDecimal.ZERO;
+        		BigDecimal lineTotal = getOrderItemQuantity(orderItem).multiply(orderItem.getBigDecimal("unitPrice")).setScale(scale, rounding);
+                deductibleAmount = deductiblePercentage.multiply(lineTotal).setScale(scale, rounding).divide(new BigDecimal(100)).setScale(scale, rounding);
+        	} else {
+                BigDecimal deductiblePercentage = orderItem.getBigDecimal("deductiblePercentage");
+                BigDecimal lineTotal = getOrderItemQuantity(orderItem).multiply(orderItem.getBigDecimal("unitPrice")).setScale(scale, rounding);
+                deductibleAmount = deductiblePercentage.multiply(lineTotal).setScale(scale, rounding).divide(new BigDecimal(100)).setScale(scale, rounding);
+        	}
+        }
+        if (deductibleAmount == null) {
+        	if(orderItem.getBigDecimal("deductiblePercentage") == null) {
+        		BigDecimal deductiblePercentage = BigDecimal.ZERO;
+        		BigDecimal lineTotal = getOrderItemQuantity(orderItem).multiply(orderItem.getBigDecimal("unitPrice")).setScale(scale, rounding);
+        		deductibleAmount = deductiblePercentage.multiply(lineTotal).setScale(scale, rounding).divide(new BigDecimal(100)).setScale(scale, rounding);
+        	} else {
+        		 BigDecimal deductiblePercentage = orderItem.getBigDecimal("deductiblePercentage");
+                 BigDecimal lineTotal = getOrderItemQuantity(orderItem).multiply(orderItem.getBigDecimal("unitPrice")).setScale(scale, rounding);
+                 deductibleAmount = deductiblePercentage.multiply(lineTotal).setScale(scale, rounding).divide(new BigDecimal(100)).setScale(scale, rounding);
+        	}
         }
         return deductibleAmount.setScale(scale, rounding);
     }
@@ -967,9 +984,26 @@ public class OrderReadHelper {
     public static BigDecimal getOrderItemCopay(GenericValue orderItem) {
         BigDecimal copayAmount = orderItem.getBigDecimal("copayAmount");
         if (copayAmount.compareTo(BigDecimal.ZERO) == 0) {
-            BigDecimal copayPercentage = orderItem.getBigDecimal("copayPercentage");
-            BigDecimal lineTotal = getOrderItemQuantity(orderItem).multiply(orderItem.getBigDecimal("unitPrice")).setScale(scale, rounding);
-            copayAmount = copayPercentage.multiply(lineTotal).setScale(scale, rounding).divide(new BigDecimal(100)).setScale(scale, rounding);
+        	if (orderItem.getBigDecimal("copayPercentage") == null) {
+        		BigDecimal copayPercentage = orderItem.getBigDecimal("copayPercentage");
+        		BigDecimal lineTotal = getOrderItemQuantity(orderItem).multiply(orderItem.getBigDecimal("unitPrice")).setScale(scale, rounding);
+        		copayAmount = copayPercentage.multiply(lineTotal).setScale(scale, rounding).divide(new BigDecimal(100)).setScale(scale, rounding);
+        	} else {
+        		BigDecimal copayPercentage = BigDecimal.ZERO;
+        		BigDecimal lineTotal = getOrderItemQuantity(orderItem).multiply(orderItem.getBigDecimal("unitPrice")).setScale(scale, rounding);
+        		copayAmount = copayPercentage.multiply(lineTotal).setScale(scale, rounding).divide(new BigDecimal(100)).setScale(scale, rounding);
+        	}
+        }
+        if (copayAmount == null) {
+        	if (orderItem.getBigDecimal("copayPercentage") == null) {
+        		BigDecimal copayPercentage = orderItem.getBigDecimal("copayPercentage");
+        		BigDecimal lineTotal = getOrderItemQuantity(orderItem).multiply(orderItem.getBigDecimal("unitPrice")).setScale(scale, rounding);
+        		copayAmount = copayPercentage.multiply(lineTotal).setScale(scale, rounding).divide(new BigDecimal(100)).setScale(scale, rounding);
+        	} else {
+        		BigDecimal copayPercentage = BigDecimal.ZERO;
+        		BigDecimal lineTotal = getOrderItemQuantity(orderItem).multiply(orderItem.getBigDecimal("unitPrice")).setScale(scale, rounding);
+        		copayAmount = copayPercentage.multiply(lineTotal).setScale(scale, rounding).divide(new BigDecimal(100)).setScale(scale, rounding);
+        	}
         }
         return copayAmount.setScale(scale, rounding);
     }
