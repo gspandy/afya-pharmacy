@@ -1212,7 +1212,7 @@ public class OrderServices {
                                 orderItem.set("copayPercentage", copaymentDetail.getCopayPercentage());
                                 orderItem.set("deductiblePercentage", copaymentDetail.getDeductiblePercentage());
                                 if (!deductibleApplied) {
-                                    if (copaymentDetail.getCopayAmount().compareTo(BigDecimal.ZERO) == 0 && copayment.getTotalDeductibleAmount().compareTo(BigDecimal.ZERO) == 1)
+                                    if (copaymentDetail.getDeductibleAmount().compareTo(BigDecimal.ZERO) == 0 && copayment.getTotalDeductibleAmount().compareTo(BigDecimal.ZERO) == 1)
                                         orderItem.set("deductibleAmount", copayment.getTotalDeductibleAmount());
                                     else
                                         orderItem.set("deductibleAmount", copaymentDetail.getDeductibleAmount());

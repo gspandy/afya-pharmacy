@@ -35,8 +35,11 @@ under the License.
                     <td width="5%" style="text-align:center;">${uiLabelMap.CommonUom}</td>
                     <#if orderHeader.orderTypeId == "PURCHASE_ORDER"><td width="20%" style="text-align:right;padding-right:10px;">${uiLabelMap.OrderUnitList}</td></#if>
                     <#if orderHeader.orderTypeId == "SALES_ORDER"><td width="20%" style="text-align:right;padding-right:10px;">${uiLabelMap.OrderUnitPrice}</td></#if>
-                    <td width="10%" style="text-align:right;padding-right:10px;">${uiLabelMap.OrderAdjustments}</td>
-                    <td width="20%" style="text-align:right;padding-right:20px;" colspan="2">${uiLabelMap.OrderSubTotal}</td>
+                    <td width="5%" style="text-align:right;padding-right:10px;">${uiLabelMap.OrderAdjustments}</td>
+                    <td width="5%" style="text-align:right;padding-right:10px;">Deductible</td>
+                    <td width="5%" style="text-align:right;padding-right:10px;">Copay</td>
+                    <td width="5%" style="text-align:right;padding-right:10px;">Copayment Patient</td>
+                    <td width="10%" style="text-align:right;padding-right:20px;" colspan="2">${uiLabelMap.OrderSubTotal}</td>
                 </tr>
                 <#if !orderItemList?has_content>
                     <tr>
@@ -706,6 +709,7 @@ under the License.
                                         <td align="center" valign="top" nowrap="nowrap">
                                             <#if orderItem.homeService=='Y'> Yes <#else> No </#if>
                                         </td>
+
                                         <td align="center" valign="top" nowrap="nowrap">
                                             <#assign shippedQuantity = orderReadHelper.getItemShippedQuantity(orderItem)>
                                             <#assign outstanding = orderItem.quantity?default(0) - orderItem.cancelQuantity?default(0)>
@@ -727,6 +731,15 @@ under the License.
                                         </td>
                                         <td style="text-align:right;padding-right:10px;" valign="top" nowrap="nowrap">
                                             <@ofbizCurrency amount=Static["org.ofbiz.order.order.OrderReadHelper"].getOrderItemAdjustmentsTotal(orderItem, orderAdjustments, true, false, false) isoCode=currencyUomId/>
+                                        </td>
+                                        <td align="center" valign="top" nowrap="nowrap">
+                                            <@ofbizCurrency amount=Static["org.ofbiz.order.order.OrderReadHelper"].getOrderItemDeductible(orderItem) isoCode=currencyUomId/>
+                                        </td>
+                                        <td align="center" valign="top" nowrap="nowrap">
+                                            <@ofbizCurrency amount=Static["org.ofbiz.order.order.OrderReadHelper"].getOrderItemCopay(orderItem) isoCode=currencyUomId/>
+                                        </td>
+                                        <td align="center" valign="top" nowrap="nowrap">
+                                            <@ofbizCurrency amount=Static["org.ofbiz.order.order.OrderReadHelper"].getOrderItemPatientToPay(orderItem) isoCode=currencyUomId/>
                                         </td>
                                         <td style="text-align:right;" valign="top" nowrap="nowrap">
                                             <#if orderItem.statusId != "ITEM_CANCELLED">

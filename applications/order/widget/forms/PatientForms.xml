@@ -332,16 +332,15 @@
         <field name="patientId">
             <hidden value="${parameters.patientId}"/>
         </field>
-        <field name="groupName" id-name="groupName">
+        <field name="tpa" title="TPA" id-name="tpa" position="1">
             <drop-down></drop-down>
         </field>
-        <field name="tpa" title="TPA" id-name="tpa" position="2">
-            <text disabled="true"/>
-        </field>
-        <field name="insuranceCompanies" position="3" id-name="insurances">
+        <field name="insurance" position="2" id-name="insurances" >
             <drop-down>
-
             </drop-down>
+        </field>
+        <field name="groupName" id-name="groupName" position="3">
+            <drop-down></drop-down>
         </field>
         <field name="policyNo" id-name="policyNo"><text/></field>
         <field name="startDate" id-name="startDate"><text/></field>

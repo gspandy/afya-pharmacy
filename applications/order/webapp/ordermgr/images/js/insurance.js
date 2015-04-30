@@ -5,6 +5,53 @@
 $(document).ready(function () {
 
 
+    $.getJSON('http://5.9.249.197:7878/afya-portal/anon/insuranceMaster/allTPAPayers', function (data){
+        $.each(data, function (attr, value) {
+            var option = $('<option></option>').val(value['payerId']).text(value['insuranceName']);
+            $('#tpa').append(option);
+        });
+    });
+
+    $.getJSON("http://5.9.249.197:7878/afya-portal/anon/insuranceMaster/getInsuranceDetailsOfTpa",
+        function (data) {
+            $.each(data, function (attr, value) {
+                var option = $('<option></option>').val(value['payerId']).text(value['insuranceName']);
+                $('#insurances').append(option);
+            });
+        });
+
+
+    $('#tpa').change( function () {
+        var payerId = $(this).val();
+        $('#insurances').empty();
+        if(payerId) {
+            $.getJSON("http://5.9.249.197:7878/afya-portal/anon/insuranceMaster/getInsuranceDetailsOfTpa?payerId=" + payerId,
+                function (data) {
+                    $.each(data, function (attr, value) {
+                            var option = $('<option></option>').val(value['payerId']).text(value['insuranceName']);
+                            $('#insurances').append(option);
+                    });
+                });
+        }
+    });
+
+
+    $('#insurances').change(function () {
+        var payerId = $(this).val();
+        $('#groupName').empty();
+        var option = $('<option></option>').val(null).text('');
+        $('#groupName').append(option);
+        if(payerId) {
+            $.getJSON("http://5.9.249.197:7878/afya-portal/anon/insuranceMaster/fetchListOfGroupNamesByPayer?payerId=" + payerId,
+                function (data) {
+                    $.each(data, function (attr, value) {
+                        var option = $('<option></option>').val(value['groupId']).text(value['groupName']);
+                        $('#groupName').append(option);
+                    });
+                });
+        }
+    });
+
     $('#patientInsurance').change( function () {
         var benefitPlanId = $(this).val();
         $('#benefitPlanId').val($(this).val());
@@ -18,14 +65,14 @@ $(document).ready(function () {
     });
 
 
-    $.getJSON("http://5.9.249.197:7878/afya-portal/anon/insuranceMaster/fetchListOfGroupNamesByClinicId?clinicId=1",
+   /* $.getJSON("http://5.9.249.197:7878/afya-portal/anon/insuranceMaster/fetchListOfGroupNamesByClinicId?clinicId=1",
         function (data) {
             $.each(data, function (attr, value) {
                 var i = 0;
                 var option = $('<option></option>').val(value['groupId']).text(value['groupName']);
                 $('#groupName').append(option);
             });
-        });
+        });*/
 
 
     $('#benefitPlanNameDropDown').change(function () {
@@ -39,26 +86,17 @@ $(document).ready(function () {
     });
 
     $('#groupName').change(function () {
-
         $.getJSON("http://5.9.249.197:7878/afya-portal/anon/insuranceMaster/getPlanDetailsForGroupId?groupId=" + $(this).val(),
             function (data) {
                 $.each(data, function (attr, value) {
-                    if (attr == "tpaDetails") {
-                        $('#tpa').val(value['insuranceName']);
-                    }
-                    else if (attr == "insuranceForTpa") {
-                        var i = 0;
-                        for (; i < value.length; i++) {
-                            var option = $('<option></option>').val(value[i]['id']).text(value[i]['insuranceName']);
-                            $('#insurances').append(option);
-                        }
-                    } else if (attr == "policyNumber") {
+                    if (attr == "policyNumber") {
                         $('#policyNo').val(value);
                     }
-                    else if (attr == "startDate") {
+                    else if (attr == "planStartDate") {
                         $('#startDate').val(value);
                     }
-                    else if (attr == "endDate") {
+                    else if (attr == "planEndDate") {
+                        alert(' endDate '+value);
                         $('#endDate').val(value);
                     } else if (attr == "benefits") {
                         var i = 0;
@@ -70,7 +108,6 @@ $(document).ready(function () {
                         $('#healthPolicyName').val(value['healthPolicyName']);
                         $('#healthPolicyId').val(value['healthPolicyId']);
                     }
-                    console.log(JSON.stringify(value));
                 });
             });
     });
