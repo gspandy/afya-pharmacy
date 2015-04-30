@@ -1200,9 +1200,10 @@ public class OrderServices {
 
                                 //Override Copay Amount
                                 if (!copayApplied) {
-                                    if (copaymentDetail.getCopayAmount().compareTo(BigDecimal.ZERO) == 0 && copayment.getTotalCopayAmount().compareTo(BigDecimal.ZERO) == 1)
+                                    if (copaymentDetail.getCopayAmount().compareTo(BigDecimal.ZERO) == 0 && copayment.getTotalCopayAmount().compareTo(BigDecimal.ZERO) == 1) {
                                         orderItem.set("copayAmount", copayment.getTotalCopayAmount());
-                                    else {
+                                        copayment.setTotalCopayAmount(BigDecimal.ZERO);
+                                    }else {
                                         orderItem.set("copayAmount", copaymentDetail.getCopayAmount());
                                     }
                                     System.out.println(" Copay Amount Applied " + orderItem.get("copayAmount"));
@@ -1212,9 +1213,10 @@ public class OrderServices {
                                 orderItem.set("copayPercentage", copaymentDetail.getCopayPercentage());
                                 orderItem.set("deductiblePercentage", copaymentDetail.getDeductiblePercentage());
                                 if (!deductibleApplied) {
-                                    if (copaymentDetail.getDeductibleAmount().compareTo(BigDecimal.ZERO) == 0 && copayment.getTotalDeductibleAmount().compareTo(BigDecimal.ZERO) == 1)
+                                    if (copaymentDetail.getDeductibleAmount().compareTo(BigDecimal.ZERO) == 0 && copayment.getTotalDeductibleAmount().compareTo(BigDecimal.ZERO) == 1) {
                                         orderItem.set("deductibleAmount", copayment.getTotalDeductibleAmount());
-                                    else
+                                        copayment.setTotalDeductibleAmount(BigDecimal.ZERO);
+                                    }else
                                         orderItem.set("deductibleAmount", copaymentDetail.getDeductibleAmount());
                                     deductibleApplied = true;
                                     System.out.println(" Deductible Amount Applied " + orderItem.get("deductibleAmount"));

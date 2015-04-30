@@ -856,7 +856,6 @@ under the License.
                     </#list>
                     
                     <td>&nbsp;</td>
-                    
                     <#-- subtotal -->
                     <tr>
                         <td  style="text-align:right;" colspan="9">
