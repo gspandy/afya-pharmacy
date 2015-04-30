@@ -70,7 +70,7 @@ under the License.
                   <td class="label">${uiLabelMap.OrderPrice}</td>
                   <td>
                     <input type="text" class="currency" size="6" name="basePrice" value="${requestParameters.price?if_exists}"/>
-                    <input type="checkbox" name="overridePrice" value="Y"/>&nbsp;${uiLabelMap.OrderOverridePrice}
+                    <#-- <input type="checkbox" name="overridePrice" value="Y"/>&nbsp;${uiLabelMap.OrderOverridePrice} -->
                   </td>
                 </tr>
                 <tr>

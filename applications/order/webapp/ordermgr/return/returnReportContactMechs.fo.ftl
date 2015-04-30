@@ -45,7 +45,7 @@ under the License.
                     <#if fromPartyNameResult.fullName?has_content>${fromPartyNameResult.fullName}<#else/><#if postalAddressTo?exists><#if (postalAddressTo.toName)?has_content>${postalAddressTo.toName}</#if></#if></#if>
                   </fo:block>
                   <fo:block>
-                    <#if contactOrgin?has_content && (contactOrgin.attnName)?has_content>${contactOrgin.attnName}</#if>
+                    <#if contactOrgin?has_content && (contactOrgin.attnName)?has_content>${contactOrgin.attnName?if_exists}</#if>
                   </fo:block>
                   <fo:block>
 	                <#if contactOrgin?has_content && (contactOrgin.address1)?has_content>${contactOrgin.address1?if_exists}</#if>
