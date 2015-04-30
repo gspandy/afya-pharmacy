@@ -859,7 +859,7 @@ under the License.
                     
                     <#-- subtotal -->
                     <tr>
-                        <td  style="text-align:right;" colspan="6">
+                        <td  style="text-align:right;" colspan="9">
                             <span class="label">${uiLabelMap.OrderItemsSubTotal}</span>
                         </td>
                         <td style="text-align:right;" nowrap="nowrap">
@@ -869,7 +869,7 @@ under the License.
                     <#-- tax adjustments -->
                     <#list orderAdjustmentGrouped as orderAdjustmentGrouped>
                         <tr>
-                            <td style="text-align:right;" colspan="6">
+                            <td style="text-align:right;" colspan="9">
                                 <#--<span class="label">Total ${adjType.description?if_exists}</span> -->
                                 <span class="label">Total ${orderAdjustmentGrouped.comments?if_exists}</span>
                             </td>
@@ -880,7 +880,7 @@ under the License.
                     </#list>
                     <#-- grand total -->
                     <tr>
-                        <td style="text-align:right;" colspan="6">
+                        <td style="text-align:right;" colspan="9">
                             <span class="label">${uiLabelMap.OrderTotalDue}</span>
                         </td>
                         <td style="text-align:right;" nowrap="nowrap">
