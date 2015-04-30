@@ -43,7 +43,6 @@
         <set-pk-fields value-field="newEntity" map="parameters"></set-pk-fields>
         <set field="newEntity.patientId" from-field="parameters.patientId"/>
         <set field="newEntity.healthPolicyId" from-field="parameters.healthPolicyId"/>
-
         <create-value do-cache-clear="true" or-store="false" value-field="newEntity"/>
     </simple-method>
 

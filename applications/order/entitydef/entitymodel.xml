@@ -3159,6 +3159,7 @@
 		<field name="healthPolicyName" type="short-varchar"></field>
 		<field name="benefitPlanId" type="short-varchar"></field>
 		<field name="benefitPlanName" type="short-varchar"></field>
+		<field name="hisBenefitId" type="short-varchar"></field>
 		<field name="uHID" type="short-varchar"></field>
 		<field name="planName" type="short-varchar"></field>
 		<prim-key field="patientId" />

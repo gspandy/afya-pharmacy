@@ -1174,7 +1174,7 @@ public class OrderServices {
                 toBeStored.add(genericValue);
 
                 if ("INSURANCE".equals(patientInfo.getPatientType())) {
-                    Copayment copayment = getDeductibleAndCopayForProductCategories(delegator, patientInfo.getModuleId(), orderItemAndServiceMapping);
+                    Copayment copayment = getDeductibleAndCopayForProductCategories(delegator, patientInfo, orderItemAndServiceMapping);
                     CopaymentDetail moduleDetail = copayment.getModuleDetails();
                     Map<String, CopaymentDetail> serviceToCopaymentDetailMapping = new HashMap();
 
@@ -1203,7 +1203,7 @@ public class OrderServices {
                                     if (copaymentDetail.getCopayAmount().compareTo(BigDecimal.ZERO) == 0 && copayment.getTotalCopayAmount().compareTo(BigDecimal.ZERO) == 1) {
                                         orderItem.set("copayAmount", copayment.getTotalCopayAmount());
                                         copayment.setTotalCopayAmount(BigDecimal.ZERO);
-                                    }else {
+                                    } else {
                                         orderItem.set("copayAmount", copaymentDetail.getCopayAmount());
                                     }
                                     System.out.println(" Copay Amount Applied " + orderItem.get("copayAmount"));
@@ -1216,7 +1216,7 @@ public class OrderServices {
                                     if (copaymentDetail.getDeductibleAmount().compareTo(BigDecimal.ZERO) == 0 && copayment.getTotalDeductibleAmount().compareTo(BigDecimal.ZERO) == 1) {
                                         orderItem.set("deductibleAmount", copayment.getTotalDeductibleAmount());
                                         copayment.setTotalDeductibleAmount(BigDecimal.ZERO);
-                                    }else
+                                    } else
                                         orderItem.set("deductibleAmount", copaymentDetail.getDeductibleAmount());
                                     deductibleApplied = true;
                                     System.out.println(" Deductible Amount Applied " + orderItem.get("deductibleAmount"));
@@ -1293,7 +1293,7 @@ public class OrderServices {
             } else {
                 patientToPay = patientToPay.add(lineTotal);
             }
-            System.out.println(" == "+patientToPay);
+            System.out.println(" == " + patientToPay);
         }
 
         if (patientToPay.compareTo(grandTotal) == 1) {
@@ -1318,7 +1318,7 @@ public class OrderServices {
         return toBeStored;
     }
 
-    private static Copayment getDeductibleAndCopayForProductCategories(Delegator delegator, String moduleId, Map orderItemAndServiceMapping) throws GenericEntityException {
+    private static Copayment getDeductibleAndCopayForProductCategories(Delegator delegator, PatientInfo patientInfo, Map orderItemAndServiceMapping) throws GenericEntityException {
 
         Set<String> serviceIds = orderItemAndServiceMapping.keySet();
 
@@ -1332,15 +1332,15 @@ public class OrderServices {
         HttpEntity<String> requestEntity = new HttpEntity<String>(headers);
         ObjectMapper mapper = new ObjectMapper();
 
-        String url = PORTAL_URL + "afya-portal/anon/insuranceMaster/getServiceOrModuleDataByServiceId?moduleId={moduleId}&serviceIds={serviceIds}";
+        String url = PORTAL_URL + "afya-portal/anon/insuranceMaster/getServiceOrModuleDataByServiceId?hisModuleId={hisBenefitId}&benefitId={benefitId}&serviceIds={serviceIds}";
         String serviceParam = "";
         for (String s : serviceIds) {
             serviceParam = serviceParam.concat(s).concat(",");
         }
 
         serviceParam = serviceParam.substring(0, serviceParam.length() - 1);
-        System.out.println(serviceParam);
-        ResponseEntity<String> responseEntity = restTemplate.exchange(url, HttpMethod.GET, requestEntity, String.class, moduleId, serviceParam);
+        ResponseEntity<String> responseEntity = restTemplate.exchange(url, HttpMethod.GET, requestEntity, String.class, patientInfo.getHisBenefitId(), patientInfo.getBenefitId(),
+                serviceParam);
         String response = responseEntity.getBody();
         System.out.println(response);
         mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);

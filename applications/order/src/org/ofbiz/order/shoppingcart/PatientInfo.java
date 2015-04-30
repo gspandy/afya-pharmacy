@@ -26,6 +26,7 @@ public class PatientInfo {
     private String healthPolicyId;
     private String moduleId;
     private String moduleName;
+    private String hisBenefitId;
 
     public Date getVisitDate() {
         return visitDate;
@@ -59,6 +60,7 @@ public class PatientInfo {
         this.benefitId=request.getParameter("benefitPlanId");
         this.moduleId=request.getParameter("moduleId");
         this.moduleName=request.getParameter("moduleName");
+        this.hisBenefitId=request.getParameter("hisBenefitId");
     }
 
     public PatientInfo() {
@@ -191,5 +193,13 @@ public class PatientInfo {
 
     public void setModuleName(String moduleName) {
         this.moduleName = moduleName;
+    }
+
+    public String getHisBenefitId() {
+        return hisBenefitId;
+    }
+
+    public void setHisBenefitId(String hisBenefitId) {
+        this.hisBenefitId = hisBenefitId;
     }
 }

@@ -18,6 +18,13 @@ $(document).ready(function () {
             });
         });
 
+    $.getJSON("http://5.9.249.197:7878/afya-portal/anon/insuranceMaster/getHISModules", function (data){
+        $.each(data, function (attr, value) {
+            var option = $('<option></option>').val(value['hisModuleId']).text(value['hisBenefitName']);
+            $('#hisBenefitId').append(option);
+        });
+    });
+
 
     $('#tpa').change(function () {
         var payerId = $(this).val();
@@ -83,6 +90,7 @@ $(document).ready(function () {
     $('#moduleId').change(function () {
         $('#moduleName').val($(this).find('option:selected').text());
     });
+
 
     $('#groupName').change(function () {
         $.getJSON("http://5.9.249.197:7878/afya-portal/anon/insuranceMaster/getPlanDetailsForGroupId?groupId=" + $(this).val(),

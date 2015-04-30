@@ -75,7 +75,7 @@
             </drop-down>
         </field>
         <field name="moduleName" id-name="moduleName"><hidden/></field>
-        <field name="moduleId" id-name="moduleId">
+        <field name="hisBenefitId" id-name="hisBenefitId">
             <drop-down></drop-down>
         </field>
         <field name="address1" parameter-name="address"><text/></field>
@@ -350,6 +350,9 @@
         <field name="benefitPlanId" id-name="benefitPlanId"><hidden/></field>
         <field name="benefitPlanName" id-name="benefitPlanName"><hidden/></field>
         <field name="benefitPlanNameDropDown" title="Select Benefit Plan" id-name="benefitPlanNameDropDown">
+            <drop-down></drop-down>
+        </field>
+        <field name="hisBenefitId" title="Select Benefit" id-name="hisBenefitId">
             <drop-down></drop-down>
         </field>
         <field name="uHID" id-name="uhid"><text/> </field>
