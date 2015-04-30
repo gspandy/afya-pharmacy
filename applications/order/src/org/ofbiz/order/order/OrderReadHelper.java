@@ -969,6 +969,7 @@ public class OrderReadHelper {
         if (copayAmount.compareTo(BigDecimal.ZERO) == 0) {
             BigDecimal copayPercentage = orderItem.getBigDecimal("copayPercentage") == null ? BigDecimal.ZERO : orderItem.getBigDecimal("copayPercentage");
             BigDecimal lineTotal = getOrderItemQuantity(orderItem).multiply(orderItem.getBigDecimal("unitPrice")).setScale(scale, rounding);
+            lineTotal=lineTotal.subtract(getOrderItemDeductible(orderItem));
             copayAmount = copayPercentage.multiply(lineTotal).setScale(scale, rounding).divide(new BigDecimal(100)).setScale(scale, rounding);
         }
         return copayAmount.setScale(scale, rounding);
