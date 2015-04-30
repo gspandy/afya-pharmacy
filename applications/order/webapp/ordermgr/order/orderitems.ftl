@@ -733,13 +733,13 @@ under the License.
                                             <@ofbizCurrency amount=Static["org.ofbiz.order.order.OrderReadHelper"].getOrderItemAdjustmentsTotal(orderItem, orderAdjustments, true, false, false) isoCode=currencyUomId/>
                                         </td>
                                         <td align="center" valign="top" nowrap="nowrap">
-                                            <@ofbizCurrency amount=Static["org.ofbiz.order.order.OrderReadHelper"].getOrderItemDeductible(orderItem) isoCode=currencyUomId/>
+                                            <@ofbizCurrency amount=Static["org.ofbiz.order.order.OrderReadHelper"].getOrderItemDeductible(orderItem)?default(0) isoCode=currencyUomId/>
                                         </td>
                                         <td align="center" valign="top" nowrap="nowrap">
-                                            <@ofbizCurrency amount=Static["org.ofbiz.order.order.OrderReadHelper"].getOrderItemCopay(orderItem) isoCode=currencyUomId/>
+                                            <@ofbizCurrency amount=Static["org.ofbiz.order.order.OrderReadHelper"].getOrderItemCopay(orderItem)?default(0) isoCode=currencyUomId/>
                                         </td>
                                         <td align="center" valign="top" nowrap="nowrap">
-                                            <@ofbizCurrency amount=Static["org.ofbiz.order.order.OrderReadHelper"].getOrderItemPatientToPay(orderItem) isoCode=currencyUomId/>
+                                            <@ofbizCurrency amount=Static["org.ofbiz.order.order.OrderReadHelper"].getOrderItemPatientToPay(orderItem)?default(0) isoCode=currencyUomId/>
                                         </td>
                                         <td style="text-align:right;" valign="top" nowrap="nowrap">
                                             <#if orderItem.statusId != "ITEM_CANCELLED">
