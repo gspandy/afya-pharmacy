@@ -18,35 +18,12 @@
  *******************************************************************************/
 package org.ofbiz.widget.form;
 
-import java.io.IOException;
-import java.io.Reader;
-import java.io.StringReader;
-import java.io.StringWriter;
-import java.sql.Timestamp;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Set;
-import java.util.WeakHashMap;
-import java.util.Map.Entry;
-
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
+import com.ibm.icu.util.Calendar;
+import freemarker.core.Environment;
+import freemarker.template.Template;
+import freemarker.template.TemplateException;
 import javolution.util.FastList;
-
-import org.apache.commons.lang.StringEscapeUtils;
-import org.ofbiz.base.util.Debug;
-import org.ofbiz.base.util.StringUtil;
-import org.ofbiz.base.util.UtilFormatOut;
-import org.ofbiz.base.util.UtilGenerics;
-import org.ofbiz.base.util.UtilHttp;
-import org.ofbiz.base.util.UtilMisc;
-import org.ofbiz.base.util.UtilProperties;
-import org.ofbiz.base.util.UtilValidate;
+import org.ofbiz.base.util.*;
 import org.ofbiz.base.util.string.FlexibleStringExpander;
 import org.ofbiz.base.util.template.FreeMarkerWorker;
 import org.ofbiz.entity.Delegator;
@@ -54,34 +31,19 @@ import org.ofbiz.webapp.control.RequestHandler;
 import org.ofbiz.webapp.taglib.ContentUrlTag;
 import org.ofbiz.widget.ModelWidget;
 import org.ofbiz.widget.WidgetWorker;
-import org.ofbiz.widget.form.ModelFormField.CheckField;
-import org.ofbiz.widget.form.ModelFormField.ContainerField;
-import org.ofbiz.widget.form.ModelFormField.DateFindField;
-import org.ofbiz.widget.form.ModelFormField.DateTimeField;
-import org.ofbiz.widget.form.ModelFormField.DisplayEntityField;
-import org.ofbiz.widget.form.ModelFormField.DisplayField;
-import org.ofbiz.widget.form.ModelFormField.DropDownField;
-import org.ofbiz.widget.form.ModelFormField.FileField;
-import org.ofbiz.widget.form.ModelFormField.HiddenField;
-import org.ofbiz.widget.form.ModelFormField.HyperlinkField;
-import org.ofbiz.widget.form.ModelFormField.IgnoredField;
-import org.ofbiz.widget.form.ModelFormField.ImageField;
-import org.ofbiz.widget.form.ModelFormField.LookupField;
-import org.ofbiz.widget.form.ModelFormField.PasswordField;
-import org.ofbiz.widget.form.ModelFormField.RadioField;
-import org.ofbiz.widget.form.ModelFormField.RangeFindField;
-import org.ofbiz.widget.form.ModelFormField.ResetField;
-import org.ofbiz.widget.form.ModelFormField.SubmitField;
-import org.ofbiz.widget.form.ModelFormField.TextField;
-import org.ofbiz.widget.form.ModelFormField.TextFindField;
-import org.ofbiz.widget.form.ModelFormField.TextareaField;
+import org.ofbiz.widget.form.ModelFormField.*;
 import org.ofbiz.widget.screen.ModelScreenWidget;
 
-import com.ibm.icu.util.Calendar;
-
-import freemarker.core.Environment;
-import freemarker.template.Template;
-import freemarker.template.TemplateException;
+import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.io.Reader;
+import java.io.StringReader;
+import java.io.StringWriter;
+import java.sql.Timestamp;
+import java.util.*;
+import java.util.Map.Entry;
 
 /**
  * Widget Library - Form Renderer implementation based on Freemarker macros
@@ -415,7 +377,7 @@ public class MacroFormRenderer implements FormStringRenderer {
         if (subHyperlink != null && subHyperlink.shouldUse(context)) {
             makeHyperlinkString(writer,subHyperlink,context);
         }
-        this.addAsterisks(writer, context, modelFormField);
+        //this.addAsterisks(writer, context, modelFormField);
         this.appendTooltip(writer, context, modelFormField);
     }
 
@@ -487,7 +449,7 @@ public class MacroFormRenderer implements FormStringRenderer {
         sr.append(buttons);
         sr.append("\" />");
         executeMacro(writer, sr.toString());
-        this.addAsterisks(writer, context, modelFormField);
+        //this.addAsterisks(writer, context, modelFormField);
         this.appendTooltip(writer, context, modelFormField);
     }
 
@@ -733,7 +695,7 @@ public class MacroFormRenderer implements FormStringRenderer {
         sr.append(formattedMask);
         sr.append("\" />");
         executeMacro(writer, sr.toString());
-        this.addAsterisks(writer, context, modelFormField);
+        //this.addAsterisks(writer, context, modelFormField);
         this.appendTooltip(writer, context, modelFormField);
     }
 
@@ -978,7 +940,7 @@ public class MacroFormRenderer implements FormStringRenderer {
         if (subHyperlink != null && subHyperlink.shouldUse(context)) {
             makeHyperlinkString(writer, subHyperlink, context);
         }
-        this.addAsterisks(writer,context,modelFormField);
+        //this.addAsterisks(writer,context,modelFormField);
         this.appendTooltip(writer, context, modelFormField);
     }
 
@@ -1249,7 +1211,7 @@ public class MacroFormRenderer implements FormStringRenderer {
         String titleText = UtilHttp.encodeAmpersands(tempTitleText);
         String style = modelFormField.getTitleStyle();
         String id = modelFormField.getCurrentContainerId(context);
-        
+
         StringBuilder sb = new StringBuilder();
         if (UtilValidate.isNotEmpty(titleText)) {
             if (" ".equals(titleText)) {
@@ -1331,6 +1293,14 @@ public class MacroFormRenderer implements FormStringRenderer {
             }
             sr.append("\" />");
             executeMacro(writer, sr.toString());
+            if(modelFormField.getRequiredField()){
+                String requiredStyle=modelFormField.getRequiredFieldStyle();
+                if(UtilValidate.isEmpty(requiredStyle)) {
+                    writer.append("<font color=\"red\">*</font>");
+                }else{
+                    writer.append("<font style=\""+requiredStyle+"\">*</font>");
+                }
+            }
         }
     }
 
@@ -3015,7 +2985,7 @@ public class MacroFormRenderer implements FormStringRenderer {
         sr.append("\" requiredStyle=\"");
         sr.append(requiredStyle);
         sr.append("\" />");
-        executeMacro(writer, sr.toString());
+        //executeMacro(writer, sr.toString());
     }
     public void appendContentUrl(Appendable writer, String location) throws IOException {
         StringBuilder buffer = new StringBuilder();

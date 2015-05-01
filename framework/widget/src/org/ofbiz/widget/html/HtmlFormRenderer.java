@@ -18,27 +18,9 @@
  *******************************************************************************/
 package org.ofbiz.widget.html;
 
-import java.io.IOException;
-import java.sql.Timestamp;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Map.Entry;
-
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
+import com.ibm.icu.util.Calendar;
 import javolution.util.FastList;
-
-import org.ofbiz.base.util.Debug;
-import org.ofbiz.base.util.StringUtil;
-import org.ofbiz.base.util.UtilGenerics;
-import org.ofbiz.base.util.UtilHttp;
-import org.ofbiz.base.util.UtilMisc;
-import org.ofbiz.base.util.UtilProperties;
-import org.ofbiz.base.util.UtilValidate;
+import org.ofbiz.base.util.*;
 import org.ofbiz.base.util.StringUtil.SimpleEncoder;
 import org.ofbiz.base.util.string.FlexibleStringExpander;
 import org.ofbiz.base.util.template.FreeMarkerWorker;
@@ -50,30 +32,19 @@ import org.ofbiz.widget.WidgetWorker;
 import org.ofbiz.widget.form.FormStringRenderer;
 import org.ofbiz.widget.form.ModelForm;
 import org.ofbiz.widget.form.ModelFormField;
-import org.ofbiz.widget.form.ModelFormField.CheckField;
-import org.ofbiz.widget.form.ModelFormField.ContainerField;
-import org.ofbiz.widget.form.ModelFormField.DateFindField;
-import org.ofbiz.widget.form.ModelFormField.DateTimeField;
-import org.ofbiz.widget.form.ModelFormField.DisplayEntityField;
-import org.ofbiz.widget.form.ModelFormField.DisplayField;
-import org.ofbiz.widget.form.ModelFormField.DropDownField;
-import org.ofbiz.widget.form.ModelFormField.FileField;
-import org.ofbiz.widget.form.ModelFormField.HiddenField;
-import org.ofbiz.widget.form.ModelFormField.HyperlinkField;
-import org.ofbiz.widget.form.ModelFormField.IgnoredField;
-import org.ofbiz.widget.form.ModelFormField.ImageField;
-import org.ofbiz.widget.form.ModelFormField.LookupField;
-import org.ofbiz.widget.form.ModelFormField.PasswordField;
-import org.ofbiz.widget.form.ModelFormField.RadioField;
-import org.ofbiz.widget.form.ModelFormField.RangeFindField;
-import org.ofbiz.widget.form.ModelFormField.ResetField;
-import org.ofbiz.widget.form.ModelFormField.SubmitField;
-import org.ofbiz.widget.form.ModelFormField.TextField;
-import org.ofbiz.widget.form.ModelFormField.TextFindField;
-import org.ofbiz.widget.form.ModelFormField.TextareaField;
+import org.ofbiz.widget.form.ModelFormField.*;
 import org.ofbiz.widget.form.UtilHelpText;
 
-import com.ibm.icu.util.Calendar;
+import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.sql.Timestamp;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Map.Entry;
 
 /**
  * Widget Library - HTML Form Renderer implementation
@@ -169,6 +140,8 @@ public class HtmlFormRenderer extends HtmlWidgetRenderer implements FormStringRe
         StringBuilder str = new StringBuilder();
 
         String idName = modelFormField.getCurrentContainerId(context);
+        boolean requiredField = modelFormField.getRequiredField();
+
 
         if (UtilValidate.isNotEmpty(modelFormField.getWidgetStyle()) || modelFormField.shouldBeRed(context)) {
             str.append("<span class=\"");
@@ -184,6 +157,7 @@ public class HtmlFormRenderer extends HtmlWidgetRenderer implements FormStringRe
                 str.append('"');
             }
             str.append('>');
+            this.addAsterisks(writer, context, modelFormField);
         }
 
         if (str.length() > 0) {
