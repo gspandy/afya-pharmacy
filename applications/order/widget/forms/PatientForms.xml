@@ -143,7 +143,7 @@
         <field name="religion" position="3">
             <text/>
         </field>
-        <field name="patientType">
+        <field name="patientType" required-field="true">
             <drop-down allow-empty="false">
                 <option key="CASH" description="Cash"/>
                 <option key="INSURANCE" description="Insurance"/>
