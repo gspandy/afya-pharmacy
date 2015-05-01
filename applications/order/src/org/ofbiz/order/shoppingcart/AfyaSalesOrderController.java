@@ -224,6 +224,9 @@ public class AfyaSalesOrderController {
         }
 
         public Date getVisitDate() {
+            if(visitDate==null){
+                return new Date();
+            }
             return visitDate;
         }
 
