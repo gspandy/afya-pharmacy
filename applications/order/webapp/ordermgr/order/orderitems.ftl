@@ -36,9 +36,11 @@ under the License.
                     <#if orderHeader.orderTypeId == "PURCHASE_ORDER"><td width="20%" style="text-align:right;padding-right:10px;">${uiLabelMap.OrderUnitList}</td></#if>
                     <#if orderHeader.orderTypeId == "SALES_ORDER"><td width="20%" style="text-align:right;padding-right:10px;">${uiLabelMap.OrderUnitPrice}</td></#if>
                     <td width="5%" style="text-align:right;padding-right:10px;">${uiLabelMap.OrderAdjustments}</td>
-                    <td width="5%" style="text-align:right;padding-right:10px;">Deductible</td>
-                    <td width="5%" style="text-align:right;padding-right:10px;">Copay</td>
-                    <td width="5%" style="text-align:right;padding-right:10px;">Copayment Patient</td>
+                    <#if orderHeader.orderTypeId == "SALES_ORDER">
+                        <td width="5%" style="text-align:right;padding-right:10px;">Deductible</td>
+                        <td width="5%" style="text-align:right;padding-right:10px;">Copay Patient</td>
+                        <td width="5%" style="text-align:right;padding-right:10px;">Copay Insurance</td>
+                    </#if>
                     <td width="10%" style="text-align:right;padding-right:20px;" colspan="2">${uiLabelMap.OrderSubTotal}</td>
                 </tr>
                 <#if !orderItemList?has_content>
@@ -107,13 +109,13 @@ under the License.
                                             <#-- INVENTORY -->
                                             <#if (orderHeader.statusId != "ORDER_COMPLETED") && availableToPromiseMap?exists && quantityOnHandMap?exists && availableToPromiseMap.get(productId)?exists && quantityOnHandMap.get(productId)?exists>
                                                 <#assign quantityToProduce = 0>
-                                                <#assign atpQuantity = availableToPromiseMap.get(productId)?default(0)>
-                                                <#assign qohQuantity = quantityOnHandMap.get(productId)?default(0)>
-                                                <#assign mktgPkgATP = mktgPkgATPMap.get(productId)?default(0)>
-                                                <#assign mktgPkgQOH = mktgPkgQOHMap.get(productId)?default(0)>
-                                                <#assign requiredQuantity = requiredProductQuantityMap.get(productId)?default(0)>
-                                                <#assign onOrderQuantity = onOrderProductQuantityMap.get(productId)?default(0)>
-                                                <#assign inProductionQuantity = productionProductQuantityMap.get(productId)?default(0)>
+                                                <#assign atpQuantity = availableToPromiseMap.get(productId)?default(0.000)>
+                                                <#assign qohQuantity = quantityOnHandMap.get(productId)?default(0.000)>
+                                                <#assign mktgPkgATP = mktgPkgATPMap.get(productId)?default(0.000)>
+                                                <#assign mktgPkgQOH = mktgPkgQOHMap.get(productId)?default(0.000)>
+                                                <#assign requiredQuantity = requiredProductQuantityMap.get(productId)?default(0.000)>
+                                                <#assign onOrderQuantity = onOrderProductQuantityMap.get(productId)?default(0.000)>
+                                                <#assign inProductionQuantity = productionProductQuantityMap.get(productId)?default(0.000)>
                                                 <#assign unplannedQuantity = requiredQuantity - qohQuantity - inProductionQuantity - onOrderQuantity - mktgPkgQOH>
                                                 <#if unplannedQuantity < 0><#assign unplannedQuantity = 0></#if>
                                                 <div class="screenlet order-item-inventory">
@@ -132,8 +134,8 @@ under the License.
                                                                 <td style="padding-right: 5px; text-align: right;">${requiredQuantity}</td>
                                                             </tr>
                                                             <#if availableToPromiseByFacilityMap?exists && quantityOnHandByFacilityMap?exists && quantityOnHandByFacilityMap.get(productId)?exists && availableToPromiseByFacilityMap.get(productId)?exists>
-                                                                <#assign atpQuantityByFacility = availableToPromiseByFacilityMap.get(productId)?default(0)>
-                                                                <#assign qohQuantityByFacility = quantityOnHandByFacilityMap.get(productId)?default(0)>
+                                                                <#assign atpQuantityByFacility = availableToPromiseByFacilityMap.get(productId)?default(0.000)>
+                                                                <#assign qohQuantityByFacility = quantityOnHandByFacilityMap.get(productId)?default(0.000)>
                                                                 <tr>
                                                                     <td width="47%"><b>${uiLabelMap.ProductInInventory} [${facility.facilityName?if_exists}] ${uiLabelMap.ProductQoh}</b></td>
                                                                     <td style="padding-right: 5px; text-align: right;">
@@ -227,7 +229,7 @@ under the License.
                                                 <table cellspacing="0" cellpadding="0" border="0" width="100%">
                                                     <tr valign="top">
                                                         <#assign shippedQuantity = orderReadHelper.getItemShippedQuantity(orderItem)>
-                                                        <#assign outstanding = orderItem.quantity?default(0) - orderItem.cancelQuantity?default(0)>
+                                                        <#assign outstanding = orderItem.quantity?default(0.000) - orderItem.cancelQuantity?default(0.000)>
                                                         <#if outstanding<shippedQuantity>
                                                             <#assign shippedQuantity =outstanding>
                                                         </#if>
@@ -247,9 +249,9 @@ under the License.
                                                             </#list>
                                                         </#if>
                                                         <#if orderHeader.orderTypeId == "PURCHASE_ORDER">
-                                                            <#assign remainingQuantity = ((orderItem.quantity?default(0) - orderItem.cancelQuantity?default(0)) - totalReceived?double)>
+                                                            <#assign remainingQuantity = ((orderItem.quantity?default(0.000) - orderItem.cancelQuantity?default(0.000)) - totalReceived?double)>
                                                         <#else>
-                                                            <#assign remainingQuantity = ((orderItem.quantity?default(0) - orderItem.cancelQuantity?default(0)) - shippedQuantity?double)>
+                                                            <#assign remainingQuantity = ((orderItem.quantity?default(0.000) - orderItem.cancelQuantity?default(0.000)) - shippedQuantity?double)>
                                                         </#if>
                                                         <#-- to compute shortfall amount, sum up the orderItemShipGrpInvRes.quantityNotAvailable -->
                                                         <#assign shortfalledQuantity = 0/>
@@ -259,20 +261,20 @@ under the License.
                                                             </#if>
                                                         </#list>
                                                         <td width="20%"><b>${uiLabelMap.OrderOrdered}</b></td>
-                                                        <td style="padding-right: 20px; text-align: right;">${orderItem.quantity?default(0)?string.number}</td>
+                                                        <td style="padding-right: 20px; text-align: right;">${orderItem.quantity?default(0.000)?string.number}</td>
                                                         <td width="20%"><b>${uiLabelMap.OrderShipRequest}</b></td>
                                                         <td style="padding-right: 20px; text-align: right;">${orderReadHelper.getItemReservedQuantity(orderItem)}</td>
                                                     </tr>
                                                     <tr valign="top">
                                                         <td width="20%"><b>${uiLabelMap.OrderCancelled}</b></td>
-                                                        <td style="padding-right: 20px; text-align: right;">${orderItem.cancelQuantity?default(0)?string.number}</td>
+                                                        <td style="padding-right: 20px; text-align: right;">${orderItem.cancelQuantity?default(0.000)?string.number}</td>
                                                         <#if orderHeader.orderTypeId == "SALES_ORDER">
                                                             <#if pickedQty gt 0 && orderHeader.statusId == "ORDER_APPROVED">
                                                                 <td><font color="red"><b>${uiLabelMap.OrderQtyPicked}</b></font></td>
-                                                                <td><font color="red">${pickedQty?default(0)?string.number}</font></td>
+                                                                <td><font color="red">${pickedQty?default(0.000)?string.number}</font></td>
                                                             <#else>
                                                                 <td width="20%"><b>${uiLabelMap.OrderQtyPicked}</b></td>
-                                                                <td style="padding-right: 20px; text-align: right;">${pickedQty?default(0)?string.number}</td>
+                                                                <td style="padding-right: 20px; text-align: right;">${pickedQty?default(0.000)?string.number}</td>
                                                             </#if>
                                                         <#else>
                                                             <td width="20%">&nbsp;</td>
@@ -294,9 +296,9 @@ under the License.
                                                             <#if (orderItem.statusId?exists) && (orderItem.statusId == "ITEM_COMPLETED")>
                                                                 0
                                                             <#elseif orderHeader.orderTypeId == "PURCHASE_ORDER">
-                                                                ${(orderItem.quantity?default(0) - orderItem.cancelQuantity?default(0)) - totalReceived?double}
+                                                                ${(orderItem.quantity?default(0.000) - orderItem.cancelQuantity?default(0.000)) - totalReceived?double}
                                                             <#elseif orderHeader.orderTypeId == "SALES_ORDER">
-                                                                ${(orderItem.quantity?default(0) - orderItem.cancelQuantity?default(0)) - shippedQuantity?double}
+                                                                ${(orderItem.quantity?default(0.000) - orderItem.cancelQuantity?default(0.000)) - shippedQuantity?double}
                                                             </#if>
                                                         </td>
                                                     </tr>
@@ -304,7 +306,7 @@ under the License.
                                                         <td width="20%"><b>${uiLabelMap.OrderInvoiced}</b></td>
                                                         <td style="padding-right: 20px; text-align: right;">${orderReadHelper.getOrderItemInvoicedQuantity(orderItem)}</td>
                                                         <td width="20%"><b>${uiLabelMap.OrderReturned}</b></td>
-                                                        <td style="padding-right: 20px; text-align: right;">${returnQuantityMap.get(orderItem.orderItemSeqId)?default(0)}</td>
+                                                        <td style="padding-right: 20px; text-align: right;">${returnQuantityMap.get(orderItem.orderItemSeqId)?default(0.000)}</td>
                                                     </tr>
                                                 </table>
                                             </div>
@@ -328,7 +330,7 @@ under the License.
                                         <#if orderItem.statusId != "ITEM_CANCELLED">
                                             <@ofbizCurrency amount=Static["org.ofbiz.order.order.OrderReadHelper"].getOrderItemSubTotal(orderItem, orderAdjustments) isoCode=currencyUomId/>
                                         <#else>
-                                            <@ofbizCurrency amount=0.00 isoCode=currencyUomId/>
+                                            <@ofbizCurrency amount=0.000 isoCode=currencyUomId/>
                                         </#if>
                                     </td>
                                     <td>&nbsp;</td>
@@ -559,7 +561,7 @@ under the License.
                                         </#if>
                                     </td>
                                     <td align="center">
-                                        ${itemIssuance.quantity?default(0) - itemIssuance.cancelQuantity?default(0)}&nbsp;
+                                        ${itemIssuance.quantity?default(0.000) - itemIssuance.cancelQuantity?default(0.000)}&nbsp;
                                     </td>
                                     <td colspan="5">&nbsp;</td>
                                 </tr>
@@ -583,7 +585,7 @@ under the License.
                                             </#if>
                                         </td>
                                         <td align="center">
-                                            ${itemIssuance.quantity?default(0) - itemIssuance.cancelQuantity?default(0)}
+                                            ${itemIssuance.quantity?default(0.000) - itemIssuance.cancelQuantity?default(0.000)}
                                         </td>
                                         <td colspan="5">&nbsp;</td>
                                     </tr>
@@ -607,7 +609,7 @@ under the License.
                                                class="btn-link">${shipmentReceipt.inventoryItemId}</a>
                                         </td>
                                         <td align="center">
-                                            ${shipmentReceipt.quantityAccepted?string.number}&nbsp;/&nbsp;${shipmentReceipt.quantityRejected?default(0)?string.number}
+                                            ${shipmentReceipt.quantityAccepted?string.number}&nbsp;/&nbsp;${shipmentReceipt.quantityRejected?default(0.000)?string.number}
                                         </td>
                                         <td colspan="5">&nbsp;</td>
                                     </tr>
@@ -627,8 +629,8 @@ under the License.
                                         <td valign="top" nowrap="nowrap">
                                             &gt;&gt; ${orderItem.itemDescription}
                                             <#if availableToPromiseByFacilityMap?exists && quantityOnHandByFacilityMap?exists && quantityOnHandByFacilityMap.get(productId)?exists && availableToPromiseByFacilityMap.get(productId)?exists>
-                                                <#assign atpQuantityByFacility = availableToPromiseByFacilityMap.get(productId)?default(0)>
-                                                <#assign qohQuantityByFacility = quantityOnHandByFacilityMap.get(productId)?default(0)>
+                                                <#assign atpQuantityByFacility = availableToPromiseByFacilityMap.get(productId)?default(0.000)>
+                                                <#assign qohQuantityByFacility = quantityOnHandByFacilityMap.get(productId)?default(0.000)>
                                                 &nbsp;( <b>${uiLabelMap.ProductQoh} = ${qohQuantityByFacility},
                                                 ${uiLabelMap.ProductAtp} = ${atpQuantityByFacility}</b> )
                                             </#if>
@@ -639,11 +641,11 @@ under the License.
                                         </td>
                                         <td align="center" valign="top" nowrap="nowrap">
                                             <#assign shippedQuantity = orderReadHelper.getItemShippedQuantity(orderItem)>
-                                            <#assign outstanding = orderItem.quantity?default(0) - orderItem.cancelQuantity?default(0)>
+                                            <#assign outstanding = orderItem.quantity?default(0.000) - orderItem.cancelQuantity?default(0.000)>
                                             <#if outstanding<shippedQuantity>
                                                 <#assign shippedQuantity = outstanding>
                                             </#if>
-                                            <#assign remainingQuantity = ((orderItem.quantity?default(0) - orderItem.cancelQuantity?default(0)) - shippedQuantity?double)>
+                                            <#assign remainingQuantity = ((orderItem.quantity?default(0.000) - orderItem.cancelQuantity?default(0.000)) - shippedQuantity?double)>
                                             ${remainingQuantity}
                                         </td>
                                         <td align="center" valign="top" nowrap="nowrap">
@@ -663,7 +665,7 @@ under the License.
                                             <#if orderItem.statusId != "ITEM_CANCELLED">
                                                 <@ofbizCurrency amount=Static["org.ofbiz.order.order.OrderReadHelper"].getOrderItemSubTotal(orderItem, orderAdjustments) isoCode=currencyUomId/>
                                             <#else>
-                                                <@ofbizCurrency amount=0.00 isoCode=currencyUomId/>
+                                                <@ofbizCurrency amount=0.000 isoCode=currencyUomId/>
                                             </#if>
                                         </td>
                                         <td>&nbsp;</td>
@@ -673,16 +675,16 @@ under the License.
                                                 <#if orderItem.supplierProductId?has_content>
                                                     ${orderItem.itemDescription?if_exists}&nbsp;(<a href="/catalog/control/EditProduct?productId=${productId}&amp;externalLoginKey=${externalLoginKey}" class="btn-link" target="_blank">${orderItem.productId}</a>)
                                                     <#if availableToPromiseByFacilityMap?exists && quantityOnHandByFacilityMap?exists && quantityOnHandByFacilityMap.get(productId)?exists && availableToPromiseByFacilityMap.get(productId)?exists>
-                                                        <#assign atpQuantityByFacility = availableToPromiseByFacilityMap.get(productId)?default(0)>
-                                                        <#assign qohQuantityByFacility = quantityOnHandByFacilityMap.get(productId)?default(0)>
+                                                        <#assign atpQuantityByFacility = availableToPromiseByFacilityMap.get(productId)?default(0.000)>
+                                                        <#assign qohQuantityByFacility = quantityOnHandByFacilityMap.get(productId)?default(0.000)>
                                                         &nbsp;( <b>${uiLabelMap.ProductQoh} = ${qohQuantityByFacility},
                                                         ${uiLabelMap.ProductAtp} = ${atpQuantityByFacility}</b> )
                                                     </#if>
                                                 <#elseif productId?exists>
                                                     ${orderItem.itemDescription?if_exists}&nbsp;(<a href="/catalog/control/EditProduct?productId=${productId}&amp;externalLoginKey=${externalLoginKey}" class="btn-link" target="_blank">${orderItem.productId?default("N/A")}</a>)
                                                     <#if availableToPromiseByFacilityMap?exists && quantityOnHandByFacilityMap?exists && quantityOnHandByFacilityMap.get(productId)?exists && availableToPromiseByFacilityMap.get(productId)?exists>
-                                                        <#assign atpQuantityByFacility = availableToPromiseByFacilityMap.get(productId)?default(0)>
-                                                        <#assign qohQuantityByFacility = quantityOnHandByFacilityMap.get(productId)?default(0)>
+                                                        <#assign atpQuantityByFacility = availableToPromiseByFacilityMap.get(productId)?default(0.000)>
+                                                        <#assign qohQuantityByFacility = quantityOnHandByFacilityMap.get(productId)?default(0.000)>
                                                         &nbsp;( <b>${uiLabelMap.ProductQoh} = ${qohQuantityByFacility},
                                                         ${uiLabelMap.ProductAtp} = ${atpQuantityByFacility}</b> )
                                                     </#if>
@@ -712,11 +714,11 @@ under the License.
 
                                         <td align="center" valign="top" nowrap="nowrap">
                                             <#assign shippedQuantity = orderReadHelper.getItemShippedQuantity(orderItem)>
-                                            <#assign outstanding = orderItem.quantity?default(0) - orderItem.cancelQuantity?default(0)>
+                                            <#assign outstanding = orderItem.quantity?default(0.000) - orderItem.cancelQuantity?default(0.000)>
                                             <#if outstanding<shippedQuantity>
                                                 <#assign shippedQuantity = outstanding>
                                             </#if>
-                                            <#assign remainingQuantity = ((orderItem.quantity?default(0) - orderItem.cancelQuantity?default(0)) - shippedQuantity?double)>
+                                            <#assign remainingQuantity = ((orderItem.quantity?default(0.000) - orderItem.cancelQuantity?default(0.000)) - shippedQuantity?double)>
                                             ${remainingQuantity}
                                         </td>
                                         <td align="center" valign="top" nowrap="nowrap">
@@ -732,20 +734,22 @@ under the License.
                                         <td style="text-align:right;padding-right:10px;" valign="top" nowrap="nowrap">
                                             <@ofbizCurrency amount=Static["org.ofbiz.order.order.OrderReadHelper"].getOrderItemAdjustmentsTotal(orderItem, orderAdjustments, true, false, false) isoCode=currencyUomId/>
                                         </td>
-                                        <td align="center" valign="top" nowrap="nowrap">
-                                            <@ofbizCurrency amount=Static["org.ofbiz.order.order.OrderReadHelper"].getOrderItemDeductible(orderItem)?default(0) isoCode=currencyUomId/>
-                                        </td>
-                                        <td align="center" valign="top" nowrap="nowrap">
-                                            <@ofbizCurrency amount=Static["org.ofbiz.order.order.OrderReadHelper"].getOrderItemCopay(orderItem)?default(0) isoCode=currencyUomId/>
-                                        </td>
-                                        <td align="center" valign="top" nowrap="nowrap">
-                                            <@ofbizCurrency amount=Static["org.ofbiz.order.order.OrderReadHelper"].getOrderItemPatientToPay(orderItem)?default(0) isoCode=currencyUomId/>
-                                        </td>
+                                        <#if orderHeader.orderTypeId == "SALES_ORDER">
+                                            <td align="center" valign="top" nowrap="nowrap">
+                                                <@ofbizCurrency amount=Static["org.ofbiz.order.order.OrderReadHelper"].getOrderItemDeductible(orderItem)?default(0.000) isoCode=currencyUomId/>
+                                            </td>
+                                            <td align="center" valign="top" nowrap="nowrap">
+                                                <@ofbizCurrency amount=Static["org.ofbiz.order.order.OrderReadHelper"].getOrderItemPatientToPay(orderItem)?default(0.000) isoCode=currencyUomId/>
+                                            </td>
+                                            <#-- <td align="center" valign="top" nowrap="nowrap">
+                                                <@ofbizCurrency amount=Static["org.ofbiz.order.order.OrderReadHelper"].getOrderItemCopay(orderItem)?default(0.000) isoCode=currencyUomId/>
+                                            </td> -->
+                                        </#if>
                                         <td style="text-align:right;" valign="top" nowrap="nowrap">
                                             <#if orderItem.statusId != "ITEM_CANCELLED">
                                                 <@ofbizCurrency amount=Static["org.ofbiz.order.order.OrderReadHelper"].getOrderItemSubTotal(orderItem, orderAdjustments) isoCode=currencyUomId/>
                                             <#else>
-                                                <@ofbizCurrency amount=0.00 isoCode=currencyUomId/>
+                                                <@ofbizCurrency amount=0.000 isoCode=currencyUomId/>
                                             </#if>
                                         </td>
                                         <td>&nbsp;</td>
@@ -856,9 +860,10 @@ under the License.
                     </#list>
                     
                     <td>&nbsp;</td>
+                    
                     <#-- subtotal -->
                     <tr>
-                        <td  style="text-align:right;" colspan="9">
+                        <td  style="text-align:right;" colspan="6">
                             <span class="label">${uiLabelMap.OrderItemsSubTotal}</span>
                         </td>
                         <td style="text-align:right;" nowrap="nowrap">
@@ -868,7 +873,7 @@ under the License.
                     <#-- tax adjustments -->
                     <#list orderAdjustmentGrouped as orderAdjustmentGrouped>
                         <tr>
-                            <td style="text-align:right;" colspan="9">
+                            <td style="text-align:right;" colspan="6">
                                 <#--<span class="label">Total ${adjType.description?if_exists}</span> -->
                                 <span class="label">Total ${orderAdjustmentGrouped.comments?if_exists}</span>
                             </td>
@@ -879,7 +884,7 @@ under the License.
                     </#list>
                     <#-- grand total -->
                     <tr>
-                        <td style="text-align:right;" colspan="9">
+                        <td style="text-align:right;" colspan="6">
                             <span class="label">${uiLabelMap.OrderTotalDue}</span>
                         </td>
                         <td style="text-align:right;" nowrap="nowrap">

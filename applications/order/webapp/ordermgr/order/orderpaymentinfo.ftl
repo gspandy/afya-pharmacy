@@ -142,7 +142,7 @@ ${cardNumberDisplay?if_exists}
                         <#-- billing accounts require a special OrderPaymentPreference because it is skipped from above section of OPPs -->
                             <div>&nbsp;<span class="label">${uiLabelMap.AccountingBillingAccount}</span>&nbsp;
                                 <#if billingAccountMaxAmount?has_content>
-                                    <br />${uiLabelMap.OrderPaymentMaximumAmount}: <@ofbizCurrency amount=billingAccountMaxAmount?default(0.00) isoCode=currencyUomId/>
+                                    <br />${uiLabelMap.OrderPaymentMaximumAmount}: <@ofbizCurrency amount=billingAccountMaxAmount?default(0.000) isoCode=currencyUomId/>
                                 </#if>
                             </div>
                         </td>
@@ -188,7 +188,7 @@ ${cardNumberDisplay?if_exists}
                             <div>
                                 <span class="label">&nbsp;${uiLabelMap.AccountingFinAccount}</span>
                                 <#if orderPaymentPreference.maxAmount?has_content>
-                                    <br />${uiLabelMap.OrderPaymentMaximumAmount}:DDD <@ofbizCurrency amount=orderPaymentPreference.maxAmount?default(0.00) isoCode=currencyUomId/>
+                                    <br />${uiLabelMap.OrderPaymentMaximumAmount}:DDD <@ofbizCurrency amount=orderPaymentPreference.maxAmount?default(0.000) isoCode=currencyUomId/>
                                 </#if>
                             </div>
                         </td>
@@ -264,33 +264,34 @@ ${cardNumberDisplay?if_exists}
                     </#if>
                 <#else>
                 
+                <#if !(orderHeader.statusId.equals("ORDER_CANCELLED")) && !(orderHeader.statusId.equals("ORDER_REJECTED"))>
                 <tr>
                     <td align="right" valign="top" width="29%">
                         <div>&nbsp;<span class="label">${paymentMethodType.get("description",locale)?if_exists}</span>&nbsp;
-                            <#if orderPaymentPreference.maxAmount?has_content>
-                                <br />${uiLabelMap.OrderPaymentMaximumAmount}: <@ofbizCurrency amount=orderPaymentPreference.maxAmount?default(0.00) isoCode=currencyUomId/>
+                            <#if orderPaymentPreference.maxAmount?has_content && (!(orderHeader.statusId.equals("ORDER_CANCELLED")) && !(orderHeader.statusId.equals("ORDER_REJECTED")))>
+                                <br />${uiLabelMap.OrderPaymentMaximumAmount}: <@ofbizCurrency amount=orderPaymentPreference.maxAmount?default(0.000) isoCode=currencyUomId/>
                             </#if>
                         </div>
                     </td>
                     <td width="1%">&nbsp;</td>
-                    <#if (paymentMethodType.paymentMethodTypeId=='CASH' || paymentMethodType.paymentMethodTypeId=='CREDIT_CARD') &&  orderPaymentPreference.statusId!='PAYMENT_NOT_RECEIVED'>
+                    <#if (paymentMethodType.paymentMethodTypeId=='CASH' || paymentMethodType.paymentMethodTypeId=='CASH PAYING' || paymentMethodType.paymentMethodTypeId=='CREDIT_CARD') &&  orderPaymentPreference.statusId!='PAYMENT_NOT_RECEIVED' && (!(orderHeader.statusId.equals("ORDER_CANCELLED")) && !(orderHeader.statusId.equals("ORDER_REJECTED")))>
                         <td width="60%">
                             <div>
                                 <#if orderPaymentPreference.maxAmount?has_content>
-                                    <br />${uiLabelMap.OrderPaymentMaximumAmount}: <@ofbizCurrency amount=orderPaymentPreference.maxAmount?default(0.00) isoCode=currencyUomId/>
+                                    <br />${uiLabelMap.OrderPaymentMaximumAmount}: <@ofbizCurrency amount=orderPaymentPreference.maxAmount?default(0.000) isoCode=currencyUomId/>
                                 </#if>
                                 <br />&nbsp;[<#if oppStatusItem?exists>${oppStatusItem.get("description",locale)}<#else>${orderPaymentPreference.statusId}</#if>]
                             </div>
                         <#--
-                        <div><@ofbizCurrency amount=orderPaymentPreference.maxAmount?default(0.00) isoCode=currencyUomId/>&nbsp;-&nbsp;${(orderPaymentPreference.authDate.toString())?if_exists}</div>
+                        <div><@ofbizCurrency amount=orderPaymentPreference.maxAmount?default(0.000) isoCode=currencyUomId/>&nbsp;-&nbsp;${(orderPaymentPreference.authDate.toString())?if_exists}</div>
                         <div>&nbsp;<#if orderPaymentPreference.authRefNum?exists>(${uiLabelMap.OrderReference}: ${orderPaymentPreference.authRefNum})</#if></div>
                         -->
                         </td>
                     <#else>
                         <td align="right" width="60%">
-                            <#if orderPaymentPreference.orderPaymentPreferenceId?has_content>
+                            <#if orderPaymentPreference.orderPaymentPreferenceId?has_content && (!(orderHeader.statusId.equals("ORDER_CANCELLED")) && !(orderHeader.statusId.equals("ORDER_REJECTED")))>
                                 <a href="<@ofbizUrl>receivepayment?${paramString}&amp;orderPaymentPreferenceId=${orderPaymentPreference.orderPaymentPreferenceId}</@ofbizUrl>" class="buttontext">${uiLabelMap.AccountingReceivePayment}</a>
-                            <#else>
+                            <#elseif (!(orderHeader.statusId.equals("ORDER_CANCELLED")) && !(orderHeader.statusId.equals("ORDER_REJECTED")))>
                                 <a href="<@ofbizUrl>receivepayment?${paramString}</@ofbizUrl>" class="buttontext">${uiLabelMap.AccountingReceivePayment}</a>
                             </#if>
                         </td>
@@ -326,6 +327,7 @@ ${cardNumberDisplay?if_exists}
                         </#if>
                     </td> -->
                 </tr>
+                </#if>
                     <#if paymentList?has_content>
                     <tr>
                         <td align="right" valign="top" width="29%">
@@ -354,7 +356,7 @@ ${cardNumberDisplay?if_exists}
                     <td align="right" valign="top" width="29%">
                         <div>&nbsp;<span class="label">${uiLabelMap.AccountingCreditCard}</span>
                             <#if orderPaymentPreference.maxAmount?has_content>
-                                <br />${uiLabelMap.OrderPaymentMaximumAmount}: <@ofbizCurrency amount=orderPaymentPreference.maxAmount?default(0.00) isoCode=currencyUomId/>
+                                <br />${uiLabelMap.OrderPaymentMaximumAmount}: <@ofbizCurrency amount=orderPaymentPreference.maxAmount?default(0.000) isoCode=currencyUomId/>
                             </#if>
                         </div>
                     </td>
@@ -434,7 +436,7 @@ ${cardNumberDisplay?if_exists}
                     <td align="right" valign="top" width="29%">
                         <div>&nbsp;<span class="label">${uiLabelMap.AccountingEFTAccount}</span>
                             <#if orderPaymentPreference.maxAmount?has_content>
-                                <br />${uiLabelMap.OrderPaymentMaximumAmount}: <@ofbizCurrency amount=orderPaymentPreference.maxAmount?default(0.00) isoCode=currencyUomId/>
+                                <br />${uiLabelMap.OrderPaymentMaximumAmount}: <@ofbizCurrency amount=orderPaymentPreference.maxAmount?default(0.000) isoCode=currencyUomId/>
                             </#if>
                         </div>
                     </td>
@@ -489,7 +491,7 @@ ${cardNumberDisplay?if_exists}
                     <td align="right" valign="top" width="29%">
                         <div>&nbsp;<span class="label">${uiLabelMap.OrderGiftCard}</span>
                             <#if orderPaymentPreference.maxAmount?has_content>
-                                <br />${uiLabelMap.OrderPaymentMaximumAmount}: <@ofbizCurrency amount=orderPaymentPreference.maxAmount?default(0.00) isoCode=currencyUomId/>
+                                <br />${uiLabelMap.OrderPaymentMaximumAmount}: <@ofbizCurrency amount=orderPaymentPreference.maxAmount?default(0.000) isoCode=currencyUomId/>
                             </#if>
                         </div>
                     </td>

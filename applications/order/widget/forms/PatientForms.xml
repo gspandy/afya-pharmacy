@@ -95,14 +95,18 @@
         <field name="patientId">
             <hidden/>
         </field>
-        <field name="civilId" use-when="patient!=null" field-name="civilId" id-name="civilId">
+       <!--  <field name="civilId" use-when="patient!=null" field-name="civilId" id-name="civilId">
             <display/>
-        </field>
+        </field> -->
         <field name="afyaId" use-when="patient!=null" position="1">
             <display/>
         </field>
 
-        <field name="civilId" use-when="patient==null" field-name="civilId" id-name="civilId">
+        <!-- <field name="civilId" use-when="patient==null" field-name="civilId" id-name="civilId">
+            <text/>
+        </field> -->
+        
+        <field name="civilId" field-name="civilId" id-name="civilId">
             <text/>
         </field>
         <field name="title" position="1">
@@ -114,13 +118,13 @@
                 <option key="Sr" description="Sr"/>
             </drop-down>
         </field>
-        <field name="firstName" title="First Name" id-name="firstName">
+        <field name="firstName" title="First Name" id-name="firstName" required-field="true">
             <text/>
         </field>
         <field name="secondName" title="Middle Name" id-name="secondName">
             <text/>
         </field>
-        <field name="thirdName" title="Last Name" id-name="thirdName">
+        <field name="thirdName" title="Last Name" id-name="thirdName" required-field="true">
             <text/>
         </field>
         <!-- <field name="fourthName" id-name="fourthName">
@@ -129,7 +133,7 @@
         <field name="nationality" position="1" id-name="nationality">
             <text/>
         </field>
-        <field name="gender" position="2" id-name="gender">
+        <field name="gender" position="2" id-name="gender" required-field="true">
             <drop-down allow-empty="true">
                 <option key="M" description="Male"/>
                 <option key="F" description="Female"/>
@@ -161,7 +165,7 @@
                 <option key="WIDOWED" description="Widowed"/>
             </drop-down>
         </field>
-        <field name="dateOfBirth" position="1">
+        <field name="dateOfBirth" position="1" required-field="true">
             <date-time type="date"/>
         </field>
 
@@ -179,7 +183,7 @@
                 <option key="-" description="-"/>
             </drop-down>
         </field>
-        <field name="emailAddress" position="1" id-name="emailId">
+        <field name="emailAddress" position="1" id-name="emailId" required-field="true">
             <text/>
         </field>
         <field name="homePhone" position="2" id-name="homePhone">
@@ -188,7 +192,7 @@
         <field name="officePhone" position="3" id-name="officePhone">
             <text/>
         </field>
-        <field name="mobilePhone" position="4" id-name="mobileNumber">
+        <field name="mobilePhone" position="4" id-name="mobileNumber" required-field="true">
             <text/>
         </field>
         <field name="address1" id-name="address">

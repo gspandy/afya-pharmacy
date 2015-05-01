@@ -88,6 +88,7 @@ under the License.
                   </td>
                 </tr>
               </#if>
+              <#if "PURCHASE_ORDER" == orderHeader.orderTypeId>
                 <tr>
                   <td class="label">${uiLabelMap.OrderDesiredDeliveryDate}</td>
                   <td>
@@ -97,6 +98,7 @@ under the License.
 					                hour1="" hour2="" timeMinutesName="" minutes="" isTwelveHour="" ampmName="" amSelected="" pmSelected="" compositeType="" formName="appendItemForm"/>
                   </td>
                 </tr>
+              </#if>
                 <tr>
                   <td class="label">${uiLabelMap.OrderReturnReason}</td>
                   <td>
@@ -108,12 +110,14 @@ under the License.
                     </select>
                   </td>
                 </tr>
+              <#if "PURCHASE_ORDER" == orderHeader.orderTypeId>
                 <tr>
                   <td class="label">${uiLabelMap.CommonComment}</td>
                   <td>
                       <input type="text" size="25" name="changeComments"/>
                   </td>
                 </tr>
+              </#if>
                 <tr>
                   <td class="label">&nbsp;</td>
                   <td><input type="submit" value="${uiLabelMap.OrderAddToOrder}" class="btn btn-success"/></td>
