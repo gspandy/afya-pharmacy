@@ -516,20 +516,19 @@ under the License.
                                                     <input type="hidden" name="orderCurrencyUomId_o_${rowCount}" value="${shipmentCurrencyUomId?if_exists}" />
                                                     <input type="text" id="orderCurrencyUnitPrice_${rowCount}" name="orderCurrencyUnitPrice_o_${rowCount}" value="${shipmentCurrencyUnitPriceMap[orderItem.shipmentItemSeqId]}"
                                                            onchange="javascript:getConvertedPrice(orderCurrencyUnitPrice_${rowCount}, '${shipmentCurrencyUomId}', '${currencyUomId}', '${rowCount}', '${shipmentCurrencyUnitPriceMap[orderItem.shipmentItemSeqId]}', '${itemCost}');"  maxlength="20" />
-                                                ${shipmentCurrencyUomId?if_exists}
+                                                    <#if shipmentCurrencyUomId?exists && shipmentCurrencyUomId.equals("KWD")>KD<#else>${shipmentCurrencyUomId?if_exists}</#if>
                                                 </td>
                                                 <td align="right"><span  class="label">${uiLabelMap.ProductPerUnitPriceFacility}:</span></td>
                                                 <td align="left">
                                                     <input type="hidden" name="currencyUomId_o_${rowCount}" value="${currencyUomId?if_exists}" />
                                                     <input type="text" id="unitCost_${rowCount}" name="unitCost_o_${rowCount}" value="${shipmentCurrencyUnitPriceMap[orderItem.shipmentItemSeqId]}" readonly="readonly" size="15" maxlength="20" />
-                                                ${currencyUomId?if_exists}
-                                                </td>
+                                                    <#if currencyUomId?exists && currencyUomId.equals("KWD")>KD<#else>${currencyUomId?if_exists}</#if>
                                             <#else>
                                                 <td align="right"><span  class="label">${uiLabelMap.ProductPerUnitPrice}:</span></td>
                                                 <td align="left">
                                                     <input type="hidden" name="currencyUomId_o_${rowCount}" value="${currencyUomId?if_exists}" />
                                                     <input type="text" name="unitCost_o_${rowCount}" value="${shipmentCurrencyUnitPriceMap[orderItem.shipmentItemSeqId]}" size="15" maxlength="20" />
-                                                ${currencyUomId?if_exists}
+                                                    <#if currencyUomId?exists && currencyUomId.equals("KWD")>KD<#else>${currencyUomId?if_exists}</#if>
                                                 </td>
                                             </#if>
                                         </tr>
@@ -731,20 +730,20 @@ under the License.
                               <input type="hidden" name="orderCurrencyUomId_o_${rowCount}" value="${orderCurrencyUomId?if_exists}" />
                               <input type="text" id="orderCurrencyUnitPrice_${rowCount}" name="orderCurrencyUnitPrice_o_${rowCount}" value="${orderCurrencyUnitPriceMap[orderItem.orderItemSeqId]}"
                               	 onchange="javascript:getConvertedPrice(orderCurrencyUnitPrice_${rowCount}, '${orderCurrencyUomId}', '${currencyUomId}', '${rowCount}', '${orderCurrencyUnitPriceMap[orderItem.orderItemSeqId]}', '${itemCost}');"  maxlength="20" />
-                              ${orderCurrencyUomId?if_exists}
+                              <#if orderCurrencyUomId?exists && orderCurrencyUomId.equals("KWD")>KD<#else>${orderCurrencyUomId?if_exists}</#if>
                             </td>
                             <td align="right"><span  class="label">${uiLabelMap.ProductPerUnitPriceFacility} :</span></td>
                             <td align="left">
                               <input type="hidden" name="currencyUomId_o_${rowCount}" value="${currencyUomId?if_exists}" />
                               <input type="text" id="unitCost_${rowCount}" name="unitCost_o_${rowCount}" value="${itemCost}" readonly="readonly" size="15" maxlength="20" />
-                              ${currencyUomId?if_exists}
+                              <#if currencyUomId?exists && currencyUomId.equals("KWD")>KD<#else>${currencyUomId?if_exists}</#if>
                             </td>
                           <#else>
                             <td align="right"><span  class="label">${uiLabelMap.ProductPerUnitPrice} :</span></td>
                             <td align="left">
                               <input type="hidden" name="currencyUomId_o_${rowCount}" value="${currencyUomId?if_exists}" />
                               <input type="text" name="unitCost_o_${rowCount}" value="${itemCost}" size="15" maxlength="20" />
-                              ${currencyUomId?if_exists}
+                              <#if currencyUomId?exists && currencyUomId.equals("KWD")>KD<#else>${currencyUomId?if_exists}</#if>
                             </td>
                           </#if>
                             <td align="right"><span  class="label">${uiLabelMap.ShippedQty} :</span></td>

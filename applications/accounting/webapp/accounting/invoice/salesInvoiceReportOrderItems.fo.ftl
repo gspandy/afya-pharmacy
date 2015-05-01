@@ -90,8 +90,8 @@ under the License.
               <fo:block font-weight="bold" margin-left="3px">Buyer Information:</fo:block>
               <fo:block margin-left="3px"><fo:leader></fo:leader></fo:block>
               <fo:block margin-left="3px">Afya ID: ${orderRxHeader.afyaId?if_exists}</fo:block>
-              <fo:block margin-left="3px">Name: ${orderRxHeader.firstName?if_exists} ${orderRxHeader.thirdName?if_exists}</fo:block>
-              <fo:block margin-left="3px">Mobile: ${orderRxHeader.mobileNumber?if_exists}</fo:block>
+              <fo:block margin-left="3px">Name:    ${orderRxHeader.firstName?if_exists} ${orderRxHeader.thirdName?if_exists}</fo:block>
+              <fo:block margin-left="3px">Mobile:  ${orderRxHeader.mobileNumber?if_exists}</fo:block>
             <#else>
               <fo:block font-weight="bold" margin-left="3px">Buyer Information:</fo:block>
               <fo:block margin-left="3px"><fo:leader></fo:leader></fo:block>
