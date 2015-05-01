@@ -78,7 +78,7 @@ under the License.
                     <td valign="top" width="40%">${benefitPlanName?if_exists}</td>
                 </tr>
                 <tr>
-                    <td align="right" valign="top" width="19%"><span class="label">Module Name</span></td>
+                    <td align="right" valign="top" width="19%"><span class="label">Benefit Name</span></td>
                     <td width="1%"><input type="hidden" value="${benefitPlanId}" id="benefitPlanId"/></td>
                     <td valign="top" width="40%">${orderRxHeader.moduleName?if_exists}</td>
                 </tr>
