@@ -95,10 +95,9 @@ under the License.
                         </td>
                     </tr>
                     <tr id="reason" style="display:none">
-                        <td align="right" width="45%"><span  class="label">Rejected Reason :<span></td>
+                        <td align="right" width="45%"><span  class="label">Rejected Reason <span><font color="red">*</font></span><span></td>
                         <td align="left">
                             <textarea name="rejectedReason" id="rejectedReason" wrap="hard" class="required"></textarea>
-                            <span><font color="red">*</font></span>
                         </td>
                     </tr>
                     <tr>

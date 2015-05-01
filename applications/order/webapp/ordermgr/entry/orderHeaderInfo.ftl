@@ -37,9 +37,8 @@ under the License.
     <div class="screenlet-body" style="width: 97%;">
                <form  method="post" action="setOrderName" name="setCartOrderNameForm" id="setCartOrderNameForm">
                 <fieldset>
-                  <label for="orderName"><strong>${uiLabelMap.OrderOrderName}</strong>:</label>
+                  <label for="orderName"><strong>${uiLabelMap.OrderOrderName}</strong> <span><font color="red">*</font></span></label>
                   <input type="text" id="orderName" style="width: 90%;"  name="orderName"  maxlength="200" value="${shoppingCart.getOrderName()?default("")}" onChange="javascript:setOrderHeaderInfo();" className="required" />
-                  <span><font color="red">*</font></span>
                   <label for="orderDate"><strong>Order Date</strong>: &nbsp; &nbsp;</label>
                   <@htmlTemplate.renderDateTimeFieldJsMethod name="orderDate" value='${Static["org.ofbiz.base.util.UtilDateTime"].getFormattedDate(shoppingCart.getOrderDate())}' className="date" alert="" 
                         title="Format: MM/dd/yyyy" size="15" maxlength="10" id="orderDate" dateType="date-time" shortDateInput=true 

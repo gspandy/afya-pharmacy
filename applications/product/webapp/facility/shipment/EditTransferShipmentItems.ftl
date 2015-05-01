@@ -126,12 +126,12 @@ under the License.
                 <tr>
                     <input type="hidden" name="shipmentId" value="${shipmentId}"/>
                     <td><span class="label">${uiLabelMap.ProductNewItem}</span></td>
-                    <td><span class="label">${uiLabelMap.ProductProductId}</span>
-                      <@htmlTemplate.lookupField formName="createShipmentItemForm" name="productId" id="productId" fieldFormName="LookupProduct" className="required"/><span><font color="red">*</font></span>
+                    <td><span class="label">${uiLabelMap.ProductProductId} <span><font color="red">*</font></span></span>
+                      <@htmlTemplate.lookupField formName="createShipmentItemForm" name="productId" id="productId" fieldFormName="LookupProduct" className="required"/>
                       <script language="JavaScript" type="text/javascript">ajaxAutoCompleter('productId,<@ofbizUrl>LookupProduct</@ofbizUrl>,ajaxLookup=Y&amp;searchValueField=productId', true);</script>
                     </td>
-                    <td><span class="label">${uiLabelMap.ProductQuantity}</span>
-                        <input type="text" name="quantity" id="shipmentQty" class="quantity required" size="5" value=""/><span><font color="red">*</font></span>
+                    <td><span class="label">${uiLabelMap.ProductQuantity} <span><font color="red">*</font></span></span>
+                        <input type="text" name="quantity" id="shipmentQty" class="quantity required" size="5" value=""/>
                     </td>
                     <td colspan="2">&nbsp;</td>
                     <#-- <td colspan="2"><span class="label">${uiLabelMap.ProductProductDescription}</span> <input name="shipmentContentDescription" size="30" maxlength="255"/></td>

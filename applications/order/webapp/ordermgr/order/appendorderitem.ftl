@@ -23,7 +23,7 @@ under the License.
   }
 </script>
 
-<#if orderHeader?has_content>
+<#if orderHeader?has_content && "PURCHASE_ORDER" == orderHeader.orderTypeId>
 <div class="screenlet">
   <div class="screenlet-title-bar">
     <ul>
@@ -57,10 +57,10 @@ under the License.
                 </tr>
               </#if>
                 <tr>
-                  <td class="label">${uiLabelMap.ProductProductId}</td>
+                  <td class="label">${uiLabelMap.ProductProductId} <span><font color="red">*</font></span></td>
                   <td>
                       <#-- FIXME Problem here: the input field is shared -->
-                      <@htmlTemplate.lookupField formName="appendItemForm" name="productId" id="productId" fieldFormName="LookupProduct" className="required"/><span><font color="red">*</font></span>
+                      <@htmlTemplate.lookupField formName="appendItemForm" name="productId" id="productId" fieldFormName="LookupProduct" className="required"/>
                       <#if "PURCHASE_ORDER" == orderHeader.orderTypeId>
                           <a href="javascript:quicklookup(document.appendItemForm.orderId)" class="btn-link">${uiLabelMap.OrderQuickLookup}</a>
                       </#if>
@@ -74,8 +74,8 @@ under the License.
                   </td>
                 </tr>
                 <tr>
-                  <td class="label">${uiLabelMap.OrderQuantity}</td>
-                  <td><input type="text" size="6" name="quantity" class="quantity required" value="${requestParameters.quantity?if_exists}"/><span><font color="red">*</font></span></td>
+                  <td class="label">${uiLabelMap.OrderQuantity} <span><font color="red">*</font></span></td>
+                  <td><input type="text" size="6" name="quantity" class="quantity required" value="${requestParameters.quantity?if_exists}"/></td>
                 </tr>
               <#if (shipGroups?size > 1)>
                 <tr>

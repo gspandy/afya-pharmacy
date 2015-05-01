@@ -28,8 +28,8 @@
                 <#list items as item>
                   <tr<#if alt_row> class="alternate-row"</#if>>
                     <#assign alt_row = !alt_row>
-                    <td>${item.attrName}</td>
-                    <td> <input type="text" class="positivedecimalvalue required" name="${item.attrName}" id="${item.attrName}" value="${item.attrValue?if_exists}"/><span><font color="red">*</font></span> </td>
+                    <td>${item.attrName} <span><font color="red">*</font></span></td>
+                    <td> <input type="text" class="positivedecimalvalue required" name="${item.attrName}" id="${item.attrName}" value="${item.attrValue?if_exists}"/> </td>
                   </tr>
                     <#assign alt_row = !alt_row>
                     <#assign rowCount = rowCount + 1>

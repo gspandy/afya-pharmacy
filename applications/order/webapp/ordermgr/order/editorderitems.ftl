@@ -129,7 +129,7 @@ under the License.
                               <td class="align-text" valign="top" nowrap="nowrap">
                                 <#assign shippedQuantity = orderReadHelper.getItemShippedQuantity(orderItem)>
                                 <#assign shipmentReceipts = delegator.findByAnd("ShipmentReceipt", {"orderId" : orderHeader.getString("orderId"), "orderItemSeqId" : orderItem.orderItemSeqId})/>
-                                <#assign totalReceived = 0.0>
+                                <#assign totalReceived = 0.000>
                                 <#if shipmentReceipts?exists && shipmentReceipts?has_content>
                                   <#list shipmentReceipts as shipmentReceipt>
                                     <#if shipmentReceipt.quantityAccepted?exists && shipmentReceipt.quantityAccepted?has_content>
@@ -143,12 +143,12 @@ under the License.
                                   </#list>
                                 </#if>
                                 <#if orderHeader.orderTypeId == "PURCHASE_ORDER">
-                                  <#assign remainingQuantity = ((orderItem.quantity?default(0) - orderItem.cancelQuantity?default(0)) - totalReceived?double)>
+                                  <#assign remainingQuantity = ((orderItem.quantity?default(0.000) - orderItem.cancelQuantity?default(0.000)) - totalReceived?double)>
                                 <#else>
-                                  <#assign remainingQuantity = ((orderItem.quantity?default(0) - orderItem.cancelQuantity?default(0)) - shippedQuantity?double)>
+                                  <#assign remainingQuantity = ((orderItem.quantity?default(0.000) - orderItem.cancelQuantity?default(0.000)) - shippedQuantity?double)>
                                 </#if>
-                                  ${uiLabelMap.OrderOrdered}&nbsp;${orderItem.quantity?default(0)?string.number}&nbsp;&nbsp;<br />
-                                  ${uiLabelMap.OrderCancelled}:&nbsp;${orderItem.cancelQuantity?default(0)?string.number}&nbsp;&nbsp;<br />
+                                  ${uiLabelMap.OrderOrdered}&nbsp;${orderItem.quantity?default(0.000)?string.number}&nbsp;&nbsp;<br />
+                                  ${uiLabelMap.OrderCancelled}:&nbsp;${orderItem.cancelQuantity?default(0.000)?string.number}&nbsp;&nbsp;<br />
                                   ${uiLabelMap.OrderRemaining}:&nbsp;${remainingQuantity}&nbsp;&nbsp;<br />
                               </td>
                               <td class="align-text" valign="top" nowrap="nowrap">
@@ -167,7 +167,7 @@ under the License.
                                   <#if orderItem.statusId != "ITEM_CANCELLED">
                                   <@ofbizCurrency amount=Static["org.ofbiz.order.order.OrderReadHelper"].getOrderItemSubTotal(orderItem, orderAdjustments) isoCode=currencyUomId/>
                                   <#else>
-                                  <@ofbizCurrency amount=0.00 isoCode=currencyUomId/>
+                                  <@ofbizCurrency amount=0.000 isoCode=currencyUomId/>
                                   </#if>
                               </td>
                               <td>&nbsp;</td>
@@ -257,7 +257,7 @@ under the License.
                                   </td>
                                   <td colspan="4">&nbsp;</td>
                                   <td>
-                                      <#assign itemStatusOkay = (orderItem.statusId != "ITEM_CANCELLED" && orderItem.statusId != "ITEM_COMPLETED" && (shipGroupAssoc.cancelQuantity?default(0) < shipGroupAssoc.quantity?default(0)) && ("Y" != orderItem.isPromo?if_exists))>
+                                      <#assign itemStatusOkay = (orderItem.statusId != "ITEM_CANCELLED" && orderItem.statusId != "ITEM_COMPLETED" && (shipGroupAssoc.cancelQuantity?default(0.000) < shipGroupAssoc.quantity?default(0.000)) && ("Y" != orderItem.isPromo?if_exists))>
                                       <#if (security.hasEntityPermission("ORDERMGR", "_ADMIN", session) && itemStatusOkay) || (security.hasEntityPermission("ORDERMGR", "_UPDATE", session) && itemStatusOkay && orderHeader.statusId != "ORDER_SENT")>
                                           <input type="checkbox" name="selectedItem" value="${orderItem.orderItemSeqId}" />
                                           <a href="javascript:document.updateItemInfo.action='<@ofbizUrl>cancelOrderItem</@ofbizUrl>';document.updateItemInfo.orderItemSeqId.value='${orderItem.orderItemSeqId}';document.updateItemInfo.shipGroupSeqId.value='${shipGroup.shipGroupSeqId}';document.updateItemInfo.submit()" class="btn btn-danger">${uiLabelMap.CommonCancel}</a>
@@ -367,7 +367,7 @@ under the License.
                         </td>
                         <td width="30%"><input type="hidden" name="description" value="" size="30" maxlength="60"/></td>
                         <td width="15%">
-                            <input type="text" class="adjustment" name="amount" size="6" value="<@ofbizAmount amount=0.00/>"/>
+                            <input type="text" class="adjustment" name="amount" size="6" value="<@ofbizAmount amount=0.000/>"/>
                             <input class="btn btn-success" type="submit" value="${uiLabelMap.CommonAdd}"/>
                         </td>
                     </tr>

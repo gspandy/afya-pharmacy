@@ -53,10 +53,10 @@ under the License.
     </td>
   </tr>
   <tr>
-    <td class="label">${uiLabelMap.ProductFacilityOwner}</td>
+    <td class="label">${uiLabelMap.ProductFacilityOwner} <span><font color="red">*</font></span></td>
     <td>
       <@htmlTemplate.lookupField value="${facility.ownerPartyId?if_exists}" formName="EditFacilityForm" name="ownerPartyId" id="ownerPartyId" fieldFormName="LookupPartyName" className="required"/>
-      <span class="tooltip">${uiLabelMap.CommonRequired}</span><span><font color="red">*</font></span>
+      <span class="tooltip">${uiLabelMap.CommonRequired}</span>
     </td>
   </tr>
   <tr>

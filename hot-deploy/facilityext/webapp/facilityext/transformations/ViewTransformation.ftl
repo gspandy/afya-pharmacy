@@ -85,14 +85,14 @@ function validateQtyDone()
 		<td valign="top">
 			<h3>Source Locations</h3><br/>
 			<#list fromLocations as fromLocation>
-				${fromLocation.inventoryItemId}<br/>
+				${fromLocation.inventoryItemId} <span><font color="red">*</font></span><br/>
 			</#list>
 			
 			<form method="post" action="AddProductTransferLocation" name="addSrcLocation">
 				<input type="hidden" name="productTransferId" value=${productTransfer.productTransferId}>
 				<input type="hidden" name="type" value="SRC">
 				<input type="hidden" value="${parameters.facilityId}" name="facilityId">
-				<@htmlTemplate.lookupField name="inventoryItemId" id="inventoryItemId" formName="addSrcLocation" fieldFormName="LookupInventoryItem?productId=${productTransfer.fromProductId}" className="required"/><span><font color="red">*</font></span>
+				<@htmlTemplate.lookupField name="inventoryItemId" id="inventoryItemId" formName="addSrcLocation" fieldFormName="LookupInventoryItem?productId=${productTransfer.fromProductId}" className="required"/>
 				<#--  <input type="text" name="inventoryItemId" id="inventoryItemId">
 				<a href="javascript:call_fieldlookup2(document.addSrcLocation.inventoryItemId, 'LookupInventoryItem?productId=${productTransfer.fromProductId}');">
 					<img src="<@ofbizContentUrl>/images/fieldlookup.gif</@ofbizContentUrl>" width="16" height="16" border="0" alt="${uiLabelMap.CommonClickHereForFieldLookup}"/>
@@ -111,14 +111,14 @@ function validateQtyDone()
 		<td valign="top">
 			<h3>Destination Locations</h3><br/>
 			<#list toLocations as toLocation>
-				${toLocation.locationId}<br/>
+				${toLocation.locationId} <span><font color="red">*</font></span><br/>
 			</#list>
 			
 			<form method="post" action="AddProductTransferLocation" name="addDestLocation">
 				<input type="hidden" name="productTransferId" value=${productTransfer.productTransferId}>
 				<input type="hidden" name="type" value="DEST">
 				<input type="hidden" value="${parameters.facilityId}" name="facilityId">
-				<@htmlTemplate.lookupField name="locationId" id="locationId" formName="addDestLocation" fieldFormName="LookupFacilityLocation" className="required"/><span><font color="red">*</font></span>
+				<@htmlTemplate.lookupField name="locationId" id="locationId" formName="addDestLocation" fieldFormName="LookupFacilityLocation" className="required"/>
 				<#--  <input type="text" name="locationId" id="locationId">
 				<a href="javascript:call_fieldlookup2(document.addDestLocation.locationId, 'LookupFacilityLocation');">
 					<img src="<@ofbizContentUrl>/images/fieldlookup.gif</@ofbizContentUrl>" width="16" height="16" border="0" alt="${uiLabelMap.CommonClickHereForFieldLookup}"/>

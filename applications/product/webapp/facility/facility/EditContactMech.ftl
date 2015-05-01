@@ -144,10 +144,10 @@ under the License.
       </td>
     </tr>
     <tr>
-      <td class="label">${uiLabelMap.PartyAddressLine1}</td>
+      <td class="label">${uiLabelMap.PartyAddressLine1} <span><font color="red">*</font></span></td>
       <td>
         <input type="text" class="required" size="30" maxlength="30" name="address1" value="${(mechMap.postalAddress.address1)?default(request.getParameter('address1')?if_exists)}" />
-      <span><font color="red">*</font></span></td>
+      </td>
     </tr>
     <tr>
       <td class="label">${uiLabelMap.PartyAddressLine2}</td>
@@ -156,13 +156,13 @@ under the License.
       </td>
     </tr>
     <tr>
-      <td class="label">${uiLabelMap.PartyCity}</td>
+      <td class="label">${uiLabelMap.PartyCity} <span><font color="red">*</font></span></td>
       <td>
           <input type="text" class="required" size="30" maxlength="30" name="city" value="${(mechMap.postalAddress.city)?default(request.getParameter('city')?if_exists)}" />
-      <span><font color="red">*</font></span></td>
+      </td>
     </tr>
 	<tr>
-      <td class="label">${uiLabelMap.PartyCountry}</td>
+      <td class="label">${uiLabelMap.PartyCountry} <span><font color="red">*</font></span></td>
         <td>
           <select name="countryGeoId" id="editcontactmechform_countryGeoId" class="required">
           	${screens.render("component://common/widget/CommonScreens.xml#countries")}
@@ -176,20 +176,20 @@ under the License.
 		    	${countryGeo.get("geoName",locale)}
 		    </option>
 		</select>
-      <span><font color="red">*</font></span></td>
+      </td>
     </tr>
     <tr>
-      <td class="label">${uiLabelMap.PartyState}</td>
+      <td class="label">${uiLabelMap.PartyState} <span><font color="red">*</font></span></td>
       <td>
         <select name="stateProvinceGeoId" id="editcontactmechform_stateProvinceGeoId" class="required">
         </select>
-      <span><font color="red">*</font></span></td>
+      </td>
     </tr>
     <tr>
-      <td class="label">${uiLabelMap.PartyZipCode}</td>
+      <td class="label">${uiLabelMap.PartyZipCode} <span><font color="red">*</font></span></td>
       <td>
         <input type="text" class="required" size="12" maxlength="10" name="postalCode" value="${(mechMap.postalAddress.postalCode)?default(request.getParameter('postalCode')?if_exists)}" />
-      <span><font color="red">*</font></span></td>
+      </td>
     </tr>
 				    
   <#elseif "TELECOM_NUMBER" = mechMap.contactMechTypeId?if_exists>
@@ -208,17 +208,17 @@ under the License.
     </tr>
   <#elseif "EMAIL_ADDRESS" = mechMap.contactMechTypeId?if_exists>
     <tr>
-      <td class="label">${uiLabelMap.PartyEmailAddress}</td>
+      <td class="label">${uiLabelMap.PartyEmailAddress} <span><font color="red">*</font></span></td>
       <td>
           <input type="text" class="required" size="60" maxlength="255" name="emailAddress" value="${(mechMap.contactMech.infoString)?default(request.getParameter('emailAddress')?if_exists)}" />
-      <span><font color="red">*</font></span></td>
+      </td>
     </tr>
   <#else>
     <tr>
-      <td class="label">${mechMap.contactMechType.get("description",locale)}</td>
+      <td class="label">${mechMap.contactMechType.get("description",locale)} <span><font color="red">*</font></span></td>
       <td>
           <input type="text" class="required" size="60" maxlength="255" name="infoString" value="${(mechMap.contactMech.infoString)?if_exists}" />
-      <span><font color="red">*</font></span></td>
+      </td>
     </tr>
   </#if>
     <tr>

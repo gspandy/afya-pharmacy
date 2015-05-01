@@ -77,13 +77,12 @@
     <#if partyRoleReqIssuerGv?has_content>
     <tr>
         <td width="14%">&nbsp;</td>
-        <td width="6%" align="right" nowrap="nowrap" class="label">Issued By</td>
+        <td width="6%" align="right" nowrap="nowrap" class="label">Issued By <span><font color="red">*</font></span></td>
         <td width="6%">&nbsp;</td>
         <td>
          <@htmlTemplate.lookupField formName="transferform" name="issuedBy" id="issuedBy" 
          	fieldFormName="LookupPersonByFacilityDepartment?facilityIdParam=${inventoryRequisition.facilityIdFrom}&partyRoleParam=REQ_ISSUER" 
          	value="${userLogin.partyId}" className="required" readonly="true"/>
-         	<span><font color="red">*</font></span>
         </td>
     </tr>
     </#if>
@@ -105,7 +104,7 @@
     <#if partyRoleReqIssuerGv?has_content>
     <tr>
         <td width="14%">&nbsp;</td>
-        <td width="6%" align="right" nowrap="nowrap" class="label">Issued To</td>
+        <td width="6%" align="right" nowrap="nowrap" class="label">Issued To <span><font color="red">*</font></span></td>
         <td width="6%">&nbsp;</td>
         <td>
          <#-- <@htmlTemplate.lookupField formName="transferform" name="issuedTo" id="issuedTo" 
@@ -114,7 +113,6 @@
          <@htmlTemplate.lookupField formName="transferform" name="issuedTo" id="issuedTo" 
             fieldFormName="LookupPerson" 
             className="required" readonly="true"/>
-            <span><font color="red">*</font></span>
         </td>
     </tr>
     </#if>

@@ -521,8 +521,8 @@ ${virtualJavaScript?if_exists}
                timeHourName="" classString="" hour1="" hour2="" timeMinutesName="" minutes="" isTwelveHour="" ampmName="" amSelected=""
                pmSelected="" compositeType="" formName="addform"/>
                 </td>
-                        <td nowrap="nowrap" align="right">Min Hours To Bill</td>
-                        <td><input type="text" size="4" name="reservLength" class="quantity required"/><span><font color="red">*</font></span></td>
+                        <td nowrap="nowrap" align="right">Min Hours To Bill <span><font color="red">*</font></span></td>
+                        <td><input type="text" size="4" name="reservLength" class="quantity required"/></td>
                         <#if product.productTypeId?if_exists == "ASSET_USAGE">
                         <td nowrap="nowrap" align="right">Number<br />of days</td>
                             <td>

@@ -105,12 +105,12 @@ under the License.
         <input value='${parameters.userLogin.userLoginId}' name="userLoginId" type="hidden"/>
          <tr>
           <td>&nbsp;</td>
-          <td align='right' valign='middle' nowrap="nowrap"><div class='tableheadtext'>${uiLabelMap.OrderCustomer}</div></td>
+          <td align='right' valign='middle' nowrap="nowrap"><div class='tableheadtext'>${uiLabelMap.OrderCustomer} <span><font color="red">*</font></div></td>
           <td>&nbsp;</td>
           <td valign='middle'>
             <div class='tabletext'>
               <@htmlTemplate.lookupField name="partyId" formName="salesentryform" fieldFormName="LookupCustomerName" value='${thisPartyId?if_exists}' className="required" id="partyId" />
-              <span class="tooltip">${uiLabelMap.CommonRequired}</span><span><font color="red">*</font></span>
+              <span class="tooltip">${uiLabelMap.CommonRequired}</span></span>
             </div>
           </td>
         </tr>
@@ -216,13 +216,13 @@ under the License.
         </tr> -->
         <tr>
           <td>&nbsp;</td>
-          <td align='right' valign='middle' nowrap="nowrap"><div class='tableheadtext'>${uiLabelMap.PartySupplier}</div></td>
+          <td align='right' valign='middle' nowrap="nowrap"><div class='tableheadtext'>${uiLabelMap.PartySupplier} <span><font color="red">*</font></div></td>
           <td>&nbsp;</td>
           <td valign='middle'>
             <div class='tabletext'>
               <@htmlTemplate.lookupField name="supplierPartyId" formName="poentryform" fieldFormName="LookupSupplierName" className="required" id="supplierPartyId" />
               <script language="JavaScript" type="text/javascript">ajaxAutoCompleter('supplierPartyId,<@ofbizUrl>LookupSupplierName</@ofbizUrl>,ajaxLookup=Y&amp;searchValueField=supplierPartyId', true);</script>
-              <span class="tooltip">${uiLabelMap.CommonRequired}</span><span><font color="red">*</font></span>
+              <span class="tooltip">${uiLabelMap.CommonRequired}</span></span>
             </div>
           </td>
         </tr>
