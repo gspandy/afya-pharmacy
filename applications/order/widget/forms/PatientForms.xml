@@ -111,11 +111,13 @@
         </field>
         <field name="title" position="1">
             <drop-down>
+                <option key="Ms" description="Ms"/>
                 <option key="Mr" description="Mr"/>
                 <option key="Mrs" description="Mrs"/>
                 <option key="Miss" description="Miss"/>
                 <option key="Dr" description="Dr"/>
                 <option key="Sr" description="Sr"/>
+                <option key="Sra" description="Sra"/>
             </drop-down>
         </field>
         <field name="firstName" title="First Name" id-name="firstName" required-field="true">
