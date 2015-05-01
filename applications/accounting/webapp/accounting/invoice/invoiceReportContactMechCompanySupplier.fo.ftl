@@ -45,7 +45,7 @@ under the License.
                 <#--${stateDescription.geoName?if_exists}  ${countryDescription.geoName?if_exists} -->
                 <fo:block><fo:leader></fo:leader></fo:block>
                 <#assign phone = (Static["org.ofbiz.party.party.PartyWorker"].findPartyLatestTelecomNumber(company.partyId,delegator))>
-                <#if phone?has_content>
+                <#if phone?has_content && phone!=null>
                   <fo:block>Tel: <#if phone.countryCode?exists>+${phone.countryCode} </#if><#if phone.areaCode?exists>${phone.areaCode} </#if>${phone.contactNumber?if_exists}</fo:block>
                 </#if>
                 <#assign billingPartyEmail = (Static["org.ofbiz.party.party.PartyWorker"].findPartyLatestContactMech(company.partyId,"EMAIL_ADDRESS",delegator))>
