@@ -164,8 +164,8 @@ public class UtilFormatOut {
     // This method should be used in place of formatPrice because it is locale aware.
     public static String formatAmount(double amount, Locale locale) {
         com.ibm.icu.text.NumberFormat nf = com.ibm.icu.text.NumberFormat.getInstance(locale);
-        nf.setMinimumFractionDigits(2);
-        nf.setMaximumFractionDigits(2);
+        nf.setMinimumFractionDigits(3);
+        nf.setMaximumFractionDigits(3);
         return nf.format(amount);
     }
 
