@@ -23,7 +23,7 @@ under the License.
       <fo:table-body>
         <fo:table-row text-align="center" border-bottom-style="solid" border-bottom-width="thin" height="30px">
           <fo:table-cell>
-            <fo:block margin-top="15px">Tax Invoice</fo:block>
+            <fo:block margin-top="15px">Invoice</fo:block>
           </fo:table-cell>
         </fo:table-row>
         <fo:table-row border-bottom-style="solid" border-bottom-width="thin" height="30px">

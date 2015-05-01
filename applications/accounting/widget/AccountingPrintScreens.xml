@@ -128,16 +128,19 @@ under the License.
                             </decorator-section> -->
                         
                             <decorator-section name="topLeft">
-                               <platform-specific>
+                               <!-- <platform-specific>
                                    <xsl-fo><html-template location="component://accounting/webapp/accounting/invoice/invoiceReportContactMechSupplier.fo.ftl"/></xsl-fo>
+                              </platform-specific> -->
+                              <platform-specific>
+                                   <xsl-fo><html-template location="component://accounting/webapp/accounting/invoice/invoiceReportContactMechCompanySupplier.fo.ftl"/></xsl-fo>
                               </platform-specific>
                             </decorator-section>
                             
-                            <decorator-section name="topLeftdown">
+                            <!-- <decorator-section name="topLeftdown">
                                 <platform-specific>
-                                   <xsl-fo><html-template location="component://accounting/webapp/accounting/invoice/invoiceReportContactMechs.fo.ftl"/></xsl-fo>
-                              </platform-specific>
-                            </decorator-section>
+                                    <xsl-fo><html-template location="component://accounting/webapp/accounting/invoice/invoiceReportContactMechs.fo.ftl"/></xsl-fo>
+                                </platform-specific>
+                            </decorator-section> -->
                             
                             <decorator-section name="topRight">
                                <platform-specific>
@@ -145,15 +148,18 @@ under the License.
                                 </platform-specific>
                             </decorator-section>
                             
-                            <decorator-section name="topRightdown">
+                            <!-- <decorator-section name="topRightdown">
                                <platform-specific>
                                     <xsl-fo><html-template location="component://accounting/webapp/accounting/invoice/invoiceReportBankTxDetails.fo.ftl"/></xsl-fo>
                                 </platform-specific>
-                            </decorator-section>
+                            </decorator-section> -->
                             
                             <decorator-section name="body">
-                               <platform-specific>
+                               <!-- <platform-specific>
                                    <xsl-fo><html-template location="component://accounting/webapp/accounting/invoice/salesInvoiceReportItems.fo.ftl"/></xsl-fo>
+                               </platform-specific> -->
+                               <platform-specific>
+                                   <xsl-fo><html-template location="component://accounting/webapp/accounting/invoice/salesInvoiceReportOrderItems.fo.ftl"/></xsl-fo>
                                </platform-specific>
                             </decorator-section>
                             

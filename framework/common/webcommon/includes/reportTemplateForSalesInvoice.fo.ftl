@@ -23,7 +23,7 @@ under the License.
               margin-top="0.4in" margin-bottom="0.4in"
               margin-left="0.6in" margin-right="0.4in">
             <#-- main body -->
-            <fo:region-body margin-top="250px" margin-bottom="0.4in"/>
+            <fo:region-body margin-top="150px" margin-bottom="0.4in"/>
             <#-- the header -->
             <fo:region-before extent="1.2in"/>
             <#-- the footer -->
@@ -85,7 +85,7 @@ under the License.
                     </fo:table-row>
                 </fo:table-body>
             </fo:table>
-            <fo:table table-layout="fixed" width="100%" space-before="0.07in">
+            <#-- <fo:table table-layout="fixed" width="100%" space-before="0.07in">
                 <fo:table-column column-number="1" column-width="proportional-column-width(50)"/>
                 <fo:table-column column-number="2" column-width="proportional-column-width(50)"/>
                 <fo:table-body>
@@ -98,7 +98,7 @@ under the License.
                         </fo:table-cell>
                     </fo:table-row>
                 </fo:table-body>
-            </fo:table>
+            </fo:table> -->
         </fo:static-content>
 
         <#-- the footer -->
