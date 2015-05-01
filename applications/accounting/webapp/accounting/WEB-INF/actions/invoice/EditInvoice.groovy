@@ -62,6 +62,15 @@ if (invoice) {
         context.phone = [:];
     }
 
+	//Company telephone
+	companyPhones = delegator.findByAnd("PartyContactMechPurpose", [partyId : "Company", contactMechPurposeTypeId : "PRIMARY_PHONE"]);
+	companyNumbers = EntityUtil.filterByDate(companyPhones, nowTimestamp, "fromDate", "thruDate", true);
+	if (companyNumbers) {
+		context.companyPhone = delegator.findByPrimaryKey("TelecomNumber", [contactMechId : companyNumbers[0].contactMechId]);
+	} else {
+		context.companyPhone = [:];
+	}
+
     if (currency && !invoice.getString("currencyUomId").equals(currency)) {
         conversionRate = InvoiceWorker.getInvoiceCurrencyConversionRate(invoice);
         invoice.currencyUomId = currency;

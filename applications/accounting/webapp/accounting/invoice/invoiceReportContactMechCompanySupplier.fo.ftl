@@ -44,9 +44,8 @@ under the License.
                 <fo:block>${billingPartyAddress.city?if_exists} ${billingPartyAddress.stateProvinceGeoId?if_exists} ${billingPartyAddress.postalCode?if_exists}</fo:block>
                 <#--${stateDescription.geoName?if_exists}  ${countryDescription.geoName?if_exists} -->
                 <fo:block><fo:leader></fo:leader></fo:block>
-                <#assign phone = (Static["org.ofbiz.party.party.PartyWorker"].findPartyLatestTelecomNumber(company.partyId,delegator))>
-                <#if phone?has_content && phone!=null>
-                  <fo:block>Tel: <#if phone.countryCode?exists>+${phone.countryCode} </#if><#if phone.areaCode?exists>${phone.areaCode} </#if>${phone.contactNumber?if_exists}</fo:block>
+                <#if companyPhone?has_content>
+                  <fo:block>Tel: <#if companyPhone.countryCode?exists>+${companyPhone.countryCode} </#if><#if companyPhone.areaCode?exists>${companyPhone.areaCode} </#if>${companyPhone.contactNumber?if_exists}</fo:block>
                 </#if>
                 <#assign billingPartyEmail = (Static["org.ofbiz.party.party.PartyWorker"].findPartyLatestContactMech(company.partyId,"EMAIL_ADDRESS",delegator))>
                 <#if billingPartyEmail?exists><fo:block>Email: ${billingPartyEmail.infoString?if_exists}</fo:block></#if>

@@ -741,6 +741,16 @@ under the License.
                                             <td align="center" valign="top" nowrap="nowrap">
                                                 <@ofbizCurrency amount=Static["org.ofbiz.order.order.OrderReadHelper"].getOrderItemPatientToPay(orderItem)?default(0.000) isoCode=currencyUomId/>
                                             </td>
+                                            <td align="center" valign="top" nowrap="nowrap">
+                                                <#assign copayPatient = Static["org.ofbiz.order.order.OrderReadHelper"].getOrderItemPatientToPay(orderItem)?default(0.000)>
+                                                <#if orderItem.statusId != "ITEM_CANCELLED">
+                                                    <#assign itemSubTotal = Static["org.ofbiz.order.order.OrderReadHelper"].getOrderItemSubTotal(orderItem, orderAdjustments)>
+                                                <#else>
+                                                    <#assign itemSubTotal = Static["java.math.BigDecimal"].ZERO>
+                                                </#if>
+                                                <#assign copayInsurance = itemSubTotal - copayPatient>
+                                                <@ofbizCurrency amount=copayInsurance?default(0.000) isoCode=currencyUomId/>
+                                            </td>
                                             <#-- <td align="center" valign="top" nowrap="nowrap">
                                                 <@ofbizCurrency amount=Static["org.ofbiz.order.order.OrderReadHelper"].getOrderItemCopay(orderItem)?default(0.000) isoCode=currencyUomId/>
                                             </td> -->
@@ -845,7 +855,7 @@ under the License.
                                     </#if>
                                     </span>
                                 </td> -->
-                                 <td style="text-align:right;" colspan="6">
+                                 <td style="text-align:right;" colspan="9">
                                     <span class="label"><#if adjustmentType.description?has_content>${adjustmentType.description}
                                     <#else>
                                     ${adjustmentType.description?if_exists}
@@ -863,7 +873,7 @@ under the License.
                     
                     <#-- subtotal -->
                     <tr>
-                        <td  style="text-align:right;" colspan="6">
+                        <td  style="text-align:right;" colspan="9">
                             <span class="label">${uiLabelMap.OrderItemsSubTotal}</span>
                         </td>
                         <td style="text-align:right;" nowrap="nowrap">
@@ -873,7 +883,7 @@ under the License.
                     <#-- tax adjustments -->
                     <#list orderAdjustmentGrouped as orderAdjustmentGrouped>
                         <tr>
-                            <td style="text-align:right;" colspan="6">
+                            <td style="text-align:right;" colspan="9">
                                 <#--<span class="label">Total ${adjType.description?if_exists}</span> -->
                                 <span class="label">Total ${orderAdjustmentGrouped.comments?if_exists}</span>
                             </td>
@@ -884,7 +894,7 @@ under the License.
                     </#list>
                     <#-- grand total -->
                     <tr>
-                        <td style="text-align:right;" colspan="6">
+                        <td style="text-align:right;" colspan="9">
                             <span class="label">${uiLabelMap.OrderTotalDue}</span>
                         </td>
                         <td style="text-align:right;" nowrap="nowrap">
