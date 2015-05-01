@@ -51,6 +51,9 @@ under the License.
                     </tr>
                 <#else>
                     <#assign itemClass = "2">
+                    <#assign totalDeductible = Static["java.math.BigDecimal"].ZERO>
+                    <#assign totalCopayPatient = Static["java.math.BigDecimal"].ZERO>
+                    <#assign totalCopayInsurance = Static["java.math.BigDecimal"].ZERO>
                     <#list orderItemList as orderItem>
                         <#assign isTotal=true>
                         <#assign adjustmentType ="">
@@ -736,20 +739,25 @@ under the License.
                                         </td>
                                         <#if orderHeader.orderTypeId == "SALES_ORDER">
                                             <td align="center" valign="top" nowrap="nowrap">
-                                                <@ofbizCurrency amount=Static["org.ofbiz.order.order.OrderReadHelper"].getOrderItemDeductible(orderItem)?default(0.000) isoCode=currencyUomId/>
+                                                <#assign itemDeductible = Static["org.ofbiz.order.order.OrderReadHelper"].getOrderItemDeductible(orderItem)?default(0.000)>
+                                                <@ofbizCurrency amount=itemDeductible isoCode=currencyUomId/>
+                                                <#assign totalDeductible = totalDeductible + itemDeductible>
                                             </td>
                                             <td align="center" valign="top" nowrap="nowrap">
-                                                <@ofbizCurrency amount=Static["org.ofbiz.order.order.OrderReadHelper"].getOrderItemPatientToPay(orderItem)?default(0.000) isoCode=currencyUomId/>
+                                                <#assign copayPatient = Static["org.ofbiz.order.order.OrderReadHelper"].getOrderItemPatientToPay(orderItem)?default(0.000)>
+                                                <@ofbizCurrency amount=copayPatient isoCode=currencyUomId/>
+                                                <#assign totalCopayPatient = totalCopayPatient + copayPatient>
                                             </td>
                                             <td align="center" valign="top" nowrap="nowrap">
                                                 <#assign copayPatient = Static["org.ofbiz.order.order.OrderReadHelper"].getOrderItemPatientToPay(orderItem)?default(0.000)>
                                                 <#if orderItem.statusId != "ITEM_CANCELLED">
-                                                    <#assign itemSubTotal = Static["org.ofbiz.order.order.OrderReadHelper"].getOrderItemSubTotal(orderItem, orderAdjustments)>
+                                                    <#assign itemSubTotal = Static["org.ofbiz.order.order.OrderReadHelper"].getOrderItemSubTotal(orderItem, orderAdjustments)?default(0.000)>
                                                 <#else>
                                                     <#assign itemSubTotal = Static["java.math.BigDecimal"].ZERO>
                                                 </#if>
                                                 <#assign copayInsurance = itemSubTotal - copayPatient>
                                                 <@ofbizCurrency amount=copayInsurance?default(0.000) isoCode=currencyUomId/>
+                                                <#assign totalCopayInsurance = totalCopayInsurance + copayInsurance>
                                             </td>
                                             <#-- <td align="center" valign="top" nowrap="nowrap">
                                                 <@ofbizCurrency amount=Static["org.ofbiz.order.order.OrderReadHelper"].getOrderItemCopay(orderItem)?default(0.000) isoCode=currencyUomId/>
@@ -868,6 +876,38 @@ under the License.
                             </tr>
                         </#if>
                     </#list>
+                    
+                    <td>&nbsp;</td>
+                    
+                    <#-- totalDeductible -->
+                    <tr>
+                        <td  style="text-align:right;" colspan="9">
+                            <span class="label">Total Deductible</span>
+                        </td>
+                        <td style="text-align:right;" nowrap="nowrap">
+                            <@ofbizCurrency amount=totalDeductible isoCode=currencyUomId/>
+                        </td>
+                    </tr>
+                    
+                    <#-- totalCopayPatient -->
+                    <tr>
+                        <td  style="text-align:right;" colspan="9">
+                            <span class="label">Total Copay Patient</span>
+                        </td>
+                        <td style="text-align:right;" nowrap="nowrap">
+                            <@ofbizCurrency amount=totalCopayPatient isoCode=currencyUomId/>
+                        </td>
+                    </tr>
+                    
+                    <#-- totalCopayInsurance -->
+                    <tr>
+                        <td  style="text-align:right;" colspan="9">
+                            <span class="label">Total Copay Insurance</span>
+                        </td>
+                        <td style="text-align:right;" nowrap="nowrap">
+                            <@ofbizCurrency amount=totalCopayInsurance isoCode=currencyUomId/>
+                        </td>
+                    </tr>
                     
                     <td>&nbsp;</td>
                     
