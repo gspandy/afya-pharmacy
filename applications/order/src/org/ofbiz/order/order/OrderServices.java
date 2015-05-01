@@ -1332,7 +1332,7 @@ public class OrderServices {
         HttpEntity<String> requestEntity = new HttpEntity<String>(headers);
         ObjectMapper mapper = new ObjectMapper();
 
-        String url = PORTAL_URL + "afya-portal/anon/insuranceMaster/getServiceOrModuleDataByServiceId?hisModuleId={hisBenefitId}&benefitId={benefitId}&serviceIds={serviceIds}";
+        String url = PORTAL_URL + "afya-portal/anonV1/insuranceMaster/getServiceOrModuleDataByServiceId?hisModuleId={hisBenefitId}&benefitId={benefitId}&serviceIds={serviceIds}";
         String serviceParam = "";
         for (String s : serviceIds) {
             serviceParam = serviceParam.concat(s).concat(",");
