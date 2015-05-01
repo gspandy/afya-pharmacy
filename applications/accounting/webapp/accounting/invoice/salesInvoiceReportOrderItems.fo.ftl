@@ -78,13 +78,43 @@ under the License.
     </fo:table-body>
   </fo:table> -->
 
+  <fo:table table-layout="fixed" width="100%" border-style="solid" border-width="thin" border-color="black">
+    <fo:table-column />
+    <fo:table-body font-size="8pt">
+      <fo:table-row space-start=".15in" height="65px">
+        <fo:table-cell>
+          <fo:block margin-left="3px"><fo:leader></fo:leader></fo:block>
+          <#if orderId?exists>
+            <#assign orderRxHeader = delegator.findOne("OrderRxHeader", {"orderId" : orderId}, true)>
+            <#if orderRxHeader?has_content>
+              <fo:block font-weight="bold" margin-left="3px">Buyer Information:</fo:block>
+              <fo:block margin-left="3px"><fo:leader></fo:leader></fo:block>
+              <fo:block margin-left="3px">Afya ID: ${orderRxHeader.afyaId?if_exists}</fo:block>
+              <fo:block margin-left="3px">Name: ${orderRxHeader.firstName?if_exists} ${orderRxHeader.thirdName?if_exists}</fo:block>
+              <fo:block margin-left="3px">Mobile: ${orderRxHeader.mobileNumber?if_exists}</fo:block>
+            <#else>
+              <fo:block font-weight="bold" margin-left="3px">Buyer Information:</fo:block>
+              <fo:block margin-left="3px"><fo:leader></fo:leader></fo:block>
+              <fo:block font-weight="bold" margin-left="3px">_NA_</fo:block>
+            </#if>
+          <#else>
+            <fo:block font-weight="bold" margin-left="3px">Buyer Information:</fo:block>
+            <fo:block margin-left="3px"><fo:leader></fo:leader></fo:block>
+            <fo:block font-weight="bold" margin-left="3px">_NA_</fo:block>
+          </#if>
+          <fo:block margin-left="3px"><fo:leader></fo:leader></fo:block>
+        </fo:table-cell>
+      </fo:table-row>
+    </fo:table-body>
+  </fo:table>
+
   <fo:table table-layout="fixed" width="100%" space-before="0.1in" border-style="solid" border-width="thin" border-color="black">
     <fo:table-column column-width="15.5mm" />
-    <fo:table-column column-width="65mm" />
-    <fo:table-column column-width="15mm" />
-    <fo:table-column column-width="17mm" />
+    <fo:table-column column-width="80mm" />
+    <fo:table-column column-width="18mm" />
+    <fo:table-column column-width="23mm" />
     <fo:table-column column-width="24mm" />
-    <fo:table-column column-width="24mm" />
+    <#-- <fo:table-column column-width="24mm" /> -->
     <fo:table-column column-width="30mm" />
 
     <fo:table-header font-size="8pt" font-weight="bold" height="8px">
@@ -110,9 +140,9 @@ under the License.
           <fo:block  text-align="center" margin-top="3px">Unit Price</fo:block>
         </fo:table-cell>
 
-        <fo:table-cell border-style="solid" border-width="thin" border-color="black">
+        <#-- <fo:table-cell border-style="solid" border-width="thin" border-color="black">
           <fo:block  text-align="center" margin-top="3px">Disc%</fo:block>
-        </fo:table-cell>
+        </fo:table-cell> -->
 
         <fo:table-cell border-style="solid" border-width="thin" border-color="black">
           <fo:block text-align="center" margin-top="3px">Nett Price</fo:block>
@@ -173,9 +203,9 @@ under the License.
             <fo:table-cell text-align="right" border-right-style="solid" border-right-width="thin" border-right-color="black">
               <fo:block margin-right="3px" margin-top="5px"> <#if invoiceItem.quantity?exists><@ofbizCurrency amount=invoiceItem.amount?if_exists isoCode=invoice.currencyUomId?if_exists/></#if> </fo:block>
             </fo:table-cell>
-            <fo:table-cell text-align="right" border-right-style="solid" border-right-width="thin" border-right-color="black">
+            <#-- <fo:table-cell text-align="right" border-right-style="solid" border-right-width="thin" border-right-color="black">
               <fo:block margin-right="3px" margin-top="5px"></fo:block>
-            </fo:table-cell>
+            </fo:table-cell> -->
             <fo:table-cell text-align="right" margin-right="3px">
               <#assign amount=(Static["org.ofbiz.accounting.invoice.InvoiceWorker"].getInvoiceItemTotal(invoiceItem))>
               <#assign totalAmountWithOutTax = totalAmountWithOutTax+amount >
@@ -207,9 +237,9 @@ under the License.
               <fo:table-cell text-align="right" border-right-style="solid" border-right-width="thin" border-right-color="black">
                 <fo:block margin-right="3px" margin-top="5px"></fo:block>
               </fo:table-cell>
-              <fo:table-cell text-align="right" border-right-style="solid" border-right-width="thin" border-right-color="black">
+              <#-- <fo:table-cell text-align="right" border-right-style="solid" border-right-width="thin" border-right-color="black">
                 <fo:block margin-right="3px" margin-top="5px"></fo:block>
-              </fo:table-cell>
+              </fo:table-cell> -->
               <fo:table-cell text-align="right" margin-right="3px">
                 <fo:block margin-top="5px"><@ofbizCurrency amount=invoiceItemDiscountAmount isoCode=invoice.currencyUomId?if_exists/></fo:block>
               </fo:table-cell>
@@ -220,7 +250,7 @@ under the License.
       <#assign height = 185 - (25 * (invoiceItems.size()?default(0)))/>
       <#if height gt 0>
         <fo:table-row height="${height}px">
-          <#list 7..1 as i>
+          <#list 6..1 as i>
             <fo:table-cell border-right-style="solid" border-right-width="thin" border-right-color="black"></fo:table-cell>
           </#list>
         </fo:table-row>

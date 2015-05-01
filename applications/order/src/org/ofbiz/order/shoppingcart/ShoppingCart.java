@@ -4185,7 +4185,7 @@ public class ShoppingCart implements Iterable<ShoppingCartItem>, Serializable {
         Delegator delegator = this.getDelegator();
         List allOpPrefs = new LinkedList();
         BigDecimal remainingAmount = this.getGrandTotal().subtract(this.getPaymentTotal());
-        remainingAmount = remainingAmount.setScale(2, BigDecimal.ROUND_HALF_UP);
+        remainingAmount = remainingAmount.setScale(3, BigDecimal.ROUND_HALF_UP);
         if (getBillingAccountId() != null && this.billingAccountAmt.compareTo(BigDecimal.ZERO) <= 0) {
             BigDecimal billingAccountAvailableAmount = CheckOutHelper.availableAccountBalance(getBillingAccountId(), dispatcher);
             if (this.billingAccountAmt.compareTo(BigDecimal.ZERO) == 0

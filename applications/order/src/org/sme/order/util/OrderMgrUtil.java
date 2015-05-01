@@ -257,7 +257,7 @@ public class OrderMgrUtil {
             BigDecimal _qtyPerPackages = new BigDecimal(qtyPerPackages.toString());
             BigDecimal totalqtyBig = new BigDecimal(totalqty.toString());
             BigDecimal _total = totalqtyBig.divide(_qtyPerPackages);
-            BigDecimal _total1 = _total.setScale(2, BigDecimal.ROUND_HALF_UP);
+            BigDecimal _total1 = _total.setScale(3, BigDecimal.ROUND_HALF_UP);
             return _total1.toString();
         }
         return "";

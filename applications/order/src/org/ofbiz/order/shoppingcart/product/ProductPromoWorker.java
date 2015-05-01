@@ -1678,7 +1678,7 @@ public class ProductPromoWorker {
                 BigDecimal ratioOfTotal = quantityUsed.multiply(cartItem.getBasePrice()).divide(totalAmount, generalRounding);
                 BigDecimal weightedAmount = ratioOfTotal.multiply(discountAmountTotal);
                 // round the weightedAmount to 2 decimal places, ie a whole number of cents or 2 decimal place monetary units
-                weightedAmount = weightedAmount.setScale(2, BigDecimal.ROUND_HALF_UP);
+                weightedAmount = weightedAmount.setScale(3, BigDecimal.ROUND_HALF_UP);
                 discountAmount = discountAmount.subtract(weightedAmount);
                 doOrderItemPromoAction(productPromoAction, cartItem, weightedAmount, "amount", delegator);
             } else {

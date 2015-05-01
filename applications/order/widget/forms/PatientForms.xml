@@ -183,7 +183,7 @@
                 <option key="-" description="-"/>
             </drop-down>
         </field>
-        <field name="emailAddress" position="1" id-name="emailId" required-field="true">
+        <field name="emailAddress" position="1" id-name="emailId">
             <text/>
         </field>
         <field name="homePhone" position="2" id-name="homePhone">

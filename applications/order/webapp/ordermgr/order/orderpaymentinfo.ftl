@@ -83,8 +83,8 @@ ${cardNumberDisplay?if_exists}
         <td width="1%">&nbsp;</td>
         <td valign="top" width="60%">
             <#list invoices as invoice>
-            <#assign invoiceGv = delegator.findOne("Invoice", {"invoiceId" : invoice}, false)>
-            <#assign statusItem = delegator.findOne("StatusItem", {"statusId" : invoiceGv.statusId}, false)>
+                <#assign invoiceGv = delegator.findOne("Invoice", {"invoiceId" : invoice}, false)>
+                <#assign statusItem = delegator.findOne("StatusItem", {"statusId" : invoiceGv.statusId}, false)>
                 <div>${uiLabelMap.CommonNbr}<a target="_blank" href="/accounting/control/invoiceOverview?invoiceId=${invoice}&amp;externalLoginKey=${externalLoginKey}" class="buttontext">${invoice}</a>
                 <block style="margin-right:12px;font-weight:bold;"> ${statusItem.description?if_exists} </block>
                 <#if orderTypeId == "SALES_ORDER">(<a target="_blank" href="/accounting/control/invoice.pdf?invoiceId=${invoice}&amp;externalLoginKey=${externalLoginKey}" class="buttontext">PDF</a>)</#if></div>

@@ -264,3 +264,5 @@ if(shipmentItemBillingList != null && shipmentItemBillingList.size() > 0) {
     String shipmentId = shipmentItemBilling.getString("shipmentId");
     context.shipmentId = shipmentId;
 }
+
+context.orderId = orderId;
