@@ -15,7 +15,7 @@ public class CopaymentDetail {
     private BigDecimal copayPercentage;
     @JsonProperty(value = "deductableAmount")
     private BigDecimal deductibleAmount;
-    @JsonProperty(value = "deductablePercecntage")
+    @JsonProperty(value = "deductablePercentage")
     private BigDecimal deductiblePercentage;
     private boolean authorization=true;
     private boolean authorizationInclusiveConsultation=false;

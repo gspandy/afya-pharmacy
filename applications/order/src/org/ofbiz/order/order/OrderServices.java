@@ -1283,6 +1283,7 @@ public class OrderServices {
             if (isAuthorized) {
                 BigDecimal deductibleAmountCal = lineTotal.multiply(deductiblePercentage).setScale(orderDecimals, orderRounding).divide(new BigDecimal(100)).setScale(orderDecimals, orderRounding);
                 if (deductibleAmountCal.compareTo(BigDecimal.ZERO) == 1) {
+                    patientToPay = patientToPay.add(deductibleAmountCal);
                     lineTotal = lineTotal.subtract(deductibleAmountCal);
                 } else {
                     patientToPay = patientToPay.add(deductibleAmount);
