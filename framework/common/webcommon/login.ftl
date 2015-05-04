@@ -95,8 +95,12 @@
 			}
 		-->
 		</style>
+
+        <script>
+            window.location.href='http://5.9.249.197:7878/afya-portal';
+        </script>
 	</head>
-	<body>
+	<#--<body>
 		<p>&nbsp;</p>
 		<div class="app-location">
 	  		<div class="location"><img src="/bootstrap/images/logo_afya.png" class="img-responsive" alt="" /></div>
@@ -113,16 +117,16 @@
 					<input type="hidden" name="JavaScriptEnabled" value="N" />
 					<div class="new">
 						<h3><a href="<@ofbizUrl>forgotPassword</@ofbizUrl>">Forgot your Password?</a></h3>
-						<!--<h4><a href="#">New here? Sign Up</a></h4>-->
+						<!--<h4><a href="#">New here? Sign Up</a></h4>&ndash;&gt;
 						<div class="clear"></div>
 					</div>
 				</form>
 			</div>
-			<!--start-copyright-->
-	   		<!--<div class="copy-right"></div>-->
-			<!--//end-copyright-->
+			<!--start-copyright&ndash;&gt;
+	   		<!--<div class="copy-right"></div>&ndash;&gt;
+			<!--//end-copyright&ndash;&gt;
 		</div>
-	</body>
+	</body>-->
 </html>
 
 <script language="JavaScript" type="text/javascript">
