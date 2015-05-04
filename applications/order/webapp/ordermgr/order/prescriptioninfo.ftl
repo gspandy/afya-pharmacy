@@ -33,54 +33,54 @@ under the License.
     <div class="screenlet-body" id="PatientInfoScreenletBody_${orderId}" style="display: none;">
         <table class="basic-table" cellspacing='0'>
             <tr>
-                <td align="right" valign="top" width="10%"><span class="label">First Name</span></td>
+                <td width="19%"><span class="label">First Name</span></td>
                 <td width="1%">&nbsp;</td>
-                <td valign="top" width="40%">${orderRxHeader.firstName?if_exists}</td>
-                <td align="right" valign="top" width="10%"><span class="label">Last Name</span></td>
+                <td width="30%">${orderRxHeader.firstName?if_exists}</td>
+                <td width="19%"><span class="label">Last Name</span></td>
                 <td width="1%">&nbsp;</td>
-                <td valign="top" width="40%">${orderRxHeader.thirdName?if_exists}</td>
+                <td width="30%">${orderRxHeader.thirdName?if_exists}</td>
             </tr>
             <tr>
-                <td align="right" valign="top" width="19%"><span class="label">Mobile</span></td>
+                <td width="19%"><span class="label">Mobile</span></td>
                 <td width="1%">&nbsp;</td>
-                <td valign="top" width="80%">${orderRxHeader.mobileNumber?if_exists}</td>
+                <td width="30%">${orderRxHeader.mobileNumber?if_exists}</td>
             </tr>
             <tr>
-                <td align="right" valign="top" width="19%"><span class="label">Visit ID</span></td>
+                <td width="19%"><span class="label">Visit ID</span></td>
                 <td width="1%">&nbsp;</td>
-                <td valign="top" width="40%">${orderRxHeader.visitId?if_exists}</td>
-                <td align="right" valign="top" width="19%"><span class="label">Visit Date</span></td>
+                <td width="30%">${orderRxHeader.visitId?if_exists}</td>
+                <td width="19%"><span class="label">Visit Date</span></td>
                 <td width="1%">&nbsp;</td>
-                <td valign="top" width="40%">${orderRxHeader.visitDate?if_exists}</td>
+                <td width="30%">${orderRxHeader.visitDate?if_exists}</td>
             </tr>
             <tr>
-                <td align="right" valign="top" width="19%"><span class="label">Afya ID</span></td>
+                <td width="19%"><span class="label">Afya ID</span></td>
                 <td width="1%">&nbsp;</td>
-                <td valign="top" width="80%">${orderRxHeader.afyaId?if_exists}</td>
+                <td width="30%">${orderRxHeader.afyaId?if_exists}</td>
             </tr>
             <tr>
-                <td align="right" valign="top" width="19%"><span class="label">Clinic Name</span></td>
+                <td width="19%"><span class="label">Clinic Name</span></td>
                 <td width="1%">&nbsp;</td>
-                <td valign="top" width="40%">${orderRxHeader.clinicName?if_exists}</td>
-                <td align="right" valign="top" width="19%"><span class="label">Doctor Name</span></td>
+                <td width="30%">${orderRxHeader.clinicName?if_exists}</td>
+                <td width="19%"><span class="label">Doctor Name</span></td>
                 <td width="1%">&nbsp;</td>
-                <td valign="top" width="40%">${orderRxHeader.doctorName?if_exists}</td>
+                <td width="30%">${orderRxHeader.doctorName?if_exists}</td>
             </tr>
             <tr>
-                <td align="right" valign="top" width="19%"><span class="label">Patient Type</span></td>
+                <td width="19%"><span class="label">Patient Type</span></td>
                 <td width="1%">&nbsp;</td>
-                <td valign="top" width="80%">${orderRxHeader.patientType?if_exists}</td>
+                <td width="30%">${orderRxHeader.patientType?if_exists}</td>
             </tr>
             <#if benefitPlanName?has_content>
                 <tr>
-                    <td align="right" valign="top" width="19%"><span class="label">Benefit Plan</span></td>
+                    <td width="19%"><span class="label">Benefit Plan</span></td>
                     <td width="1%"><input type="hidden" value="${benefitPlanId}" id="benefitPlanId"/></td>
-                    <td valign="top" width="40%">${benefitPlanName?if_exists}</td>
+                    <td width="30%">${benefitPlanName?if_exists}</td>
                 </tr>
                 <tr>
-                    <td align="right" valign="top" width="19%"><span class="label">Benefit Name</span></td>
+                    <td width="19%"><span class="label">Benefit Name</span></td>
                     <td width="1%"><input type="hidden" value="${benefitPlanId}" id="benefitPlanId"/></td>
-                    <td valign="top" width="40%">${orderRxHeader.moduleName?if_exists}</td>
+                    <td width="30%">${orderRxHeader.moduleName?if_exists}</td>
                 </tr>
             </#if>
         </table>
