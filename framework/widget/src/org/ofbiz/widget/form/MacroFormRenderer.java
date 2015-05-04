@@ -449,7 +449,7 @@ public class MacroFormRenderer implements FormStringRenderer {
         sr.append(buttons);
         sr.append("\" />");
         executeMacro(writer, sr.toString());
-        this.addAsterisks(writer, context, modelFormField);
+        //this.addAsterisks(writer, context, modelFormField);
         this.appendTooltip(writer, context, modelFormField);
     }
 
@@ -695,7 +695,7 @@ public class MacroFormRenderer implements FormStringRenderer {
         sr.append(formattedMask);
         sr.append("\" />");
         executeMacro(writer, sr.toString());
-        this.addAsterisks(writer, context, modelFormField);
+        //this.addAsterisks(writer, context, modelFormField);
         this.appendTooltip(writer, context, modelFormField);
     }
 
@@ -2214,7 +2214,7 @@ public class MacroFormRenderer implements FormStringRenderer {
         sr.append("\" />");
         executeMacro(writer, sr.toString());
 
-        this.addAsterisks(writer, context, modelFormField);
+        //this.addAsterisks(writer, context, modelFormField);
 
         this.makeHyperlinkString(writer, lookupField.getSubHyperlink(), context);
         this.appendTooltip(writer, context, modelFormField);
@@ -2582,7 +2582,7 @@ public class MacroFormRenderer implements FormStringRenderer {
         sr.append("\" />");
         executeMacro(writer, sr.toString());
 
-        this.addAsterisks(writer, context, modelFormField);
+        //this.addAsterisks(writer, context, modelFormField);
 
         this.makeHyperlinkString(writer, passwordField.getSubHyperlink(), context);
 
