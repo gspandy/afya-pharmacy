@@ -111,8 +111,8 @@
         </field>
         <field name="title" position="1">
             <drop-down>
-                <option key="Ms" description="Ms"/>
                 <option key="Mr" description="Mr"/>
+                <option key="Ms" description="Ms"/>
                 <option key="Mrs" description="Mrs"/>
                 <option key="Miss" description="Miss"/>
                 <option key="Dr" description="Dr"/>
@@ -158,7 +158,7 @@
                 <option key="DIVORCED" description="Divorced"/>
                 <option key="DOMESTIC_PARTNER" description="Domestic Partner"/>
                 <option key="LEGALLY_SEPARATED" description="Legally Separated"/>
-                <option key="LIVING_TOGATHER" description="Living Togather"/>
+                <option key="LIVING_TOGETHER" description="Living Together"/>
                 <option key="MARRIED" description="Married"/>
                 <option key="OTHER" description="Other"/>
                 <option key="SEPARATED" description="Separated"/>
@@ -309,13 +309,13 @@
         <field name="endDate">
             <display/>
         </field>
-        <field name="healthPolicyName">
+        <field name="healthPolicyName" title="Health Plan">
             <display/>
         </field>
         <field name="benefitPlanName">
             <display/>
         </field>
-        <field name="UHID">
+        <field name="UHID" title="Membership ID">
             <display/>
         </field>
         <field name="planName">
@@ -352,7 +352,7 @@
         <field name="startDate" id-name="startDate"><text/></field>
         <field name="endDate" id-name="endDate"><text/></field>
         <field name="healthPolicyId" id-name="healthPolicyId"><hidden/></field>
-        <field name="healthPolicyName" id-name="healthPolicyName"><text/></field>
+        <field name="healthPolicyName" id-name="healthPolicyName" title="Health Plan" required-field="true"><text/></field>
         <field name="benefitPlanId" id-name="benefitPlanId"><hidden/></field>
         <field name="benefitPlanName" id-name="benefitPlanName"><hidden/></field>
         <field name="benefitPlanNameDropDown" title="Select Benefit Plan" id-name="benefitPlanNameDropDown">
@@ -361,7 +361,7 @@
         <field name="hisBenefitId" title="Select Benefit" id-name="hisBenefitId">
             <drop-down></drop-down>
         </field>
-        <field name="uHID" id-name="uhid"><text/> </field>
+        <field name="uHID" id-name="uhid" title="Membership ID" required-field="true"><text/> </field>
         <field name="createButton" title="Add Insurance" widget-style="btn btn-success">
             <submit button-type="button"/>
         </field>
