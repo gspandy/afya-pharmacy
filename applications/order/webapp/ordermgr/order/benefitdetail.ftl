@@ -1,0 +1,63 @@
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true"  style="width:60%">
+    <div class="modal-dialog  modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="myModalLabel">Benefit Plan Details</h4>
+            </div>
+            <div class="modal-body">
+                <div role="tabpanel">
+                    <!-- Nav tabs -->
+                    <ul class="nav nav-tabs" role="tablist">
+                        <li role="presentation" class="active"><a href="#home" aria-controls="home" role="tab" data-toggle="tab">Module Detail</a></li>
+                        <li role="presentation"><a href="#settings" aria-controls="settings" role="tab" data-toggle="tab">Service Detail</a></li>
+                    </ul>
+
+                    <!-- Tab panes -->
+                    <div class="tab-content">
+                        <div role="tabpanel" class="tab-pane active" id="home">
+
+                            <table id="moduleTable"  class="table table-striped table-bordered">
+                                <thead>
+                                <tr>
+                                    <td>Module Name</td>
+                                    <td>Authorization Required</td>
+                                    <td>Copay Amount</td>
+                                    <td>Copay Percentage</td>
+                                    <td>Deductible Amount</td>
+                                    <td>Deductible Percentage</td>
+                                </tr>
+                                </thead>
+                                <tbody>
+
+                                </tbody>
+                            </table>
+                        </div>
+                        <div role="tabpanel" class="tab-pane" id="settings">
+                            <table id="serviceTable"  class="table table-striped table-bordered">
+                                <thead>
+                                <tr>
+                                    <td>Service Name</td>
+                                    <td>Authorization Required</td>
+                                    <td>Copay Amount</td>
+                                    <td>Copay Percentage</td>
+                                    <td>Deductible Amount</td>
+                                    <td>Deductible Percentage</td>
+                                </tr>
+                                </thead>
+                                <tbody>
+
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+
+</div>

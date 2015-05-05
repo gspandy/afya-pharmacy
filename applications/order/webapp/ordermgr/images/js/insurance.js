@@ -117,4 +117,35 @@ $(document).ready(function () {
                 });
             });
     });
+
+    $('.insuranceList tr').bind('click', function (event){
+        event.preventDefault();
+        event.stopPropagation();
+        var rowIndex=this.rowIndex;
+        var benefitPlanId = $(this).find("input[name|='benefitPlanId']").val();
+        $.getJSON('http://5.9.249.197:7878/afya-portal/anon/insuranceMaster/getServiceOrModuleDataByBenefitId?benefitId='+benefitPlanId, function(data) {
+            var moduleDetails = data['moduleDetails'];
+            var moduleHtml='';
+            $.each(moduleDetails, function (index, moduleDetail) {
+                moduleHtml=moduleHtml+'<tr><td>'+moduleDetail.moduleName+'</td><td></td>'+moduleDetail.authorization+'</td><td>'+moduleDetail.copayAmount+'</td><td>'+
+                    moduleDetail.copayPercentage+'</td><td>'+moduleDetail.deductibleAmount+'</td><td>'+moduleDetail.deductiblePercentage+'</td></tr>';
+            });
+            $('#moduleTable').find('tbody').html(moduleHtml);
+            var serviceHtml='';
+            var serviceDetails = data['associatedServiceDetailsOfTheModule'];
+            $.each(serviceDetails, function (index, serviceDetail) {
+                serviceHtml=serviceHtml+'<tr><td>'+serviceDetail.serviceId+'</td><td></td>'+serviceDetail.authorization+'</td><td>'+serviceDetail.copayAmount+'</td><td>'+
+                serviceDetail.copayPercentage+'</td><td>'+serviceDetail.deductibleAmount+'</td><td>'+serviceDetail.deductiblePercentage+'</td></tr>';
+            });
+            $('#serviceTable').find('tbody').html(serviceHtml);
+        });
+
+        $('#myModal').modal({
+            keyboard: false
+        });
+
+    });
 });
+
+
+
