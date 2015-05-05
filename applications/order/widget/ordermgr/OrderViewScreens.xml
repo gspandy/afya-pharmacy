@@ -979,7 +979,6 @@
         </section>
     </screen>
 
-
     <screen name="NewPatient">
         <section>
             <actions>
@@ -992,8 +991,8 @@
                     <decorator-section name="body">
                         <screenlet title="Patient Information" navigation-menu-name="PatientMenu">
                             <include-menu name="PatientMenu" location="component://order/widget/ordermgr/OrderMenus.xml"/>
-                            <include-form name="PatientRegistration" location="component://order/widget/forms/PatientForms.xml"/>
-
+                            <!-- <include-form name="PatientRegistration" location="component://order/widget/forms/PatientForms.xml"/> -->
+                            <platform-specific><html><html-template location="component://order/webapp/ordermgr/entry/order/patientRegistration.ftl"/></html></platform-specific>
                         </screenlet>
                     </decorator-section>
                 </decorator-screen>

@@ -3149,6 +3149,7 @@
 		<field name="country" type="short-varchar"></field>
 		<field name="passport" type="short-varchar"></field>
 		<field name="expiryDate" type="date"></field>
+		<field name="selectionType" type="short-varchar"></field>
 		<prim-key field="patientId" />
 	</entity>
 

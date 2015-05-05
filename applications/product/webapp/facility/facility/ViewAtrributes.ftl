@@ -15,13 +15,12 @@
                 </#if>
                 <#if productAttributes?has_content>
                     <tr>
-                        <td>Date</td>
+                        <td>Date <span><font color="red">*</font></span></td>
                         <td>
                             <@htmlTemplate.renderDateTimeField name="effectiveDate" value="${nowTimestamp?string('yyyy-MM-dd')!''}" className="date required" alert="" 
                                         title="Format: dd/MM/yyyy" size="15" maxlength="10" id="transferDate" dateType="date" shortDateInput=true 
                                         timeDropdownParamName="" defaultDateTimeString="" localizedIconTitle="" timeDropdown="" timeHourName="" classString="" 
                                         hour1="" hour2="" timeMinutesName="" minutes="" isTwelveHour="" ampmName="" amSelected="" pmSelected="" compositeType="" formName="transferform"/>
-                            <label style="color:red;">*</label>
                         </td>
                     </tr>
                 </#if>
