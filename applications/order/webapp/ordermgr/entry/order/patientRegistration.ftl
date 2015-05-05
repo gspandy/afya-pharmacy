@@ -24,24 +24,14 @@ under the License.
       <div class="fieldgroup-body">
         <table cellspacing="0" class="basic-table">
           <tr>
-            <td class="" id="selectionType_title"><span id="selectionType_title">&nbsp;</span></td>
-            <td id="selectionType_textField">
-              <span class="ui-widget">
-                <#if patient.selectionType?exists && "CIVIL_ID" == patient.selectionType>
-                  <input type="text" name="selectionName"size="15" value="Civil ID" readonly="readonly"/>
-                <#elseif patient.selectionType?exists && "PASSPORT" == patient.selectionType>
-                  <input type="text" name="selectionName" size="15" value="Passport &#47; VISA" readonly="readonly"/>
-                </#if>
-              </span>
-            </td>
             <#if "CIVIL_ID" == patient.selectionType>
-              <td class="" id="civilId_title"><span id="civilId_title">Civil ID</span></td>
+              <td class="" id="civilId_title" width="5%"><span id="civilId_title">Civil ID</span></td>
               <td id="civilId_textfield"><input type="text" name="civilId" id="civilId" size="25" value="${patient.civilId?if_exists}"/></td>
             </#if>
             <#if "PASSPORT" == patient.selectionType>
-              <td class="" id="passport_title"><span id="passport_title">Passport &#47; VISA</span></td>
+              <td class="" id="passport_title" width="7%"><span id="passport_title">Passport &#47; VISA</span></td>
               <td id="passport_textField"><input type="text" name="passport" id="passport" size="25" value="${patient.passport?if_exists}"/></td>
-              <td id="expiryDate_title" class=""><span id="expiryDate_title">Expiry Date</span></td>
+              <td id="expiryDate_title" width="5%"><span id="expiryDate_title">Expiry Date</span></td>
               <td id="expiryDate_dateField" colspan="4">
                 <#if patient.expiryDate?exists>
                   <@htmlTemplate.renderDateTimeFieldJsMethod name="expiryDate" value='${Static["org.ofbiz.base.util.UtilDateTime"].getFormattedDate(patient.expiryDate)}' className="date" alert="" 
@@ -327,17 +317,17 @@ under the License.
         var selectionType = selection.value;
         
         if(selectionType == "CIVIL_ID") {
-            civilId_title.style.display = '';
+            //civilId_title.style.display = '';
             civilId_textfield.style.display = '';
-            passport_title.style.display = 'none';
+            //passport_title.style.display = 'none';
             passport_textField.style.display = 'none';
             expiryDate_title.style.display = 'none';
             expiryDate_dateField.style.display = 'none';
         }
         if(selectionType != "CIVIL_ID") {
-            civilId_title.style.display = 'none';
+            //civilId_title.style.display = 'none';
             civilId_textfield.style.display = 'none';
-            passport_title.style.display = '';
+            //passport_title.style.display = '';
             passport_textField.style.display = '';
             expiryDate_title.style.display = '';
             expiryDate_dateField.style.display = '';
@@ -352,7 +342,7 @@ under the License.
         <table cellspacing="0" class="basic-table">
           <tr>
             <td class=""><span id="select_title">&nbsp;</span></td>
-            <td>
+            <td width="12%">
               <span class="ui-widget">
                 <select name="selectionType" id="selectionType" onchange="javascript:validate(this);">
                   <option value="CIVIL_ID">Civil ID</option>
@@ -360,11 +350,11 @@ under the License.
                 </select>
               </span>
             </td>
-            <td class="" id="civilId_title"><span id="civilId_title">Civil ID</span></td>
+            <#-- <td class="" id="civilId_title"><span id="civilId_title">Civil ID</span></td> -->
             <td id="civilId_textfield"><input type="text" name="civilId" id="civilId" size="25"/></td>
-            <td class="" id="passport_title" style="display:none"><span id="passport_title">Passport &#47; VISA</span></td>
+            <#-- <td class="" id="passport_title" style="display:none"><span id="passport_title">Passport &#47; VISA</span></td> -->
             <td id="passport_textField" style="display:none"><input type="text" name="passport" id="passport" size="25"/></td>
-            <td id="expiryDate_title" class="" style="display:none"><span id="expiryDate_title">Expiry Date</span></td>
+            <td id="expiryDate_title" class="" width="7%" style="display:none"><span id="expiryDate_title">Expiry Date</span></td>
             <td id="expiryDate_dateField" colspan="4" style="display:none">
               <@htmlTemplate.renderDateTimeField name="expiryDate" value="${value!''}" className="date" alert="" 
                       title="Format: MM/dd/yyyy" size="15" maxlength="10" id="item1" dateType="date-time" shortDateInput=true 

@@ -106,9 +106,9 @@
                 <option key="INSURANCE" description="Insurance"/>
             </drop-down>
         </field>
-        <field name="benefitPlanId" id-name="benefitPlanId">
+        <!-- <field name="benefitPlanId" id-name="benefitPlanId">
             <text/>
-        </field>
+        </field> -->
         <field name="patientInsurance" id-name="patientInsurance">
             <drop-down allow-empty="true">
                 <entity-options entity-name="PatientInsurance" description="${healthPolicyName} - ${policyNo}" key-field-name="benefitPlanId"></entity-options>
@@ -117,7 +117,7 @@
         <field name="moduleName" id-name="moduleName">
             <hidden/>
         </field>
-        <field name="hisBenefitId" id-name="hisBenefitId">
+        <field name="hisBenefitId" id-name="hisBenefitId" title="Benefits">
             <drop-down></drop-down>
         </field>
         <field name="address1" parameter-name="address">
