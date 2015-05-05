@@ -3139,6 +3139,7 @@
 		<field name="emailAddress" type="short-varchar"></field>
 		<field name="homePhone" type="short-varchar"></field>
 		<field name="officePhone" type="short-varchar"></field>
+		<field name="mobileCode" type="short-varchar"></field>
 		<field name="mobilePhone" type="short-varchar"></field>
 		<field name="address1" type="long-varchar"></field>
 		<field name="address2" type="long-varchar"></field>
@@ -3146,6 +3147,8 @@
 		<field name="city" type="short-varchar"></field>
 		<field name="governorate" type="short-varchar"></field>
 		<field name="country" type="short-varchar"></field>
+		<field name="passport" type="short-varchar"></field>
+		<field name="expiryDate" type="date"></field>
 		<prim-key field="patientId" />
 	</entity>
 
