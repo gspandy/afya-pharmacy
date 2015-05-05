@@ -134,17 +134,21 @@ $(document).ready(function () {
             var serviceHtml='';
             var serviceDetails = data['associatedServiceDetailsOfTheModule'];
             $.each(serviceDetails, function (index, serviceDetail) {
-                serviceHtml=serviceHtml+'<tr><td>'+serviceDetail.serviceId+'</td><td></td>'+serviceDetail.authorization+'</td><td>'+serviceDetail.copayAmount+'</td><td>'+
+                serviceHtml=serviceHtml+'<tr><td>'+serviceDetail.moduleName+'</td><td>'+serviceDetail.serviceName+'</td>'+decodeAuth(serviceDetail.authorization)+'<td>'+serviceDetail.copayAmount+'</td><td>'+
                 serviceDetail.copayPercentage+'</td><td>'+serviceDetail.deductibleAmount+'</td><td>'+serviceDetail.deductiblePercentage+'</td></tr>';
             });
             $('#serviceTable').find('tbody').html(serviceHtml);
         });
 
         $('#myModal').modal({
-            keyboard: false
+            keyboard: true
         });
 
     });
+
+    function decodeAuth(auth){
+        return "<td class='success' style='text-align:center'><span class='icon-ok'></span></td>";
+    }
 });
 
 

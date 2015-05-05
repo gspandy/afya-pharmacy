@@ -97,8 +97,9 @@ under the License.
                   <tr>
                     <td align="right"><div>${uiLabelMap.ProductProductId} <span><font color="red">*</font></span></div></td>
                     <td width="25%">
-                      <@htmlTemplate.lookupField formName="quickaddform" name="add_product_id" id="add_product_id" fieldFormName="LookupProduct" className="required"/>
-                      <script language="JavaScript" type="text/javascript">ajaxAutoCompleter('add_product_id,<@ofbizUrl>LookupProduct</@ofbizUrl>,ajaxLookup=Y&amp;searchValueField=add_product_id', true);</script>
+                      <@htmlTemplate.lookupField formName="quickaddform" name="add_product_id" id="add_product_id" fieldFormName="LookupProduct"  className="required"/>
+                   <#--   <@htmlTemplate.lookupField formName="quickaddform" name="add_product_id" id="add_product_id" fieldFormName="LookupProduct" className="required"/>
+                      <script language="JavaScript" type="text/javascript">ajaxAutoCompleter('add_product_id,<@ofbizUrl>LookupProduct</@ofbizUrl>,'ajaxLookup=Y&amp;searchValueField=add_product_id', true);</script>-->
                     </td>
                     <td align="right"><div>${uiLabelMap.OrderQuantity} <span><font color="red">*</font></span></div></td>
                     <td width="25%">

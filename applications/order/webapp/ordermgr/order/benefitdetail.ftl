@@ -21,7 +21,7 @@
                                 <thead>
                                 <tr>
                                     <td>Module Name</td>
-                                    <td>Authorization Required</td>
+                                    <td>Authorized</td>
                                     <td>Copay Amount</td>
                                     <td>Copay Percentage</td>
                                     <td>Deductible Amount</td>
@@ -37,8 +37,9 @@
                             <table id="serviceTable"  class="table table-striped table-bordered">
                                 <thead>
                                 <tr>
+                                    <td>Module Name</td>
                                     <td>Service Name</td>
-                                    <td>Authorization Required</td>
+                                    <td>Authorized</td>
                                     <td>Copay Amount</td>
                                     <td>Copay Percentage</td>
                                     <td>Deductible Amount</td>
