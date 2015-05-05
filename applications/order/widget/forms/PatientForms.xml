@@ -3,11 +3,21 @@
 
     <form name="FindPatient" type="single" target="findPatient" title=""
           default-title-style="tableheadtext" default-widget-style="tabletext" default-tooltip-style="tabletext">
-        <field name="civilId" id-name="civilId" position="1"><text-find/></field>
-        <field name="firstName" title="First Name" position="2"><text-find/></field>
-        <field name="afyaId" position="1"><text-find/></field>
-        <field name="thirdName" title="Last Name" position="2"><text-find/></field>
-        <field name="mobilePhone" position="1"><text/></field>
+        <field name="civilId" id-name="civilId" position="1">
+            <text-find/>
+        </field>
+        <field name="firstName" title="First Name" position="2">
+            <text-find/>
+        </field>
+        <field name="afyaId" position="1">
+            <text-find/>
+        </field>
+        <field name="thirdName" title="Last Name" position="2">
+            <text-find/>
+        </field>
+        <field name="mobilePhone" position="1">
+            <text/>
+        </field>
         <field name="submitButton" title="${uiLabelMap.CommonFind}" widget-style="btn btn-primary">
             <submit button-type="button"/>
         </field>
@@ -16,20 +26,30 @@
     <form name="PatientSearchResult" type="list" use-row-submit="true" target="findPatient" title="" list-name="listIt"
           odd-row-style="alternate-row" header-row-style="header-row-2" default-table-style="basic-table hover-bar"
           paginate-target="findPatient">
-    <actions>
-        <set field="entityName" value="Patient"/>
-        <service service-name="performFind" result-map="result" result-map-list="listIt">
-            <field-map field-name="inputFields" from-field="parameters"/>
-            <field-map field-name="entityName" from-field="entityName"/>
-            <field-map field-name="viewIndex" from-field="viewIndex"/>
-            <field-map field-name="viewSize" from-field="viewSize"/>
-        </service>
-    </actions>
-        <field name="civilId" id-name="civilId"><display/></field>
-        <field name="afyaId"><display/></field>
-        <field name="firstName" title="First Name"><display/></field>
-        <field name="thirdName" title="Last Name"><display/></field>
-        <field name="mobilePhone"><display/></field>
+        <actions>
+            <set field="entityName" value="Patient"/>
+            <service service-name="performFind" result-map="result" result-map-list="listIt">
+                <field-map field-name="inputFields" from-field="parameters"/>
+                <field-map field-name="entityName" from-field="entityName"/>
+                <field-map field-name="viewIndex" from-field="viewIndex"/>
+                <field-map field-name="viewSize" from-field="viewSize"/>
+            </service>
+        </actions>
+        <field name="civilId" id-name="civilId">
+            <display/>
+        </field>
+        <field name="afyaId">
+            <display/>
+        </field>
+        <field name="firstName" title="First Name">
+            <display/>
+        </field>
+        <field name="thirdName" title="Last Name">
+            <display/>
+        </field>
+        <field name="mobilePhone">
+            <display/>
+        </field>
         <field name="submitButton" widget-style="btn btn-mini btn-primary">
             <hyperlink title="Select" text="Select">
                 <parameter param-name="patientId"/>
@@ -50,17 +70,35 @@
                 <condition-expr field-name="patientId" from-field="parameters.patientId"></condition-expr>
             </entity-condition>
         </actions>
-        <field name="patientId"><hidden/></field>
-        <field name="civilId" id-name="civilId" position="1"><text/></field>
-        <field name="afyaId" position="2"><text/></field>
-        <field name="firstName" title="First Name" position="1"><text/></field>
-        <field name="secondName" title="Middle Name" position="2"><text/></field>
-        <field name="thirdName" title="Last Name" position="3"><text/></field>
+        <field name="patientId">
+            <hidden/>
+        </field>
+        <field name="civilId" id-name="civilId" position="1">
+            <text/>
+        </field>
+        <field name="afyaId" position="2">
+            <text/>
+        </field>
+        <field name="firstName" title="First Name" position="1">
+            <text/>
+        </field>
+        <field name="secondName" title="Middle Name" position="2">
+            <text/>
+        </field>
+        <field name="thirdName" title="Last Name" position="3">
+            <text/>
+        </field>
         <!-- <field name="fourthName" title="Patient Fourth Name" position="4"><text/></field> -->
-        <field name="mobilePhone" position="1" parameter-name="mobile"><text/></field>
-        <field name="clinicName" position="2"><text/></field>
+        <field name="mobilePhone" position="1" parameter-name="mobile">
+            <text/>
+        </field>
+        <field name="clinicName" position="2">
+            <text/>
+        </field>
         <!--<field name="clinicId"><text/></field>-->
-        <field name="doctorName" position="3"><text/></field>
+        <field name="doctorName" position="3">
+            <text/>
+        </field>
         <field name="patientType" id-name="patientType">
             <drop-down>
                 <option key="CASH" description="Cash"/>
@@ -68,22 +106,36 @@
                 <option key="INSURANCE" description="Insurance"/>
             </drop-down>
         </field>
-        <field name="benefitPlanId" id-name="benefitPlanId"><text/></field>
+        <field name="benefitPlanId" id-name="benefitPlanId">
+            <text/>
+        </field>
         <field name="patientInsurance" id-name="patientInsurance">
             <drop-down allow-empty="true">
                 <entity-options entity-name="PatientInsurance" description="${healthPolicyName} - ${policyNo}" key-field-name="benefitPlanId"></entity-options>
             </drop-down>
         </field>
-        <field name="moduleName" id-name="moduleName"><hidden/></field>
+        <field name="moduleName" id-name="moduleName">
+            <hidden/>
+        </field>
         <field name="hisBenefitId" id-name="hisBenefitId">
             <drop-down></drop-down>
         </field>
-        <field name="address1" parameter-name="address"><text/></field>
-        <field name="city" position="2"><text/></field>
-        <field name="governorate" position="3" parameter-name="state"><text/></field>
-        <field name="country" position="4"><text/></field>
+        <field name="address1" parameter-name="address">
+            <text/>
+        </field>
+        <field name="city" position="2">
+            <text/>
+        </field>
+        <field name="governorate" position="3" parameter-name="state">
+            <text/>
+        </field>
+        <field name="country" position="4">
+            <text/>
+        </field>
         <field name="submitButton" title="${uiLabelMap.CommonSubmit}"
-               widget-style="btn btn-primary"><submit button-type="button"/></field>
+               widget-style="btn btn-primary">
+            <submit button-type="button"/>
+        </field>
     </form>
 
 
@@ -95,9 +147,9 @@
         <field name="patientId">
             <hidden/>
         </field>
-       <!--  <field name="civilId" use-when="patient!=null" field-name="civilId" id-name="civilId">
-            <display/>
-        </field> -->
+        <!--  <field name="civilId" use-when="patient!=null" field-name="civilId" id-name="civilId">
+             <display/>
+         </field> -->
         <field name="afyaId" use-when="patient!=null" position="1">
             <display/>
         </field>
@@ -105,7 +157,7 @@
         <!-- <field name="civilId" use-when="patient==null" field-name="civilId" id-name="civilId">
             <text/>
         </field> -->
-        
+
         <field name="civilId" field-name="civilId" title="Civil ID" id-name="civilId">
             <text/>
         </field>
@@ -300,7 +352,7 @@
 
 
     <form name="InsuranceList" target="insuranceList" title="Insurance List" type="list" list-name="insuranceList"
-          odd-row-style="alternate-row" header-row-style="header-row-2" default-table-style="basic-table hover-bar">
+          odd-row-style="alternate-row" header-row-style="header-row-2" default-table-style="basic-table hover-bar insuranceList" id="insuranceList">
         <field name="groupName">
             <display/>
         </field>
@@ -317,7 +369,8 @@
             <display/>
         </field>
         <field name="benefitPlanName">
-            <display/>
+            <hyperlink description="${benefitPlanName}" alternate="${benefitPlanId}" also-hidden="true" target="${benefitPlanId}">
+            </hyperlink>
         </field>
         <field name="UHID" title="Membership ID">
             <display/>
@@ -325,10 +378,11 @@
         <field name="planName">
             <display/>
         </field>
-        <field use-when="" name="editButton" action="editPatient" title="Remove" widget-style="btn btn-mini btn-danger">
-            <hyperlink target="removeInsurance" description="${uiLabelMap.CommonRemove}" also-hidden="false">
+        <field use-when="" name="editButton" id-name="remove" action="editPatient" title="Remove" widget-style="btn btn-mini btn-danger">
+            <hyperlink target="removeInsurance" description="${uiLabelMap.CommonRemove}" also-hidden="false" id="ttttttt">
                 <parameter param-name="healthPolicyId"/>
                 <parameter param-name="patientId"/>
+                <parameter param-name="benefitPlanId"/>
             </hyperlink>
         </field>
     </form>
@@ -345,27 +399,43 @@
         <field name="tpa" title="TPA" id-name="tpa" position="1">
             <drop-down></drop-down>
         </field>
-        <field name="insurance" position="2" id-name="insurances" >
+        <field name="insurance" position="2" id-name="insurances">
             <drop-down>
             </drop-down>
         </field>
         <field name="groupName" id-name="groupName" position="3">
             <drop-down></drop-down>
         </field>
-        <field name="policyNo" id-name="policyNo"><text/></field>
-        <field name="startDate" id-name="startDate"><text/></field>
-        <field name="endDate" id-name="endDate"><text/></field>
-        <field name="healthPolicyId" id-name="healthPolicyId"><hidden/></field>
-        <field name="healthPolicyName" id-name="healthPolicyName" title="Health Plan" required-field="true"><text/></field>
-        <field name="benefitPlanId" id-name="benefitPlanId"><hidden/></field>
-        <field name="benefitPlanName" id-name="benefitPlanName"><hidden/></field>
+        <field name="policyNo" id-name="policyNo">
+            <text/>
+        </field>
+        <field name="startDate" id-name="startDate">
+            <text/>
+        </field>
+        <field name="endDate" id-name="endDate">
+            <text/>
+        </field>
+        <field name="healthPolicyId" id-name="healthPolicyId">
+            <hidden/>
+        </field>
+        <field name="healthPolicyName" id-name="healthPolicyName" title="Health Plan" required-field="true">
+            <text/>
+        </field>
+        <field name="benefitPlanId" id-name="benefitPlanId">
+            <hidden/>
+        </field>
+        <field name="benefitPlanName" id-name="benefitPlanName">
+            <hidden/>
+        </field>
         <field name="benefitPlanNameDropDown" title="Select Benefit Plan" id-name="benefitPlanNameDropDown">
             <drop-down></drop-down>
         </field>
         <field name="hisBenefitId" title="Select Benefit" id-name="hisBenefitId">
             <drop-down></drop-down>
         </field>
-        <field name="uHID" id-name="uhid" title="Membership ID" required-field="true"><text/> </field>
+        <field name="uHID" id-name="uhid" title="Membership ID" required-field="true">
+            <text/>
+        </field>
         <field name="createButton" title="Add Insurance" widget-style="btn btn-success">
             <submit button-type="button"/>
         </field>

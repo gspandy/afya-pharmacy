@@ -1015,6 +1015,7 @@
     <screen name="InsuranceList">
         <section>
             <actions>
+                <set field="layoutSettings.javaScripts[]" value="/ordermgr/images/js/insurance.js" global="true"/>
                 <entity-condition entity-name="PatientInsurance" list="insuranceList">
                     <condition-expr field-name="patientId" from-field="parameters.patientId"/>
                     <order-by field-name="groupName"/>
@@ -1028,6 +1029,11 @@
                                 <parameter param-name="patientId" from-field="parameters.patientId"/>
                             </link>
                             <include-form name="InsuranceList" location="component://order/widget/forms/PatientForms.xml"/>
+                            <platform-specific>
+                                <html>
+                                    <html-template location="component://order/webapp/ordermgr/order/benefitdetail.ftl"/>
+                                </html>
+                            </platform-specific>
                         </screenlet>
                     </decorator-section>
                 </decorator-screen>
