@@ -3139,7 +3139,7 @@
 		<field name="emailAddress" type="short-varchar"></field>
 		<field name="homePhone" type="short-varchar"></field>
 		<field name="officePhone" type="short-varchar"></field>
-		<field name="mobileCode" type="short-varchar"></field>
+		<field name="isdCode" type="short-varchar"></field>
 		<field name="mobilePhone" type="short-varchar"></field>
 		<field name="address1" type="long-varchar"></field>
 		<field name="address2" type="long-varchar"></field>
