@@ -106,7 +106,7 @@
             <text/>
         </field> -->
         
-        <field name="civilId" field-name="civilId" id-name="civilId">
+        <field name="civilId" field-name="civilId" title="Civil ID" id-name="civilId">
             <text/>
         </field>
         <field name="title" position="1">
@@ -194,7 +194,10 @@
         <field name="officePhone" position="3" id-name="officePhone">
             <text/>
         </field>
-        <field name="mobilePhone" position="4" id-name="mobileNumber" required-field="true">
+        <field name="mobileCode" position="4" id-name="mobileCode" title="Mobile Phone">
+            <text size="7" default-value="+965"/>
+        </field>
+        <field name="mobilePhone" position="5" id-name="mobileNumber" title="${uiLabelMap.CommonEmptyHeader}" required-field="true">
             <text/>
         </field>
         <field name="address1" id-name="address">
@@ -254,6 +257,7 @@
                 <sort-field name="emailAddress"/>
                 <sort-field name="homePhone"/>
                 <sort-field name="officePhone"/>
+                <sort-field name="mobileCode"/>
                 <sort-field name="mobilePhone"/>
                 <sort-field name="address1"/>
                 <sort-field name="city" position="2"/>
