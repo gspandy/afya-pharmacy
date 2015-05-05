@@ -37,8 +37,8 @@
                             <table id="serviceTable"  class="table table-striped table-bordered">
                                 <thead>
                                 <tr>
-                                    <td>Module Name</td>
                                     <td>Service Name</td>
+                                    <td>Module Name</td>
                                     <td>Authorized</td>
                                     <td>Copay Amount</td>
                                     <td>Copay Percentage</td>

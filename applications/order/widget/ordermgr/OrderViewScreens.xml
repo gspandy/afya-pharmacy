@@ -44,6 +44,7 @@
                 <set field="titleProperty" value="OrderViewOrder"/>
                 <set field="headerItem" value="findorders"/>
                 <set field="layoutSettings.javaScripts[]" value="/ordermgr/images/js/order.js" global="true"/>
+                <set field="layoutSettings.javaScripts[]" value="/ordermgr/images/js/insurance.js" global="true"/>
                 <set field="layoutSettings.javaScripts[]" value="/ordermgr/images/js/OrderShippingInfo.js" global="true"/>
                 <set field="layoutSettings.javaScripts[]" value="/ordermgr/images/js/geoAutoCompleter.js" global="true"/>
                 <script location="component://order/webapp/ordermgr/WEB-INF/actions/order/OrderView.groovy"/>
@@ -68,6 +69,11 @@
                         <platform-specific>
                             <html>
                                 <html-template location="component://order/webapp/ordermgr/order/transitions.ftl"/>
+                            </html>
+                        </platform-specific>
+                        <platform-specific>
+                            <html>
+                                <html-template location="component://order/webapp/ordermgr/order/benefitdetail.ftl"/>
                             </html>
                         </platform-specific>
                     </decorator-section>
@@ -100,7 +106,7 @@
                     <include-screen name="orderterms"/>
                     <section>
                         <condition>
-                            <if-compare field="orderHeader.orderTypeId" operator="equals" value="SLAES_ORDER" type="String"/>
+                            <if-compare field="orderHeader.orderTypeId" operator="equals" value="SALES_ORDER" type="String"/>
                         </condition>
                         <widgets>
                             <include-screen name="orderpaymentinfo"/>
@@ -135,6 +141,7 @@
                         <html-template location="component://order/webapp/ordermgr/order/prescriptioninfo.ftl"/>
                     </html>
                 </platform-specific>
+
             </widgets>
         </section>
     </screen>
@@ -986,6 +993,7 @@
                         <screenlet title="Patient Information" navigation-menu-name="PatientMenu">
                             <include-menu name="PatientMenu" location="component://order/widget/ordermgr/OrderMenus.xml"/>
                             <include-form name="PatientRegistration" location="component://order/widget/forms/PatientForms.xml"/>
+
                         </screenlet>
                     </decorator-section>
                 </decorator-screen>
@@ -1005,6 +1013,11 @@
                     <decorator-section name="body">
                         <screenlet title="Insurance Details">
                             <include-form name="AddInsurance" location="component://order/widget/forms/PatientForms.xml"/>
+                            <platform-specific>
+                                <html>
+                                    <html-template location="component://order/webapp/ordermgr/order/benefitdetail.ftl"/>
+                                </html>
+                            </platform-specific>
                         </screenlet>
                     </decorator-section>
                 </decorator-screen>

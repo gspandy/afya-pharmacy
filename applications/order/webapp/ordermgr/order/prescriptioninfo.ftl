@@ -75,7 +75,7 @@ under the License.
                 <tr>
                     <td width="19%"><span class="label">Benefit Plan</span></td>
                     <td width="1%"><input type="hidden" value="${benefitPlanId}" id="benefitPlanId"/></td>
-                    <td width="30%">${benefitPlanName?if_exists}</td>
+                    <td width="30%"><a href='javascript:void(0);' id="benefitPlanLink">${benefitPlanName?if_exists}</a></td>
                 </tr>
                 <tr>
                     <td width="19%"><span class="label">Benefit Name</span></td>

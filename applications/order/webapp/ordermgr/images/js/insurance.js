@@ -85,6 +85,10 @@ $(document).ready(function () {
         $('#benefitPlanId').val($(this).val());
         ($(this).find('option:selected').text());
         $('#benefitPlanName').val($(this).find('option:selected').text());
+
+        if($('#benefitPlanLink').length==0) {
+            $(this).parent().append("<span id='benefitPlanIdLink'><a>View Details</a></span>");
+        }
     });
 
     $('#moduleId').change(function () {
@@ -123,32 +127,52 @@ $(document).ready(function () {
         event.stopPropagation();
         var rowIndex=this.rowIndex;
         var benefitPlanId = $(this).find("input[name|='benefitPlanId']").val();
+        populateTable(benefitPlanId);
+    });
+
+
+    $('#benefitPlanIdLink').live('click', function (event){
+        populateTable($('#benefitPlanId').val());
+    });
+
+    $('#benefitPlanLink').bind('click', function (event){
+        populateTable($('#benefitPlanId').val());
+    });
+
+    $('#benefitPlanId').bind('click', function (event){
+        populateTable($('#benefitPlanId').val());
+    });
+
+    function populateTable(benefitPlanId){
         $.getJSON('http://5.9.249.197:7878/afya-portal/anon/insuranceMaster/getServiceOrModuleDataByBenefitId?benefitId='+benefitPlanId, function(data) {
             var moduleDetails = data['moduleDetails'];
             var moduleHtml='';
             $.each(moduleDetails, function (index, moduleDetail) {
                 moduleHtml=moduleHtml+'<tr><td>'+moduleDetail.moduleName+'</td><td></td>'+moduleDetail.authorization+'</td><td>'+moduleDetail.copayAmount+'</td><td>'+
-                    moduleDetail.copayPercentage+'</td><td>'+moduleDetail.deductibleAmount+'</td><td>'+moduleDetail.deductiblePercentage+'</td></tr>';
+                moduleDetail.copayPercentage+'</td><td>'+moduleDetail.deductibleAmount+'</td><td>'+moduleDetail.deductiblePercentage+'</td></tr>';
             });
             $('#moduleTable').find('tbody').html(moduleHtml);
             var serviceHtml='';
             var serviceDetails = data['associatedServiceDetailsOfTheModule'];
             $.each(serviceDetails, function (index, serviceDetail) {
-                serviceHtml=serviceHtml+'<tr><td>'+serviceDetail.moduleName+'</td><td>'+serviceDetail.serviceName+'</td>'+decodeAuth(serviceDetail.authorization)+'<td>'+serviceDetail.copayAmount+'</td><td>'+
+                serviceHtml=serviceHtml+'<tr><td>'+serviceDetail.serviceName+'</td><td>'+serviceDetail.moduleName+'</td>'+decodeAuth(serviceDetail.authorization)+'<td>'+serviceDetail.copayAmount+'</td><td>'+
                 serviceDetail.copayPercentage+'</td><td>'+serviceDetail.deductibleAmount+'</td><td>'+serviceDetail.deductiblePercentage+'</td></tr>';
             });
             $('#serviceTable').find('tbody').html(serviceHtml);
         });
-
         $('#myModal').modal({
             keyboard: true
         });
-
-    });
+    }
 
     function decodeAuth(auth){
-        return "<td class='success' style='text-align:center'><span class='icon-ok'></span></td>";
+        if(auth==1)
+            return "<td class='success' style='text-align:center'><span class='icon-ok'></span></td>";
+        else
+            return "<td class='error' style='text-align:center'><span class='icon-off'></span></td>";
+
     }
+
 });
 
 
