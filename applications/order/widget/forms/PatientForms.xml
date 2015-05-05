@@ -406,6 +406,12 @@
         <field name="groupName" id-name="groupName" position="3">
             <drop-down></drop-down>
         </field>
+        <field name="healthPolicyName" id-name="healthPolicyName" title="Health Plan" required-field="true">
+            <text size="30"/>
+        </field>
+        <field name="benefitPlanNameDropDown" title="Benefits" id-name="benefitPlanNameDropDown">
+            <drop-down></drop-down>
+        </field>
         <field name="policyNo" id-name="policyNo">
             <text/>
         </field>
@@ -418,24 +424,15 @@
         <field name="healthPolicyId" id-name="healthPolicyId">
             <hidden/>
         </field>
-        <field name="healthPolicyName" id-name="healthPolicyName" title="Health Plan" required-field="true">
-            <text/>
-        </field>
         <field name="benefitPlanId" id-name="benefitPlanId">
             <hidden/>
         </field>
         <field name="benefitPlanName" id-name="benefitPlanName">
             <hidden/>
         </field>
-        <field name="benefitPlanNameDropDown" title="Select Benefit Plan" id-name="benefitPlanNameDropDown">
+        <!-- <field name="hisBenefitId" title="Select Benefit" id-name="hisBenefitId">
             <drop-down></drop-down>
-        </field>
-        <field name="hisBenefitId" title="Select Benefit" id-name="hisBenefitId">
-            <drop-down></drop-down>
-        </field>
-        <field name="uHID" id-name="uhid" title="Membership ID" required-field="true">
-            <text/>
-        </field>
+        </field> -->
         <field name="createButton" title="Add Insurance" widget-style="btn btn-success">
             <submit button-type="button"/>
         </field>
