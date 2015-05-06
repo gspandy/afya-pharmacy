@@ -15,7 +15,7 @@
                     <!-- Tab panes -->
                     <div class="tab-content">
                         <div role="tabpanel" class="tab-pane active" id="home">
-                            <table id="moduleTable"  class="table table-striped table-bordered" width="90%">
+                            <table id="moduleTable" class="table table-striped table-bordered" width="90%">
                                 <thead style="font-size:10px;font-weight: bold">
                                     <tr>
                                         <td width="8%" style="vertical-align: middle;text-align: center">Benefits</td>
@@ -36,7 +36,7 @@
                             </table>
                         </div>
                         <div role="tabpanel" class="tab-pane" id="settings">
-                            <table id="serviceTable"  class="table table-striped table-bordered" width="90%">
+                            <table id="serviceTable" class="table table-striped table-bordered" width="90%">
                                 <thead style="font-size:10px;font-weight: bold">
                                     <tr>
                                         <td width="8%" style="vertical-align: middle;text-align: center">Services</td>

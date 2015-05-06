@@ -95,7 +95,7 @@ $(document).ready(function () {
         ($(this).find('option:selected').text());
         $('#benefitPlanName').val($(this).find('option:selected').text());
         if($('#benefitPlanIdLink').length==0) {
-            $(this).parent().append("<span id='benefitPlanIdLink'><a>View Details</a></span>");
+            $(this).parent().append("<span id='benefitPlanIdLink'><a>View Plan Details</a></span>");
         }
     });
 
