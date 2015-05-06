@@ -162,9 +162,9 @@ $(document).ready(function () {
                 +amount(moduleDetail.sumInsured)+'</td>'
                 +decodeBoolean(moduleDetail.authorization)+'<td>'
                 +amount(moduleDetail.deductibleAmount)+'</td><td>'
-                +percentage(amount(moduleDetail.deductiblePercentage))+'</td><td>'
+                +amount(moduleDetail.deductiblePercentage)+'</td><td>'
                 +amount(moduleDetail.copayAmount)+'</td><td>'
-                +percentage(amount(moduleDetail.copayPercentage))+'</td><td>'
+                +amount(moduleDetail.copayPercentage)+'</td><td>'
                 +text(moduleDetail.computeBy)+'</td>'
                 +decodeBoolean(moduleDetail.authorizationInclusiveConsultation)+''
                 +decodeBoolean(moduleDetail.authorizationRequiredConsultation)+'</tr>';
@@ -177,10 +177,10 @@ $(document).ready(function () {
                 serviceHtml=serviceHtml+'<tr><td>'+serviceDetail.serviceName+'</td><td>'
                 +serviceDetail.moduleName+'</td>'
                 +decodeBoolean(serviceDetail.authorization)+'<td>'
-                +amount(serviceDetail.deductibleAmount)+'</td><td>'+
-                percentage(amount(serviceDetail.deductiblePercentage))+'</td><td>'
+                +amount(serviceDetail.deductibleAmount)+'</td><td>'
+                +amount(serviceDetail.deductiblePercentage)+'</td><td>'
                 +amount(serviceDetail.copayAmount)+'</td><td>'
-                +percentage(amount(serviceDetail.copayPercentage))+'</td><td>'
+                +amount(serviceDetail.copayPercentage)+'</td><td>'
                 +amount(serviceDetail.individualLimitAmount)+'</td><td>'
                 +text(serviceDetail.numberOfCases)+'</td></tr>';
             });
