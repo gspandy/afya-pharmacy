@@ -81,13 +81,9 @@ under the License.
                     <td width="30%">&nbsp;</td>
                 </tr>
                 <tr>
-                    <td width="19%"><span class="label">Benefits</span></td>
+                    <td width="19%"><span class="label">Benefit</span></td>
                     <td width="1%"><input type="hidden" value="${benefitPlanId}" id="benefitPlanId"/></td>
-                    <#if orderRxHeader.moduleName?exists>
-                        <#assign module = orderRxHeader.moduleName>
-                        <#assign moduleName = module.substring(0, module.indexOf("-"))>
-                        <td width="30%">${moduleName?if_exists}</td>
-                    </#if>
+                    <td width="30%">${orderRxHeader.moduleName?if_exists}</td>
                 </tr>
             </#if>
         </table>
