@@ -73,14 +73,19 @@ under the License.
             </tr>
             <#if benefitPlanName?has_content>
                 <tr>
-                    <td width="19%"><span class="label">Benefit Plan</span></td>
+                    <td width="19%"><span class="label">Patient Insurance</span></td>
+                    <td width="1%">&nbsp;</td>
+                    <td width="30%">${healthPolicyName?if_exists} - ${policyNo?if_exists}</td>
+                    <td width="19%"><a href='javascript:void(0);' id="benefitPlanLink">View Plan Details</a></td>
                     <td width="1%"><input type="hidden" value="${benefitPlanId}" id="benefitPlanId"/></td>
-                    <td width="30%"><a href='javascript:void(0);' id="benefitPlanLink">${benefitPlanName?if_exists}</a></td>
+                    <td width="30%">&nbsp;</td>
                 </tr>
                 <tr>
-                    <td width="19%"><span class="label">Benefit Name</span></td>
+                    <td width="19%"><span class="label">Benefits</span></td>
                     <td width="1%"><input type="hidden" value="${benefitPlanId}" id="benefitPlanId"/></td>
-                    <td width="30%">${orderRxHeader.moduleName?if_exists}</td>
+                    <#assign module = orderRxHeader.moduleName>
+                    <#assign moduleName = module.substring(0, module.indexOf("-"))>
+                    <td width="30%">${moduleName?if_exists}</td>
                 </tr>
             </#if>
         </table>
