@@ -88,8 +88,6 @@ $(document).ready(function () {
      $('#groupName').append(option);
      });
      });*/
-
-
     $('#benefitPlanNameDropDown').change(function () {
         $('#benefitPlanId').val($(this).val());
         ($(this).find('option:selected').text());
@@ -99,7 +97,7 @@ $(document).ready(function () {
         }
     });
 
-    $('#moduleId').change(function () {
+    $('#hisBenefitId').change(function () {
         $('#moduleName').val($(this).find('option:selected').text());
     });
 
