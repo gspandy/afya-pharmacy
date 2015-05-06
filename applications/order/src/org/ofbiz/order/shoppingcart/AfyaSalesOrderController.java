@@ -92,6 +92,7 @@ public class AfyaSalesOrderController {
             responseStatus.put("orderId",orderId);
             responseStatus.put("message","Order successfully placed.");*/
         } catch (Exception e) {
+            e.printStackTrace();
             /*responseStatus.put("statusCode",500);
             responseStatus.put("message",e.getMessage());
             e.printStackTrace();

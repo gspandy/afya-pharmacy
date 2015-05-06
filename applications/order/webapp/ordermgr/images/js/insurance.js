@@ -77,6 +77,9 @@ $(document).ready(function () {
                     $('#moduleId').append(option);
                 });
             });
+        if($('#benefitPlanIdLink').length==0) {
+            $(this).parent().append("<span id='benefitPlanIdLink'><a href=javascript:void(0);>View Plan Details</a></span>");
+        }
     });
 
 
