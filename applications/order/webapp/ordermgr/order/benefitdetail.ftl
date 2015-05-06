@@ -1,4 +1,4 @@
-<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true"  style="width:60%">
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true"  style="width:80%;left:30%">
     <div class="modal-dialog  modal-lg">
         <div class="modal-content">
             <div class="modal-header">
@@ -16,16 +16,19 @@
                     <!-- Tab panes -->
                     <div class="tab-content">
                         <div role="tabpanel" class="tab-pane active" id="home">
-
-                            <table id="moduleTable"  class="table table-striped table-bordered">
-                                <thead>
+                            <table id="moduleTable"  class="table table-striped table-bordered" width="80%">
+                                <thead style="font-size:10px;font-weight: bold">
                                 <tr>
-                                    <td>Module Name</td>
-                                    <td>Authorized</td>
-                                    <td>Copay Amount</td>
-                                    <td>Copay Percentage</td>
-                                    <td>Deductible Amount</td>
-                                    <td>Deductible Percentage</td>
+                                    <td width="8%">Benefits</td>
+                                    <td width="8%" style="vertical-align: middle;text-align: center">Coverage Amount</td>
+                                    <td width="5%" style="vertical-align: middle;text-align: center">Pre Auth Required?</td>
+                                    <td width="8%" style="vertical-align: middle;text-align: center">Deductible Amount</td>
+                                    <td width="5%" style="vertical-align: middle;text-align: center">Deductible Percentage</td>
+                                    <td width="8%" style="vertical-align: middle;text-align: center">Copay Amount</td>
+                                    <td width="8%" style="vertical-align: middle;text-align: center">Copay Percentage</td>
+                                    <td width="5%" style="vertical-align: middle;text-align: center">Calculation On</td>
+                                    <td width="5%" style="vertical-align: middle;text-align: center">Is Cons Included?</td>
+                                    <td width="5%" style="vertical-align: middle;text-align: center">Is Cons Pre Auth Req?</td>
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -37,13 +40,17 @@
                             <table id="serviceTable"  class="table table-striped table-bordered">
                                 <thead>
                                 <tr>
-                                    <td>Service Name</td>
-                                    <td>Module Name</td>
-                                    <td>Authorized</td>
-                                    <td>Copay Amount</td>
-                                    <td>Copay Percentage</td>
-                                    <td>Deductible Amount</td>
-                                    <td>Deductible Percentage</td>
+                                    <td width="8%" style="vertical-align: middle;text-align: center">Module Name</td>
+                                    <td width="8%" style="vertical-align: middle;text-align: center">Service Name</td>
+                                    <td width="8%" style="vertical-align: middle;text-align: center">Coverage Amount</td>
+                                    <td width="8%" style="vertical-align: middle;text-align: center">Pre Auth Required?</td>
+                                    <td width="8%" style="vertical-align: middle;text-align: center">Deductible Amount</td>
+                                    <td width="8%" style="vertical-align: middle;text-align: center">Deductible Percentage</td>
+                                    <td width="8%" style="vertical-align: middle;text-align: center">Copay Amount</td>
+                                    <td width="8%" style="vertical-align: middle;text-align: center">Copay Percentage</td>
+                                    <td width="8%" style="vertical-align: middle;text-align: center">Calculation On</td>
+                                    <td width="8%" style="vertical-align: middle;text-align: center">Is Cons Included?</td>
+                                    <td width="8%" style="vertical-align: middle;text-align: center">Is Cons Pre Auth Req?</td>
                                 </tr>
                                 </thead>
                                 <tbody>

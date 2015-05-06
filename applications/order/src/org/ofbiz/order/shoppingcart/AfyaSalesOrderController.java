@@ -82,6 +82,8 @@ public class AfyaSalesOrderController {
             patientInfo.setVisitId(prescription.getVisitId());
             patientInfo.setPatientType(prescription.getPatientType());
             patientInfo.setAddress(prescription.getAddress());
+            patientInfo.setHisBenefitId(prescription.getHisBenefitId());
+            patientInfo.setBenefitId(prescription.getBenefitId());
             cart.setPatientInfo(patientInfo);
             CheckOutHelper checkOutHelper = new CheckOutHelper(dispatcher, dispatcher.getDelegator(), cart);
             java.util.Map orderCreate = checkOutHelper.createOrder(userLogin);
@@ -158,7 +160,8 @@ public class AfyaSalesOrderController {
         private String clinicName;
         private String doctorName;
         private String address;
-
+        private String hisBenefitId;
+        private String benefitId;
         public String getAddress() {
             return address;
         }
@@ -256,6 +259,22 @@ public class AfyaSalesOrderController {
 
         public void setMobile(String mobile) {
             this.mobile = mobile;
+        }
+
+        public String getHisBenefitId() {
+            return hisBenefitId;
+        }
+
+        public void setHisBenefitId(String hisBenefitId) {
+            this.hisBenefitId = hisBenefitId;
+        }
+
+        public String getBenefitId() {
+            return benefitId;
+        }
+
+        public void setBenefitId(String benefitId) {
+            this.benefitId = benefitId;
         }
 
         @Override

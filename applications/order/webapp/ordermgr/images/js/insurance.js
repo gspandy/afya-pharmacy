@@ -55,6 +55,15 @@ $(document).ready(function () {
                         $('#groupName').append(option);
                     });
                 });
+
+          /*  $.getJSON("http://5.9.249.197:7878/afya-portal/anon/insuranceMaster/getHealthPoliciesByPayer?payerId=" + payerId,
+                function (data) {
+                    $.each(data, function (attr, value) {
+                        alert(value);
+                        var option = $('<option></option>').val(value['id']).text(value['policyName']);
+                        $('#benefitPlanNameDropDown').append(option);
+                    });
+                });*/
         }
     });
 
@@ -148,15 +157,27 @@ $(document).ready(function () {
             var moduleDetails = data['moduleDetails'];
             var moduleHtml='';
             $.each(moduleDetails, function (index, moduleDetail) {
-                moduleHtml=moduleHtml+'<tr><td>'+moduleDetail.moduleName+'</td><td></td>'+moduleDetail.authorization+'</td><td>'+moduleDetail.copayAmount+'</td><td>'+
-                moduleDetail.copayPercentage+'</td><td>'+moduleDetail.deductibleAmount+'</td><td>'+moduleDetail.deductiblePercentage+'</td></tr>';
+                moduleHtml=moduleHtml+'<tr><td>'+moduleDetail.moduleName+'</td><td>'
+                +text(moduleDetail.sumInsured)+'</td>'
+                +decodeBoolean(moduleDetail.authorization)+'<td>'
+                +moduleDetail.deductibleAmount+'</td><td>'
+                +percentage(moduleDetail.deductiblePercentage)+'</td><td>'
+                +moduleDetail.copayAmount+'</td><td>'
+                +percentage(moduleDetail.copayPercentage)+'</td><td>'
+                +moduleDetail.computeBy+'</td>'
+                +decodeBoolean(moduleDetail.authorizationInclusiveConsultation)+''
+                +decodeBoolean(moduleDetail.authorizationRequiredConsultation)+'</tr>';
             });
             $('#moduleTable').find('tbody').html(moduleHtml);
             var serviceHtml='';
             var serviceDetails = data['associatedServiceDetailsOfTheModule'];
             $.each(serviceDetails, function (index, serviceDetail) {
-                serviceHtml=serviceHtml+'<tr><td>'+serviceDetail.serviceName+'</td><td>'+serviceDetail.moduleName+'</td>'+decodeAuth(serviceDetail.authorization)+'<td>'+serviceDetail.copayAmount+'</td><td>'+
-                serviceDetail.copayPercentage+'</td><td>'+serviceDetail.deductibleAmount+'</td><td>'+serviceDetail.deductiblePercentage+'</td></tr>';
+                serviceHtml=serviceHtml+'<tr><td>'+serviceDetail.moduleName+'</td><td>'
+                +serviceDetail.serviceName+'</td><td>'+text(serviceDetail.sumInsured)+'</td>'+decodeBoolean(serviceDetail.authorization)+
+                '<td>'+serviceDetail.deductibleAmount+'</td><td>'+
+                percentage(serviceDetail.deductiblePercentage)+'</td><td>'+serviceDetail.copayAmount+'</td><td>'+percentage(serviceDetail.copayPercentage)+'</td><td>'+serviceDetail.computeBy+'</td>'
+                +decodeBoolean(serviceDetail.authorizationInclusiveConsultation) +
+                +decodeBoolean(serviceDetail.authorizationRequiredConsultation) +'</tr>';
             });
             $('#serviceTable').find('tbody').html(serviceHtml);
         });
@@ -165,11 +186,24 @@ $(document).ready(function () {
         });
     }
 
-    function decodeAuth(auth){
+    function text(content){
+        if(content==undefined)
+        return '';
+        else return content;
+    }
+
+    function percentage(content){
+        if(content==undefined || content=='null')
+            return '';
+        else
+            return content+'%';
+    }
+
+    function decodeBoolean(auth){
         if(auth==1)
             return "<td class='success' style='text-align:center'><span class='icon-ok'></span></td>";
         else
-            return "<td class='error' style='text-align:center'><span class='icon-off'></span></td>";
+            return "<td class='error' style='text-align:center'><span class='icon-remove'></span></td>";
 
     }
 
