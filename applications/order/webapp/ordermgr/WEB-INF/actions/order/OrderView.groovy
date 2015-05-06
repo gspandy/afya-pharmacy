@@ -382,7 +382,7 @@ if (orderHeader) {
 
             context.benefitPlanName = patientInsurance.benefitPlanName;
             context.benefitPlanId=patientInsurance.benefitPlanId;
-			context.policyNo = patientInsurance.policyNo;
+            context.policyNo = patientInsurance.policyNo;
             context.healthPolicyName = patientInsurance.healthPolicyName;
             context.healthPolicyId=patientInsurance.healthPolicyId;
         }
