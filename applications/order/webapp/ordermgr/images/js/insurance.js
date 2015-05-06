@@ -163,30 +163,35 @@ $(document).ready(function () {
                 +percentage(moduleDetail.deductiblePercentage)+'</td><td>'
                 +moduleDetail.copayAmount+'</td><td>'
                 +percentage(moduleDetail.copayPercentage)+'</td><td>'
-                +moduleDetail.computeBy+'</td>'
+                +text(moduleDetail.computeBy)+'</td>'
                 +decodeBoolean(moduleDetail.authorizationInclusiveConsultation)+''
                 +decodeBoolean(moduleDetail.authorizationRequiredConsultation)+'</tr>';
             });
             $('#moduleTable').find('tbody').html(moduleHtml);
-            var serviceHtml='';
+
             var serviceDetails = data['associatedServiceDetailsOfTheModule'];
+            var serviceHtml='';
             $.each(serviceDetails, function (index, serviceDetail) {
-                serviceHtml=serviceHtml+'<tr><td>'+serviceDetail.moduleName+'</td><td>'
-                +serviceDetail.serviceName+'</td><td>'+text(serviceDetail.sumInsured)+'</td>'+decodeBoolean(serviceDetail.authorization)+
-                '<td>'+serviceDetail.deductibleAmount+'</td><td>'+
-                percentage(serviceDetail.deductiblePercentage)+'</td><td>'+serviceDetail.copayAmount+'</td><td>'+percentage(serviceDetail.copayPercentage)+'</td><td>'+serviceDetail.computeBy+'</td>'
-                +decodeBoolean(serviceDetail.authorizationInclusiveConsultation) +
-                +decodeBoolean(serviceDetail.authorizationRequiredConsultation) +'</tr>';
+                serviceHtml=serviceHtml+'<tr><td>'+serviceDetail.serviceName+'</td><td>'
+                +serviceDetail.moduleName+'</td>'
+                +decodeBoolean(serviceDetail.authorization)+'<td>'
+                +serviceDetail.deductibleAmount+'</td><td>'+
+                percentage(serviceDetail.deductiblePercentage)+'</td><td>'
+                +serviceDetail.copayAmount+'</td><td>'
+                +percentage(serviceDetail.copayPercentage)+'</td><td>'
+                +serviceDetail.individualLimitAmount+'</td><td>'
+                +text(serviceDetail.numberOfCases)+'</td></tr>';
             });
             $('#serviceTable').find('tbody').html(serviceHtml);
         });
+
         $('#myModal').modal({
             keyboard: true
         });
     }
 
     function text(content){
-        if(content==undefined)
+        if(content==undefined || content=='null')
         return '';
         else return content;
     }
@@ -207,6 +212,3 @@ $(document).ready(function () {
     }
 
 });
-
-
-

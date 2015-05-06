@@ -7,7 +7,7 @@
           <td width="10%">${uiLabelMap.OrderOrder} #</td>
           <#-- <td width="15%">${uiLabelMap.OrderOrderBillToParty}</td>
           <td width="25%">${uiLabelMap.OrderProductStore}</td> -->
-          <td width="10%">Clinic Id</td>
+          <td width="10%">Clinic Name</td>
           <td width="10%">Visit Id</td>
           <td width="15%">Visit Date</td>
           <td width="20%">Patient Name</td>
@@ -28,7 +28,7 @@
             <td><a href="/ordermgr/control/orderview?orderId=${salesOrderHeader.orderId}" class="btn btn-link">${salesOrderHeader.orderId}</a></td>
             <#-- <td>${billTo?if_exists}</td>
             <td><#if productStore?has_content>${productStore.storeName?default(productStore.productStoreId)}</#if></td> -->
-            <td><#if salesOrderRxHeader?has_content>${salesOrderRxHeader.clinicId?if_exists}</#if></td>
+            <td><#if salesOrderRxHeader?has_content>${salesOrderRxHeader.clinicName?if_exists}</#if></td>
             <td><#if salesOrderRxHeader?has_content>${salesOrderRxHeader.visitId?if_exists}</#if></td>
             <td><#if salesOrderRxHeader?has_content>${Static["org.ofbiz.base.util.UtilDateTime"].toDateString(salesOrderRxHeader.visitDate, "dd/MM/yyyy")}</#if></td>
             <td><#if salesOrderRxHeader?has_content>${salesOrderRxHeader.firstName?if_exists} ${salesOrderRxHeader.thirdName?if_exists}</#if></td>
