@@ -134,7 +134,7 @@ public class UtilFormatOut {
      * @return A String with the formatted price
      */
     public static String formatCurrency(BigDecimal price, String isoCode, Locale locale) {
-        return formatCurrency(price, isoCode, locale, -1); // earlier it was -1
+        return formatCurrency(price, isoCode, locale, 3); // earlier it was -1
     }
 
     /** Formats a Double into a properly spelled out number string based on Locale
