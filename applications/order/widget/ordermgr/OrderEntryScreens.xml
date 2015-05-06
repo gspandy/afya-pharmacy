@@ -56,6 +56,11 @@ under the License.
                     <decorator-section name="body">
                         <screenlet title="Patient Information" navigation-menu-name="New Patient">
                             <include-form name="PatientInfo" location="component://order/widget/forms/PatientForms.xml"/>
+                            <platform-specific>
+                                <html>
+                                    <html-template location="component://order/webapp/ordermgr/order/benefitdetail.ftl"/>
+                                </html>
+                            </platform-specific>
                         </screenlet>
                     </decorator-section>
                 </decorator-screen>

@@ -90,8 +90,6 @@ public class UtilFormatOut {
     public static String formatCurrency(double price, String isoCode, Locale locale, int maximumFractionDigits) {
         //Debug.logInfo("formatting currency: " + price + ", isoCode: " + isoCode + ", locale: " + locale, module);
         com.ibm.icu.text.NumberFormat nf = com.ibm.icu.text.NumberFormat.getCurrencyInstance(locale);
-        nf.setMinimumFractionDigits(3);
-        nf.setMaximumFractionDigits(3);
         if (isoCode != null && isoCode.length() > 1) {
             nf.setCurrency(com.ibm.icu.util.Currency.getInstance(isoCode));
         } else {
