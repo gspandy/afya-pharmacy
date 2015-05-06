@@ -112,7 +112,7 @@
         <field name="patientInsurance" id-name="patientInsurance">
             <drop-down allow-empty="true">
                 <entity-options entity-name="PatientInsurance" description="${healthPolicyName} - ${policyNo}" key-field-name="benefitPlanId">
-                    <entity-constraint name="patientId" operator="equals" env-name="patientId"/>
+                    <entity-constraint name="patientId" operator="equals" env-name="patient.patientId"/>
                 </entity-options>
             </drop-down>
         </field>
