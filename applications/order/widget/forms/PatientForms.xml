@@ -71,7 +71,7 @@
             </entity-condition>
         </actions>
         <field name="patientId">
-            <hidden value="${patientId}/>
+            <hidden value="${patientId}"/>
         </field>
         <field name="civilId" id-name="civilId" position="1">
             <text/>
