@@ -96,7 +96,7 @@ public class UtilFormatOut {
             if (Debug.verboseOn()) Debug.logVerbose("No isoCode specified to format currency value:" + price, module);
         }
         if (maximumFractionDigits >= 0) {
-            nf.setMaximumFractionDigits(maximumFractionDigits);
+            nf.setMaximumFractionDigits(3);
         }
         return nf.format(price);
     }
@@ -134,7 +134,7 @@ public class UtilFormatOut {
      * @return A String with the formatted price
      */
     public static String formatCurrency(BigDecimal price, String isoCode, Locale locale) {
-        return formatCurrency(price, isoCode, locale, 3); // earlier it was -1
+        return formatCurrency(price, isoCode, locale, -1); // earlier it was -1
     }
 
     /** Formats a Double into a properly spelled out number string based on Locale

@@ -216,10 +216,10 @@ under the License.
             </fo:table-cell>
           </fo:table-row>
           <#assign invoiceItemAdjustmentsGv = delegator.findByAnd("InvoiceItem", {"invoiceId":invoiceItem.invoiceId,"productId":invoiceItem.productId,"invoiceItemTypeId":"INVOICE_ITM_ADJ"})/>
-          <#assign invoiceItemDiscountAmount=0.00/>
+          <#assign invoiceItemDiscountAmount=0.000/>
           <#if invoiceItemAdjustmentsGv?has_content>
             <#list invoiceItemAdjustmentsGv as invoiceItemAdjustment>
-              <#assign invoiceItemDiscountAmount=invoiceItemDiscountAmount+invoiceItemAdjustment.amount?default(0)/>
+              <#assign invoiceItemDiscountAmount=invoiceItemDiscountAmount+invoiceItemAdjustment.amount?default(0.000)/>
             </#list>
             <fo:table-row space-start=".15in" height="30px">
               <fo:table-cell border-right-style="solid" border-right-width="thin" border-right-color="black">
@@ -278,7 +278,7 @@ under the License.
                   <fo:table-cell border-left-style="solid" border-width="thin">
                     <fo:block text-align="right" margin-top="10px" margin-right="3px">
                         <#assign amount=Static["org.ofbiz.accounting.invoice.InvoiceWorker"].getInvoiceNoTaxTotal(invoice)/>
-                        <@ofbizCurrency amount=(amount+discountAmount)?default(0) isoCode=invoice.currencyUomId?if_exists/>
+                        <@ofbizCurrency amount=(amount+discountAmount)?default(0.000) isoCode=invoice.currencyUomId?if_exists/>
                     </fo:block>
                   </fo:table-cell>
                 </fo:table-row>
