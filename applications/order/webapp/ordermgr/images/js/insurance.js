@@ -151,16 +151,17 @@ $(document).ready(function () {
 
     function populateTable(benefitPlanId){
         $.getJSON('http://5.9.249.197:7878/afya-portal/anon/insuranceMaster/getServiceOrModuleDataByBenefitId?benefitId='+benefitPlanId, function(data) {
+            console.log(JSON.stringify(data));
             var moduleDetails = data['moduleDetails'];
             var moduleHtml='';
             $.each(moduleDetails, function (index, moduleDetail) {
                 moduleHtml=moduleHtml+'<tr><td>'+moduleDetail.moduleName+'</td><td>'
-                +text(moduleDetail.sumInsured)+'</td>'
+                +amount(moduleDetail.sumInsured)+'</td>'
                 +decodeBoolean(moduleDetail.authorization)+'<td>'
-                +moduleDetail.deductibleAmount+'</td><td>'
-                +percentage(moduleDetail.deductiblePercentage)+'</td><td>'
-                +moduleDetail.copayAmount+'</td><td>'
-                +percentage(moduleDetail.copayPercentage)+'</td><td>'
+                +amount(moduleDetail.deductibleAmount)+'</td><td>'
+                +percentage(amount(moduleDetail.deductiblePercentage))+'</td><td>'
+                +amount(moduleDetail.copayAmount)+'</td><td>'
+                +percentage(amount(moduleDetail.copayPercentage))+'</td><td>'
                 +text(moduleDetail.computeBy)+'</td>'
                 +decodeBoolean(moduleDetail.authorizationInclusiveConsultation)+''
                 +decodeBoolean(moduleDetail.authorizationRequiredConsultation)+'</tr>';
@@ -173,11 +174,11 @@ $(document).ready(function () {
                 serviceHtml=serviceHtml+'<tr><td>'+serviceDetail.serviceName+'</td><td>'
                 +serviceDetail.moduleName+'</td>'
                 +decodeBoolean(serviceDetail.authorization)+'<td>'
-                +serviceDetail.deductibleAmount+'</td><td>'+
-                percentage(serviceDetail.deductiblePercentage)+'</td><td>'
-                +serviceDetail.copayAmount+'</td><td>'
-                +percentage(serviceDetail.copayPercentage)+'</td><td>'
-                +serviceDetail.individualLimitAmount+'</td><td>'
+                +amount(serviceDetail.deductibleAmount)+'</td><td>'+
+                percentage(amount(serviceDetail.deductiblePercentage))+'</td><td>'
+                +amount(serviceDetail.copayAmount)+'</td><td>'
+                +percentage(amount(serviceDetail.copayPercentage))+'</td><td>'
+                +amount(serviceDetail.individualLimitAmount)+'</td><td>'
                 +text(serviceDetail.numberOfCases)+'</td></tr>';
             });
             $('#serviceTable').find('tbody').html(serviceHtml);
@@ -186,6 +187,13 @@ $(document).ready(function () {
         $('#myModal').modal({
             keyboard: true
         });
+    }
+
+
+    function amount(content){
+        if(content==undefined || content=='null')
+            return '0.000';
+        else return parseFloat(content).toFixed(3);
     }
 
     function text(content){
