@@ -18,7 +18,7 @@ under the License.
 -->
 <#escape x as x?xml>
 
-    <fo:table table-layout="fixed" width="100%" border-width="thin" border-color="black">
+    <#-- <fo:table table-layout="fixed" width="100%" border-width="thin" border-color="black">
         <fo:table-column column-width="proportional-column-width(25.5)"/>
         <fo:table-column column-width="proportional-column-width(5)"/>
         <fo:table-column column-width="proportional-column-width(5)"/>
@@ -49,15 +49,15 @@ under the License.
                 </fo:table-cell>
             </fo:table-row>
         </fo:table-body>
-    </fo:table>
+    </fo:table> -->
     <#if orderHeader?has_content>
         <fo:table table-layout="fixed" width="100%" space-after="0.025in" border-style="solid" border-width="thin" border-color="black">
             <fo:table-column column-width="proportional-column-width(6)"/>
-            <fo:table-column column-width="proportional-column-width(15)"/>
-            <fo:table-column column-width="proportional-column-width(5)"/>
+            <fo:table-column column-width="proportional-column-width(16)"/>
+            <#-- <fo:table-column column-width="proportional-column-width(5)"/> -->
             <fo:table-column column-width="proportional-column-width(4)"/>
             <fo:table-column column-width="proportional-column-width(4)"/>
-            <fo:table-column column-width="proportional-column-width(1.7)"/>
+            <#-- <fo:table-column column-width="proportional-column-width(1.7)"/> -->
             <fo:table-column column-width="proportional-column-width(7)"/>
             <fo:table-column column-width="proportional-column-width(7)"/>
 
@@ -72,9 +72,9 @@ under the License.
                         <fo:block text-align="center" margin-top="3px">Description</fo:block>
                     </fo:table-cell>
 
-                    <fo:table-cell border-style="solid" border-width="thin" border-color="black">
+                    <#-- <fo:table-cell border-style="solid" border-width="thin" border-color="black">
                         <fo:block text-align="center" margin-top="3px">Item Category</fo:block>
-                    </fo:table-cell>
+                    </fo:table-cell> -->
 
                     <fo:table-cell border-style="solid" border-width="thin" border-color="black">
                         <fo:block text-align="center" margin-top="3px">Quantity</fo:block>
@@ -84,9 +84,9 @@ under the License.
                         <fo:block text-align="center" margin-top="3px">Unit</fo:block>
                     </fo:table-cell>
 
-                    <fo:table-cell border-style="solid" border-width="thin" border-color="black">
+                    <#-- <fo:table-cell border-style="solid" border-width="thin" border-color="black">
                         <fo:block text-align="center" margin-top="3px">VAT</fo:block>
-                    </fo:table-cell>
+                    </fo:table-cell> -->
 
                     <fo:table-cell border-style="solid" border-width="thin" border-color="black">
                         <fo:block text-align="center" margin-top="3px">Unit Price</fo:block>
@@ -144,14 +144,14 @@ under the License.
                                 </#if>
                             </fo:block>
                         </fo:table-cell>
-                        <fo:table-cell border-right-style="solid" border-right-width="thin" border-right-color="black">
+                        <#-- <fo:table-cell border-right-style="solid" border-right-width="thin" border-right-color="black">
                             <#assign productCategoryAndMemberGv = delegator.findByAnd("ProductCategoryAndMember", {"productId":orderItem.productId,"productCategoryTypeId":"CATALOG_CATEGORY"})/>
                             <#assign productCategoryGv=[]/>
                             <#if productCategoryAndMemberGv?has_content>
                                 <#assign productCategoryGv = productCategoryAndMemberGv.get(0)/>
                             </#if>
                             <fo:block text-align="center" margin-top="5px"><#if productCategoryAndMemberGv?has_content>${productCategoryGv.categoryName?if_exists}</#if></fo:block>
-                        </fo:table-cell>
+                        </fo:table-cell> -->
                         <fo:table-cell border-right-style="solid" border-right-width="thin" border-right-color="black">
                             <fo:block text-align="center" margin-top="5px">${remainingQuantity}</fo:block>
                         </fo:table-cell>
@@ -161,14 +161,14 @@ under the License.
                             <#assign uomGv = (delegator.findOne("Uom", {"uomId", quantityUom?if_exists}, false))?if_exists />
                             <fo:block text-align="center" margin-top="5px"> <#if uomGv?has_content>${uomGv.description}</#if> </fo:block>
                         </fo:table-cell>
-                        <fo:table-cell border-right-style="solid" border-right-width="thin" border-right-color="black">
+                        <#-- <fo:table-cell border-right-style="solid" border-right-width="thin" border-right-color="black">
                             <#assign orderAdjustmentGv = delegator.findByAnd("OrderAdjustment", {"orderId":orderItem.orderId,"orderItemSeqId":orderItem.orderItemSeqId,"orderAdjustmentTypeId":"SALES_TAX"})/>
                             <#if orderAdjustmentGv?has_content>
                                 <fo:block text-align="center" margin-top="5px">S</fo:block>
                             <#else>
                                 <fo:block text-align="center" margin-top="5px">E</fo:block>
                             </#if>
-                        </fo:table-cell>
+                        </fo:table-cell> -->
                         <fo:table-cell border-right-style="solid" border-right-width="thin" border-right-color="black">
                             <fo:block text-align="right" margin-top="5px" margin-right="5px"><@ofbizCurrency amount=orderItem.unitPrice isoCode=currencyUomId/></fo:block>
                         </fo:table-cell>
@@ -186,7 +186,7 @@ under the License.
                 <#assign height = 100 - (30 * orderItemList.size())/>
                 <#if height gt 0>
                     <fo:table-row height="${height}px">
-                        <#list 8..1 as i>
+                        <#list 6..1 as i>
                             <fo:table-cell border-right-style="solid" border-right-width="thin" border-right-color="black"></fo:table-cell>
                         </#list>
                     </fo:table-row>
@@ -259,7 +259,7 @@ under the License.
         <fo:table-body>
             <fo:table-row space-start="2.15in" height="35px">
                 <fo:table-cell>
-                    <fo:block text-align="left" margin-left="3px" margin-top="25px">Prepared By: ...........................................  &#160; &#160; &#160; Date: ............................</fo:block>
+                    <fo:block text-align="left" margin-left="3px" margin-top="20px">Prepared By: ...........................................  &#160; &#160; &#160; Date: ............................</fo:block>
                 </fo:table-cell>
                 <fo:table-cell border-style="solid" border-width="thin">
                     <fo:table table-layout="fixed" font-size="10pt" width="100%">
@@ -282,7 +282,7 @@ under the License.
             </fo:table-row>
             <fo:table-row space-start="2.15in" height="35px">
                 <fo:table-cell>
-                    <fo:block text-align="left" margin-left="3px" margin-top="25px">Checked By: ............................................  &#160; &#160; &#160; Date: ...........................</fo:block>
+                    <fo:block text-align="left" margin-left="3px" margin-top="20px">Checked By: ............................................  &#160; &#160; &#160; Date: ...........................</fo:block>
                 </fo:table-cell>
                 <fo:table-cell border-style="solid" border-width="thin">
                     <fo:table table-layout="fixed" font-size="10pt" width="100%">
@@ -309,7 +309,7 @@ under the License.
                     </fo:table>
                 </fo:table-cell>
             </fo:table-row>
-            <fo:table-row space-start="2.15in" height="35px">
+            <#-- <fo:table-row space-start="2.15in" height="35px">
                 <fo:table-cell>
                     <fo:block text-align="left" margin-left="3px" margin-top="25px">Approved By: ...........................................  &#160; &#160; &#160; Date: ...........................</fo:block>
                 </fo:table-cell>
@@ -324,7 +324,7 @@ under the License.
                                 </fo:table-cell>
                                 <fo:table-cell border-left-style="solid" border-width="thin">
                                     <fo:block text-align="right" margin-top="15px" margin-right="5px">
-                                        <#-- the vat total -->
+                                        <!-- the vat total &ndash;&gt;
                                         <#assign vatAmt = Static["java.math.BigDecimal"].ZERO>
                                         <#if invoiceItemsVat?has_content>
                                             <@ofbizCurrency amount=invoiceItemsVat.get(0).amount isoCode=currencyUomId/>
@@ -337,10 +337,10 @@ under the License.
                         </fo:table-body>
                     </fo:table>
                 </fo:table-cell>
-            </fo:table-row>
+            </fo:table-row> -->
             <fo:table-row space-start="2.15in" height="35px">
                 <fo:table-cell>
-                    <fo:block></fo:block>
+                    <fo:block text-align="left" margin-left="3px" margin-top="20px">Approved By: ...........................................  &#160; &#160; &#160; Date: ...........................</fo:block>
                 </fo:table-cell>
                 <fo:table-cell border-style="solid" border-width="thin">
                     <fo:table table-layout="fixed" font-size="10pt" width="100%">

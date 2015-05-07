@@ -43,6 +43,15 @@ under the License.
                             </widgets>
                         </section>
                     </decorator-section>
+                    <decorator-section name="top">
+                        <section>
+                            <widgets>
+                                <platform-specific>
+                                    <xsl-fo><html-template location="component://order/webapp/ordermgr/order/poOrderHeader.fo.ftl"/></xsl-fo>
+                                </platform-specific>
+                            </widgets>
+                        </section>
+                    </decorator-section>
                     <decorator-section name="topLeft">
                         <section>
                             <widgets>
@@ -58,7 +67,10 @@ under the License.
                                 <!-- <platform-specific>
                                     <xsl-fo><html-template location="component://order/webapp/ordermgr/order/orderReportHeaderInfo.fo.ftl"/></xsl-fo>
                                 </platform-specific> -->
-                                <include-screen name="POCustomerInfo" location="component://order/widget/ordermgr/OrderPrintScreens.xml"/>
+                                <!-- <include-screen name="POCustomerInfo" location="component://order/widget/ordermgr/OrderPrintScreens.xml"/> -->
+                                <platform-specific>
+                                    <xsl-fo><html-template location="component://order/webapp/ordermgr/order/poOrderNumberInfo.fo.ftl"/></xsl-fo>
+                                </platform-specific>
                             </widgets>
                         </section>
                     </decorator-section>

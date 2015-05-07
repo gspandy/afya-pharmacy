@@ -146,6 +146,7 @@ if (address)    {
    stateProvince = address.getRelatedOneCache("StateProvinceGeo");
    if (stateProvince) {
        context.stateProvinceAbbr = stateProvince.abbreviation;
+	   context.governorate = stateProvince.get("geoName", locale);
    }
 }
 context.postalAddress = address;

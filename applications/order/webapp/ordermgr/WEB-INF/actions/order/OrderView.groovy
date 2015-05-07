@@ -556,3 +556,33 @@ if (orderItems) {
     taxAdjustments.addAll(delegator.findList("OrderAdjustmentGrouped",
         EntityCondition.makeCondition([EntityCondition.makeCondition(UtilMisc.toMap("orderId",orderId))]),null,null,null,true));
     context.taxAdjustments = taxAdjustments;
+
+	//telephone
+	phones = delegator.findByAnd("PartyContactMechPurpose", [partyId : partyId, contactMechPurposeTypeId : "PRIMARY_PHONE"]);
+	selPhones = EntityUtil.filterByDate(phones, nowTimestamp, "fromDate", "thruDate", true);
+	if (selPhones) {
+		context.phone = delegator.findByPrimaryKey("TelecomNumber", [contactMechId : selPhones[0].contactMechId]);
+	}  else{
+		context.phone = [:];
+	}
+	
+	//Email
+	emails = delegator.findByAnd("PartyContactMechPurpose", [partyId : partyId, contactMechPurposeTypeId : "PRIMARY_EMAIL"]);
+	selEmails = EntityUtil.filterByDate(emails, nowTimestamp, "fromDate", "thruDate", true);
+	if (selEmails) {
+		context.email = delegator.findByPrimaryKey("ContactMech", [contactMechId : selEmails[0].contactMechId]);
+	} else {    //get email address from party contact mech
+		contacts = delegator.findByAnd("PartyContactMech", [partyId : partyId]);
+		selContacts = EntityUtil.filterByDate(contacts, nowTimestamp, "fromDate", "thruDate", true);
+		if (selContacts) {
+			i = selContacts.iterator();
+			while (i.hasNext())    {
+				email = i.next().getRelatedOne("ContactMech");
+				if ("ELECTRONIC_ADDRESS".equals(email.contactMechTypeId))    {
+					context.email = email;
+					break;
+				}
+			}
+		}
+	}
+	

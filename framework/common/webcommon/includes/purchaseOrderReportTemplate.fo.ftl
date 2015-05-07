@@ -63,7 +63,7 @@ under the License.
                     </fo:table-body>
                 </fo:table>
                 <fo:table table-layout="fixed" width="100%" >
-                    <fo:table-column column-number="2" column-width="proportional-column-width(100)"/>
+                    <#-- <fo:table-column column-number="2" column-width="proportional-column-width(100)"/> -->
                     <fo:table-body>
                         <fo:table-row>
                             <fo:table-cell>
@@ -109,16 +109,16 @@ under the License.
             
             <fo:static-content flow-name="xsl-region-after">
                 <#if footerLabel?has_content>
-                    <fo:block font-size="10pt" text-align="center" space-before="10pt">
-                        This is a computer generated statement. <#-- ${footerLabel}. -->
+                    <#-- <fo:block font-size="10pt" text-align="center" space-before="10pt">
+                        This is a computer generated statement. <!-- ${footerLabel}. &ndash;&gt;
                     </fo:block>
                     <fo:block font-size="10pt" text-align="right" space-before="10pt">
                         ${uiLabelMap.CommonPage} <fo:page-number/> ${uiLabelMap.CommonOf} <fo:page-number-citation ref-id="theEnd"/>
-                    </fo:block>
+                    </fo:block> -->
                 <#else>
-                    <fo:block font-size="10pt" text-align="center" space-before="10pt">
-                        This is a computer generated statement. <#-- invoice. -->
-                    </fo:block>
+                    <#-- <fo:block font-size="10pt" text-align="center" space-before="10pt">
+                        This is a computer generated statement. <!-- invoice. &ndash;&gt;
+                    </fo:block> -->
                     <fo:block font-size="10pt" text-align="right" space-before="10pt">
                         ${uiLabelMap.CommonPage} <fo:page-number/> ${uiLabelMap.CommonOf} <fo:page-number-citation ref-id="theEnd"/>
                     </fo:block>
