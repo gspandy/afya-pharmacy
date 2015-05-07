@@ -83,6 +83,7 @@ public class AfyaSalesOrderController {
             patientInfo.setPatientType(prescription.getPatientType());
             patientInfo.setAddress(prescription.getAddress());
             patientInfo.setHisBenefitId(prescription.getHisBenefitId());
+            patientInfo.setBenefitId(prescription.getModuleName());
             patientInfo.setBenefitId(prescription.getBenefitId());
             cart.setPatientInfo(patientInfo);
             CheckOutHelper checkOutHelper = new CheckOutHelper(dispatcher, dispatcher.getDelegator(), cart);
@@ -162,6 +163,7 @@ public class AfyaSalesOrderController {
         private String doctorName;
         private String address;
         private String hisBenefitId;
+        private String moduleName;
         private String benefitId;
         public String getAddress() {
             return address;
@@ -268,6 +270,14 @@ public class AfyaSalesOrderController {
 
         public void setHisBenefitId(String hisBenefitId) {
             this.hisBenefitId = hisBenefitId;
+        }
+
+        public String getModuleName() {
+            return moduleName;
+        }
+
+        public void setModuleName(String moduleName) {
+            this.moduleName = moduleName;
         }
 
         public String getBenefitId() {
