@@ -51,12 +51,12 @@ under the License.
                 <td width="30%">${orderRxHeader.visitId?if_exists}</td>
                 <td width="19%"><span class="label">Visit Date</span></td>
                 <td width="1%">&nbsp;</td>
-                <td width="30%">${orderRxHeader.visitDate?if_exists}</td>
+                <td width="30%"><#if orderRxHeader.visitDate?has_content>${orderRxHeader.visitDateif_exists?string("dd/MM/yyyy")}</#if></td>
             </tr>
             <tr>
                 <td width="19%"><span class="label">Afya ID</span></td>
                 <td width="1%">&nbsp;</td>
-                <td width="30%"><#if orderRxHeader.afyaId?has_content>${orderRxHeader.afyaId?string("dd/MM/yyyy")}</#if></td>
+                <td width="30%">${orderRxHeader.afyaId?if_exists}</td>
             </tr>
             <tr>
                 <td width="19%"><span class="label">Clinic Name</span></td>
