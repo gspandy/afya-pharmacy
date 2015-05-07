@@ -116,7 +116,7 @@ under the License.
               <fo:block margin-left="3px"><fo:leader></fo:leader></fo:block>
               <fo:block margin-left="3px">Doctor: ${orderRxHeader.doctorName?if_exists}</fo:block>
               <fo:block margin-left="3px">Invoice Date: <#if invoiceDate?has_content>${invoiceDate?if_exists?string("dd/MM/yyyy")}</#if></fo:block>
-              <fo:block margin-left="3px">Invoice No: <#if invoice?has_content>${invoice.invoiceId} ${orderRxHeader.benefitPlanId?if_exists}</#if></fo:block>
+              <fo:block margin-left="3px">Invoice No: <#if invoice?has_content>${invoice.invoiceId}</#if></fo:block>
               <#if orderRxHeader.patientType?exists && "INSURANCE"==orderRxHeader.patientType>
                   <#assign patientInsuranceList = delegator.findByAnd("PatientInsurance", {"benefitPlanId" : orderRxHeader.benefitPlanId?if_exists})>
                   <#if patientInsuranceList?has_content>
