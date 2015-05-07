@@ -56,7 +56,7 @@ under the License.
             <tr>
                 <td width="19%"><span class="label">Afya ID</span></td>
                 <td width="1%">&nbsp;</td>
-                <td width="30%"><#if orderRxHeader.afyaId?has_content>${orderRxHeader.afyaId?if_exists?string("dd/MM/yyyy")}</#if></td>
+                <td width="30%"><#if orderRxHeader.afyaId?has_content>${orderRxHeader.afyaId?string("dd/MM/yyyy")}</#if></td>
             </tr>
             <tr>
                 <td width="19%"><span class="label">Clinic Name</span></td>
