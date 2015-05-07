@@ -320,7 +320,7 @@ under the License.
               <fo:table-body>
                 <fo:table-row height="25px">
                   <fo:table-cell>
-                    <fo:block text-align="left" margin-top="10px" margin-left="3px">Discount @ &#160; &#160; 0.00%</fo:block>
+                    <fo:block text-align="left" margin-top="10px" margin-left="3px">Discount</fo:block>
                   </fo:table-cell>
                   <fo:table-cell border-left-style="solid" border-width="thin">
                     <fo:block text-align="right" margin-top="10px" margin-right="3px">

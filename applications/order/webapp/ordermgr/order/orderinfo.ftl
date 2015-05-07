@@ -176,7 +176,7 @@ under the License.
             <tr>
               <td align="right" valign="top" width="15%" class="label">&nbsp;${uiLabelMap.CommonCurrency} </td>
               <td width="5%">&nbsp;</td>
-              <td valign="top" width="80%">${orderHeader.currencyUom?default("???")}</td>
+              <td valign="top" width="80%"><#if orderHeader.currencyUom?exists && "KWD" == orderHeader.currencyUom>KD<#else>${orderHeader.currencyUom?default("???")}</#if></td>
             </tr>
             <#if orderHeader.internalCode?has_content>
             <tr><td colspan="3"><hr /></td></tr>
