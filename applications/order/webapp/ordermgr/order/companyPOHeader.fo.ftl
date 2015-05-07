@@ -54,7 +54,7 @@ under the License.
 
                             <#if sendingPartyTaxId?exists || phone?exists || email?exists || website?exists || eftAccount?exists>
                                 <fo:list-block provisional-distance-between-starts=".5in">
-                                    <#if phone?exists>
+                                    <#if phone?exists && phone.contactNumber?has_content>
                                         <fo:list-item>
                                             <fo:list-item-label>
                                                 <fo:block>${uiLabelMap.CommonTelephoneAbbr}:</fo:block>
@@ -64,7 +64,7 @@ under the License.
                                             </fo:list-item-body>
                                         </fo:list-item>
                                     </#if>
-                                    <#if email?exists>
+                                    <#if email?exists && email.infoString?has_content>
                                         <fo:list-item>
                                             <fo:list-item-label>
                                                 <fo:block>${uiLabelMap.CommonEmail}:</fo:block>
