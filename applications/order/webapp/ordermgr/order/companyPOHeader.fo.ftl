@@ -39,20 +39,22 @@ under the License.
                         <fo:block><fo:leader></fo:leader></fo:block>
                         <fo:block font-size="8pt">
                             <fo:block font-weight="bold">${companyName}</fo:block>
-                            <fo:block>${postalAddress.city?if_exists}</fo:block>
                             <#if postalAddress?has_content>
                                 <fo:block>
-                                <#if postalAddress.address1?has_content>${postalAddress.address1?if_exists}, </#if>
-                                <#if postalAddress.address2?has_content>${postalAddress.address2?if_exists}, </#if>
+                                    <#if postalAddress.city?exists>${postalAddress.city?if_exists}</#if>
                                 </fo:block>
                                 <fo:block>
-                                    <#if postalAddress.postalCode?has_content>${postalAddress.postalCode?if_exists} - </#if>
+                                    <#if postalAddress.address1?exists>${postalAddress.address1?if_exists}, </#if>
+                                    <#if postalAddress.address2?exists>${postalAddress.address2?if_exists},</#if>
+                                </fo:block>
+                                <fo:block>
+                                    <#if postalAddress.postalCode?exists>${postalAddress.postalCode?if_exists} - </#if>
                                     <#if governorate?has_content>${governorate?if_exists}, </#if>
                                     <#if countryName?has_content>${countryName?if_exists}.</#if>
                                 </fo:block>
                             </#if>
 
-                            <#if sendingPartyTaxId?exists || phone?exists || email?exists || website?exists || eftAccount?exists>
+                            <#if phone?exists || email?exists>
                                 <fo:list-block provisional-distance-between-starts=".5in">
                                     <#if phone?exists && phone.contactNumber?has_content>
                                         <fo:list-item>

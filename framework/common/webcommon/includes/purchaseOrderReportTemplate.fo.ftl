@@ -111,10 +111,10 @@ under the License.
                 <#if footerLabel?has_content>
                     <#-- <fo:block font-size="10pt" text-align="center" space-before="10pt">
                         This is a computer generated statement. <!-- ${footerLabel}. &ndash;&gt;
-                    </fo:block>
+                    </fo:block> -->
                     <fo:block font-size="10pt" text-align="right" space-before="10pt">
                         ${uiLabelMap.CommonPage} <fo:page-number/> ${uiLabelMap.CommonOf} <fo:page-number-citation ref-id="theEnd"/>
-                    </fo:block> -->
+                    </fo:block>
                 <#else>
                     <#-- <fo:block font-size="10pt" text-align="center" space-before="10pt">
                         This is a computer generated statement. <!-- invoice. &ndash;&gt;

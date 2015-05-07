@@ -114,6 +114,17 @@ under the License.
                         <decorator-screen name="FoSalesInvoiceReportDecorator" location="component://common/widget/CommonScreens.xml">
                         
                             <!-- at the top of every page we put the logo and company information -->
+                            <decorator-section name="header">
+                                <platform-specific>
+                                   <xsl-fo><html-template location="component://accounting/webapp/accounting/invoice/companyInvoiceHeader.fo.ftl"/></xsl-fo>
+                                </platform-specific>
+                            </decorator-section>
+                            <decorator-section name="top">
+                                <platform-specific>
+                                   <xsl-fo><html-template location="component://accounting/webapp/accounting/invoice/soInvoiceHeader.fo.ftl"/></xsl-fo>
+                              </platform-specific>
+                            </decorator-section>
+                            
                             <!-- <decorator-section name="header">
                                 <section>
                                     <widgets>
@@ -283,7 +294,18 @@ under the License.
         </section>
     </screen>
     
-    <screen name="ZPCHeader">
+    <screen name="InvoiceHeader">
+        <section>
+            <actions>
+                <script location="component://order/webapp/ordermgr/WEB-INF/actions/order/CompanyHeader.groovy"/>
+            </actions>
+            <widgets>
+                <platform-specific><xsl-fo><html-template location="component://order/webapp/ordermgr/order/companyPOHeader.fo.ftl"/></xsl-fo></platform-specific>
+            </widgets>
+        </section>
+    </screen>
+    
+    <!-- <screen name="ZPCHeader">
         <section>
             <actions>
                 <script location="component://order/webapp/ordermgr/WEB-INF/actions/order/CompanyHeader.groovy"/>
@@ -292,6 +314,6 @@ under the License.
                 <platform-specific><xsl-fo><html-template location="component://order/webapp/ordermgr/order/companyHeaderInfo.fo.ftl"/></xsl-fo></platform-specific>
             </widgets>
         </section>
-    </screen>
+    </screen> -->
     
 </screens>

@@ -23,7 +23,7 @@ under the License.
               margin-top="0.4in" margin-bottom="0.4in"
               margin-left="0.6in" margin-right="0.4in">
             <#-- main body -->
-            <fo:region-body margin-top="150px" margin-bottom="0.4in"/>
+            <fo:region-body margin-top="100px" margin-bottom="0.4in"/>
             <#-- the header -->
             <fo:region-before extent="1.2in"/>
             <#-- the footer -->
@@ -62,7 +62,7 @@ under the License.
                 </fo:table-body>
             </fo:table>
             <fo:table table-layout="fixed" width="100%" >
-                <fo:table-column column-number="2" column-width="proportional-column-width(100)"/>
+                <#-- <fo:table-column column-number="2" column-width="proportional-column-width(100)"/> -->
                 <fo:table-body>
                     <fo:table-row>
                         <fo:table-cell>
@@ -71,7 +71,7 @@ under the License.
                     </fo:table-row>
                 </fo:table-body>
             </fo:table>
-            <fo:table table-layout="fixed" width="100%">
+            <#-- <fo:table table-layout="fixed" width="100%">
                 <fo:table-column column-number="1" column-width="proportional-column-width(50)"/>
                 <fo:table-column column-number="2" column-width="proportional-column-width(50)"/>
                 <fo:table-body>
@@ -84,7 +84,7 @@ under the License.
                         </fo:table-cell>
                     </fo:table-row>
                 </fo:table-body>
-            </fo:table>
+            </fo:table> -->
             <#-- <fo:table table-layout="fixed" width="100%" space-before="0.07in">
                 <fo:table-column column-number="1" column-width="proportional-column-width(50)"/>
                 <fo:table-column column-number="2" column-width="proportional-column-width(50)"/>
@@ -110,12 +110,18 @@ under the License.
         
         <fo:static-content flow-name="xsl-region-after">
             <#if footerLabel?has_content>
-                <fo:block font-size="10pt" text-align="center" space-before="10pt">
+                <#-- <fo:block font-size="10pt" text-align="center" space-before="10pt">
                     This is a computer generated ${footerLabel}.
+                </fo:block> -->
+                <fo:block font-size="10pt" text-align="right" space-before="10pt">
+                    ${uiLabelMap.CommonPage} <fo:page-number/> ${uiLabelMap.CommonOf} <fo:page-number-citation ref-id="theEnd"/>
                 </fo:block>
             <#else>
-                <fo:block font-size="10pt" text-align="center" space-before="10pt">
+                <#-- <fo:block font-size="10pt" text-align="center" space-before="10pt">
                     This is a computer generated invoice.
+                </fo:block> -->
+                <fo:block font-size="10pt" text-align="right" space-before="10pt">
+                    ${uiLabelMap.CommonPage} <fo:page-number/> ${uiLabelMap.CommonOf} <fo:page-number-citation ref-id="theEnd"/>
                 </fo:block>
             </#if>
         </fo:static-content>
