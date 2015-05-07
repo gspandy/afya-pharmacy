@@ -33,7 +33,7 @@ public class UtilNumber {
     private static final String arithmeticPropertiesFile = "arithmetic.properties";
 
     // default scale and rounding mode for BigDecimals
-    private static final int DEFAULT_BD_SCALE = 2;
+    private static final int DEFAULT_BD_SCALE = 3;
     private static final int DEFAULT_BD_ROUNDING_MODE = BigDecimal.ROUND_HALF_UP;
 
     /**
