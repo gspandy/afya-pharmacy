@@ -22,7 +22,7 @@ under the License.
     <fo:block><fo:leader></fo:leader></fo:block>
     <fo:block font-size="14pt" text-align="center" font-weight="bold">${orderId?if_exists}</fo:block>
     <#assign orderDate = orderHeader.get("orderDate")>
-    <fo:block font-size="14pt" text-align="center">${orderDate?if_exists?string("dd/MM/yyyy")}</fo:block>
+    <fo:block font-size="14pt" text-align="center"><#if orderDate?has_content>${orderDate?if_exists?string("dd/MM/yyyy")}</#if></fo:block>
     <fo:block><fo:leader></fo:leader></fo:block>
     <fo:block><fo:leader></fo:leader></fo:block>
 

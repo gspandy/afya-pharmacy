@@ -24,7 +24,7 @@ under the License.
             <#assign contactMech = supplierGeneralContactMechValueMap.contactMech>
             <#assign postalAddress = supplierGeneralContactMechValueMap.postalAddress>
             <#assign partyGroupGv = delegator.findOne("PartyGroup",{"partyId":supplierId},false)/>
-            <fo:block font-size="8pt" margin-bottom="5px"  text-indent="0.1in"> 
+            <fo:block font-size="8pt" margin-bottom="5px" text-indent="0.1in"> 
                 <#if partyGroupGv?has_content>${partyGroupGv.groupName?if_exists}<#else>${supplierPartyId}</#if>
                 <#if postalAddress?has_content>
                     <fo:block>${postalAddress.city?if_exists}</fo:block>
