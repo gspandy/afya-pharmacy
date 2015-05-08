@@ -19,7 +19,7 @@
             <text/>
         </field>
         <field name="patientType" position="2">
-            <drop-down>
+            <drop-down allow-empty="true">
                 <option key="CASH" description="Cash"/>
                 <option key="CORPORATE" description="Corporate"/>
                 <option key="INSURANCE" description="Insurance"/>
@@ -112,7 +112,7 @@
             <text/>
         </field>
         <field use-when="${'CASH' != patient.patientType}" name="patientType">
-            <drop-down allow-empty="true">
+            <drop-down>
                 <option key="CASH" description="Cash"/>
                 <option key="CORPORATE" description="Corporate"/>
                 <option key="INSURANCE" description="Insurance"/>
