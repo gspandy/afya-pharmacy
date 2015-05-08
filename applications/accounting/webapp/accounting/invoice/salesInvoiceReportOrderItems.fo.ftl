@@ -83,50 +83,85 @@ under the License.
     <fo:table-column />
     <fo:table-body font-size="8pt">
       <fo:table-row space-start=".15in" height="65px">
-        <fo:table-cell>
-          <fo:block margin-left="3px"><fo:leader></fo:leader></fo:block>
-          <#if orderId?exists>
-            <#assign orderRxHeader = delegator.findOne("OrderRxHeader", {"orderId" : orderId}, true)>
-            <#if orderRxHeader?has_content>
+        <#if orderId?has_content>
+          <#assign orderRxHeader = delegator.findOne("OrderRxHeader", {"orderId" : orderId}, true)>
+          <#if orderRxHeader?has_content>
+            <fo:table-cell>
+              <fo:block margin-left="3px"><fo:leader></fo:leader></fo:block>
               <fo:block font-weight="bold" margin-left="3px">Patient Details:</fo:block>
               <fo:block margin-left="3px"><fo:leader></fo:leader></fo:block>
               <fo:block margin-left="3px">Afya ID: ${orderRxHeader.afyaId?if_exists}</fo:block>
               <fo:block margin-left="3px">Civil ID: ${orderRxHeader.civilId?if_exists}</fo:block>
               <fo:block margin-left="3px">Patient Name: ${orderRxHeader.firstName?if_exists} ${orderRxHeader.thirdName?if_exists}</fo:block>
               <fo:block margin-left="3px">Gender: <#if orderRxHeader.gender?exists && ("M" == orderRxHeader.gender || "Male" == orderRxHeader.gender)>Male<#elseif orderRxHeader.gender?exists && ("F" == orderRxHeader.gender || "Female" == orderRxHeader.gender)>Female</#if></fo:block>
-              <fo:block margin-left="3px">Patient Type: ${orderRxHeader.patientType?if_exists}</fo:block>
-            <#else>
-              <fo:block font-weight="bold" margin-left="3px">Patient Details:</fo:block>
+              <#if orderRxHeader.patientType?exists && "INSURANCE"==orderRxHeader.patientType>
+                <fo:block margin-left="3px">Patient Type: ${orderRxHeader.patientType?if_exists}</fo:block>
+              </#if>
               <fo:block margin-left="3px"><fo:leader></fo:leader></fo:block>
-              <fo:block font-weight="bold" margin-left="3px"></fo:block>
-            </#if>
-          <#else>
-            <fo:block font-weight="bold" margin-left="3px">Patient Details:</fo:block>
-            <fo:block margin-left="3px"><fo:leader></fo:leader></fo:block>
-            <fo:block font-weight="bold" margin-left="3px"></fo:block>
-          </#if>
-          <fo:block margin-left="3px"><fo:leader></fo:leader></fo:block>
-        </fo:table-cell>
-        <fo:table-cell>
-          <fo:block margin-left="3px"><fo:leader></fo:leader></fo:block>
-          <#if orderId?exists>
-            <#assign orderRxHeader = delegator.findOne("OrderRxHeader", {"orderId" : orderId}, true)>
-            <#if orderRxHeader?has_content>
+            </fo:table-cell>
+            <fo:table-cell>
+              <fo:block margin-left="3px"><fo:leader></fo:leader></fo:block>
               <fo:block margin-left="3px"><fo:leader></fo:leader></fo:block>
               <fo:block margin-left="3px"><fo:leader></fo:leader></fo:block>
               <fo:block margin-left="3px">Doctor: ${orderRxHeader.doctorName?if_exists}</fo:block>
               <fo:block margin-left="3px">Invoice Date: <#if invoiceDate?has_content>${invoiceDate?if_exists?string("dd/MM/yyyy")}</#if></fo:block>
               <fo:block margin-left="3px">Invoice No: <#if invoice?has_content>${invoice.invoiceId}</#if></fo:block>
+              <#if orderRxHeader.patientType?exists && "INSURANCE"!=orderRxHeader.patientType>
+                <fo:block margin-left="3px">Patient Type: ${orderRxHeader.patientType?if_exists}</fo:block>
+              </#if>
               <#if orderRxHeader.patientType?exists && "INSURANCE"==orderRxHeader.patientType>
-                  <#assign patientInsuranceList = delegator.findByAnd("PatientInsurance", {"benefitPlanId" : orderRxHeader.benefitPlanId?if_exists})>
-                  <#if patientInsuranceList?has_content>
-                      <#assign patientInsurance = patientInsuranceList.get(0)?if_exists>
-                      <fo:block margin-left="3px">Patient Insurance: ${patientInsurance.healthPolicyName?if_exists} - ${patientInsurance.policyNo?if_exists}</fo:block></#if>
-                  </#if>
-            </#if>
+                <#assign patientInsuranceList = delegator.findByAnd("PatientInsurance", {"benefitPlanId" : orderRxHeader.benefitPlanId?if_exists})>
+                <#if patientInsuranceList?has_content>
+                  <#assign patientInsurance = patientInsuranceList.get(0)?if_exists>
+                  <fo:block margin-left="3px">Patient Insurance: ${patientInsurance.healthPolicyName?if_exists} - ${patientInsurance.policyNo?if_exists}</fo:block>
+                </#if>
+              </#if>
+              <fo:block margin-left="3px"><fo:leader></fo:leader></fo:block>
+            </fo:table-cell>
+          <#else>
+            <fo:table-cell>
+              <fo:block margin-left="3px"><fo:leader></fo:leader></fo:block>
+              <fo:block font-weight="bold" margin-left="3px">Patient Details:</fo:block>
+              <fo:block margin-left="3px"><fo:leader></fo:leader></fo:block>
+              <fo:block margin-left="3px">Afya ID: </fo:block>
+              <fo:block margin-left="3px">Civil ID: </fo:block>
+              <fo:block margin-left="3px">Patient Name: </fo:block>
+              <fo:block margin-left="3px">Gender: </fo:block>
+              <fo:block margin-left="3px"><fo:leader></fo:leader></fo:block>
+            </fo:table-cell>
+            <fo:table-cell>
+              <fo:block margin-left="3px"><fo:leader></fo:leader></fo:block>
+              <fo:block margin-left="3px"><fo:leader></fo:leader></fo:block>
+              <fo:block margin-left="3px"><fo:leader></fo:leader></fo:block>
+              <fo:block margin-left="3px">Doctor: </fo:block>
+              <fo:block margin-left="3px">Invoice Date: <#if invoiceDate?has_content>${invoiceDate?if_exists?string("dd/MM/yyyy")}</#if></fo:block>
+              <fo:block margin-left="3px">Invoice No: <#if invoice?has_content>${invoice.invoiceId}</#if></fo:block>
+              <fo:block margin-left="3px">Patient Type: </fo:block>
+              <fo:block margin-left="3px"><fo:leader></fo:leader></fo:block>
+            </fo:table-cell>
           </#if>
-          <fo:block margin-left="3px"><fo:leader></fo:leader></fo:block>
-        </fo:table-cell>
+        <#else>
+          <fo:table-cell>
+            <fo:block margin-left="3px"><fo:leader></fo:leader></fo:block>
+            <fo:block font-weight="bold" margin-left="3px">Patient Details:</fo:block>
+            <fo:block margin-left="3px"><fo:leader></fo:leader></fo:block>
+            <fo:block margin-left="3px">Afya ID: </fo:block>
+            <fo:block margin-left="3px">Civil ID: </fo:block>
+            <fo:block margin-left="3px">Patient Name: </fo:block>
+            <fo:block margin-left="3px">Gender: </fo:block>
+            <fo:block margin-left="3px"><fo:leader></fo:leader></fo:block>
+          </fo:table-cell>
+          <fo:table-cell>
+            <fo:block margin-left="3px"><fo:leader></fo:leader></fo:block>
+            <fo:block margin-left="3px"><fo:leader></fo:leader></fo:block>
+            <fo:block margin-left="3px"><fo:leader></fo:leader></fo:block>
+            <fo:block margin-left="3px">Doctor: </fo:block>
+            <fo:block margin-left="3px">Invoice Date: <#if invoiceDate?has_content>${invoiceDate?if_exists?string("dd/MM/yyyy")}</#if></fo:block>
+            <fo:block margin-left="3px">Invoice No: <#if invoice?has_content>${invoice.invoiceId}</#if></fo:block>
+            <fo:block margin-left="3px">Patient Type: </fo:block>
+            <fo:block margin-left="3px"><fo:leader></fo:leader></fo:block>
+          </fo:table-cell>
+        </#if>
       </fo:table-row>
     </fo:table-body>
   </fo:table>
