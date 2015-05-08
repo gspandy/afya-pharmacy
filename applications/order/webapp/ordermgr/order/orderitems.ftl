@@ -651,7 +651,6 @@ under the License.
                                             </#if>
                                             <#assign remainingQuantity = ((orderItem.quantity?default(0.000) - orderItem.cancelQuantity?default(0.000)) - shippedQuantity?double)>
                                             ${remainingQuantity}
-                                            <#-- ${shippedQuantity?default(0.000)} -->
                                         </td>
                                         <td align="center" valign="top" nowrap="nowrap">
                                             <#assign product = orderItem.getRelatedOneCache("Product")>
@@ -725,7 +724,6 @@ under the License.
                                             </#if>
                                             <#assign remainingQuantity = ((orderItem.quantity?default(0.000) - orderItem.cancelQuantity?default(0.000)) - shippedQuantity?double)>
                                             ${remainingQuantity}
-                                            <#-- ${shippedQuantity?default(0.000)} -->
                                         </td>
                                         <td align="center" valign="top" nowrap="nowrap">
                                             <#assign product = orderItem.getRelatedOneCache("Product")>
@@ -740,12 +738,12 @@ under the License.
                                         <td style="text-align:right;padding-right:10px;" valign="top" nowrap="nowrap">
                                             <@ofbizCurrency amount=Static["org.ofbiz.order.order.OrderReadHelper"].getOrderItemAdjustmentsTotal(orderItem, orderAdjustments, true, false, false) isoCode=currencyUomId/>
                                         </td>
+                                        <td align="center" valign="top" nowrap="nowrap">
+                                            <#assign copayPatient = Static["org.ofbiz.order.order.OrderReadHelper"].getOrderItemPatientToPay(orderItem)?default(0.000)>
+                                            <@ofbizCurrency amount=copayPatient isoCode=currencyUomId/>
+                                            <#assign totalCopayPatient = totalCopayPatient + copayPatient>
+                                        </td>
                                         <#if orderHeader.orderTypeId == "SALES_ORDER" && orderRxHeader?exists && orderRxHeader.patientType?exists && 'INSURANCE'==orderRxHeader.patientType>
-                                            <td align="center" valign="top" nowrap="nowrap">
-                                                <#assign copayPatient = Static["org.ofbiz.order.order.OrderReadHelper"].getOrderItemPatientToPay(orderItem)?default(0.000)>
-                                                <@ofbizCurrency amount=copayPatient isoCode=currencyUomId/>
-                                                <#assign totalCopayPatient = totalCopayPatient + copayPatient>
-                                            </td>
                                             <td align="center" valign="top" nowrap="nowrap">
                                                 <#assign copayPatient = Static["org.ofbiz.order.order.OrderReadHelper"].getOrderItemPatientToPay(orderItem)?default(0.000)>
                                                 <#if orderItem.statusId != "ITEM_CANCELLED">
@@ -766,11 +764,6 @@ under the License.
                                                 <@ofbizCurrency amount=Static["org.ofbiz.order.order.OrderReadHelper"].getOrderItemCopay(orderItem)?default(0.000) isoCode=currencyUomId/>
                                             </td> -->
                                         <#else>
-                                            <td align="center" valign="top" nowrap="nowrap">
-                                                <#assign copayPatient = Static["java.math.BigDecimal"].ZERO>
-                                                <@ofbizCurrency amount=copayPatient isoCode=currencyUomId/>
-                                                <#assign totalCopayPatient = totalCopayPatient + copayPatient>
-                                            </td>
                                             <td align="center" valign="top" nowrap="nowrap">
                                                 <#assign copayPatient = Static["java.math.BigDecimal"].ZERO>
                                                 <#if orderItem.statusId != "ITEM_CANCELLED">
