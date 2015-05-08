@@ -9,78 +9,58 @@ import java.util.Date;
 public class PatientInfo {
 
     private String patientId;
-    private String clinicId;
     private String afyaId;
+    private String civilId;
     private String firstName;
     private String secondName;
     private String thirdName;
     private String fourthName;
+    private String gender;
+    private String address;
     private String mobile;
     private String patientType;
+    private String visitId;
+    private Date visitDate;
+    private String clinicId;
     private String clinicName;
     private String doctorName;
-    private Date visitDate;
-    private String visitId;
-    private String address;
     private String benefitId;
+    private String hisBenefitId;
     private String healthPolicyId;
     private String moduleId;
     private String moduleName;
-    private String hisBenefitId;
-
-    public Date getVisitDate() {
-        return visitDate;
-    }
-
-    public void setVisitDate(Date visitDate) {
-        this.visitDate = visitDate;
-    }
-
-    public String getVisitId() {
-        return visitId;
-    }
-
-    public void setVisitId(String visitId) {
-        this.visitId = visitId;
-    }
 
     PatientInfo(HttpServletRequest request){
         this.patientId=request.getParameter("patientId");
-        this.clinicId=request.getParameter("clinicId");
+        this.afyaId=request.getParameter("afyaId");
+        this.civilId=request.getParameter("civilId");
         this.firstName=request.getParameter("firstName");
         this.secondName=request.getParameter("secondName");
         this.thirdName=request.getParameter("thirdName");
         this.fourthName=request.getParameter("fourthName");
-        this.clinicName=request.getParameter("clinicName");
+        this.gender=request.getParameter("gender");
         this.mobile=request.getParameter("mobile");
-        this.afyaId=request.getParameter("afyaId");
-        this.doctorName=request.getParameter("doctorName");
         this.patientType=request.getParameter("patientType");
-        this.healthPolicyId=request.getParameter("healthPolicyId");
+        this.clinicId=request.getParameter("clinicId");
+        this.clinicName=request.getParameter("clinicName");
+        this.doctorName=request.getParameter("doctorName");
         this.benefitId=request.getParameter("benefitPlanId");
+        this.hisBenefitId=request.getParameter("hisBenefitId");
+        this.healthPolicyId=request.getParameter("healthPolicyId");
         this.moduleId=request.getParameter("moduleId");
         this.moduleName=request.getParameter("moduleName");
-        this.hisBenefitId=request.getParameter("hisBenefitId");
     }
 
     public PatientInfo() {
 
     }
 
-    public String getModuleId() {
-        return moduleId;
-    }
-
     public String getPatientId() {
         return patientId;
     }
 
-    public String getClinicId() {
-        return clinicId;
-    }
-
-    public void setClinicId(String clinicId) {
-        this.clinicId = clinicId;
+    public void setPatientId(String patientId) {
+        this.patientId = patientId;
     }
 
     public String getAfyaId() {
@@ -91,12 +71,60 @@ public class PatientInfo {
         this.afyaId = afyaId;
     }
 
+    public String getCivilId() {
+		return civilId;
+	}
+
+	public void setCivilId(String civilId) {
+		this.civilId = civilId;
+	}
+
     public String getFirstName() {
         return firstName;
     }
 
     public void setFirstName(String firstName) {
         this.firstName = firstName;
+    }
+
+    public String getSecondName() {
+        return secondName;
+    }
+
+    public void setSecondName(String secondName) {
+        this.secondName = secondName;
+    }
+
+    public String getThirdName() {
+        return thirdName;
+    }
+
+    public void setThirdName(String thirdName) {
+        this.thirdName = thirdName;
+    }
+
+    public String getFourthName() {
+        return fourthName;
+    }
+
+    public void setFourthName(String fourthName) {
+        this.fourthName = fourthName;
+    }
+
+	public String getGender() {
+		return gender;
+	}
+
+	public void setGender(String gender) {
+		this.gender = gender;
+	}
+
+	public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
     }
 
     public String getMobile() {
@@ -115,6 +143,30 @@ public class PatientInfo {
         this.patientType = patientType;
     }
 
+    public String getVisitId() {
+        return visitId;
+    }
+
+    public void setVisitId(String visitId) {
+        this.visitId = visitId;
+    }
+
+    public Date getVisitDate() {
+        return visitDate;
+    }
+
+    public void setVisitDate(Date visitDate) {
+        this.visitDate = visitDate;
+    }
+
+    public String getClinicId() {
+        return clinicId;
+    }
+
+    public void setClinicId(String clinicId) {
+        this.clinicId = clinicId;
+    }
+
     public String getClinicName() {
         return clinicName;
     }
@@ -131,20 +183,20 @@ public class PatientInfo {
         this.doctorName = doctorName;
     }
 
-    public void setAddress(String address) {
-        this.address = address;
-    }
-
-    public String getAddress() {
-        return address;
-    }
-
     public String getBenefitId() {
         return benefitId;
     }
 
     public void setBenefitId(String benefitId) {
         this.benefitId = benefitId;
+    }
+
+    public String getHisBenefitId() {
+        return hisBenefitId;
+    }
+
+    public void setHisBenefitId(String hisBenefitId) {
+        this.hisBenefitId = hisBenefitId;
     }
 
     public String getHealthPolicyId() {
@@ -155,51 +207,20 @@ public class PatientInfo {
         this.healthPolicyId = healthPolicyId;
     }
 
-    public String getSecondName() {
-        return secondName;
-    }
-
-    public String getThirdName() {
-        return thirdName;
-    }
-
-    public String getFourthName() {
-        return fourthName;
-    }
-
-    public String getModuleName() {
-        return moduleName;
-    }
-
-    public void setPatientId(String patientId) {
-        this.patientId = patientId;
-    }
-
-    public void setSecondName(String secondName) {
-        this.secondName = secondName;
-    }
-
-    public void setThirdName(String thirdName) {
-        this.thirdName = thirdName;
-    }
-
-    public void setFourthName(String fourthName) {
-        this.fourthName = fourthName;
+    public String getModuleId() {
+        return moduleId;
     }
 
     public void setModuleId(String moduleId) {
         this.moduleId = moduleId;
     }
 
+    public String getModuleName() {
+        return moduleName;
+    }
+
     public void setModuleName(String moduleName) {
         this.moduleName = moduleName;
     }
 
-    public String getHisBenefitId() {
-        return hisBenefitId;
-    }
-
-    public void setHisBenefitId(String hisBenefitId) {
-        this.hisBenefitId = hisBenefitId;
-    }
 }

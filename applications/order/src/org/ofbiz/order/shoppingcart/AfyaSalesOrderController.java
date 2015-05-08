@@ -72,8 +72,10 @@ public class AfyaSalesOrderController {
 
             PatientInfo patientInfo = new PatientInfo();
             patientInfo.setAfyaId(prescription.getAfyaId());
+            patientInfo.setAfyaId(prescription.getCivilId());
             patientInfo.setThirdName(prescription.getLastName());
             patientInfo.setFirstName(prescription.getFirstName());
+            patientInfo.setGender(prescription.getGender());
             patientInfo.setMobile(prescription.getMobile());
             patientInfo.setClinicId(prescription.getClinicId());
             patientInfo.setClinicName(prescription.getClinicName());
@@ -83,7 +85,7 @@ public class AfyaSalesOrderController {
             patientInfo.setPatientType(prescription.getPatientType());
             patientInfo.setAddress(prescription.getAddress());
             patientInfo.setHisBenefitId(prescription.getHisBenefitId());
-            patientInfo.setBenefitId(prescription.getModuleName());
+            patientInfo.setModuleName(prescription.getModuleName());
             patientInfo.setBenefitId(prescription.getBenefitId());
             cart.setPatientInfo(patientInfo);
             CheckOutHelper checkOutHelper = new CheckOutHelper(dispatcher, dispatcher.getDelegator(), cart);
@@ -153,10 +155,12 @@ public class AfyaSalesOrderController {
         private String clinicId;
         private String afyaId;
         private List<LineItem> rows;
+        private String civilId;
         private String visitId;
         private Date visitDate;
         private String firstName;
         private String lastName;
+        private String gender;
         private String mobile;
         private String patientType;
         private String clinicName;
@@ -165,6 +169,7 @@ public class AfyaSalesOrderController {
         private String hisBenefitId;
         private String moduleName;
         private String benefitId;
+
         public String getAddress() {
             return address;
         }
@@ -213,7 +218,15 @@ public class AfyaSalesOrderController {
             this.afyaId = afyaId;
         }
 
-        public List<LineItem> getRows() {
+        public String getCivilId() {
+			return civilId;
+		}
+
+		public void setCivilId(String civilId) {
+			this.civilId = civilId;
+		}
+
+		public List<LineItem> getRows() {
             return rows;
         }
 
@@ -256,7 +269,15 @@ public class AfyaSalesOrderController {
             this.lastName = lastName;
         }
 
-        public String getMobile() {
+        public String getGender() {
+			return gender;
+		}
+
+		public void setGender(String gender) {
+			this.gender = gender;
+		}
+
+		public String getMobile() {
             return mobile;
         }
 
@@ -293,11 +314,13 @@ public class AfyaSalesOrderController {
             return "Prescription{" +
                     "clinicId='" + clinicId + '\'' +
                     ", afyaId='" + afyaId + '\'' +
+                    ", civilId='" + civilId + '\'' +
                     ", rows=" + rows +
                     ", visitId='" + visitId + '\'' +
                     ", visitDate=" + visitDate +
                     ", firstName='" + firstName + '\'' +
                     ", lastName='" + lastName + '\'' +
+                    ", gender='" + gender + '\'' +
                     ", mobile='" + mobile + '\'' +
                     ", patientType='" + patientType + '\'' +
                     ", clinicName='" + clinicName + '\'' +

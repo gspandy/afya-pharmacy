@@ -1157,10 +1157,12 @@ public class OrderServices {
             if (patientInfo != null) {
                 Map presciptionData = UtilMisc.toMap("orderId", orderId, "visitId", patientInfo.getVisitId(), "clinicId", patientInfo.getClinicId(),
                         "afyaId", patientInfo.getAfyaId(),
+                        "civilId", patientInfo.getCivilId(),
                         "firstName", patientInfo.getFirstName(),
                         "secondName", patientInfo.getSecondName(),
                         "thirdName", patientInfo.getThirdName(),
                         "fourthName", patientInfo.getFourthName(),
+                        "gender", patientInfo.getGender(),
                         "visitDate", UtilDateTime.toSqlDate(patientInfo.getVisitDate()),
                         "doctorName", patientInfo.getDoctorName(),
                         "clinicName", patientInfo.getClinicName(),

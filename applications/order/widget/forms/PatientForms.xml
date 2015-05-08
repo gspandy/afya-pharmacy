@@ -72,7 +72,6 @@
         </field>
     </form>
 
-
     <form name="PatientInfo" type="single" target="savePatientInfo" default-map-name="patient"
           title="" default-title-style="label control-label" default-table-style="tableext">
         <actions>
@@ -82,6 +81,9 @@
         </actions>
         <field name="patientId">
             <hidden value="${patientId}"/>
+        </field>
+        <field name="gender">
+            <hidden value="${patient.gender}"/>
         </field>
         <field name="civilId" id-name="civilId" position="1">
             <text/>
@@ -109,17 +111,20 @@
         <field name="doctorName" position="3">
             <text/>
         </field>
-        <field name="patientType" id-name="patientType">
+        <field use-when="${'CASH' != patient.patientType}" name="patientType">
             <drop-down>
                 <option key="CASH" description="Cash"/>
                 <option key="CORPORATE" description="Corporate"/>
                 <option key="INSURANCE" description="Insurance"/>
             </drop-down>
         </field>
+        <field use-when="${'CASH' == patient.patientType}" name="patientType">
+            <display description="Cash"/>
+        </field>
         <field name="benefitPlanId" id-name="benefitPlanId">
             <hidden/>
         </field>
-        <field name="patientInsurance" id-name="patientInsurance">
+        <field use-when="${patient.patientType == 'INSURANCE'}" name="patientInsurance" id-name="patientInsurance">
             <drop-down allow-empty="true">
                 <entity-options entity-name="PatientInsurance" description="${healthPolicyName} - ${policyNo}" key-field-name="benefitPlanId">
                     <entity-constraint name="patientId" operator="equals" env-name="patient.patientId"/>
@@ -129,7 +134,7 @@
         <field name="moduleName" id-name="moduleName">
             <hidden/>
         </field>
-        <field name="hisBenefitId" id-name="hisBenefitId" title="Benefits">
+        <field use-when="${patient.patientType == 'INSURANCE'}" name="hisBenefitId" id-name="hisBenefitId" title="Benefits">
             <drop-down></drop-down>
         </field>
         <field name="address1" parameter-name="address">
@@ -149,7 +154,6 @@
             <submit button-type="button"/>
         </field>
     </form>
-
 
     <form name="PatientRegistration" type="single" default-map-name="patient"
           target="updatePatient" header-row-style="header-row" default-table-style="basic-table"

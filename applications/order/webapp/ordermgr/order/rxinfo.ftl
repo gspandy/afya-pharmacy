@@ -153,7 +153,8 @@ under the License.
                       <tr>
                         <td width="80px">${loopStatusItem.get("description",locale)}</td>
                         <td width="2px">-</td>
-                        <td width="80px">${orderHeaderStatus.statusDatetime?default("0000-00-00 00:00:00")?string}</td>
+                        <td width="80px">${Static["org.ofbiz.base.util.UtilFormatOut"].formatDateTime(orderHeaderStatus.statusDatetime, "", locale, timeZone)!}</td>
+                        <#-- <td width="80px">${orderHeaderStatus.statusDatetime?default("0000-00-00 00:00:00")?string}</td> -->
                         <td width="80px">${uiLabelMap.CommonBy}</td><td width="1%">-</td>
                         <#--${Static["org.ofbiz.party.party.PartyHelper"].getPartyName(delegator, userlogin.getString("partyId"), true)}
                         <#assign person = delegator.findOne("Person", {"partyId" : orderHeaderStatus.statusUserLogin}, true)>
@@ -170,7 +171,8 @@ under the License.
               <td align="right" valign="top" width="15%" class="label">&nbsp;${uiLabelMap.OrderDateOrdered} </td>
               <td width="5%">&nbsp;</td>
               <#-- <td valign="top" width="80%">${orderHeader.orderDate.toString()}</td> -->
-              <td valign="top" width="80%">${Static["org.ofbiz.base.util.UtilDateTime"].getFormattedDate(orderHeader.orderDate)}</td>
+              <#-- <td valign="top" width="80%">${Static["org.ofbiz.base.util.UtilDateTime"].getFormattedDate(orderHeader.orderDate)}</td> -->
+              <td valign="top" width="80%">${orderHeader.orderDate?if_exists?string("dd/MM/yyyy")}</td>
             </tr>
             <tr><td colspan="3"><hr /></td></tr>
             <tr>

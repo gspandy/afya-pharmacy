@@ -24,6 +24,9 @@ under the License.
             <actions>
                 <set field="titleProperty" value="Find Patient"/>
                 <set field="headerItem" value="Patient Information"/>
+                <set field="entityName" value="Patient"/>
+                <set field="viewIndex" from-field="parameters.VIEW_INDEX" type="Integer"/>
+                <set field="viewSize" from-field="parameters.VIEW_SIZE" type="Integer" default-value="50"/>
             </actions>
             <widgets>
                 <decorator-screen name="main-decorator" location="${parameters.mainDecoratorLocation}">

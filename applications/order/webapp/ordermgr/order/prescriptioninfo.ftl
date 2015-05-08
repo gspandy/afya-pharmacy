@@ -71,7 +71,7 @@ under the License.
                 <td width="1%">&nbsp;</td>
                 <td width="30%">${orderRxHeader.patientType?if_exists}</td>
             </tr>
-            <#if benefitPlanName?has_content>
+            <#if benefitPlanName?has_content && orderRxHeader.patientType?exists && "INSURANCE" == orderRxHeader.patientType>
                 <tr>
                     <td width="19%"><span class="label">Patient Insurance</span></td>
                     <td width="1%">&nbsp;</td>

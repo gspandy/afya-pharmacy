@@ -91,9 +91,9 @@ under the License.
               <fo:block font-weight="bold" margin-left="3px">Patient Details:</fo:block>
               <fo:block margin-left="3px"><fo:leader></fo:leader></fo:block>
               <fo:block margin-left="3px">Afya ID: ${orderRxHeader.afyaId?if_exists}</fo:block>
-              <fo:block margin-left="3px">Civil ID: </fo:block>
+              <fo:block margin-left="3px">Civil ID: ${orderRxHeader.civilId?if_exists}</fo:block>
               <fo:block margin-left="3px">Patient Name: ${orderRxHeader.firstName?if_exists} ${orderRxHeader.thirdName?if_exists}</fo:block>
-              <fo:block margin-left="3px">Gender: </fo:block>
+              <fo:block margin-left="3px">Gender: <#if "M" == orderRxHeader.gender || "Male" == orderRxHeader.gender>Male<#elseif "F" == orderRxHeader.gender || "Female" == orderRxHeader.gender>Female</#if></fo:block>
               <fo:block margin-left="3px">Patient Type: ${orderRxHeader.patientType?if_exists}</fo:block>
             <#else>
               <fo:block font-weight="bold" margin-left="3px">Patient Details:</fo:block>
