@@ -114,7 +114,7 @@ under the License.
                 </td>
                 <td width="5">&nbsp;</td>
                 <td valign="top" width="80%">
-                    ${cart.getOrderDate()?if_exists?string("yyyy-MM-dd")}
+                    ${cart.getOrderDate()?if_exists?string("dd/MM/yyyy")}
                 </td>
             </tr>
             <tr><td colspan="7"><hr /></td></tr>
@@ -125,7 +125,7 @@ under the License.
                 </td>
                 <td width="5">&nbsp;</td>
                 <td valign="top" width="80%">
-                    ${nowTimestamp?string("yyyy-MM-dd")}
+                    ${nowTimestamp?string("dd/MM/yyyy")}
                 </td>
             </tr>
             <tr><td colspan="7"><hr /></td></tr>
@@ -139,7 +139,7 @@ under the License.
                 </td>
                 <td width="5">&nbsp;</td>
                 <td valign="top" width="80%">
-                    ${cart.getDeliveryDate()?if_exists?string("yyyy-MM-dd")}
+                    ${cart.getDeliveryDate()?if_exists?string("dd/MM/yyyy")}
                 </td>
             </tr>
             <tr><td colspan="7"><hr /></td></tr>
