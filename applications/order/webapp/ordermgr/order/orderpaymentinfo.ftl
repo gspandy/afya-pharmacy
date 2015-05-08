@@ -106,7 +106,7 @@ ${cardNumberDisplay?if_exists}
                 <#assign statusItem = orderPaymentStatus.getRelatedOne("StatusItem")?if_exists>
                 <#if statusItem?has_content>
                     <div>
-                    ${statusItem.get("description",locale)} <#if orderPaymentStatus.statusDatetime?has_content>- ${Static["org.ofbiz.base.util.UtilFormatOut"].formatDateTime(orderPaymentStatus.statusDatetime, "", locale, timeZone)!}</#if>
+                    ${statusItem.get("description",locale)} <#if orderPaymentStatus.statusDatetime?has_content>- ${orderPaymentStatus.statusDatetime?if_exists?string("dd/MM/yyyy")}</#if><#-- ${Static["org.ofbiz.base.util.UtilFormatOut"].formatDateTime(orderPaymentStatus.statusDatetime, "", locale, timeZone)!} -->
                         &nbsp;
                     ${uiLabelMap.CommonBy} - [${orderPaymentStatus.statusUserLogin?if_exists}]
                     </div>
@@ -219,7 +219,7 @@ ${cardNumberDisplay?if_exists}
                                     <#list gatewayResponses as gatewayResponse>
                                         <#assign transactionCode = gatewayResponse.getRelatedOne("TranCodeEnumeration")>
                                     ${(transactionCode.get("description",locale))?default("Unknown")}:
-                                        <#if gatewayResponse.transactionDate?has_content>${Static["org.ofbiz.base.util.UtilFormatOut"].formatDateTime(gatewayResponse.transactionDate, "", locale, timeZone)!} </#if>
+                                        <#if gatewayResponse.transactionDate?has_content> ${gatewayResponse.transactionDate?if_exists?string("dd/MM/yyyy")}</#if><#-- ${Static["org.ofbiz.base.util.UtilFormatOut"].formatDateTime(gatewayResponse.transactionDate, "", locale, timeZone)!} -->
                                         <@ofbizCurrency amount=gatewayResponse.amount isoCode=currencyUomId/><br />
                                         (<span class="label">${uiLabelMap.OrderReference}</span>&nbsp;${gatewayResponse.referenceNum?if_exists}
                                         <span class="label">${uiLabelMap.OrderAvs}</span>&nbsp;${gatewayResponse.gatewayAvsResult?default("N/A")}
@@ -375,7 +375,7 @@ ${cardNumberDisplay?if_exists}
                                 <#if security.hasEntityPermission("PAY_INFO", "_VIEW", session)>
                                 ${creditCard.cardType}
                                     <@maskSensitiveNumber cardNumber=creditCard.cardNumber?if_exists/>
-                                ${creditCard.expireDate}
+                                ${creditCard.expireDate?string("dd/MM/yyyy")}
                                     &nbsp;[<#if oppStatusItem?exists>${oppStatusItem.get("description",locale)}<#else>${orderPaymentPreference.statusId}</#if>]
                                 <#else>
                                 ${Static["org.ofbiz.party.contact.ContactHelper"].formatCreditCard(creditCard)}
@@ -623,7 +623,7 @@ ${cardNumberDisplay?if_exists}
                                         <#assign creditCard = paymentMethodValueMap.creditCard/>
                                         <#if (creditCard?has_content)>
                                             <#if security.hasEntityPermission("PAY_INFO", "_VIEW", session)>
-                                            ${creditCard.cardType?if_exists} <@maskSensitiveNumber cardNumber=creditCard.cardNumber?if_exists/> ${creditCard.expireDate?if_exists}
+                                            ${creditCard.cardType?if_exists} <@maskSensitiveNumber cardNumber=creditCard.cardNumber?if_exists/> ${creditCard.expireDate?if_exists?string("dd/MM/yyyy")}
                                             <#else>
                                             ${Static["org.ofbiz.party.contact.ContactHelper"].formatCreditCard(creditCard)}
                                             </#if>
