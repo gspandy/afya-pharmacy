@@ -153,7 +153,8 @@ under the License.
                       <tr>
                         <td width="80px">${loopStatusItem.get("description",locale)}</td>
                         <td width="2px">-</td>
-                        <td width="80px">${Static["org.ofbiz.base.util.UtilFormatOut"].formatDateTime(orderHeaderStatus.statusDatetime, "", locale, timeZone)!}</td>
+                        <td width="80px">${orderHeaderStatus.statusDatetime?string("dd/MM/yyyy")}</td>
+                        <#-- <td width="80px">${Static["org.ofbiz.base.util.UtilFormatOut"].formatDateTime(orderHeaderStatus.statusDatetime, "", locale, timeZone)!}</td> -->
                         <#-- <td width="80px">${orderHeaderStatus.statusDatetime?default("0000-00-00 00:00:00")?string}</td> -->
                         <td width="80px">${uiLabelMap.CommonBy}</td><td width="1%">-</td>
                         <#--${Static["org.ofbiz.party.party.PartyHelper"].getPartyName(delegator, userlogin.getString("partyId"), true)}
@@ -170,9 +171,9 @@ under the License.
             <tr>
               <td align="right" valign="top" width="15%" class="label">&nbsp;${uiLabelMap.OrderDateOrdered} </td>
               <td width="5%">&nbsp;</td>
+              <td valign="top" width="80%">${orderHeader.orderDate?if_exists?string("dd/MM/yyyy")}</td>
               <#-- <td valign="top" width="80%">${orderHeader.orderDate.toString()}</td> -->
               <#-- <td valign="top" width="80%">${Static["org.ofbiz.base.util.UtilDateTime"].getFormattedDate(orderHeader.orderDate)}</td> -->
-              <td valign="top" width="80%">${orderHeader.orderDate?if_exists?string("dd/MM/yyyy")}</td>
             </tr>
             <tr><td colspan="3"><hr /></td></tr>
             <tr>
@@ -254,7 +255,8 @@ under the License.
              <td width="5%">&nbsp;</td>
              <td valign="top" width="80%">
                <#if orderHeader.deliveryDate?has_content>
-                 ${Static["org.ofbiz.base.util.UtilDateTime"].getFormattedDate(orderHeader.deliveryDate)}
+                 ${orderHeader.deliveryDate?string("dd/MM/yyyy")}
+                 <#-- ${Static["org.ofbiz.base.util.UtilDateTime"].getFormattedDate(orderHeader.deliveryDate)} -->
                <#else>
                  ${uiLabelMap.CommonNotSet}
                </#if>
@@ -275,7 +277,7 @@ under the License.
               <tr>
                 <td align="right" valign="top" width="15%" class="label">&nbsp;${uiLabelMap.FormFieldTitle_cancelBackOrderDate}</td>
                 <td width="5%">&nbsp;</td>
-                <td valign="top" width="80%">${orderItem.cancelBackOrderDate?if_exists}</td>
+                <td valign="top" width="80%">${orderItem.cancelBackOrderDate?if_exists?string("dd/MM/yyyy")}</td>
               </tr>
             </#if>
             
