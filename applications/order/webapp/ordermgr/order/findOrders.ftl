@@ -633,7 +633,7 @@ document.lookuporder.orderId.focus();
                       </#if>
                   </td>
               </#if>
-              <td>${Static["org.ofbiz.base.util.UtilFormatOut"].formatDateTime(orderHeader.orderDate, "", locale, timeZone)!}</td>
+              <td>${orderHeader.orderDate?string("dd/MM/yyyy")}</td>
               <td>
                 <#if partyId != "_NA_">
                   <a href="${customerDetailLink}${partyId}&amp;externalLoginKey=${externalLoginKey}" class="btn btn-link">${partyId}</a>
