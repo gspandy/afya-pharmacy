@@ -18,6 +18,13 @@
         <field name="mobilePhone" position="1">
             <text/>
         </field>
+        <field name="patientType" position="2">
+            <drop-down>
+                <option key="CASH" description="Cash"/>
+                <option key="CORPORATE" description="Corporate"/>
+                <option key="INSURANCE" description="Insurance"/>
+            </drop-down>
+        </field>
         <field name="submitButton" title="${uiLabelMap.CommonFind}" widget-style="btn btn-primary">
             <submit button-type="button"/>
         </field>
@@ -41,6 +48,9 @@
         <field name="afyaId">
             <display/>
         </field>
+        <field name="patientType">
+            <display/>
+        </field>
         <field name="firstName" title="First Name">
             <display/>
         </field>
@@ -50,11 +60,11 @@
         <field name="mobilePhone">
             <display/>
         </field>
-        <field name="submitButton" widget-style="btn btn-mini btn-primary">
+        <!-- <field name="submitButton" widget-style="btn btn-mini btn-primary">
             <hyperlink title="Select" text="Select">
                 <parameter param-name="patientId"/>
             </hyperlink>
-        </field>
+        </field> -->
         <field use-when="" name="editButton" action="editPatient" title="Select" widget-style="btn btn-mini btn-success">
             <hyperlink target="patientinfo" description="Select" also-hidden="false">
                 <parameter param-name="patientId"/>
@@ -321,6 +331,82 @@
         </sort-order>
     </form>
 
+    <form name="SearchPatient" type="single" target="findPatients" title=""
+          default-title-style="tableheadtext" default-widget-style="tabletext" default-tooltip-style="tabletext">
+        <field name="civilId" id-name="civilId" position="1">
+            <text-find/>
+        </field>
+        <field name="firstName" title="First Name" position="2">
+            <text-find/>
+        </field>
+        <field name="afyaId" position="1">
+            <text-find/>
+        </field>
+        <field name="thirdName" title="Last Name" position="2">
+            <text-find/>
+        </field>
+        <field name="mobilePhone" position="1">
+            <text/>
+        </field>
+        <field name="patientType" position="2">
+            <drop-down>
+                <option key="CASH" description="Cash"/>
+                <option key="CORPORATE" description="Corporate"/>
+                <option key="INSURANCE" description="Insurance"/>
+            </drop-down>
+        </field>
+        <field name="submitButton" title="${uiLabelMap.CommonFind}" widget-style="btn btn-primary">
+            <submit button-type="button"/>
+        </field>
+        <field name="performSearch"><hidden value="Y"/></field>
+    </form>
+
+    <form name="PatientSearchResults" type="list" use-row-submit="true" target="findPatients" title="" list-name="listIt"
+          odd-row-style="alternate-row" header-row-style="header-row-2" default-table-style="basic-table hover-bar"
+          paginate-target="findPatients">
+        <actions>
+            <set field="entityName" value="Patient"/>
+            <service service-name="performFind" result-map="result" result-map-list="listIt">
+				<field-map field-name="inputFields" from-field="parameters" />
+				<field-map field-name="orderBy" value="firstName" />
+				<field-map field-name="entityName" from-field="entityName"/>
+				<field-map field-name="viewIndex" from-field="viewIndex" />
+				<field-map field-name="viewSize" from-field="viewSize" />
+			</service>
+        </actions>
+        <field name="civilId" id-name="civilId">
+            <display/>
+        </field>
+        <field name="afyaId">
+            <display/>
+        </field>
+        <field name="patientType">
+            <display/>
+        </field>
+        <field name="firstName" title="First Name">
+            <display/>
+        </field>
+        <field name="thirdName" title="Last Name">
+            <display/>
+        </field>
+        <field name="mobilePhone">
+            <display/>
+        </field>
+        <field name="gender">
+            <display/>
+        </field>
+        <field name="mobileNumber">
+            <display/>
+        </field>
+        <field name="emailAddress">
+            <display/>
+        </field>
+        <field use-when="" name="editButton" action="editPatient" title="Edit" widget-style="btn btn-mini btn-success">
+            <hyperlink target="editPatient" description="${uiLabelMap.CommonEdit}" also-hidden="false">
+                <parameter param-name="patientId"/>
+            </hyperlink>
+        </field>
+    </form>
 
     <form name="PatientList" target="patientList" title="Patient List" type="list" list-name="patientList"
           odd-row-style="alternate-row" header-row-style="header-row-2" default-table-style="basic-table hover-bar">

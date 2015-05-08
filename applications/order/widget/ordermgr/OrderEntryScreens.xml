@@ -28,10 +28,10 @@ under the License.
             <widgets>
                 <decorator-screen name="main-decorator" location="${parameters.mainDecoratorLocation}">
                     <decorator-section name="body">
-                        <screenlet title="Find Patient">
+                        <screenlet title="Find Patients">
                             <include-form name="FindPatient" location="component://order/widget/forms/PatientForms.xml"/>
                         </screenlet>
-                        <screenlet title="Result Patient">
+                        <screenlet title="Patients List">
                             <include-form name="PatientSearchResult" location="component://order/widget/forms/PatientForms.xml"/>
                         </screenlet>
                     </decorator-section>

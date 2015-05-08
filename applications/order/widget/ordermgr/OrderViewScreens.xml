@@ -1053,10 +1053,31 @@
         </section>
     </screen>
 
+    <screen name="FindPatient">
+        <section>
+            <actions>
+                <set field="titleProperty" value="Find Patient"/>
+                <set field="headerItem" value="Patient List"/>
+            </actions>
+            <widgets>
+                <decorator-screen name="main-decorator" location="${parameters.mainDecoratorLocation}">
+                    <decorator-section name="body">
+                        <screenlet title="Find Patients">
+                            <include-form name="SearchPatient" location="component://order/widget/forms/PatientForms.xml"/>
+                        </screenlet>
+                        <screenlet title="Patients List">
+                            <include-form name="PatientSearchResults" location="component://order/widget/forms/PatientForms.xml"/>
+                        </screenlet>
+                    </decorator-section>
+                </decorator-screen>
+            </widgets>
+        </section>
+    </screen>
 
     <screen name="PatientList">
         <section>
             <actions>
+                <set field="titleProperty" value="Patient List"/>
                 <entity-condition entity-name="Patient" list="patientList">
                     <order-by field-name="firstName"/>
                 </entity-condition>

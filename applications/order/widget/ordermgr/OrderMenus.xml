@@ -147,13 +147,13 @@ under the License.
             </menu-item> -->
         
         </menu-item>
-        <menu-item name="patient" title="Patient List">
-            <link target="patientList"/>
-            <menu-item name="newPatient" title="New Patient">
+        <menu-item name="patient" title="Patients">
+            <link target="findPatients"/>
+            <menu-item name="newPatient" title="Create New Patient">
                 <link target="newPatient"/>
             </menu-item>
-            <menu-item name="patientList" title="Patient List">
-                <link target="patientList"/>
+            <menu-item name="patientList" title="Find Patients">
+                <link target="findPatients"/>
             </menu-item>
         </menu-item>
       <!--  <menu-item name="return" title="${uiLabelMap.OrderOrderReturns}">

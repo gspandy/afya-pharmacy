@@ -168,7 +168,7 @@ under the License.
         </fo:table-cell> -->
 
         <fo:table-cell border-style="solid" border-width="thin" border-color="black">
-          <fo:block text-align="center" margin-top="3px">Nett Price</fo:block>
+          <fo:block text-align="center" margin-top="3px">Gross Price</fo:block>
         </fo:table-cell>
 
       </fo:table-row>
@@ -296,7 +296,7 @@ under the License.
               <fo:table-body>
                 <fo:table-row height="30px">
                   <fo:table-cell>
-                    <fo:block text-align="left" margin-top="10px" margin-left="3px">Sub Total</fo:block>
+                    <fo:block text-align="left" margin-top="10px" margin-left="3px">Gross Total</fo:block>
                   </fo:table-cell>
                   <fo:table-cell border-left-style="solid" border-width="thin">
                     <fo:block text-align="right" margin-top="10px" margin-right="3px">
@@ -343,7 +343,7 @@ under the License.
               <fo:table-body>
                 <fo:table-row space-start="2.15in" border-width="thin" height="25px">
                   <fo:table-cell>
-                    <fo:block text-align="left" margin-top="10px" margin-left="3px">Total</fo:block>
+                    <fo:block text-align="left" margin-top="10px" margin-left="3px">Net Total</fo:block>
                   </fo:table-cell>
                   <fo:table-cell border-left-style="solid" border-width="thin">
                     <fo:block text-align="right" margin-top="10px" margin-right="3px">
