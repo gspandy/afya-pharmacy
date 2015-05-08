@@ -650,8 +650,8 @@ under the License.
                                                 <#assign shippedQuantity = outstanding>
                                             </#if>
                                             <#assign remainingQuantity = ((orderItem.quantity?default(0.000) - orderItem.cancelQuantity?default(0.000)) - shippedQuantity?double)>
-                                            <#-- ${remainingQuantity} -->
-                                            ${shippedQuantity?default(0.000)}
+                                            ${remainingQuantity}
+                                            <#-- ${shippedQuantity?default(0.000)} -->
                                         </td>
                                         <td align="center" valign="top" nowrap="nowrap">
                                             <#assign product = orderItem.getRelatedOneCache("Product")>
@@ -724,8 +724,8 @@ under the License.
                                                 <#assign shippedQuantity = outstanding>
                                             </#if>
                                             <#assign remainingQuantity = ((orderItem.quantity?default(0.000) - orderItem.cancelQuantity?default(0.000)) - shippedQuantity?double)>
-                                            <#-- ${remainingQuantity} -->
-                                            ${shippedQuantity?default(0.000)}
+                                            ${remainingQuantity}
+                                            <#-- ${shippedQuantity?default(0.000)} -->
                                         </td>
                                         <td align="center" valign="top" nowrap="nowrap">
                                             <#assign product = orderItem.getRelatedOneCache("Product")>
