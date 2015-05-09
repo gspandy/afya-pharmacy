@@ -875,9 +875,11 @@ under the License.
                 
                 <#if orderHeader.orderTypeId == "SALES_ORDER">
                     <td style="text-align:right;padding-right:10px;font-weight:bold;" colspan="5">Total</td>
-                    <#assign totalAdjustmentAmount = Static["java.math.BigDecimal"].ZERO>
+                    <#assign itemAmountDeductible = Static["java.math.BigDecimal"].ZERO>
                     <#assign totalorderAdjustmentGrouped = Static["java.math.BigDecimal"].ZERO>
                     <#assign totalAdjustments = Static["java.math.BigDecimal"].ZERO>
+                    
+                    <#-- <#assign totalAdjustmentAmount = Static["java.math.BigDecimal"].ZERO>
                     <#list orderHeaderAdjustments as orderHeaderAdjustment>
                         <#assign adjustmentType = orderHeaderAdjustment.getRelatedOne("OrderAdjustmentType")>
                         <#assign adjDesc = adjustmentType.description>
@@ -885,12 +887,17 @@ under the License.
                         <#if adjustmentAmount != 0 && (!adjustmentType.assessableValueCalculation?exists || adjustmentType.assessableValueCalculation!="Y")>
                             <#assign totalAdjustmentAmount=totalAdjustmentAmount+adjustmentAmount?default(0.000)>
                         </#if>
+                    </#list> -->
+                    
+                    <#-- line item adjustments -->
+                    <#list orderItemList as orderItem>
+                        <#assign itemAmountDeductible = Static["org.ofbiz.order.order.OrderReadHelper"].getOrderItemDeductible(orderItem)?default(0.000)>
                     </#list>
                     <#-- tax adjustments -->
                     <#list orderAdjustmentGrouped as orderAdjustmentGrouped>
                         <#assign totalorderAdjustmentGrouped=totalorderAdjustmentGrouped+orderAdjustmentGrouped.amount?default(0.000)>
                     </#list>
-                    <#assign totalAdjustments=totalAdjustmentAmount?default(0.000)+totalorderAdjustmentGrouped?default(0.000)>
+                    <#assign totalAdjustments=itemAmountDeductible?default(0.000)+totalorderAdjustmentGrouped?default(0.000)>
                     <#-- totalAdjustments(Total Adjustments) -->
                     <td style="text-align:right;padding-right:10px;font-weight:bold;" nowrap="nowrap">
                         <@ofbizCurrency amount=totalAdjustments isoCode=currencyUomId/>
