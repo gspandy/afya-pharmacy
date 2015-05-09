@@ -786,7 +786,7 @@ under the License.
                                             </td> -->
                                           </#if>
                                         </#if>
-                                        <td style="text-align:right;padding-right:10px;" valign="top" nowrap="nowrap">
+                                        <td style="text-align:right;" valign="top" nowrap="nowrap">
                                             <#if orderItem.statusId != "ITEM_CANCELLED">
                                                 <@ofbizCurrency amount=Static["org.ofbiz.order.order.OrderReadHelper"].getOrderItemSubTotal(orderItem, orderAdjustments) isoCode=currencyUomId/>
                                             <#else>
@@ -907,7 +907,7 @@ under the License.
                         <@ofbizCurrency amount=totalDeductible isoCode=currencyUomId/>
                     </td>
                     <#-- itemsSubtotal(ItemsSubTotal) -->
-                    <td style="text-align:right;padding-right:10px;" nowrap="nowrap">
+                    <td style="text-align:right;" nowrap="nowrap">
                         <@ofbizCurrency amount=orderSubTotal isoCode=currencyUomId/>
                     </td>
                     <#-- grand total -->
