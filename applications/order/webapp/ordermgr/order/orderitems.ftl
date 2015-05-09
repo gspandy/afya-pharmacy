@@ -753,7 +753,8 @@ under the License.
                                                 <#else>
                                                     <#assign itemSubTotal = Static["java.math.BigDecimal"].ZERO>
                                                 </#if>
-                                                <#assign copayInsurance = itemSubTotal - copayPatient>
+                                                <#assign itemDeductibleAmount = Static["org.ofbiz.order.order.OrderReadHelper"].getOrderItemDeductible(orderItem)?default(0.000)>
+                                                <#assign copayInsurance = itemSubTotal - (copayPatient + itemDeductibleAmount)>
                                                 <@ofbizCurrency amount=copayInsurance?default(0.000) isoCode=currencyUomId/>
                                                 <#assign totalCopayInsurance = totalCopayInsurance + copayInsurance>
                                             </td>
@@ -891,28 +892,28 @@ under the License.
                     </#list>
                     <#assign totalAdjustments=totalAdjustmentAmount?default(0.000)+totalorderAdjustmentGrouped?default(0.000)>
                     <#-- totalAdjustments(Total Adjustments) -->
-                    <td style="text-align:right;padding-right:10px;" nowrap="nowrap">
+                    <td style="text-align:right;padding-right:10px;font-weight:bold;" nowrap="nowrap">
                         <@ofbizCurrency amount=totalAdjustments isoCode=currencyUomId/>
                     </td>
                     <#-- totalCopayPatient(Total Patient Payable) -->
-                    <td style="text-align:right;padding-right:10px;" nowrap="nowrap">
+                    <td style="text-align:right;padding-right:10px;font-weight:bold;" nowrap="nowrap">
                         <@ofbizCurrency amount=totalCopayPatient isoCode=currencyUomId/>
                     </td>
                     <#-- totalCopayInsurance(Total Insurance Payable) -->
-                    <td style="text-align:right;padding-right:10px;" nowrap="nowrap">
+                    <td style="text-align:right;padding-right:10px;font-weight:bold;" nowrap="nowrap">
                         <@ofbizCurrency amount=totalCopayInsurance isoCode=currencyUomId/>
                     </td>
                     <#-- totalDeductible(Total Deductible) -->
-                    <td style="text-align:right;padding-right:10px;" nowrap="nowrap">
+                    <td style="text-align:right;padding-right:10px;font-weight:bold;" nowrap="nowrap">
                         <@ofbizCurrency amount=totalDeductible isoCode=currencyUomId/>
                     </td>
                     <#-- itemsSubtotal(ItemsSubTotal) -->
-                    <td style="text-align:right;" nowrap="nowrap">
+                    <td style="text-align:right;font-weight:bold;" nowrap="nowrap">
                         <@ofbizCurrency amount=orderSubTotal isoCode=currencyUomId/>
                     </td>
                     <#-- grand total -->
                     <#-- <tr>
-                        <td style="text-align:right;padding-right:10px;" colspan="9">
+                        <td style="text-align:right;padding-right:10px;font-weight:bold;" colspan="9">
                             <span class="label">${uiLabelMap.OrderTotalDue}</span>
                         </td>
                         <td style="text-align:right;padding-right:10px;" nowrap="nowrap">
