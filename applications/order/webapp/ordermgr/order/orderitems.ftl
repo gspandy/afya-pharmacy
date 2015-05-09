@@ -880,23 +880,29 @@ under the License.
                     <#assign totalAdjustments = Static["java.math.BigDecimal"].ZERO>
                     
                     <#-- <#assign totalAdjustmentAmount = Static["java.math.BigDecimal"].ZERO>
-                    <#list orderHeaderAdjustments as orderHeaderAdjustment>
-                        <#assign adjustmentType = orderHeaderAdjustment.getRelatedOne("OrderAdjustmentType")>
-                        <#assign adjDesc = adjustmentType.description>
-                        <#assign adjustmentAmount = Static["org.ofbiz.order.order.OrderReadHelper"].calcOrderAdjustment(orderHeaderAdjustment, orderSubTotal)>
-                        <#if adjustmentAmount != 0 && (!adjustmentType.assessableValueCalculation?exists || adjustmentType.assessableValueCalculation!="Y")>
-                            <#assign totalAdjustmentAmount=totalAdjustmentAmount+adjustmentAmount?default(0.000)>
-                        </#if>
-                    </#list> -->
+                    <#if orderHeaderAdjustments?has_content>
+                        <#list orderHeaderAdjustments as orderHeaderAdjustment>
+                            <#assign adjustmentType = orderHeaderAdjustment.getRelatedOne("OrderAdjustmentType")>
+                            <#assign adjDesc = adjustmentType.description>
+                            <#assign adjustmentAmount = Static["org.ofbiz.order.order.OrderReadHelper"].calcOrderAdjustment(orderHeaderAdjustment, orderSubTotal)>
+                            <#if adjustmentAmount != 0 && (!adjustmentType.assessableValueCalculation?exists || adjustmentType.assessableValueCalculation!="Y")>
+                                <#assign totalAdjustmentAmount=totalAdjustmentAmount+adjustmentAmount?default(0.000)>
+                            </#if>
+                        </#list>
+                    </#if> -->
                     
                     <#-- line item adjustments -->
-                    <#list orderItemList as orderItem>
-                        <#assign itemAmountDeductible = Static["org.ofbiz.order.order.OrderReadHelper"].getOrderItemDeductible(orderItem)?default(0.000)>
-                    </#list>
+                    <#if orderItemList?has_content>
+                        <#list orderItemList as orderItem>
+                            <#assign itemAmountDeductible = Static["org.ofbiz.order.order.OrderReadHelper"].getOrderItemDeductible(orderItem)?default(0.000)>
+                        </#list>
+                    </#if>
                     <#-- tax adjustments -->
-                    <#list orderAdjustmentGrouped as orderAdjustmentGrouped>
-                        <#assign totalOrderAdjustmentGrouped=totalOrderAdjustmentGrouped+orderAdjustmentGrouped.amount?default(0.000)>
-                    </#list>
+                    <#if orderAdjustmentGrouped?has_content>
+                        <#list orderAdjustmentGrouped as orderAdjustmentGrouped>
+                            <#assign totalOrderAdjustmentGrouped=totalOrderAdjustmentGrouped+orderAdjustmentGrouped.amount?default(0.000)>
+                        </#list>
+                    </#if>
                     <#assign totalAdjustments=itemAmountDeductible?default(0.000)+totalOrderAdjustmentGrouped?default(0.000)>
                     <#-- totalAdjustments(Total Adjustments) -->
                     <td style="text-align:right;padding-right:10px;font-weight:bold;" nowrap="nowrap">
