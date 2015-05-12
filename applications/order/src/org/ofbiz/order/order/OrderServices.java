@@ -274,7 +274,9 @@ public class OrderServices {
         // get the order type
         String orderTypeId = (String) context.get("orderTypeId");
         String partyId = (String) context.get("partyId");
+        String isOrderApproved = (String) context.get("isOrderApproved");
         String billFromVendorPartyId = (String) context.get("billFromVendorPartyId");
+        String initialStatus = null;
 
         // check security permissions for order:
         // SALES ORDERS - if userLogin has ORDERMGR_SALES_CREATE or ORDERMGR_CREATE permission, or if it is same party
@@ -542,7 +544,10 @@ public class OrderServices {
         }
 
         // the inital status for ALL order types
-        String initialStatus = "ORDER_CREATED";
+        if (isOrderApproved == null && "Y".equals(isOrderApproved))
+            initialStatus = "ORDER_APPROVED";
+        else
+            initialStatus = "ORDER_CREATED";
         successResult.put("statusId", initialStatus);
 
         // create the order object

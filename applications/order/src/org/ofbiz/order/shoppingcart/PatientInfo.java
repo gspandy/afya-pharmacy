@@ -29,6 +29,7 @@ public class PatientInfo {
     private String healthPolicyId;
     private String moduleId;
     private String moduleName;
+    private String isOrderApproved;
 
     PatientInfo(HttpServletRequest request){
         this.patientId=request.getParameter("patientId");
@@ -49,6 +50,7 @@ public class PatientInfo {
         this.healthPolicyId=request.getParameter("healthPolicyId");
         this.moduleId=request.getParameter("moduleId");
         this.moduleName=request.getParameter("moduleName");
+        this.isOrderApproved=request.getParameter("isOrderApproved");
     }
 
     public PatientInfo() {
@@ -222,5 +224,13 @@ public class PatientInfo {
     public void setModuleName(String moduleName) {
         this.moduleName = moduleName;
     }
+
+	public String getIsOrderApproved() {
+		return isOrderApproved;
+	}
+
+	public void setIsOrderApproved(String isOrderApproved) {
+		this.isOrderApproved = isOrderApproved;
+	}
 
 }

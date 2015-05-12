@@ -87,6 +87,7 @@ public class AfyaSalesOrderController {
             patientInfo.setHisBenefitId(prescription.getHisBenefitId());
             patientInfo.setModuleName(prescription.getModuleName());
             patientInfo.setBenefitId(prescription.getBenefitId());
+            patientInfo.setIsOrderApproved(prescription.getIsOrderApproved());
             cart.setPatientInfo(patientInfo);
             CheckOutHelper checkOutHelper = new CheckOutHelper(dispatcher, dispatcher.getDelegator(), cart);
             java.util.Map orderCreate = checkOutHelper.createOrder(userLogin);
@@ -169,6 +170,7 @@ public class AfyaSalesOrderController {
         private String hisBenefitId;
         private String moduleName;
         private String benefitId;
+        private String isOrderApproved;
 
         public String getAddress() {
             return address;
@@ -309,7 +311,15 @@ public class AfyaSalesOrderController {
             this.benefitId = benefitId;
         }
 
-        @Override
+        public String getIsOrderApproved() {
+			return isOrderApproved;
+		}
+
+		public void setIsOrderApproved(String isOrderApproved) {
+			this.isOrderApproved = isOrderApproved;
+		}
+
+		@Override
         public String toString() {
             return "Prescription{" +
                     "clinicId='" + clinicId + '\'' +
@@ -323,6 +333,7 @@ public class AfyaSalesOrderController {
                     ", gender='" + gender + '\'' +
                     ", mobile='" + mobile + '\'' +
                     ", patientType='" + patientType + '\'' +
+                    ", isOrderApproved='" + isOrderApproved + '\'' +
                     ", clinicName='" + clinicName + '\'' +
                     ", doctorName='" + doctorName + '\'' +
                     ", address='" + address + '\'' +
