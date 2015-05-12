@@ -30,7 +30,7 @@ under the License.
     }
 </script>
 <#if security.hasEntityPermission("ORDERMGR", "_UPDATE", session)>
-<div class="screenlet">
+  <div class="screenlet">
     <div class="screenlet-title-bar">
       <ul>
         <li class="h3">${uiLabelMap.OrderReceiveOfflinePayments}</li>
@@ -38,7 +38,7 @@ under the License.
       <br class="clear"/>
     </div>
     <div class="screenlet-body">
-      <a href="<@ofbizUrl>authview/${donePage}</@ofbizUrl>" class="buttontext">${uiLabelMap.CommonBack}</a>
+      <a href="<@ofbizUrl>${donePage}</@ofbizUrl>" class="buttontext">${uiLabelMap.CommonBack}</a>
       <a href="javascript:document.paysetupform.submit()" class="btn btn-success">${uiLabelMap.CommonSave}</a>
 
       <form method="post" action="<@ofbizUrl>editOrderPaymentPreference/${donePage}</@ofbizUrl>" name="paysetupform">
@@ -61,10 +61,17 @@ under the License.
             <td width="30%" class="align-text">
               <select name="checkOutPaymentId" id="paymentMethodTypeId" onchange="javascript:validate(this);">
                 <#list paymentMethodTypes as payType>
-                  <option value="${payType.paymentMethodTypeId}">${payType.get("description",locale)?default(payType.paymentMethodTypeId)}</option>
+                  <#if payType?exists && "PATIENT" != payType.paymentMethodTypeId>
+                    <option value="${payType.paymentMethodTypeId}">${payType.get("description",locale)?default(payType.paymentMethodTypeId)}</option>
+                  <#elseif payType?exists && "PATIENT" == payType.paymentMethodTypeId>
+                    <#assign paymentMethodType = delegator.findOne("PaymentMethodType", {"paymentMethodTypeId" : "CASH"}, true)>
+                    <option value="${paymentMethodType.paymentMethodTypeId}">${paymentMethodType.get("description",locale)?default(paymentMethodType.paymentMethodTypeId)}</option>
+                  </#if>
+                  <#if payType?exists && ("CASH" == payType.paymentMethodTypeId || "CASH PAYING" == payType.paymentMethodTypeId || "PATIENT" == payType.paymentMethodTypeId)>
+                    <#assign paymentMethodType = delegator.findOne("PaymentMethodType", {"paymentMethodTypeId" : "CREDIT_CARD"}, true)>
+                    <option value="${paymentMethodType.paymentMethodTypeId}">${paymentMethodType.get("description",locale)?default(paymentMethodType.paymentMethodTypeId)}</option>
+                  </#if>
                 </#list>
-                <#assign paymentMethodType = delegator.findOne("PaymentMethodType", {"paymentMethodTypeId" : "CREDIT_CARD"}, true)>
-                <option value="${paymentMethodType.paymentMethodTypeId}">${paymentMethodType.get("description",locale)?default(paymentMethodType.paymentMethodTypeId)}</option>
               </select>
             </td>
             <td width="1">&nbsp;&nbsp;&nbsp;</td>
@@ -81,11 +88,11 @@ under the License.
         </table>
       </form>
 
-      <a href="<@ofbizUrl>authview/${donePage}</@ofbizUrl>" class="buttontext">${uiLabelMap.CommonBack}</a>
+      <a href="<@ofbizUrl>${donePage}</@ofbizUrl>" class="buttontext">${uiLabelMap.CommonBack}</a>
       <a href="javascript:document.paysetupform.submit()" class="btn btn-success">${uiLabelMap.CommonSave}</a>
     </div>
-</div>
-<br />
+  </div>
+  <br />
 <#else>
   <h3>${uiLabelMap.OrderViewPermissionError}</h3>
 </#if>
