@@ -4244,7 +4244,7 @@ public class ShoppingCart implements Iterable<ShoppingCartItem>, Serializable {
         Iterator i = paymentInfo.iterator();
         while (i.hasNext()) {
             CartPaymentInfo inf = (CartPaymentInfo) i.next();
-            if("PATIENT".equals(inf.paymentMethodTypeId) || "CASH".equals(inf.paymentMethodTypeId) || "CASH PAYING".equals(inf.paymentMethodTypeId)) {
+            if("PATIENT".equals(inf.paymentMethodTypeId) || "CASH".equals(inf.paymentMethodTypeId) || "CASH PAYING".equals(inf.paymentMethodTypeId) || "CREDIT_CARD".equals(inf.paymentMethodTypeId)) {
                 inf.amount = patientToPay;
             }else if("INSURANCE".equals(inf.paymentMethodTypeId) || "COPORATE".equals(inf.paymentMethodTypeId)){
                 inf.amount = remainingAmount;
