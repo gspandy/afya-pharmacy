@@ -97,7 +97,7 @@
 		</style>
 
         <script>
-            window.location.href='http://5.9.249.197:7878/afya-portal';
+            window.location.href='http://5.9.249.197:7878/afya-portal/login';
         </script>
 	</head>
 	<#--<body>
