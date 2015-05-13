@@ -782,8 +782,9 @@ under the License.
                                                 <@ofbizCurrency amount=Static["org.ofbiz.order.order.OrderReadHelper"].getOrderItemCopay(orderItem)?default(0.000) isoCode=currencyUomId/>
                                             </td> -->
                                           <#else>
-                                           <td style="text-align:right;padding-right:10px;" valign="top" nowrap="nowrap">
-                                                <#assign copayPatient = Static["org.ofbiz.order.order.OrderReadHelper"].getOrderItemSubTotal(orderItem, orderAdjustments)?default(0.000)>
+                                            <td style="text-align:right;padding-right:10px;" valign="top" nowrap="nowrap">
+                                                <#assign patientPayable = Static["org.ofbiz.order.order.OrderReadHelper"].getOrderItemSubTotal(orderItem, orderAdjustments)?default(0.000)>
+                                                <#assign copayPatient = patientPayable + lineItemAdjustmentTotal>
                                                 <@ofbizCurrency amount=copayPatient isoCode=currencyUomId/>
                                                 <#assign totalCopayPatient = totalCopayPatient + copayPatient>
                                             </td>
