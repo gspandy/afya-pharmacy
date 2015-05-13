@@ -550,7 +550,7 @@ public class OrderServices {
         }
 
         // the inital status for ALL order types
-        if (isOrderApproved != null && "Y".equals(isOrderApproved))
+        if ("Y".equals(isOrderApproved))
             initialStatus = "ORDER_APPROVED";
         else
             initialStatus = "ORDER_CREATED";
