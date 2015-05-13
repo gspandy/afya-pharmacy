@@ -778,7 +778,7 @@ under the License.
                                                 <@ofbizCurrency amount=itemDeductible isoCode=currencyUomId/>
                                                 <#assign totalDeductible = totalDeductible + itemDeductible>
                                             </td>
-                                            <#-- <td style="text-align:right;padding-right:10px;" valign="top" nowrap="nowrap">
+                                            `<#-- <td style="text-align:right;padding-right:10px;" valign="top" nowrap="nowrap">
                                                 <@ofbizCurrency amount=Static["org.ofbiz.order.order.OrderReadHelper"].getOrderItemCopay(orderItem)?default(0.000) isoCode=currencyUomId/>
                                             </td> -->
                                           <#else>
@@ -938,7 +938,7 @@ under the License.
                 
                 <#if orderHeader.orderTypeId == "SALES_ORDER">
                     <td style="text-align:right;padding-right:10px;font-weight:bold;" colspan="5">Total</td>
-                    <#assign itemAmountDeductible = Static["java.math.BigDecimal"].ZERO>
+                    <#-- <#assign itemAmountDeductible = Static["java.math.BigDecimal"].ZERO> -->
                     <#assign totalOrderAdjustmentGrouped = Static["java.math.BigDecimal"].ZERO>
                     <#assign totalAdjustments = Static["java.math.BigDecimal"].ZERO>
                     
@@ -955,18 +955,18 @@ under the License.
                     </#if> -->
                     
                     <#-- line item adjustments -->
-                    <#if orderItemList?has_content>
+                    <#-- <#if orderItemList?has_content>
                         <#list orderItemList as orderItem>
                             <#assign itemAmountDeductible = Static["org.ofbiz.order.order.OrderReadHelper"].getOrderItemDeductible(orderItem)?default(0.000)>
                         </#list>
-                    </#if>
+                    </#if> -->
                     <#-- tax adjustments -->
                     <#if orderAdjustmentGrouped?has_content>
                         <#list orderAdjustmentGrouped as orderAdjustmentGrouped>
                             <#assign totalOrderAdjustmentGrouped=totalOrderAdjustmentGrouped+orderAdjustmentGrouped.amount?default(0.000)>
                         </#list>
                     </#if>
-                    <#assign totalAdjustments=itemAmountDeductible?default(0.000)+totalOrderAdjustmentGrouped?default(0.000)>
+                    <#assign totalAdjustments=totalOrderAdjustmentGrouped?default(0.000)>
                     <#-- totalAdjustments(Total Adjustments) -->
                     <td style="text-align:right;padding-right:10px;font-weight:bold;" nowrap="nowrap">
                         <@ofbizCurrency amount=totalAdjustments isoCode=currencyUomId/>
