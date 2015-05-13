@@ -153,7 +153,7 @@ under the License.
                       <tr>
                         <td width="80px">${loopStatusItem.get("description",locale)}</td>
                         <td width="2px">-</td>
-                        <td width="80px">${orderHeaderStatus.statusDatetime?string("dd/MM/yyyy")}</td>
+                        <td width="80px">${orderHeaderStatus.statusDatetime?string("dd/MM/yyyy HH:mm:ss")}</td>
                         <#-- <td width="80px">${Static["org.ofbiz.base.util.UtilFormatOut"].formatDateTime(orderHeaderStatus.statusDatetime, "", locale, timeZone)!}</td> -->
                         <#-- <td width="80px">${orderHeaderStatus.statusDatetime?default("0000-00-00 00:00:00")?string}</td> -->
                         <td width="80px">${uiLabelMap.CommonBy}</td><td width="1%">-</td>

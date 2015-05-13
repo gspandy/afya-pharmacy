@@ -106,7 +106,7 @@ ${cardNumberDisplay?if_exists}
                 <#assign statusItem = orderPaymentStatus.getRelatedOne("StatusItem")?if_exists>
                 <#if statusItem?has_content>
                     <div>
-                    ${statusItem.get("description",locale)} <#if orderPaymentStatus.statusDatetime?has_content>- ${orderPaymentStatus.statusDatetime?if_exists?string("dd/MM/yyyy")}</#if><#-- ${Static["org.ofbiz.base.util.UtilFormatOut"].formatDateTime(orderPaymentStatus.statusDatetime, "", locale, timeZone)!} -->
+                    ${statusItem.get("description",locale)} <#if orderPaymentStatus.statusDatetime?has_content>- ${orderPaymentStatus.statusDatetime?if_exists?string("dd/MM/yyyy HH:mm:ss")}</#if><#-- ${Static["org.ofbiz.base.util.UtilFormatOut"].formatDateTime(orderPaymentStatus.statusDatetime, "", locale, timeZone)!} -->
                         &nbsp;
                     ${uiLabelMap.CommonBy} - [${orderPaymentStatus.statusUserLogin?if_exists}]
                     </div>
