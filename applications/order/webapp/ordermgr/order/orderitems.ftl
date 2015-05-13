@@ -495,7 +495,7 @@ under the License.
                              <#if orderItem.estimatedShipDate?exists>
                                 <tr<#if itemClass == "1"> class="alternate-row"</#if>>
                                     <td align="right" colspan="2">
-                                        <span class="label">${uiLabelMap.OrderOrderQuoteEstimatedDeliveryDate}</span>&nbsp;${orderItem.estimatedShipDate?if_exists?string('dd-MM-yyyy')}
+                                        <span class="label">${uiLabelMap.OrderOrderQuoteEstimatedDeliveryDate}</span>&nbsp;${orderItem.estimatedShipDate?if_exists?string('dd/MM/yyyy')}
                                     </td>
                                     <td colspan="7">&nbsp;</td>
                                 </tr>
@@ -503,7 +503,7 @@ under the License.
                                 <tr<#if itemClass == "1"> class="alternate-row"</#if>>
                                     <td align="right" colspan="2">
                                        <#if orderItem.estimatedDeliveryDate?exists>
-                                        <span class="label">${uiLabelMap.OrderOrderQuoteEstimatedDeliveryDate}</span>&nbsp;${orderItem.estimatedDeliveryDate?if_exists?string('dd-MM-yyyy')}
+                                        <span class="label">${uiLabelMap.OrderOrderQuoteEstimatedDeliveryDate}</span>&nbsp;${orderItem.estimatedDeliveryDate?if_exists?string('dd/MM/yyyy')}
                                         </#if>
                                     </td>
                                     <td colspan="7"></td>
@@ -736,10 +736,25 @@ under the License.
                                         <td style="text-align:right;padding-right:10px;" valign="top" nowrap="nowrap">
                                             <@ofbizCurrency amount=orderItem.unitPrice isoCode=currencyUomId/>
                                         </td>
-                                        <td style="text-align:right;padding-right:10px;" valign="top" nowrap="nowrap">
-                                            <@ofbizCurrency amount=Static["org.ofbiz.order.order.OrderReadHelper"].getOrderItemAdjustmentsTotal(orderItem, orderAdjustments, true, false, false) isoCode=currencyUomId/>
-                                        </td>
+                                        <#if orderHeader.orderTypeId == "PURCHASE_ORDER">
+                                            <td style="text-align:right;padding-right:10px;" valign="top" nowrap="nowrap">
+                                                <@ofbizCurrency amount=Static["org.ofbiz.order.order.OrderReadHelper"].getOrderItemAdjustmentsTotal(orderItem, orderAdjustments, true, false, false) isoCode=currencyUomId/>
+                                            </td>
+                                        </#if>
                                         <#if orderHeader.orderTypeId == "SALES_ORDER">
+                                          <#-- adjustment details per line item -->
+                                          <td style="text-align:right;padding-right:10px;" valign="top" nowrap="nowrap">
+                                            <#assign lineItemAdjustmentTotal = Static["java.math.BigDecimal"].ZERO>
+                                            <#assign orderItemAdjustments = Static["org.ofbiz.order.order.OrderReadHelper"].getOrderItemAdjustmentList(orderItem, orderAdjustments)?default(0.000)>
+                                            <#if orderItemAdjustments?exists && orderItemAdjustments?has_content>
+                                              <#list orderItemAdjustments as orderItemAdjustment>
+                                                <#assign adjustmentType = orderItemAdjustment.getRelatedOneCache("OrderAdjustmentType")>
+                                                <#assign lineItemAdjustment = Static["org.ofbiz.order.order.OrderReadHelper"].calcItemAdjustment(orderItemAdjustment, orderItem)?default(0.000)>
+                                                <#assign lineItemAdjustmentTotal = lineItemAdjustmentTotal + lineItemAdjustment>
+                                              </#list>
+                                            </#if>
+                                            <@ofbizCurrency amount=lineItemAdjustmentTotal isoCode=currencyUomId/>
+                                          </td>
                                           <#if orderRxHeader?has_content && "INSURANCE"==orderRxHeader.patientType>
                                             <td style="text-align:right;padding-right:10px;" valign="top" nowrap="nowrap">
                                                 <#assign copayPatient = Static["org.ofbiz.order.order.OrderReadHelper"].getOrderItemPatientToPay(orderItem)?default(0.000)>
@@ -788,8 +803,11 @@ under the License.
                                           </#if>
                                         </#if>
                                         <td style="text-align:right;" valign="top" nowrap="nowrap">
+                                            <#assign subTotal = Static["java.math.BigDecimal"].ZERO>
                                             <#if orderItem.statusId != "ITEM_CANCELLED">
-                                                <@ofbizCurrency amount=Static["org.ofbiz.order.order.OrderReadHelper"].getOrderItemSubTotal(orderItem, orderAdjustments) isoCode=currencyUomId/>
+                                                <#assign lineItemSubTotal = Static["org.ofbiz.order.order.OrderReadHelper"].getOrderItemSubTotal(orderItem, orderAdjustments)?default(0.000)>
+                                                <#assign subTotal = lineItemSubTotal + lineItemAdjustmentTotal>
+                                                <@ofbizCurrency amount=subTotal isoCode=currencyUomId/>
                                             <#else>
                                                 <@ofbizCurrency amount=0.000 isoCode=currencyUomId/>
                                             </#if>
@@ -805,6 +823,50 @@ under the License.
                             </#if>
                         </#if>
                     </#list>
+                </#if>
+                
+                <#if orderHeader.orderTypeId == "SALES_ORDER">
+                    <#assign orderLevelAdjustment = Static["java.math.BigDecimal"].ZERO>
+                    <#if orderHeaderAdjustments?has_content>
+                        <#list orderHeaderAdjustments as orderHeaderAdjustment>
+                            <#assign adjustmentType = orderHeaderAdjustment.getRelatedOne("OrderAdjustmentType")>
+                            <#assign adjustmentAmount = Static["org.ofbiz.order.order.OrderReadHelper"].calcOrderAdjustment(orderHeaderAdjustment, orderSubTotal)>
+                            <#assign orderAdjustmentId = orderHeaderAdjustment.get("orderAdjustmentId")>
+                            <#assign productPromoCodeId = ''>
+                            <#if adjustmentType.get("orderAdjustmentTypeId") == "PROMOTION_ADJUSTMENT" && orderHeaderAdjustment.get("productPromoId")?has_content>
+                                <#assign productPromo = orderHeaderAdjustment.getRelatedOne("ProductPromo")>
+                                <#assign productPromoCodes = delegator.findByAnd("ProductPromoCode", {"productPromoId":productPromo.productPromoId})>
+                                <#assign orderProductPromoCode = ''>
+                                <#list productPromoCodes as productPromoCode>
+                                    <#if !(orderProductPromoCode?has_content)>
+                                        <#assign orderProductPromoCode = delegator.findOne("OrderProductPromoCode", {"productPromoCodeId":productPromoCode.productPromoCodeId, "orderId":orderHeaderAdjustment.orderId}, false)?if_exists>
+                                    </#if>
+                                </#list>
+                                <#if orderProductPromoCode?has_content>
+                                    <#assign productPromoCodeId = orderProductPromoCode.get("productPromoCodeId")>
+                                </#if>
+                            </#if>
+                            <#if adjustmentAmount != 0>
+                                <#assign orderLevelAdjustment = orderLevelAdjustment + adjustmentAmount>
+                                <#-- <tr>
+                                    <td style="text-align:right;padding-right:10px;font-weight:bold;" colspan="5">
+                                        ${adjustmentType.description?if_exists}
+                                    </td>
+                                    <td style="text-align:right;padding-right:10px;font-weight:bold;" nowrap="nowrap">
+                                        <@ofbizCurrency amount=adjustmentAmount isoCode=currencyUomId/>
+                                    </td>
+                                </tr> -->
+                            </#if>
+                        </#list>
+                        <#if adjustmentAmount != 0>
+                            <tr>
+                                <td style="text-align:right;padding-right:10px;" nowrap="nowrap" colspan="5">&nbsp;</td>
+                                <td style="text-align:right;padding-right:10px;" nowrap="nowrap">
+                                    <@ofbizCurrency amount=adjustmentAmount isoCode=currencyUomId/>
+                                </td>
+                            </tr>
+                        </#if>
+                    </#if>
                 </#if>
                 
                 <#if orderHeader.orderTypeId == "PURCHASE_ORDER">
@@ -922,7 +984,7 @@ under the License.
                     </td>
                     <#-- itemsSubtotal(ItemsSubTotal) -->
                     <td style="text-align:right;font-weight:bold;" nowrap="nowrap">
-                        <@ofbizCurrency amount=orderSubTotal isoCode=currencyUomId/>
+                        <@ofbizCurrency amount=grandTotal isoCode=currencyUomId/>
                     </td>
                     <#-- grand total -->
                     <#-- <tr>

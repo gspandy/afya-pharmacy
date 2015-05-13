@@ -92,15 +92,15 @@ under the License.
                     <#list WorkOrderItemFulfillments as WorkOrderItemFulfillment>
                         <#assign workEffort = WorkOrderItemFulfillment.getRelatedOneCache("WorkEffort")?if_exists>
                           <tr><td>&nbsp;</td><td>&nbsp;</td><td colspan="8">
-                              <div>${uiLabelMap.CommonFrom}: ${workEffort.estimatedStartDate?string("yyyy-MM-dd")} ${uiLabelMap.CommonTo}: ${workEffort.estimatedCompletionDate?string("yyyy-MM-dd")} ${uiLabelMap.OrderNbrPersons}: ${workEffort.reservPersons}</div></td></tr>
+                              <div>${uiLabelMap.CommonFrom}: ${workEffort.estimatedStartDate?string("dd/MM/yyyy")} ${uiLabelMap.CommonTo}: ${workEffort.estimatedCompletionDate?string("dd/MM/yyyy")} ${uiLabelMap.OrderNbrPersons}: ${workEffort.reservPersons}</div></td></tr>
                         <#break>&lt;#&ndash; need only the first one &ndash;&gt;
                     </#list>
                 </#if>-->
             <#assign cartItem = cart.findCartItem(orderItem_index)>
                 <#if cartItem.itemType == "RENTAL_ORDER_ITEM">
                 <tr><td>&nbsp;</td><td>&nbsp;</td><td colspan="8">
-                        <span style="width:250px;"><b>${uiLabelMap.CommonFrom} </b>: ${cartItem.reservStart?string("yyyy-MM-dd")} </span>
-                            <span style="width:250px"><b>${uiLabelMap.CommonTo}</b> : ${cartItem.reservEnd?string("yyyy-MM-dd")}</span>
+                        <span style="width:250px;"><b>${uiLabelMap.CommonFrom} </b>: ${cartItem.reservStart?string("dd/MM/yyyy")} </span>
+                            <span style="width:250px"><b>${uiLabelMap.CommonTo}</b> : ${cartItem.reservEnd?string("dd/MM/yyyy")}</span>
                         <span style="width:250px"><b>Min hours to Bill </b>: ${cartItem.reservLength}</span>
                    </td></tr>
                 </#if>
