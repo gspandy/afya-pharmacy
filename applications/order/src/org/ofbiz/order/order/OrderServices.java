@@ -274,9 +274,15 @@ public class OrderServices {
         // get the order type
         String orderTypeId = (String) context.get("orderTypeId");
         String partyId = (String) context.get("partyId");
-        String isOrderApproved = (String) context.get("isOrderApproved");
         String billFromVendorPartyId = (String) context.get("billFromVendorPartyId");
+        String isOrderApproved = null;
         String initialStatus = null;
+
+        if ("SALES_ORDER".equals(orderTypeId)) {
+            PatientInfo patientInfoForSO = (PatientInfo) context.get("patientDetails");
+            if (patientInfoForSO != null)
+                isOrderApproved = patientInfoForSO.getIsOrderApproved();
+        }
 
         // check security permissions for order:
         // SALES ORDERS - if userLogin has ORDERMGR_SALES_CREATE or ORDERMGR_CREATE permission, or if it is same party
