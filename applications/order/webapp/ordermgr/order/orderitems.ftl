@@ -769,7 +769,7 @@ under the License.
                                                     <#assign itemSubTotal = Static["java.math.BigDecimal"].ZERO>
                                                 </#if>
                                                 <#assign itemDeductibleAmount = Static["org.ofbiz.order.order.OrderReadHelper"].getOrderItemDeductible(orderItem)?default(0.000)>
-                                                <#assign copayInsurance = itemSubTotal - copayPatient>
+                                                <#assign copayInsurance = itemSubTotal + lineItemAdjustmentTotal - copayPatient>
                                                 <@ofbizCurrency amount=copayInsurance?default(0.000) isoCode=currencyUomId/>
                                                 <#assign totalCopayInsurance = totalCopayInsurance + copayInsurance>
                                             </td>
