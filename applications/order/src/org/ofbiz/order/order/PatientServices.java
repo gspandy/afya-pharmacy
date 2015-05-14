@@ -29,8 +29,8 @@ public class PatientServices {
         try {
             String patientId = (String) context.get("patientId");
             GenericValue patientRecord = delegator.findOne("Patient", false, "patientId", patientId);
-            Map returnVal = new HashMap();
-            returnVal.put("afyaId", "11111111");
+            //Map returnVal = new HashMap();
+            //returnVal.put("afyaId", "11111111");
             ObjectMapper gson = new ObjectMapper();
             //.setDateFormat("yyyy-MM-dd").create();
             String patientJsonString = gson.writeValueAsString(patientRecord);
@@ -43,7 +43,7 @@ public class PatientServices {
             headers.setAccept(mediaTypes);
             headers.setContentType(MediaType.APPLICATION_JSON);
             HttpEntity<String> requestEntity = new HttpEntity<String>(patientJsonString, headers);
-            ResponseEntity<String> responseEntity = restTemplate.exchange("http://"+PORTAL_URL+"/afya-portal/anon/patient/retrieveAfyaId", HttpMethod.POST, requestEntity, String.class);
+            ResponseEntity<String> responseEntity = restTemplate.exchange("http://5.9.249.197:7878/afya-portal/anon/patient/retrieveAfyaId", HttpMethod.POST, requestEntity, String.class);
             String afyaId = responseEntity.getBody();
             patientRecord.set("afyaId", afyaId);
             delegator.store(patientRecord);

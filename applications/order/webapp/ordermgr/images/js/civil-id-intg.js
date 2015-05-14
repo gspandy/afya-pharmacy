@@ -44,8 +44,7 @@ $(document).ready(function () {
                         $("#state").val(value);
                     } else if (attr == "country") {
                         $("#country").val(value);
-                    }
-                    else if (attr == "uhid") {
+                    } else if (attr == "uhid") {
                         $("#uhid").val(value);
                     }
                 });

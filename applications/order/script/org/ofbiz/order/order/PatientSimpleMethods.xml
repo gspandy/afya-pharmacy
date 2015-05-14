@@ -8,17 +8,59 @@
 
     <simple-method method-name="registerPatient" login-required="true" use-transaction="true" short-description="For Registering a new Patient">
 
-        <make-value entity-name="Patient" value-field="newPatient"/>
-        <set-nonpk-fields map="parameters" set-if-null="true" value-field="newPatient"/>
-        <sequenced-id field="newPatient.patientId" get-long-only="false" sequence-name="Patient"/>
+        <set field="civilId" from-field="parameters.civilId" set-if-empty="true" set-if-null="true"/>
 
-        <field-to-result field="newPatient.patientId" result-name="patientId"/>
-        <create-value do-cache-clear="true" or-store="false" value-field="newPatient"/>
+        <if>
 
-        <set field="serviceCtx.patientId" from-field="newPatient.patientId"/>
+            <condition>
+                <not>
+                    <if-empty field="civilId"></if-empty>
+                </not>
+            </condition>
 
-        <call-service break-on-error="true" error-code="error" in-map-name="serviceCtx" include-user-login="true"
-                      require-new-transaction="false" service-name="registerPatientOnPortal" success-code="success"/>
+            <then>
+
+                <set field="lookupMap.civilId" from-field="parameters.civilId"/>
+                <find-by-and entity-name="Patient" map="lookupMap" list="patientsList"/>
+                <if-empty field="patientsList">
+                        <make-value entity-name="Patient" value-field="newPatient"/>
+                        <set-nonpk-fields map="parameters" set-if-null="true" value-field="newPatient"/>
+                        <sequenced-id field="newPatient.patientId" get-long-only="false" sequence-name="Patient"/>
+
+                        <field-to-result field="newPatient.patientId" result-name="patientId"/>
+                        <create-value do-cache-clear="true" or-store="false" value-field="newPatient"/>
+
+                        <set field="serviceCtx.patientId" from-field="newPatient.patientId"/>
+
+                        <call-service break-on-error="true" error-code="error" in-map-name="serviceCtx" include-user-login="true"
+                                      require-new-transaction="false" service-name="registerPatientOnPortal" success-code="success"/>
+                </if-empty>
+                <if-not-empty field="patientsList">
+				        <add-error>
+					        <fail-message message="There is already a Patient registered with CivilId: ${civilId}"/>
+				        </add-error>
+				        <check-errors/>
+			    </if-not-empty>
+
+            </then>
+
+            <else>
+
+                <make-value entity-name="Patient" value-field="newPatient"/>
+                <set-nonpk-fields map="parameters" set-if-null="true" value-field="newPatient"/>
+                <sequenced-id field="newPatient.patientId" get-long-only="false" sequence-name="Patient"/>
+
+                <field-to-result field="newPatient.patientId" result-name="patientId"/>
+                <create-value do-cache-clear="true" or-store="false" value-field="newPatient"/>
+
+                <set field="serviceCtx.patientId" from-field="newPatient.patientId"/>
+
+                <call-service break-on-error="true" error-code="error" in-map-name="serviceCtx" include-user-login="true"
+                              require-new-transaction="false" service-name="registerPatientOnPortal" success-code="success"/>
+
+            </else>
+
+        </if>
 
     </simple-method>
 

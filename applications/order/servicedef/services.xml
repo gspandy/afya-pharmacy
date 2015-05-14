@@ -1177,7 +1177,8 @@ under the License.
              location="component://order/script/org/ofbiz/order/order/PatientSimpleMethods.xml" invoke="registerPatient"
             default-entity-name="Patient">
         <description>Register Patient</description>
-        <auto-attributes mode="IN" entity-name="Patient"  optional="true"/>
+        <auto-attributes mode="IN" entity-name="Patient" optional="true"/>
+        <attribute name="civilId" type="String" mode="IN" optional="true"/>
         <attribute name="patientId" type="String" mode="OUT"/>
     </service>
 
