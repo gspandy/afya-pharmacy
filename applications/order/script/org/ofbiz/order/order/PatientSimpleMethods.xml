@@ -75,6 +75,11 @@
         <now-timestamp field="lookedUpValue.updatedDate"/>
         <set field="lookedUpValue.updatedByUserLogin" from="userLogin.userLoginId" set-if-empty="true" set-if-null="false"/>
         <store-value do-cache-clear="true" value-field="lookedUpValue"/>
+        
+        <set field="serviceCtx.patientId" from-field="parameters.patientId"/>
+
+        <call-service break-on-error="true" error-code="error" in-map-name="serviceCtx" include-user-login="true"
+                      require-new-transaction="false" service-name="registerPatientOnPortal" success-code="success"/>
     </simple-method>
 
 
