@@ -274,6 +274,7 @@ ${cardNumberDisplay?if_exists}
                                   Amount:
                                   <#assign totalCopayPatient = Static["java.math.BigDecimal"].ZERO>
                                   <#assign totalCopayInsurance = Static["java.math.BigDecimal"].ZERO>
+                                  <#assign maxAmt = Static["java.math.BigDecimal"].ZERO>
                                   <#if orderRxHeader?has_content && "INSURANCE"==orderRxHeader.patientType>
                                       <#if ("CASH" == paymentMethodType.paymentMethodTypeId || "CASH PAYING" == paymentMethodType.paymentMethodTypeId || "CREDIT_CARD" == paymentMethodType.paymentMethodTypeId || "PATIENT" == paymentMethodType.paymentMethodTypeId)>
                                         <#if orderItemList?has_content>
