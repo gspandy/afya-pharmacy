@@ -1,6 +1,7 @@
 package org.ofbiz.order.order;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+
 import org.ofbiz.base.util.UtilMisc;
 import org.ofbiz.base.util.UtilProperties;
 import org.ofbiz.entity.Delegator;
@@ -15,6 +16,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javolution.util.FastMap;
+
 /**
  * Created by pradyumna on 23-04-2015.
  */
@@ -28,7 +31,33 @@ public class PatientServices {
         Delegator delegator = ctx.getDelegator();
         try {
             String patientId = (String) context.get("patientId");
-            GenericValue patientRecord = delegator.findOne("Patient", false, "patientId", patientId);
+            GenericValue patientRecordGv = delegator.findOne("Patient", false, "patientId", patientId);
+            
+            Map<String, Object> patientRecord = FastMap.newInstance();
+            patientRecord.put("civilId", patientRecordGv.getString("civilId"));
+            patientRecord.put("patientId", patientRecordGv.getString("patientId"));
+            patientRecord.put("patientType", patientRecordGv.getString("patientType"));
+            patientRecord.put("salutation", patientRecordGv.getString("title"));
+            patientRecord.put("firstName", patientRecordGv.getString("firstName"));
+            patientRecord.put("lastName", patientRecordGv.getString("thirdName"));
+            patientRecord.put("gender", patientRecordGv.getString("gender"));
+            patientRecord.put("dateOfBirth", patientRecordGv.getDate("dateOfBirth"));
+            patientRecord.put("bloodGroup", patientRecordGv.getString("bloodGroup"));
+            patientRecord.put("rH", patientRecordGv.getString("rH"));
+            patientRecord.put("address", patientRecordGv.getString("address1"));
+            patientRecord.put("postalCode", patientRecordGv.getString("postalCode"));
+            patientRecord.put("maritalStatus", patientRecordGv.getString("maritalStatus"));
+            patientRecord.put("nationality", patientRecordGv.getString("nationality"));
+            patientRecord.put("city", patientRecordGv.getString("city"));
+            patientRecord.put("state", patientRecordGv.getString("governorate"));
+            patientRecord.put("country", patientRecordGv.getString("country"));
+            patientRecord.put("emailAddress", patientRecordGv.getString("emailAddress"));
+            patientRecord.put("passport", patientRecordGv.getString("passport"));
+            patientRecord.put("homePhone", patientRecordGv.getString("homePhone"));
+            patientRecord.put("officePhone", patientRecordGv.getString("officePhone"));
+            patientRecord.put("isdCode", patientRecordGv.getString("isdCode"));
+            patientRecord.put("mobileNumber", patientRecordGv.getString("mobilePhone"));
+            
             //Map returnVal = new HashMap();
             //returnVal.put("afyaId", "11111111");
             ObjectMapper gson = new ObjectMapper();
@@ -45,15 +74,14 @@ public class PatientServices {
             HttpEntity<String> requestEntity = new HttpEntity<String>(patientJsonString, headers);
             ResponseEntity<String> responseEntity = restTemplate.exchange("http://5.9.249.197:7878/afya-portal/anon/patient/retrieveAfyaId", HttpMethod.POST, requestEntity, String.class);
             String afyaId = responseEntity.getBody();
-            patientRecord.set("afyaId", afyaId);
-            delegator.store(patientRecord);
+            patientRecordGv.set("afyaId", afyaId);
+            delegator.store(patientRecordGv);
             return UtilMisc.toMap("afyaId", afyaId);
         } catch (Exception e) {
             e.printStackTrace();
         }
         return ServiceUtil.returnFailure();
     }
-
 
 
 }
