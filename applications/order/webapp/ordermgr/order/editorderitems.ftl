@@ -254,12 +254,15 @@ under the License.
                                         </td>
                                         <td align="center">
                                             <input type="text" class="quantity" name="iqm_${shipGroupAssoc.orderItemSeqId}:${shipGroupAssoc.shipGroupSeqId}" size="6" value="${shipGroupAssoc.quantity?string.number}"/>
+                                            <#assign itemStatusOkay = (orderItem.statusId != "ITEM_CANCELLED" && orderItem.statusId != "ITEM_COMPLETED" && (shipGroupAssoc.cancelQuantity?default(0.000) < shipGroupAssoc.quantity?default(0.000)) && ("Y" != orderItem.isPromo?if_exists))>
+                                            <#if (security.hasEntityPermission("ORDERMGR", "_ADMIN", session) && itemStatusOkay) || (security.hasEntityPermission("ORDERMGR", "_UPDATE", session) && itemStatusOkay && orderHeader.statusId != "ORDER_SENT")>
+                                                <input type="checkbox" name="selectedItem" value="${orderItem.orderItemSeqId}" />
+                                            </#if>
                                         </td>
                                         <td colspan="4">&nbsp;</td>
                                         <td>
                                             <#assign itemStatusOkay = (orderItem.statusId != "ITEM_CANCELLED" && orderItem.statusId != "ITEM_COMPLETED" && (shipGroupAssoc.cancelQuantity?default(0.000) < shipGroupAssoc.quantity?default(0.000)) && ("Y" != orderItem.isPromo?if_exists))>
                                             <#if (security.hasEntityPermission("ORDERMGR", "_ADMIN", session) && itemStatusOkay) || (security.hasEntityPermission("ORDERMGR", "_UPDATE", session) && itemStatusOkay && orderHeader.statusId != "ORDER_SENT")>
-                                                <input type="checkbox" name="selectedItem" value="${orderItem.orderItemSeqId}" />
                                                 <a href="javascript:document.updateItemInfo.action='<@ofbizUrl>cancelOrderItem</@ofbizUrl>';document.updateItemInfo.orderItemSeqId.value='${orderItem.orderItemSeqId}';document.updateItemInfo.shipGroupSeqId.value='${shipGroup.shipGroupSeqId}';document.updateItemInfo.submit()" class="btn btn-danger">${uiLabelMap.CommonCancel}</a>
                                             <#else>
                                                 &nbsp;
