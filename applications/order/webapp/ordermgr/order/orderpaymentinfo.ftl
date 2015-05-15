@@ -332,6 +332,26 @@ ${cardNumberDisplay?if_exists}
                                       <#assign maxAmt = totalCopayPatient?default(0.000)?string("0.000")/>
                                   </#if>
                                 </#if>
+                              <#elseif  ("CASH" == paymentMethodType.paymentMethodTypeId || "CASH PAYING" == paymentMethodType.paymentMethodTypeId || "CREDIT_CARD" == paymentMethodType.paymentMethodTypeId || "PATIENT" == paymentMethodType.paymentMethodTypeId)>
+                                <#if orderItemList?has_content>
+                                  <#list orderItemList as orderItem>
+                                    <#assign lineItemAdjustmentTotal = Static["java.math.BigDecimal"].ZERO>
+                                    <#assign orderItemAdjustments = Static["org.ofbiz.order.order.OrderReadHelper"].getOrderItemAdjustmentList(orderItem, orderAdjustments)?default(0.000)>
+                                    <#if orderItemAdjustments?exists && orderItemAdjustments?has_content>
+                                      <#list orderItemAdjustments as orderItemAdjustment>
+                                        <#assign adjustmentType = orderItemAdjustment.getRelatedOneCache("OrderAdjustmentType")>
+                                        <#assign lineItemAdjustment = Static["org.ofbiz.order.order.OrderReadHelper"].calcItemAdjustment(orderItemAdjustment, orderItem)?default(0.000)>
+                                        <#assign lineItemAdjustmentTotal = lineItemAdjustmentTotal + lineItemAdjustment>
+                                      </#list>
+                                    </#if>
+                                    <#assign patientPayable = Static["org.ofbiz.order.order.OrderReadHelper"].getOrderItemSubTotal(orderItem, orderAdjustments)?default(0.000)>
+                                    <#assign copayPatient = patientPayable + lineItemAdjustmentTotal>
+                                    <#assign totalCopayPatient = totalCopayPatient + copayPatient>
+                                  </#list>
+                                </#if>
+                                <@ofbizCurrency amount=totalCopayPatient isoCode=currencyUomId/>
+                                <#assign maxAmt = totalCopayPatient?default(0.000)?string("0.000")/>
+                              </#if>
                             </#if>
                         </div>
                     </td>
