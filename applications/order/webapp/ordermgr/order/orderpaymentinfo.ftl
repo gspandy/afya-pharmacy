@@ -128,6 +128,7 @@ ${cardNumberDisplay?if_exists}
             <#assign outputted = "true">
         <#-- try the paymentMethod first; if paymentMethodId is specified it overrides paymentMethodTypeId -->
             <#assign paymentMethod = orderPaymentPreference.getRelatedOne("PaymentMethod")?if_exists>
+            ${paymentMethod}
             <#if !paymentMethod?has_content>
                 <#assign paymentMethodType = orderPaymentPreference.getRelatedOne("PaymentMethodType")>
                 <#if paymentMethodType.paymentMethodTypeId == "EXT_BILLACT">
@@ -269,16 +270,78 @@ ${cardNumberDisplay?if_exists}
                     <td align="right" valign="top" width="29%">
                         <div>&nbsp;<span class="label">${paymentMethodType.get("description",locale)?if_exists}</span>&nbsp;
                             <#if orderPaymentPreference.maxAmount?has_content && (!(orderHeader.statusId.equals("ORDER_CANCELLED")) && !(orderHeader.statusId.equals("ORDER_REJECTED")))>
-                                <br />${uiLabelMap.OrderPaymentMaximumAmount}: <@ofbizCurrency amount=orderPaymentPreference.maxAmount?default(0.000) isoCode=currencyUomId/>
+                                <br /><#-- ${uiLabelMap.OrderPaymentMaximumAmount}: <@ofbizCurrency amount=orderPaymentPreference.maxAmount?default(0.000) isoCode=currencyUomId/> -->
+                                  Amount:
+                                  <#assign totalCopayPatient = Static["java.math.BigDecimal"].ZERO>
+                                  <#assign totalCopayInsurance = Static["java.math.BigDecimal"].ZERO>
+                                  <#if orderRxHeader?has_content && "INSURANCE"==orderRxHeader.patientType>
+                                      <#if ("CASH" == paymentMethodType.paymentMethodTypeId || "CASH PAYING" == paymentMethodType.paymentMethodTypeId || "CREDIT_CARD" == paymentMethodType.paymentMethodTypeId || "PATIENT" == paymentMethodType.paymentMethodTypeId)>
+                                        <#if orderItemList?has_content>
+                                          <#list orderItemList as orderItem>
+                                            <#assign copayPatient = Static["org.ofbiz.order.order.OrderReadHelper"].getOrderItemPatientToPay(orderItem)?default(0.000)>
+                                            <#assign totalCopayPatient = totalCopayPatient + copayPatient>
+                                          </#list>
+                                        </#if>
+                                        <@ofbizCurrency amount=totalCopayPatient isoCode=currencyUomId/>
+                                        <#assign maxAmt = totalCopayPatient?default(0.000)?string("0.000")/>
+                                      <#elseif "INSURANCE" == paymentMethodType.paymentMethodTypeId>
+                                          <#if orderItemList?has_content>
+                                            <#list orderItemList as orderItem>
+                                              <#assign lineItemAdjustmentTotal = Static["java.math.BigDecimal"].ZERO>
+                                              <#assign orderItemAdjustments = Static["org.ofbiz.order.order.OrderReadHelper"].getOrderItemAdjustmentList(orderItem, orderAdjustments)?default(0.000)>
+                                            <#if orderItemAdjustments?exists && orderItemAdjustments?has_content>
+                                              <#list orderItemAdjustments as orderItemAdjustment>
+                                                <#assign lineItemAdjustment = Static["org.ofbiz.order.order.OrderReadHelper"].calcItemAdjustment(orderItemAdjustment, orderItem)?default(0.000)>
+                                                <#assign lineItemAdjustmentTotal = lineItemAdjustmentTotal + lineItemAdjustment>
+                                              </#list>
+                                            </#if>
+                                              <#assign copayPatient = Static["org.ofbiz.order.order.OrderReadHelper"].getOrderItemPatientToPay(orderItem)?default(0.000)>
+                                              <#if orderItem.statusId != "ITEM_CANCELLED">
+                                                <#assign itemSubTotal = Static["org.ofbiz.order.order.OrderReadHelper"].getOrderItemSubTotal(orderItem, orderAdjustments)?default(0.000)>
+                                              <#else>
+                                                <#assign itemSubTotal = Static["java.math.BigDecimal"].ZERO>
+                                              </#if>
+                                              <#assign itemDeductibleAmount = Static["org.ofbiz.order.order.OrderReadHelper"].getOrderItemDeductible(orderItem)?default(0.000)>
+                                              <#assign copayInsurance = itemSubTotal + lineItemAdjustmentTotal - copayPatient>
+                                              <#assign totalCopayInsurance = totalCopayInsurance + copayInsurance>
+                                            </#list>
+                                        </#if>
+                                        <@ofbizCurrency amount=totalCopayInsurance isoCode=currencyUomId/>
+                                        <#assign maxAmt = totalCopayInsurance?default(0.000)?string("0.000")/>
+                                      </#if>
+                                  <#elseif (orderRxHeader?has_content && ("CASH"==orderRxHeader.patientType || "CASH PAYING"==orderRxHeader.patientType))>
+                                    <#if ("CASH" == paymentMethodType.paymentMethodTypeId || "CASH PAYING" == paymentMethodType.paymentMethodTypeId || "CREDIT_CARD" == paymentMethodType.paymentMethodTypeId || "PATIENT" == paymentMethodType.paymentMethodTypeId)>
+                                      <#if orderItemList?has_content>
+                                        <#list orderItemList as orderItem>
+                                           <#assign lineItemAdjustmentTotal = Static["java.math.BigDecimal"].ZERO>
+                                            <#assign orderItemAdjustments = Static["org.ofbiz.order.order.OrderReadHelper"].getOrderItemAdjustmentList(orderItem, orderAdjustments)?default(0.000)>
+                                            <#if orderItemAdjustments?exists && orderItemAdjustments?has_content>
+                                              <#list orderItemAdjustments as orderItemAdjustment>
+                                                <#assign adjustmentType = orderItemAdjustment.getRelatedOneCache("OrderAdjustmentType")>
+                                                <#assign lineItemAdjustment = Static["org.ofbiz.order.order.OrderReadHelper"].calcItemAdjustment(orderItemAdjustment, orderItem)?default(0.000)>
+                                                <#assign lineItemAdjustmentTotal = lineItemAdjustmentTotal + lineItemAdjustment>
+                                              </#list>
+                                            </#if>
+                                           <#assign patientPayable = Static["org.ofbiz.order.order.OrderReadHelper"].getOrderItemSubTotal(orderItem, orderAdjustments)?default(0.000)>
+                                           <#assign copayPatient = patientPayable + lineItemAdjustmentTotal>
+                                           <#assign totalCopayPatient = totalCopayPatient + copayPatient>
+                                        </#list>
+                                      </#if>
+                                      <@ofbizCurrency amount=totalCopayPatient isoCode=currencyUomId/>
+                                      <#assign maxAmt = totalCopayPatient?default(0.000)?string("0.000")/>
+                                  </#if>
+                                </#if>
                             </#if>
                         </div>
                     </td>
+                    
                     <td width="1%">&nbsp;</td>
                     <#if (paymentMethodType.paymentMethodTypeId=='CASH' || paymentMethodType.paymentMethodTypeId=='CASH PAYING' || paymentMethodType.paymentMethodTypeId=='CREDIT_CARD') &&  orderPaymentPreference.statusId!='PAYMENT_NOT_RECEIVED' && (!(orderHeader.statusId.equals("ORDER_CANCELLED")) && !(orderHeader.statusId.equals("ORDER_REJECTED")))>
                         <td width="60%">
                             <div>
                                 <#if orderPaymentPreference.maxAmount?has_content>
-                                    <br />${uiLabelMap.OrderPaymentMaximumAmount}: <@ofbizCurrency amount=orderPaymentPreference.maxAmount?default(0.000) isoCode=currencyUomId/>
+                                    <#-- <br />${uiLabelMap.OrderPaymentMaximumAmount}: <@ofbizCurrency amount=orderPaymentPreference.maxAmount?default(0.000) isoCode=currencyUomId/> -->
+                                    <br />Amount: <@ofbizCurrency amount=maxAmt?default(0.000) isoCode=currencyUomId/>
                                 </#if>
                                 <br />&nbsp;[<#if oppStatusItem?exists>${oppStatusItem.get("description",locale)}<#else>${orderPaymentPreference.statusId}</#if>]
                             </div>
@@ -289,16 +352,16 @@ ${cardNumberDisplay?if_exists}
                         </td>
                     <#else>
                         <td align="right" width="60%">
-                            <#if orderPaymentPreference.orderPaymentPreferenceId?has_content && (!(orderHeader.statusId.equals("ORDER_CANCELLED")) && !(orderHeader.statusId.equals("ORDER_REJECTED")))>
-                                <a href="<@ofbizUrl>receivepayment?${paramString}&amp;orderPaymentPreferenceId=${orderPaymentPreference.orderPaymentPreferenceId}</@ofbizUrl>" class="buttontext">${uiLabelMap.AccountingReceivePayment}</a>
-                            <#elseif (!(orderHeader.statusId.equals("ORDER_CANCELLED")) && !(orderHeader.statusId.equals("ORDER_REJECTED")))>
+                            <#if orderPaymentPreference.orderPaymentPreferenceId?has_content && (!(orderHeader.statusId.equals("ORDER_CANCELLED")) && !(orderHeader.statusId.equals("ORDER_REJECTED"))) && maxAmt!="0.000">
+                                <a href="<@ofbizUrl>receivepayment?${paramString}&amp;orderPaymentPreferenceId=${orderPaymentPreference.orderPaymentPreferenceId}&amp;amount=${maxAmt}</@ofbizUrl>" class="buttontext">${uiLabelMap.AccountingReceivePayment}</a>
+                            <#elseif (!(orderHeader.statusId.equals("ORDER_CANCELLED")) && !(orderHeader.statusId.equals("ORDER_REJECTED"))) && maxAmt!="0.000">
                                 <a href="<@ofbizUrl>receivepayment?${paramString}</@ofbizUrl>" class="buttontext">${uiLabelMap.AccountingReceivePayment}</a>
                             </#if>
                         </td>
                     </#if>
                     <td width="10%">
                         <#if !(orderHeader.statusId.equals("ORDER_REJECTED")) && !(orderHeader.statusId.equals("ORDER_CANCELLED"))>
-                            <#if orderPaymentPreference.statusId != "PAYMENT_SETTLED">
+                            <#if orderPaymentPreference.statusId != "PAYMENT_SETTLED" && maxAmt!="0.000">
                                 <div>
                                     <a href="javascript:document.CancelOrderPaymentPreference_${orderPaymentPreference.orderPaymentPreferenceId}.submit()" class="buttontext">${uiLabelMap.CommonCancel}</a>
                                     <form name="CancelOrderPaymentPreference_${orderPaymentPreference.orderPaymentPreferenceId}" method="post" action="<@ofbizUrl>editOrderPaymentPreference</@ofbizUrl>">

@@ -778,7 +778,7 @@ under the License.
                                                 <@ofbizCurrency amount=itemDeductible isoCode=currencyUomId/>
                                                 <#assign totalDeductible = totalDeductible + itemDeductible>
                                             </td>
-                                            `<#-- <td style="text-align:right;padding-right:10px;" valign="top" nowrap="nowrap">
+                                            <#-- <td style="text-align:right;padding-right:10px;" valign="top" nowrap="nowrap">
                                                 <@ofbizCurrency amount=Static["org.ofbiz.order.order.OrderReadHelper"].getOrderItemCopay(orderItem)?default(0.000) isoCode=currencyUomId/>
                                             </td> -->
                                           <#else>

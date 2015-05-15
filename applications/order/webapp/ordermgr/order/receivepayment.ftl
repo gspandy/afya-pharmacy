@@ -77,7 +77,7 @@ under the License.
             <td width="1">&nbsp;&nbsp;&nbsp;</td>
             <td width="1">
               <#assign orderPaymentPreference = delegator.findOne("OrderPaymentPreference", {"orderPaymentPreferenceId" : requestParameters.orderPaymentPreferenceId}, true)>
-              <input type="text" size="15" name="receivedAmount" value="${orderPaymentPreference.maxAmount?if_exists}" readonly="true" /></td>
+              <input type="text" size="15" name="receivedAmount" value="${requestParameters.amount?if_exists}" readonly="true" style="text-align:right;"/></td>
             <td width="1">&nbsp;&nbsp;&nbsp;</td>
             <td width="70%" id="reference"><input type="text" size="20" name="receivedAmtRefNum" /></td>
             <#-- <td width="70%" id="creditCardNumber" style="display:none">
