@@ -43,7 +43,7 @@ public class PatientServices {
             patientRecord.put("gender", patientRecordGv.getString("gender"));
             patientRecord.put("dateOfBirth", patientRecordGv.getDate("dateOfBirth"));
             patientRecord.put("bloodGroup", patientRecordGv.getString("bloodGroup"));
-            patientRecord.put("rH", patientRecordGv.getString("rH"));
+            patientRecord.put("rh", patientRecordGv.getString("rH"));
             patientRecord.put("address", patientRecordGv.getString("address1"));
             patientRecord.put("postalCode", patientRecordGv.getString("postalCode"));
             patientRecord.put("maritalStatus", patientRecordGv.getString("maritalStatus"));
@@ -51,7 +51,7 @@ public class PatientServices {
             patientRecord.put("city", patientRecordGv.getString("city"));
             patientRecord.put("state", patientRecordGv.getString("governorate"));
             patientRecord.put("country", patientRecordGv.getString("country"));
-            patientRecord.put("emailAddress", patientRecordGv.getString("emailAddress"));
+            patientRecord.put("emailId", patientRecordGv.getString("emailAddress"));
             patientRecord.put("passport", patientRecordGv.getString("passport"));
             patientRecord.put("homePhone", patientRecordGv.getString("homePhone"));
             patientRecord.put("officePhone", patientRecordGv.getString("officePhone"));
