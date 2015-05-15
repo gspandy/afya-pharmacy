@@ -1174,6 +1174,7 @@ public class OrderServices {
                         "thirdName", patientInfo.getThirdName(),
                         "fourthName", patientInfo.getFourthName(),
                         "gender", patientInfo.getGender(),
+                        "dateOfBirth", UtilDateTime.toSqlDate(patientInfo.getDateOfBirth()),
                         "visitDate", UtilDateTime.toSqlDate(patientInfo.getVisitDate()),
                         "doctorName", patientInfo.getDoctorName(),
                         "clinicName", patientInfo.getClinicName(),

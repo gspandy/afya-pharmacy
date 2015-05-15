@@ -16,6 +16,7 @@ public class PatientInfo {
     private String thirdName;
     private String fourthName;
     private String gender;
+    private Date dateOfBirth;
     private String address;
     private String mobile;
     private String patientType;
@@ -119,6 +120,14 @@ public class PatientInfo {
 
 	public void setGender(String gender) {
 		this.gender = gender;
+	}
+
+	public Date getDateOfBirth() {
+		return dateOfBirth;
+	}
+
+	public void setDateOfBirth(Date dateOfBirth) {
+		this.dateOfBirth = dateOfBirth;
 	}
 
 	public String getAddress() {

@@ -96,7 +96,7 @@ ${cardNumberDisplay?if_exists}
 <#else>
 
 <#-- order payment status -->
-<tr>
+<#-- <tr>
     <td align="center" valign="top" width="29%" class="label">&nbsp;${uiLabelMap.OrderStatusHistory}</td>
     <td width="1%">&nbsp;</td>
     <td width="60%">
@@ -106,7 +106,7 @@ ${cardNumberDisplay?if_exists}
                 <#assign statusItem = orderPaymentStatus.getRelatedOne("StatusItem")?if_exists>
                 <#if statusItem?has_content>
                     <div>
-                    ${statusItem.get("description",locale)} <#if orderPaymentStatus.statusDatetime?has_content>- ${orderPaymentStatus.statusDatetime?if_exists?string("dd/MM/yyyy HH:mm:ss")}</#if><#-- ${Static["org.ofbiz.base.util.UtilFormatOut"].formatDateTime(orderPaymentStatus.statusDatetime, "", locale, timeZone)!} -->
+                    ${statusItem.get("description",locale)} <#if orderPaymentStatus.statusDatetime?has_content>- ${orderPaymentStatus.statusDatetime?if_exists?string("dd/MM/yyyy HH:mm:ss")}</#if><!-- ${Static["org.ofbiz.base.util.UtilFormatOut"].formatDateTime(orderPaymentStatus.statusDatetime, "", locale, timeZone)!} &ndash;&gt;
                         &nbsp;
                     ${uiLabelMap.CommonBy} - [${orderPaymentStatus.statusUserLogin?if_exists}]
                     </div>
@@ -115,7 +115,7 @@ ${cardNumberDisplay?if_exists}
         </#if>
     </td>
     <td width="10%">&nbsp;</td>
-</tr>
+</tr> -->
 <tr><td colspan="4"><hr /></td></tr>
     <#if orderPaymentPreferences?has_content || billingAccount?has_content || invoices?has_content>
         <#list orderPaymentPreferences as orderPaymentPreference>

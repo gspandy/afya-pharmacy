@@ -76,6 +76,7 @@ public class AfyaSalesOrderController {
             patientInfo.setThirdName(prescription.getLastName());
             patientInfo.setFirstName(prescription.getFirstName());
             patientInfo.setGender(prescription.getGender());
+            patientInfo.setDateOfBirth(prescription.getDateOfBirth());
             patientInfo.setMobile(prescription.getMobile());
             patientInfo.setClinicId(prescription.getClinicId());
             patientInfo.setClinicName(prescription.getClinicName());
@@ -162,6 +163,7 @@ public class AfyaSalesOrderController {
         private String firstName;
         private String lastName;
         private String gender;
+        private Date dateOfBirth;
         private String mobile;
         private String patientType;
         private String clinicName;
@@ -279,6 +281,14 @@ public class AfyaSalesOrderController {
 			this.gender = gender;
 		}
 
+		public Date getDateOfBirth() {
+			return dateOfBirth;
+		}
+
+		public void setDateOfBirth(Date dateOfBirth) {
+			this.dateOfBirth = dateOfBirth;
+		}
+
 		public String getMobile() {
             return mobile;
         }
@@ -331,6 +341,7 @@ public class AfyaSalesOrderController {
                     ", firstName='" + firstName + '\'' +
                     ", lastName='" + lastName + '\'' +
                     ", gender='" + gender + '\'' +
+                    ", dateOfBirth=" + dateOfBirth +
                     ", mobile='" + mobile + '\'' +
                     ", patientType='" + patientType + '\'' +
                     ", isOrderApproved='" + isOrderApproved + '\'' +
