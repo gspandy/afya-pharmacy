@@ -362,7 +362,7 @@ ${cardNumberDisplay?if_exists}
                     </#if>
                     <td width="10%">
                         <#if !(orderHeader.statusId.equals("ORDER_REJECTED")) && !(orderHeader.statusId.equals("ORDER_CANCELLED"))>
-                            <#if orderPaymentPreference.statusId != "PAYMENT_SETTLED" && maxAmt!="0.000">
+                            <#if orderPaymentPreference.statusId != "PAYMENT_SETTLED">
                                 <div>
                                     <a href="javascript:document.CancelOrderPaymentPreference_${orderPaymentPreference.orderPaymentPreferenceId}.submit()" class="buttontext">${uiLabelMap.CommonCancel}</a>
                                     <form name="CancelOrderPaymentPreference_${orderPaymentPreference.orderPaymentPreferenceId}" method="post" action="<@ofbizUrl>editOrderPaymentPreference</@ofbizUrl>">
