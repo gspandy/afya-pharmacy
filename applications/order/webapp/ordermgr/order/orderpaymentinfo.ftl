@@ -115,8 +115,8 @@ ${cardNumberDisplay?if_exists}
         </#if>
     </td>
     <td width="10%">&nbsp;</td>
-</tr> -->
-<tr><td colspan="4"><hr /></td></tr>
+</tr>
+<tr><td colspan="4"><hr /></td></tr> -->
     <#if orderPaymentPreferences?has_content || billingAccount?has_content || invoices?has_content>
         <#list orderPaymentPreferences as orderPaymentPreference>
             <#assign paymentList = orderPaymentPreference.getRelated("Payment")>
