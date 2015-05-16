@@ -118,7 +118,7 @@ public class AfyaSalesOrderController {
             System.out.println(" calculateProductPrice " + result);
             BigDecimal quantity = eachRxRow.getQuantity();
             BigDecimal unitPrice = (BigDecimal) result.get("defaultPrice");
-            BigDecimal selectedAmount = unitPrice;
+            BigDecimal selectedAmount = BigDecimal.ZERO;
             String itemType = "PRODUCT_ORDER_ITEM";
             boolean triggerExternalOpsBool = false;
             boolean triggerPriceRulesBool = false;
