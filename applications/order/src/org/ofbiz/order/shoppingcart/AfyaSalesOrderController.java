@@ -129,7 +129,7 @@ public class AfyaSalesOrderController {
                 mediaTypes.add(MediaType.APPLICATION_JSON);
                 httpHeaders.setAccept(mediaTypes);
                 HttpEntity<String> requestEntity = new HttpEntity<String>(httpHeaders);
-                ResponseEntity<String> responseEntity = restTemplate.exchange("http://localhost:7878/afya-portal/anon/fetchPatientByAfyaId?afyaId={afyaId}", HttpMethod.GET, requestEntity, String.class, afyaId);
+                ResponseEntity<String> responseEntity = restTemplate.exchange("http://5.9.249.197:7878/afya-portal/anon/fetchPatientByAfyaId?afyaId={afyaId}", HttpMethod.GET, requestEntity, String.class, afyaId);
                 String repsonseJson = responseEntity.getBody();
                 mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
                 Map<String, Object> map = new HashMap();
