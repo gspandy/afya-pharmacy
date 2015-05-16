@@ -3101,6 +3101,7 @@
 		<field name="thirdName" type="long-varchar"></field>
 		<field name="fourthName" type="long-varchar"></field>
 		<field name="gender" type="short-varchar"></field>
+		<field name="dateOfBirth" type="date"></field>
 
 		<field name="healthPolicyId" type="short-varchar"></field>
 		<field name="benefitPlanId" type="short-varchar"></field>
