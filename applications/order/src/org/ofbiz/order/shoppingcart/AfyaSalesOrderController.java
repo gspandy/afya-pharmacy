@@ -1,10 +1,13 @@
 package org.ofbiz.order.shoppingcart;
 
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+
 import org.ofbiz.base.util.UtilHttp;
 import org.ofbiz.base.util.UtilMisc;
 import org.ofbiz.base.util.UtilProperties;
+import org.ofbiz.base.util.UtilValidate;
 import org.ofbiz.entity.Delegator;
 import org.ofbiz.entity.GenericDelegator;
 import org.ofbiz.entity.GenericEntityException;
@@ -12,14 +15,23 @@ import org.ofbiz.entity.GenericValue;
 import org.ofbiz.entity.condition.EntityCondition;
 import org.ofbiz.entity.util.EntityUtil;
 import org.ofbiz.service.LocalDispatcher;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.client.RestTemplate;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
 import java.io.IOException;
 import java.io.OutputStream;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.*;
+
+import javolution.util.FastList;
 
 /**
  * Created by pradyumna on 02-04-2015.
@@ -96,6 +108,74 @@ public class AfyaSalesOrderController {
             /*responseStatus.put("statusCode",200);
             responseStatus.put("orderId",orderId);
             responseStatus.put("message","Order successfully placed.");*/
+            GenericValue orderRxHeader = delegator.findOne("OrderRxHeader", UtilMisc.toMap("orderId", orderId), false);
+            String afyaId = orderRxHeader.getString("afyaId");
+            String firstName = orderRxHeader.getString("firstName");
+            String thirdName = orderRxHeader.getString("thirdName");
+            Date dob = ((Date) orderRxHeader.get("dateOfBirth"));
+            List<GenericValue> patientDetails = FastList.newInstance();
+            if(afyaId != null || UtilValidate.isNotEmpty(afyaId)) {
+                patientDetails = delegator.findByAnd("Patient", UtilMisc.toMap("afyaId", afyaId), null, false);
+            }  else {
+                patientDetails = delegator.findByAnd("Patient", UtilMisc.toMap("firstName", firstName, "thirdName", thirdName, "dateOfBirth"), null, false);
+            }
+            
+            if(UtilValidate.isEmpty(patientDetails)) {
+            
+                RestTemplate restTemplate = new RestTemplate();
+                HttpHeaders httpHeaders = new HttpHeaders();
+                httpHeaders.setContentType(MediaType.APPLICATION_JSON);
+                List<MediaType> mediaTypes = new ArrayList<MediaType>();
+                mediaTypes.add(MediaType.APPLICATION_JSON);
+                httpHeaders.setAccept(mediaTypes);
+                HttpEntity<String> requestEntity = new HttpEntity<String>(httpHeaders);
+                ResponseEntity<String> responseEntity = restTemplate.exchange("http://localhost:7878/afya-portal/anon/fetchPatientByAfyaId?afyaId={afyaId}", HttpMethod.GET, requestEntity, String.class, afyaId);
+                String repsonseJson = responseEntity.getBody();
+                mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
+                Map<String, Object> map = new HashMap();
+                try {
+                    map = mapper.readValue(repsonseJson, map.getClass());
+                    String patientId = delegator.getNextSeqId("Patient");
+                    String patientType = (String) map.get("patientType");
+                    String dateOfBirth = (String) map.get("dateOfBirth");
+                    SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+                    GenericValue patient = delegator.makeValidValue("Patient", UtilMisc.toMap("patientId", patientId));
+                    patient.set("afyaId", map.get("afyaId"));
+                    patient.set("civilId", map.get("civilId"));
+                    if("CASH PAYING" == patientType) {
+                        patient.set("patientType", "CASH");
+                    } else {
+                        patient.set("patientType", map.get("patientType"));
+                    }
+                    patient.set("title", map.get("salutation"));
+                    patient.set("firstName", map.get("firstName"));
+                    patient.set("secondName", map.get("middleName"));
+                    patient.set("thirdName", map.get("lastName"));
+                    patient.set("fourthName", map.get("endMostName"));
+                    patient.set("dateOfBirth", new java.sql.Date(format.parse(dateOfBirth).getTime()));
+                    patient.set("bloodGroup", map.get("bloodGroup"));
+                    patient.set("rH", map.get("rh"));
+                    patient.set("maritalStatus", map.get("maritalStatus"));
+                    patient.set("address1", map.get("address"));
+                    patient.set("address2", map.get("additionalAddress"));
+                    patient.set("city", map.get("city"));
+                    patient.set("governorate", map.get("state"));
+                    patient.set("postalCode", map.get("postalCode"));
+                    patient.set("country", map.get("country"));
+                    patient.set("nationality", map.get("nationality"));
+                    patient.set("emailAddress", map.get("emailId"));
+                    patient.set("mobilePhone", map.get("mobileNumber"));
+                    patient.set("homePhone", map.get("homePhone"));
+                    patient.set("officePhone", map.get("officePhone"));
+                    patient.set("selectionType", "CIVIL_ID");
+                    
+                    delegator.create(patient);
+                    
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+            
         } catch (Exception e) {
             e.printStackTrace();
             /*responseStatus.put("statusCode",500);
@@ -223,14 +303,14 @@ public class AfyaSalesOrderController {
         }
 
         public String getCivilId() {
-			return civilId;
-		}
+            return civilId;
+        }
 
-		public void setCivilId(String civilId) {
-			this.civilId = civilId;
-		}
+        public void setCivilId(String civilId) {
+            this.civilId = civilId;
+        }
 
-		public List<LineItem> getRows() {
+        public List<LineItem> getRows() {
             return rows;
         }
 
@@ -274,22 +354,22 @@ public class AfyaSalesOrderController {
         }
 
         public String getGender() {
-			return gender;
-		}
+            return gender;
+        }
 
-		public void setGender(String gender) {
-			this.gender = gender;
-		}
+        public void setGender(String gender) {
+            this.gender = gender;
+        }
 
-		public Date getDateOfBirth() {
-			return dateOfBirth;
-		}
+        public Date getDateOfBirth() {
+            return dateOfBirth;
+        }
 
-		public void setDateOfBirth(Date dateOfBirth) {
-			this.dateOfBirth = dateOfBirth;
-		}
+        public void setDateOfBirth(Date dateOfBirth) {
+            this.dateOfBirth = dateOfBirth;
+        }
 
-		public String getMobile() {
+        public String getMobile() {
             return mobile;
         }
 
@@ -322,14 +402,14 @@ public class AfyaSalesOrderController {
         }
 
         public String getIsOrderApproved() {
-			return isOrderApproved;
-		}
+            return isOrderApproved;
+        }
 
-		public void setIsOrderApproved(String isOrderApproved) {
-			this.isOrderApproved = isOrderApproved;
-		}
+        public void setIsOrderApproved(String isOrderApproved) {
+            this.isOrderApproved = isOrderApproved;
+        }
 
-		@Override
+        @Override
         public String toString() {
             return "Prescription{" +
                     "clinicId='" + clinicId + '\'' +
