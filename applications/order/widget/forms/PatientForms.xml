@@ -393,13 +393,13 @@
         <field name="thirdName" title="Last Name">
             <display/>
         </field>
-        <field name="mobilePhone">
-            <display/>
-        </field>
         <field name="gender">
             <display/>
         </field>
-        <field name="mobileNumber">
+        <!-- <field name="mobileNumber">
+            <display/>
+        </field> -->
+        <field name="mobilePhone">
             <display/>
         </field>
         <field name="emailAddress">
@@ -429,7 +429,7 @@
         <field name="gender">
             <display/>
         </field>
-        <field name="mobileNumber">
+        <field name="mobilePhone">
             <display/>
         </field>
         <field name="emailAddress">
