@@ -3932,7 +3932,8 @@ public class ShoppingCart implements Iterable<ShoppingCartItem>, Serializable {
                 nextItemSeq++;
 
                 // the initial status for all item types
-                String initialStatus = "ITEM_CREATED";
+                /*String initialStatus = "ITEM_CREATED";*/
+                String initialStatus = "ITEM_APPROVED";
                 String status = item.getStatusId();
                 if (status == null) {
                     status = initialStatus;
