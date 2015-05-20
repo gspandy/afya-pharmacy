@@ -194,6 +194,7 @@ public class AfyaSalesOrderController {
                     patient.set("country", map.get("country"));
                     patient.set("nationality", map.get("nationality"));
                     patient.set("emailAddress", map.get("emailId"));
+                    patient.set("isdCode", map.get("isdCode"));
                     patient.set("mobilePhone", map.get("mobileNumber"));
                     patient.set("homePhone", map.get("homePhone"));
                     patient.set("officePhone", map.get("officePhone"));
