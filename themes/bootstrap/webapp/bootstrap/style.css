@@ -755,7 +755,7 @@ A IMG.imageborder {
 	font-size: 1.6em;
 	font-weight: bold; */
 	color: #ffffee;
-	background-color: #26abe2;
+	background-color: #24aadd;
 	border: 1px solid #337abf;
 	min-height: 30px;
     padding-top: 10px;
@@ -844,7 +844,7 @@ padding-right:5px;
 
 #column-container .h1 {
 	color: #ffffee;
-	background-color: #26abe2;
+	background-color: #24aadd;
 	border: 1px solid #337abf;
 	min-height: 30px;
 	padding-top: 10px;
@@ -853,7 +853,7 @@ padding-right:5px;
 }
 
 #column-container h1 {
-	background-color: #26abe2;
+	background-color: #24aadd;
 	border: 1px solid #337abf;
 	color: #ffffee;
 	font-size: 17px !important;
@@ -864,7 +864,7 @@ padding-right:5px;
 }
 
 #column-container header1, #column-container .header1 {
-	background-color: #26abe2;
+	background-color: #24aadd;
 	border: 1px solid #337abf;
 	color: #ffffee;
 	font-size: 17px !important;
@@ -1309,7 +1309,7 @@ the top of the main content area */
 /* ===== Screenlet Title Bar/Navigation Styles ===== */
 /* ================================================= */
 .screenlet-title-bar {
-	background-color: #26abe2;
+	background-color: #24aadd;
 	font-weight: bold;
 	min-height: 33px;
 }
@@ -1407,7 +1407,7 @@ the top of the main content area */
 /* ================================================= */
 .screenlet-title-bar-warning {
 	color: red;
-	background-color: #26abe2;
+	background-color: #24aadd;
 	font-size: 14px;
 	font-weight: bold;
 	//float: right;

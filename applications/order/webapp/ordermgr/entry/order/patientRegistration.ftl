@@ -16,8 +16,14 @@ KIND, either express or implied.  See the License for the
 specific language governing permissions and limitations
 under the License.
 -->
+<style type="text/css">
+.basic-font {
+    font-family: Tahoma !important;
+    font-size: 11px !important;
+}
+</style>
 <#if patientId?has_content>
-  <form name="editPatientForm" id="editPatientForm" method="post" action="<@ofbizUrl>updatePatient</@ofbizUrl>" class="basic-form">
+  <form name="editPatientForm" id="editPatientForm" method="post" action="<@ofbizUrl>updatePatient</@ofbizUrl>" class="basic-form basic-font">
     <input type="hidden" name="patientId" id="patientId" value="${patientId}"/>
     <div class="fieldgroup">
       <div class="fieldgroup-title-bar"></div>
@@ -334,7 +340,7 @@ under the License.
         }
     }
 </script>
-  <form name="patientRegistrationForm" id="patientRegistrationForm" method="post" action="<@ofbizUrl>registerPatient</@ofbizUrl>" class="basic-form">
+  <form name="patientRegistrationForm" id="patientRegistrationForm" method="post" action="<@ofbizUrl>registerPatient</@ofbizUrl>" class="basic-form basic-font">
     <input type="hidden" name="patientId" id="patientId"/>
     <div class="fieldgroup">
       <div class="fieldgroup-title-bar"></div>
