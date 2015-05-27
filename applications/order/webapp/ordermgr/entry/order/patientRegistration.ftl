@@ -20,6 +20,7 @@ under the License.
 .basic-font {
     font-family: Tahoma !important;
     font-size: 11px !important;
+    font-weight: bold;
 }
 </style>
 <#if patientId?has_content>
