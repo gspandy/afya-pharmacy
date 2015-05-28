@@ -66,7 +66,7 @@ under the License.
       <table width="100%" border="0" cellspacing="0" cellpadding="0" class="boxbottom">
        <tr>
           <td>&nbsp;</td>
-          <td align='right' valign='middle' nowrap="nowrap"><div class='tableheadtext'>Order Flow</div></td>
+          <td class="field-title" align='right' valign='middle' nowrap="nowrap"><div class='tableheadtext'>Order Flow</div></td>
           <td>&nbsp;</td>
           <td valign='middle'>
             <div class='tabletext'>
@@ -79,7 +79,7 @@ under the License.
         </tr>
         <tr>
           <td >&nbsp;</td>
-          <td width="300" align='right' valign='middle' nowrap="nowrap"><div class='tableheadtext'>${uiLabelMap.ProductProductStore}</div></td>
+          <td class="field-title" width="300" align='right' valign='middle' nowrap="nowrap"><div class='tableheadtext'>${uiLabelMap.ProductProductStore}</div></td>
           <td >&nbsp;</td>
           <td valign='middle'>
             <div class='tabletext'>
@@ -105,7 +105,7 @@ under the License.
         <input value='${parameters.userLogin.userLoginId}' name="userLoginId" type="hidden"/>
          <tr>
           <td>&nbsp;</td>
-          <td align='right' valign='middle' nowrap="nowrap"><div class='tableheadtext'>${uiLabelMap.OrderCustomer} <span><font color="red">*</font></div></td>
+          <td class="field-title" align='right' valign='middle' nowrap="nowrap"><div class='tableheadtext'>${uiLabelMap.OrderCustomer} <span><font color="red">*</font></div></td>
           <td>&nbsp;</td>
           <td valign='middle'>
             <div class='tabletext'>
@@ -116,7 +116,7 @@ under the License.
         </tr>
         <tr>
           <td>&nbsp;</td>
-          <td align='right' valign='middle' nowrap="nowrap"><div class='tableheadtext'>Voucher Type</div></td>
+          <td class="field-title" align='right' valign='middle' nowrap="nowrap"><div class='tableheadtext'>Voucher Type</div></td>
           <td>&nbsp;</td>
           <td valign='middle'>
             <div class='tabletext'>
@@ -166,7 +166,7 @@ under the License.
       <table width="100%" border='0' cellspacing='0' cellpadding='0' class='boxbottom'>
        <tr>
           <td>&nbsp;</td>
-          <td align='right' valign='middle' nowrap="nowrap"><div class='tableheadtext'>Order Flow</div></td>
+          <td class="field-title" align='right' valign='middle' nowrap="nowrap"><div class='tableheadtext'>Order Flow</div></td>
           <td>&nbsp;</td>
           <td valign='middle'>
             <div class='tabletext'>
@@ -184,7 +184,7 @@ under the License.
         </#if>
         <tr>
           <td>&nbsp;</td>
-          <td width="300" align='right' valign='middle' nowrap="nowrap"><div class='tableheadtext'>${uiLabelMap.OrderOrderEntryInternalOrganization}</div></td>
+          <td class="field-title" width="300" align='right' valign='middle' nowrap="nowrap"><div class='tableheadtext'>${uiLabelMap.OrderOrderEntryInternalOrganization}</div></td>
           <td>&nbsp;</td>
           <td valign='middle'>
             <div class='tabletext'>
@@ -216,7 +216,7 @@ under the License.
         </tr> -->
         <tr>
           <td>&nbsp;</td>
-          <td align='right' valign='middle' nowrap="nowrap"><div class='tableheadtext'>${uiLabelMap.PartySupplier} <span><font color="red">*</font></div></td>
+          <td class="field-title" align='right' valign='middle' nowrap="nowrap"><div class='tableheadtext'>${uiLabelMap.PartySupplier} <span><font color="red">*</font></div></td>
           <td>&nbsp;</td>
           <td valign='middle'>
             <div class='tabletext'>
@@ -229,7 +229,7 @@ under the License.
         
         <tr>
           <td>&nbsp;</td>
-          <td align='right' valign='middle' nowrap="nowrap"><div class='tableheadtext'>Voucher Type</div></td>
+          <td class="field-title" align='right' valign='middle' nowrap="nowrap"><div class='tableheadtext'>Voucher Type</div></td>
           <td>&nbsp;</td>
           <td valign='middle'>
             <div class='tabletext'>
