@@ -67,7 +67,7 @@ under the License.
     ${uiLabelMap.CommonCopyright} &copy; 2009-${nowTimestamp?string("yyyy")} NthDimenzion Solutions (P) Limited - <a href="http://www.nthdimenzion.com" target="_blank">www.nthdimenzion.com </a><br />
   </p> -->
   <p>
-    ${uiLabelMap.CommonPoweredBy} Afya - <a href="http://www.afyaarabia.com" target="_blank">www.afyaarabia.com</a>
+    <b>${uiLabelMap.CommonPoweredBy} Afya - </b><a href="http://www.afyaarabia.com" target="_blank"><b>www.afyaarabia.com</b></a>
   </p>
 </div>
 <#if layoutSettings.VT_FTR_JAVASCRIPT?has_content>
