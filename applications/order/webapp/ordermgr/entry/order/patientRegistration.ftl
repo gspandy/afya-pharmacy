@@ -18,9 +18,9 @@ under the License.
 -->
 <style type="text/css">
 .basic-font {
-    font-family: Tahoma !important;
-    font-size: 11px !important;
-    font-weight: bold;
+    font-family: calibri !important;
+    font-size: 12px !important;
+    font-weight: bold !important;
 }
 </style>
 <#if patientId?has_content>
@@ -121,6 +121,27 @@ under the License.
                         hour1="" hour2="" timeMinutesName="" minutes="" isTwelveHour="" ampmName="" amSelected="" pmSelected="" compositeType="" formName="editPatientForm"/>
               </#if>
             </td>
+            <td class=""><span id="gender_title">Gender</span><font color="red">*</font></td>
+            <td>
+              <span class="ui-widget">
+                <select name="gender" id="gender" size="1" class="required">
+                  <#if patient.gender?exists>
+                    <#if "M" == patient.gender>
+                      <option selected="selected" value="${patient.gender}">Male</option>
+                    <#elseif "F" == patient.gender>
+                      <option selected="selected" value="${patient.gender}">Female</option>
+                    <#elseif "NA" == patient.gender>
+                      <option selected="selected" value="${patient.gender}">Not Applicable</option>
+                    </#if>
+                    <option value="${patient.gender}">---</option>
+                  </#if>
+                  <option value="">&nbsp;</option>
+                  <option value="M">Male</option>
+                  <option value="F">Female</option>
+                  <option value="NA">Not Applicable</option>
+                </select>
+              </span>
+            </td>
             <td class=""><span id="bloodGroup_title">Blood Group</span></td>
             <td>
               <span class="ui-widget">
@@ -165,51 +186,10 @@ under the License.
             </td>
           </tr>
           <tr>
-            <td class=""><span id="nationality_title">Nationality</span></td>
-            <td><input type="text" name="nationality" id="nationality" size="25" value="${patient.nationality?if_exists}"/></td>
-            <td class=""><span id="patientType_title">Patient Type</span><font color="red">*</font></td>
-            <td>
-              <span class="ui-widget">
-                <select name="patientType" id="patientType" size="1"  class="required">
-                  <#if patient.patientType?exists>
-                    <#if "CASH" == patient.patientType>
-                      <option selected="selected" value="${patient.patientType}">Cash</option>
-                    <#elseif "INSURANCE" == patient.patientType>
-                      <option selected="selected" value="${patient.patientType}">Insurance</option>
-                    <#elseif "CORPORATE" == patient.patientType>
-                      <option selected="selected" value="${patient.patientType}">Corporate</option>
-                    </#if>
-                    <option value="${patient.patientType}">---</option>
-                  </#if>
-                  <option value="CASH">Cash</option>
-                  <option value="INSURANCE">Insurance</option>
-                  <option value="CORPORATE">Corporate</option>
-                </select>
-              </span>
-            </td>
-            <td class=""><span id="gender_title">Gender</span><font color="red">*</font></td>
-            <td>
-              <span class="ui-widget">
-                <select name="gender" id="gender" size="1" class="required">
-                  <#if patient.gender?exists>
-                    <#if "M" == patient.gender>
-                      <option selected="selected" value="${patient.gender}">Male</option>
-                    <#elseif "F" == patient.gender>
-                      <option selected="selected" value="${patient.gender}">Female</option>
-                    <#elseif "NA" == patient.gender>
-                      <option selected="selected" value="${patient.gender}">Not Applicable</option>
-                    </#if>
-                    <option value="${patient.gender}">---</option>
-                  </#if>
-                  <option value="">&nbsp;</option>
-                  <option value="M">Male</option>
-                  <option value="F">Female</option>
-                  <option value="NA">Not Applicable</option>
-                </select>
-              </span>
-            </td>
             <td class=""><span id="religion_title">Religion</span></td>
             <td><input type="text" name="religion" id="religion" size="25" value="${patient.religion?if_exists}"/></td>
+            <td class=""><span id="nationality_title">Nationality</span></td>
+            <td><input type="text" name="nationality" id="nationality" size="25" value="${patient.nationality?if_exists}"/></td>
             <td class=""><span id="maritalStatus_title">Marital Status</span></td>
             <td>
               <span class="ui-widget">
@@ -238,7 +218,7 @@ under the License.
                     <#elseif "WIDOWED" == patient.maritalStatus>
                       <option selected="selected" value="${patient.maritalStatus}">Widowed</option>
                     </#if>
-                    <option value="${patient.gender}">---</option>
+                    <option value="${patient.maritalStatus}">---</option>
                   </#if>
                   <option value="">&nbsp;</option>
                   <option value="ANNULLED">Annulled</option>
@@ -252,6 +232,26 @@ under the License.
                   <option value="SINGLE">Single</option>
                   <option value="UNMARRIED">Unmarried</option>
                   <option value="WIDOWED">Widowed</option>
+                </select>
+              </span>
+            </td>
+            <td class=""><span id="patientType_title">Patient Type</span><font color="red">*</font></td>
+            <td>
+              <span class="ui-widget">
+                <select name="patientType" id="patientType" size="1"  class="required">
+                  <#if patient.patientType?exists>
+                    <#if "CASH" == patient.patientType>
+                      <option selected="selected" value="${patient.patientType}">Cash</option>
+                    <#elseif "INSURANCE" == patient.patientType>
+                      <option selected="selected" value="${patient.patientType}">Insurance</option>
+                    <#elseif "CORPORATE" == patient.patientType>
+                      <option selected="selected" value="${patient.patientType}">Corporate</option>
+                    </#if>
+                    <option value="${patient.patientType}">---</option>
+                  </#if>
+                  <option value="CASH">Cash</option>
+                  <option value="INSURANCE">Insurance</option>
+                  <option value="CORPORATE">Corporate</option>
                 </select>
               </span>
             </td>
@@ -276,7 +276,7 @@ under the License.
           </tr>
           <tr>
             <td class=""><span id="address_title">Address1</span></td>
-            <td><textarea name="address1" id="address" cols="60" rows="3">${patient.address1?if_exists}</textarea></td>
+            <td><textarea name="address1" id="address" cols="25" rows="3">${patient.address1?if_exists}</textarea></td>
             <td class=""><span id="city_title">City</span></td>
             <td><input type="text" name="city" id="city" size="25" value="${patient.city?if_exists}"/></td>
             <td class=""><span id="state_title">Governorate</span></td>
@@ -406,6 +406,17 @@ under the License.
                       timeDropdownParamName="" defaultDateTimeString="" localizedIconTitle="" timeDropdown="" timeHourName="" classString="" 
                       hour1="" hour2="" timeMinutesName="" minutes="" isTwelveHour="" ampmName="" amSelected="" pmSelected="" compositeType="" formName="patientRegistrationForm"/>
             </td>
+            <td class=""><span id="gender_title">Gender</span><font color="red">*</font></td>
+            <td>
+              <span class="ui-widget">
+                <select name="gender" id="gender" size="1" class="required">
+                  <option value="">&nbsp;</option>
+                  <option value="M">Male</option>
+                  <option value="F">Female</option>
+                  <option value="NA">Not Applicable</option>
+                </select>
+              </span>
+            </td>
             <td class=""><span id="bloodGroup_title">Blood Group</span></td>
             <td>
               <span class="ui-widget">
@@ -430,31 +441,10 @@ under the License.
             </td>
           </tr>
           <tr>
-            <td class=""><span id="nationality_title">Nationality</span></td>
-            <td><input type="text" name="nationality" id="nationality" size="25"/></td>
-            <td class=""><span id="patientType_title">Patient Type</span><font color="red">*</font></td>
-            <td>
-              <span class="ui-widget">
-                <select name="patientType" id="patientType" size="1"  class="required">
-                  <option value="CASH">Cash</option>
-                  <option value="INSURANCE">Insurance</option>
-                  <option value="CORPORATE">Corporate</option>
-                </select>
-              </span>
-            </td>
-            <td class=""><span id="gender_title">Gender</span><font color="red">*</font></td>
-            <td>
-              <span class="ui-widget">
-                <select name="gender" id="gender" size="1" class="required">
-                  <option value="">&nbsp;</option>
-                  <option value="M">Male</option>
-                  <option value="F">Female</option>
-                  <option value="NA">Not Applicable</option>
-                </select>
-              </span>
-            </td>
             <td class=""><span id="religion_title">Religion</span></td>
             <td><input type="text" name="religion" id="religion" size="25"/></td>
+            <td class=""><span id="nationality_title">Nationality</span></td>
+            <td><input type="text" name="nationality" id="nationality" size="25"/></td>
             <td class=""><span id="maritalStatus_title">Marital Status</span></td>
             <td>
               <span class="ui-widget">
@@ -471,6 +461,16 @@ under the License.
                   <option value="SINGLE">Single</option>
                   <option value="UNMARRIED">Unmarried</option>
                   <option value="WIDOWED">Widowed</option>
+                </select>
+              </span>
+            </td>
+            <td class=""><span id="patientType_title">Patient Type</span><font color="red">*</font></td>
+            <td>
+              <span class="ui-widget">
+                <select name="patientType" id="patientType" size="1"  class="required">
+                  <option value="CASH">Cash</option>
+                  <option value="INSURANCE">Insurance</option>
+                  <option value="CORPORATE">Corporate</option>
                 </select>
               </span>
             </td>
@@ -495,7 +495,7 @@ under the License.
           </tr>
           <tr>
             <td class=""><span id="address_title">Address1</span></td>
-            <td><textarea name="address1" id="address" cols="60" rows="3"></textarea></td>
+            <td><textarea name="address1" id="address" cols="25" rows="3"></textarea></td>
             <td class=""><span id="city_title">City</span></td>
             <td><input type="text" name="city" id="city" size="25"/></td>
             <td class=""><span id="state_title">Governorate</span></td>
