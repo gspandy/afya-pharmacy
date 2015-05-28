@@ -95,13 +95,13 @@ under the License.
               <#if shoppingCart.getOrderType() == "SALES_ORDER">
                 <table border="0" style="width:100%">
                   <tr>
-                    <td class="field-title" align="right"><div>${uiLabelMap.ProductProductId} <span><font color="red">*</font></span></div></td>
+                    <td class="label" align="right"><div>${uiLabelMap.ProductProductId} <span><font color="red">*</font></span></div></td>
                     <td width="25%">
                       <@htmlTemplate.lookupField formName="quickaddform" name="add_product_id" id="add_product_id" fieldFormName="LookupProduct"  className="required"/>
                    <#--   <@htmlTemplate.lookupField formName="quickaddform" name="add_product_id" id="add_product_id" fieldFormName="LookupProduct" className="required"/>
                       <script language="JavaScript" type="text/javascript">ajaxAutoCompleter('add_product_id,<@ofbizUrl>LookupProduct</@ofbizUrl>,'ajaxLookup=Y&amp;searchValueField=add_product_id', true);</script>-->
                     </td>
-                    <td class="field-title" align="right"><div>${uiLabelMap.OrderQuantity} <span><font color="red">*</font></span></div></td>
+                    <td class="label" align="right"><div>${uiLabelMap.OrderQuantity} <span><font color="red">*</font></span></div></td>
                     <td width="25%">
                       <input type="text" size="6" class="quantity required" id="quantity" name="quantity" value="" onfocus="javascript:setQtyUom();"/>
                       <span id="qtyUom" style="font-weight: bold"/>
@@ -112,17 +112,17 @@ under the License.
               <#else>
                 <table border="0" style="width:100%">
                   <tr>
-                    <td class="field-title" align="right"><div>${uiLabelMap.ProductProductId} <span><font color="red">*</font></span></div></td>
+                    <td class="label" align="right"><div>${uiLabelMap.ProductProductId} <span><font color="red">*</font></span></div></td>
                     <td width="15%">
                       <@htmlTemplate.lookupField formName="quickaddform" name="add_product_id" id="add_product_id" fieldFormName="LookupProduct" className="required"/>
                       <script language="JavaScript" type="text/javascript">ajaxAutoCompleter('add_product_id,<@ofbizUrl>LookupProduct</@ofbizUrl>,ajaxLookup=Y&amp;searchValueField=add_product_id', true);</script>
                     </td>
-                    <td class="field-title" align="right"><div>${uiLabelMap.OrderQuantity} <span><font color="red">*</font></span></div></td>
+                    <td class="label" align="right"><div>${uiLabelMap.OrderQuantity} <span><font color="red">*</font></span></div></td>
                     <td>
                       <input type="text" size="6" class="quantity required" id="quantity" name="quantity" value="" onfocus="javascript:setQtyUom();"/>
                       <span id="qtyUom" style="font-weight: bold"/>
                     </td>
-                    <td class="field-title" align="right"><div>${uiLabelMap.OrderDesiredDeliveryDate}</div></td>
+                    <td class="label" align="right"><div>${uiLabelMap.OrderDesiredDeliveryDate}</div></td>
                     <td>
                       <div width="100%">
                         <#if useAsDefaultDesiredDeliveryDate?exists> 
@@ -131,7 +131,7 @@ under the License.
                         <@htmlTemplate.renderDateTimeField name="itemDesiredDeliveryDate" value="${value!''}" className="date" alert="" title="Format: MM/dd/yyyy" size="15" maxlength="10" id="item1" dateType="date-time" shortDateInput=true timeDropdownParamName="" defaultDateTimeString="" localizedIconTitle="" timeDropdown="" timeHourName="" classString="" hour1="" hour2="" timeMinutesName="" minutes="" isTwelveHour="" ampmName="" amSelected="" pmSelected="" compositeType="" formName=""/>
                       </div>
                     </td>
-                    <td class="field-title" align="right"><div>${uiLabelMap.CommonComment}</div></td>
+                    <td class="label" align="right"><div>${uiLabelMap.CommonComment}</div></td>
                     <td>
                       <div>
                         <textarea cols="30" rows="2" wrap="hard" name="itemComment" onfocus="javascript:setQtyUom();">${defaultComment?if_exists}</textarea>

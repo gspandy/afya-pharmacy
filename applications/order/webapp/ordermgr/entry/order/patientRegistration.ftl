@@ -25,13 +25,13 @@ under the License.
         <table cellspacing="0" class="basic-table">
           <tr>
             <#if "CIVIL_ID" == patient.selectionType>
-              <td class="field-title" id="civilId_title" width="5%"><span id="civilId_title">Civil ID</span></td>
+              <td class="label" id="civilId_title" width="5%"><span id="civilId_title">Civil ID</span></td>
               <td id="civilId_textfield"><input type="text" name="civilId" id="civilId" size="25" value="${patient.civilId?if_exists}"/></td>
             </#if>
             <#if "PASSPORT" == patient.selectionType>
-              <td class="field-title" id="passport_title" width="7%"><span id="passport_title">Passport &#47; VISA</span></td>
+              <td class="label" id="passport_title" width="7%"><span id="passport_title">Passport &#47; VISA</span></td>
               <td id="passport_textField"><input type="text" name="passport" id="passport" size="25" value="${patient.passport?if_exists}"/></td>
-              <td class="field-title" id="expiryDate_title" width="5%"><span id="expiryDate_title">Expiry Date</span></td>
+              <td class="label" id="expiryDate_title" width="5%"><span id="expiryDate_title">Expiry Date</span></td>
               <td id="expiryDate_dateField" colspan="4">
                 <#if patient.expiryDate?exists>
                   <@htmlTemplate.renderDateTimeFieldJsMethod name="expiryDate" value='${Static["org.ofbiz.base.util.UtilDateTime"].getFormattedDate(patient.expiryDate)}' className="date" alert="" 
@@ -56,10 +56,10 @@ under the License.
       <div class="fieldgroup-body">
         <table cellspacing="0" class="basic-table">
           <tr>
-            <td class="field-title"><span id="select_title">Afya ID</span></td>
+            <td class="label"><span id="select_title">Afya ID</span></td>
             <td colspan="13">${patient.afyaId?if_exists}</td>
           <tr>
-            <td class="field-title"><span id="title_title">Title</span></td>
+            <td class="label"><span id="title_title">Title</span></td>
             <td>
               <span class="ui-widget">
                 <select name="title" id="title">
@@ -91,15 +91,15 @@ under the License.
                 </select>
               </span>
             </td>
-            <td class="field-title"><span id="firstName_title">First Name</span><font color="red"> *</font></td>
+            <td class="label"><span id="firstName_title">First Name</span><font color="red"> *</font></td>
             <td><input type="text" name="firstName" id="firstName" size="25" value="${patient.firstName?if_exists}" class="required"/></td>
-            <td class="field-title"><span id="secondName_title">Middle Name</span></td>
+            <td class="label"><span id="secondName_title">Middle Name</span></td>
             <td><input type="text" name="secondName" id="secondName" size="25" value="${patient.secondName?if_exists}"/></td>
-            <td class="field-title"><span id="thirdName_title">Last Name</span><font color="red"> *</font></td>
+            <td class="label"><span id="thirdName_title">Last Name</span><font color="red"> *</font></td>
             <td colspan="4"><input type="text" name="thirdName" id="thirdName" size="25" value="${patient.thirdName?if_exists}" class="required"/></td>
           </tr>
           <tr>
-            <td class="field-title"><span id="dateOfBirth_title">Date Of Birth</span><font color="red"> *</font></td>
+            <td class="label"><span id="dateOfBirth_title">Date Of Birth</span><font color="red"> *</font></td>
             <td id="dateOfBirth_dateField">
               <#if patient.dateOfBirth?exists>
                 <@htmlTemplate.renderDateTimeFieldJsMethod name="dateOfBirth" value='${Static["org.ofbiz.base.util.UtilDateTime"].getFormattedDate(patient.dateOfBirth)}' className="date required" alert="" 
@@ -114,7 +114,7 @@ under the License.
                         hour1="" hour2="" timeMinutesName="" minutes="" isTwelveHour="" ampmName="" amSelected="" pmSelected="" compositeType="" formName="editPatientForm"/>
               </#if>
             </td>
-            <td class="field-title"><span id="gender_title">Gender</span><font color="red"> *</font></td>
+            <td class="label"><span id="gender_title">Gender</span><font color="red"> *</font></td>
             <td>
               <span class="ui-widget">
                 <select name="gender" id="gender" size="1" class="required">
@@ -135,7 +135,7 @@ under the License.
                 </select>
               </span>
             </td>
-            <td class="field-title"><span id="bloodGroup_title">Blood Group</span></td>
+            <td class="label"><span id="bloodGroup_title">Blood Group</span></td>
             <td>
               <span class="ui-widget">
                 <select name="bloodGroup" id="bloodGroup">
@@ -159,7 +159,7 @@ under the License.
                 </select>
               </span>
             </td>
-            <td class="field-title"><span id="rh_title">R H</span></td>
+            <td class="label"><span id="rh_title">R H</span></td>
             <td colspan="7">
               <span class="ui-widget">
                 <select name="rH" id="rh">
@@ -179,11 +179,11 @@ under the License.
             </td>
           </tr>
           <tr>
-            <td class="field-title"><span id="religion_title">Religion</span></td>
+            <td class="label"><span id="religion_title">Religion</span></td>
             <td><input type="text" name="religion" id="religion" size="25" value="${patient.religion?if_exists}"/></td>
-            <td class="field-title"><span id="nationality_title">Nationality</span></td>
+            <td class="label"><span id="nationality_title">Nationality</span></td>
             <td><input type="text" name="nationality" id="nationality" size="25" value="${patient.nationality?if_exists}"/></td>
-            <td class="field-title"><span id="maritalStatus_title">Marital Status</span></td>
+            <td class="label"><span id="maritalStatus_title">Marital Status</span></td>
             <td>
               <span class="ui-widget">
                 <select name="maritalStatus" id="maritalStatus" size="1">
@@ -228,7 +228,7 @@ under the License.
                 </select>
               </span>
             </td>
-            <td class="field-title"><span id="patientType_title">Patient Type</span><font color="red"> *</font></td>
+            <td class="label"><span id="patientType_title">Patient Type</span><font color="red"> *</font></td>
             <td>
               <span class="ui-widget">
                 <select name="patientType" id="patientType" size="1"  class="required">
@@ -257,24 +257,24 @@ under the License.
       <div class="fieldgroup-body">
         <table cellspacing="0" class="basic-table">
           <tr>
-            <td class="field-title"><span id="emailId_title">Email Address</span></td>
+            <td class="label"><span id="emailId_title">Email Address</span></td>
             <td><input type="text" name="emailAddress" id="emailId" size="25" value="${patient.emailAddress?if_exists}"/></td>
-            <td class="field-title"><span id="homePhone_title">Home Phone</span></td>
+            <td class="label"><span id="homePhone_title">Home Phone</span></td>
             <td><input type="text" name="homePhone" id="homePhone" size="25" value="${patient.homePhone?if_exists}"/></td>
-            <td class="field-title"><span id="officePhone_title">Office Phone</span></td>
+            <td class="label"><span id="officePhone_title">Office Phone</span></td>
             <td><input type="text" name="officePhone" id="officePhone" size="25" value="${patient.officePhone?if_exists}"/></td>
-            <td class="field-title"><span id="mobileNumber_title">Mobile Phone</span><font color="red"> *</font></td>
+            <td class="label"><span id="mobileNumber_title">Mobile Phone</span><font color="red"> *</font></td>
             <td><input type="text" name="isdCode" id="isdCode" size="7" value="${patient.isdCode?if_exists}"/></td>
             <td><input type="text" name="mobilePhone" id="mobileNumber" size="25" value="${patient.mobilePhone?if_exists}" class="required"/></td>
           </tr>
           <tr>
-            <td class="field-title"><span id="address_title">Address1</span></td>
+            <td class="label"><span id="address_title">Address1</span></td>
             <td><textarea name="address1" id="address" cols="25" rows="3" style="width: 190px; height: 65px;">${patient.address1?if_exists}</textarea></td>
-            <td class="field-title"><span id="city_title">City</span></td>
+            <td class="label"><span id="city_title">City</span></td>
             <td><input type="text" name="city" id="city" size="25" value="${patient.city?if_exists}"/></td>
-            <td class="field-title"><span id="state_title">Governorate</span></td>
+            <td class="label"><span id="state_title">Governorate</span></td>
             <td><input type="text" name="governorate" id="state" size="25" value="${patient.governorate?if_exists}"/></td>
-            <td class="field-title"><span id="country_title">Country</span></td>
+            <td class="label"><span id="country_title">Country</span></td>
             <td colspan="4" id="country_selectionField">
               <select name="country" id="country">
                 <#if patient.country?exists>
@@ -354,7 +354,7 @@ under the License.
             <td id="civilId_textfield"><input type="text" name="civilId" id="civilId" size="25"/></td>
             <#-- <td class="" id="passport_title" style="display:none"><span id="passport_title">Passport &#47; VISA</span></td> -->
             <td id="passport_textField" style="display:none"><input type="text" name="passport" id="passport" size="25"/></td>
-            <td id="expiryDate_title" class="field-title" width="7%" style="display:none"><span id="expiryDate_title">Expiry Date</span></td>
+            <td id="expiryDate_title" class="label" width="7%" style="display:none"><span id="expiryDate_title">Expiry Date</span></td>
             <td id="expiryDate_dateField" colspan="4" style="display:none">
               <@htmlTemplate.renderDateTimeField name="expiryDate" value="${value!''}" className="date" alert="" 
                       title="Format: MM/dd/yyyy" size="15" maxlength="10" id="item1" dateType="date-time" shortDateInput=true 
@@ -370,7 +370,7 @@ under the License.
       <div class="fieldgroup-body">
         <table cellspacing="0" class="basic-table">
           <tr>
-            <td class="field-title"><span id="title_title">Title</span></td>
+            <td class="label"><span id="title_title">Title</span></td>
             <td>
               <span class="ui-widget">
                 <select name="title" id="title" selected="selected" value="${patient.title}" size="1">
@@ -384,22 +384,22 @@ under the License.
                 </select>
               </span>
             </td>
-            <td class="field-title"><span id="firstName_title">First Name</span><font color="red"> *</font></td>
+            <td class="label"><span id="firstName_title">First Name</span><font color="red"> *</font></td>
             <td><input type="text" name="firstName" id="firstName" size="25" class="required"/></td>
-            <td class="field-title"><span id="secondName_title">Middle Name</span></td>
+            <td class="label"><span id="secondName_title">Middle Name</span></td>
             <td><input type="text" name="secondName" id="secondName" size="25"/></td>
-            <td class="field-title"><span id="thirdName_title">Last Name</span><font color="red"> *</font></td>
+            <td class="label"><span id="thirdName_title">Last Name</span><font color="red"> *</font></td>
             <td colspan="4"><input type="text" name="thirdName" id="thirdName" size="25" class="required"/></td>
           </tr>
           <tr>
-            <td class="field-title"><span id="dateOfBirth_title">Date Of Birth</span><font color="red"> *</font></td>
+            <td class="label"><span id="dateOfBirth_title">Date Of Birth</span><font color="red"> *</font></td>
             <td id="dateOfBirth_dateField">
               <@htmlTemplate.renderDateTimeField name="dateOfBirth" value="${value!''}" className="date required" alert="" 
                       title="Format: dd/MM/yyyy" size="15" maxlength="10" id="transferDate" dateType="date" shortDateInput=true 
                       timeDropdownParamName="" defaultDateTimeString="" localizedIconTitle="" timeDropdown="" timeHourName="" classString="" 
                       hour1="" hour2="" timeMinutesName="" minutes="" isTwelveHour="" ampmName="" amSelected="" pmSelected="" compositeType="" formName="patientRegistrationForm"/>
             </td>
-            <td class="field-title"><span id="gender_title">Gender</span><font color="red"> *</font></td>
+            <td class="label"><span id="gender_title">Gender</span><font color="red"> *</font></td>
             <td>
               <span class="ui-widget">
                 <select name="gender" id="gender" size="1" class="required">
@@ -410,7 +410,7 @@ under the License.
                 </select>
               </span>
             </td>
-            <td class="field-title"><span id="bloodGroup_title">Blood Group</span></td>
+            <td class="label"><span id="bloodGroup_title">Blood Group</span></td>
             <td>
               <span class="ui-widget">
                 <select name="bloodGroup" id="bloodGroup" selected="selected" value="${patient.bloodgroup}" size="1">
@@ -422,7 +422,7 @@ under the License.
                 </select>
               </span>
             </td>
-            <td class="field-title"><span id="rh_title">R H</span></td>
+            <td class="label"><span id="rh_title">R H</span></td>
             <td colspan="7">
               <span class="ui-widget">
                 <select name="rH" id="rh" size="1">
@@ -434,11 +434,11 @@ under the License.
             </td>
           </tr>
           <tr>
-            <td class="field-title"><span id="religion_title">Religion</span></td>
+            <td class="label"><span id="religion_title">Religion</span></td>
             <td><input type="text" name="religion" id="religion" size="25"/></td>
-            <td class="field-title"><span id="nationality_title">Nationality</span></td>
+            <td class="label"><span id="nationality_title">Nationality</span></td>
             <td><input type="text" name="nationality" id="nationality" size="25"/></td>
-            <td class="field-title"><span id="maritalStatus_title">Marital Status</span></td>
+            <td class="label"><span id="maritalStatus_title">Marital Status</span></td>
             <td>
               <span class="ui-widget">
                 <select name="maritalStatus" id="maritalStatus" size="1">
@@ -457,7 +457,7 @@ under the License.
                 </select>
               </span>
             </td>
-            <td class="field-title"><span id="patientType_title">Patient Type</span><font color="red"> *</font></td>
+            <td class="label"><span id="patientType_title">Patient Type</span><font color="red"> *</font></td>
             <td>
               <span class="ui-widget">
                 <select name="patientType" id="patientType" size="1"  class="required">
@@ -476,24 +476,24 @@ under the License.
       <div class="fieldgroup-body">
         <table cellspacing="0" class="basic-table">
           <tr>
-            <td class="field-title"><span id="emailId_title">Email Address</span></td>
+            <td class="label"><span id="emailId_title">Email Address</span></td>
             <td><input type="text" name="emailAddress" id="emailId" size="25"/></td>
-            <td class="field-title"><span id="homePhone_title">Home Phone</span></td>
+            <td class="label"><span id="homePhone_title">Home Phone</span></td>
             <td><input type="text" name="homePhone" id="homePhone" size="25"/></td>
-            <td class="field-title"><span id="officePhone_title">Office Phone</span></td>
+            <td class="label"><span id="officePhone_title">Office Phone</span></td>
             <td><input type="text" name="officePhone" id="officePhone" size="25"/></td>
-            <td class="field-title"><span id="mobileNumber_title">Mobile Phone</span><font color="red"> *</font></td>
+            <td class="label"><span id="mobileNumber_title">Mobile Phone</span><font color="red"> *</font></td>
             <td><input type="text" name="isdCode" id="isdCode" value="00965" size="7"/></td>
             <td><input type="text" name="mobilePhone" id="mobileNumber" size="25" class="required"/></td>
           </tr>
           <tr>
-            <td class="field-title"><span id="address_title">Address1</span></td>
+            <td class="label"><span id="address_title">Address1</span></td>
             <td><textarea name="address1" id="address" cols="25" rows="3" style="width: 190px; height: 65px;"></textarea></td>
-            <td class="field-title"><span id="city_title">City</span></td>
+            <td class="label"><span id="city_title">City</span></td>
             <td><input type="text" name="city" id="city" size="25"/></td>
-            <td class="field-title"><span id="state_title">Governorate</span></td>
+            <td class="label"><span id="state_title">Governorate</span></td>
             <td><input type="text" name="governorate" id="state" size="25"/></td>
-            <td class="field-title"><span id="country_title">Country</span></td>
+            <td class="label"><span id="country_title">Country</span></td>
             <td colspan="4">
               <select name="countryGeoId" id="countryGeoId">
                 ${screens.render("component://common/widget/CommonScreens.xml#countries")}

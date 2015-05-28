@@ -13,7 +13,7 @@
     <option value="Y"></option>
 </select>
 </span></td>
-            <td class="">
+            <td class="label">
                 <span id="insurances_title">Insurance</span></td>
             <td>
                 <span class="ui-widget">
@@ -22,7 +22,7 @@
                 </select>
                 </span>
             </td>
-            <td class="">
+            <td class="label">
                 <span id="groupName_title">Group Name</span></td>
             <td>
                 <span class="ui-widget">
@@ -33,35 +33,35 @@
             </td>
         </tr>
         <tr>
-            <td class="">
+            <td class="label">
                 <span id="policyNo_title">Policy No</span></td>
             <td colspan="7">
                 <input type="text" name="policyNo"
                        size="25" id="policyNo" autocomplete="off"/></td>
         </tr>
         <tr>
-            <td class="">
+            <td class="label">
                 <span id="startDate_title">Start Date</span></td>
             <td colspan="7">
                 <input type="text" name="startDate"
                        size="25" id="startDate" autocomplete="off"/></td>
         </tr>
         <tr>
-            <td class="">
+            <td class="label">
                 <span id="endDate_title">End Date</span></td>
             <td colspan="7">
                 <input type="text" name="endDate"
                        size="25" id="endDate" autocomplete="off"/></td>
         </tr>
         <tr>
-            <td class="">
+            <td class="label">
                 <span id="healthPolicyName_title">Health Plan</span><font color="red">*</font></td>
             <td colspan="7">
                 <input type="text" name="healthPolicyName" class="required"
                        size="25" id="healthPolicyName" autocomplete="off"/></td>
         </tr>
         <tr>
-            <td class="">
+            <td class="label">
                 <span id="benefitPlanNameDropDown_title">Select Benefit Plan</span></td>
             <td colspan="7">
                 <span class="ui-widget">
@@ -73,7 +73,7 @@
             </td>
         </tr>
         <tr>
-            <td class="">
+            <td class="label">
                 <span id="hisBenefitId_title">Select Benefit</span></td>
             <td colspan="7">
                 <span class="ui-widget">
@@ -84,7 +84,7 @@
             </td>
         </tr>
         <tr>
-            <td class="">
+            <td class="label">
                 <span id="uhid_title">Membership ID</span><font color="red">*</font></td>
             <td colspan="7">
                 <input type="text" name="uHID" class="required" size="25" id="uhid" autocomplete="off"/>
