@@ -1296,9 +1296,9 @@ public class MacroFormRenderer implements FormStringRenderer {
             if(modelFormField.getRequiredField()){
                 String requiredStyle=modelFormField.getRequiredFieldStyle();
                 if(UtilValidate.isEmpty(requiredStyle)) {
-                    writer.append("<font color=\"red\">*</font>");
+                    writer.append("<font color=\"red\"> *</font>");
                 }else{
-                    writer.append("<font style=\""+requiredStyle+"\">*</font>");
+                    writer.append("<font style=\""+requiredStyle+"\"> *</font>");
                 }
             }
         }

@@ -295,7 +295,7 @@ ${item.description}</span>
 <#macro renderIgnoredField></#macro>
 
 <#macro renderFieldTitle style title id fieldHelpText="">
-    <span<#if fieldHelpText?has_content> title="${fieldHelpText}"</#if><#if style?has_content> class="${style}"</#if><#if id?has_content> id="${id}"</#if>><#t/>
+    <span style="font-weight: bold;"<#if fieldHelpText?has_content> title="${fieldHelpText}"</#if><#if style?has_content> class="${style}"</#if><#if id?has_content> id="${id}"</#if>><#t/>
     ${title}<#t/>
     </span><#t/>
 </#macro>
@@ -847,7 +847,7 @@ Parameter: lastViewName, String, optional - If the ajaxEnabled parameter is true
 </#macro>
 
 <#macro renderAsterisks requiredField requiredStyle>
-<#if requiredField=="true"><#if !requiredStyle?has_content><font color="red">*</font></#if></#if>
+<#if requiredField=="true"><#if !requiredStyle?has_content><font color="red"> *</font></#if></#if>
 </#macro>
 
 <#macro makeHiddenFormLinkForm actionUrl name parameters targetWindow>

@@ -89,8 +89,8 @@ a:hover,a:active {
 }
 
 body,textarea,input,select {
-	font-family:'Segoe UI',Tahoma,Helvetica,Sans-Serif !important;
-	font-size: 12px;
+	font-family: Calibri,Candara,Segoe,Segoe UI,Optima,Arial,sans-serif;
+	font-size: 12px !important;
 }
 
 body {
@@ -503,7 +503,7 @@ background: -moz-linear-gradient(center top, #000063 0pt, #9CAAC6 100%)
 	text-decoration: none;
 	cursor: pointer;
 	display: inline-block;
-	font-family: calibri;
+	font-family: Calibri,Candara,Segoe,Segoe UI,Optima,Arial,sans-serif;
 	font-weight: bold;
 	font-size: 14px;
 	padding:3px;
@@ -756,7 +756,7 @@ A IMG.imageborder {
 	font-weight: bold; */
 	color: #ffffee;
 	background-color: #24aadd;
-	border: 1px solid #337abf;
+	border: 1px solid #24aaff;
 	min-height: 30px;
     padding-top: 10px;
     padding-left: 5px;
@@ -845,16 +845,17 @@ padding-right:5px;
 #column-container .h1 {
 	color: #ffffee;
 	background-color: #24aadd;
-	border: 1px solid #337abf;
+	border: 1px solid #24aaff;
 	min-height: 30px;
 	padding-top: 10px;
 	padding-left: 5px;
 	font-size: 17px !important;
 }
 
+
 #column-container h1 {
 	background-color: #24aadd;
-	border: 1px solid #337abf;
+	border: 1px solid #24aaff;
 	color: #ffffee;
 	font-size: 17px !important;
 	font-weight: bold;
@@ -865,7 +866,7 @@ padding-right:5px;
 
 #column-container header1, #column-container .header1 {
 	background-color: #24aadd;
-	border: 1px solid #337abf;
+	border: 1px solid #24aaff;
 	color: #ffffee;
 	font-size: 17px !important;
 	font-weight: bold;
@@ -1310,6 +1311,7 @@ the top of the main content area */
 /* ================================================= */
 .screenlet-title-bar {
 	background-color: #24aadd;
+	font-size: 14px;
 	font-weight: bold;
 	min-height: 33px;
 }
@@ -1340,6 +1342,9 @@ the top of the main content area */
 	{
 	border-left: none;
 	float: left;
+	font-size: 14px;
+	padding-bottom: 6px !important;
+    padding-top: 6px !important;
 }
 
 .screenlet-title-bar .h1 {
@@ -1808,7 +1813,7 @@ collection of buttons used in lists */
 	text-decoration: none;
 	cursor: pointer;
 	display: inline-block;
-	font-family: calibri;
+	font-family: Calibri,Candara,Segoe,Segoe UI,Optima,Arial,sans-serif;
 	font-weight: bold;
 	font-size: 14px;
 	height: 24px;
@@ -2403,7 +2408,7 @@ Lookups
 	margin-left: 8px;
 	padding-left: 6px;
 	padding-right: 6px;
-	font: bold 8pt Verdana, Arial, Helvetica, sans-serif;
+	font: bold 8pt Calibri,Candara,Segoe,Segoe UI,Optima,Arial,sans-serif;
 	color: #000099;
 	background-color: white;
 	border: 1px solid #AAAAAA;
@@ -2414,7 +2419,7 @@ Lookups
 	margin-left: 8px;
 	padding-left: 6px;
 	padding-right: 6px;
-	font: bold 8pt Verdana, Arial, Helvetica, sans-serif;
+	font: bold 8pt Calibri,Candara,Segoe,Segoe UI,Optima,Arial,sans-serif;
 	color: #AA0000;
 	background-color: white;
 	border: 1px solid #AAAAAA;
@@ -2425,7 +2430,7 @@ Lookups
 	padding-left: 6px;
 	padding-right: 6px;
 	padding-bottom: 1px;
-	font: bold 8pt Verdana, Arial, Helvetica, sans-serif;
+	font: bold 8pt Calibri,Candara,Segoe,Segoe UI,Optima,Arial,sans-serif;
 	color: #AA0000;
 	background-color: white;
 	border: 1px solid #AAAAAA;
@@ -2450,7 +2455,7 @@ Lookups
 }
 
 .subMenuButtonText {
-	font: bold 8pt Verdana, Arial, Helvetica, sans-serif;
+	font: bold 8pt Calibri,Candara,Segoe,Segoe UI,Optima,Arial,sans-serif;
 }
 /****************************************8*/
 /************************************LOGIN STYLES**********/
@@ -2481,7 +2486,7 @@ Lookups
 .login_form_section {
 	width: 365px;
 	padding: 100px 0 0 60px;
-	font-family: Arial, Helvetica, sans-serif;
+	font-family: Calibri,Candara,Segoe,Segoe UI,Optima,Arial,sans-serif;
 	font-size: 12px;
 }
 
@@ -2520,7 +2525,7 @@ Lookups
 	padding: 100px 0 10px 0;
 	background: url(images/apps_icons.png) center no-repeat;
 	text-align: center;
-	font-family: Arial, Helvetica, sans-serif;
+	font-family: Calibri,Candara,Segoe,Segoe UI,Optima,Arial,sans-serif;
 	font-size: 11px;
 }
 
@@ -2684,8 +2689,8 @@ input.validation-passed,textarea.validation-passed {
 /* Component containers
 ----------------------------------*/
 .ui-widget {
-	font-family: Trebuchet MS, Tahoma, Verdana, Arial, sans-serif;
-	font-size: 1.1em;
+	font-family: Calibri,Candara,Segoe,Segoe UI,Optima,Arial,sans-serif;
+	font-size: 1em;
 }
 
 .ui-widget .ui-widget {
@@ -2694,7 +2699,7 @@ input.validation-passed,textarea.validation-passed {
 
 .ui-widget input,.ui-widget select,.ui-widget textarea,.ui-widget button
 	{
-	font-family: Trebuchet MS, Tahoma, Verdana, Arial, sans-serif;
+	font-family: Calibri,Candara,Segoe,Segoe UI,Optima,Arial,sans-serif;
 	font-size: 1em;
 }
 
@@ -4682,6 +4687,7 @@ html[xmlns] #cont-nav {
 /* main level link */
 #nav a {
 	color: #0088cc;
+	font-size: 14px;
 	font-weight: bold;
 	text-decoration: none;
 	display: block;
@@ -4808,4 +4814,16 @@ html[xmlns] #nav {
 
 .validation-advice {
 	color: red;
+}
+
+.field-title {
+    font-family: calibri !important;
+    font-size: 12px !important;
+    font-weight: bold !important;
+}
+
+.field-title {
+    font-family: calibri !important;
+    font-size: 12px !important;
+    font-weight: bold !important;
 }
