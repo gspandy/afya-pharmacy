@@ -3065,7 +3065,8 @@ button.close {
   padding: 4px 12px;
   margin-bottom: 0;
   *margin-left: .3em;
-  font-size: 14px;
+  font-size: 12px;
+  font-weight: bold;
   line-height: 20px;
   *line-height: 20px;
   color: #333333;
@@ -3293,7 +3294,7 @@ input[type="button"].btn-block {
 
 .btn-danger {
   color: #ffffff;
-  text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
+  /* text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25); */
   background-color: #da4f49;
   *background-color: #bd362f;
   background-image: -moz-linear-gradient(top, #ee5f5b, #bd362f);
@@ -3523,7 +3524,7 @@ input[type="submit"].btn.btn-mini {
 
 .btn-group > .btn,
 .btn-group > .dropdown-menu {
-  font-size: 14px;
+  font-size: 12px;
 }
 
 .btn-group > .btn-mini {
