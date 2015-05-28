@@ -276,7 +276,7 @@ under the License.
           </tr>
           <tr>
             <td class=""><span id="address_title">Address1</span></td>
-            <td><textarea name="address1" id="address" cols="25" rows="3">${patient.address1?if_exists}</textarea></td>
+            <td><textarea name="address1" id="address" cols="25" rows="3" style="width: 190px; height: 65px;">${patient.address1?if_exists}</textarea></td>
             <td class=""><span id="city_title">City</span></td>
             <td><input type="text" name="city" id="city" size="25" value="${patient.city?if_exists}"/></td>
             <td class=""><span id="state_title">Governorate</span></td>
@@ -495,7 +495,7 @@ under the License.
           </tr>
           <tr>
             <td class=""><span id="address_title">Address1</span></td>
-            <td><textarea name="address1" id="address" cols="25" rows="3"></textarea></td>
+            <td><textarea name="address1" id="address" cols="25" rows="3" style="width: 190px; height: 65px;"></textarea></td>
             <td class=""><span id="city_title">City</span></td>
             <td><input type="text" name="city" id="city" size="25"/></td>
             <td class=""><span id="state_title">Governorate</span></td>
