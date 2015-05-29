@@ -1378,6 +1378,7 @@ the top of the main content area */
 
 .screenlet-title-bar ul .disabled {
 	color: #000;
+	margin: 5px;
 }
 
 .screenlet-title-bar ul .collapsed,.screenlet-title-bar ul .collapsed:hover
