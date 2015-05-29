@@ -120,18 +120,18 @@ under the License.
               <#-- <fo:block margin-left="3px"><fo:leader></fo:leader></fo:block>
               <fo:block margin-left="3px"><fo:leader></fo:leader></fo:block> -->
               <fo:block margin-left="3px"><fo:leader></fo:leader></fo:block>
-              <fo:block margin-left="3px">${orderRxHeader.afyaId?if_exists}</fo:block>
+              <fo:block margin-left="3px">${orderRxHeader.afyaId?if_exists?default("")}</fo:block>
               <fo:block margin-left="3px">
                 <#if orderRxHeader.afyaId?exists>
                   <#assign patientList = delegator.findByAnd("Patient", {"afyaId":orderRxHeader.afyaId})/>
                   <#if patientList?has_content>
                     <#assign patient = patientList.get(0)?if_exists>
-                    ${patient.civilId?if_exists}
+                    ${patient.civilId?if_exists?default("")}
                   <#else>
-                    ${orderRxHeader.civilId?if_exists}
+                    ${orderRxHeader.civilId?if_exists?default("")}
                   </#if>
                 <#else>
-                  ${orderRxHeader.civilId?if_exists}
+                  ${orderRxHeader.civilId?if_exists?default("")}
                 </#if>
               </fo:block>
               <fo:block margin-left="3px">${orderRxHeader.firstName?if_exists} ${orderRxHeader.thirdName?if_exists}</fo:block>
@@ -149,7 +149,7 @@ under the License.
                 </#if>
               </fo:block>
               <#if orderRxHeader.patientType?exists && "INSURANCE"==orderRxHeader.patientType>
-                <fo:block margin-left="3px">${orderRxHeader.patientType?if_exists}</fo:block>
+                <fo:block margin-left="3px">${orderRxHeader.patientType?if_exists?default("")}</fo:block>
               </#if>
             </fo:table-cell>
             
@@ -195,11 +195,11 @@ under the License.
               <#-- <fo:block margin-left="3px"><fo:leader></fo:leader></fo:block>
               <fo:block margin-left="3px"><fo:leader></fo:leader></fo:block> -->
               <fo:block margin-left="3px"><fo:leader></fo:leader></fo:block>
-              <fo:block margin-left="3px">${orderRxHeader.doctorName?if_exists}</fo:block>
+              <fo:block margin-left="3px">${orderRxHeader.doctorName?if_exists?default("")}</fo:block>
               <fo:block margin-left="3px"><#if invoiceDate?has_content>${invoiceDate?if_exists?string("dd/MM/yyyy")}</#if></fo:block>
-              <fo:block margin-left="3px"><#if invoice?has_content>${invoice.invoiceId}</#if></fo:block>
+              <fo:block margin-left="3px"><#if invoice?has_content>${invoice.invoiceId?default("")}</#if></fo:block>
               <#if orderRxHeader.patientType?exists && "INSURANCE"!=orderRxHeader.patientType>
-                <fo:block margin-left="3px">${orderRxHeader.patientType?if_exists}</fo:block>
+                <fo:block margin-left="3px">${orderRxHeader.patientType?if_exists?default("")}</fo:block>
               </#if>
               <#if orderRxHeader.patientType?exists && "INSURANCE"==orderRxHeader.patientType>
                 <#assign patientInsuranceList = delegator.findByAnd("PatientInsurance", {"benefitPlanId" : orderRxHeader.benefitPlanId?if_exists})>
@@ -235,10 +235,10 @@ under the License.
               <#-- <fo:block margin-left="3px"><fo:leader></fo:leader></fo:block>
               <fo:block margin-left="3px"><fo:leader></fo:leader></fo:block> -->
               <fo:block margin-left="3px"><fo:leader></fo:leader></fo:block>
-              <fo:block margin-left="3px"></fo:block>
-              <fo:block margin-left="3px"></fo:block>
-              <fo:block margin-left="3px"></fo:block>
-              <fo:block margin-left="3px"></fo:block>
+              <fo:block margin-left="3px">&#32;</fo:block>
+              <fo:block margin-left="3px">&#32;</fo:block>
+              <fo:block margin-left="3px">&#32;</fo:block>
+              <fo:block margin-left="3px">&#32;</fo:block>
             </fo:table-cell>
             
             <fo:table-cell>
@@ -265,10 +265,10 @@ under the License.
               <#-- <fo:block margin-left="3px"><fo:leader></fo:leader></fo:block>
               <fo:block margin-left="3px"><fo:leader></fo:leader></fo:block> -->
               <fo:block margin-left="3px"><fo:leader></fo:leader></fo:block>
-              <fo:block margin-left="3px"></fo:block>
+              <fo:block margin-left="3px">&#32;</fo:block>
               <fo:block margin-left="3px"><#if invoiceDate?has_content>${invoiceDate?if_exists?string("dd/MM/yyyy")}</#if></fo:block>
               <fo:block margin-left="3px"><#if invoice?has_content>${invoice.invoiceId}</#if></fo:block>
-              <fo:block margin-left="3px"></fo:block>
+              <fo:block margin-left="3px">&#32;</fo:block>
             </fo:table-cell>
             
           </#if>
@@ -297,10 +297,10 @@ under the License.
             <#-- <fo:block margin-left="3px"><fo:leader></fo:leader></fo:block>
             <fo:block margin-left="3px"><fo:leader></fo:leader></fo:block> -->
             <fo:block margin-left="3px"><fo:leader></fo:leader></fo:block>
-            <fo:block margin-left="3px"></fo:block>
-            <fo:block margin-left="3px"></fo:block>
-            <fo:block margin-left="3px"></fo:block>
-            <fo:block margin-left="3px"></fo:block>
+            <fo:block margin-left="3px">&#32;</fo:block>
+            <fo:block margin-left="3px">&#32;</fo:block>
+            <fo:block margin-left="3px">&#32;</fo:block>
+            <fo:block margin-left="3px">&#32;</fo:block>
           </fo:table-cell>
           
           <fo:table-cell>
@@ -327,10 +327,10 @@ under the License.
             <#-- <fo:block margin-left="3px"><fo:leader></fo:leader></fo:block>
             <fo:block margin-left="3px"><fo:leader></fo:leader></fo:block> -->
             <fo:block margin-left="3px"><fo:leader></fo:leader></fo:block>
-            <fo:block margin-left="3px"></fo:block>
+            <fo:block margin-left="3px">&#32;</fo:block>
             <fo:block margin-left="3px"><#if invoiceDate?has_content>${invoiceDate?if_exists?string("dd/MM/yyyy")}</#if></fo:block>
             <fo:block margin-left="3px"><#if invoice?has_content>${invoice.invoiceId}</#if></fo:block>
-            <fo:block margin-left="3px"></fo:block>
+            <fo:block margin-left="3px">&#32;</fo:block>
           </fo:table-cell>
           
         </#if>
