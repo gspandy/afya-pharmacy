@@ -91,9 +91,33 @@ under the License.
               <fo:block font-weight="bold" margin-left="3px">Patient Details:</fo:block>
               <fo:block margin-left="3px"><fo:leader></fo:leader></fo:block>
               <fo:block margin-left="3px">Afya ID: ${orderRxHeader.afyaId?if_exists}</fo:block>
-              <fo:block margin-left="3px">Civil ID: ${orderRxHeader.civilId?if_exists}</fo:block>
+              <fo:block margin-left="3px">
+                <#if orderRxHeader.afyaId?exists>
+                  <#assign patientList = delegator.findByAnd("Patient", {"afyaId":orderRxHeader.afyaId})/>
+                  <#if patientList?has_content>
+                    <#assign patient = patientList.get(0)?if_exists>
+                    Civil ID: ${patient.civilId?if_exists}
+                  <#else>
+                    Civil ID: ${orderRxHeader.civilId?if_exists}
+                  </#if>
+                <#else>
+                  Civil ID: ${orderRxHeader.civilId?if_exists}
+                </#if>
+              </fo:block>
               <fo:block margin-left="3px">Patient Name: ${orderRxHeader.firstName?if_exists} ${orderRxHeader.thirdName?if_exists}</fo:block>
-              <fo:block margin-left="3px">Gender: <#if orderRxHeader.gender?exists && ("M" == orderRxHeader.gender || "Male" == orderRxHeader.gender)>Male<#elseif orderRxHeader.gender?exists && ("F" == orderRxHeader.gender || "Female" == orderRxHeader.gender)>Female</#if></fo:block>
+              <fo:block margin-left="3px">
+                <#if orderRxHeader.afyaId?exists>
+                  <#assign patientList = delegator.findByAnd("Patient", {"afyaId":orderRxHeader.afyaId})/>
+                  <#if patientList?has_content>
+                    <#assign patient = patientList.get(0)?if_exists>
+                    Gender: <#if patient.gender?exists && ("M" == patient.gender || "Male" == patient.gender)>Male<#elseif patient.gender?exists && ("F" == patient.gender || "Female" == patient.gender)>Female</#if>
+                  <#else>
+                    Gender: <#if orderRxHeader.gender?exists && ("M" == orderRxHeader.gender || "Male" == orderRxHeader.gender)>Male<#elseif orderRxHeader.gender?exists && ("F" == orderRxHeader.gender || "Female" == orderRxHeader.gender)>Female</#if>
+                  </#if>
+                <#else>
+                  Gender: <#if orderRxHeader.gender?exists && ("M" == orderRxHeader.gender || "Male" == orderRxHeader.gender)>Male<#elseif orderRxHeader.gender?exists && ("F" == orderRxHeader.gender || "Female" == orderRxHeader.gender)>Female</#if>
+                </#if>
+              </fo:block>
               <#if orderRxHeader.patientType?exists && "INSURANCE"==orderRxHeader.patientType>
                 <fo:block margin-left="3px">Patient Type: ${orderRxHeader.patientType?if_exists}</fo:block>
               </#if>
