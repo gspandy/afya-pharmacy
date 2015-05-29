@@ -161,7 +161,7 @@ textarea {
 body {
   margin: 0;
   font-family: Calibri,Candara,Segoe,Segoe UI,Optima,Arial,sans-serif;
-  font-size: 12px;
+  font-size: 13px;
   line-height: 20px;
   color: #333333;
   background-color: #ffffff;
@@ -877,7 +877,7 @@ code,
 pre {
   padding: 0 3px 2px;
   font-family: Calibri,Candara,Segoe,Segoe UI,Optima,Arial,sans-serif;
-  font-size: 12px;
+  font-size: 13px;
   color: #333333;
   -webkit-border-radius: 3px;
      -moz-border-radius: 3px;

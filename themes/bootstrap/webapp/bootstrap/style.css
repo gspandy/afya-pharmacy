@@ -90,7 +90,7 @@ a:hover,a:active {
 
 body,textarea,input,select {
 	font-family: Calibri,Candara,Segoe,Segoe UI,Optima,Arial,sans-serif;
-	font-size: 12px !important;
+	font-size: 13px !important;
 }
 
 body {
@@ -340,7 +340,7 @@ td a{
 	padding: 4px 12px;
 	margin-bottom: 0;
 	*margin-left: .3em;
-	font-size: 12px;
+	font-size: 13px;
 	line-height: 10px;
 	color: #333333;
 	text-align: center;
@@ -2326,7 +2326,7 @@ Lookups
 	border-bottom: 1px solid #aaa;
 	border-top: 1px solid #000;
 	height: 18px;
-	font-size: 12px;
+	font-size: 13px;
 	padding: 3px 0;
 	color: #333;
 	background-image: url(header_bg.gif);
@@ -4819,6 +4819,6 @@ html[xmlns] #nav {
 
 .field-title {
     font-family: calibri !important;
-    font-size: 12px !important;
+    font-size: 13px !important;
     font-weight: bold !important;
 }
