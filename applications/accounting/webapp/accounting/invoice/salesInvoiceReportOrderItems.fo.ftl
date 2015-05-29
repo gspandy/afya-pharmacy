@@ -120,18 +120,18 @@ under the License.
               <#-- <fo:block margin-left="3px"><fo:leader></fo:leader></fo:block>
               <fo:block margin-left="3px"><fo:leader></fo:leader></fo:block> -->
               <fo:block margin-left="3px"><fo:leader></fo:leader></fo:block>
-              <fo:block margin-left="3px">${orderRxHeader.afyaId?if_exists?default("")}</fo:block>
+              <fo:block margin-left="3px"><#if orderRxHeader.afyaId?exists>${orderRxHeader.afyaId?if_exists}<#else>&#32;</#if></fo:block>
               <fo:block margin-left="3px">
                 <#if orderRxHeader.afyaId?exists>
                   <#assign patientList = delegator.findByAnd("Patient", {"afyaId":orderRxHeader.afyaId})/>
                   <#if patientList?has_content>
                     <#assign patient = patientList.get(0)?if_exists>
-                    ${patient.civilId?if_exists?default("")}
+                    <#if patient.civilId?exists>${patient.civilId?if_exists}<#else>&#32;</#if>
                   <#else>
-                    ${orderRxHeader.civilId?if_exists?default("")}
+                    <#if orderRxHeader.civilId?exists>${orderRxHeader.civilId?if_exists}<#else>&#32;</#if>
                   </#if>
                 <#else>
-                  ${orderRxHeader.civilId?if_exists?default("")}
+                  <#if orderRxHeader.civilId?exists>${orderRxHeader.civilId?if_exists}<#else>&#32;</#if>
                 </#if>
               </fo:block>
               <fo:block margin-left="3px">${orderRxHeader.firstName?if_exists} ${orderRxHeader.thirdName?if_exists}</fo:block>
@@ -140,16 +140,16 @@ under the License.
                   <#assign patientList = delegator.findByAnd("Patient", {"afyaId":orderRxHeader.afyaId})/>
                   <#if patientList?has_content>
                     <#assign patient = patientList.get(0)?if_exists>
-                    <#if patient.gender?exists && ("M" == patient.gender || "Male" == patient.gender)>Male<#elseif patient.gender?exists && ("F" == patient.gender || "Female" == patient.gender)>Female</#if>
+                    <#if patient.gender?exists && ("M" == patient.gender || "Male" == patient.gender)>Male<#elseif patient.gender?exists && ("F" == patient.gender || "Female" == patient.gender)>Female<#else>&#32;</#if>
                   <#else>
-                    <#if orderRxHeader.gender?exists && ("M" == orderRxHeader.gender || "Male" == orderRxHeader.gender)>Male<#elseif orderRxHeader.gender?exists && ("F" == orderRxHeader.gender || "Female" == orderRxHeader.gender)>Female</#if>
+                    <#if orderRxHeader.gender?exists && ("M" == orderRxHeader.gender || "Male" == orderRxHeader.gender)>Male<#elseif orderRxHeader.gender?exists && ("F" == orderRxHeader.gender || "Female" == orderRxHeader.gender)>Female<#else>&#32;</#if>
                   </#if>
                 <#else>
-                  <#if orderRxHeader.gender?exists && ("M" == orderRxHeader.gender || "Male" == orderRxHeader.gender)>Male<#elseif orderRxHeader.gender?exists && ("F" == orderRxHeader.gender || "Female" == orderRxHeader.gender)>Female</#if>
+                  <#if orderRxHeader.gender?exists && ("M" == orderRxHeader.gender || "Male" == orderRxHeader.gender)>Male<#elseif orderRxHeader.gender?exists && ("F" == orderRxHeader.gender || "Female" == orderRxHeader.gender)>Female<#else>&#32;</#if>
                 </#if>
               </fo:block>
               <#if orderRxHeader.patientType?exists && "INSURANCE"==orderRxHeader.patientType>
-                <fo:block margin-left="3px">${orderRxHeader.patientType?if_exists?default("")}</fo:block>
+                <fo:block margin-left="3px"><#if orderRxHeader.patientType?exists>${orderRxHeader.patientType?if_exists}<#else>&#32;</#if></fo:block>
               </#if>
             </fo:table-cell>
             
@@ -195,11 +195,11 @@ under the License.
               <#-- <fo:block margin-left="3px"><fo:leader></fo:leader></fo:block>
               <fo:block margin-left="3px"><fo:leader></fo:leader></fo:block> -->
               <fo:block margin-left="3px"><fo:leader></fo:leader></fo:block>
-              <fo:block margin-left="3px">${orderRxHeader.doctorName?if_exists?default("")}</fo:block>
-              <fo:block margin-left="3px"><#if invoiceDate?has_content>${invoiceDate?if_exists?string("dd/MM/yyyy")}</#if></fo:block>
-              <fo:block margin-left="3px"><#if invoice?has_content>${invoice.invoiceId?default("")}</#if></fo:block>
+              <fo:block margin-left="3px"><#if orderRxHeader.doctorName?exists>${orderRxHeader.doctorName?if_exists}<#else>&#32;</#if></fo:block>
+              <fo:block margin-left="3px"><#if invoiceDate?has_content>${invoiceDate?if_exists?string("dd/MM/yyyy")}<#else>&#32;</#if></fo:block>
+              <fo:block margin-left="3px"><#if invoice?has_content>${invoice.invoiceId}<#else>&#32;</#if></fo:block>
               <#if orderRxHeader.patientType?exists && "INSURANCE"!=orderRxHeader.patientType>
-                <fo:block margin-left="3px">${orderRxHeader.patientType?if_exists?default("")}</fo:block>
+                <fo:block margin-left="3px"><#if orderRxHeader.patientType?exists>${orderRxHeader.patientType?if_exists}<#else>&#32;</#if></fo:block>
               </#if>
               <#if orderRxHeader.patientType?exists && "INSURANCE"==orderRxHeader.patientType>
                 <#assign patientInsuranceList = delegator.findByAnd("PatientInsurance", {"benefitPlanId" : orderRxHeader.benefitPlanId?if_exists})>
@@ -266,8 +266,8 @@ under the License.
               <fo:block margin-left="3px"><fo:leader></fo:leader></fo:block> -->
               <fo:block margin-left="3px"><fo:leader></fo:leader></fo:block>
               <fo:block margin-left="3px">&#32;</fo:block>
-              <fo:block margin-left="3px"><#if invoiceDate?has_content>${invoiceDate?if_exists?string("dd/MM/yyyy")}</#if></fo:block>
-              <fo:block margin-left="3px"><#if invoice?has_content>${invoice.invoiceId}</#if></fo:block>
+              <fo:block margin-left="3px"><#if invoiceDate?has_content>${invoiceDate?if_exists?string("dd/MM/yyyy")}<#else>&#32;</#if></fo:block>
+              <fo:block margin-left="3px"><#if invoice?has_content>${invoice.invoiceId}<#else>&#32;</#if></fo:block>
               <fo:block margin-left="3px">&#32;</fo:block>
             </fo:table-cell>
             
@@ -328,8 +328,8 @@ under the License.
             <fo:block margin-left="3px"><fo:leader></fo:leader></fo:block> -->
             <fo:block margin-left="3px"><fo:leader></fo:leader></fo:block>
             <fo:block margin-left="3px">&#32;</fo:block>
-            <fo:block margin-left="3px"><#if invoiceDate?has_content>${invoiceDate?if_exists?string("dd/MM/yyyy")}</#if></fo:block>
-            <fo:block margin-left="3px"><#if invoice?has_content>${invoice.invoiceId}</#if></fo:block>
+            <fo:block margin-left="3px"><#if invoiceDate?has_content>${invoiceDate?if_exists?string("dd/MM/yyyy")}<#else>&#32;</#if></fo:block>
+            <fo:block margin-left="3px"><#if invoice?has_content>${invoice.invoiceId}<#else>&#32;</#if></fo:block>
             <fo:block margin-left="3px">&#32;</fo:block>
           </fo:table-cell>
           
