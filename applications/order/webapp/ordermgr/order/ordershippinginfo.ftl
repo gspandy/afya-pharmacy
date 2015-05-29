@@ -68,7 +68,7 @@ under the License.
             </form>
             <#assign productStore =  delegator.findByPrimaryKey("ProductStore", Static["org.ofbiz.base.util.UtilMisc"].toMap("productStoreId", orderHeader.productStoreId))?if_exists />
             <#if productStore?has_content && productStore.reserveInventory == "Y">
-              <a href="javascript:document.quickShipOrder.submit()" class="btn  btn-link btn-mini">${uiLabelMap.OrderQuickShipEntireOrder}</a></li>
+              <a href="javascript:document.quickShipOrder.submit()" class="btn btn-link">${uiLabelMap.OrderQuickShipEntireOrder}</a></li>
             </#if>
           <#else> <#-- PURCHASE_ORDER -->
             <span class="label">&nbsp;<#if orderHeader.orderTypeId == "PURCHASE_ORDER">${uiLabelMap.ProductDestinationFacility}</#if></span>
@@ -99,7 +99,7 @@ under the License.
                         </#list>
                       </select>
                       </form>
-                      <a href="javascript:document.receivePurchaseOrderForm.submit()" class="btn  btn-link btn-mini">${uiLabelMap.CommonReceive}</a>
+                      <a href="javascript:document.receivePurchaseOrderForm.submit()" class="btn btn-link">${uiLabelMap.CommonReceive}</a>
                  </li>
               <#else>
                   <li>
@@ -125,7 +125,7 @@ under the License.
                          </#list>
                        </select>
                     </form>
-                   <a href="javascript:document.partialReceiveInventoryForm.submit()" class="btn  btn-link btn-mini">${uiLabelMap.CommonReceive}</a>
+                   <a href="javascript:document.partialReceiveInventoryForm.submit()" class="btn btn-link">${uiLabelMap.CommonReceive}</a>
                   </li>
               </#if>
                 </#if>
@@ -155,7 +155,7 @@ under the License.
               <input type="hidden" name="receiveReturn" value="true"/>
               <input type="hidden" name="returnHeaderTypeId" value="${returnHeaderTypeId}"/>
             </form>
-            <a href="javascript:document.quickRefundOrder.submit()" class="btn btn-mini btn-link">${uiLabelMap.OrderQuickRefundEntireOrder}</a>
+            <a href="javascript:document.quickRefundOrder.submit()" class="btn btn-link">${uiLabelMap.OrderQuickRefundEntireOrder}</a>
             </li>
             <li>
             <form name="quickreturn" method="post" action="<@ofbizUrl>quickreturn</@ofbizUrl>">
@@ -164,21 +164,21 @@ under the License.
               <input type="hidden" name="returnHeaderTypeId" value="${returnHeaderTypeId}"/>
               <input type="hidden" name="needsInventoryReceive" value="${needsInventoryReceive?default("N")}"/>
             </form>
-            <a href="javascript:document.quickreturn.submit()" class="btn btn-mini btn-link">${uiLabelMap.OrderCreateReturn}</a>
+            <a href="javascript:document.quickreturn.submit()" class="btn btn-link">${uiLabelMap.OrderCreateReturn}</a>
             </li>
           </#if>
         </#if>
         <#if orderHeader?has_content && orderHeader.statusId != "ORDER_CANCELLED">
           <#if orderHeader.statusId != "ORDER_COMPLETED">
-              <li><a href="<@ofbizUrl>cancelOrderItem?${paramString}</@ofbizUrl>" class="btn btn-danger btn-mini btn-link">${uiLabelMap.OrderCancelAllItems}</a></li>
-            <li><a href="<@ofbizUrl>editOrderItems?${paramString}</@ofbizUrl>" class="btn btn-mini btn-link">${uiLabelMap.OrderEditItems}</a></li>
+              <li><a href="<@ofbizUrl>cancelOrderItem?${paramString}</@ofbizUrl>" class="btn btn-danger btn-link">${uiLabelMap.OrderCancelAllItems}</a></li>
+            <li><a href="<@ofbizUrl>editOrderItems?${paramString}</@ofbizUrl>" class="btn btn-link">${uiLabelMap.OrderEditItems}</a></li>
           </#if>
-          <li><a href="<@ofbizUrl>loadCartFromOrder?${paramString}&amp;finalizeMode=init</@ofbizUrl>" class="btn btn-mini btn-link">${uiLabelMap.OrderCreateAsNewOrder}</a></li>
+          <li><a href="<@ofbizUrl>loadCartFromOrder?${paramString}&amp;finalizeMode=init</@ofbizUrl>" class="btn btn-link">${uiLabelMap.OrderCreateAsNewOrder}</a></li>
          <#-- <#if orderHeader.statusId == "ORDER_COMPLETED">
-            <li><a href="<@ofbizUrl>loadCartForReplacementOrder?${paramString}</@ofbizUrl>" class="btn btn-mini btn-link">${uiLabelMap.OrderCreateReplacementOrder}</a></li>
+            <li><a href="<@ofbizUrl>loadCartForReplacementOrder?${paramString}</@ofbizUrl>" class="btn btn-link">${uiLabelMap.OrderCreateReplacementOrder}</a></li>
           </#if>-->
         </#if>
-        <li><a href="<@ofbizUrl>OrderHistory?orderId=${orderId}</@ofbizUrl>" class="btn btn-mini btn-link">${uiLabelMap.OrderViewOrderHistory}</a></li>
+        <li><a href="<@ofbizUrl>OrderHistory?orderId=${orderId}</@ofbizUrl>" class="btn btn-link">${uiLabelMap.OrderViewOrderHistory}</a></li>
       </ul>
     </div>
   </div>

@@ -380,7 +380,7 @@
 				<property-map resource="CommonUiLabels" map-name="uiLabelMap"
 					global="true" />
 				<set field="logoImageUrl" from-field="partyg.logoImageUrl" />
-				<!--<set field="defaultFontFamily" value="Arial"/>-->
+				<!--<set field="defaultFontFamily" value="Calibri"/>-->
 			</actions>
 			<widgets>
 				<!-- render header -->

@@ -511,7 +511,7 @@
 				<property-map resource="CommonUiLabels" map-name="uiLabelMap" global="true" />
 				<!-- <set field="logoImageUrl" value="/images/ofbiz_company_icon.gif" /> -->
 				<set field="logoImageUrl" value="/images/logo.png" />
-				<!--<set field="defaultFontFamily" value="Arial"/> -->
+				<!--<set field="defaultFontFamily" value="Calibri"/> -->
 			</actions>
 			<widgets>
 				<!-- render header -->
@@ -877,7 +877,7 @@
 				<property-map resource="CommonUiLabels" map-name="uiLabelMap"
 					global="true" />
 				<!-- <set field="logoImageUrl" value="/images/ofbiz_logo.gif" /> -->
-				<!--<set field="defaultFontFamily" value="Arial"/> -->
+				<!--<set field="defaultFontFamily" value="Calibri"/> -->
 			</actions>
 			<widgets>
 				<platform-specific>
