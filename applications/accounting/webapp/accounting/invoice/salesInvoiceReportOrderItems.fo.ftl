@@ -86,7 +86,7 @@ under the License.
     <fo:table-column column-number="5" column-width="proportional-column-width(3)" />
     <fo:table-column column-number="6" column-width="proportional-column-width(30)" />
     <fo:table-body font-size="8pt">
-      <fo:table-row space-start=".15in" height="57px">
+      <fo:table-row space-start=".15in" height="60px">
         <#if orderId?has_content>
           <#assign orderRxHeader = delegator.findOne("OrderRxHeader", {"orderId" : orderId}, true)>
           <#if orderRxHeader?has_content>
