@@ -69,7 +69,7 @@ under the License.
                     </fo:table-cell>
 
                     <fo:table-cell border-style="solid" border-width="thin" border-color="black">
-                        <fo:block text-align="center" margin-top="3px">Description</fo:block>
+                        <fo:block text-align="left" margin-left="10px" margin-top="3px">Description</fo:block>
                     </fo:table-cell>
 
                     <#-- <fo:table-cell border-style="solid" border-width="thin" border-color="black">
@@ -116,7 +116,7 @@ under the License.
                             </fo:block>
                         </fo:table-cell>
                         <fo:table-cell border-right-style="solid" border-right-width="thin" border-right-color="black">
-                            <fo:block text-align="center" margin-top="5px">
+                            <fo:block text-align="left" margin-left="10px" margin-top="5px">
                                 <#if orderItem.productId?has_content>
                                     ${orderItem.itemDescription?if_exists}
                                     <#if orderItem.comments?has_content>
