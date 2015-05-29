@@ -425,7 +425,7 @@ under the License.
               <fo:block text-align="left" margin-left="10px" margin-top="5px">${description?if_exists}</fo:block>
             </fo:table-cell>
             <fo:table-cell border-right-style="solid" border-right-width="thin" border-right-color="black">
-              <fo:block text-align="right" margin-top="5px" margin-right="7px"> <#if invoiceItem.quantity?exists>${invoiceItem.quantity?string.number}</#if> </fo:block>
+              <fo:block text-align="center" margin-top="5px" margin-right="7px"> <#if invoiceItem.quantity?exists>${invoiceItem.quantity?string.number}</#if> </fo:block>
             </fo:table-cell>
             <fo:table-cell text-align="center" border-right-style="solid" border-right-width="thin" border-right-color="black">
               <fo:block margin-top="5px"> <#if uomGv?has_content>${uomGv.description}</#if> </fo:block>
