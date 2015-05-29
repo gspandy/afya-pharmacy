@@ -2672,29 +2672,55 @@
 								global="true"/>
 
 				<set field="footerLabel" value="Goods Received Note" />
+
+				<script location="component://product/webapp/facility/WEB-INF/actions/facility/GetSupplierContactInfo.groovy" />
 				</actions>
 			<widgets>
-				<decorator-screen name="FoReportDecorator" location="component://common/widget/CommonScreens.xml">
+				<decorator-screen name="FoPurchaseOrderReportDecorator" location="component://common/widget/CommonScreens.xml">
 					<!-- at the top of every page we put the logo and company information -->
 					<decorator-section name="header">
 						<section>
 							<widgets>
-								<include-screen name="ZPCHeader" location="component://product/widget/facility/FacilityScreens.xml"/>
+								<include-screen name="AfyaHeader" location="component://product/widget/facility/FacilityScreens.xml"/>
 							</widgets>
 						</section>
 					</decorator-section>
-					<decorator-section name="body">
-						<section>
-							<widgets>
-								<platform-specific>
-									<xsl-fo>
-										<html-template
-												location="component://product/webapp/facility/inventory/GoodsReceivedNote.fo.ftl"/>
-									</xsl-fo>
-								</platform-specific>
-							</widgets>
-						</section>
-					</decorator-section>
+					<decorator-section name="top">
+                        <section>
+                            <widgets>
+                                <platform-specific>
+                                    <xsl-fo><html-template location="component://product/webapp/facility/inventory/GRNHeader.fo.ftl"/></xsl-fo>
+                                </platform-specific>
+                            </widgets>
+                        </section>
+                    </decorator-section>
+                    <decorator-section name="topLeft">
+                        <section>
+                            <widgets>
+                                <platform-specific>
+                                    <xsl-fo><html-template location="component://product/webapp/facility/inventory/GRNSupplierInfo.fo.ftl"/></xsl-fo>
+                                </platform-specific>
+                            </widgets>
+                        </section>
+                    </decorator-section>
+                    <decorator-section name="topRight">
+                        <section>
+                            <widgets>
+                                <platform-specific>
+                                    <xsl-fo><html-template location="component://product/webapp/facility/inventory/GRNShipmentNumberInfo.fo.ftl"/></xsl-fo>
+                                </platform-specific>
+                            </widgets>
+                        </section>
+                    </decorator-section>
+                    <decorator-section name="body">
+                        <section>
+                            <widgets>
+                                <platform-specific>
+                                    <xsl-fo><html-template location="component://product/webapp/facility/inventory/GoodsReceivedNote.fo.ftl"/></xsl-fo>
+                                </platform-specific>
+                            </widgets>
+                        </section>
+                    </decorator-section>
 				</decorator-screen>
 			</widgets>
 		</section>
@@ -2714,6 +2740,17 @@
 			</widgets>
 		</section>
 	</screen>
+	
+	<screen name="AfyaHeader">
+        <section>
+            <actions>
+                <script location="component://order/webapp/ordermgr/WEB-INF/actions/order/CompanyHeader.groovy"/>
+            </actions>
+            <widgets>
+                <platform-specific><xsl-fo><html-template location="component://order/webapp/ordermgr/order/companyPOHeader.fo.ftl"/></xsl-fo></platform-specific>
+            </widgets>
+        </section>
+    </screen>
 	
 	<screen name="editGrnsEmail">
 		<section>
