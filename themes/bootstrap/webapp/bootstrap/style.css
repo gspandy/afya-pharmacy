@@ -1321,7 +1321,7 @@ the top of the main content area */
 	background: none;
 	color: #FFF;
 	font-weight: bold;
-	font-size: 1.3em;
+	font-size: 14px;
 }
 
 .screenlet-title-bar ul {
@@ -1333,7 +1333,7 @@ the top of the main content area */
 	border-left: 0.1em solid #FFF;
 	color: #000000;
 	float: right;
-	font-size: 1em;
+	font-size: 14px;
 	font-weight: bold;
 	padding: 0.1em 0.5em 0.2em 0.5em;
 }
@@ -1348,15 +1348,16 @@ the top of the main content area */
 }
 
 .screenlet-title-bar .h1 {
-	font-size: 1.6em;
+	font-size: 16px;
 }
 
 .screenlet-title-bar .h2 {
-	font-size: 1.3em;
+	font-size: 15px;
 }
 
 .screenlet-title-bar .h3,.screenlet-title-bar .head4 {
-	font-size: 1.2em;
+	font-size: 14px;
+	padding: 6px 0.5em 6px 0.5em;
 }
 
 .screenlet-title-bar .h3 a {
