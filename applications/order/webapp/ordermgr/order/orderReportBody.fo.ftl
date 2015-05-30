@@ -89,11 +89,11 @@ under the License.
                     </fo:table-cell> -->
 
                     <fo:table-cell border-style="solid" border-width="thin" border-color="black">
-                        <fo:block text-align="center" margin-top="3px">Unit Price</fo:block>
+                        <fo:block text-align="right" margin-right="10px" margin-top="3px">Unit Price</fo:block>
                     </fo:table-cell>
 
                     <fo:table-cell border-style="solid" border-width="thin" border-color="black">
-                        <fo:block text-align="center" margin-top="3px">Amount</fo:block>
+                        <fo:block text-align="right" margin-right="10px" margin-top="3px">Amount</fo:block>
                     </fo:table-cell>
 
                 </fo:table-row>
