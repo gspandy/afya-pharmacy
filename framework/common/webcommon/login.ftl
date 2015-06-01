@@ -5,6 +5,8 @@
 <#if requestAttributes.uiLabelMap?exists><#assign uiLabelMap = requestAttributes.uiLabelMap></#if>
 <#assign useMultitenant = Static["org.ofbiz.base.util.UtilProperties"].getPropertyValue("general.properties", "multitenant")>
 
+<#assign webappName = Static["org.ofbiz.base.util.UtilHttp"].getApplicationName(request)>
+
 <#assign username = requestParameters.USERNAME?default((sessionAttributes.autoUserLogin.userLoginId)?default(""))>
 <#if username != "">
   <#assign focusName = false>
@@ -79,54 +81,57 @@
 </div> -->
 
 <html>
-	<head>
-		<title>Afya Pharmacy: Login</title>
-		<link href="/bootstrap/login_style.css" type="text/css" rel="stylesheet" />
-		<meta name="viewport" content="width=device-width, initial-scale=1" />
-		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-		<script type="application/x-javascript"> addEventListener("load", function() { setTimeout(hideURLbar, 0); }, false); function hideURLbar(){ window.scrollTo(0,1); } </script>
-		<!--webfonts-->
-		<link href='http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,400,300,600,700,800' rel='stylesheet' type='text/css'>
-		<!--//webfonts-->
-		<style type="text/css">
-		<!--
-			body {
-				background-color: #FFFFFF;
-			}
-		-->
-		</style>
+  <head>
+    <title>Afya Pharmacy: Login</title>
+    <link href="/bootstrap/login_style.css" type="text/css" rel="stylesheet" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <script type="application/x-javascript"> addEventListener("load", function() { setTimeout(hideURLbar, 0); }, false); function hideURLbar(){ window.scrollTo(0,1); } </script>
+    <!--webfonts-->
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,400,300,600,700,800' rel='stylesheet' type='text/css'>
+    <!--//webfonts-->
+    <style type="text/css">
+      <!--
+      body {
+        background-color: #FFFFFF;
+      }
+      -->
+    </style>
 
-        <script>
-            window.location.href='http://5.9.249.197:7878/afya-portal/login';
-        </script>
-	</head>
-	<#--<body>
-		<p>&nbsp;</p>
-		<div class="app-location">
-	  		<div class="location"><img src="/bootstrap/images/logo_afya.png" class="img-responsive" alt="" /></div>
-				<form method="post" action="<@ofbizUrl>login</@ofbizUrl>" name="loginform">
-					<input type="text" class="text" name="USERNAME" value="User Name" onFocus="this.value = '';" onBlur="if (this.value == '') {this.value = 'User Name';}" />
-					<input type="password" name="PASSWORD" value="Password" onFocus="this.value = '';" onBlur="if (this.value == '') {this.value = 'Password';}" />
-					<#if ("Y" == useMultitenant)>
-						<input type="tenant-text" class="login_input" name="tenantId" value="${parameters.tenantId?if_exists}" onFocus="this.value = '';" onBlur="if (this.value == '') {this.value = '';}" />
-					</#if>
-					<div class="submit">
-						<input type="submit" value="Login" />
-					</div>
-					<div class="clear"></div>
-					<input type="hidden" name="JavaScriptEnabled" value="N" />
-					<div class="new">
-						<h3><a href="<@ofbizUrl>forgotPassword</@ofbizUrl>">Forgot your Password?</a></h3>
-						<!--<h4><a href="#">New here? Sign Up</a></h4>&ndash;&gt;
-						<div class="clear"></div>
-					</div>
-				</form>
-			</div>
-			<!--start-copyright&ndash;&gt;
-	   		<!--<div class="copy-right"></div>&ndash;&gt;
-			<!--//end-copyright&ndash;&gt;
-		</div>
-	</body>-->
+    <#if webappName?has_content && webappName != "webtools">
+      <script>
+        window.location.href='http://5.9.249.197:7878/afya-portal/login';
+      </script>
+    </#if>
+  </head>
+  <#if webappName?has_content && webappName == "webtools">
+    <body>
+      <p>&nbsp;</p>
+      <div class="app-location">
+        <div class="location"><img src="/bootstrap/images/logo_afya.png" class="img-responsive" alt="" /></div>
+        <form method="post" action="<@ofbizUrl>login</@ofbizUrl>" name="loginform">
+          <input type="text" class="text" name="USERNAME" value="User Name" onFocus="this.value = '';" onBlur="if (this.value == '') {this.value = 'User Name';}" />
+          <input type="password" name="PASSWORD" value="Password" onFocus="this.value = '';" onBlur="if (this.value == '') {this.value = 'Password';}" />
+          <#if ("Y" == useMultitenant)>
+            <input type="tenant-text" class="login_input" name="tenantId" value="${parameters.tenantId?if_exists}" onFocus="this.value = '';" onBlur="if (this.value == '') {this.value = '';}" />
+          </#if>
+          <div class="submit">
+            <input type="submit" value="Login" />
+          </div>
+          <div class="clear"></div>
+          <input type="hidden" name="JavaScriptEnabled" value="N" />
+          <div class="new">
+            <h3><a href="<@ofbizUrl>forgotPassword</@ofbizUrl>">Forgot your Password?</a></h3>
+            <!--<h4><a href="#">New here? Sign Up</a></h4>-->
+            <div class="clear"></div>
+          </div>
+        </form>
+      </div>
+      <!--start-copyright-->
+      <!--<div class="copy-right"></div>-->
+      <!--//end-copyright-->
+    </body>
+  </#if>
 </html>
 
 <script language="JavaScript" type="text/javascript">
