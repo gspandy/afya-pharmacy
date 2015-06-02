@@ -107,7 +107,7 @@ under the License.
         </#if>
         
         <#-- Order Date -->   
-        <#if (cart.getOrderDate()?has_content)>
+        <#if (cart.getOrderDate()?has_content && !cart.getPatientInfo()?has_content)>
             <tr>
                 <td align="right" valign="top" width="15%">
                     <span>&nbsp;<b>Order Date</b> </span>
@@ -117,8 +117,8 @@ under the License.
                     ${cart.getOrderDate()?if_exists?string("dd/MM/yyyy")}
                 </td>
             </tr>
-            <tr><td colspan="7"><hr /></td></tr>
-        <#else>
+            <#-- <tr><td colspan="7"><hr /></td></tr> -->
+        <#elseif !cart.getPatientInfo()?has_content>
             <tr>
                 <td align="right" valign="top" width="15%">
                     <span>&nbsp;<b>Order Date</b> </span>
@@ -128,7 +128,7 @@ under the License.
                     ${nowTimestamp?string("dd/MM/yyyy")}
                 </td>
             </tr>
-            <tr><td colspan="7"><hr /></td></tr>
+            <#-- <tr><td colspan="7"><hr /></td></tr> -->
         </#if>
         
         <#-- Delivery Date -->   
@@ -225,5 +225,97 @@ under the License.
             </tr>
         </#if>
         </table>
+        <#if orderType == "SALES_ORDER" && cart.getPatientInfo()?has_content>
+            <div class="screenlet-body">
+                <table width="100%" border="0" cellpadding="1" class="basic-table">
+                    <tr>
+                        <td align="right" valign="top" width="10%"><span id="afyaId_title">&nbsp;<b>Afya ID :</b> </span></td>
+                        <td width="1%">&nbsp;</td>
+                        <td valign="top" width="20%">${cart.getPatientInfo().getAfyaId()?if_exists}</td>
+                        <td align="right" valign="top" width="10%"><span id="civilId_title"><b> Civil ID :</b> </span></td>
+                        <td width="1%">&nbsp;</td>
+                        <td valign="top" width="20%">${cart.getPatientInfo().getCivilId()?if_exists}</td>
+                        <td align="right" valign="top" width="10%"><span id="gender_title"><b> Gender :</b> </span></td>
+                        <td width="1%">&nbsp;</td>
+                        <td valign="top" width="20%"><#if "M" == cart.getPatientInfo().getGender()>Male<#elseif "F" == cart.getPatientInfo().getGender()>Female<#else>&#160;&#32;</#if></td>
+                    </tr>
+                    <tr>
+                        <td align="right" valign="top" width="10%"><span id="name_title">&nbsp;<b>Name :</b> </span></td>
+                        <td width="1%">&nbsp;</td>
+                        <td valign="top" width="20%">${cart.getPatientInfo().getFirstName()?if_exists} ${cart.getPatientInfo().getSecondName()?if_exists} ${cart.getPatientInfo().getThirdName()?if_exists}</td>
+                        <td align="right" valign="top" width="10%"><span id="doctor_title"><b> Doctor :</b> </span></td>
+                        <td width="1%">&nbsp;</td>
+                        <td valign="top" width="20%">${cart.getPatientInfo().getDoctorName()?if_exists}</td>
+                        <td align="right" valign="top" width="10%"><span id="patientType_title"><b> Patient Type :</b> </span></td>
+                        <td width="1%">&nbsp;</td>
+                        <td valign="top" width="20%">${cart.getPatientInfo().getPatientType()?if_exists}</td>
+                    </tr>
+                    <#if "INSURANCE" == cart.getPatientInfo().getPatientType()>
+                        <tr>
+                            <td align="right" valign="top" width="10%"><span id="patientType_title"><b> Insurance :</b> </span></td>
+                            <td width="1%">&nbsp;</td>
+                            <td valign="top" width="20%">
+                                <#if cart.getPatientInfo().getBenefitId()?has_content>
+                                    <#assign benefitPlanId = cart.getPatientInfo().getBenefitId()>
+
+                                    <#assign patientInsuranceList = delegator.findByAnd("PatientInsurance",{"benefitPlanId", benefitPlanId})>
+                                    <#assign patientInsurance = Static["org.ofbiz.entity.util.EntityUtil"].getFirst(patientInsuranceList)>
+
+                                    <#assign benefitPlanName = patientInsurance.benefitPlanName>
+                                    <#assign benefitPlanId=patientInsurance.benefitPlanId>
+                                    <#assign policyNo = patientInsurance.policyNo>
+                                    <#assign healthPolicyName = patientInsurance.healthPolicyName>
+                                    <#assign healthPolicyId=patientInsurance.healthPolicyId>
+
+                                    ${healthPolicyName?if_exists} - ${policyNo?if_exists} <a href='javascript:void(0);' id="benefitPlanLink">View Plan</a>
+                                    <input type="hidden" value="${benefitPlanId}" id="benefitPlanId"/>
+                                <#else>
+                                    &#160;&#32;
+                                </#if>
+                            </td>
+                            <td align="right" valign="top" width="10%"><span id="patientType_title"><b> Benefit :</b> </span></td>
+                            <td width="1%">&nbsp;</td>
+                            <td valign="top" width="20%">
+                                <#if cart.getPatientInfo().getModuleName()?has_content>
+                                    ${cart.getPatientInfo().getModuleName()?if_exists}
+                                <#else>
+                                    &#160;&#32;
+                                </#if>
+                            </td>
+                            <#-- Order Date -->   
+                            <#if (cart.getOrderDate()?has_content)>
+                                <td align="right" valign="top" width="10%><span>&nbsp;<b>Order Date:</b> </span></td>
+                                <td width="1">&nbsp;</td>
+                                <td valign="top" width="20%">
+                                    ${cart.getOrderDate()?if_exists?string("dd/MM/yyyy")}
+                                </td>
+                            <#else>
+                                <td align="right" valign="top" width="10%"><span>&nbsp;<b>Order Date:</b> </span></td>
+                                <td width="1">&nbsp;</td>
+                                <td valign="top" width="20%">
+                                    ${nowTimestamp?string("dd/MM/yyyy")}
+                                </td>
+                            </#if>
+                        </tr>
+                    <#else>
+                        <#-- Order Date -->   
+                            <#if (cart.getOrderDate()?has_content)>
+                                <td align="right" valign="top" width="10%><span>&nbsp;<b>Order Date:</b> </span></td>
+                                <td width="1">&nbsp;</td>
+                                <td valign="top" width="20%">
+                                    ${cart.getOrderDate()?if_exists?string("dd/MM/yyyy")}
+                                </td>
+                            <#else>
+                                <td align="right" valign="top" width="10%"><span>&nbsp;<b>Order Date:</b> </span></td>
+                                <td width="1">&nbsp;</td>
+                                <td valign="top" width="20%">
+                                    ${nowTimestamp?string("dd/MM/yyyy")}
+                                </td>
+                            </#if>
+                        </tr>
+                    </#if>
+                </table>
+            </div>
+        </#if>
     </div>
 </div>

@@ -158,12 +158,12 @@ $(document).ready(function () {
             var moduleDetails = data['moduleDetails'];
             var moduleHtml='';
             $.each(moduleDetails, function (index, moduleDetail) {
-                moduleHtml=moduleHtml+'<tr><td>'+moduleDetail.moduleName+'</td><td>'
+                moduleHtml=moduleHtml+'<tr><td>'+moduleDetail.moduleName+'</td><td style="text-align:right">'
                 +amount(moduleDetail.sumInsured)+'</td>'
-                +decodeBoolean(moduleDetail.authorization)+'<td>'
-                +amount(moduleDetail.deductibleAmount)+'</td><td>'
-                +amount(moduleDetail.deductiblePercentage)+'</td><td>'
-                +amount(moduleDetail.copayAmount)+'</td><td>'
+                +decodeBoolean(moduleDetail.authorization)+'<td style="text-align:right">'
+                +amount(moduleDetail.deductibleAmount)+'</td><td style="text-align:right">'
+                +amount(moduleDetail.deductiblePercentage)+'</td><td style="text-align:right">'
+                +amount(moduleDetail.copayAmount)+'</td><td style="text-align:right">'
                 +amount(moduleDetail.copayPercentage)+'</td><td>'
                 +text(moduleDetail.computeBy)+'</td>'
                 +decodeBoolean(moduleDetail.authorizationInclusiveConsultation)+''
@@ -176,11 +176,11 @@ $(document).ready(function () {
             $.each(serviceDetails, function (index, serviceDetail) {
                 serviceHtml=serviceHtml+'<tr><td>'+serviceDetail.serviceName+'</td><td>'
                 +serviceDetail.moduleName+'</td>'
-                +decodeBoolean(serviceDetail.authorization)+'<td>'
-                +amount(serviceDetail.deductibleAmount)+'</td><td>'
-                +amount(serviceDetail.deductiblePercentage)+'</td><td>'
-                +amount(serviceDetail.copayAmount)+'</td><td>'
-                +amount(serviceDetail.copayPercentage)+'</td><td>'
+                +decodeBoolean(serviceDetail.authorization)+'<td style="text-align:right">'
+                +amount(serviceDetail.deductibleAmount)+'</td><td style="text-align:right">'
+                +amount(serviceDetail.deductiblePercentage)+'</td><td style="text-align:right">'
+                +amount(serviceDetail.copayAmount)+'</td><td style="text-align:right">'
+                +amount(serviceDetail.copayPercentage)+'</td><td style="text-align:right">'
                 +amount(serviceDetail.individualLimitAmount)+'</td><td>'
                 +text(serviceDetail.numberOfCases)+'</td></tr>';
             });

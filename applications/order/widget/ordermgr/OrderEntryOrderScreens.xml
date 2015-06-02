@@ -244,6 +244,7 @@
 				<set field="stepTitleId" value="OrderOrderConfirmation" />
 				<set field="stepLabelId" value="OrderReviewOrder" />
 				<set field="titleProperty" value="Order Confirmation" />
+				<set field="layoutSettings.javaScripts[]" value="/ordermgr/images/js/insurance.js" global="true"/>
 				<property-to-field resource="order" property="orderPreference.giftEnable" field="giftEnable"
 					default="Y" />
 				<script location="component://order/webapp/ordermgr/WEB-INF/actions/entry/CheckoutReview.groovy" />
@@ -256,6 +257,11 @@
 								<html-template location="component://order/webapp/ordermgr/entry/order/orderheaderinfo.ftl" />
 							</html>
 						</platform-specific>
+						<platform-specific>
+                            <html>
+                                <html-template location="component://order/webapp/ordermgr/order/benefitdetail.ftl"/>
+                            </html>
+                        </platform-specific>
 						<platform-specific>
 							<html>
 								<html-template location="component://order/webapp/ordermgr/entry/order/orderpaymentinfo.ftl" />
