@@ -284,13 +284,13 @@ under the License.
                             </td>
                             <#-- Order Date -->   
                             <#if (cart.getOrderDate()?has_content)>
-                                <td align="right" valign="top" width="10%><span>&nbsp;<b>Order Date:</b> </span></td>
+                                <td align="right" valign="top" width="10%><span>&nbsp;<b>Order Date :</b> </span></td>
                                 <td width="1">&nbsp;</td>
                                 <td valign="top" width="20%">
                                     ${cart.getOrderDate()?if_exists?string("dd/MM/yyyy")}
                                 </td>
                             <#else>
-                                <td align="right" valign="top" width="10%"><span>&nbsp;<b>Order Date:</b> </span></td>
+                                <td align="right" valign="top" width="10%"><span>&nbsp;<b>Order Date :</b> </span></td>
                                 <td width="1">&nbsp;</td>
                                 <td valign="top" width="20%">
                                     ${nowTimestamp?string("dd/MM/yyyy")}
@@ -300,13 +300,13 @@ under the License.
                     <#else>
                         <#-- Order Date -->   
                             <#if (cart.getOrderDate()?has_content)>
-                                <td align="right" valign="top" width="10%><span>&nbsp;<b>Order Date:</b> </span></td>
+                                <td align="right" valign="top" width="10%><span>&nbsp;<b>Order Date :</b> </span></td>
                                 <td width="1">&nbsp;</td>
                                 <td valign="top" width="20%">
                                     ${cart.getOrderDate()?if_exists?string("dd/MM/yyyy")}
                                 </td>
                             <#else>
-                                <td align="right" valign="top" width="10%"><span>&nbsp;<b>Order Date:</b> </span></td>
+                                <td align="right" valign="top" width="10%"><span>&nbsp;<b>Order Date :</b> </span></td>
                                 <td width="1">&nbsp;</td>
                                 <td valign="top" width="20%">
                                     ${nowTimestamp?string("dd/MM/yyyy")}
