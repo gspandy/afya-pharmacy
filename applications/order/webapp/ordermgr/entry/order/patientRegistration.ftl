@@ -495,7 +495,7 @@ under the License.
             <td><input type="text" name="governorate" id="state" size="25"/></td>
             <td class="label"><span id="country_title">Country</span></td>
             <td colspan="4">
-              <select name="countryGeoId" id="countryGeoId">
+              <select name="country" id="country">
                 ${screens.render("component://common/widget/CommonScreens.xml#countries")}
                 <#assign defaultCountryGeoId = Static["org.ofbiz.base.util.UtilProperties"].getPropertyValue("general.properties", "country.geo.id.default")>
                 <option selected="selected" value="${defaultCountryGeoId}">
