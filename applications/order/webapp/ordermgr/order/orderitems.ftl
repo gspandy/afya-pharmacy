@@ -757,12 +757,12 @@ under the License.
                                           </td>
                                           <#if orderRxHeader?has_content && "INSURANCE"==orderRxHeader.patientType>
                                             <td style="text-align:right;padding-right:10px;" valign="top" nowrap="nowrap">
-                                                <#assign copayPatient = Static["org.ofbiz.order.order.OrderReadHelper"].getOrderItemPatientToPay(orderItem)?default(0.000)>
+                                                <#assign copayPatient = Static["org.ofbiz.order.order.OrderReadHelper"].getOrderItemCopay(orderItem)?default(0.000)>
                                                 <@ofbizCurrency amount=copayPatient isoCode=currencyUomId/>
                                                 <#assign totalCopayPatient = totalCopayPatient + copayPatient>
                                             </td>
                                             <td style="text-align:right;padding-right:10px;" valign="top" nowrap="nowrap">
-                                                <#assign copayPatient = Static["org.ofbiz.order.order.OrderReadHelper"].getOrderItemPatientToPay(orderItem)?default(0.000)>
+                                                <#assign copayPatient = Static["org.ofbiz.order.order.OrderReadHelper"].getOrderItemCopay(orderItem)?default(0.000)>
                                                 <#if orderItem.statusId != "ITEM_CANCELLED">
                                                     <#assign itemSubTotal = Static["org.ofbiz.order.order.OrderReadHelper"].getOrderItemSubTotal(orderItem, orderAdjustments)?default(0.000)>
                                                 <#else>
