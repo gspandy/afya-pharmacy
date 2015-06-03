@@ -181,7 +181,7 @@ $(document).ready(function () {
                 +amount(serviceDetail.deductiblePercentage)+'</td><td style="text-align:right">'
                 +amount(serviceDetail.copayAmount)+'</td><td style="text-align:right">'
                 +amount(serviceDetail.copayPercentage)+'</td><td style="text-align:right">'
-                +amount(serviceDetail.individualLimitAmount)+'</td><td>'
+                +amount(serviceDetail.individualLimitAmount)+'</td><td style="text-align:right">'
                 +text(serviceDetail.numberOfCases)+'</td></tr>';
             });
             $('#serviceTable').find('tbody').html(serviceHtml);
