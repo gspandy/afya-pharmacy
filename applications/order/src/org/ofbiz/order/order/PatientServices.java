@@ -39,6 +39,7 @@ public class PatientServices {
             patientRecord.put("patientType", patientRecordGv.getString("patientType"));
             patientRecord.put("salutation", patientRecordGv.getString("title"));
             patientRecord.put("firstName", patientRecordGv.getString("firstName"));
+            patientRecord.put("middleName", patientRecordGv.getString("secondName"));
             patientRecord.put("lastName", patientRecordGv.getString("thirdName"));
             patientRecord.put("gender", patientRecordGv.getString("gender"));
             patientRecord.put("dateOfBirth", patientRecordGv.getDate("dateOfBirth"));
