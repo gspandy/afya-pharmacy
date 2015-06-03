@@ -53,6 +53,9 @@ jQuery.validator.addMethod("ziprange", function(value, element) {
 	return this.optional(element) || /^90[2-5]\d\{2}-\d{4}$/.test(value);
 }, "Your ZIP-code must be in the range 902xx-xxxx to 905-xx-xxxx");
 
+jQuery.validator.addMethod("civilidrange", function(value, element) {
+	return this.optional(element) || /^\d{12}$/.test(value);
+}, "Civil ID must be of exact 12 digit length");
 
 jQuery.validator.addMethod("integer", function(value, element) {
 	return this.optional(element) || /^-?\d+$/.test(value);

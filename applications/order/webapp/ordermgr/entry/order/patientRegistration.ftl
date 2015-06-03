@@ -26,7 +26,7 @@ under the License.
           <tr>
             <#if "CIVIL_ID" == patient.selectionType>
               <td class="label" id="civilId_title" width="5%"><span id="civilId_title">Civil ID</span></td>
-              <td id="civilId_textfield"><input type="text" name="civilId" id="civilId" size="25" value="${patient.civilId?if_exists}"/></td>
+              <td id="civilId_textfield"><input type="text" name="civilId" id="civilId" size="15" maxlength="12" class="civilidrange" value="${patient.civilId?if_exists}"/></td>
             </#if>
             <#if "PASSPORT" == patient.selectionType>
               <td class="label" id="passport_title" width="7%"><span id="passport_title">Passport &#47; VISA</span></td>
@@ -351,7 +351,7 @@ under the License.
               </span>
             </td>
             <#-- <td class="" id="civilId_title"><span id="civilId_title">Civil ID</span></td> -->
-            <td id="civilId_textfield"><input type="text" name="civilId" id="civilId" size="25"/></td>
+            <td id="civilId_textfield"><input type="text" name="civilId" id="civilId" size="15" maxlength="12" class="civilidrange"/></td>
             <#-- <td class="" id="passport_title" style="display:none"><span id="passport_title">Passport &#47; VISA</span></td> -->
             <td id="passport_textField" style="display:none"><input type="text" name="passport" id="passport" size="25"/></td>
             <td id="expiryDate_title" class="label" width="7%" style="display:none"><span id="expiryDate_title">Expiry Date</span></td>

@@ -3,13 +3,13 @@
 
     <form name="FindPatient" type="single" target="findPatient" title=""
           default-title-style="tableheadtext" default-widget-style="tabletext" default-tooltip-style="tabletext">
-        <field name="civilId" id-name="civilId" position="1">
+        <field name="civilId" title="Civil ID" id-name="civilId" position="1">
             <text-find/>
         </field>
         <field name="firstName" title="First Name" position="2">
             <text-find/>
         </field>
-        <field name="afyaId" position="1">
+        <field name="afyaId" title="Afya ID" position="1">
             <text-find/>
         </field>
         <field name="thirdName" title="Last Name" position="2">
@@ -42,10 +42,10 @@
                 <field-map field-name="viewSize" from-field="viewSize"/>
             </service>
         </actions>
-        <field name="civilId" id-name="civilId">
+        <field name="civilId" title="Civil ID" id-name="civilId">
             <display/>
         </field>
-        <field name="afyaId">
+        <field name="afyaId" title="Afya ID">
             <display/>
         </field>
         <field name="patientType">
@@ -85,10 +85,10 @@
         <field name="gender">
             <hidden value="${patient.gender}"/>
         </field>
-        <field name="civilId" id-name="civilId" position="1">
+        <field name="civilId" title="Civil ID" id-name="civilId" position="1">
             <text/>
         </field>
-        <field name="afyaId" position="2">
+        <field name="afyaId" title="Afya ID" position="2">
             <text/>
         </field>
         <field name="firstName" title="First Name" position="1">
@@ -337,13 +337,13 @@
 
     <form name="SearchPatient" type="single" target="findPatients" title=""
           default-title-style="tableheadtext" default-widget-style="tabletext" default-tooltip-style="tabletext">
-        <field name="civilId" id-name="civilId" position="1">
+        <field name="civilId" title="Civil ID" id-name="civilId" position="1">
             <text-find/>
         </field>
         <field name="firstName" title="First Name" position="2">
             <text-find/>
         </field>
-        <field name="afyaId" position="1">
+        <field name="afyaId" title="Afya ID" position="1">
             <text-find/>
         </field>
         <field name="thirdName" title="Last Name" position="2">
@@ -378,10 +378,10 @@
 				<field-map field-name="viewSize" from-field="viewSize" />
 			</service>
         </actions>
-        <field name="civilId" id-name="civilId">
+        <field name="civilId" title="Civil ID" id-name="civilId">
             <display/>
         </field>
-        <field name="afyaId">
+        <field name="afyaId" title="Afya ID">
             <display/>
         </field>
         <field name="patientType">
