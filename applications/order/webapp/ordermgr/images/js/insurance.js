@@ -132,7 +132,7 @@ $(document).ready(function () {
     });
 
     $('.insuranceList tr').bind('click', function (event){
-        event.preventDefault();
+        //event.preventDefault();
         event.stopPropagation();
         var rowIndex=this.rowIndex;
         var benefitPlanId = $(this).find("input[name|='benefitPlanId']").val();

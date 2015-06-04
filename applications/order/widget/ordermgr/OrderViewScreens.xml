@@ -989,7 +989,7 @@
             <widgets>
                 <decorator-screen name="main-decorator" location="${parameters.mainDecoratorLocation}">
                     <decorator-section name="body">
-                        <screenlet title="Patient Information" navigation-menu-name="PatientMenu">
+                        <screenlet title="Patient Information: [${uiLabelMap.CommonId}:${patientId}]" navigation-menu-name="PatientMenu">
                             <include-menu name="PatientMenu" location="component://order/widget/ordermgr/OrderMenus.xml"/>
                             <!-- <include-form name="PatientRegistration" location="component://order/widget/forms/PatientForms.xml"/> -->
                             <platform-specific><html><html-template location="component://order/webapp/ordermgr/entry/order/patientRegistration.ftl"/></html></platform-specific>
@@ -1010,7 +1010,7 @@
             <widgets>
                 <decorator-screen name="main-decorator" location="${parameters.mainDecoratorLocation}">
                     <decorator-section name="body">
-                        <screenlet title="Insurance Details">
+                        <screenlet title="Insurance Details ${uiLabelMap.CommonFor}: ${patient.firstName} ${patient.thirdName} [${uiLabelMap.CommonId}:${patientId}]">
                             <include-form name="AddInsurance" location="component://order/widget/forms/PatientForms.xml"/>
                             <platform-specific>
                                 <html>
@@ -1032,11 +1032,13 @@
                     <condition-expr field-name="patientId" from-field="parameters.patientId"/>
                     <order-by field-name="groupName"/>
                 </entity-condition>
+                <set field="patientId" from-field="parameters.patientId"/>
+                <entity-one entity-name="Patient" value-field="patient" auto-field-map="true"/>
             </actions>
             <widgets>
                 <decorator-screen name="main-decorator" location="${parameters.mainDecoratorLocation}">
                     <decorator-section name="body">
-                        <screenlet title="Insurance List">
+                        <screenlet title="Insurance List ${uiLabelMap.CommonFor}: ${patient.firstName} ${patient.thirdName} [${uiLabelMap.CommonId}:${patientId}]">
                             <link target="newInsurance" title="Add Insurance" text="Add Insurance">
                                 <parameter param-name="patientId" from-field="parameters.patientId"/>
                             </link>

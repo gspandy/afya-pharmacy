@@ -2338,7 +2338,11 @@
 	<request-map uri="registerPatient">
 		<security auth="true"/>
 		<event type="service" invoke="registerPatient"/>
-		<response name="success" type="view" value="newpatient"/>
+		<response name="CASH" type="view" value="newpatient"/>
+		<response name="CORPORATE" type="view" value="newpatient"/>
+		<response name="INSURANCE" type="request-redirect" value="newInsurance">
+			<redirect-parameter name="patientId"/>
+		</response>
 	</request-map>
 
 	<request-map uri="editPatient">

@@ -454,6 +454,11 @@
 
     <form name="InsuranceList" target="insuranceList" title="Insurance List" type="list" list-name="insuranceList"
           odd-row-style="alternate-row" header-row-style="header-row-2" default-table-style="basic-table hover-bar insuranceList" id="insuranceList">
+        <field name="patientId">
+            <hyperlink description="${patientId}" target="editPatient" target-window="_blank">
+				<parameter param-name="patientId"/>
+			</hyperlink>
+        </field>
         <field name="groupName">
             <display/>
         </field>
@@ -469,9 +474,8 @@
         <field name="healthPolicyName" title="Health Plan">
             <display/>
         </field>
-        <field name="benefitPlanName">
-            <hyperlink description="${benefitPlanName}" alternate="${benefitPlanId}" also-hidden="true" target="${benefitPlanId}">
-            </hyperlink>
+        <field name="benefitPlanName" widget-style="btn btn-link">
+            <display/>
         </field>
         <field name="UHID" title="Membership ID">
             <display/>
