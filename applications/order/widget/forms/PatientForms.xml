@@ -86,40 +86,46 @@
             <hidden value="${patient.gender}"/>
         </field>
         <field name="civilId" title="Civil ID" id-name="civilId" position="1">
-            <text/>
+            <display/>
         </field>
         <field name="afyaId" title="Afya ID" position="2">
-            <text/>
+            <display/>
         </field>
         <field name="firstName" title="First Name" position="1">
-            <text/>
+            <display/>
         </field>
         <field name="secondName" title="Middle Name" position="2">
-            <text/>
+            <display/>
         </field>
         <field name="thirdName" title="Last Name" position="3">
-            <text/>
+            <display/>
         </field>
         <!-- <field name="fourthName" title="Patient Fourth Name" position="4"><text/></field> -->
         <field name="mobilePhone" position="1" parameter-name="mobile">
-            <text/>
+            <display/>
         </field>
         <field name="clinicName" position="2">
-            <text/>
+            <display/>
         </field>
         <!--<field name="clinicId"><text/></field>-->
         <field name="doctorName" position="3">
-            <text/>
+            <display/>
         </field>
-        <field use-when="${'CASH' != patient.patientType}" name="patientType">
+        <!-- <field use-when="${'CASH' != patient.patientType}" name="patientType">
             <drop-down>
                 <option key="CASH" description="Cash"/>
                 <option key="CORPORATE" description="Corporate"/>
                 <option key="INSURANCE" description="Insurance"/>
             </drop-down>
-        </field>
+        </field> -->
         <field use-when="${'CASH' == patient.patientType}" name="patientType">
             <display description="Cash"/>
+        </field>
+        <field use-when="${'CORPORATE' == patient.patientType}" name="patientType">
+            <display description="Corporate"/>
+        </field>
+        <field use-when="${'INSURANCE' == patient.patientType}" name="patientType">
+            <display description="Insurance"/>
         </field>
         <field name="benefitPlanId" id-name="benefitPlanId">
             <hidden/>
@@ -137,17 +143,20 @@
         <field use-when="${patient.patientType == 'INSURANCE'}" name="hisBenefitId" id-name="hisBenefitId" title="Benefits">
             <drop-down></drop-down>
         </field>
+        <field use-when="${'CASH' == patient.patientType}" name="address1" parameter-name="address" position="2">
+            <display/>
+        </field>
         <field name="address1" parameter-name="address">
-            <text/>
+            <display/>
         </field>
         <field name="city" position="2">
-            <text/>
+            <display/>
         </field>
         <field name="governorate" position="3" parameter-name="state">
-            <text/>
+            <display/>
         </field>
-        <field name="country" position="4">
-            <text/>
+        <field name="country" position="1">
+            <display-entity entity-name="Geo" description="${geoName}" key-field-name="geoId"></display-entity>
         </field>
         <field name="submitButton" title="${uiLabelMap.CommonSubmit}"
                widget-style="btn btn-primary">
@@ -471,7 +480,7 @@
             <display/>
         </field>
         <field use-when="" name="editButton" id-name="remove" action="editPatient" title="Remove" widget-style="btn btn-mini btn-danger">
-            <hyperlink target="removeInsurance" description="${uiLabelMap.CommonRemove}" also-hidden="false" id="ttttttt">
+            <hyperlink target="removeInsurance" description="${uiLabelMap.CommonRemove}" also-hidden="false" id="removeInsurance">
                 <parameter param-name="healthPolicyId"/>
                 <parameter param-name="patientId"/>
                 <parameter param-name="benefitPlanId"/>
