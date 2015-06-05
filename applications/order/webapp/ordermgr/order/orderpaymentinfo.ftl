@@ -286,26 +286,37 @@ ${cardNumberDisplay?if_exists}
                                         <@ofbizCurrency amount=totalCopayPatient isoCode=currencyUomId/>
                                         <#assign maxAmt = totalCopayPatient?default(0.000)?string("0.000")/>
                                       <#elseif "INSURANCE" == paymentMethodType.paymentMethodTypeId>
-                                          <#if orderItemList?has_content>
-                                            <#list orderItemList as orderItem>
-                                              <#assign lineItemAdjustmentTotal = Static["java.math.BigDecimal"].ZERO>
-                                              <#assign orderItemAdjustments = Static["org.ofbiz.order.order.OrderReadHelper"].getOrderItemAdjustmentList(orderItem, orderAdjustments)?default(0.000)>
+                                        <#if orderItemList?has_content>
+                                          <#list orderItemList as orderItem>
+                                            <#assign lineItemAdjustmentTotal = Static["java.math.BigDecimal"].ZERO>
+                                            <#assign orderItemAdjAmt = Static["java.math.BigDecimal"].ZERO>
+                                            
+                                            <#assign orderItemAdjustments = Static["org.ofbiz.order.order.OrderReadHelper"].getOrderItemAdjustmentList(orderItem, orderAdjustments)?default(0.000)>
                                             <#if orderItemAdjustments?exists && orderItemAdjustments?has_content>
                                               <#list orderItemAdjustments as orderItemAdjustment>
                                                 <#assign lineItemAdjustment = Static["org.ofbiz.order.order.OrderReadHelper"].calcItemAdjustment(orderItemAdjustment, orderItem)?default(0.000)>
                                                 <#assign lineItemAdjustmentTotal = lineItemAdjustmentTotal + lineItemAdjustment>
                                               </#list>
                                             </#if>
-                                              <#assign copayPatient = Static["org.ofbiz.order.order.OrderReadHelper"].getOrderItemPatientToPay(orderItem)?default(0.000)>
-                                              <#if orderItem.statusId != "ITEM_CANCELLED">
-                                                <#assign itemSubTotal = Static["org.ofbiz.order.order.OrderReadHelper"].getOrderItemSubTotal(orderItem, orderAdjustments)?default(0.000)>
-                                              <#else>
-                                                <#assign itemSubTotal = Static["java.math.BigDecimal"].ZERO>
-                                              </#if>
-                                              <#assign itemDeductibleAmount = Static["org.ofbiz.order.order.OrderReadHelper"].getOrderItemDeductible(orderItem)?default(0.000)>
-                                              <#assign copayInsurance = itemSubTotal + lineItemAdjustmentTotal - copayPatient>
-                                              <#assign totalCopayInsurance = totalCopayInsurance + copayInsurance>
-                                            </#list>
+                                            
+                                            <#assign orderItemApportionAdjustments = delegator.findByAnd("OrderItemAdjustment","orderId",orderItem.orderId,"orderItemSeqId",orderItem.orderItemSeqId)>
+                                            <#if orderItemApportionAdjustments?has_content>
+                                              <#list orderItemApportionAdjustments as orderItemApportionAdjustment>
+                                                <#assign orderItemAdjAmt = orderItemAdjAmt + orderItemApportionAdjustment.amount/>
+                                              </#list>
+                                            </#if>
+                                            
+                                            <#assign copayPatient = Static["org.ofbiz.order.order.OrderReadHelper"].getOrderItemPatientToPay(orderItem)?default(0.000)>
+                                            <#if orderItem.statusId != "ITEM_CANCELLED">
+                                              <#assign itemSubTotal = Static["org.ofbiz.order.order.OrderReadHelper"].getOrderItemSubTotal(orderItem, orderAdjustments)?default(0.000)>
+                                            <#else>
+                                              <#assign itemSubTotal = Static["java.math.BigDecimal"].ZERO>
+                                            </#if>
+                                            
+                                            <#assign itemDeductibleAmount = Static["org.ofbiz.order.order.OrderReadHelper"].getOrderItemDeductible(orderItem)?default(0.000)>
+                                            <#assign copayInsurance = itemSubTotal + lineItemAdjustmentTotal + orderItemAdjAmt - copayPatient>
+                                            <#assign totalCopayInsurance = totalCopayInsurance + copayInsurance>
+                                          </#list>
                                         </#if>
                                         <@ofbizCurrency amount=totalCopayInsurance isoCode=currencyUomId/>
                                         <#assign maxAmt = totalCopayInsurance?default(0.000)?string("0.000")/>
@@ -314,18 +325,28 @@ ${cardNumberDisplay?if_exists}
                                     <#if ("CASH" == paymentMethodType.paymentMethodTypeId || "CASH PAYING" == paymentMethodType.paymentMethodTypeId || "CREDIT_CARD" == paymentMethodType.paymentMethodTypeId || "PATIENT" == paymentMethodType.paymentMethodTypeId)>
                                       <#if orderItemList?has_content>
                                         <#list orderItemList as orderItem>
-                                           <#assign lineItemAdjustmentTotal = Static["java.math.BigDecimal"].ZERO>
-                                            <#assign orderItemAdjustments = Static["org.ofbiz.order.order.OrderReadHelper"].getOrderItemAdjustmentList(orderItem, orderAdjustments)?default(0.000)>
-                                            <#if orderItemAdjustments?exists && orderItemAdjustments?has_content>
-                                              <#list orderItemAdjustments as orderItemAdjustment>
-                                                <#assign adjustmentType = orderItemAdjustment.getRelatedOneCache("OrderAdjustmentType")>
-                                                <#assign lineItemAdjustment = Static["org.ofbiz.order.order.OrderReadHelper"].calcItemAdjustment(orderItemAdjustment, orderItem)?default(0.000)>
-                                                <#assign lineItemAdjustmentTotal = lineItemAdjustmentTotal + lineItemAdjustment>
-                                              </#list>
-                                            </#if>
-                                           <#assign patientPayable = Static["org.ofbiz.order.order.OrderReadHelper"].getOrderItemSubTotal(orderItem, orderAdjustments)?default(0.000)>
-                                           <#assign copayPatient = patientPayable + lineItemAdjustmentTotal>
-                                           <#assign totalCopayPatient = totalCopayPatient + copayPatient>
+                                          <#assign lineItemAdjustmentTotal = Static["java.math.BigDecimal"].ZERO>
+                                          <#assign orderItemAdjAmt = Static["java.math.BigDecimal"].ZERO>
+                                          
+                                          <#assign orderItemAdjustments = Static["org.ofbiz.order.order.OrderReadHelper"].getOrderItemAdjustmentList(orderItem, orderAdjustments)?default(0.000)>
+                                          <#if orderItemAdjustments?exists && orderItemAdjustments?has_content>
+                                            <#list orderItemAdjustments as orderItemAdjustment>
+                                              <#assign adjustmentType = orderItemAdjustment.getRelatedOneCache("OrderAdjustmentType")>
+                                              <#assign lineItemAdjustment = Static["org.ofbiz.order.order.OrderReadHelper"].calcItemAdjustment(orderItemAdjustment, orderItem)?default(0.000)>
+                                              <#assign lineItemAdjustmentTotal = lineItemAdjustmentTotal + lineItemAdjustment>
+                                            </#list>
+                                          </#if>
+                                          
+                                          <#assign orderItemApportionAdjustments = delegator.findByAnd("OrderItemAdjustment","orderId",orderItem.orderId,"orderItemSeqId",orderItem.orderItemSeqId)>
+                                          <#if orderItemApportionAdjustments?has_content>
+                                            <#list orderItemApportionAdjustments as orderItemApportionAdjustment>
+                                              <#assign orderItemAdjAmt = orderItemAdjAmt + orderItemApportionAdjustment.amount/>
+                                            </#list>
+                                          </#if>
+                                          
+                                          <#assign patientPayable = Static["org.ofbiz.order.order.OrderReadHelper"].getOrderItemSubTotal(orderItem, orderAdjustments)?default(0.000)>
+                                          <#assign copayPatient = patientPayable + lineItemAdjustmentTotal + orderItemAdjAmt>
+                                          <#assign totalCopayPatient = totalCopayPatient + copayPatient>
                                         </#list>
                                       </#if>
                                       <@ofbizCurrency amount=totalCopayPatient isoCode=currencyUomId/>
@@ -335,6 +356,8 @@ ${cardNumberDisplay?if_exists}
                                     <#if orderItemList?has_content>
                                       <#list orderItemList as orderItem>
                                         <#assign lineItemAdjustmentTotal = Static["java.math.BigDecimal"].ZERO>
+                                        <#assign orderItemAdjAmt = Static["java.math.BigDecimal"].ZERO>
+                                        
                                         <#assign orderItemAdjustments = Static["org.ofbiz.order.order.OrderReadHelper"].getOrderItemAdjustmentList(orderItem, orderAdjustments)?default(0.000)>
                                         <#if orderItemAdjustments?exists && orderItemAdjustments?has_content>
                                           <#list orderItemAdjustments as orderItemAdjustment>
@@ -343,8 +366,16 @@ ${cardNumberDisplay?if_exists}
                                             <#assign lineItemAdjustmentTotal = lineItemAdjustmentTotal + lineItemAdjustment>
                                           </#list>
                                         </#if>
+                                        
+                                        <#assign orderItemApportionAdjustments = delegator.findByAnd("OrderItemAdjustment","orderId",orderItem.orderId,"orderItemSeqId",orderItem.orderItemSeqId)>
+                                        <#if orderItemApportionAdjustments?has_content>
+                                          <#list orderItemApportionAdjustments as orderItemApportionAdjustment>
+                                            <#assign orderItemAdjAmt = orderItemAdjAmt + orderItemApportionAdjustment.amount/>
+                                          </#list>
+                                        </#if>
+                                        
                                         <#assign patientPayable = Static["org.ofbiz.order.order.OrderReadHelper"].getOrderItemSubTotal(orderItem, orderAdjustments)?default(0.000)>
-                                        <#assign copayPatient = patientPayable + lineItemAdjustmentTotal>
+                                        <#assign copayPatient = patientPayable + lineItemAdjustmentTotal + orderItemAdjAmt>
                                         <#assign totalCopayPatient = totalCopayPatient + copayPatient>
                                       </#list>
                                       <@ofbizCurrency amount=totalCopayPatient isoCode=currencyUomId/>
