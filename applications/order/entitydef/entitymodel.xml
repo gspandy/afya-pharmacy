@@ -3136,6 +3136,7 @@
 		<field name="religion" type="short-varchar"></field>
 		<field name="dateOfBirth" type="date"></field>
 		<field name="patientType" type="short-varchar"></field>
+		<field name="isStaff" type="short-varchar"></field>
 		<field name="maritalStatus" type="short-varchar"></field>
 		<field name="bloodGroup" type="short-varchar"></field>
 		<field name="rH" type="short-varchar"></field>
@@ -3158,6 +3159,8 @@
 
 	<entity entity-name="PatientInsurance" package-name="org.ofbiz.order.order" title="Patient Details">
 		<field name="patientId" type="id"/>
+		<field name="memberType" type="short-varchar"></field>
+		<field name="relationship" type="short-varchar"></field>
 		<field name="groupName" type="short-varchar"></field>
 		<field name="policyNo" type="short-varchar"></field>
 		<field name="startDate" type="short-varchar"></field>
@@ -3168,6 +3171,7 @@
 		<field name="benefitPlanName" type="short-varchar"></field>
 		<field name="hisBenefitId" type="short-varchar"></field>
 		<field name="uHID" type="short-varchar"></field>
+		<field name="primaryUHID" type="short-varchar"></field>
 		<field name="planName" type="short-varchar"></field>
 		<prim-key field="patientId" />
 		<prim-key field="healthPolicyId" />
@@ -3175,4 +3179,33 @@
 			<key-map field-name="patientId" />
 		</relation>
 	</entity>
+
+	<view-entity entity-name="PatientInsuranceView" package-name="org.ofbiz.order.order" title="Patient Insurance View Entity">
+		<member-entity entity-alias="PNT" entity-name="Patient"/>
+		<member-entity entity-alias="PNTINS" entity-name="PatientInsurance"/>
+		<alias entity-alias="PNT" name="patientId"/>
+		<alias entity-alias="PNT" name="civilId"/>
+		<alias entity-alias="PNT" name="afyaId"/>
+		<alias entity-alias="PNT" name="title"/>
+		<alias entity-alias="PNT" name="firstName"/>
+		<alias entity-alias="PNT" name="secondName"/>
+		<alias entity-alias="PNT" name="thirdName"/>
+		<alias entity-alias="PNT" name="gender"/>
+		<alias entity-alias="PNT" name="patientType"/>
+		<alias entity-alias="PNTINS" name="memberType"/>
+		<alias entity-alias="PNTINS" name="uHID"/>
+		<alias entity-alias="PNTINS" name="relationship"/>
+		<alias entity-alias="PNTINS" name="primaryUHID"/>
+		<alias entity-alias="PNTINS" name="groupName"/>
+		<alias entity-alias="PNTINS" name="policyNo"/>
+		<alias entity-alias="PNTINS" name="healthPolicyId"/>
+		<alias entity-alias="PNTINS" name="healthPolicyName"/>
+		<alias entity-alias="PNTINS" name="benefitPlanId"/>
+		<alias entity-alias="PNTINS" name="benefitPlanName"/>
+		<alias entity-alias="PNTINS" name="hisBenefitId"/>
+		<view-link entity-alias="PNT" rel-entity-alias="PNTINS" rel-optional="true">
+			<key-map field-name="patientId"/>
+		</view-link>
+	</view-entity>
+
 </entitymodel>

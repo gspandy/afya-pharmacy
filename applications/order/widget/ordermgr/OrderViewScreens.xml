@@ -1005,13 +1005,15 @@
             <actions>
                 <set field="patientId" from-field="parameters.patientId"/>
                 <entity-one entity-name="Patient" value-field="patient" auto-field-map="true"/>
+                <set field="gender" from-field="patient.gender"/>
                 <set field="layoutSettings.javaScripts[]" value="/ordermgr/images/js/insurance.js" global="true"/>
             </actions>
             <widgets>
                 <decorator-screen name="main-decorator" location="${parameters.mainDecoratorLocation}">
                     <decorator-section name="body">
                         <screenlet title="Insurance Details ${uiLabelMap.CommonFor}: ${patient.firstName} ${patient.thirdName} [${uiLabelMap.CommonId}:${patientId}]">
-                            <include-form name="AddInsurance" location="component://order/widget/forms/PatientForms.xml"/>
+                            <!-- <include-form name="AddInsurance" location="component://order/widget/forms/PatientForms.xml"/> -->
+                            <platform-specific><html><html-template location="component://order/webapp/ordermgr/entry/order/addInsurance.ftl"/></html></platform-specific>
                             <platform-specific>
                                 <html>
                                     <html-template location="component://order/webapp/ordermgr/order/benefitdetail.ftl"/>

@@ -1985,6 +1985,12 @@
 		<security https="true" auth="true" />
 		<response name="success" type="view" value="LookupWorkEffort" />
 	</request-map>
+
+	<request-map uri="LookupPatientByMembershipId">
+		<security https="true" auth="true" />
+		<response name="success" type="view" value="LookupPatientByMembershipId" />
+	</request-map>
+
 	<request-map uri="LookupBulkAddProducts">
 		<security https="true" auth="true" />
 		<response name="success" type="view" value="LookupBulkAddProducts" />
@@ -2601,6 +2607,9 @@
 	<view-map name="LookupOrderHeader" type="screen" page="component://order/widget/ordermgr/LookupScreens.xml#LookupOrderHeader" />
 
 	<view-map name="LookupWorkEffort" type="screen" page="component://workeffort/widget/LookupScreens.xml#LookupWorkEffort" />
+
+	<view-map name="LookupPatientByMembershipId" type="screen" page="component://order/widget/ordermgr/LookupScreens.xml#LookupPatientByMembershipId" />
+
 	<view-map name="LookupBulkAddProducts" type="screen" page="component://order/widget/ordermgr/OrderEntryCartScreens.xml#LookupBulkAddProducts" />
 	<view-map name="LookupBulkAddSupplierProducts" type="screen" page="component://order/widget/ordermgr/OrderEntryCartScreens.xml#LookupBulkAddSupplierProducts" />
 	<view-map name="LookupContent" page="component://content/widget/content/ContentScreens.xml#LookupContent" type="screen" />

@@ -728,5 +728,47 @@ under the License.
         <field name="description"><display/></field>
         <field name="externalAccountId" title="${uiLabelMap.AccountingExternalAccountId}"><display/></field>
     </form>
-    
+
+    <form name="lookupPatientByMembershipId" target="LookupPatientByMembershipId" title="" type="single"
+        header-row-style="header-row" default-table-style="basic-table">
+        <!-- <auto-fields-entity entity-name="PatientInsuranceView" default-field-type="find" map-name="parameters"/> -->
+        <!-- <auto-fields-entity entity-name="PatientInsuranceView" default-field-type="hidden"/> -->
+        <field name="uHID" title="Membership ID"><text-find/></field>
+        <field name="patientId" title="Patient ID"><text-find/></field>
+        <field name="civilId" title="Civil ID"><text-find/></field>
+        <field name="afyaId" title="Afya ID"><text-find/></field>
+        <field name="firstName" title="First Name"><text-find/></field>
+        <field name="secondName" title="Middle Name"><text-find/></field>
+        <field name="thirdName" title="Last Name"><text-find/></field>
+        <!-- <field name="gender">
+            <drop-down allow-empty="true">
+                <option key="M" description="Male"/>
+                <option key="F" description="Female"/>
+            </drop-down>
+        </field> -->
+        <field name="memberType"><hidden value="SELF"/></field>
+        <field name="noConditionFind"><hidden value="Y"/><!-- if this isn't there then with all fields empty no query will be done --></field>
+        <field name="submitButton" title="${uiLabelMap.CommonSubmit}" widget-style="smallSubmit"><submit button-type="button"/></field>
+    </form>
+    <form name="listLookupPatientByMembershipId" list-name="listIt" title="" type="list"
+        odd-row-style="alternate-row" default-table-style="basic-table hover-bar" paginate-target="LookupPatientByMembershipId" view-size="20">
+        <actions>
+            <service service-name="performFind" result-map="result" result-map-list="listIt">
+                <field-map field-name="inputFields" from-field="parameters"/>
+                <field-map field-name="entityName" value="PatientInsuranceView"/>
+                <field-map field-name="viewIndex" from-field="viewIndex"/>
+                <field-map field-name="viewSize" from-field="viewSize"/>
+            </service>
+        </actions>
+        <field name="uHID" title="Membership ID" widget-style="btn btn-link">
+            <hyperlink also-hidden="false" target-type="plain" description="${uHID}" target="javascript:set_value('${uHID}')"/>
+        </field>
+        <field name="patientId" title="Patient ID"><display/></field>
+        <field name="civilId" title="Civil ID"><display/></field>
+        <field name="afyaId" title="Afya ID"><display/></field>
+        <field name="firstName" title="First Name"><display/></field>
+        <field name="secondName" title="Middle Name"><display/></field>
+        <field name="thirdName" title="Last Name"><display/></field>
+        <!-- <field name="gender"><display/></field> -->
+    </form>
 </forms>

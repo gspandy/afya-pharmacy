@@ -189,9 +189,9 @@
         <field name="title" position="1">
             <drop-down>
                 <option key="Mr" description="Mr"/>
-                <option key="Ms" description="Ms"/>
                 <option key="Mrs" description="Mrs"/>
                 <option key="Miss" description="Miss"/>
+                <option key="Ms" description="Ms"/>
                 <option key="Dr" description="Dr"/>
                 <option key="Sr" description="Sr"/>
                 <option key="Sra" description="Sra"/>
@@ -216,7 +216,6 @@
             <drop-down allow-empty="true">
                 <option key="M" description="Male"/>
                 <option key="F" description="Female"/>
-                <option key="NA" description="Not Applicable"/>
             </drop-down>
         </field>
         <field name="religion" position="3">
@@ -451,7 +450,6 @@
         </field>
     </form>
 
-
     <form name="InsuranceList" target="insuranceList" title="Insurance List" type="list" list-name="insuranceList"
           odd-row-style="alternate-row" header-row-style="header-row-2" default-table-style="basic-table hover-bar insuranceList" id="insuranceList">
         <field name="patientId">
@@ -477,7 +475,7 @@
         <field name="benefitPlanName" widget-style="btn btn-link">
             <display/>
         </field>
-        <field name="UHID" title="Membership ID">
+        <field name="uHID" title="Membership ID">
             <display/>
         </field>
         <field name="planName">
@@ -504,26 +502,29 @@
         <field name="tpa" title="TPA" id-name="tpa" position="1">
             <drop-down></drop-down>
         </field>
-        <field name="insurance" position="2" id-name="insurances">
+        <field name="insurance" id-name="insurances" position="2" required-field="true">
             <drop-down>
             </drop-down>
         </field>
-        <field name="groupName" id-name="groupName" position="3">
+        <field name="groupName" title="Group" id-name="groupName" position="3" required-field="true">
             <drop-down></drop-down>
         </field>
-        <field name="healthPolicyName" id-name="healthPolicyName" title="Health Plan" required-field="true">
+        <field name="healthPolicyName" id-name="healthPolicyName" title="Health Plan" position="1" required-field="true">
             <text size="30"/>
         </field>
-        <field name="benefitPlanNameDropDown" title="Benefits" id-name="benefitPlanNameDropDown">
+        <field name="benefitPlanNameDropDown" title="Benefits" id-name="benefitPlanNameDropDown" position="2" required-field="true">
             <drop-down></drop-down>
         </field>
-        <field name="policyNo" id-name="policyNo">
+        <field name="policyNo" id-name="policyNo" position="3">
             <text/>
         </field>
-        <field name="startDate" id-name="startDate">
+        <field name="uHID" title="Membership ID" position="1" required-field="true">
             <text/>
         </field>
-        <field name="endDate" id-name="endDate">
+        <field name="startDate" id-name="startDate" position="2">
+            <text/>
+        </field>
+        <field name="endDate" id-name="endDate" position="3">
             <text/>
         </field>
         <field name="healthPolicyId" id-name="healthPolicyId">

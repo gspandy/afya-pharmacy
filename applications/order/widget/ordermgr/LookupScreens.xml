@@ -444,4 +444,38 @@ under the License.
             </widgets>
         </section>
     </screen>
+    <screen name="LookupPatientByMembershipId">
+        <section>
+            <condition>
+                <if-has-permission permission="ORDERMGR" action="_VIEW"/>
+            </condition>
+            <actions>
+                <property-map resource="OrderUiLabels" map-name="uiLabelMap" global="true"/>
+                <set field="title" value="Lookup Patient By Membership ID"/>
+                <set field="queryString" from-field="result.queryString"/>
+                <set field="viewIndex" from-field="parameters.VIEW_INDEX" type="Integer"/>
+                <set field="viewSize" from-field="parameters.VIEW_SIZE" type="Integer" default-value="20"/>
+                <set field="entityName" value="PatientInsuranceView"/>
+                <set field="searchFields" value="[uHID, firstName, secondName, thirdName]"/>
+                <set field="andCondition" value="${groovy: return org.ofbiz.entity.condition.EntityCondition.makeCondition(&quot;memberType&quot;, &quot;SELF&quot;)}"/>
+            </actions>
+            <widgets>
+                <decorator-screen name="LookupDecorator" location="component://common/widget/CommonScreens.xml">
+                    <decorator-section name="search-options">
+                        <include-form name="lookupPatientByMembershipId" location="component://order/widget/ordermgr/FieldLookupForms.xml"/>
+                    </decorator-section>
+                    <decorator-section name="search-results">
+                        <section>
+                            <condition>
+                                <if-compare field="parameters.noConditionFind" operator="equals" value="Y"/>
+                            </condition>
+                            <widgets>
+                                <include-form name="listLookupPatientByMembershipId" location="component://order/widget/ordermgr/FieldLookupForms.xml"/>
+                            </widgets>
+                        </section>
+                    </decorator-section>
+                </decorator-screen>
+            </widgets>
+        </section>
+    </screen>
 </screens>

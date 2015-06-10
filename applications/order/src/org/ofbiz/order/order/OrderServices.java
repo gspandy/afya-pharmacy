@@ -4571,7 +4571,7 @@ public class OrderServices {
             throw new GeneralException(e.getMessage());
         }
 
-        // get the new orderItems, adjustments, shipping info, payments and order item atrributes from the cart
+        // get the new orderItems, adjustments, shipping info, payments and order item attributes from the cart
         List<Map> modifiedItems = FastList.newInstance();
         List toStore = new LinkedList();
         List<GenericValue> toAddList = new ArrayList<GenericValue>();

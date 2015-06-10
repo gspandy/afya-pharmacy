@@ -975,6 +975,27 @@ public class OrderReadHelper {
         return copayAmount.setScale(scale, rounding);
     }
 
+    public static BigDecimal getOrderItemDeductible(BigDecimal netAmount, GenericValue orderItem) {
+        BigDecimal deductibleAmount = orderItem.getBigDecimal("deductibleAmount") == null ? BigDecimal.ZERO : orderItem.getBigDecimal("deductibleAmount");
+        if (deductibleAmount.compareTo(BigDecimal.ZERO) == 0) {
+            BigDecimal deductiblePercentage = orderItem.getBigDecimal("deductiblePercentage") == null ? BigDecimal.ZERO : orderItem.getBigDecimal("deductiblePercentage");
+            BigDecimal lineTotal = netAmount.setScale(scale, rounding);
+            deductibleAmount = deductiblePercentage.multiply(lineTotal).setScale(scale, rounding).divide(new BigDecimal(100)).setScale(scale, rounding);
+        }
+        return deductibleAmount.setScale(scale, rounding);
+    }
+
+    public static BigDecimal getOrderItemCopay(BigDecimal netAmount, GenericValue orderItem) {
+        BigDecimal copayAmount = orderItem.getBigDecimal("copayAmount") == null ? BigDecimal.ZERO : orderItem.getBigDecimal("copayAmount");
+        if (copayAmount.compareTo(BigDecimal.ZERO) == 0) {
+            BigDecimal copayPercentage = orderItem.getBigDecimal("copayPercentage") == null ? BigDecimal.ZERO : orderItem.getBigDecimal("copayPercentage");
+            BigDecimal lineTotal = netAmount.setScale(scale, rounding);
+            lineTotal=lineTotal.subtract(getOrderItemDeductible(netAmount, orderItem));
+            copayAmount = copayPercentage.multiply(lineTotal).setScale(scale, rounding).divide(new BigDecimal(100)).setScale(scale, rounding);
+        }
+        return copayAmount.setScale(scale, rounding);
+    }
+
     public static BigDecimal getOrderItemPatientToPay(GenericValue orderItem) {
         BigDecimal patientToPay = getOrderItemDeductible(orderItem).add(getOrderItemCopay(orderItem)).setScale(scale, rounding);
         return patientToPay.setScale(scale, rounding);

@@ -22,10 +22,24 @@ $(document).ready(function () {
                         $("#thirdName").val(value);
                     } else if (attr == "endMostName") {
                         $("#fourthName").val(value);
+                    } else if (attr == "dateOfBirth") {
+                        var input = value,
+                        datePart = input.match(/\d+/g),
+                        year = datePart[0],
+                        month = datePart[1],
+                        day = datePart[2],
+                        dob = day+'/'+month+'/'+year;
+                        $("#dateOfBirth").val(dob);
                     } else if (attr == "nationality") {
                         $("#nationality").val(value);
                     } else if (attr == "gender") {
-                        $("#gender").val(value);
+                        var genderInput = value;
+                        if(genderInput == "Male" || genderInput == "M")
+                            $("#gender").val("M");
+                        if(genderInput == "Female" || genderInput == "F")
+                            $("#gender").val("F");
+                        if(genderInput == "")
+                            $("#gender").val("");
                     } else if (attr == "bloodGroup") {
                         $("#bloodGroup").val(value);
                     } else if (attr == "rh") {
@@ -49,7 +63,40 @@ $(document).ready(function () {
                     }
                 });
             });
-    })
-    ;
-})
-;
+    });
+
+    $.getJSON('http://5.9.249.197:7878/afya-portal/anon/getAllCities', function (data) {
+        $.each(data, function (attr, value) {
+            var option = $('<option></option>').val(value['city']).text(value['city']);
+            $('#city').append(option);
+        });
+    });
+
+    $("#city").bind("change", function (e) {
+        $.getJSON("http://5.9.249.197:7878/afya-portal/anon/getStateCountryBasedOnCity?city=" + $("#city").val(),
+            function (data) {
+                $.each(data, function (attr, value) {
+                    if (attr == "cityId") {
+                        $("#cityId").val(value);
+                    } else if (attr == "city") {
+                        $("#city").val(value);
+                    } else if (attr == "cityCode") {
+                        $("#cityCode").val(value);
+                    } else if (attr == "stateId") {
+                        $("#stateId").val(value);
+                    } else if (attr == "state") {
+                        $("#state").val(value);
+                    } else if (attr == "stateCode") {
+                        $("#stateCode").val(value);
+                    } else if (attr == "countryId") {
+                        $("#countryId").val(value);
+                    } else if (attr == "country") {
+                        $("#country").val(value);
+                    } else if (attr == "countryCode") {
+                        $("#countryCode").val(value);
+                    }
+                });
+            });
+    });
+
+});

@@ -37,6 +37,7 @@ public class PatientServices {
             patientRecord.put("civilId", patientRecordGv.getString("civilId"));
             patientRecord.put("patientId", patientRecordGv.getString("patientId"));
             patientRecord.put("patientType", patientRecordGv.getString("patientType"));
+            patientRecord.put("isStaff", patientRecordGv.getString("isStaff"));
             patientRecord.put("salutation", patientRecordGv.getString("title"));
             patientRecord.put("firstName", patientRecordGv.getString("firstName"));
             patientRecord.put("middleName", patientRecordGv.getString("secondName"));
@@ -46,6 +47,7 @@ public class PatientServices {
             patientRecord.put("bloodGroup", patientRecordGv.getString("bloodGroup"));
             patientRecord.put("rh", patientRecordGv.getString("rH"));
             patientRecord.put("address", patientRecordGv.getString("address1"));
+            patientRecord.put("additionalAddress", patientRecordGv.getString("address2"));
             patientRecord.put("postalCode", patientRecordGv.getString("postalCode"));
             patientRecord.put("maritalStatus", patientRecordGv.getString("maritalStatus"));
             patientRecord.put("nationality", patientRecordGv.getString("nationality"));
@@ -53,7 +55,8 @@ public class PatientServices {
             patientRecord.put("state", patientRecordGv.getString("governorate"));
             patientRecord.put("country", patientRecordGv.getString("country"));
             patientRecord.put("emailId", patientRecordGv.getString("emailAddress"));
-            patientRecord.put("passport", patientRecordGv.getString("passport"));
+            //patientRecord.put("passport", patientRecordGv.getString("passport"));
+            //patientRecord.put("expiryDate", patientRecordGv.getDate("expiryDate"));
             patientRecord.put("homePhone", patientRecordGv.getString("homePhone"));
             patientRecord.put("officePhone", patientRecordGv.getString("officePhone"));
             patientRecord.put("isdCode", patientRecordGv.getString("isdCode"));
