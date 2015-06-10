@@ -106,7 +106,15 @@ $(document).ready(function () {
 
 
     $('#groupName').change(function () {
-        $.getJSON("http://5.9.249.197:7878/afya-portal/anon/insuranceMaster/getPlanDetailsForGroupId?groupId=" + $(this).val(),
+        var groupId = $(this).val(),
+        relationship = $('#relationship').val(),
+        gender = $('#gender').val();
+        if(relationship == "")
+            var dependent = "SELF";
+        else
+            var dependent = relationship;
+
+        $.getJSON("http://5.9.249.196:7878/afya-portal/anon/insuranceMaster/getPlanDetailsForGroupId?groupId=" + groupId + "&dependent=" + dependent + "&gender=" + gender,
             function (data) {
                 $.each(data, function (attr, value) {
                     if (attr == "policyNumber") {

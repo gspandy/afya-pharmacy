@@ -38,6 +38,7 @@ under the License.
 </script>
 <form name="addInsurance" id="addInsurance" method="post" action="<@ofbizUrl>addInsurance</@ofbizUrl>">
     <input type="hidden" name="patientId" id="patientId" value="${patientId}"/>
+    <input type="hidden" name="gender" id="gender" value="${gender}"/>
     <input type="hidden" name="healthPolicyId" id="healthPolicyId"/>
     <input type="hidden" name="benefitPlanId" id="benefitPlanId"/>
     <input type="hidden" name="benefitPlanName" id="benefitPlanName"/>
