@@ -302,15 +302,28 @@ under the License.
             <td class="label"><span id="address2_title">Address2</span></td>
             <td><textarea name="address2" id="additionalAddress" cols="25" rows="3" style="width: 190px; height: 65px;">${patient.address2?if_exists}</textarea></td>
             <td class="label"><span id="city_title">City</span></td>
-            <td><input type="text" name="city" id="city" size="25" value="${patient.city?if_exists}"/></td>
+            <td>
+              <span class="ui-widget">
+                <select name="city" id="city" size="1">
+                  <#if patient.city?exists>
+                    <option selected="selected" value="${patient.city}">${patient.city}</option>
+                    <option value="${patient.city}">---</option>
+                  </#if>
+                  <option></option>
+                </select>
+              </span>
+            </td>
             <td class="label"><span id="postalCode_title">Postal Code</span></td>
             <td><input type="text" name="postalCode" id="postalCode" size="15" value="${patient.postalCode?if_exists}"/></td>
           </tr>
           <tr>
             <td class="label"><span id="state_title">Governorate</span></td>
-            <td><input type="text" name="governorate" id="state" size="25" value="${patient.governorate?if_exists}"/></td>
+            <td><input type="text" readonly="true" name="governorate" id="state" size="25" value="${patient.governorate?if_exists}"/></td>
             <td class="label"><span id="country_title">Country</span></td>
-            <td colspan="4" id="country_selectionField">
+            <td colspan="4">
+              <input type="text" readonly="true" name="country" id="country" size="25" value="${patient.country?if_exists}"/>
+            </td>
+            <#-- <td colspan="4" id="country_selectionField">
               <select name="country" id="country">
                 <#if patient.country?exists>
                   <#assign defaultCountryGeoId = (patient.country)>
@@ -325,7 +338,7 @@ under the License.
                 <option value="${defaultCountryGeoId}">---</option>
                 ${screens.render("component://common/widget/CommonScreens.xml#countries")}
               </select>
-            </td>
+            </td> -->
           </tr>
         </table>
       </div>
@@ -336,7 +349,10 @@ under the License.
         <table cellspacing="0" class="basic-table">
           <tr>
             <#-- <td class="">&nbsp;</td> -->
-            <td style="text-align:center"><input type="submit" name="updateButton" value="Save" class="btn btn-success"/></td>
+            <td style="text-align:center">
+              <input type="submit" name="createButton" value="${uiLabelMap.CommonSave}" class="btn btn-success"/>
+              <a href="<@ofbizUrl>findPatients</@ofbizUrl>" class="btn btn-danger">${uiLabelMap.CommonCancel}</a>
+            </td>
           </tr>
         </table>
       </div>
