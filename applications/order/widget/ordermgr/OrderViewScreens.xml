@@ -982,6 +982,7 @@
     <screen name="NewPatient">
         <section>
             <actions>
+                <set field="titleProperty" value="Patient"/>
                 <set field="patientId" from-field="parameters.patientId"/>
                 <entity-one entity-name="Patient" value-field="patient" auto-field-map="true"/>
                 <set field="layoutSettings.javaScripts[]" value="/ordermgr/images/js/civil-id-intg.js" global="true"/>
@@ -1003,6 +1004,7 @@
     <screen name="AddInsurance">
         <section>
             <actions>
+                <set field="titleProperty" value="Add Insurance"/>
                 <set field="patientId" from-field="parameters.patientId"/>
                 <entity-one entity-name="Patient" value-field="patient" auto-field-map="true"/>
                 <set field="gender" from-field="patient.gender"/>
@@ -1029,6 +1031,7 @@
     <screen name="InsuranceList">
         <section>
             <actions>
+                <set field="titleProperty" value="Insurance List"/>
                 <set field="layoutSettings.javaScripts[]" value="/ordermgr/images/js/insurance.js" global="true"/>
                 <entity-condition entity-name="PatientInsurance" list="insuranceList">
                     <condition-expr field-name="patientId" from-field="parameters.patientId"/>
