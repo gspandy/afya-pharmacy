@@ -114,7 +114,7 @@ $(document).ready(function () {
         else
             var dependent = relationship;
 
-        $.getJSON("http://5.9.249.196:7878/afya-portal/anon/insuranceMaster/getPlanDetailsForGroupId?groupId=" + groupId + "&dependent=" + dependent + "&gender=" + gender,
+        $.getJSON("http://5.9.249.197:7878/afya-portal/anon/insuranceMaster/getPlanDetailsForGroupId?groupId=" + groupId + "&dependent=" + dependent + "&gender=" + gender,
             function (data) {
                 $.each(data, function (attr, value) {
                     if (attr == "policyNumber") {
