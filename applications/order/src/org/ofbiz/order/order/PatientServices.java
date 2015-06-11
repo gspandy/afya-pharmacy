@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.ofbiz.base.util.UtilMisc;
 import org.ofbiz.base.util.UtilProperties;
+import org.ofbiz.base.util.UtilValidate;
 import org.ofbiz.entity.Delegator;
 import org.ofbiz.entity.GenericValue;
 import org.ofbiz.service.DispatchContext;
@@ -29,13 +30,22 @@ public class PatientServices {
     public static Map registerPatientOnPortal(DispatchContext ctx, Map context) {
 
         Delegator delegator = ctx.getDelegator();
+        String facilityType = "PHARMACY";
+        String tenantId = "default_pharmacy";
+        if(UtilValidate.isNotEmpty(delegator.getDelegatorTenantId()))
+            tenantId = delegator.getDelegatorTenantId();
+
         try {
             String patientId = (String) context.get("patientId");
             GenericValue patientRecordGv = delegator.findOne("Patient", false, "patientId", patientId);
             
             Map<String, Object> patientRecord = FastMap.newInstance();
+            //patientRecord.put("patientId", patientRecordGv.getString("patientId"));
+            //patientRecord.put("passport", patientRecordGv.getString("passport"));
+            //patientRecord.put("expiryDate", patientRecordGv.getDate("expiryDate"));
+            if(UtilValidate.isNotEmpty(patientRecordGv.getString("afyaId")))
+                patientRecord.put("afyaId", patientRecordGv.getString("afyaId"));
             patientRecord.put("civilId", patientRecordGv.getString("civilId"));
-            patientRecord.put("patientId", patientRecordGv.getString("patientId"));
             patientRecord.put("patientType", patientRecordGv.getString("patientType"));
             patientRecord.put("isStaff", patientRecordGv.getString("isStaff"));
             patientRecord.put("salutation", patientRecordGv.getString("title"));
@@ -55,17 +65,13 @@ public class PatientServices {
             patientRecord.put("state", patientRecordGv.getString("governorate"));
             patientRecord.put("country", patientRecordGv.getString("country"));
             patientRecord.put("emailId", patientRecordGv.getString("emailAddress"));
-            //patientRecord.put("passport", patientRecordGv.getString("passport"));
-            //patientRecord.put("expiryDate", patientRecordGv.getDate("expiryDate"));
             patientRecord.put("homePhone", patientRecordGv.getString("homePhone"));
             patientRecord.put("officePhone", patientRecordGv.getString("officePhone"));
             patientRecord.put("isdCode", patientRecordGv.getString("isdCode"));
             patientRecord.put("mobileNumber", patientRecordGv.getString("mobilePhone"));
             
-            //Map returnVal = new HashMap();
-            //returnVal.put("afyaId", "11111111");
-            ObjectMapper gson = new ObjectMapper();
             //.setDateFormat("yyyy-MM-dd").create();
+            ObjectMapper gson = new ObjectMapper();
             String patientJsonString = gson.writeValueAsString(patientRecord);
             System.out.println(patientJsonString);
 
@@ -76,7 +82,7 @@ public class PatientServices {
             headers.setAccept(mediaTypes);
             headers.setContentType(MediaType.APPLICATION_JSON);
             HttpEntity<String> requestEntity = new HttpEntity<String>(patientJsonString, headers);
-            ResponseEntity<String> responseEntity = restTemplate.exchange("http://5.9.249.197:7878/afya-portal/anon/patient/retrieveAfyaId", HttpMethod.POST, requestEntity, String.class);
+            ResponseEntity<String> responseEntity = restTemplate.exchange("http://5.9.249.197:7878/afya-portal/anon/patient/retrieveAfyaId?tenantId={tenantId}&facilityType={facilityType}", HttpMethod.POST, requestEntity, String.class, tenantId, facilityType);
             String afyaId = responseEntity.getBody();
             patientRecordGv.set("afyaId", afyaId);
             delegator.store(patientRecordGv);
