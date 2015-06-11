@@ -191,7 +191,17 @@ under the License.
               </span>
             </td>
             <td class="label"><span id="nationality_title">Nationality</span></td>
-            <td><input type="text" name="nationality" id="nationality" size="25" value="${patient.nationality?if_exists}"/></td>
+            <td>
+              <span class="ui-widget">
+                <select name="nationality" id="nationality" size="1">
+                  <#if patient.city?exists>
+                    <option selected="selected" value="${patient.nationality}">${patient.nationality}</option>
+                    <option value="${patient.nationality}">---</option>
+                  </#if>
+                  <option></option>
+                </select>
+              </span>
+            </td>
             <#-- <td class="label"><span id="bloodGroup_title">Blood Group</span></td>
             <td>
               <span class="ui-widget">
@@ -513,7 +523,13 @@ under the License.
               </span>
             </td>
             <td class="label"><span id="nationality_title">Nationality</span></td>
-            <td><input type="text" name="nationality" id="nationality" size="25"/></td>
+            <td>
+              <span class="ui-widget">
+                <select name="nationality" id="nationality" size="1">
+                  <option></option>
+                </select>
+              </span>
+            </td>
           </tr>
           <tr>
             <#-- <td class="label"><span id="religion_title">Religion</span></td>

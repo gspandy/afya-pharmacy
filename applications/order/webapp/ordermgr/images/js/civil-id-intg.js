@@ -65,6 +65,13 @@ $(document).ready(function () {
             });
     });
 
+    $.getJSON('http://5.9.249.197:7878/afya-portal/anon/getAllNationality', function (data) {
+        $.each(data, function (attr, value) {
+            var option = $('<option></option>').val(value['nationality']).text(value['nationality']);
+            $('#nationality').append(option);
+        });
+    });
+
     $.getJSON('http://5.9.249.197:7878/afya-portal/anon/getAllCities', function (data) {
         $.each(data, function (attr, value) {
             var option = $('<option></option>').val(value['city']).text(value['city']);
