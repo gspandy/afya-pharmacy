@@ -80,7 +80,7 @@ under the License.
 
         <field position="1" name="salesDiscWhenNotAvail" title="${uiLabelMap.ProductSalesDiscontinuationNotAvailable}">
             <drop-down allow-empty="true"><option key="Y" description="${uiLabelMap.CommonY}"/><option key="N" description="${uiLabelMap.CommonN}"/></drop-down>
-            </field>
+        </field>
         <field position="2" name="requirementMethodEnumId" title="${uiLabelMap.ProductRequirementMethodEnumId}">
             <drop-down allow-empty="true">
                 <entity-options entity-name="Enumeration" key-field-name="enumId" description="${description}">
@@ -94,6 +94,13 @@ under the License.
             <drop-down allow-empty="true"><option key="Y" description="${uiLabelMap.CommonY}"/><option key="N" description="${uiLabelMap.CommonN}"/></drop-down>
         </field>
         <field position="2" name="inventoryMessage" title="${uiLabelMap.ProductInventoryMessage}"><text size="20" maxlength="255"/></field>
+
+        <field position="1" name="requireBatchNumber" title="${uiLabelMap.ProductRequireBatchNumber}" tooltip="${uiLabelMap.ProductBatchNumberRequiredProduct}">
+            <drop-down allow-empty="true"><option key="Y" description="${uiLabelMap.CommonY}"/><option key="N" description="${uiLabelMap.CommonN}"/></drop-down>
+        </field>
+        <field position="2" name="requireExpiryDate" title="${uiLabelMap.ProductRequireExpiryDate}" tooltip="${uiLabelMap.ProductExpiryDateRequiredProduct}">
+            <drop-down allow-empty="true"><option key="Y" description="${uiLabelMap.CommonY}"/><option key="N" description="${uiLabelMap.CommonN}"/></drop-down>
+        </field>
 
         <!-- <field position="1" name="ratingTypeEnum" title="${uiLabelMap.ProductRatingTypeEnum}">
             <drop-down allow-empty="true">
@@ -263,6 +270,8 @@ under the License.
                 <sort-field name="requirementMethodEnumId"/>
                 <sort-field name="requireInventory"/>
                 <sort-field name="inventoryMessage"/>
+                <sort-field name="requireBatchNumber"/>
+                <sort-field name="requireExpiryDate"/>
             </field-group>
             <!-- <field-group title="${uiLabelMap.CommonRate}" collapsible="true" initially-collapsed="true">
                 <sort-field name="ratingTypeEnum"/>

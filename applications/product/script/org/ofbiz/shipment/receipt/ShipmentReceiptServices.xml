@@ -182,6 +182,8 @@ under the License.
                         <then>
                             <clear-field field="serviceInMap"/>
                             <set field="serviceInMap.inventoryItemId" from="currentInventoryItemId" />
+                            <set field="serviceInMap.batchNumber" from-field="parameters.batchNumber"/>
+                            <set field="serviceInMap.expireDate" from-field="parameters.expireDate"/>
                             <!-- XXX set to returned instead -->
                             <set field="serviceInMap.statusId"  value="INV_AVAILABLE"/>
                             <call-service break-on-error="true" error-code="error" in-map-name="serviceInMap" include-user-login="true" require-new-transaction="false" service-name="updateInventoryItem" success-code="success"/>

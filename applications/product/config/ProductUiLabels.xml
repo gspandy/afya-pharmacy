@@ -12422,9 +12422,15 @@
         <value xml:lang="th">สินค้าที่ได้รับ</value>
         <value xml:lang="zh">接收库存</value>
     </property>
+    <property key="ProductBatchNumberRequiredProduct">
+        <value xml:lang="en">Should Batch No. be required to purchase this product?</value>
+    </property>
+    <property key="ProductExpiryDateRequiredProduct">
+        <value xml:lang="en">Should Expiry Date be required to purchase this product?</value>
+    </property>
     <property key="ProductInventoryRequiredProduct">
         <value xml:lang="de">Muss Lagerbestand vorhanden sein um dieses Produkt einzukaufen? Falls nicht angegeben wird Einstellung gemäss Angaben Laden verwendet.</value>
-        <value xml:lang="en">Should inventory be required to purchase this product? If not specified defaults to Store setting.</value>
+        <value xml:lang="en">Should Inventory be required to purchase this product? If not specified defaults to Store setting.</value>
         <value xml:lang="es">Este producto necesita inventario para ser adquirido? Si este campo no se especifica, entonces se usarán los valores de la tienda.</value>
         <value xml:lang="fr">Est-il nécessaire d'avoir du stock pour acheter cet article ? Si vide, la configuration du centre de profit est appliqué.</value>
         <value xml:lang="it">L'inventario dovrebbe essere richiesto per acquistare questo prodotto? Se non specificato defaults è dalle impostazioni del Negozio.</value>
@@ -13114,6 +13120,9 @@
         <value xml:lang="ru">Искать поставку(и)</value>
         <value xml:lang="th">ค้นหาการขนส่ง</value>
         <value xml:lang="zh">查找运输</value>
+    </property>
+    <property key="ProductBatchNumber">
+        <value xml:lang="en">Batch No.</value>
     </property>
     <property key="ProductLotId">
         <value xml:lang="de">Los ID</value>
@@ -17777,6 +17786,12 @@
         <value xml:lang="ru">Требуется количество</value>
         <value xml:lang="th">ต้องการจำนวน</value>
         <value xml:lang="zh">需要金额</value>
+    </property>
+    <property key="ProductRequireBatchNumber">
+        <value xml:lang="en">Require Batch No.</value>
+    </property>
+    <property key="ProductRequireExpiryDate">
+        <value xml:lang="en">Require Expiry Date</value>
     </property>
     <property key="ProductRequireCo">
         <value xml:lang="de">Benötigt Unternehmung</value>

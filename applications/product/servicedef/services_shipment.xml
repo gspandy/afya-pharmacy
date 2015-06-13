@@ -894,6 +894,8 @@ under the License.
         </auto-attributes>
         <auto-attributes entity-name="InventoryItemDetail" include="nonpk" mode="IN" optional="true"/>
         <auto-attributes entity-name="ShipmentReceipt" include="nonpk" mode="IN" optional="true"/>
+        <attribute name="batchNumber" type="String" mode="IN" optional="true"/>
+        <attribute name="expireDate" type="Timestamp" mode="IN" optional="true"/>
         <attribute name="inventoryItemDetailSeqId" type="String" mode="IN" optional="true"/>
         <attribute name="priorityOrderId" type="String" mode="IN" optional="true"/>
         <attribute name="priorityOrderItemSeqId" type="String" mode="IN" optional="true"/>

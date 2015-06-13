@@ -1785,6 +1785,7 @@
 		<field name="statusId" type="id"></field>
 		<field name="datetimeReceived" type="date-time"></field>
 		<field name="datetimeManufactured" type="date-time"></field>
+		<field name="batchNumber" type="short-varchar"></field>
 		<field name="expireDate" type="date-time"></field>
 		<field name="facilityId" type="id"></field>
 		<field name="containerId" type="id"></field>
@@ -2624,6 +2625,8 @@
 		<field name="detailScreen" type="long-varchar"></field>
 		<field name="inventoryMessage" type="description"></field>
 		<field name="requireInventory" type="indicator"></field>
+		<field name="requireBatchNumber" type="indicator"></field>
+		<field name="requireExpiryDate" type="indicator"></field>
 		<field name="quantityUomId" type="id"></field>
 		<field name="quantityIncluded" type="fixed-point"></field>
 		<field name="piecesIncluded" type="numeric"></field>

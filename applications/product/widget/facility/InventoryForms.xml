@@ -32,6 +32,9 @@ under the License.
                 <field-map field-name="locationSeqId" from-field="locationSeqId"/>
                 <field-map field-name="facilityId" from-field="facilityId"/>
             </entity-one>
+            <entity-one entity-name="Product" value-field="product">
+                <field-map field-name="productId" from-field="productId"/>
+            </entity-one>
         </actions>
         <alt-target use-when="inventoryItemId==null" target="CreateInventoryItem"/>
         <auto-fields-service service-name="updateInventoryItem" map-name="inventoryItem"/>
@@ -84,7 +87,14 @@ under the License.
                 </entity-options>
             </drop-down>
         </field>
-        <field name="expireDate" title="${uiLabelMap.ProductExpireDate}"/>
+        <!-- product!=null&amp;&amp;&quot;N&quot;.equals(product.getString(&quot;requireBatchNumber&quot;))
+        product!=null&amp;&amp;&quot;Y&quot;.equals(product.getString(&quot;requireBatchNumber&quot;))
+        product!=null&amp;&amp;!&quot;Y&quot;.equals(product.getString(&quot;requireExpiryDate&quot;))
+        product!=null&amp;&amp;&quot;Y&quot;.equals(product.getString(&quot;requireExpiryDate&quot;)) -->
+        <field use-when="${groovy:product!=null &amp;&amp; (product.requireBatchNumber==null || product.requireBatchNumber=='N')}" name="batchNumber" title="${uiLabelMap.ProductBatchNumber}"><text default-value="${inventoryItem.batchNumber}"/></field>
+        <field use-when="${groovy:product!=null &amp;&amp; product.requireBatchNumber=='Y'}" name="batchNumber" title="${uiLabelMap.ProductBatchNumber}" required-field="true"><text default-value="${inventoryItem.batchNumber}"/></field>
+        <field use-when="${groovy:product!=null &amp;&amp; (product.requireExpiryDate==null || product.requireBatchNumber=='N')}" name="expireDate" title="${uiLabelMap.ProductExpireDate}"><date-time default-value="${inventoryItem.expireDate}"/></field>
+        <field use-when="${groovy:product!=null &amp;&amp; product.requireExpiryDate=='Y'}" name="expireDate" title="${uiLabelMap.ProductExpireDate}" required-field="true"><date-time default-value="${inventoryItem.expireDate}"/></field>
         <field name="facilityId" title="Facility">
         <display-entity entity-name="Facility" description="${facilityName}"></display-entity>
         </field>
@@ -124,7 +134,7 @@ under the License.
             </drop-down> -->
             <display type="text"/>
         </field>
-		<field name="comments"><textarea/></field>
+		<field name="comments"><textarea rows="2" cols="25"/></field>
         <field name="accountingQuantityTotal">
             <display/>
         </field>
@@ -151,8 +161,8 @@ under the License.
             <sort-field name="containerId" position="2"/>
             <sort-field name="datetimeManufactured" position="1"/>
             <sort-field name="datetimeReceived" position="2"/>
+            <sort-field name="batchNumber" position="1"/>
             <sort-field name="expireDate" position="1"/>
-            <sort-field name="uomId" position="2"/>
             <sort-field name="serialNumber" position="1"/>
             <sort-field name="comments" position="2"/>
             <!-- <sort-field name="lotId"/> -->
@@ -164,10 +174,11 @@ under the License.
             <sort-field name="currencyUomId" position="2"/>
             <sort-field name="facilityId" position="1"/>
             <sort-field name="locationSeqId" position="2"/>
-            <sort-field name="accountingQuantityTotal" position="1"/>
-            <sort-field name="totals" position="2"/>
+            <sort-field name="fixedAssetId" position="1"/>
+            <sort-field name="accountingQuantityTotal" position="2"/>
+            <sort-field name="totals" position="1"/>
+            <sort-field name="uomId" position="2"/>
             <sort-field name="statusId" position="1"/>
-            <sort-field name="fixedAssetId" position="2"/>
             <sort-field name="submit"/>
         </sort-order>
     </form>
