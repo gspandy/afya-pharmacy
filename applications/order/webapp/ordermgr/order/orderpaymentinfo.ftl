@@ -327,9 +327,16 @@ ${cardNumberDisplay?if_exists}
                                                 <#assign netAmount = Static["java.math.BigDecimal"].ZERO>
                                               </#if>
                                             </#if>
-                                            <#assign copayPatient = Static["org.ofbiz.order.order.OrderReadHelper"].getOrderItemCopay(netAmount, orderItem)?default(0.000)>
-                                            <#-- <@ofbizCurrency amount=copayPatient isoCode=currencyUomId/> -->
-                                            <#assign totalCopayPatient = totalCopayPatient + copayPatient>
+
+                                            <#if orderItem.authorized == "Y">
+                                                <#assign copayPatient = Static["org.ofbiz.order.order.OrderReadHelper"].getOrderItemCopay(netAmount, orderItem)?default(0.000)>
+                                                <#-- <@ofbizCurrency amount=copayPatient isoCode=currencyUomId/> -->
+                                                <#assign totalCopayPatient = totalCopayPatient + copayPatient>
+                                            <#else>
+                                                <#assign itemDeductible = Static["org.ofbiz.order.order.OrderReadHelper"].getOrderItemDeductible(netAmount, orderItem)?default(0.000)>
+                                                <#assign copayPatient = netAmount - itemDeductible>
+                                                <#assign totalCopayPatient = totalCopayPatient + copayPatient>
+                                            </#if>
 
                                             <#assign orderItemAdjAmt = Static["java.math.BigDecimal"].ZERO>
                                             <#assign copayPatient = Static["org.ofbiz.order.order.OrderReadHelper"].getOrderItemCopay(netAmount, orderItem)?default(0.000)>
@@ -392,12 +399,18 @@ ${cardNumberDisplay?if_exists}
                                             <#-- <@ofbizCurrency amount=copayPatient isoCode=currencyUomId/> -->
                                             <#assign totalCopayPatient = totalCopayPatient + copayPatient>
 
-                                            <#assign orderItemAdjAmt = Static["java.math.BigDecimal"].ZERO>
-                                            <#assign copayPatient = Static["org.ofbiz.order.order.OrderReadHelper"].getOrderItemCopay(netAmount, orderItem)?default(0.000)>
-                                            <#assign itemDeductible = Static["org.ofbiz.order.order.OrderReadHelper"].getOrderItemDeductible(netAmount, orderItem)?default(0.000)>
-                                            <#assign copayInsurance = netAmount - (copayPatient + itemDeductible)>
-                                            <#-- <@ofbizCurrency amount=copayInsurance?default(0.000) isoCode=currencyUomId/> -->
-                                            <#assign totalCopayInsurance = totalCopayInsurance + copayInsurance>
+                                            <#if orderItem.authorized == "Y">
+                                                <#assign orderItemAdjAmt = Static["java.math.BigDecimal"].ZERO>
+                                                <#assign copayPatient = Static["org.ofbiz.order.order.OrderReadHelper"].getOrderItemCopay(netAmount, orderItem)?default(0.000)>
+                                                <#assign itemDeductible = Static["org.ofbiz.order.order.OrderReadHelper"].getOrderItemDeductible(netAmount, orderItem)?default(0.000)>
+                                                <#assign copayInsurance = netAmount - (copayPatient + itemDeductible)>
+                                                <#-- <@ofbizCurrency amount=copayInsurance?default(0.000) isoCode=currencyUomId/> -->
+                                                <#assign totalCopayInsurance = totalCopayInsurance + copayInsurance>
+                                            <#else>
+                                                <#assign copayInsurance = 0.000>
+                                                <#assign totalCopayInsurance = totalCopayInsurance + copayInsurance>
+                                            </#if>
+
                                             <#-- <@ofbizCurrency amount=itemDeductible isoCode=currencyUomId/> -->
                                             <#assign totalDeductible = totalDeductible + itemDeductible>
 
