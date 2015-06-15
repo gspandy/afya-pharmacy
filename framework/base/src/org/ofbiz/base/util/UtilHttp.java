@@ -67,6 +67,7 @@ public class UtilHttp {
     public static final String MULTI_ROW_DELIMITER = "_o_";
     public static final String ROW_SUBMIT_PREFIX = "_rowSubmit_o_";
     public static final String COMPOSITE_DELIMITER = "_c_";
+    public static final String DATE_RENDERER_SUFFIX = "_i18n";
     public static final int MULTI_ROW_DELIMITER_LENGTH = MULTI_ROW_DELIMITER.length();
     public static final int ROW_SUBMIT_PREFIX_LENGTH = ROW_SUBMIT_PREFIX.length();
     public static final int COMPOSITE_DELIMITER_LENGTH = COMPOSITE_DELIMITER.length();
@@ -1123,6 +1124,9 @@ public class UtilHttp {
             if (key == null) continue;
             int index = key.indexOf(MULTI_ROW_DELIMITER);
             if (index <= 0) continue;
+            int index2 = key.indexOf(DATE_RENDERER_SUFFIX);
+            if (index2 > 0) continue;
+
             if (key.length() > ROW_SUBMIT_PREFIX_LENGTH && key.substring(0, ROW_SUBMIT_PREFIX_LENGTH).equals(ROW_SUBMIT_PREFIX)) continue;
 
             // get the map with index N

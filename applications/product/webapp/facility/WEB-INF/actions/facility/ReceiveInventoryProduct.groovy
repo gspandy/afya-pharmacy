@@ -29,9 +29,8 @@ String shipmentId = request.getParameter("shipmentId");
 purchaseOrderId = request.getParameter("purchaseOrderId");
 String shipmentIdParam = parameters.shipmentId;
 
-
 def parameterCollection = UtilHttp.parseMultiFormData(parameters);
-Timestamp datetimeReceived = UtilValidate.isEmpty(request.getParameter("datetimeReceived")) ? null : UtilDateTime.dateStringToTimestampParser(request.getParameter("datetimeReceived"));
+Timestamp datetimeReceived = UtilValidate.isEmpty(request.getParameter("datetimeReceived")) ? null : UtilDateTime.getDate(request.getParameter("datetimeReceived"));
 if (UtilValidate.isEmpty(datetimeReceived)) {
     datetimeReceived = UtilDateTime.nowTimestamp();
 }
@@ -79,8 +78,11 @@ for (Map inParam : parameterCollection) {
         facilityId = inParam.get("facilityId");
         locationSeqId = inParam.get("locationSeqId");
         productId = inParam.get("productId");
+        batchNumber = inParam.get("batchNumber");
         rejectionId = inParam.get("rejectionId");
         //datetimeReceived=inParam.get("datetimeReceived");
+        expireDate = UtilValidate.isEmpty(inParam.get("expireDate")) ? null : UtilDateTime.dateStringToTimestampParser(inParam.get("expireDate"));
+		//expireDate=inParam.get("expireDate");
         unitCost = inParam.get("unitCost");
         orderCurrencyUnitPrice = inParam.get("orderCurrencyUnitPrice");
         quantityAccepted = inParam.get("quantityAccepted");
@@ -109,8 +111,10 @@ for (Map inParam : parameterCollection) {
         serviceMap.put("facilityId", facilityId);
         serviceMap.put("locationSeqId", locationSeqId);
         serviceMap.put("productId", productId);
+		serviceMap.put("batchNumber", batchNumber);
         serviceMap.put("rejectionId", rejectionId);
         serviceMap.put("datetimeReceived", datetimeReceived);
+		serviceMap.put("expireDate", expireDate);
         serviceMap.put("unitCost", unitCost);
         serviceMap.put("inventoryItemTypeId", inventoryItemTypeId);
         serviceMap.put("quantityAccepted", quantityAccepted);
@@ -140,6 +144,8 @@ for (Map inParam : parameterCollection) {
             String fixedAssetId = result2.fixedAssetId;
             serviceMap.put("unitCost", 0);
             serviceMap.put("fixedAssetId", fixedAssetId);
+            serviceMap.put("batchNumber", batchNumber);
+            serviceMap.put("expireDate", expireDate);
             serviceMap.put("inventoryItemTypeId", "SERIALIZED_INV_ITEM");
             result = dispatcher.runSync("receiveInventoryProduct", serviceMap);
         }

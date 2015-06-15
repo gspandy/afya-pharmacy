@@ -99,7 +99,7 @@ under the License.
                 </tr>
               </form>
             </#list>
-            <tr><td colspan="12"><hr /></td></tr>
+            <tr><td colspan="13"><hr /></td></tr>
           </table>
           <br />
         </#if>
@@ -723,7 +723,7 @@ under the License.
                             <td colspan="2">&nbsp;</td>
                         </tr>
                         <tr>
-                            <td width="25%">&nbsp;</td>
+                          <td width="25%">&nbsp;</td>
                           <#if currencyUomId != orderCurrencyUomId>
                             <td align="right"><span  class="label">${uiLabelMap.ProductPerUnitPriceOrder}+Landed Cost :</span></td>
                             <td align="left">
@@ -753,6 +753,56 @@ under the License.
                                     ${product.getRelatedOneCache("QuantityUom").description?if_exists}
                                 </#if>
                             </td>
+                        </tr>
+                        <tr>
+                            <#if orderItem.productId?exists>
+                                <#assign product = orderItem.getRelatedOneCache("Product")/>
+                                <#if product?exists && product.requireExpiryDate?exists && product.requireExpiryDate == "Y">
+                                    <td width="25%">
+                                        <span  class="label"> ${uiLabelMap.ProductBatchNumber} :</span><font color="red"> *</font>
+                                        <input type="text" name="batchNumber_o_${rowCount}" class="required" size="20" />
+                                    </td>
+                                <#else>
+                                    <td width="25%">
+                                        <span  class="label"> ${uiLabelMap.ProductBatchNumber} :</span>
+                                        <input type="text" name="batchNumber_o_${rowCount}" size="20" />
+                                    </td>
+                                </#if>
+                            <#else>
+                                <td width="25%">
+                                    <span  class="label"> ${uiLabelMap.ProductBatchNumber} :</span>
+                                    <input type="text" name="batchNumber_o_${rowCount}" value="" size="20" />
+                                </td>
+                            </#if>
+                            <#if orderItem.productId?exists>
+                                <#assign product = orderItem.getRelatedOneCache("Product")/>
+                                <#if product?exists && product.requireExpiryDate?exists && product.requireExpiryDate == "Y">
+                                    <td align="right"><span  class="label">${uiLabelMap.ProductExpireDate} :</span><font color="red"> *</font></td>
+                                    <td align="left">
+                                        <@htmlTemplate.renderDateTimeField name="expireDate_o_${rowCount}" event="" action="" className="required" alert=""
+                                                title="Format: yyyy-MM-dd HH:mm:ss.SSS" value="" size="25" maxlength="30" id="expireDate_o_${rowCount}" dateType="date-time" shortDateInput=false
+                                                timeDropdownParamName="" defaultDateTimeString="" localizedIconTitle="" timeDropdown="" timeHourName="" classString=""
+                                                hour1="" hour2="" timeMinutesName="" minutes="" isTwelveHour="" ampmName="" amSelected="" pmSelected="" compositeType="" formName=""/>
+			                        </td>
+			                    <#else>
+			                        <td align="right"><span  class="label">${uiLabelMap.ProductExpireDate} :</span></td>
+                                    <td align="left">
+                                        <@htmlTemplate.renderDateTimeField name="expireDate_o_${rowCount}" event="" action="" className="" alert=""
+                                                title="Format: yyyy-MM-dd HH:mm:ss.SSS" value="" size="25" maxlength="30" id="expireDate_o_${rowCount}" dateType="date-time" shortDateInput=false
+                                                timeDropdownParamName="" defaultDateTimeString="" localizedIconTitle="" timeDropdown="" timeHourName="" classString=""
+                                                hour1="" hour2="" timeMinutesName="" minutes="" isTwelveHour="" ampmName="" amSelected="" pmSelected="" compositeType="" formName=""/>
+			                        </td>
+                                </#if>
+                            <#else>
+                                <td align="right"><span  class="label">${uiLabelMap.ProductExpireDate} :</span></td>
+                                <td align="left">
+                                    <@htmlTemplate.renderDateTimeField name="expireDate_o_${rowCount}" event="" action="" className="" alert=""
+                                                title="Format: yyyy-MM-dd HH:mm:ss.SSS" value="" size="25" maxlength="30" id="expireDate_o_${rowCount}" dateType="date-time" shortDateInput=false
+                                                timeDropdownParamName="" defaultDateTimeString="" localizedIconTitle="" timeDropdown="" timeHourName="" classString=""
+                                                hour1="" hour2="" timeMinutesName="" minutes="" isTwelveHour="" ampmName="" amSelected="" pmSelected="" compositeType="" formName=""/>
+                                </td>
+                            </#if>
+                            <td colspan="2">&nbsp;</td>
                         </tr>
                         <tr><td colspan="4">&nbsp;</td></tr>
                       </table>
@@ -848,7 +898,11 @@ under the License.
             </table>
             <input type="hidden" name="_rowCount" value="${rowCount}"/>
           </form>
-          <script language="JavaScript" type="text/javascript">selectAll('selectAllForm');</script>
+          <script language="JavaScript" type="text/javascript">
+            var form = document.selectAllForm;
+            jQuery(form).validate();
+            selectAll('selectAllForm');
+          </script>
 
         <#-- Initial Screen -->
         <#else>
