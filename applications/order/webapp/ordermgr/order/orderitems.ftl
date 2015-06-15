@@ -799,7 +799,12 @@ under the License.
                                                     <#assign orderItemAdjAmt = Static["java.math.BigDecimal"].ZERO>
                                                     <#assign patientCopay = Static["org.ofbiz.order.order.OrderReadHelper"].getOrderItemCopay(netAmount, orderItem)?default(0.000)>
                                                     <#assign itemDeductible = Static["org.ofbiz.order.order.OrderReadHelper"].getOrderItemDeductible(netAmount, orderItem)?default(0.000)>
-                                                    <#assign copayPatient = netAmount - itemDeductible>
+                                                    <#if orderItem.computeBy?has_content && orderItem.computeBy == "GROSS">
+                                                        <#assign grossAmount = Static["org.ofbiz.order.order.OrderReadHelper"].getOrderItemGrossAmount(orderItem)?default(0.000)>
+                                                        <#assign copayPatient = grossAmount - itemDeductible>
+                                                    <#else>
+                                                        <#assign copayPatient = netAmount - itemDeductible>
+                                                    </#if>
                                                     <@ofbizCurrency amount=copayPatient isoCode=currencyUomId/>
                                                     <#assign totalCopayPatient = totalCopayPatient + copayPatient>
                                                 </#if>
@@ -809,7 +814,12 @@ under the License.
                                                     <#assign orderItemAdjAmt = Static["java.math.BigDecimal"].ZERO>
                                                     <#assign copayPatient = Static["org.ofbiz.order.order.OrderReadHelper"].getOrderItemCopay(netAmount, orderItem)?default(0.000)>
                                                     <#assign itemDeductible = Static["org.ofbiz.order.order.OrderReadHelper"].getOrderItemDeductible(netAmount, orderItem)?default(0.000)>
-                                                    <#assign copayInsurance = netAmount - (copayPatient + itemDeductible)>
+                                                    <#if orderItem.computeBy?has_content && orderItem.computeBy == "GROSS">
+                                                        <#assign grossAmount = Static["org.ofbiz.order.order.OrderReadHelper"].getOrderItemGrossAmount(orderItem)?default(0.000)>
+                                                        <#assign copayInsurance = grossAmount - (copayPatient + itemDeductible)>
+                                                    <#else>
+                                                        <#assign copayInsurance = netAmount - (copayPatient + itemDeductible)>
+                                                    </#if>
                                                     <@ofbizCurrency amount=copayInsurance?default(0.000) isoCode=currencyUomId/>
                                                     <#assign totalCopayInsurance = totalCopayInsurance + copayInsurance>
                                                 <#else>

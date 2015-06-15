@@ -979,8 +979,16 @@ public class OrderReadHelper {
         BigDecimal deductibleAmount = orderItem.getBigDecimal("deductibleAmount") == null ? BigDecimal.ZERO : orderItem.getBigDecimal("deductibleAmount");
         if (deductibleAmount.compareTo(BigDecimal.ZERO) == 0) {
             BigDecimal deductiblePercentage = orderItem.getBigDecimal("deductiblePercentage") == null ? BigDecimal.ZERO : orderItem.getBigDecimal("deductiblePercentage");
-            BigDecimal lineTotal = netAmount.setScale(scale, rounding);
-            deductibleAmount = deductiblePercentage.multiply(lineTotal).setScale(scale, rounding).divide(new BigDecimal(100)).setScale(scale, rounding);
+            if (orderItem.getString("computeBy") != null && orderItem.getString("computeBy").equalsIgnoreCase("GROSS")) {
+                BigDecimal lineTotal = getOrderItemQuantity(orderItem).multiply(orderItem.getBigDecimal("unitPrice")).setScale(scale, rounding);
+                deductibleAmount = deductiblePercentage.multiply(lineTotal).setScale(scale, rounding).divide(new BigDecimal(100)).setScale(scale, rounding);
+            } else if (orderItem.getString("computeBy") != null && orderItem.getString("computeBy").equalsIgnoreCase("NET")) {
+                BigDecimal lineTotal = netAmount.setScale(scale, rounding);
+                deductibleAmount = deductiblePercentage.multiply(lineTotal).setScale(scale, rounding).divide(new BigDecimal(100)).setScale(scale, rounding);
+            } else {
+                BigDecimal lineTotal = netAmount.setScale(scale, rounding);
+                deductibleAmount = deductiblePercentage.multiply(lineTotal).setScale(scale, rounding).divide(new BigDecimal(100)).setScale(scale, rounding);
+            }
         }
         return deductibleAmount.setScale(scale, rounding);
     }
@@ -989,9 +997,19 @@ public class OrderReadHelper {
         BigDecimal copayAmount = orderItem.getBigDecimal("copayAmount") == null ? BigDecimal.ZERO : orderItem.getBigDecimal("copayAmount");
         if (copayAmount.compareTo(BigDecimal.ZERO) == 0) {
             BigDecimal copayPercentage = orderItem.getBigDecimal("copayPercentage") == null ? BigDecimal.ZERO : orderItem.getBigDecimal("copayPercentage");
-            BigDecimal lineTotal = netAmount.setScale(scale, rounding);
-            lineTotal=lineTotal.subtract(getOrderItemDeductible(netAmount, orderItem));
-            copayAmount = copayPercentage.multiply(lineTotal).setScale(scale, rounding).divide(new BigDecimal(100)).setScale(scale, rounding);
+            if (orderItem.getString("computeBy") != null && orderItem.getString("computeBy").equalsIgnoreCase("GROSS")) {
+                BigDecimal lineTotal = getOrderItemQuantity(orderItem).multiply(orderItem.getBigDecimal("unitPrice")).setScale(scale, rounding);
+                lineTotal=lineTotal.subtract(getOrderItemDeductible(orderItem));
+                copayAmount = copayPercentage.multiply(lineTotal).setScale(scale, rounding).divide(new BigDecimal(100)).setScale(scale, rounding);
+            } else if (orderItem.getString("computeBy") != null && orderItem.getString("computeBy").equalsIgnoreCase("NET")) {
+                BigDecimal lineTotal = netAmount.setScale(scale, rounding);
+                lineTotal=lineTotal.subtract(getOrderItemDeductible(netAmount, orderItem));
+                copayAmount = copayPercentage.multiply(lineTotal).setScale(scale, rounding).divide(new BigDecimal(100)).setScale(scale, rounding);
+            } else {
+                BigDecimal lineTotal = netAmount.setScale(scale, rounding);
+                lineTotal=lineTotal.subtract(getOrderItemDeductible(netAmount, orderItem));
+                copayAmount = copayPercentage.multiply(lineTotal).setScale(scale, rounding).divide(new BigDecimal(100)).setScale(scale, rounding);
+            }
         }
         return copayAmount.setScale(scale, rounding);
     }
@@ -999,6 +1017,11 @@ public class OrderReadHelper {
     public static BigDecimal getOrderItemPatientToPay(GenericValue orderItem) {
         BigDecimal patientToPay = getOrderItemDeductible(orderItem).add(getOrderItemCopay(orderItem)).setScale(scale, rounding);
         return patientToPay.setScale(scale, rounding);
+    }
+
+    public static BigDecimal getOrderItemGrossAmount(GenericValue orderItem) {
+        BigDecimal lineGrossTotal = getOrderItemQuantity(orderItem).multiply(orderItem.getBigDecimal("unitPrice")).setScale(scale, rounding);
+        return lineGrossTotal.setScale(scale, rounding);
     }
 
     public String getOrderId() {

@@ -334,7 +334,12 @@ ${cardNumberDisplay?if_exists}
                                                 <#assign totalCopayPatient = totalCopayPatient + copayPatient>
                                             <#else>
                                                 <#assign itemDeductible = Static["org.ofbiz.order.order.OrderReadHelper"].getOrderItemDeductible(netAmount, orderItem)?default(0.000)>
-                                                <#assign copayPatient = netAmount - itemDeductible>
+                                                <#if orderItem.computeBy?has_content && orderItem.computeBy == "GROSS">
+                                                    <#assign grossAmount = Static["org.ofbiz.order.order.OrderReadHelper"].getOrderItemGrossAmount(orderItem)?default(0.000)>
+                                                    <#assign copayPatient = grossAmount - itemDeductible>
+                                                <#else>
+                                                    <#assign copayPatient = netAmount - itemDeductible>
+                                                </#if>
                                                 <#assign totalCopayPatient = totalCopayPatient + copayPatient>
                                             </#if>
 
@@ -403,7 +408,12 @@ ${cardNumberDisplay?if_exists}
                                                 <#assign orderItemAdjAmt = Static["java.math.BigDecimal"].ZERO>
                                                 <#assign copayPatient = Static["org.ofbiz.order.order.OrderReadHelper"].getOrderItemCopay(netAmount, orderItem)?default(0.000)>
                                                 <#assign itemDeductible = Static["org.ofbiz.order.order.OrderReadHelper"].getOrderItemDeductible(netAmount, orderItem)?default(0.000)>
-                                                <#assign copayInsurance = netAmount - (copayPatient + itemDeductible)>
+                                                <#if orderItem.computeBy?has_content && orderItem.computeBy == "GROSS">
+                                                    <#assign grossAmount = Static["org.ofbiz.order.order.OrderReadHelper"].getOrderItemGrossAmount(orderItem)?default(0.000)>
+                                                    <#assign copayInsurance = grossAmount - (copayPatient + itemDeductible)>
+                                                <#else>
+                                                    <#assign copayInsurance = netAmount - (copayPatient + itemDeductible)>
+                                                </#if>
                                                 <#-- <@ofbizCurrency amount=copayInsurance?default(0.000) isoCode=currencyUomId/> -->
                                                 <#assign totalCopayInsurance = totalCopayInsurance + copayInsurance>
                                             <#else>
@@ -520,7 +530,7 @@ ${cardNumberDisplay?if_exists}
                     </td>
                     
                     <td width="1%">&nbsp;</td>
-                    <#if (paymentMethodType.paymentMethodTypeId=='CASH' || paymentMethodType.paymentMethodTypeId=='CASH PAYING' || paymentMethodType.paymentMethodTypeId=='CREDIT_CARD') &&  orderPaymentPreference.statusId!='PAYMENT_NOT_RECEIVED' && (!(orderHeader.statusId.equals("ORDER_CANCELLED")) && !(orderHeader.statusId.equals("ORDER_REJECTED")))>
+                    <#if (paymentMethodType.paymentMethodTypeId=='INSURANCE' || paymentMethodType.paymentMethodTypeId=='CASH' || paymentMethodType.paymentMethodTypeId=='CASH PAYING' || paymentMethodType.paymentMethodTypeId=='CREDIT_CARD') &&  orderPaymentPreference.statusId!='PAYMENT_NOT_RECEIVED' && (!(orderHeader.statusId.equals("ORDER_CANCELLED")) && !(orderHeader.statusId.equals("ORDER_REJECTED")))>
                         <td width="60%">
                             <div>
                                 <#if orderPaymentPreference.maxAmount?has_content>
