@@ -85,6 +85,9 @@
         <field name="gender">
             <hidden value="${patient.gender}"/>
         </field>
+        <field name="dateOfBirth">
+            <hidden value="${patient.dateOfBirth}"/>
+        </field>
         <field name="civilId" title="Civil ID" id-name="civilId" position="1">
             <display/>
         </field>
@@ -159,7 +162,7 @@
             <display-entity entity-name="Geo" description="${geoName}" key-field-name="geoId"></display-entity>
         </field>
         <field name="submitButton" title="${uiLabelMap.CommonSubmit}"
-               widget-style="btn btn-primary">
+               widget-style="btn btn-success">
             <submit button-type="button"/>
         </field>
     </form>

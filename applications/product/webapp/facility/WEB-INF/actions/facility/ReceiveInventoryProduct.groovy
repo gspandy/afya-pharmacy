@@ -79,10 +79,9 @@ for (Map inParam : parameterCollection) {
         locationSeqId = inParam.get("locationSeqId");
         productId = inParam.get("productId");
         batchNumber = inParam.get("batchNumber");
+        expireDate = UtilValidate.isEmpty(inParam.get("expireDate")) ? null : UtilDateTime.dateStringToTimestampParser(inParam.get("expireDate"));
         rejectionId = inParam.get("rejectionId");
         //datetimeReceived=inParam.get("datetimeReceived");
-        expireDate = UtilValidate.isEmpty(inParam.get("expireDate")) ? null : UtilDateTime.dateStringToTimestampParser(inParam.get("expireDate"));
-		//expireDate=inParam.get("expireDate");
         unitCost = inParam.get("unitCost");
         orderCurrencyUnitPrice = inParam.get("orderCurrencyUnitPrice");
         quantityAccepted = inParam.get("quantityAccepted");
@@ -111,10 +110,10 @@ for (Map inParam : parameterCollection) {
         serviceMap.put("facilityId", facilityId);
         serviceMap.put("locationSeqId", locationSeqId);
         serviceMap.put("productId", productId);
-		serviceMap.put("batchNumber", batchNumber);
+        serviceMap.put("batchNumber", batchNumber);
+        serviceMap.put("expireDate", expireDate);
         serviceMap.put("rejectionId", rejectionId);
         serviceMap.put("datetimeReceived", datetimeReceived);
-		serviceMap.put("expireDate", expireDate);
         serviceMap.put("unitCost", unitCost);
         serviceMap.put("inventoryItemTypeId", inventoryItemTypeId);
         serviceMap.put("quantityAccepted", quantityAccepted);

@@ -1,6 +1,9 @@
 package org.ofbiz.order.shoppingcart;
 
 import javax.servlet.http.HttpServletRequest;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 /**
@@ -32,7 +35,9 @@ public class PatientInfo {
     private String moduleName;
     private String isOrderApproved;
 
-    PatientInfo(HttpServletRequest request){
+    PatientInfo(HttpServletRequest request) throws ParseException {
+        String dob = request.getParameter("dateOfBirth");
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
         this.patientId=request.getParameter("patientId");
         this.afyaId=request.getParameter("afyaId");
         this.civilId=request.getParameter("civilId");
@@ -41,6 +46,7 @@ public class PatientInfo {
         this.thirdName=request.getParameter("thirdName");
         this.fourthName=request.getParameter("fourthName");
         this.gender=request.getParameter("gender");
+        this.dateOfBirth=new java.sql.Date(dateFormat.parse(dob).getTime());
         this.mobile=request.getParameter("mobile");
         this.patientType=request.getParameter("patientType");
         this.clinicId=request.getParameter("clinicId");

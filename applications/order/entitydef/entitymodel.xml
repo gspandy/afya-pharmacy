@@ -3105,6 +3105,7 @@
 
 		<field name="healthPolicyId" type="short-varchar"></field>
 		<field name="benefitPlanId" type="short-varchar"></field>
+		<field name="hisBenefitId" type="short-varchar"></field>
 		<field name="moduleId" type="short-varchar"></field>
 		<field name="moduleName" type="short-varchar"></field>
 		<field name="patientType" type="id-ne"/>

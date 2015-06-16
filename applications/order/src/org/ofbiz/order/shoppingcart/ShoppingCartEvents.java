@@ -1677,7 +1677,11 @@ public class ShoppingCartEvents {
     public static String savePatientInfo(HttpServletRequest request, HttpServletResponse response) {
         ShoppingCart cart = getCartObject(request);
         assert cart!=null;
-        cart.setPatientInfo(new PatientInfo(request));
+        try {
+            cart.setPatientInfo(new PatientInfo(request));
+        } catch (ParseException parseException) {
+            parseException.printStackTrace();
+        }
         return "success";
     }
 
