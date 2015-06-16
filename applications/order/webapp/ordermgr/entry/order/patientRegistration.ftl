@@ -194,7 +194,7 @@ under the License.
             <td>
               <span class="ui-widget">
                 <select name="nationality" id="nationality" size="1">
-                  <#if patient.city?exists>
+                  <#if patient.nationality?exists>
                     <option selected="selected" value="${patient.nationality}">${patient.nationality}</option>
                     <option value="${patient.nationality}">---</option>
                   </#if>
