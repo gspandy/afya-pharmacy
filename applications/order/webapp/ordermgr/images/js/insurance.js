@@ -121,10 +121,22 @@ $(document).ready(function () {
                         $('#policyNo').val(value);
                     }
                     else if (attr == "planStartDate") {
-                        $('#startDate').val(value);
+                        var input = value,
+                        datePart = input.match(/\d+/g),
+                        year = datePart[0],
+                        month = datePart[1],
+                        day = datePart[2],
+                        startDate = day+'/'+month+'/'+year;
+                        $('#startDate').val(startDate);
                     }
                     else if (attr == "planEndDate") {
-                        $('#endDate').val(value);
+                        var input = value,
+                        datePart = input.match(/\d+/g),
+                        year = datePart[0],
+                        month = datePart[1],
+                        day = datePart[2],
+                        endDate = day+'/'+month+'/'+year;
+                        $('#endDate').val(endDate);
                     } else if (attr == "benefits") {
                         var i = 0;
                         for (; i < value.length; i++) {

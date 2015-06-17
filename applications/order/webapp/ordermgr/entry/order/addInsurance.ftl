@@ -147,13 +147,13 @@ under the License.
           <span id="startDate_title">Start Date</span>
         </td>
         <td>
-          <input type="text" name="startDate" size="25" id="startDate"/>
+          <input type="text" readonly="true" name="startDate" size="25" id="startDate"/>
         </td>
         <td class="label">
           <span id="endDate_title">End Date</span>
         </td>
         <td>
-          <input type="text" name="endDate" size="25" id="endDate"/>
+          <input type="text" readonly="true" name="endDate" size="25" id="endDate"/>
         </td>
       </tr>
       <tr>
