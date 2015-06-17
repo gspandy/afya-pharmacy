@@ -2638,8 +2638,6 @@ public class OrderServices {
                                 else
                                     orderItem.set("computeBy", moduleDetail.getComputeBy());
 
-                                orderItem.set("authorized", copaymentDetail.isAuthorization());
-
                                 delegator.store(orderItem);
 
                             }
