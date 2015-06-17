@@ -119,7 +119,7 @@ under the License.
           <span id="healthPolicyName_title">Health Plan</span><font color="red"> *</font>
         </td>
         <td>
-          <input type="text" name="healthPolicyName" class="required" size="30" id="healthPolicyName"/>
+          <input type="text" readonly="true" name="healthPolicyName" class="required" size="30" id="healthPolicyName"/>
         </td>
         <td class="label">
           <span id="benefitPlanNameDropDown_title">Benefits</span><font color="red"> *</font>
@@ -133,7 +133,7 @@ under the License.
           <span id="policyNo_title">Policy No</span>
         </td>
         <td>
-          <input type="text" name="policyNo" size="25" id="policyNo"/>
+          <input type="text" readonly="true" name="policyNo" size="25" id="policyNo"/>
         </td>
       </tr>
       <tr>
