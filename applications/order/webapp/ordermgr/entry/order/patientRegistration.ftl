@@ -46,14 +46,14 @@ under the License.
               <td class="label" id="expiryDate_title" width="5%"><span id="expiryDate_title">Expiry Date</span></td>
               <td id="expiryDate_dateField" colspan="4">
                 <#if patient.expiryDate?exists>
-                  <@htmlTemplate.renderDateTimeFieldJsMethod name="expiryDate" value='${Static["org.ofbiz.base.util.UtilDateTime"].getFormattedDate(patient.expiryDate)}' className="date" alert="" 
-                          title="Format: MM/dd/yyyy" size="15" maxlength="10" id="expiryDate" dateType="date-time" shortDateInput=true 
+                  <@htmlTemplate.renderDateTimeFieldJsMethod name="expiryDate" id="expiryDate" value='${Static["org.ofbiz.base.util.UtilDateTime"].getFormattedDate(patient.expiryDate)}' className="date" alert="" 
+                          title="Format: MM/dd/yyyy" size="15" maxlength="10" dateType="date-time" shortDateInput=true 
                           timeDropdownParamName="" defaultDateTimeString="" localizedIconTitle="" timeDropdown="" timeHourName="" classString="" 
                           hour1="" hour2="" timeMinutesName="" minutes="" isTwelveHour="" ampmName="" amSelected="" pmSelected="" compositeType="" formName="editPatientForm"
                           javaScriptMethod=""/>
                 <#else>
-                  <@htmlTemplate.renderDateTimeField name="expiryDate" value="${value!''}" className="date" alert="" 
-                          title="Format: MM/dd/yyyy" size="15" maxlength="10" id="item1" dateType="date-time" shortDateInput=true 
+                  <@htmlTemplate.renderDateTimeField name="expiryDate" id="expiryDate" value="${value!''}" className="date" alert="" 
+                          title="Format: MM/dd/yyyy" size="15" maxlength="10" dateType="date-time" shortDateInput=true 
                           timeDropdownParamName="" defaultDateTimeString="" localizedIconTitle="" timeDropdown="" timeHourName="" classString="" 
                           hour1="" hour2="" timeMinutesName="" minutes="" isTwelveHour="" ampmName="" amSelected="" pmSelected="" compositeType="" formName="editPatientForm"/>
                 </#if>
@@ -116,13 +116,13 @@ under the License.
             <td id="dateOfBirth_dateField">
               <#if patient.dateOfBirth?exists>
                 <@htmlTemplate.renderDateTimeFieldJsMethod name="dateOfBirth" id="dateOfBirth" value='${Static["org.ofbiz.base.util.UtilDateTime"].getFormattedDate(patient.dateOfBirth)}' className="date required" alert="" 
-                        title="Format: MM/dd/yyyy" size="15" maxlength="10" id="dateOfBirth" dateType="date-time" shortDateInput=true 
+                        title="Format: MM/dd/yyyy" size="15" maxlength="10" dateType="date-time" shortDateInput=true 
                         timeDropdownParamName="" defaultDateTimeString="" localizedIconTitle="" timeDropdown="" timeHourName="" classString="" 
                         hour1="" hour2="" timeMinutesName="" minutes="" isTwelveHour="" ampmName="" amSelected="" pmSelected="" compositeType="" formName="editPatientForm"
                         javaScriptMethod=""/>
               <#else>
                 <@htmlTemplate.renderDateTimeField name="dateOfBirth" id="dateOfBirth" value="${value!''}" className="date required" alert="" 
-                        title="Format: MM/dd/yyyy" size="15" maxlength="10" id="item1" dateType="date-time" shortDateInput=true 
+                        title="Format: MM/dd/yyyy" size="15" maxlength="10" dateType="date-time" shortDateInput=true 
                         timeDropdownParamName="" defaultDateTimeString="" localizedIconTitle="" timeDropdown="" timeHourName="" classString="" 
                         hour1="" hour2="" timeMinutesName="" minutes="" isTwelveHour="" ampmName="" amSelected="" pmSelected="" compositeType="" formName="editPatientForm"/>
               </#if>
@@ -427,8 +427,8 @@ under the License.
             <td id="passport_textField" style="display:none"><input type="text" name="passport" id="passport" size="25"/></td>
             <td id="expiryDate_title" class="label" width="7%" style="display:none"><span id="expiryDate_title">Expiry Date</span></td>
             <td id="expiryDate_dateField" colspan="4" style="display:none">
-              <@htmlTemplate.renderDateTimeField name="expiryDate" className="date" alert="" 
-                      title="Format: MM/dd/yyyy" size="15" maxlength="10" id="item1" dateType="date-time" shortDateInput=true 
+              <@htmlTemplate.renderDateTimeField name="expiryDate" id="expiryDate" value="" className="date" alert="" 
+                      title="Format: MM/dd/yyyy" size="15" maxlength="10" dateType="date-time" shortDateInput=true 
                       timeDropdownParamName="" defaultDateTimeString="" localizedIconTitle="" timeDropdown="" timeHourName="" classString="" 
                       hour1="" hour2="" timeMinutesName="" minutes="" isTwelveHour="" ampmName="" amSelected="" pmSelected="" compositeType="" formName="patientRegistrationForm"/>
             </td>
@@ -465,9 +465,9 @@ under the License.
           </tr>
           <tr>
             <td class="label"><span id="dateOfBirth_title">Date Of Birth</span><font color="red"> *</font></td>
-            <td id="dateOfBirth">
+            <td id="dateOfBirth_dateField">
               <@htmlTemplate.renderDateTimeField name="dateOfBirth" id="dateOfBirth" value="" className="date required" alert="" 
-                      title="Format: dd/MM/yyyy" size="15" maxlength="10" id="transferDate" dateType="date" shortDateInput=true 
+                      title="Format: dd/MM/yyyy" size="15" maxlength="10" dateType="date-time" shortDateInput=true 
                       timeDropdownParamName="" defaultDateTimeString="" localizedIconTitle="" timeDropdown="" timeHourName="" classString="" 
                       hour1="" hour2="" timeMinutesName="" minutes="" isTwelveHour="" ampmName="" amSelected="" pmSelected="" compositeType="" formName="patientRegistrationForm"/>
             </td>
