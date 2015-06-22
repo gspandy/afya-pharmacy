@@ -330,8 +330,11 @@ under the License.
         <attribute name="itemShipDateMap" type="Map" mode="IN" string-map-prefix="isdm_" optional="true"/>
         <attribute name="itemDeliveryDateMap" type="Map" mode="IN" string-map-prefix="iddm_" optional="true"/>
         <attribute name="itemAuthMap" type="Map" mode="IN" string-map-prefix="iau_" optional="true"/>
-        <attribute name="itemHomeServiceMap" type="Map" mode="IN" string-map-prefix="ihm_" optional="true"/>
         <attribute name="itemAuthNumberMap" type="Map" mode="IN" string-map-prefix="ian_" optional="true"/>
+        <attribute name="itemAuthDateMap" type="Map" mode="IN" string-map-prefix="iad_" optional="true"/>
+        <attribute name="itemAuthAmountMap" type="Map" mode="IN" string-map-prefix="iaamt_" optional="true"/>
+        <attribute name="itemAuthNoteMap" type="Map" mode="IN" string-map-prefix="iant_" optional="true"/>
+        <attribute name="itemHomeServiceMap" type="Map" mode="IN" string-map-prefix="ihm_" optional="true"/>
         <attribute name="shoppingCart" type="org.ofbiz.order.shoppingcart.ShoppingCart" mode="OUT" optional="false"/>
     </service>
     <service name="loadCartForUpdate" engine="java" auth="true"

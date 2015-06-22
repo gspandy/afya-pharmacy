@@ -510,6 +510,10 @@ public class ShoppingCartServices {
                 cartItem.setName(item.getString("itemDescription"));
                 cartItem.setAuthorizationNumber(item.getString("authorizationNumber"));
                 cartItem.setAuthorized(item.getBoolean("authorized"));
+                cartItem.setAuthorizationDate(item.getDate("authorizationDate"));
+                if(item.getBigDecimal("authorizationAmount") != null)
+                    cartItem.setAuthorizationAmount(item.getBigDecimal("authorizationAmount"));
+                cartItem.setAuthorizationNote(item.getString("authorizationNote"));
                 cartItem.setCopayAmount(item.getBigDecimal("copayAmount") == null ? BigDecimal.ZERO : item.getBigDecimal("copayAmount"));
                 cartItem.setCopayPercentage(item.getBigDecimal("copayPercentage") == null ? BigDecimal.ZERO :item.getBigDecimal("copayPercentage"));
                 cartItem.setDeductibleAmount(item.getBigDecimal("deductibleAmount")== null ? BigDecimal.ZERO :item.getBigDecimal("deductibleAmount"));

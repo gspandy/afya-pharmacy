@@ -24,11 +24,14 @@ import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.introspect.VisibilityChecker;
+import com.ibm.icu.text.SimpleDateFormat;
+
 import freemarker.cache.FileTemplateLoader;
 import freemarker.template.*;
 import javolution.util.FastList;
 import javolution.util.FastMap;
 import javolution.util.FastSet;
+
 import org.ofbiz.base.util.*;
 import org.ofbiz.base.util.collections.ResourceBundleMapWrapper;
 import org.ofbiz.common.CommonWorkers;
@@ -63,12 +66,14 @@ import org.springframework.http.*;
 import org.springframework.web.client.RestTemplate;
 
 import javax.transaction.Transaction;
+
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
+import java.text.ParseException;
 import java.util.*;
 
 /**
@@ -4221,6 +4226,9 @@ public class OrderServices {
         Map<String, String> itemEstimatedDeliveryDateMap = (Map) context.get("itemDeliveryDateMap");
         Map<String, String> itemAuthMap = (Map) context.get("itemAuthMap");
         Map<String, String> itemAuthNumberMap = (Map) context.get("itemAuthNumberMap");
+        Map<String, String> itemAuthDateMap = (Map) context.get("itemAuthDateMap");
+        Map<String, String> itemAuthAmountMap = (Map) context.get("itemAuthAmountMap");
+        Map<String, String> itemAuthNoteMap = (Map) context.get("itemAuthNoteMap");
         Map<String, String> itemHomeServiceMap = (Map) context.get("itemHomeServiceMap");
         // obtain a shopping cart object for updating
         ShoppingCart cart = null;
@@ -4330,18 +4338,49 @@ public class OrderServices {
                 }
 
                 if (itemAuthMap != null) {
-                    String attrValue = null;
-                    attrValue = (String) itemAuthMap.get(itemSeqId);
-                    if (UtilValidate.isNotEmpty(attrValue)) {
-                        cartItem.setAuthorized("Y".equals(attrValue) ? true : false);
+                    String attribValue = null;
+                    attribValue = (String) itemAuthMap.get(itemSeqId);
+                    if (UtilValidate.isNotEmpty(attribValue)) {
+                        cartItem.setAuthorized("Y".equals(attribValue) ? true : false);
                     }
-                }
+                    if ("Y".equals(attribValue)) {
+                        if (itemAuthNumberMap != null) {
+                            String attrValue = null;
+                            attrValue = (String) itemAuthNumberMap.get(itemSeqId);
+                            if (UtilValidate.isNotEmpty(attrValue)) {
+                                cartItem.setAuthorizationNumber(attrValue);
+                            }
+                        }
 
-                if (itemAuthNumberMap != null) {
-                    String attrValue = null;
-                    attrValue = (String) itemAuthNumberMap.get(itemSeqId);
-                    if (UtilValidate.isNotEmpty(attrValue)) {
-                        cartItem.setAuthorizationNumber(attrValue);
+                        if (itemAuthDateMap != null) {
+                            String attrValue = null;
+                            attrValue = (String) itemAuthDateMap.get(itemSeqId);
+                            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+                            if (UtilValidate.isNotEmpty(attrValue)) {
+                                try {
+                                    cartItem.setAuthorizationDate(new java.sql.Date(dateFormat.parse(attrValue).getTime()));
+                                } catch (ParseException e) {
+                                // TODO Auto-generated catch block
+                                e.printStackTrace();
+                                }
+                            }
+                        }
+
+                        if (itemAuthAmountMap != null) {
+                            String attrValue = null;
+                            attrValue = (String) itemAuthAmountMap.get(itemSeqId);
+                            if (UtilValidate.isNotEmpty(attrValue)) {
+                                cartItem.setAuthorizationAmount(new BigDecimal(attrValue));
+                            }
+                        }
+
+                        if (itemAuthNoteMap != null) {
+                            String attrValue = null;
+                            attrValue = (String) itemAuthNoteMap.get(itemSeqId);
+                            if (UtilValidate.isNotEmpty(attrValue)) {
+                                cartItem.setAuthorizationNote(attrValue);
+                            }
+                        }
                     }
                 }
 

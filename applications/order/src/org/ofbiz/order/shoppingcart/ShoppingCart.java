@@ -3975,6 +3975,10 @@ public class ShoppingCart implements Iterable<ShoppingCartItem>, Serializable {
                 orderItem.set("homeService", item.isHomeService());
                 orderItem.set("authorized", item.isAuthorized());
                 orderItem.set("authorizationNumber", item.getAuthorizationNumber());
+                orderItem.set("authorizationDate", item.getAuthorizationDate());
+                if(item.getAuthorizationAmount() != null)
+                    orderItem.set("authorizationAmount", item.getAuthorizationAmount());
+                orderItem.set("authorizationNote", item.getAuthorizationNote());
 
                 orderItem.set("shipBeforeDate", item.getShipBeforeDate());
                 orderItem.set("shipAfterDate", item.getShipAfterDate());

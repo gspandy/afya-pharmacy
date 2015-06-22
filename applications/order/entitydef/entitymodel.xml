@@ -623,6 +623,9 @@
 		<field name="calculateOnGross" type="indicator"></field>
 		<field name="authorized" type="indicator"></field>
 		<field name="authorizationNumber" type="id"></field>
+		<field name="authorizationDate" type="date"></field>
+		<field name="authorizationAmount" type="fixed-point"></field>
+		<field name="authorizationNote" type="description"></field>
 		<field name="computeBy" type="id"></field>
 
 		<field name="unitPrice" type="currency-amount" enable-audit-log="true"></field>

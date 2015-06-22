@@ -140,6 +140,9 @@ public class ShoppingCartItem implements java.io.Serializable {
     private boolean homeService;
     private boolean authorized;
     private String authorizationNumber;
+    private Date authorizationDate;
+    private BigDecimal authorizationAmount;
+    private String authorizationNote;
 
 
     private BigDecimal copayAmount;
@@ -2535,6 +2538,32 @@ public class ShoppingCartItem implements java.io.Serializable {
 
     public void setAuthorizationNumber(String authorizationNumber) {
         this.authorizationNumber = authorizationNumber;
+    }
+
+    public Date getAuthorizationDate() {
+        return authorizationDate;
+    }
+
+    public void setAuthorizationDate(Date authorizationDate) {
+        this.authorizationDate = authorizationDate;
+    }
+
+
+    public BigDecimal getAuthorizationAmount() {
+        return authorizationAmount;
+    }
+
+    public void setAuthorizationAmount(BigDecimal authorizationAmount) {
+        this.authorizationAmount = authorizationAmount;
+    }
+
+
+    public String getAuthorizationNote() {
+        return authorizationNote;
+    }
+
+    public void setAuthorizationNote(String authorizationNote) {
+        this.authorizationNote = authorizationNote;
     }
 
     public static String getPurchaseOrderItemDescription(GenericValue product, GenericValue supplierProduct, Locale locale) {
