@@ -284,7 +284,7 @@ under the License.
 
                                                         <span class="label">Authorization Amount</span><font color="red"> *</font>
                                                         <input type="hidden" name="iacin_${orderItem.orderItemSeqId}" id="iacin_${orderItem.orderItemSeqId}" value="${copayInsurance?default(0.000)}" />
-                                                        <input type="text" size="15" maxlength="60" class="currency" style="text-align: right;padding-right: 3px;" name="iaamt_${orderItem.orderItemSeqId}" id="iaamt_${orderItem.orderItemSeqId}" value="<@ofbizAmount amount=copayInsurance?default(0.000)/>" onchange="javascript:validateAuthAmount(this)" class="required"/>
+                                                        <input type="text" size="15" maxlength="60" class="currency required" style="text-align: right;padding-right: 3px;" name="iaamt_${orderItem.orderItemSeqId}" id="iaamt_${orderItem.orderItemSeqId}" value="<@ofbizAmount amount=copayInsurance?default(0.000)/>" onchange="javascript:validateAuthAmount(this)"/>
                                                     </td>
                                                     <td id="iantt_${orderItem.orderItemSeqId}" style="display:none">
                                                         <span class="label">Note</span>
