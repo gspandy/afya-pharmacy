@@ -139,6 +139,9 @@ $(document).ready(function () {
                         $('#endDate').val(endDate);
                     } else if (attr == "benefits") {
                         var i = 0;
+                        $('#benefitPlanNameDropDown').empty();
+                        var option = $('<option></option>').val(null).text('');
+                        $('#benefitPlanNameDropDown').append(option);
                         for (; i < value.length; i++) {
                             var option = $('<option></option>').val(value[i]['benefitPlanId']).text(value[i]['benefitPlan']);
                             $('#benefitPlanNameDropDown').append(option);
