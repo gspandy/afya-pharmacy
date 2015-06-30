@@ -1389,7 +1389,7 @@ public class OrderServices {
 
         Set<String> serviceIds = orderItemAndServiceMapping.keySet();
 
-        String PORTAL_URL = UtilProperties.getPropertyValue("general.properties", "portal.server.url", "localhost:7878");
+        String PORTAL_URL = UtilProperties.getPropertyValue("general.properties", "portal.server.url", "5.9.249.197:7878");
         RestTemplate restTemplate = new RestTemplate();
         HttpHeaders headers = new HttpHeaders();
         List<MediaType> mediaTypes = new ArrayList<MediaType>();
