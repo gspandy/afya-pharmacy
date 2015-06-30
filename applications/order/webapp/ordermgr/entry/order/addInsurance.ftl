@@ -35,6 +35,18 @@ under the License.
       primaryMember_lookupField.style.display = '';
     }
   }
+  function validateInsuranceType(selection) {
+    var insuranceType = selection.value;
+    if(insuranceType == "GROUP") {
+      groupName_title_td.style.display = '';
+      groupName_selection_td.style.display = '';
+    }
+    if(insuranceType != "GROUP") {
+      groupName_title_td.style.display = 'none';
+      groupName_selection_td.style.display = 'none';
+      $('#groupName').empty();
+    }
+  }
 </script>
 <form name="addInsurance" id="addInsurance" method="post" action="<@ofbizUrl>addInsurance</@ofbizUrl>">
     <input type="hidden" name="patientId" id="patientId" value="${patientId}"/>
@@ -43,6 +55,27 @@ under the License.
     <input type="hidden" name="benefitPlanId" id="benefitPlanId"/>
     <input type="hidden" name="benefitPlanName" id="benefitPlanName"/>
     <table cellspacing="0" class="basic-table">
+      <tr>
+        <td class="label">
+          <span id="insuranceType_title">Insurance Type</span>
+        </td>
+        <td>
+          <span class="ui-widget">
+            <select name="insuranceType" id="insuranceType" size="1" onchange="javascript:validateInsuranceType(this);">
+              <option value="INDIVIDUAL">Individual</option>
+              <option value="GROUP" selected="selected">Group</option>
+            </select>
+          </span>
+        </td>
+        <td id="groupName_title_td" class="label">
+          <span id="groupName_title">Group</span><font color="red"> *</font>
+        </td>
+        <td id="groupName_selection_td">
+          <span class="ui-widget">
+            <select name="groupName" class="required" id="groupName" size="1"><option> </option></select>
+          </span>
+        </td>
+      </tr>
       <tr>
         <td class="label">
           <span id="memberType_title">Member Type</span>
@@ -90,11 +123,11 @@ under the License.
       </tr>
       <tr>
         <td class="label">
-          <span id="tpa_title">TPA</span>
+          <span id="policy_title">Policy</span><font color="red"> *</font>
         </td>
         <td>
           <span class="ui-widget">
-            <select name="tpa" id="tpa" size="1"><option> </option></select>
+            <select name="policy" class="required" id="policy" size="1"><option> </option></select>
           </span>
         </td>
         <td class="label">
@@ -106,11 +139,11 @@ under the License.
           </span>
         </td>
         <td class="label">
-          <span id="groupName_title">Group</span><font color="red"> *</font>
+          <span id="tpa_title">TPA</span>
         </td>
         <td>
           <span class="ui-widget">
-            <select name="groupName" class="required" id="groupName" size="1"><option> </option></select>
+            <select name="tpa" id="tpa" size="1"><option> </option></select>
           </span>
         </td>
       </tr>
@@ -130,19 +163,19 @@ under the License.
           </span>
         </td>
         <td class="label">
-          <span id="policyNo_title">Policy No</span>
-        </td>
-        <td>
-          <input type="text" readonly="true" name="policyNo" size="25" id="policyNo"/>
-        </td>
-      </tr>
-      <tr>
-        <td class="label">
           <span id="uHID_title">Membership ID</span><font color="red"> *</font>
         </td>
         <td>
           <input type="text" name="uHID" class="required" size="25" id="uHID"/>
         </td>
+        <#-- <td class="label">
+          <span id="policyNo_title">Policy No</span>
+        </td>
+        <td>
+          <input type="text" readonly="true" name="policyNo" size="25" id="policyNo"/>
+        </td> -->
+      </tr>
+      <tr>
         <td class="label">
           <span id="startDate_title">Start Date</span>
         </td>

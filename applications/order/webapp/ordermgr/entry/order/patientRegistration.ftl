@@ -20,13 +20,62 @@ under the License.
 <script language="JavaScript" type="text/javascript">
     function validateGender(selection) {
         var titleValue = selection.value;
-        
+
         if(titleValue == "Mr" || titleValue == "Sr")
             $("#gender").val("M");
         if(titleValue == "Ms" || titleValue == "Miss" || titleValue == "Mrs" || titleValue == "Sra")
             $("#gender").val("F");
         if(titleValue == "Dr" || titleValue == "")
             $("#gender").val("");
+    }
+    function validatePatientType(selection) {
+        var patientType = selection.value;
+
+        if(patientType == "CORPORATE") {
+            primaryPayer_title.style.display = '';
+            primaryPayer_selectionField.style.display = '';
+        }
+        if(patientType != "CORPORATE") {
+            primaryPayer_title.style.display = 'none';
+            primaryPayer_selectionField.style.display = 'none';
+            $("#primaryPayer").val("");
+            copay_title.style.display = 'none';
+            copay_textField.style.display = 'none';
+            $("#copay").val("");
+            copayType_title.style.display = 'none';
+            copayType_selectionField.style.display = 'none';
+            $("#copayType").val("");
+        }
+    }
+    function validatePrimaryPayer(selection) {
+        var primaryPayer = selection.value;
+
+        if(primaryPayer == "Corporate") {
+            //copay_title.style.display = '';
+            //copay_textField.style.display = '';
+            copayType_title.style.display = '';
+            copayType_selectionField.style.display = '';
+        }
+        if(primaryPayer != "Corporate") {
+            copay_title.style.display = 'none';
+            copay_textField.style.display = 'none';
+            $("#copay").val("");
+            copayType_title.style.display = 'none';
+            copayType_selectionField.style.display = 'none';
+            $("#copayType").val("");
+        }
+    }
+    function validateCopayType(selection) {
+        var copayType = selection.value;
+
+        if(copayType == "AMOUNT" || copayType == "PERCENT") {
+            copay_title.style.display = '';
+            copay_textField.style.display = '';
+        } else {
+            copay_title.style.display = 'none';
+            copay_textField.style.display = 'none';
+            $("#copay").val("");
+        }
     }
 </script>
   <form name="editPatientForm" id="editPatientForm" method="post" action="<@ofbizUrl>updatePatient</@ofbizUrl>" class="basic-form">
@@ -251,7 +300,7 @@ under the License.
             <td class="label"><span id="patientType_title">Patient Type</span><font color="red"> *</font></td>
             <td>
               <span class="ui-widget">
-                <select name="patientType" id="patientType" size="1" class="required">
+                <select name="patientType" id="patientType" size="1" class="required" onchange="javascript:validatePatientType(this);">
                   <#if patient.patientType?exists>
                     <#if "CASH" == patient.patientType>
                       <option selected="selected" value="${patient.patientType}">Cash</option>
@@ -268,6 +317,66 @@ under the License.
                 </select>
               </span>
             </td>
+            <#if patient?has_content && "CORPORATE" == patient.patientType>
+              <td id="primaryPayer_title" class="label"><span id="primaryPayer_title">Primary Payer</span><font color="red"> *</font></td>
+              <td id="primaryPayer_selectionField">
+                <span class="ui-widget">
+                  <select name="primaryPayer" id="primaryPayer" size="1" class="required" onchange="javascript:validatePrimaryPayer(this);">
+                    <#if patient.primaryPayer?exists>
+                      <#if "Corporate" == patient.primaryPayer>
+                        <option selected="selected" value="${patient.primaryPayer}">Corporate</option>
+                      <#elseif "Patient" == patient.primaryPayer>
+                        <option selected="selected" value="${patient.primaryPayer}">Patient</option>
+                      </#if>
+                      <option value="${patient.primaryPayer}">---</option>
+                    </#if>
+                    <option value="">&nbsp;</option>
+                    <option value="Corporate">Corporate</option>
+                    <option value="Patient">Patient</option>
+                  </select>
+                </span>
+              </td>
+              <#if patient.copayType?exists>
+                <td id="copayType_title" class="label"><span id="copayType_title">Copay Type</span></td>
+                <td id="copayType_selectionField">
+                  <span class="ui-widget">
+                    <select name="copayType" id="copayType" size="1" onchange="javascript:validateCopayType(this);">
+                      <#if patient.copayType?exists>
+                        <#if "AMOUNT" == patient.copayType>
+                          <option selected="selected" value="${patient.copayType}">AMOUNT</option>
+                        <#elseif "PERCENT" == patient.copayType>
+                          <option selected="selected" value="${patient.copayType}">PERCENT</option>
+                        </#if>
+                        <option value="${patient.copayType}">---</option>
+                      </#if>
+                      <option value="">&nbsp;</option>
+                      <option value="AMOUNT">AMOUNT</option>
+                      <option value="PERCENT">PERCENT</option>
+                    </select>
+                  </span>
+                </td>
+              <#else>
+                <td id="copayType_title" class="label" style="display:none;"><span id="copayType_title">Copay Type</span></td>
+                <td id="copayType_selectionField" style="display:none;">
+                  <span class="ui-widget">
+                    <select name="copayType" id="copayType" size="1" onchange="javascript:validateCopayType(this);">
+                      <option value="">&nbsp;</option>
+                      <option value="AMOUNT">AMOUNT</option>
+                      <option value="PERCENT">PERCENT</option>
+                    </select>
+                  </span>
+                </td>
+              </#if>
+              <#if patient.copay?exists>
+                <td id="copay_title" class="label"><span id="copay_title">Copay</span><font color="red"> *</font></td>
+                <td id="copay_textField"><input type="text" name="copay" id="copay" size="8" class="currency required" value="${patient.copay?if_exists}"/></td>
+              <#else>
+                <td id="copay_title" class="label" style="display:none;"><span id="copay_title">Copay</span><font color="red"> *</font></td>
+                <td id="copay_textField" style="display:none;"><input type="text" name="copay" id="copay" size="8" class="currency required"/></td>
+              </#if>
+            </#if>
+          </tr>
+          <tr>
             <td class="label">
               <span id="isStaff_title">Staff</span>
             </td>
@@ -376,7 +485,7 @@ under the License.
 <script language="JavaScript" type="text/javascript">
     function validate(selection) {
         var selectionType = selection.value;
-        
+
         if(selectionType == "CIVIL_ID") {
             //civilId_title.style.display = '';
             civilId_textfield.style.display = '';
@@ -396,13 +505,62 @@ under the License.
     }
     function validateGender(selection) {
         var titleValue = selection.value;
-        
+
         if(titleValue == "Mr" || titleValue == "Sr")
             $("#gender").val("M");
         if(titleValue == "Ms" || titleValue == "Miss" || titleValue == "Mrs" || titleValue == "Sra")
             $("#gender").val("F");
         if(titleValue == "Dr" || titleValue == "")
             $("#gender").val("");
+    }
+    function validatePatientType(selection) {
+        var patientType = selection.value;
+
+        if(patientType == "CORPORATE") {
+            primaryPayer_title.style.display = '';
+            primaryPayer_selectionField.style.display = '';
+        }
+        if(patientType != "CORPORATE") {
+            primaryPayer_title.style.display = 'none';
+            primaryPayer_selectionField.style.display = 'none';
+            $("#primaryPayer").val("");
+            copay_title.style.display = 'none';
+            copay_textField.style.display = 'none';
+            $("#copay").val("");
+            copayType_title.style.display = 'none';
+            copayType_selectionField.style.display = 'none';
+            $("#copayType").val("");
+        }
+    }
+    function validatePrimaryPayer(selection) {
+        var primaryPayer = selection.value;
+
+        if(primaryPayer == "Corporate") {
+            //copay_title.style.display = '';
+            //copay_textField.style.display = '';
+            copayType_title.style.display = '';
+            copayType_selectionField.style.display = '';
+        }
+        if(primaryPayer != "Corporate") {
+            copay_title.style.display = 'none';
+            copay_textField.style.display = 'none';
+            $("#copay").val("");
+            copayType_title.style.display = 'none';
+            copayType_selectionField.style.display = 'none';
+            $("#copayType").val("");
+        }
+    }
+    function validateCopayType(selection) {
+        var copayType = selection.value;
+
+        if(copayType == "AMOUNT" || copayType == "PERCENT") {
+            copay_title.style.display = '';
+            copay_textField.style.display = '';
+        } else {
+            copay_title.style.display = 'none';
+            copay_textField.style.display = 'none';
+            $("#copay").val("");
+        }
     }
 </script>
   <form name="patientRegistrationForm" id="patientRegistrationForm" method="post" action="<@ofbizUrl>registerPatient</@ofbizUrl>" class="basic-form">
@@ -537,13 +695,37 @@ under the License.
             <td class="label"><span id="patientType_title">Patient Type</span><font color="red"> *</font></td>
             <td>
               <span class="ui-widget">
-                <select name="patientType" id="patientType" size="1" class="required">
+                <select name="patientType" id="patientType" size="1" class="required" onchange="javascript:validatePatientType(this);">
                   <option value="CASH">Cash</option>
                   <option value="INSURANCE">Insurance</option>
                   <option value="CORPORATE">Corporate</option>
                 </select>
               </span>
             </td>
+            <td id="primaryPayer_title" class="label" style="display:none;"><span id="primaryPayer_title">Primary Payer</span><font color="red"> *</font></td>
+            <td id="primaryPayer_selectionField" style="display:none;">
+              <span class="ui-widget">
+                <select name="primaryPayer" id="primaryPayer" size="1" class="required" onchange="javascript:validatePrimaryPayer(this);">
+                  <option value="">&nbsp;</option>
+                  <option value="Corporate">Corporate</option>
+                  <option value="Patient">Patient</option>
+                </select>
+              </span>
+            </td>
+            <td id="copayType_title" class="label" style="display:none;"><span id="copayType_title">Copay Type</span></td>
+            <td id="copayType_selectionField" style="display:none;">
+              <span class="ui-widget">
+                <select name="copayType" id="copayType" size="1" onchange="javascript:validateCopayType(this);">
+                  <option value="">&nbsp;</option>
+                  <option value="AMOUNT">AMOUNT</option>
+                  <option value="PERCENT">PERCENT</option>
+                </select>
+              </span>
+            </td>
+            <td id="copay_title" class="label" style="display:none;"><span id="copay_title">Copay</span><font color="red"> *</font></td>
+            <td id="copay_textField" style="display:none"><input type="text" name="copay" id="copay" size="8" class="currency required"/></td>
+          </tr>
+          <tr>
             <td class="label">
               <span id="isStaff_title">Staff</span>
             </td>

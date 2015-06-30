@@ -101,6 +101,27 @@ public class AfyaSalesOrderController {
             patientInfo.setModuleName(prescription.getModuleName());
             patientInfo.setBenefitId(prescription.getBenefitId());
             patientInfo.setIsOrderApproved(prescription.getIsOrderApproved());
+            /*if(prescription.getCopay() != null)
+                patientInfo.setCopay(prescription.getCopay());
+            patientInfo.setCopayType(prescription.getCopayType());
+            patientInfo.setPrimaryPayer(prescription.getPrimaryPayer());*/
+
+            patientInfo.setCopay(BigDecimal.TEN);
+            patientInfo.setCopayType("PERCENT");
+            patientInfo.setPrimaryPayer("Corporate");
+
+            /*patientInfo.setCopay(BigDecimal.TEN);
+            patientInfo.setCopayType("AMOUNT");
+            patientInfo.setPrimaryPayer("Corporate");*/
+
+            /*patientInfo.setCopay(null);
+            patientInfo.setCopayType(null);
+            patientInfo.setPrimaryPayer("Corporate");*/
+
+            /*patientInfo.setCopay(null);
+            patientInfo.setCopayType(null);
+            patientInfo.setPrimaryPayer("Patient");*/
+
             cart.setPatientInfo(patientInfo);
             CheckOutHelper checkOutHelper = new CheckOutHelper(dispatcher, dispatcher.getDelegator(), cart);
             java.util.Map orderCreate = checkOutHelper.createOrder(userLogin);
@@ -290,6 +311,9 @@ public class AfyaSalesOrderController {
         private String moduleName;
         private String benefitId;
         private String isOrderApproved;
+        private BigDecimal copay;
+        private String copayType;
+        private String primaryPayer;
 
         public String getAddress() {
             return address;
@@ -446,7 +470,31 @@ public class AfyaSalesOrderController {
             this.isOrderApproved = isOrderApproved;
         }
 
-        @Override
+        public BigDecimal getCopay() {
+			return copay;
+		}
+
+		public void setCopay(BigDecimal copay) {
+			this.copay = copay;
+		}
+
+		public String getCopayType() {
+			return copayType;
+		}
+
+		public void setCopayType(String copayType) {
+			this.copayType = copayType;
+		}
+
+		public String getPrimaryPayer() {
+			return primaryPayer;
+		}
+
+		public void setPrimaryPayer(String primaryPayer) {
+			this.primaryPayer = primaryPayer;
+		}
+
+		@Override
         public String toString() {
             return "Prescription{" +
                     "clinicId='" + clinicId + '\'' +

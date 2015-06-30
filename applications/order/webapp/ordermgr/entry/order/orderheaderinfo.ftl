@@ -106,7 +106,7 @@ under the License.
             <tr><td colspan="7"><hr /></td></tr>
         </#if>
         
-        <#-- Order Date -->   
+        <#-- Order Date -->
         <#if (cart.getOrderDate()?has_content && !cart.getPatientInfo()?has_content)>
             <tr>
                 <td align="right" valign="top" width="15%">
@@ -250,7 +250,53 @@ under the License.
                         <td width="1%">&nbsp;</td>
                         <td valign="top" width="20%">${cart.getPatientInfo().getPatientType()?if_exists}</td>
                     </tr>
-                    <#if "INSURANCE" == cart.getPatientInfo().getPatientType()>
+                    <#if "CORPORATE" == cart.getPatientInfo().getPatientType()>
+                        <tr>
+                            <td align="right" valign="top" width="10%"><span id="primaryPayer_title"><b> Primary Payer :</b> </span></td>
+                            <td width="1%">&nbsp;</td>
+                            <td valign="top" width="20%">
+                                <#if cart.getPatientInfo().getPrimaryPayer()?has_content>
+                                    ${cart.getPatientInfo().getPrimaryPayer()?if_exists}
+                                <#else>
+                                    &#160;&#32;
+                                </#if>
+                            </td>
+                            <td align="right" valign="top" width="10%"><span id="copay_title"><b> Copay :</b> </span></td>
+                            <td width="1%">&nbsp;</td>
+                            <td valign="top" width="20%">
+                                <#if cart.getPatientInfo().getCopay()?has_content>
+                                    ${cart.getPatientInfo().getCopay()?if_exists}
+                                <#else>
+                                    &#160;&#32;
+                                </#if>
+                            </td>
+                            <td align="right" valign="top" width="10%"><span id="copay_title"><b> Copay Type :</b> </span></td>
+                            <td width="1%">&nbsp;</td>
+                            <td valign="top" width="20%">
+                                <#if cart.getPatientInfo().getCopayType()?has_content>
+                                    ${cart.getPatientInfo().getCopayType()?if_exists}
+                                <#else>
+                                    &#160;&#32;
+                                </#if>
+                            </td>
+                        </tr>
+                        <tr>
+                            <#-- Order Date -->
+                            <#if (cart.getOrderDate()?has_content)>
+                                <td align="right" valign="top" width="10%><span>&nbsp;<b>Order Date :</b> </span></td>
+                                <td width="1">&nbsp;</td>
+                                <td valign="top" width="20%">
+                                    ${cart.getOrderDate()?if_exists?string("dd/MM/yyyy")}
+                                </td>
+                            <#else>
+                                <td align="right" valign="top" width="10%"><span>&nbsp;<b>Order Date :</b> </span></td>
+                                <td width="1">&nbsp;</td>
+                                <td valign="top" width="20%">
+                                    ${nowTimestamp?string("dd/MM/yyyy")}
+                                </td>
+                            </#if>
+                        </tr>
+                    <#elseif "INSURANCE" == cart.getPatientInfo().getPatientType()>
                         <tr>
                             <td align="right" valign="top" width="10%"><span id="patientType_title"><b> Insurance :</b> </span></td>
                             <td width="1%">&nbsp;</td>
@@ -282,7 +328,7 @@ under the License.
                                     &#160;&#32;
                                 </#if>
                             </td>
-                            <#-- Order Date -->   
+                            <#-- Order Date -->
                             <#if (cart.getOrderDate()?has_content)>
                                 <td align="right" valign="top" width="10%><span>&nbsp;<b>Order Date :</b> </span></td>
                                 <td width="1">&nbsp;</td>
@@ -298,7 +344,7 @@ under the License.
                             </#if>
                         </tr>
                     <#else>
-                        <#-- Order Date -->   
+                        <#-- Order Date -->
                             <#if (cart.getOrderDate()?has_content)>
                                 <td align="right" valign="top" width="10%><span>&nbsp;<b>Order Date :</b> </span></td>
                                 <td width="1">&nbsp;</td>

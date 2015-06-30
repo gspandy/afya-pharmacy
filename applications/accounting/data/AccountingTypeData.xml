@@ -722,7 +722,7 @@
     <PaymentMethodType description="Check" paymentMethodTypeId="COMPANY_CHECK"/>
     <PaymentMethodType description="Cash" paymentMethodTypeId="CASH"/>
     <PaymentMethodType description="Credit Card" paymentMethodTypeId="CREDIT_CARD"/>
-    <PaymentMethodType description="Corporate" paymentMethodTypeId="COPORATE"/>
+    <PaymentMethodType description="Corporate" paymentMethodTypeId="CORPORATE"/>
     <PaymentMethodType description="Insurance" paymentMethodTypeId="INSURANCE"/>
     <PaymentMethodType description="Patient" paymentMethodTypeId="PATIENT"/>
 

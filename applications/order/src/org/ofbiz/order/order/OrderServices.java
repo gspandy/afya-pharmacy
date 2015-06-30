@@ -1189,9 +1189,51 @@ public class OrderServices {
                         "hisBenefitId", patientInfo.getHisBenefitId(),
                         "healthPolicyId", patientInfo.getHealthPolicyId(),
                         "moduleId", patientInfo.getModuleId(),
-                        "moduleName", patientInfo.getModuleName());
+                        "moduleName", patientInfo.getModuleName(),
+                        "copay", patientInfo.getCopay(),
+                        "copayType", patientInfo.getCopayType(),
+                        "primaryPayer", patientInfo.getPrimaryPayer());
                 GenericValue genericValue = delegator.makeValidValue("OrderRxHeader", presciptionData);
                 toBeStored.add(genericValue);
+
+                if ("CORPORATE".equals(patientInfo.getPatientType())) {
+
+                    // check to make sure we have something to order
+                    /*List<GenericValue> orderItemsList = null;
+                    EntityConditionList<EntityExpr> condition = EntityCondition.makeCondition(UtilMisc.toList(
+                            EntityCondition.makeCondition("orderId", orderId),
+                            EntityCondition.makeCondition("statusId", EntityOperator.IN, UtilMisc.toList("ITEM_CREATED","ITEM_APPROVED"))),
+                            EntityOperator.AND);
+
+                    orderItemsList = delegator.findList("OrderItem", condition, null, null, null, false);*/
+
+                    if(UtilValidate.isNotEmpty(orderItems)) {
+                        /*set the order items*/
+                        //Iterator orderItemsItr = orderItemsList.iterator();
+                        Iterator orderItemsItr = orderItems.iterator();
+                        if ("Corporate".equals(patientInfo.getPrimaryPayer()) && patientInfo.getCopay() != null && "AMOUNT".equals(patientInfo.getCopayType())) {
+                            boolean copayApplied = false;
+                            while (orderItemsItr.hasNext()) {
+                                GenericValue orderItem = (GenericValue) orderItemsItr.next();
+                                //BigDecimal copayAmount = patientInfo.getCopay();
+                                if (!copayApplied) {
+                                    orderItem.set("copayAmount", patientInfo.getCopay());
+                                    System.out.println("\n\n\n\n\n\n Copay Amount Applied = " + orderItem.get("copayAmount") + "\n\n\n\n\n\n");
+                                    copayApplied = true;
+                                }
+                            }
+                        } else if ("Corporate".equals(patientInfo.getPrimaryPayer()) && patientInfo.getCopay() != null && "PERCENT".equals(patientInfo.getCopayType())) {
+                            while (orderItemsItr.hasNext()) {
+                                GenericValue orderItem = (GenericValue) orderItemsItr.next();
+                                //BigDecimal copayPercentage = patientInfo.getCopay();
+                                orderItem.set("copayPercentage", patientInfo.getCopay());
+                                System.out.println("\n\n\n\n\n\n Copay Percentage Applied = " + orderItem.get("copayPercentage") + "\n\n\n\n\n\n");
+                            }
+                        } else
+                            System.out.println("\n\n\n\n\n\n Either Corporate Or Patient Completely Payable in Corporate Scenario!!! \n\n\n\n\n\n");
+                    }
+
+                }
 
                 if ("INSURANCE".equals(patientInfo.getPatientType())) {
                     Copayment copayment = getDeductibleAndCopayForProductCategories(delegator, patientInfo, orderItemAndServiceMapping);
@@ -1257,7 +1299,7 @@ public class OrderServices {
 
             if (context.get("grandTotal") != null && "SALES_ORDER".equals(orderTypeId)) {
                 BigDecimal grandTotal = (BigDecimal) context.get("grandTotal");
-                List result = createOrderPaymentPreferences(delegator, orderItems.iterator(), orderId, patientInfo == null ? "CASH" : patientInfo.getPatientType(), grandTotal);
+                List result = createOrderPaymentPreferences(delegator, orderItems.iterator(), orderId, patientInfo == null ? "CASH" : patientInfo.getPatientType(), patientInfo == null ? "CASH" : patientInfo.getPrimaryPayer(), grandTotal);
                 toBeStored.addAll(result);
             }
 
@@ -1287,14 +1329,14 @@ public class OrderServices {
         return successResult;
     }
 
-    private static List createOrderPaymentPreferences(Delegator delegator, Iterator orderItemIter, String orderId, String patientType, BigDecimal grandTotal) {
+    private static List createOrderPaymentPreferences(Delegator delegator, Iterator orderItemIter, String orderId, String patientType, String primaryPayer, BigDecimal grandTotal) {
         BigDecimal patientToPay = BigDecimal.ZERO;
         List toBeStored = new ArrayList();
         while (orderItemIter.hasNext()) {
             GenericValue orderItem = (GenericValue) orderItemIter.next();
             BigDecimal lineTotal = orderItem.getBigDecimal("quantity").setScale(OrderServices.orderDecimals, OrderServices.orderRounding).multiply(orderItem.getBigDecimal("unitPrice"));
-            BigDecimal copayAmount = orderItem.getBigDecimal("copayAmount");
-            BigDecimal copayPercentage = orderItem.getBigDecimal("copayPercentage"),
+            BigDecimal copayAmount = orderItem.getBigDecimal("copayAmount"),
+                    copayPercentage = orderItem.getBigDecimal("copayPercentage"),
                     deductibleAmount = orderItem.getBigDecimal("deductibleAmount"),
                     deductiblePercentage = orderItem.getBigDecimal("deductiblePercentage");
 
@@ -1311,6 +1353,9 @@ public class OrderServices {
                 }
                 patientToPay = patientToPay.add(copayAmount);
                 patientToPay = patientToPay.add(lineTotal.multiply(copayPercentage).setScale(orderDecimals, orderRounding).divide(new BigDecimal(100)).setScale(orderDecimals, orderRounding));
+            } else if ("CORPORATE".equals(patientType) && primaryPayer != null && "Corporate".equals(primaryPayer) && (copayAmount != null || copayPercentage != null)) {
+                patientToPay = patientToPay.add(copayAmount == null ? BigDecimal.ZERO : copayAmount);
+                patientToPay = patientToPay.add(lineTotal.multiply(copayPercentage == null ? BigDecimal.ZERO : copayPercentage).setScale(orderDecimals, orderRounding).divide(new BigDecimal(100)).setScale(orderDecimals, orderRounding));
             } else {
                 patientToPay = patientToPay.add(lineTotal);
             }
@@ -1322,20 +1367,21 @@ public class OrderServices {
         }
         String paymentPrefId = delegator.getNextSeqId("OrderPaymentPreference");
         Map paymentPreference = UtilMisc.toMap("orderId", orderId, "orderPaymentPreferenceId", paymentPrefId,
-                "paymentMethodTypeId", "INSURANCE".equals(patientType) ? "PATIENT" : patientType,
+                "paymentMethodTypeId", "INSURANCE".equals(patientType) || "CORPORATE".equals(patientType) ? "PATIENT" : patientType,
                 "maxAmount", patientToPay, "statusId", "PAYMENT_NOT_RECEIVED");
         GenericValue genericValue = delegator.makeValidValue("OrderPaymentPreference", paymentPreference);
         toBeStored.add(genericValue);
 
         BigDecimal remainingAmount = grandTotal.subtract(patientToPay).setScale(orderDecimals, orderRounding);
-        if (remainingAmount.compareTo(BigDecimal.ZERO) == 1 || "INSURANCE".equals(patientType)) {
+        if (remainingAmount.compareTo(BigDecimal.ZERO) == 1 || "INSURANCE".equals(patientType) || ("CORPORATE".equals(patientType) && primaryPayer != null && "Corporate".equals(primaryPayer))) {
             paymentPrefId = delegator.getNextSeqId("OrderPaymentPreference");
             paymentPreference = UtilMisc.toMap("orderId", orderId, "orderPaymentPreferenceId", paymentPrefId,
-                    "paymentMethodTypeId", "INSURANCE",
+                    "paymentMethodTypeId", "CORPORATE".equals(patientType) ? "CORPORATE" : "INSURANCE",
                     "maxAmount", remainingAmount, "statusId", "PAYMENT_NOT_RECEIVED");
             genericValue = delegator.makeValidValue("OrderPaymentPreference", paymentPreference);
             toBeStored.add(genericValue);
         }
+
         return toBeStored;
     }
 
@@ -1343,7 +1389,7 @@ public class OrderServices {
 
         Set<String> serviceIds = orderItemAndServiceMapping.keySet();
 
-        String PORTAL_URL = UtilProperties.getPropertyValue("general.properties", "portal.server.url", "5.9.249.197:7878");
+        String PORTAL_URL = UtilProperties.getPropertyValue("general.properties", "portal.server.url", "localhost:7878");
         RestTemplate restTemplate = new RestTemplate();
         HttpHeaders headers = new HttpHeaders();
         List<MediaType> mediaTypes = new ArrayList<MediaType>();
@@ -2527,6 +2573,58 @@ public class OrderServices {
         }
 
         GenericValue orderRxHeader = delegator.findOne("OrderRxHeader", UtilMisc.toMap("orderId", orderId), false);
+
+        if("CORPORATE".equalsIgnoreCase(orderRxHeader.getString("patientType"))) {
+            String afyaId = orderRxHeader.getString("afyaId");
+            String firstName = orderRxHeader.getString("firstName");
+            String thirdName = orderRxHeader.getString("thirdName");
+            Date dob = ((Date) orderRxHeader.get("dateOfBirth"));
+            String hisBenefitId = orderRxHeader.getString("hisBenefitId");
+            String benefitPlanId = orderRxHeader.getString("benefitPlanId");
+            String moduleName = orderRxHeader.getString("moduleName");
+            BigDecimal copay = orderRxHeader.getBigDecimal("copay");
+            String copayType = orderRxHeader.getString("copayType");
+            String primaryPayer = orderRxHeader.getString("primaryPayer");
+
+            // check to make sure we have something to order
+            List<GenericValue> orderItemsList = null;
+            EntityConditionList<EntityExpr> condition = EntityCondition.makeCondition(UtilMisc.toList(
+                    EntityCondition.makeCondition("orderId", orderId),
+                    EntityCondition.makeCondition("statusId", EntityOperator.IN, UtilMisc.toList("ITEM_CREATED","ITEM_APPROVED"))),
+                    EntityOperator.AND);
+
+            orderItemsList = delegator.findList("OrderItem", condition, null, null, null, false);
+
+            if(UtilValidate.isNotEmpty(orderItemsList)) {
+                // set the order items
+                Iterator orderItemsItr = orderItemsList.iterator();
+                if ("Corporate".equals(orderRxHeader.getString("primaryPayer")) && orderRxHeader.getBigDecimal("copay") != null && "AMOUNT".equals(orderRxHeader.getString("copayType"))) {
+                    boolean copayApplied = false;
+                    while (orderItemsItr.hasNext()) {
+                        GenericValue orderItem = (GenericValue) orderItemsItr.next();
+                        BigDecimal copayAmount = orderRxHeader.getBigDecimal("copay");
+                        //Override Copay Amount
+                        if (!copayApplied) {
+                            orderItem.set("copayAmount", copayAmount);
+                            System.out.println(" Copay Amount Applied = " + orderItem.get("copayAmount"));
+                            copayApplied = true;
+                        }
+                        delegator.store(orderItem);
+                    }
+                } else if ("Corporate".equals(orderRxHeader.getString("primaryPayer")) && orderRxHeader.getBigDecimal("copay") != null && "PERCENT".equals(orderRxHeader.getString("copayType"))) {
+                    while (orderItemsItr.hasNext()) {
+                        GenericValue orderItem = (GenericValue) orderItemsItr.next();
+                        BigDecimal copayPercentage = orderRxHeader.getBigDecimal("copay");
+                        //Override Copay Percentage
+                        orderItem.set("copayPercentage", copayPercentage);
+                        System.out.println(" Copay Percentage Applied = " + orderItem.get("copayPercentage"));
+                    }
+                } else
+                    System.out.println("\n\n\n\n\n\n Either Corporate Or Patient Completely Payable in Corporate Scenario!!! \n\n\n\n\n\n");
+            }
+
+        }
+
         if("INSURANCE".equalsIgnoreCase(orderRxHeader.getString("patientType"))) {
             String afyaId = orderRxHeader.getString("afyaId");
             String firstName = orderRxHeader.getString("firstName");

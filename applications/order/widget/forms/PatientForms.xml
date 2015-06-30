@@ -149,7 +149,7 @@
         <field use-when="${'CASH' == patient.patientType}" name="address1" parameter-name="address" position="2">
             <display/>
         </field>
-        <field name="address1" parameter-name="address">
+        <field name="address1" parameter-name="address" position="1">
             <display/>
         </field>
         <field name="city" position="2">
@@ -160,6 +160,15 @@
         </field>
         <field name="country" position="1">
             <display-entity entity-name="Geo" description="${geoName}" key-field-name="geoId"></display-entity>
+        </field>
+        <field use-when="${'CORPORATE' == patient.patientType}" name="primaryPayer" position="1">
+            <display/>
+        </field>
+        <field use-when="${'CORPORATE' == patient.patientType &amp;&amp; 'Corporate' == patient.primaryPayer}" name="copay" position="2">
+            <display type="accounting-number"/>
+        </field>
+        <field use-when="${'CORPORATE' == patient.patientType &amp;&amp; 'Corporate' == patient.primaryPayer}" name="copayType" position="3">
+            <display/>
         </field>
         <field name="submitButton" title="${uiLabelMap.CommonSubmit}"
                widget-style="btn btn-success">

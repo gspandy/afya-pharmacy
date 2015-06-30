@@ -3117,6 +3117,10 @@
 		<field name="doctorName" type="id-vlong-ne"></field>
 		<field name="address" type="text"></field>
 		<field name="clinicName" type="id-vlong-ne"></field>
+
+		<field name="copay" type="currency-amount"></field>
+		<field name="copayType" type="short-varchar"></field>
+		<field name="primaryPayer" type="short-varchar"></field>
 		<prim-key field="orderId" />
 	</entity>
 
@@ -3158,11 +3162,16 @@
 		<field name="passport" type="short-varchar"></field>
 		<field name="expiryDate" type="date"></field>
 		<field name="selectionType" type="short-varchar"></field>
+
+		<field name="copay" type="currency-amount"></field>
+		<field name="copayType" type="short-varchar"></field>
+		<field name="primaryPayer" type="short-varchar"></field>
 		<prim-key field="patientId" />
 	</entity>
 
 	<entity entity-name="PatientInsurance" package-name="org.ofbiz.order.order" title="Patient Details">
 		<field name="patientId" type="id"/>
+		<field name="insuranceType" type="short-varchar"></field>
 		<field name="memberType" type="short-varchar"></field>
 		<field name="relationship" type="short-varchar"></field>
 		<field name="groupName" type="short-varchar"></field>

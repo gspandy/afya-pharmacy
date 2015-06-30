@@ -1257,7 +1257,7 @@ public class CheckOutHelper {
 				EntityCondition.makeCondition("paymentMethodTypeId", EntityOperator.EQUALS, "CASH PAYING"),
 				EntityCondition.makeCondition("paymentMethodTypeId", EntityOperator.EQUALS, "INSURANCE"),
 				EntityCondition.makeCondition("paymentMethodTypeId", EntityOperator.EQUALS, "PATIENT"),
-				EntityCondition.makeCondition("paymentMethodTypeId", EntityOperator.EQUALS, "COPORATE"),
+				EntityCondition.makeCondition("paymentMethodTypeId", EntityOperator.EQUALS, "CORPORATE"),
 				EntityCondition.makeCondition("paymentMethodTypeId", EntityOperator.EQUALS, "EXT_COD"),
 				EntityCondition.makeCondition("paymentMethodTypeId", EntityOperator.EQUALS, "PERSONAL_CHECK"),
 				EntityCondition.makeCondition("paymentMethodTypeId", EntityOperator.EQUALS, "EXT_BILLACT"));

@@ -70,7 +70,20 @@ under the License.
                 <td width="19%"><span class="label">Patient Type</span></td>
                 <td width="1%">&nbsp;</td>
                 <td width="30%">${orderRxHeader.patientType?if_exists}</td>
+                <#if orderRxHeader.patientType?exists && "CORPORATE" == orderRxHeader.patientType && orderRxHeader.primaryPayer?exists>
+                    <td width="19%"><span class="label">Primary Payer</span></td>
+                    <td width="1%">&nbsp;</td>
+                    <td width="30%">${orderRxHeader.primaryPayer?if_exists}</td>
+                </#if>
             </tr>
+            <#if orderRxHeader.patientType?exists && "CORPORATE" == orderRxHeader.patientType && orderRxHeader.primaryPayer?exists && "Corporate" == orderRxHeader.primaryPayer && orderRxHeader.copay?exists>
+                <td width="19%"><span class="label">Copay</span></td>
+                <td width="1%">&nbsp;</td>
+                <td width="30%">${orderRxHeader.copay?if_exists}</td>
+                <td width="19%"><span class="label">Copay Type</span></td>
+                <td width="1%">&nbsp;</td>
+                <td width="30%">${orderRxHeader.copayType?if_exists}</td>
+            </#if>
             <#if benefitPlanName?has_content && orderRxHeader.patientType?exists && "INSURANCE" == orderRxHeader.patientType>
                 <tr>
                     <td width="19%"><span class="label">Patient Insurance</span></td>

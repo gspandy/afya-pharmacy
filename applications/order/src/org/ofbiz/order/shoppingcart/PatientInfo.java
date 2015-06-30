@@ -2,6 +2,7 @@ package org.ofbiz.order.shoppingcart;
 
 import javax.servlet.http.HttpServletRequest;
 
+import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -34,6 +35,9 @@ public class PatientInfo {
     private String moduleId;
     private String moduleName;
     private String isOrderApproved;
+    private BigDecimal copay;
+    private String copayType;
+    private String primaryPayer;
 
     PatientInfo(HttpServletRequest request) throws ParseException {
         String dob = request.getParameter("dateOfBirth");
@@ -58,6 +62,10 @@ public class PatientInfo {
         this.moduleId=request.getParameter("moduleId");
         this.moduleName=request.getParameter("moduleName");
         this.isOrderApproved=request.getParameter("isOrderApproved");
+        if (request.getParameter("copay") != null)
+            this.copay=new BigDecimal(request.getParameter("copay"));
+        this.copayType=request.getParameter("copayType");
+        this.primaryPayer=request.getParameter("primaryPayer");
     }
 
     public PatientInfo() {
@@ -246,6 +254,30 @@ public class PatientInfo {
 
 	public void setIsOrderApproved(String isOrderApproved) {
 		this.isOrderApproved = isOrderApproved;
+	}
+
+    public BigDecimal getCopay() {
+		return copay;
+	}
+
+	public void setCopay(BigDecimal copay) {
+		this.copay = copay;
+	}
+
+	public String getCopayType() {
+		return copayType;
+	}
+
+	public void setCopayType(String copayType) {
+		this.copayType = copayType;
+	}
+
+	public String getPrimaryPayer() {
+		return primaryPayer;
+	}
+
+	public void setPrimaryPayer(String primaryPayer) {
+		this.primaryPayer = primaryPayer;
 	}
 
 }
