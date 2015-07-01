@@ -101,14 +101,15 @@ public class AfyaSalesOrderController {
             patientInfo.setModuleName(prescription.getModuleName());
             patientInfo.setBenefitId(prescription.getBenefitId());
             patientInfo.setIsOrderApproved(prescription.getIsOrderApproved());
-            /*if(prescription.getCopay() != null)
-                patientInfo.setCopay(prescription.getCopay());
-            patientInfo.setCopayType(prescription.getCopayType());
-            patientInfo.setPrimaryPayer(prescription.getPrimaryPayer());*/
+            
+            if(prescription.getCorporateCopay() != null)
+                patientInfo.setCopay(prescription.getCorporateCopay());
+            patientInfo.setCopayType(prescription.getCorporateCopayType());
+            patientInfo.setPrimaryPayer(prescription.getCorporatePrimaryPayer());
 
-            patientInfo.setCopay(BigDecimal.TEN);
+            /*patientInfo.setCopay(BigDecimal.TEN);
             patientInfo.setCopayType("PERCENT");
-            patientInfo.setPrimaryPayer("Corporate");
+            patientInfo.setPrimaryPayer("Corporate");*/
 
             /*patientInfo.setCopay(BigDecimal.TEN);
             patientInfo.setCopayType("AMOUNT");
@@ -311,9 +312,9 @@ public class AfyaSalesOrderController {
         private String moduleName;
         private String benefitId;
         private String isOrderApproved;
-        private BigDecimal copay;
-        private String copayType;
-        private String primaryPayer;
+        private BigDecimal corporateCopay;
+        private String corporateCopayType;
+        private String corporatePrimaryPayer;
 
         public String getAddress() {
             return address;
@@ -470,28 +471,28 @@ public class AfyaSalesOrderController {
             this.isOrderApproved = isOrderApproved;
         }
 
-        public BigDecimal getCopay() {
-			return copay;
+		public BigDecimal getCorporateCopay() {
+			return corporateCopay;
 		}
 
-		public void setCopay(BigDecimal copay) {
-			this.copay = copay;
+		public void setCorporateCopay(BigDecimal corporateCopay) {
+			this.corporateCopay = corporateCopay;
 		}
 
-		public String getCopayType() {
-			return copayType;
+		public String getCorporateCopayType() {
+			return corporateCopayType;
 		}
 
-		public void setCopayType(String copayType) {
-			this.copayType = copayType;
+		public void setCorporateCopayType(String corporateCopayType) {
+			this.corporateCopayType = corporateCopayType;
 		}
 
-		public String getPrimaryPayer() {
-			return primaryPayer;
+		public String getCorporatePrimaryPayer() {
+			return corporatePrimaryPayer;
 		}
 
-		public void setPrimaryPayer(String primaryPayer) {
-			this.primaryPayer = primaryPayer;
+		public void setCorporatePrimaryPayer(String corporatePrimaryPayer) {
+			this.corporatePrimaryPayer = corporatePrimaryPayer;
 		}
 
 		@Override
