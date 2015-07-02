@@ -101,7 +101,7 @@ public class AfyaSalesOrderController {
             patientInfo.setModuleName(prescription.getModuleName());
             patientInfo.setBenefitId(prescription.getBenefitId());
             patientInfo.setIsOrderApproved(prescription.getIsOrderApproved());
-            
+
             if(prescription.getCorporateCopay() != null)
                 patientInfo.setCopay(prescription.getCorporateCopay());
             patientInfo.setCopayType(prescription.getCorporateCopayType());
@@ -471,29 +471,29 @@ public class AfyaSalesOrderController {
             this.isOrderApproved = isOrderApproved;
         }
 
-		public BigDecimal getCorporateCopay() {
-			return corporateCopay;
-		}
+        public BigDecimal getCorporateCopay() {
+            return corporateCopay;
+        }
 
-		public void setCorporateCopay(BigDecimal corporateCopay) {
-			this.corporateCopay = corporateCopay;
-		}
+        public void setCorporateCopay(BigDecimal corporateCopay) {
+            this.corporateCopay = corporateCopay;
+        }
 
-		public String getCorporateCopayType() {
-			return corporateCopayType;
-		}
+        public String getCorporateCopayType() {
+            return corporateCopayType;
+        }
 
-		public void setCorporateCopayType(String corporateCopayType) {
-			this.corporateCopayType = corporateCopayType;
-		}
+        public void setCorporateCopayType(String corporateCopayType) {
+            this.corporateCopayType = corporateCopayType;
+        }
 
-		public String getCorporatePrimaryPayer() {
-			return corporatePrimaryPayer;
-		}
+        public String getCorporatePrimaryPayer() {
+            return corporatePrimaryPayer;
+        }
 
-		public void setCorporatePrimaryPayer(String corporatePrimaryPayer) {
-			this.corporatePrimaryPayer = corporatePrimaryPayer;
-		}
+        public void setCorporatePrimaryPayer(String corporatePrimaryPayer) {
+            this.corporatePrimaryPayer = corporatePrimaryPayer;
+        }
 
 		@Override
         public String toString() {

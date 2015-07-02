@@ -164,10 +164,10 @@
         <field use-when="${'CORPORATE' == patient.patientType}" name="primaryPayer" position="1">
             <display/>
         </field>
-        <field use-when="${'CORPORATE' == patient.patientType &amp;&amp; 'Corporate' == patient.primaryPayer}" name="copay" position="2">
+        <field use-when="${'CORPORATE' == patient.patientType &amp;&amp; 'Corporate' == patient.primaryPayer &amp;&amp; patient.copay != null}" name="copay" position="2">
             <display type="accounting-number"/>
         </field>
-        <field use-when="${'CORPORATE' == patient.patientType &amp;&amp; 'Corporate' == patient.primaryPayer}" name="copayType" position="3">
+        <field use-when="${'CORPORATE' == patient.patientType &amp;&amp; 'Corporate' == patient.primaryPayer &amp;&amp; patient.copay != null}" name="copayType" position="3">
             <display/>
         </field>
         <field name="submitButton" title="${uiLabelMap.CommonSubmit}"
