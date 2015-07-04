@@ -68,7 +68,18 @@ $(document).ready(function () {
     $.getJSON('http://5.9.249.197:7878/afya-portal/anon/getAllNationality', function (data) {
         $.each(data, function (attr, value) {
             var option = $('<option></option>').val(value['nationality']).text(value['nationality']);
+            var nationality = value['nationality'];
+            if (nationality == "Kuwaiti") {
+                option.attr('selected', 'selected');
+            }
             $('#nationality').append(option);
+        });
+    });
+
+    $.getJSON('http://5.9.249.197:7878/afya-portal/anon/getAllNationality', function (data) {
+        $.each(data, function (attr, value) {
+            var option = $('<option></option>').val(value['nationality']).text(value['nationality']);
+            $('#citizenship').append(option);
         });
     });
 
