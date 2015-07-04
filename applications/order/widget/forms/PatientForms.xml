@@ -484,16 +484,16 @@
         <field name="healthPolicyName" title="Health Plan">
             <display/>
         </field>
-        <field name="benefitPlanName" widget-style="btn btn-link">
+        <field name="benefitPlanName" id-name="benefitPlanName" title="Benefit" widget-style="btn btn-link">
             <display/>
         </field>
         <field name="uHID" title="Membership ID">
             <display/>
         </field>
-        <field name="planName">
+        <field name="insuranceName" title="Payer Name">
             <display/>
         </field>
-        <field use-when="" name="editButton" id-name="remove" action="editPatient" title="Remove" widget-style="btn btn-mini btn-danger">
+        <field use-when="" name="editButton" id-name="remove" action="editPatient" title="${uiLabelMap.FormFieldTitle_actionEnumId}" widget-style="btn btn-mini btn-danger">
             <hyperlink target="removeInsurance" description="${uiLabelMap.CommonRemove}" also-hidden="false" id="removeInsurance">
                 <parameter param-name="healthPolicyId"/>
                 <parameter param-name="patientId"/>

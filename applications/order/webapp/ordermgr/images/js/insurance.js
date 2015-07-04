@@ -3,20 +3,71 @@
  */
 $(document).ready(function () {
 
-    $.getJSON('http://5.9.249.197:7878/afya-portal/anon/insuranceMaster/allTPAPayers', function (data) {
+    /*$.getJSON('http://5.9.249.197:7878/afya-portal/anon/insuranceMaster/allTPAPayers', function (data) {
         $.each(data, function (attr, value) {
             var option = $('<option></option>').val(value['payerId']).text(value['insuranceName']);
             $('#tpa').append(option);
         });
+    });*/
+
+    $('#insuranceType').change(function () {
+        $('#policy').empty();
+        var insuranceType = $(this).val();
+        if (insuranceType == "INDIVIDUAL") {
+            var option = $('<option></option>').val(null).text('');
+            $('#policy').append(option);
+            $.getJSON("http://5.9.249.197:7878/afya-portal/anon/insuranceMaster/getPolicyForIndividual",
+            function (data) {
+                $.each(data, function (attr, value) {
+                    var healthPolicyId = value['healthPolicyId'];
+                    var payerId = value['payerId'];
+                    var policyNo = value['policyNo'];
+                    var comma = ",";
+                    var policyAndPayerId = healthPolicyId+comma+payerId+comma+policyNo;
+                    //alert(policyAndPayerId);
+                    var option = $('<option></option>').val(policyAndPayerId).text(value['policyNo']);
+                    $('#policy').append(option);
+                });
+            });
+        }
+        if (insuranceType == "GROUP") {
+            $.getJSON("http://5.9.249.197:7878/afya-portal/anon/insuranceMaster/getAllGroups",
+            function (data) {
+                var option = $('<option></option>').val(null).text('');
+                $('#group').append(option);
+                $.each(data, function (attr, value) {
+                    var groupId = value['groupId'];
+                    var groupName = value['groupName'];
+                    var comma = ",";
+                    var group = groupId+comma+groupName;
+                    var option = $('<option></option>').val(group).text(value['groupName']);
+                    $('#group').append(option);
+                });
+            });
+        }
     });
 
-    $.getJSON("http://5.9.249.197:7878/afya-portal/anon/insuranceMaster/getInsuranceDetailsOfTpa",
+
+
+    $.getJSON("http://5.9.249.197:7878/afya-portal/anon/insuranceMaster/getAllGroups",
+            function (data) {
+                $.each(data, function (attr, value) {
+                    var groupId = value['groupId'];
+                    var groupName = value['groupName'];
+                    var comma = ",";
+                    var group = groupId+comma+groupName;
+                    var option = $('<option></option>').val(group).text(value['groupName']);
+                    $('#group').append(option);
+                });
+            });
+
+    /*$.getJSON("http://5.9.249.197:7878/afya-portal/anon/insuranceMaster/getInsuranceDetailsOfTpa",
         function (data) {
             $.each(data, function (attr, value) {
                 var option = $('<option></option>').val(value['payerId']).text(value['insuranceName']);
                 $('#insurances').append(option);
             });
-        });
+        });*/
 
     $.getJSON("http://5.9.249.197:7878/afya-portal/anon/insuranceMaster/getHISModules", function (data){
         $.each(data, function (attr, value) {
@@ -105,16 +156,175 @@ $(document).ready(function () {
     });
 
 
-    $('#groupName').change(function () {
-        var groupId = $(this).val(),
-        relationship = $('#relationship').val(),
-        gender = $('#gender').val();
+    $('#policy').change(function () {
+        var policyAndPayerId = $(this).val();
+        //alert("Inside Policy Function: "+policyAndPayerId);
+        var policy = policyAndPayerId.split(',');
+        var healthPolicyId = policy[0];
+        //alert("healthPolicyId= "+healthPolicyId);
+        var payerId = policy[1];
+        //alert("payerId= "+payerId);
+        var policyNo = policy[2];
+        //alert("policyNo= "+policyNo);
+        var relationship = $('#relationship').val();
+        var gender = $('#gender').val();
+        //alert("gender= "+gender);
+        if(relationship == "")
+            var dependent = "SELF";
+        else
+            var dependent = relationship;
+        //alert("dependent= "+dependent);
+
+        $('#policyNo').val(policyNo);
+
+        $.getJSON("http://5.9.249.197:7878/afya-portal/anon/insuranceMaster/getPayerById?payerId=" + payerId,
+        function (data) {
+            $.each(data, function (attr, value) {
+                var payerId = value['payerId'];
+                var payerType = value['payerType'];
+                var insuranceCode = value['insuranceCode'];
+                var insuranceName = value['insuranceName'];
+                if(data) {
+                    if (payerType == "INSURANCE") {
+                        $("#insurance").val(insuranceName);
+                        tpa_title.style.display = 'none';
+                        tpa_textField.style.display = 'none';
+                        $('#tpa').val("");
+
+                        $.getJSON("http://5.9.249.197:7878/afya-portal/anon/insuranceMaster/getPlanDetailsForPolicyId?policyId=" + healthPolicyId + "&dependent=" + dependent + "&gender=" + gender,
+                        function (data) {
+                            $.each(data, function (attr, value) {
+                                if (attr == "planStartDate") {
+                                    var input = value,
+                                        datePart = input.match(/\d+/g),
+                                        year = datePart[0],
+                                        month = datePart[1],
+                                        day = datePart[2],
+                                        startDate = day+'/'+month+'/'+year;
+                                        $('#startDate').val(startDate);
+                                } else if (attr == "planEndDate") {
+                                    var input = value,
+                                        datePart = input.match(/\d+/g),
+                                        year = datePart[0],
+                                        month = datePart[1],
+                                        day = datePart[2],
+                                        endDate = day+'/'+month+'/'+year;
+                                        $('#endDate').val(endDate);
+                                }
+                            });
+                            console.log(JSON.stringify(data));
+                            var benefitPlan = data['benefits'];
+                            var benefitPlanDetails = benefitPlan[0];
+                            $.each(benefitPlanDetails, function (attr, value) {
+                                if (attr == "benefitPlanId") {
+                                    $('#benefitPlanId').val(value);
+                                    if($('#benefitPlanIdLink').length==0) {
+                                        $('#healthPolicyName').parent().append("<span id='benefitPlanIdLink'><a href=javascript:void(0);>View Plan Details</a></span>");
+                                    }
+                                } else if (attr == "benefitPlan")
+                                    $('#benefitPlanName').val(value);
+                            });
+                            var healthPolicyDetails = data['healthPolicy'];
+                            $.each(healthPolicyDetails, function (attr, value) {
+                                if (attr == "healthPolicyId")
+                                    $('#healthPolicyId').val(value);
+                                else if (attr == "healthPolicyName")
+                                    $('#healthPolicyName').val(value);
+                            });
+                        });
+                    } else {
+                        $("#insurance").val(insuranceName);
+                        tpa_title.style.display = '';
+                        tpa_textField.style.display = '';
+                        $('#tpa').val(insuranceName);
+
+                        $.getJSON("http://5.9.249.197:7878/afya-portal/anon/insuranceMaster/getPlanDetailsForPolicyId?policyId=" + healthPolicyId + "&dependent=" + dependent + "&gender=" + gender,
+                        function (data) {
+                            $.each(data, function (attr, value) {
+                                if (attr == "planStartDate") {
+                                    var input = value,
+                                        datePart = input.match(/\d+/g),
+                                        year = datePart[0],
+                                        month = datePart[1],
+                                        day = datePart[2],
+                                        startDate = day+'/'+month+'/'+year;
+                                        $('#startDate').val(startDate);
+                                } else if (attr == "planEndDate") {
+                                    var input = value,
+                                        datePart = input.match(/\d+/g),
+                                        year = datePart[0],
+                                        month = datePart[1],
+                                        day = datePart[2],
+                                        endDate = day+'/'+month+'/'+year;
+                                        $('#endDate').val(endDate);
+                                }
+                            });
+                            console.log(JSON.stringify(data));
+                            var benefitPlan = data['benefits'];
+                            var benefitPlanDetails = benefitPlan[0];
+                            $.each(benefitPlanDetails, function (attr, value) {
+                                if (attr == "benefitPlanId") {
+                                    $('#benefitPlanId').val(value);
+                                    if($('#benefitPlanIdLink').length==0) {
+                                        $('#healthPolicyName').parent().append("<span id='benefitPlanIdLink'><a href=javascript:void(0);>View Plan Details</a></span>");
+                                    }
+                                } else if (attr == "benefitPlan")
+                                    $('#benefitPlanName').val(value);
+                            });
+                            var healthPolicyDetails = data['healthPolicy'];
+                            $.each(healthPolicyDetails, function (attr, value) {
+                                if (attr == "healthPolicyId")
+                                    $('#healthPolicyId').val(value);
+                                else if (attr == "healthPolicyName")
+                                    $('#healthPolicyName').val(value);
+                            });
+                        });
+                    }
+                }
+            });
+        });
+
+        /*$.getJSON("http://5.9.249.197:7878/afya-portal/anon/insuranceMaster/getHealthPolicyById?id=" + healthPolicyId,
+        function (data) {
+            $.each(data, function (attr, value) {
+                $('#healthPolicyName').val(value['policyName']);
+            });
+        });*/
+    });
+
+    $('#group').change(function () {
+        var group = $(this).val();
+        var splitGroup = group.split(',');
+        var groupId = splitGroup[0];
+        var groupName = splitGroup[1];
+        var relationship = $('#relationship').val();
+        var gender = $('#gender').val();
         if(relationship == "")
             var dependent = "SELF";
         else
             var dependent = relationship;
 
-        $.getJSON("http://5.9.249.197:7878/afya-portal/anon/insuranceMaster/getPlanDetailsForGroupId?groupId=" + groupId + "&dependent=" + dependent + "&gender=" + gender,
+        $('#groupId').val(groupId);
+        $('#groupName').val(groupName);
+
+        $.getJSON("http://5.9.249.197:7878/afya-portal/anon/insuranceMaster/getPolicyByGroupId?groupId=" + groupId,
+                function (data) {
+                    $('#policy').empty();
+                    var option = $('<option></option>').val(null).text('');
+                    $('#policy').append(option);
+                    $.each(data, function (attr, value) {
+                        var healthPolicyId = value['healthPolicyId'];
+                        var payerId = value['payerId'];
+                        var policyNo = value['policyNo'];
+                        var comma = ",";
+                        var policyAndPayerId = healthPolicyId+comma+payerId+comma+policyNo;
+                        //alert(policyAndPayerId);
+                        var option = $('<option></option>').val(policyAndPayerId).text(value['policyNo']);
+                        $('#policy').append(option);
+                    });
+                });
+
+        /*$.getJSON("http://5.9.249.197:7878/afya-portal/anon/insuranceMaster/getPlanDetailsForGroupId?groupId=" + groupId + "&dependent=" + dependent + "&gender=" + gender,
             function (data) {
                 $.each(data, function (attr, value) {
                     if (attr == "policyNumber") {
@@ -151,7 +361,7 @@ $(document).ready(function () {
                         $('#healthPolicyId').val(value['healthPolicyId']);
                     }
                 });
-            });
+            });*/
     });
 
     $('.insuranceList tr').bind('click', function (event){

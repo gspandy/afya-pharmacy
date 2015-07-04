@@ -55,8 +55,7 @@ under the License.
             //copay_textField.style.display = '';
             copayType_title.style.display = '';
             copayType_selectionField.style.display = '';
-        }
-        if(primaryPayer != "Corporate") {
+        } else {
             copay_title.style.display = 'none';
             copay_textField.style.display = 'none';
             $("#copay").val("");
@@ -80,21 +79,15 @@ under the License.
   </script>
   <form name="editPatientForm" id="editPatientForm" method="post" action="<@ofbizUrl>updatePatient</@ofbizUrl>" class="basic-form">
     <input type="hidden" name="patientId" id="patientId" value="${patientId}"/>
-    <div class="fieldgroup">
-      <div class="fieldgroup-title-bar"></div>
-      <div class="fieldgroup-body">
         <table cellspacing="0" class="basic-table">
           <tr>
             <#if "CIVIL_ID" == patient.selectionType>
-              <td class=""><span>&nbsp;</span></td>
               <td class="label" id="civilId_title"><span id="civilId_title">Civil ID</span></td>
               <td>
                 <input type="text" name="civilId" id="civilId" size="15" maxlength="12" class="civilidrange" value="${patient.civilId?if_exists}"/>
-                <span id="non_breakable_space">&#160;&#32;&#160;&#32;&#160;&#32;&#160;&#32;&#160;&#32;&#160;&#32;</span>
-                <span id="non_breakable_space">&#160;&#32;&#160;&#32;&#160;&#32;&#160;&#32;&#160;&#32;&#160;&#32;</span>
-                <span id="non_breakable_space">&#160;&#32;&#160;&#32;&#160;&#32;&#160;&#32;&#160;&#32;&#160;&#32;</span>
-                <span id="non_breakable_space">&#160;&#32;&#160;&#32;&#160;&#32;&#160;&#32;&#160;&#32;&#160;&#32;</span>
-                <span id="select_title"class="label">Afya ID</span>
+              </td>
+              <td id="select_title" class="label"><span id="select_title">Afya ID</span></td>
+              <td>
                 <input type="text" readonly="true" name="afyaId" id="state" size="15" value="${patient.afyaId?if_exists}"/>
               </td>
             </#if>
@@ -102,36 +95,30 @@ under the License.
               <td class="label" id="passport_title"><span id="passport_title">Passport &#47; VISA</span></td>
               <td>
                 <input type="text" name="passport" id="passport" size="20" value="${patient.passport?if_exists}"/>
-                <span id="non_breakable_space">&#160;&#32;&#160;&#32;&#160;&#32;&#160;&#32;&#160;&#32;</span>
-                <span id="non_breakable_space">&#160;&#32;&#160;&#32;&#160;&#32;&#160;&#32;&#160;&#32;</span>
-                <span id="expiryDate_title" class="label">Expiry Date</span>
-                <#if patient.expiryDate?exists>
+              </td>
+              <td id="expiryDate_title" class="label"><span id="expiryDate_title">Expiry Date</span></td>
+              <#if patient.expiryDate?exists>
+                <td>
                   <@htmlTemplate.renderDateTimeFieldJsMethod name="expiryDate" id="expiryDate" value='${Static["org.ofbiz.base.util.UtilDateTime"].getFormattedDate(patient.expiryDate)}' className="date" alert="" 
                           title="Format: MM/dd/yyyy" size="15" maxlength="10" dateType="date-time" shortDateInput=true 
                           timeDropdownParamName="" defaultDateTimeString="" localizedIconTitle="" timeDropdown="" timeHourName="" classString="" 
                           hour1="" hour2="" timeMinutesName="" minutes="" isTwelveHour="" ampmName="" amSelected="" pmSelected="" compositeType="" formName="editPatientForm"
                           javaScriptMethod=""/>
-                <#else>
+                </td>
+              <#else>
+                <td>
                   <@htmlTemplate.renderDateTimeField name="expiryDate" id="expiryDate" value="${value!''}" className="date" alert="" 
                           title="Format: MM/dd/yyyy" size="15" maxlength="10" dateType="date-time" shortDateInput=true 
                           timeDropdownParamName="" defaultDateTimeString="" localizedIconTitle="" timeDropdown="" timeHourName="" classString="" 
                           hour1="" hour2="" timeMinutesName="" minutes="" isTwelveHour="" ampmName="" amSelected="" pmSelected="" compositeType="" formName="editPatientForm"/>
-                </#if>
-                <span id="non_breakable_space">&#160;&#32;&#160;&#32;&#160;&#32;&#160;&#32;&#160;&#32;&#160;&#32;&#160;&#32;&#160;&#32;</span>
-                <span id="non_breakable_space">&#160;&#32;&#160;&#32;&#160;&#32;&#160;&#32;&#160;&#32;&#160;&#32;&#160;&#32;&#160;&#32;</span>
-                <span id="select_title" class="label">Afya ID</span>
+                </td>
+              </#if>
+              <td id="select_title" class="label"><span id="select_title">Afya ID</span></td>
+              <td>
                 <input type="text" readonly="true" name="afyaId" id="state" size="15" value="${patient.afyaId?if_exists}"/>
               </td>
             </#if>
           </tr>
-        </table>
-      </div>
-    </div>
-    <div class="fieldgroup">
-      <div class="fieldgroup-title-bar">Basic Information</div>
-      <div class="fieldgroup-body">
-        <table cellspacing="0" class="basic-table">
-          <tr>
           <tr>
             <td class="label"><span id="title_title">Title</span></td>
             <td>
@@ -328,13 +315,6 @@ under the License.
               </span>
             </td>
           </tr> -->
-        </table>
-      </div>
-    </div>
-    <div class="fieldgroup">
-      <div class="fieldgroup-title-bar">Communication Details</div>
-      <div class="fieldgroup-body">
-        <table cellspacing="0" class="basic-table">
           <tr>
             <td class="label"><span id="emailId_title">Email</span></td>
             <td><input type="text" name="emailAddress" id="emailId" size="25" value="${patient.emailAddress?if_exists}"/></td>
@@ -392,7 +372,7 @@ under the License.
               </select>
             </td> -->
             <td class="label"><span id="patientType_title">Patient Type</span><font color="red"> *</font></td>
-            <td>
+            <td id="patientType">
               <span class="ui-widget">
                 <select name="patientType" id="patientType" size="1" class="required" onchange="javascript:validatePatientType(this);">
                   <#if patient.patientType?exists>
@@ -430,6 +410,17 @@ under the License.
                   </select>
                 </span>
               </td>
+            <#else>
+              <td id="primaryPayer_title" class="label" style="display:none;"><span id="primaryPayer_title">Primary Payer</span><font color="red"> *</font></td>
+              <td id="primaryPayer_selectionField" style="display:none;">
+                <span class="ui-widget">
+                  <select name="primaryPayer" id="primaryPayer" size="1" class="required" onchange="javascript:validatePrimaryPayer(this);">
+                    <option value="">&nbsp;</option>
+                    <option value="Corporate">Corporate</option>
+                    <option value="Patient">Patient</option>
+                  </select>
+                </span>
+              </td>
             </#if>
           </tr>
           <tr>
@@ -454,7 +445,7 @@ under the License.
                   </span>
                 </td>
               <#else>
-                <td id="copayType_title" class="label" style="display:none;"><span id="copayType_title">Copay Type</span></td>
+                <td colspan="5" id="copayType_title" class="label" style="display:none;"><span id="copayType_title">Copay Type</span></td>
                 <td id="copayType_selectionField" style="display:none;">
                   <span class="ui-widget">
                     <select name="copayType" id="copayType" size="1" onchange="javascript:validateCopayType(this);">
@@ -472,24 +463,36 @@ under the License.
                 <td id="copay_title" class="label" style="display:none;"><span id="copay_title">Copay</span><font color="red"> *</font></td>
                 <td id="copay_textField" style="display:none;"><input type="text" name="copay" id="copay" size="8" class="currency required"/></td>
               </#if>
+            <#else>
+              <td colspan="5" id="copayType_title" class="label" style="display:none;"><span id="copayType_title">Copay Type</span></td>
+              <td id="copayType_selectionField" style="display:none;">
+                <span class="ui-widget">
+                  <select name="copayType" id="copayType" size="1" onchange="javascript:validateCopayType(this);">
+                    <option value="">&nbsp;</option>
+                    <option value="AMOUNT">AMOUNT</option>
+                    <option value="PERCENT">PERCENT</option>
+                  </select>
+                </span>
+              </td>
+              <td id="copay_title" class="label" style="display:none;"><span id="copay_title">Copay</span><font color="red"> *</font></td>
+              <td id="copay_textField" style="display:none;"><input type="text" name="copay" id="copay" size="8" class="currency required"/></td>
             </#if>
           </tr>
         </table>
-      </div>
-    </div>
-    <div class="fieldgroup">
-      <div class="fieldgroup-title-bar"></div>
-      <div class="fieldgroup-body">
-        <table cellspacing="0" class="basic-table">
-          <tr>
-            <td style="text-align:center">
-              <input type="submit" name="createButton" value="${uiLabelMap.CommonSave}" class="btn btn-success"/>
-              <a href="<@ofbizUrl>findPatients</@ofbizUrl>" class="btn btn-danger">${uiLabelMap.CommonCancel}</a>
-            </td>
-          </tr>
-        </table>
-      </div>
-    </div>
+        <div class="fieldgroup">
+          <div class="fieldgroup-title-bar"></div>
+            <div class="fieldgroup-body">
+              <table cellspacing="0" class="basic-table">
+                <tr>
+                  <td style="text-align:center">
+                    <input type="submit" name="createButton" value="${uiLabelMap.CommonSave}" class="btn btn-success"/>
+                    <a href="<@ofbizUrl>findPatients</@ofbizUrl>" class="btn btn-danger">${uiLabelMap.CommonCancel}</a>
+                  </td>
+                </tr>
+              </table>
+            </div>
+          </div>
+        </div>
   </form>
   <script type="text/javascript">
     var form = document.editPatientForm;
@@ -582,12 +585,8 @@ under the License.
   </script>
   <form name="patientRegistrationForm" id="patientRegistrationForm" method="post" action="<@ofbizUrl>registerPatient</@ofbizUrl>" class="basic-form">
     <input type="hidden" name="patientId" id="patientId"/>
-    <div class="fieldgroup">
-      <div class="fieldgroup-title-bar"></div>
-      <div class="fieldgroup-body">
         <table cellspacing="0" class="basic-table">
           <tr>
-            <td class=""><span id="select_title">&nbsp;</span></td>
             <td>
               <span class="ui-widget">
                 <select name="selectionType" id="selectionType" onchange="javascript:validate(this);">
@@ -595,13 +594,16 @@ under the License.
                   <option value="PASSPORT">Passport &#47; VISA</option>
                 </select>
               </span>
+            </td>
+            <td>
               <#-- <span id="civilId_title">Civil ID</span> -->
               <span id="civilId_textfield"><input type="text" name="civilId" id="civilId" size="15" maxlength="12" class="civilidrange"/></span>
               <#-- <span id="passport_title" style="display:none">Passport &#47; VISA</span> -->
               <span id="passport_textField" style="display:none"><input type="text" name="passport" id="passport" size="20"/></span>
-              <span id="non_breakable_space">&#160;&#32;&#160;&#32;&#160;&#32;&#160;&#32;&#160;&#32;&#160;&#32;</span>
-              <span id="expiryDate_title" class="label" style="display:none">Expiry Date</span>
-              <span id="expiryDate_dateField" colspan="4" style="display:none">
+            </td>
+            <td id="expiryDate_title" class="label" style="display:none"><span id="expiryDate_title">Expiry Date</span></td>
+            <td id="expiryDate_dateField" colspan="4" style="display:none">
+              <span id="expiryDate_dateField">
                   <@htmlTemplate.renderDateTimeField name="expiryDate" id="expiryDate" value="" className="date" alert="" 
                       title="Format: MM/dd/yyyy" size="15" maxlength="10" dateType="date-time" shortDateInput=true 
                       timeDropdownParamName="" defaultDateTimeString="" localizedIconTitle="" timeDropdown="" timeHourName="" classString="" 
@@ -609,13 +611,6 @@ under the License.
               </span>
             </td>
           </tr>
-        </table>
-      </div>
-    </div>
-    <div class="fieldgroup">
-      <div class="fieldgroup-title-bar">Basic Information</div>
-      <div class="fieldgroup-body">
-        <table cellspacing="0" class="basic-table">
           <tr>
             <td class="label"><span id="title_title">Title</span></td>
             <td>
@@ -720,13 +715,6 @@ under the License.
               </span>
             </td>
           </tr> -->
-        </table>
-      </div>
-    </div>
-    <div class="fieldgroup">
-      <div class="fieldgroup-title-bar">Communication Details</div>
-      <div class="fieldgroup-body">
-        <table cellspacing="0" class="basic-table">
           <tr>
             <td class="label"><span id="emailId_title">Email</span></td>
             <td><input type="text" name="emailAddress" id="emailId" size="25"/></td>
@@ -808,21 +796,20 @@ under the License.
             <td id="copay_textField" style="display:none"><input type="text" name="copay" id="copay" size="8" class="currency required"/></td>
           </tr>
         </table>
-      </div>
-    </div>
-    <div class="fieldgroup">
-      <div class="fieldgroup-title-bar"></div>
-      <div class="fieldgroup-body">
-        <table cellspacing="0" class="basic-table">
-          <tr>
-            <td style="text-align:center">
-              <input type="submit" name="createButton" value="${uiLabelMap.CommonSave}" class="btn btn-success"/>
-              <a href="<@ofbizUrl>findPatients</@ofbizUrl>" class="btn btn-danger">${uiLabelMap.CommonCancel}</a>
-            </td>
-          </tr>
-        </table>
-      </div>
-    </div>
+        <div class="fieldgroup">
+          <div class="fieldgroup-title-bar"></div>
+            <div class="fieldgroup-body">
+              <table cellspacing="0" class="basic-table">
+                <tr>
+                  <td style="text-align:center">
+                    <input type="submit" name="createButton" value="${uiLabelMap.CommonSave}" class="btn btn-success"/>
+                    <a href="<@ofbizUrl>findPatients</@ofbizUrl>" class="btn btn-danger">${uiLabelMap.CommonCancel}</a>
+                  </td>
+                </tr>
+              </table>
+            </div>
+          </div>
+        </div>
   </form>
   <script type="text/javascript">
     var form = document.patientRegistrationForm;
