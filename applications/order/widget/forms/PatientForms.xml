@@ -108,11 +108,11 @@
             <display/>
         </field>
         <field name="clinicName" position="2">
-            <display/>
+            <text/>
         </field>
         <!--<field name="clinicId"><text/></field>-->
         <field name="doctorName" position="3">
-            <display/>
+            <text/>
         </field>
         <!-- <field use-when="${'CASH' != patient.patientType}" name="patientType">
             <drop-down>
