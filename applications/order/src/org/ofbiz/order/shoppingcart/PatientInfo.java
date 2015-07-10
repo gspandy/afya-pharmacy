@@ -38,6 +38,7 @@ public class PatientInfo {
     private BigDecimal copay;
     private String copayType;
     private String primaryPayer;
+    private String mobileNumberVisibleForDelivery;
 
     PatientInfo(HttpServletRequest request) throws ParseException {
         String dob = request.getParameter("dateOfBirth");
@@ -66,6 +67,7 @@ public class PatientInfo {
             this.copay=new BigDecimal(request.getParameter("copay"));
         this.copayType=request.getParameter("copayType");
         this.primaryPayer=request.getParameter("primaryPayer");
+        this.mobileNumberVisibleForDelivery=request.getParameter("mobileNumberVisibleForDelivery");
     }
 
     public PatientInfo() {
@@ -278,6 +280,14 @@ public class PatientInfo {
 
 	public void setPrimaryPayer(String primaryPayer) {
 		this.primaryPayer = primaryPayer;
+	}
+
+	public String getMobileNumberVisibleForDelivery() {
+		return mobileNumberVisibleForDelivery;
+	}
+
+	public void setMobileNumberVisibleForDelivery(String mobileNumberVisibleForDelivery) {
+		this.mobileNumberVisibleForDelivery = mobileNumberVisibleForDelivery;
 	}
 
 }

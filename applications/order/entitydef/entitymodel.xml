@@ -3113,6 +3113,7 @@
 		<field name="moduleName" type="short-varchar"></field>
 		<field name="patientType" type="id-ne"/>
 		<field name="mobileNumber" type="id-ne"/>
+		<field name="mobileNumberVisibleForDelivery" type="very-short"/>
 		<field name="visitDate" type="date"></field>
 		<field name="doctorName" type="id-vlong-ne"></field>
 		<field name="address" type="text"></field>

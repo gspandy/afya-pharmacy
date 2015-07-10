@@ -101,6 +101,7 @@ public class AfyaSalesOrderController {
             patientInfo.setModuleName(prescription.getModuleName());
             patientInfo.setBenefitId(prescription.getBenefitId());
             patientInfo.setIsOrderApproved(prescription.getIsOrderApproved());
+            patientInfo.setMobileNumberVisibleForDelivery(String.valueOf(prescription.getMobileNumberVisibleForDelivery()));
 
             if(prescription.getCorporateCopay() != null)
                 patientInfo.setCopay(prescription.getCorporateCopay());
@@ -315,6 +316,7 @@ public class AfyaSalesOrderController {
         private BigDecimal corporateCopay;
         private String corporateCopayType;
         private String corporatePrimaryPayer;
+        private Boolean mobileNumberVisibleForDelivery;
 
         public String getAddress() {
             return address;
@@ -494,6 +496,15 @@ public class AfyaSalesOrderController {
         public void setCorporatePrimaryPayer(String corporatePrimaryPayer) {
             this.corporatePrimaryPayer = corporatePrimaryPayer;
         }
+
+		public Boolean getMobileNumberVisibleForDelivery() {
+			return mobileNumberVisibleForDelivery;
+		}
+
+		public void setMobileNumberVisibleForDelivery(
+				Boolean mobileNumberVisibleForDelivery) {
+			this.mobileNumberVisibleForDelivery = mobileNumberVisibleForDelivery;
+		}
 
 		@Override
         public String toString() {
