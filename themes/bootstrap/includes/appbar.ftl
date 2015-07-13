@@ -99,7 +99,7 @@
                 <div class="navbar-inner">
                     <ul class="nav" style="float:none;">
                         <li>
-                            <img src="/bootstrap/images/logo.png" height="50px" width="50px" style="height:70px !important;width:200px !important"/>
+                            <img src="/bootstrap/images/logo.png" height="50px" width="50px" style="height:80px !important;width:200px !important"/>
                             <#-- <img src="/bootstrap/images/logo_02.png" height="40px" width="150px" style="height:40px !important"/> -->
                         </li>
                         <#if userLogin?exists>
