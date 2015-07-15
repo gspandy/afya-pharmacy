@@ -80,7 +80,8 @@ public class LoginServices {
         mediaTypes.add(MediaType.APPLICATION_JSON);
         httpHeaders.setAccept(mediaTypes);
         HttpEntity<String> requestEntity = new HttpEntity<String>(httpHeaders);
-        ResponseEntity<String> responseEntity = restTemplate.exchange("http://localhost:7878/afya-portal/anon/getUserLoginByName?userName={userName}", HttpMethod.GET, requestEntity, String.class, userName);
+        String portalAddress = UtilProperties.getPropertyValue("security.properties", "security.login.portal.address");
+        ResponseEntity<String> responseEntity = restTemplate.exchange("http://"+portalAddress+"/afya-portal/anon/getUserLoginByName?userName={userName}", HttpMethod.GET, requestEntity, String.class, userName);
         String json = responseEntity.getBody();
         ObjectMapper mapper = new ObjectMapper();
         mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
