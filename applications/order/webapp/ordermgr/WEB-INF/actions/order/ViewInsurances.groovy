@@ -53,7 +53,7 @@ List<MediaType> mediaTypes = new ArrayList<MediaType>();
 mediaTypes.add(MediaType.APPLICATION_JSON);
 httpHeaders.setAccept(mediaTypes);
 HttpEntity<String> requestEntity = new HttpEntity<String>(httpHeaders);
-ResponseEntity<String> responseEntity = restTemplate.exchange("http://localhost:7878/afya-portal/anon/getListOfInsuranceForGivenTenant?tenantId={tenantId}&facilityType={facilityType}", HttpMethod.GET, requestEntity, String.class, tenantId, facilityType);
+ResponseEntity<String> responseEntity = restTemplate.exchange("http://5.9.249.197:7878/afya-portal/anon/getListOfInsuranceForGivenTenant?tenantId={tenantId}&facilityType={facilityType}", HttpMethod.GET, requestEntity, String.class, tenantId, facilityType);
 String repsonseJson = responseEntity.getBody();
 mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
 List<Map<String, Object>> viewInsuranceList = new ArrayList<>();
