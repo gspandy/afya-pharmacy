@@ -1104,4 +1104,29 @@
         </section>
     </screen>
 
+    <screen name="ViewInsurances">
+        <section>
+            <actions>
+                <set field="titleProperty" value="View Insurances"/>
+                <set field="headerItem" value="ViewInsurances"/>
+                <set field="layoutSettings.javaScripts[]" value="/ordermgr/images/js/insurance.js" global="true"/>
+                <script location="component://order/webapp/ordermgr/WEB-INF/actions/order/ViewInsurances.groovy"/>
+            </actions>
+            <widgets>
+                <decorator-screen name="main-decorator" location="${parameters.mainDecoratorLocation}">
+                    <decorator-section name="body">
+                        <screenlet title="Insurance Details">
+                            <include-form name="ViewInsurances" location="component://order/widget/ordermgr/OrderForms.xml"/>
+                            <platform-specific>
+                                <html>
+                                    <html-template location="component://order/webapp/ordermgr/order/insurancePlanDetail.ftl"/>
+                                </html>
+                            </platform-specific>
+                        </screenlet>
+                    </decorator-section>
+                </decorator-screen>
+            </widgets>
+        </section>
+    </screen>
+
 </screens>

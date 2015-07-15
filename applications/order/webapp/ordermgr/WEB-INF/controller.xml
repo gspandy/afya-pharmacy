@@ -2375,6 +2375,17 @@
 		</response>
 	</request-map>
 
+	<request-map uri="viewInsurances">
+		<security auth="true"/>
+		<response name="success" type="view" value="viewInsurances"/>
+	</request-map>
+
+	<request-map uri="viewInsuranceList">
+		<security auth="true"/>
+		<event type="service" invoke=""/>
+		<response name="success" type="view" value="viewInsurances"/>
+	</request-map>
+
 	<request-map uri="addInsurance">
 		<security auth="true"/>
 		<event type="service" invoke="addInsurance"/>
@@ -2427,6 +2438,7 @@
 	<view-map name="patientList" type="screen" page="component://order/widget/ordermgr/OrderViewScreens.xml#PatientList" />
 	<view-map name="addInsurance" type="screen" page="component://order/widget/ordermgr/OrderViewScreens.xml#AddInsurance" />
 	<view-map name="insuranceList" type="screen" page="component://order/widget/ordermgr/OrderViewScreens.xml#InsuranceList" />
+	<view-map name="viewInsurances" type="screen" page="component://order/widget/ordermgr/OrderViewScreens.xml#ViewInsurances" />
 
 	<view-map name="searchPatient" type="screen" page="component://order/widget/ordermgr/OrderEntryScreens.xml#SearchPatient" />
 	<view-map name="searchPatientResult" type="screen" page="component://order/widget/ordermgr/OrderEntryScreens.xml#SearchPatientResult" />

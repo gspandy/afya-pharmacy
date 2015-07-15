@@ -1014,6 +1014,10 @@ in contained elements. */
 	text-align: center;
 }
 
+.cursor-pointer {
+	cursor: pointer; !important;
+}
+
 /* ==================================== */
 /* ===== Masthead (Header) Styles ===== */
 /* ==================================== */

@@ -57,6 +57,10 @@ jQuery.validator.addMethod("civilidrange", function(value, element) {
 	return this.optional(element) || /^\d{12}$/.test(value);
 }, "Civil ID must be of exact 12 digit length");
 
+jQuery.validator.addMethod("categorycoderange", function(value, element) {
+	return this.optional(element) || /^\d{2}$/.test(value);
+}, "Category Code must be of exact 2 digit length");
+
 jQuery.validator.addMethod("integer", function(value, element) {
 	return this.optional(element) || /^-?\d+$/.test(value);
 }, "A positive or negative non-decimal number please");

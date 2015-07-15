@@ -357,5 +357,23 @@ under the License.
             <submit button-type="button"/>
         </field>
     </form>
+
+    <form name="ViewInsurances" target="viewInsurances" title="View Insurances" type="list" list-name="viewInsuranceList"
+          odd-row-style="alternate-row" header-row-style="header-row-2" default-table-style="basic-table hover-bar viewInsuranceList" id="viewInsuranceList">
+        <field name="insuranceCode" id-name="insuranceCode" title="Payer Code" widget-area-style="cursor-pointer">
+            <display/>
+        </field>
+        <field name="insuranceName" id-name="insuranceName" title="Payer Name" widget-area-style="cursor-pointer">
+            <display/>
+        </field>
+        <field name="payerType" id-name="payerType" title="Payer Type" widget-area-style="cursor-pointer">
+            <display/>
+        </field>
+        <field name="viewButton" id-name="viewPlan" action="javascript:void(0);" title="${uiLabelMap.CommonEmptyHeader}" widget-style="btn btn-link" widget-area-style="cursor-pointer">
+            <hyperlink target="viewInsuranceList" description="" also-hidden="false" id="viewPlans">
+                <parameter param-name="payerId"/>
+            </hyperlink>
+        </field>
+    </form>
     
 </forms>

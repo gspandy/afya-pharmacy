@@ -3125,6 +3125,7 @@
 		<prim-key field="orderId" />
 	</entity>
 
+
 	<extend-entity entity-name="OrderItem">
 		<field name="rxFrequency" type="id-ne"/>
 		<field name="homeService" type="indicator"/>
@@ -3164,11 +3165,15 @@
 		<field name="expiryDate" type="date"></field>
 		<field name="selectionType" type="short-varchar"></field>
 
+		<field name="corporateMasterId" type="id"></field>
+		<field name="corporateName" type="short-varchar"></field>
+		<field name="corporateId" type="short-varchar"></field>
 		<field name="copay" type="currency-amount"></field>
 		<field name="copayType" type="short-varchar"></field>
 		<field name="primaryPayer" type="short-varchar"></field>
 		<prim-key field="patientId" />
 	</entity>
+
 
 	<entity entity-name="PatientInsurance" package-name="org.ofbiz.order.order" title="Patient Details">
 		<field name="patientId" type="id"/>
@@ -3195,6 +3200,7 @@
 			<key-map field-name="patientId" />
 		</relation>
 	</entity>
+
 
 	<view-entity entity-name="PatientInsuranceView" package-name="org.ofbiz.order.order" title="Patient Insurance View Entity">
 		<member-entity entity-alias="PNT" entity-name="Patient"/>
@@ -3225,5 +3231,16 @@
 			<key-map field-name="patientId"/>
 		</view-link>
 	</view-entity>
+
+
+	<entity entity-name="CorporateMaster" package-name="org.ofbiz.order.order" title="Corporate Master Details">
+		<field name="id" type="id-ne"/>
+		<field name="corporateName" type="short-varchar"></field>
+		<field name="corporateCopay" type="currency-amount"></field>
+		<field name="corporateCopayType" type="short-varchar"></field>
+		<field name="primaryPayer" type="short-varchar"></field>
+		<field name="corporateId" type="short-varchar"></field>
+		<prim-key field="id" />
+	</entity>
 
 </entitymodel>

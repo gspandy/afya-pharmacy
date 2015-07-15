@@ -425,6 +425,32 @@ $(document).ready(function () {
         });
     }
 
+    $('.viewInsuranceList tr').bind('click', function (event){
+        event.preventDefault();
+        event.stopPropagation();
+        var rowIndex=this.rowIndex;
+        //alert(rowIndex);
+        var payerId = $(this).find("input[name|='payerId']").val();
+        //alert(payerId);
+        populateInsuranceTable(payerId);
+    });
+
+    function populateInsuranceTable(payerId){
+        $.getJSON('http://5.9.249.197:7878/afya-portal/anon/getPlansForGivenInsurance?payerId='+payerId, function(data) {
+            console.log(JSON.stringify(data));
+
+            var viewInsuranceHtml='';
+            $.each(data, function (attr, value) {
+                viewInsuranceHtml=viewInsuranceHtml+'<tr><td style="text-align:center">'+text(value['policyName'])+'</td></tr>';
+            });
+            $('#viewInsuranceTable').find('tbody').html(viewInsuranceHtml);
+        });
+
+        $('#myModal').modal({
+            keyboard: true
+        });
+
+    }
 
     function amount(content){
         if(content==undefined || content=='null')

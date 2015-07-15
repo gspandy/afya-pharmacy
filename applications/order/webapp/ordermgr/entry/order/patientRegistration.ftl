@@ -32,22 +32,29 @@ under the License.
         var patientType = selection.value;
 
         if(patientType == "CORPORATE") {
-            primaryPayer_title.style.display = '';
-            primaryPayer_selectionField.style.display = '';
+            //primaryPayer_title.style.display = '';
+            //primaryPayer_selectionField.style.display = '';
+            corporateMasterId_title.style.display = '';
+            corporateMasterId_selectionField.style.display = '';
+            $("#copay").val("");
         }
         if(patientType != "CORPORATE") {
-            primaryPayer_title.style.display = 'none';
-            primaryPayer_selectionField.style.display = 'none';
-            $("#primaryPayer").val("");
-            copay_title.style.display = 'none';
-            copay_textField.style.display = 'none';
+            corporateMasterId_title.style.display = 'none';
+            corporateMasterId_selectionField.style.display = 'none';
+            $("#corporateMasterId").val("");
+            $("#corporateId").val("");
             $("#copay").val("");
-            copayType_title.style.display = 'none';
-            copayType_selectionField.style.display = 'none';
             $("#copayType").val("");
+            $("#primaryPayer").val("");
+            //copay_title.style.display = 'none';
+            //copay_textField.style.display = 'none';
+            //copayType_title.style.display = 'none';
+            //copayType_selectionField.style.display = 'none';
+            //primaryPayer_title.style.display = 'none';
+            //primaryPayer_selectionField.style.display = 'none';
         }
     }
-    function validatePrimaryPayer(selection) {
+    /*function validatePrimaryPayer(selection) {
         var primaryPayer = selection.value;
 
         if(primaryPayer == "Corporate") {
@@ -75,10 +82,15 @@ under the License.
             copay_textField.style.display = 'none';
             $("#copay").val("");
         }
-    }
+    }*/
   </script>
   <form name="editPatientForm" id="editPatientForm" method="post" action="<@ofbizUrl>updatePatient</@ofbizUrl>" class="basic-form">
     <input type="hidden" name="patientId" id="patientId" value="${patientId}"/>
+    <input type="hidden" name="corporateId" id="corporateId"/>
+    <input type="hidden" name="corporateName" id="corporateName"/>
+    <input type="hidden" name="copay" id="copay"/>
+    <input type="hidden" name="copayType" id="copayType"/>
+    <input type="hidden" name="primaryPayer" id="primaryPayer"/>
         <table cellspacing="0" class="basic-table">
           <tr>
             <#if "CIVIL_ID" == patient.selectionType>
@@ -392,7 +404,24 @@ under the License.
               </span>
             </td>
             <#if patient?has_content && "CORPORATE" == patient.patientType>
-              <td id="primaryPayer_title" class="label"><span id="primaryPayer_title">Primary Payer</span><font color="red"> *</font></td>
+              <td id="corporateMasterId_title" class="label"><span id="corporateMasterId_title">Corporate</span><font color="red"> *</font></td>
+              <td id="corporateMasterId_selectionField">
+                <#assign corporateMasters = delegator.findList("CorporateMaster", null, null, null, null, false)>
+                <span class="ui-widget">
+                  <select name="corporateMasterId" id="corporateMasterId" size="1" class="required">
+                    <#if patient.corporateMasterId?exists>
+                      <option selected="selected" value="${patient.corporateMasterId}">${patient.corporateName}</option>
+                      <option value="${patient.corporateMasterId}">---</option>
+                    </#if>
+                    <option></option>
+                    <#list corporateMasters as corporateMaster>
+                      <option value="${corporateMaster.id}">${corporateMaster.get("corporateName")}</option>
+                    </#list>
+                  </select>
+                </span>
+              </td>
+
+              <#-- <td id="primaryPayer_title" class="label"><span id="primaryPayer_title">Primary Payer</span><font color="red"> *</font></td>
               <td id="primaryPayer_selectionField">
                 <span class="ui-widget">
                   <select name="primaryPayer" id="primaryPayer" size="1" class="required" onchange="javascript:validatePrimaryPayer(this);">
@@ -409,9 +438,22 @@ under the License.
                     <option value="Patient">Patient</option>
                   </select>
                 </span>
-              </td>
+              </td> -->
             <#else>
-              <td id="primaryPayer_title" class="label" style="display:none;"><span id="primaryPayer_title">Primary Payer</span><font color="red"> *</font></td>
+              <td id="corporateMasterId_title" class="label" style="display:none;"><span id="corporateMasterId_title">Corporate</span><font color="red"> *</font></td>
+              <td id="corporateMasterId_selectionField" style="display:none;">
+                <#assign corporateMasters = delegator.findList("CorporateMaster", null, null, null, null, false)>
+                <span class="ui-widget">
+                  <select name="corporateMasterId" id="corporateMasterId" size="1" class="required">
+                    <option></option>
+                    <#list corporateMasters as corporateMaster>
+                      <option value="${corporateMaster.id}">${corporateMaster.get("corporateName")}</option>
+                    </#list>
+                  </select>
+                </span>
+              </td>
+
+              <#-- <td id="primaryPayer_title" class="label" style="display:none;"><span id="primaryPayer_title">Primary Payer</span><font color="red"> *</font></td>
               <td id="primaryPayer_selectionField" style="display:none;">
                 <span class="ui-widget">
                   <select name="primaryPayer" id="primaryPayer" size="1" class="required" onchange="javascript:validatePrimaryPayer(this);">
@@ -420,10 +462,10 @@ under the License.
                     <option value="Patient">Patient</option>
                   </select>
                 </span>
-              </td>
+              </td> -->
             </#if>
           </tr>
-          <tr>
+          <#-- <tr>
             <#if patient?has_content && "CORPORATE" == patient.patientType>
               <#if patient.copayType?exists>
                 <td colspan="5" id="copayType_title" class="label"><span id="copayType_title">Copay Type</span></td>
@@ -477,7 +519,7 @@ under the License.
               <td id="copay_title" class="label" style="display:none;"><span id="copay_title">Copay</span><font color="red"> *</font></td>
               <td id="copay_textField" style="display:none;"><input type="text" name="copay" id="copay" size="8" class="currency required"/></td>
             </#if>
-          </tr>
+          </tr> -->
         </table>
         <div class="fieldgroup">
           <div class="fieldgroup-title-bar"></div>
@@ -537,27 +579,32 @@ under the License.
         var patientType = selection.value;
 
         if(patientType == "CORPORATE") {
-            primaryPayer_title.style.display = '';
-            primaryPayer_selectionField.style.display = '';
+            //primaryPayer_title.style.display = '';
+            //primaryPayer_selectionField.style.display = '';
+            corporateMasterId_title.style.display = '';
+            corporateMasterId_selectionField.style.display = '';
+            $("#copay").val("");
         }
         if(patientType != "CORPORATE") {
-            primaryPayer_title.style.display = 'none';
-            primaryPayer_selectionField.style.display = 'none';
-            $("#primaryPayer").val("");
-            copay_title.style.display = 'none';
-            copay_textField.style.display = 'none';
+            corporateMasterId_title.style.display = 'none';
+            corporateMasterId_selectionField.style.display = 'none';
+            $("#corporateMasterId").val("");
+            $("#corporateId").val("");
             $("#copay").val("");
-            copayType_title.style.display = 'none';
-            copayType_selectionField.style.display = 'none';
             $("#copayType").val("");
+            $("#primaryPayer").val("");
+            //copay_title.style.display = 'none';
+            //copay_textField.style.display = 'none';
+            //copayType_title.style.display = 'none';
+            //copayType_selectionField.style.display = 'none';
+            //primaryPayer_title.style.display = 'none';
+            //primaryPayer_selectionField.style.display = 'none';
         }
     }
-    function validatePrimaryPayer(selection) {
+    /*function validatePrimaryPayer(selection) {
         var primaryPayer = selection.value;
 
         if(primaryPayer == "Corporate") {
-            //copay_title.style.display = '';
-            //copay_textField.style.display = '';
             copayType_title.style.display = '';
             copayType_selectionField.style.display = '';
         }
@@ -581,10 +628,15 @@ under the License.
             copay_textField.style.display = 'none';
             $("#copay").val("");
         }
-    }
+    }*/
   </script>
   <form name="patientRegistrationForm" id="patientRegistrationForm" method="post" action="<@ofbizUrl>registerPatient</@ofbizUrl>" class="basic-form">
     <input type="hidden" name="patientId" id="patientId"/>
+    <input type="hidden" name="corporateId" id="corporateId"/>
+    <input type="hidden" name="corporateName" id="corporateName"/>
+    <input type="hidden" name="copay" id="copay"/>
+    <input type="hidden" name="copayType" id="copayType"/>
+    <input type="hidden" name="primaryPayer" id="primaryPayer"/>
         <table cellspacing="0" class="basic-table">
           <tr>
             <td>
@@ -769,7 +821,19 @@ under the License.
                 </select>
               </span>
             </td>
-            <td id="primaryPayer_title" class="label" style="display:none;"><span id="primaryPayer_title">Primary Payer</span><font color="red"> *</font></td>
+            <td id="corporateMasterId_title" class="label" style="display:none;"><span id="corporateMasterId_title">Corporate</span><font color="red"> *</font></td>
+            <td id="corporateMasterId_selectionField" style="display:none;">
+              <#assign corporateMasters = delegator.findList("CorporateMaster", null, null, null, null, false)>
+              <span class="ui-widget">
+                <select name="corporateMasterId" id="corporateMasterId" size="1" class="required">
+                  <option></option>
+                  <#list corporateMasters as corporateMaster>
+                    <option value="${corporateMaster.id}">${corporateMaster.get("corporateName")}</option>
+                  </#list>
+                </select>
+              </span>
+            </td>
+            <#-- <td id="primaryPayer_title" class="label" style="display:none;"><span id="primaryPayer_title">Primary Payer</span><font color="red"> *</font></td>
             <td id="primaryPayer_selectionField" style="display:none;">
               <span class="ui-widget">
                 <select name="primaryPayer" id="primaryPayer" size="1" class="required" onchange="javascript:validatePrimaryPayer(this);">
@@ -779,9 +843,9 @@ under the License.
                 </select>
               </span>
             </td>
-            </td>
+            </td> -->
           </tr>
-          <tr>
+          <#-- <tr>
             <td colspan="5" id="copayType_title" class="label" style="display:none;"><span id="copayType_title">Copay Type</span></td>
             <td id="copayType_selectionField" style="display:none;">
               <span class="ui-widget">
@@ -794,7 +858,7 @@ under the License.
             </td>
             <td id="copay_title" class="label" style="display:none;"><span id="copay_title">Copay</span><font color="red"> *</font></td>
             <td id="copay_textField" style="display:none"><input type="text" name="copay" id="copay" size="8" class="currency required"/></td>
-          </tr>
+          </tr> -->
         </table>
         <div class="fieldgroup">
           <div class="fieldgroup-title-bar"></div>

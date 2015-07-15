@@ -29,6 +29,23 @@
                         <sequenced-id field="newPatient.patientId" get-long-only="false" sequence-name="Patient"/>
 
                         <field-to-result field="newPatient.patientId" result-name="patientId"/>
+
+                        <if-compare field="patientType" operator="equals" value="CORPORATE" type="Boolean">
+                            <entity-one entity-name="CorporateMaster" value-field="corporateMaster" auto-field-map="false">
+                                <field-map field-name="id" value="${parameters.corporateMasterId}"/>
+                            </entity-one>
+                            <if-not-empty field="corporateMaster">
+                                <set field="newPatient.corporateMasterId" from-field="corporateMaster.id"/>
+                                <set field="newPatient.corporateId" from-field="corporateMaster.corporateId"/>
+                                <set field="newPatient.corporateName" from-field="corporateMaster.corporateName"/>
+                                <if-compare field="corporateMaster.corporateCopay" operator="not-equals" value="">
+                                    <set field="newPatient.copay" from-field="corporateMaster.corporateCopay" type="BigDecimal"/>
+                                </if-compare>
+                                <set field="newPatient.copayType" from-field="corporateMaster.corporateCopayType" set-if-empty="true" set-if-null="true"/>
+                                <set field="newPatient.primaryPayer" from-field="corporateMaster.primaryPayer" set-if-empty="true" set-if-null="true"/>
+                            </if-not-empty>
+                        </if-compare>
+
                         <create-value do-cache-clear="true" or-store="false" value-field="newPatient"/>
 
                         <set field="serviceCtx.patientId" from-field="newPatient.patientId"/>
@@ -54,6 +71,23 @@
                 <sequenced-id field="newPatient.patientId" get-long-only="false" sequence-name="Patient"/>
 
                 <field-to-result field="newPatient.patientId" result-name="patientId"/>
+
+                <if-compare field="patientType" operator="equals" value="CORPORATE" type="Boolean">
+                    <entity-one entity-name="CorporateMaster" value-field="corporateMaster" auto-field-map="false">
+                        <field-map field-name="id" value="${parameters.corporateMasterId}"/>
+                    </entity-one>
+                    <if-not-empty field="corporateMaster">
+                        <set field="newPatient.corporateMasterId" from-field="corporateMaster.id"/>
+                        <set field="newPatient.corporateId" from-field="corporateMaster.corporateId"/>
+                        <set field="newPatient.corporateName" from-field="corporateMaster.corporateName"/>
+                        <if-compare field="corporateMaster.corporateCopay" operator="not-equals" value="">
+                            <set field="newPatient.copay" from-field="corporateMaster.corporateCopay" type="BigDecimal"/>
+                        </if-compare>
+                        <set field="newPatient.copayType" from-field="corporateMaster.corporateCopayType" set-if-empty="true" set-if-null="true"/>
+                        <set field="newPatient.primaryPayer" from-field="corporateMaster.primaryPayer" set-if-empty="true" set-if-null="true"/>
+                    </if-not-empty>
+                </if-compare>
+
                 <create-value do-cache-clear="true" or-store="false" value-field="newPatient"/>
 
                 <set field="serviceCtx.patientId" from-field="newPatient.patientId"/>
@@ -76,6 +110,24 @@
         <set-nonpk-fields map="parameters" set-if-null="true" value-field="lookedUpValue"/>
 
         <field-to-result field="parameters.patientId" result-name="patientId"/>
+
+        <set field="patientType" from-field="parameters.patientType"/>
+        <if-compare field="patientType" operator="equals" value="CORPORATE" type="Boolean">
+            <entity-one entity-name="CorporateMaster" value-field="corporateMaster" auto-field-map="false">
+                <field-map field-name="id" value="${parameters.corporateMasterId}"/>
+            </entity-one>
+            <if-not-empty field="corporateMaster">
+                <set field="lookedUpValue.corporateMasterId" from-field="corporateMaster.id"/>
+                <set field="lookedUpValue.corporateId" from-field="corporateMaster.corporateId"/>
+                <set field="lookedUpValue.corporateName" from-field="corporateMaster.corporateName"/>
+                <if-compare field="corporateMaster.corporateCopay" operator="not-equals" value="">
+                    <set field="lookedUpValue.copay" from-field="corporateMaster.corporateCopay" type="BigDecimal"/>
+                </if-compare>
+                <set field="lookedUpValue.copayType" from-field="corporateMaster.corporateCopayType" set-if-empty="true" set-if-null="true"/>
+                <set field="lookedUpValue.primaryPayer" from-field="corporateMaster.primaryPayer" set-if-empty="true" set-if-null="true"/>
+            </if-not-empty>
+        </if-compare>
+
         <now-timestamp field="lookedUpValue.updatedDate"/>
         <set field="lookedUpValue.updatedByUserLogin" from="userLogin.userLoginId" set-if-empty="true" set-if-null="false"/>
         <store-value do-cache-clear="true" value-field="lookedUpValue"/>

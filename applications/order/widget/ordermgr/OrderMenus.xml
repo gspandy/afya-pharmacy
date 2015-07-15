@@ -111,6 +111,9 @@ under the License.
                     </condition>
                     <link target="findorders?type=SALES_ORDER"/>
                 </menu-item>
+                <menu-item name="viewInsurances" title="View Insurances">
+                    <link target="viewInsurances"/>
+                </menu-item>
             </menu-item>
             <menu-item name="purchaseOrder" title="Purchase Orders">
                 <condition>
