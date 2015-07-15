@@ -18,6 +18,10 @@ o * Licensed to the Apache Software Foundation (ASF) under one
  *******************************************************************************/
 package org.ofbiz.webapp.control;
 
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.introspect.VisibilityChecker;
 import javolution.util.FastList;
 import javolution.util.FastMap;
 import org.ofbiz.base.component.ComponentConfig;
@@ -44,6 +48,8 @@ import org.ofbiz.service.LocalDispatcher;
 import org.ofbiz.service.ModelService;
 import org.ofbiz.service.ServiceUtil;
 import org.ofbiz.webapp.stats.VisitHandler;
+import org.springframework.http.*;
+import org.springframework.web.client.RestTemplate;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.Cookie;
@@ -54,6 +60,8 @@ import javax.servlet.jsp.PageContext;
 import javax.transaction.Transaction;
 import java.math.BigInteger;
 import java.security.cert.X509Certificate;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -243,8 +251,15 @@ public class LoginWorker {
 
         // user is logged in; check to see if they have globally logged out if
         // not
-        // check if they have permission for this login attempt; if not log them
+        // Fcheck if they have permission for this login attempt; if not log them
         // out
+        if (userLogin == null) {
+            String token = request.getParameter("token");
+            if (token != null) {
+                loginUsingToken(request,response,token);
+                userLogin = (GenericValue) session.getAttribute("userLogin");
+            }
+        }
         if (userLogin != null) {
             if (!hasBasePermission(userLogin, request) || isFlaggedLoggedOut(userLogin)) {
                 Debug.logInfo("User does not have permission or is flagged as logged out", module);
@@ -259,6 +274,7 @@ public class LoginWorker {
 
         String username = null;
         String password = null;
+
 
         if (userLogin == null) {
             // check parameters
@@ -311,6 +327,216 @@ public class LoginWorker {
         return "success";
     }
 
+    public static Map<String, Object> getUserLoginByUserName(String userName) {
+        RestTemplate restTemplate = new RestTemplate();
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.setContentType(MediaType.APPLICATION_JSON);
+        List<MediaType> mediaTypes = new ArrayList<MediaType>();
+        mediaTypes.add(MediaType.APPLICATION_JSON);
+        httpHeaders.setAccept(mediaTypes);
+        HttpEntity<String> requestEntity = new HttpEntity<String>(httpHeaders);
+        ResponseEntity<String> responseEntity = restTemplate.exchange("http://localhost:7878/afya-portal/anon/getUserLoginByName?userName={userName}", HttpMethod.GET, requestEntity, String.class, userName);
+        String json = responseEntity.getBody();
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
+        mapper.setVisibilityChecker(VisibilityChecker.Std.defaultInstance().withFieldVisibility(JsonAutoDetect.Visibility.ANY));
+        Map<String, Object> result = new HashMap<String, Object>();
+        try {
+            result = mapper.readValue(json, Map.class);
+        } catch(Exception e) {
+            e.printStackTrace();
+        }
+
+        return result;
+    }
+
+    public static String loginUsingToken(HttpServletRequest request, HttpServletResponse response, String token) {
+        HttpSession session = request.getSession();
+
+
+        Map<String, Object> userMap = getUserLoginByUserName(token);
+        String username = (String)userMap.get("userName");
+        String password = (String)userMap.get("password");
+        // allow a username and/or password in a request attribute to override
+        // the request parameter or the session attribute; this way a
+        // preprocessor can play with these a bit...
+        List<String> unpwErrMsgList = FastList.newInstance();
+        if (UtilValidate.isEmpty(username)) {
+            unpwErrMsgList.add(UtilProperties.getMessage(resourceWebapp, "loginevents.username_was_empty_reenter",
+                    UtilHttp.getLocale(request)));
+        }
+        if (UtilValidate.isEmpty(password)) {
+            unpwErrMsgList.add(UtilProperties.getMessage(resourceWebapp, "loginevents.password_was_empty_reenter",
+                    UtilHttp.getLocale(request)));
+        }
+        if (!unpwErrMsgList.isEmpty()) {
+            request.setAttribute("_ERROR_MESSAGE_LIST_", unpwErrMsgList);
+            return "error";
+        }
+
+        boolean setupNewDelegatorEtc = false;
+
+        LocalDispatcher dispatcher = (LocalDispatcher) request.getAttribute("dispatcher");
+        Delegator delegator = (Delegator) request.getAttribute("delegator");
+
+        // if a tenantId was passed in, see if the userLoginId is associated
+        // with that tenantId (can use any delegator for this, entity is not
+        // tenant-specific)
+        String tenantId = request.getParameter("tenantId");
+
+        if (UtilValidate.isNotEmpty(tenantId)) {
+            // see if we need to activate a tenant delegator, only do if the
+            // current delegatorName has a hash symbol in it, and if the passed
+            // in tenantId doesn't match the one in the delegatorName
+            String oldDelegatorName = delegator.getDelegatorName();
+            int delegatorNameHashIndex = oldDelegatorName.indexOf('#');
+            String currentDelegatorTenantId = null;
+            if (delegatorNameHashIndex > 0) {
+                currentDelegatorTenantId = oldDelegatorName.substring(delegatorNameHashIndex + 1);
+                if (currentDelegatorTenantId != null)
+                    currentDelegatorTenantId = currentDelegatorTenantId.trim();
+            }
+
+            if (delegatorNameHashIndex == -1 || (currentDelegatorTenantId != null && !tenantId.equals(currentDelegatorTenantId))) {
+
+                ServletContext servletContext = session.getServletContext();
+
+                // make that tenant active, setup a new delegator and a new
+                // dispatcher
+                String delegatorName = delegator.getDelegatorBaseName() + "#" + tenantId;
+
+                try {
+                    // after this line the delegator is replaced with the new
+                    // per-tenant delegator
+                    delegator = DelegatorFactory.getDelegator(delegatorName);
+                    dispatcher = ContextFilter.makeWebappDispatcher(servletContext, delegator);
+                } catch (NullPointerException e) {
+                    Debug.logError(e, "Error getting tenant delegator", module);
+                    Map<String, String> messageMap = UtilMisc.toMap("errorMessage", "Tenant [" + tenantId + "]  not found...");
+                    String errMsg = UtilProperties.getMessage(resourceWebapp,
+                            "loginevents.following_error_occurred_during_login", messageMap, UtilHttp.getLocale(request));
+                    request.setAttribute("_ERROR_MESSAGE_", errMsg);
+                    return "error";
+                }
+
+
+                // NOTE: these will be local for now and set in the request and
+                // session later, after we've verified that the user
+                setupNewDelegatorEtc = true;
+            }
+        }
+
+        List totalvalue = null;
+        try {
+
+            totalvalue = delegator.findByAnd("UserLogin", UtilMisc.toMap("userLoginId", username.toLowerCase()));
+        } catch (GenericEntityException e1) {
+            // TODO Auto-generated catch block
+            e1.printStackTrace();
+        }
+        if (totalvalue.size() == 0) {
+            String errmsg = "Incorrect User Name";
+            request.setAttribute("_ERROR_MESSAGE_", errmsg);
+            return "error";
+
+        }
+        Map<String, Object> result = null;
+        try {
+            // get the visit id to pass to the userLogin for history
+            String visitId = VisitHandler.getVisitId(session);
+            result = dispatcher.runSync(
+                    "userLogin",
+                    UtilMisc.toMap("login.username", username, "login.password", password, "visitId", visitId, "locale",
+                            UtilHttp.getLocale(request)));
+        } catch (GenericServiceException e) {
+            Debug.logError(e, "Error calling userLogin service", module);
+            Map<String, String> messageMap = UtilMisc.toMap("errorMessage", e.getMessage());
+            String errMsg = UtilProperties.getMessage(resourceWebapp, "loginevents.following_error_occurred_during_login",
+                    messageMap, UtilHttp.getLocale(request));
+            request.setAttribute("_ERROR_MESSAGE_", errMsg);
+            return "error";
+        }
+
+        if (ModelService.RESPOND_SUCCESS.equals(result.get(ModelService.RESPONSE_MESSAGE))) {
+            GenericValue userLogin = (GenericValue) result.get("userLogin");
+
+            if ("Y".equals(request.getParameter("requirePasswordChange"))) {
+                Map<String, Object> inMap = UtilMisc.<String, Object> toMap("login.username", username, "login.password",
+                        password, "locale", UtilHttp.getLocale(request));
+                inMap.put("userLoginId", username);
+                inMap.put("currentPassword", password);
+                inMap.put("newPassword", request.getParameter("newPassword"));
+                inMap.put("newPasswordVerify", request.getParameter("newPasswordVerify"));
+                Map<String, Object> resultPasswordChange = null;
+                try {
+                    resultPasswordChange = dispatcher.runSync("updatePassword", inMap);
+                } catch (GenericServiceException e) {
+                    Debug.logError(e, "Error calling updatePassword service", module);
+                    Map<String, String> messageMap = UtilMisc.toMap("errorMessage", e.getMessage());
+                    String errMsg = UtilProperties.getMessage(resourceWebapp,
+                            "loginevents.following_error_occurred_during_login", messageMap, UtilHttp.getLocale(request));
+                    request.setAttribute("_ERROR_MESSAGE_", errMsg);
+                    return "error";
+                }
+                if (ServiceUtil.isError(resultPasswordChange)) {
+                    String errorMessage = (String) resultPasswordChange.get(ModelService.ERROR_MESSAGE);
+                    if (UtilValidate.isNotEmpty(errorMessage)) {
+                        Map<String, String> messageMap = UtilMisc.toMap("errorMessage", errorMessage);
+                        String errMsg = UtilProperties.getMessage(resourceWebapp,
+                                "loginevents.following_error_occurred_during_login", messageMap, UtilHttp.getLocale(request));
+                        request.setAttribute("_ERROR_MESSAGE_", errMsg);
+                    }
+                    request.setAttribute("_ERROR_MESSAGE_LIST_", resultPasswordChange.get(ModelService.ERROR_MESSAGE_LIST));
+                    return "error";
+                } else {
+                    try {
+                        userLogin.refresh();
+                    } catch (GenericEntityException e) {
+                        Debug.logError(e, "Error refreshing userLogin value", module);
+                        Map<String, String> messageMap = UtilMisc.toMap("errorMessage", e.getMessage());
+                        String errMsg = UtilProperties.getMessage(resourceWebapp,
+                                "loginevents.following_error_occurred_during_login", messageMap, UtilHttp.getLocale(request));
+                        request.setAttribute("_ERROR_MESSAGE_", errMsg);
+                        return "error";
+                    }
+                }
+            }
+
+            if (setupNewDelegatorEtc) {
+                // now set the delegator and dispatcher in a bunch of places
+                // just in case they were changed
+                setWebContextObjects(request, response, delegator, dispatcher, true);
+            }
+
+            // check to see if a password change is required for the user
+            Map<String, Object> userLoginSession = checkMap(result.get("userLoginSession"), String.class, Object.class);
+            if (userLogin != null && "Y".equals(userLogin.getString("requirePasswordChange"))) {
+                return "requirePasswordChange";
+            }
+
+            // check on JavaScriptEnabled
+            String javaScriptEnabled = "N";
+            if ("Y".equals(request.getParameter("JavaScriptEnabled"))) {
+                javaScriptEnabled = "Y";
+            }
+            try {
+                result = dispatcher.runSync("setUserPreference", UtilMisc.toMap("userPrefTypeId", "javaScriptEnabled",
+                        "userPrefGroupTypeId", "GLOBAL_PREFERENCES", "userPrefValue", javaScriptEnabled, "userLogin", userLogin));
+            } catch (GenericServiceException e) {
+                Debug.logError(e, "Error setting user preference", module);
+            }
+
+            // finally do the main login routine to set everything else up in
+            // the session, etc
+            return doMainLogin(request, response, userLogin, userLoginSession);
+        } else {
+            Map<String, String> messageMap = UtilMisc.toMap("errorMessage", (String) result.get(ModelService.ERROR_MESSAGE));
+            String errMsg = UtilProperties.getMessage(resourceWebapp, "loginevents.following_error_occurred_during_login",
+                    messageMap, UtilHttp.getLocale(request));
+            request.setAttribute("_ERROR_MESSAGE_", errMsg);
+            return "error";
+        }
+    }
     /**
      * An HTTP WebEvent handler that logs in a userLogin. This should run before
      * the security check.
@@ -414,6 +640,7 @@ public class LoginWorker {
 
         List totalvalue = null;
         try {
+
             totalvalue = delegator.findByAnd("UserLogin", UtilMisc.toMap("userLoginId", username.toLowerCase()));
         } catch (GenericEntityException e1) {
             // TODO Auto-generated catch block

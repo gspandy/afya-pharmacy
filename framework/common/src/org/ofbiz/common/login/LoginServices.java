@@ -19,13 +19,16 @@
 
 package org.ofbiz.common.login;
 
+import java.io.IOException;
 import java.sql.Timestamp;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
+import java.util.*;
 
 import javax.transaction.Transaction;
 
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.introspect.VisibilityChecker;
 import javolution.util.FastList;
 import javolution.util.FastMap;
 
@@ -54,6 +57,8 @@ import org.ofbiz.service.LocalDispatcher;
 import org.ofbiz.service.ModelService;
 import org.ofbiz.service.ServiceUtil;
 import org.ofbiz.webapp.control.LoginWorker;
+import org.springframework.http.*;
+import org.springframework.web.client.RestTemplate;
 
 /**
  * <b>Title:</b> Login Services
@@ -66,6 +71,30 @@ public class LoginServices {
     /** Login service to authenticate username and password
      * @return Map of results including (userLogin) GenericValue object
      */
+
+    public static Map<String, Object> getUserLoginByUserName(String userName) {
+        RestTemplate restTemplate = new RestTemplate();
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.setContentType(MediaType.APPLICATION_JSON);
+        List<MediaType> mediaTypes = new ArrayList<MediaType>();
+        mediaTypes.add(MediaType.APPLICATION_JSON);
+        httpHeaders.setAccept(mediaTypes);
+        HttpEntity<String> requestEntity = new HttpEntity<String>(httpHeaders);
+        ResponseEntity<String> responseEntity = restTemplate.exchange("http://localhost:7878/afya-portal/anon/getUserLoginByName?userName={userName}", HttpMethod.GET, requestEntity, String.class, userName);
+        String json = responseEntity.getBody();
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
+        mapper.setVisibilityChecker(VisibilityChecker.Std.defaultInstance().withFieldVisibility(JsonAutoDetect.Visibility.ANY));
+        Map<String, Object> result = new HashMap<String, Object>();
+        try {
+            result = mapper.readValue(json, Map.class);
+        } catch(Exception e) {
+            e.printStackTrace();
+        }
+
+        return result;
+    }
+
     public static Map<String, Object> userLogin(DispatchContext ctx, Map<String, ?> context) {
         LocalDispatcher dispatcher = ctx.getDispatcher();
         Locale locale = (Locale) context.get("locale");
@@ -91,6 +120,7 @@ public class LoginServices {
         Map<String, Object> result = FastMap.newInstance();
         Delegator delegator = ctx.getDelegator();
         boolean useEncryption = "true".equals(UtilProperties.getPropertyValue("security.properties", "password.encrypt"));
+        boolean loginPortal = "true".equals(UtilProperties.getPropertyValue("security.properties", "security.login.portal"));
 
         // if isServiceAuth is not specified, default to not a service auth
         boolean isServiceAuth = context.get("isServiceAuth") != null && ((Boolean) context.get("isServiceAuth")).booleanValue();
@@ -131,6 +161,15 @@ public class LoginServices {
                 try {
                     // only get userLogin from cache for service calls; for web and other manual logins there is less time sensitivity
                     userLogin = delegator.findOne("UserLogin", isServiceAuth, "userLoginId", username);
+                    if (loginPortal) {
+                        Map<String, Object> userMap = getUserLoginByUserName(username);
+                        if ((userMap == null) || (userMap.size() == 0)) {
+                            userLogin = null;
+                        } else {
+                            String currentPassword = (String) userMap.get("password");
+                            userLogin.set("currentPassword", useEncryption ? HashCrypt.cryptUTF8(getHashType(), null, currentPassword) : currentPassword);
+                        }
+                    }
                 } catch (GenericEntityException e) {
                     Debug.logWarning(e, "", module);
                 }
@@ -147,6 +186,16 @@ public class LoginServices {
                     // check the user login object again
                     try {
                         userLogin = delegator.findOne("UserLogin", isServiceAuth, "userLoginId", username);
+                        if (loginPortal) {
+                            Map<String, Object> userMap = getUserLoginByUserName(username);
+                            if ((userMap == null) || (userMap.size() == 0)) {
+                                userLogin = null;
+                            } else {
+
+                                userLogin.set("currentPassword", userMap.get("password"));
+                            }
+                        }
+
                     } catch (GenericEntityException e) {
                         Debug.logWarning(e, "", module);
                     }
