@@ -40,11 +40,13 @@ under the License.
                 <td width="1%">&nbsp;</td>
                 <td width="30%">${orderRxHeader.thirdName?if_exists}</td>
             </tr>
-            <tr>
-                <td width="19%"><span class="label">Mobile</span></td>
-                <td width="1%">&nbsp;</td>
-                <td width="30%">${orderRxHeader.mobileNumber?if_exists}</td>
-            </tr>
+            <#if orderRxHeader?has_content && (!orderRxHeader.mobileNumberVisibleForDelivery?exists || orderRxHeader.mobileNumberVisibleForDelivery == "true")>
+                <tr>
+                    <td width="19%"><span class="label">Mobile</span></td>
+                    <td width="1%">&nbsp;</td>
+                    <td width="30%">${orderRxHeader.mobileNumber?if_exists}</td>
+                </tr>
+            </#if>
             <tr>
                 <td width="19%"><span class="label">Visit ID</span></td>
                 <td width="1%">&nbsp;</td>

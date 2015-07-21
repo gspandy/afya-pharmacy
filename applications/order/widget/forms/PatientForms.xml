@@ -104,7 +104,7 @@
             <display/>
         </field>
         <!-- <field name="fourthName" title="Patient Fourth Name" position="4"><text/></field> -->
-        <field name="mobilePhone" position="1" parameter-name="mobile">
+        <field name="patientType" position="1">
             <display/>
         </field>
         <field name="clinicName" position="2">
@@ -120,7 +120,7 @@
                 <option key="CORPORATE" description="Corporate"/>
                 <option key="INSURANCE" description="Insurance"/>
             </drop-down>
-        </field> -->
+        </field>
         <field use-when="${'CASH' == patient.patientType}" name="patientType">
             <display description="Cash"/>
         </field>
@@ -129,27 +129,33 @@
         </field>
         <field use-when="${'INSURANCE' == patient.patientType}" name="patientType">
             <display description="Insurance"/>
-        </field>
+        </field> -->
         <field name="benefitPlanId" id-name="benefitPlanId">
             <hidden/>
         </field>
-        <field use-when="${patient.patientType == 'INSURANCE'}" name="patientInsurance" id-name="patientInsurance">
+        <field use-when="${patient.patientType == 'INSURANCE'}" name="patientInsurance" id-name="patientInsurance" position="1">
             <drop-down allow-empty="true">
                 <entity-options entity-name="PatientInsurance" description="${healthPolicyName} - ${policyNo}" key-field-name="benefitPlanId">
                     <entity-constraint name="patientId" operator="equals" env-name="patient.patientId"/>
                 </entity-options>
             </drop-down>
         </field>
+        <field use-when="${patient.patientType == 'INSURANCE'}" name="hisBenefitId" id-name="hisBenefitId" title="Benefits" position="2">
+            <drop-down></drop-down>
+        </field>
         <field name="moduleName" id-name="moduleName">
             <hidden/>
         </field>
-        <field use-when="${patient.patientType == 'INSURANCE'}" name="hisBenefitId" id-name="hisBenefitId" title="Benefits">
-            <drop-down></drop-down>
-        </field>
-        <field use-when="${'CASH' == patient.patientType}" name="address1" parameter-name="address" position="2">
+        <field use-when="${'CORPORATE' == patient.patientType}" name="primaryPayer" position="1">
             <display/>
         </field>
-        <field name="address1" parameter-name="address" position="1">
+        <field use-when="${'CORPORATE' == patient.patientType &amp;&amp; 'Corporate' == patient.primaryPayer &amp;&amp; patient.copay != null}" name="copay" position="2">
+            <display type="accounting-number"/>
+        </field>
+        <field use-when="${'CORPORATE' == patient.patientType &amp;&amp; 'Corporate' == patient.primaryPayer &amp;&amp; patient.copay != null}" name="copayType" position="3">
+            <display/>
+        </field>
+        <field name="address1" position="1" parameter-name="address">
             <display/>
         </field>
         <field name="city" position="2">
@@ -161,14 +167,14 @@
         <field name="country" position="1">
             <display-entity entity-name="Geo" description="${geoName}" key-field-name="geoId"></display-entity>
         </field>
-        <field use-when="${'CORPORATE' == patient.patientType}" name="primaryPayer" position="1">
+        <field name="mobilePhone" position="1" parameter-name="mobile">
             <display/>
         </field>
-        <field use-when="${'CORPORATE' == patient.patientType &amp;&amp; 'Corporate' == patient.primaryPayer &amp;&amp; patient.copay != null}" name="copay" position="2">
-            <display type="accounting-number"/>
-        </field>
-        <field use-when="${'CORPORATE' == patient.patientType &amp;&amp; 'Corporate' == patient.primaryPayer &amp;&amp; patient.copay != null}" name="copayType" position="3">
-            <display/>
+        <field name="mobileNumberVisibleForDelivery" position="2">
+            <drop-down allow-empty="false" no-current-selected-key="true">
+                <option key="true" description="${uiLabelMap.CommonY}"/>
+                <option key="false" description="${uiLabelMap.CommonN}"/>
+            </drop-down>
         </field>
         <field name="submitButton" title="${uiLabelMap.CommonSubmit}"
                widget-style="btn btn-success">

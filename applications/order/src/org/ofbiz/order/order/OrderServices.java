@@ -1185,6 +1185,7 @@ public class OrderServices {
                         "clinicName", patientInfo.getClinicName(),
                         "patientType", patientInfo.getPatientType(),
                         "mobileNumber", patientInfo.getMobile(),
+                        "mobileNumberVisibleForDelivery", patientInfo.getMobileNumberVisibleForDelivery(),
                         "benefitPlanId", patientInfo.getBenefitId(),
                         "hisBenefitId", patientInfo.getHisBenefitId(),
                         "healthPolicyId", patientInfo.getHealthPolicyId(),

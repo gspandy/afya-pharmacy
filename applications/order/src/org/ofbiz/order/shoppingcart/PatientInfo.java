@@ -2,6 +2,8 @@ package org.ofbiz.order.shoppingcart;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.ofbiz.base.util.UtilValidate;
+
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -51,7 +53,8 @@ public class PatientInfo {
         this.thirdName=request.getParameter("thirdName");
         this.fourthName=request.getParameter("fourthName");
         this.gender=request.getParameter("gender");
-        this.dateOfBirth=new java.sql.Date(dateFormat.parse(dob).getTime());
+        if (UtilValidate.isNotEmpty(dob))
+            this.dateOfBirth=new java.sql.Date(dateFormat.parse(dob).getTime());
         this.mobile=request.getParameter("mobile");
         this.patientType=request.getParameter("patientType");
         this.clinicId=request.getParameter("clinicId");
