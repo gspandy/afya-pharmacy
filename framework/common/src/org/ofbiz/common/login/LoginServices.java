@@ -124,7 +124,7 @@ public class LoginServices {
         httpHeaders.setAccept(mediaTypes);
         HttpEntity<String> requestEntity = new HttpEntity<String>(userLoginJsonString, httpHeaders);
         String portalAddress = UtilProperties.getPropertyValue("general.properties", "portal.server.url");
-        ResponseEntity<String> responseEntity = restTemplate.exchange(portalAddress+"anon/persistUsersLoginFromTenant", HttpMethod.POST, requestEntity, String.class);
+        ResponseEntity<String> responseEntity = restTemplate.exchange(portalAddress+"afya-portal/anon/persistUsersLoginFromTenant", HttpMethod.POST, requestEntity, String.class);
         return responseEntity.getBody();
     }
 
@@ -137,7 +137,7 @@ public class LoginServices {
         httpHeaders.setAccept(mediaTypes);
         HttpEntity<String> requestEntity = new HttpEntity<String>(httpHeaders);
         String portalAddress = UtilProperties.getPropertyValue("general.properties", "portal.server.url");
-        ResponseEntity<String> responseEntity = restTemplate.exchange(portalAddress+"anon/persistUserLoginFacilityAssociation?userName={userName}&tenantId={tenantId}&facilityType={facilityType}", HttpMethod.POST, requestEntity, String.class, userName, tenantId, facilityType);
+        ResponseEntity<String> responseEntity = restTemplate.exchange(portalAddress+"afya-portal/anon/persistUserLoginFacilityAssociation?userName={userName}&tenantId={tenantId}&facilityType={facilityType}", HttpMethod.POST, requestEntity, String.class, userName, tenantId, facilityType);
         return responseEntity.getBody();
     }
 
