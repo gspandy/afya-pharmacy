@@ -21,14 +21,18 @@ package org.ofbiz.common.login;
 
 import java.io.IOException;
 import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 import javax.transaction.Transaction;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.introspect.VisibilityChecker;
+
 import javolution.util.FastList;
 import javolution.util.FastMap;
 
@@ -94,6 +98,47 @@ public class LoginServices {
         }
 
         return result;
+    }
+
+    public static String persistUserLogin(String userName, String password) {
+        Map<String, Object> userLoginRecord = FastMap.newInstance();
+        userLoginRecord.put("username", userName);
+        userLoginRecord.put("password", password);
+        ObjectMapper gson = new ObjectMapper();
+        String userLoginJsonString = null;
+
+        try {
+            userLoginJsonString = gson.writeValueAsString(userLoginRecord);
+            //System.out.println(userLoginJsonString);
+            gson.configure(SerializationFeature.WRITE_DATE_KEYS_AS_TIMESTAMPS, false);
+            gson.setDateFormat(new SimpleDateFormat("yyyy-MM-dd")); // 1.8 and above
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
+
+        RestTemplate restTemplate = new RestTemplate();
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.setContentType(MediaType.APPLICATION_JSON);
+        List<MediaType> mediaTypes = new ArrayList<MediaType>();
+        mediaTypes.add(MediaType.APPLICATION_JSON);
+        httpHeaders.setAccept(mediaTypes);
+        HttpEntity<String> requestEntity = new HttpEntity<String>(userLoginJsonString, httpHeaders);
+        String portalAddress = UtilProperties.getPropertyValue("general.properties", "portal.server.url");
+        ResponseEntity<String> responseEntity = restTemplate.exchange(portalAddress+"anon/persistUsersLoginFromTenant", HttpMethod.POST, requestEntity, String.class);
+        return responseEntity.getBody();
+    }
+
+    public static String persistUserLoginFacilityAssociation(String userName, String tenantId, String facilityType) {
+        RestTemplate restTemplate = new RestTemplate();
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.setContentType(MediaType.APPLICATION_JSON);
+        List<MediaType> mediaTypes = new ArrayList<MediaType>();
+        mediaTypes.add(MediaType.APPLICATION_JSON);
+        httpHeaders.setAccept(mediaTypes);
+        HttpEntity<String> requestEntity = new HttpEntity<String>(httpHeaders);
+        String portalAddress = UtilProperties.getPropertyValue("general.properties", "portal.server.url");
+        ResponseEntity<String> responseEntity = restTemplate.exchange(portalAddress+"anon/persistUserLoginFacilityAssociation?userName={userName}&tenantId={tenantId}&facilityType={facilityType}", HttpMethod.POST, requestEntity, String.class, userName, tenantId, facilityType);
+        return responseEntity.getBody();
     }
 
     public static Map<String, Object> userLogin(DispatchContext ctx, Map<String, ?> context) {
@@ -523,6 +568,11 @@ public class LoginServices {
         List<String> errorMessageList = FastList.newInstance();
         Locale locale = (Locale) context.get("locale");
 
+        String facilityType = "PHARMACY";
+        String tenantId = "default_pharmacy";
+        if(UtilValidate.isNotEmpty(delegator.getDelegatorTenantId()))
+            tenantId = delegator.getDelegatorTenantId();
+
         boolean useEncryption = "true".equals(UtilProperties.getPropertyValue("security.properties", "password.encrypt"));
 
         String userLoginId = (String) context.get("userLoginId");
@@ -597,8 +647,20 @@ public class LoginServices {
         }
 
         try {
-            userLoginToCreate.create();
-            createUserLoginPasswordHistory(delegator,userLoginId, currentPassword);
+            String response1 = persistUserLogin(userLoginId, currentPassword);
+            if(!response1.equals("success")) {
+                Map<String, String> messageMap = UtilMisc.toMap("userLoginId", userLoginId);
+                return ServiceUtil.returnError(UtilProperties.getMessage(resource,"loginservices.could_not_create_login_user_with_ID_exists", messageMap, locale));
+            } else {
+                String response2 = persistUserLoginFacilityAssociation(userLoginId,tenantId,facilityType);
+                if(!response2.equals("success")) {
+                    Map<String, String> messageMap = UtilMisc.toMap("userLoginId", userLoginId);
+                    return ServiceUtil.returnError(UtilProperties.getMessage(resource,"loginservices.could_not_create_login_user_with_ID_exists", messageMap, locale));
+                } else {
+                    userLoginToCreate.create();
+                    createUserLoginPasswordHistory(delegator,userLoginId, currentPassword);
+                }
+            }
         } catch (GenericEntityException e) {
             Debug.logWarning(e, "", module);
             Map<String, String> messageMap = UtilMisc.toMap("errorMessage", e.getMessage());
@@ -621,6 +683,11 @@ public class LoginServices {
         GenericValue loggedInUserLogin = (GenericValue) context.get("userLogin");
         Locale locale = (Locale) context.get("locale");
         Map<String, Object> result = ServiceUtil.returnSuccess(UtilProperties.getMessage(resource, "loginevents.password_was_changed_with_success", locale));
+
+        String facilityType = "PHARMACY";
+        String tenantId = "default_pharmacy";
+        if(UtilValidate.isNotEmpty(delegator.getDelegatorTenantId()))
+            tenantId = delegator.getDelegatorTenantId();
 
         // load the external auth modules -- note: this will only run once and cache the objects
         if (!AuthHelper.authenticatorsLoaded()) {
@@ -727,8 +794,20 @@ public class LoginServices {
             userLoginToUpdate.set("requirePasswordChange", "N");
 
             try {
-                userLoginToUpdate.store();
-                createUserLoginPasswordHistory(delegator,userLoginId, newPassword);
+                String response1 = persistUserLogin(userLoginId, newPassword);
+                if(!response1.equals("success")) {
+                    Map<String, String> messageMap = UtilMisc.toMap("errorMessage", "Use different combination.");
+                    return ServiceUtil.returnError(UtilProperties.getMessage(resource,"loginservices.could_not_change_password_write_failure", messageMap, locale));
+                } else {
+                    String response2 = persistUserLoginFacilityAssociation(userLoginId,tenantId,facilityType);
+                    if(!response2.equals("success")) {
+                        Map<String, String> messageMap = UtilMisc.toMap("errorMessage", "Use different combination.");
+                        return ServiceUtil.returnError(UtilProperties.getMessage(resource,"loginservices.could_not_change_password_write_failure", messageMap, locale));
+                    } else {
+                        userLoginToUpdate.store();
+                        createUserLoginPasswordHistory(delegator,userLoginId, newPassword);
+                    }
+                }
             } catch (GenericEntityException e) {
                 Map<String, String> messageMap = UtilMisc.toMap("errorMessage", e.getMessage());
                 errMsg = UtilProperties.getMessage(resource,"loginservices.could_not_change_password_write_failure", messageMap, locale);
@@ -753,6 +832,11 @@ public class LoginServices {
         GenericValue loggedInUserLogin = (GenericValue) context.get("userLogin");
         List<String> errorMessageList = FastList.newInstance();
         Locale locale = (Locale) context.get("locale");
+
+        String facilityType = "PHARMACY";
+        String tenantId = "default_pharmacy";
+        if(UtilValidate.isNotEmpty(delegator.getDelegatorTenantId()))
+            tenantId = delegator.getDelegatorTenantId();
 
         //boolean useEncryption = "true".equals(UtilProperties.getPropertyValue("security.properties", "password.encrypt"));
 
@@ -826,9 +910,33 @@ public class LoginServices {
 
         try {
             if (doCreate) {
-                newUserLogin.create();
+                String response1 = persistUserLogin(userLoginId, password);
+                if(!response1.equals("success")) {
+                    Map<String, String> messageMap = UtilMisc.toMap("userLoginId", userLoginId);
+                    return ServiceUtil.returnError(UtilProperties.getMessage(resource,"loginservices.could_not_create_login_user_with_ID_exists", messageMap, locale));
+                } else {
+                    String response2 = persistUserLoginFacilityAssociation(userLoginId,tenantId,facilityType);
+                    if(!response2.equals("success")) {
+                        Map<String, String> messageMap = UtilMisc.toMap("userLoginId", userLoginId);
+                        return ServiceUtil.returnError(UtilProperties.getMessage(resource,"loginservices.could_not_create_login_user_with_ID_exists", messageMap, locale));
+                    } else {
+                        newUserLogin.create();
+                    }
+                }
             } else {
-                newUserLogin.store();
+                String response1 = persistUserLogin(userLoginId, password);
+                if(!response1.equals("success")) {
+                    Map<String, String> messageMap = UtilMisc.toMap("userLoginId", userLoginId);
+                    return ServiceUtil.returnError(UtilProperties.getMessage(resource,"loginservices.could_not_create_login_user_with_ID_exists", messageMap, locale));
+                } else {
+                    String response2 = persistUserLoginFacilityAssociation(userLoginId,tenantId,facilityType);
+                    if(!response2.equals("success")) {
+                        Map<String, String> messageMap = UtilMisc.toMap("userLoginId", userLoginId);
+                        return ServiceUtil.returnError(UtilProperties.getMessage(resource,"loginservices.could_not_create_login_user_with_ID_exists", messageMap, locale));
+                    } else {
+                        newUserLogin.store();
+                    }
+                }
             }
         } catch (GenericEntityException e) {
             Debug.logWarning(e, "", module);
