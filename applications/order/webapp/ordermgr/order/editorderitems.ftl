@@ -269,6 +269,7 @@ under the License.
                                                         </#if>
 
                                                         <#assign copayPatient = Static["org.ofbiz.order.order.OrderReadHelper"].getOrderItemCopay(netAmount, orderItem)?default(0.000)>
+                                                        <#assign patientCopay = Static["org.ofbiz.order.order.OrderReadHelper"].getOrderItemCopay(netAmount, orderItem)?default(0.000)>
                                                         <#assign totalCopayPatient = totalCopayPatient + copayPatient>
 
                                                         <#assign orderItemAdjAmt = Static["java.math.BigDecimal"].ZERO>
@@ -277,6 +278,18 @@ under the License.
                                                         <#if orderItem.computeBy?has_content && orderItem.computeBy == "GROSS">
                                                             <#assign grossAmount = Static["org.ofbiz.order.order.OrderReadHelper"].getOrderItemGrossAmount(orderItem)?default(0.000)>
                                                             <#assign copayInsurance = grossAmount - (copayPatient + itemDeductible)>
+                                                            <#assign copayPatient = copayPatient + lineItemAdjTot + orderItemAdjAmount>
+                                                            <#if copayPatient lt 0>
+                                                                <#assign deductibleAmount = Static["org.ofbiz.order.order.OrderReadHelper"].getOrderItemDeductible(netAmount, orderItem)?default(0.000)>
+                                                                <#assign deductible = deductibleAmount + copayPatient>
+                                                                <#if deductible lt 0>
+                                                                    <#assign copayInsurance = grossAmount - (patientCopay + itemDeductible) + deductible>
+                                                                <#else>
+                                                                    <#assign copayInsurance = grossAmount - (patientCopay + itemDeductible)>
+                                                                </#if>
+                                                            <#else>
+                                                                <#assign copayInsurance = grossAmount - (patientCopay + itemDeductible)>
+                                                            </#if>
                                                         <#else>
                                                             <#assign copayInsurance = netAmount - (copayPatient + itemDeductible)>
                                                         </#if>
@@ -624,7 +637,7 @@ under the License.
                             var authorizationAmount = $(authAmt).val();
                             var copayInsurance = $(authCopayIns).val();
                             var lineItemCopayInsuranceAmount = parseFloat(copayInsurance).toFixed(3);
-                            if(parseInt(authorizationAmount) > parseFloat(lineItemCopayInsuranceAmount))
+                            if(parseFloat(authorizationAmount) > parseFloat(lineItemCopayInsuranceAmount))
                                 alert('Authorization Amount can not be greater than the maximum Insurance Payable.');
                         }
                     </script>

@@ -795,22 +795,40 @@ under the License.
                                                     </#if>
                                                 </#if>
 
-
                                                 <#-- <#assign copayPatient = Static["org.ofbiz.order.order.OrderReadHelper"].getOrderItemCopay(orderItem)?default(0.000)> -->
                                                 <#if orderItem.authorized == "Y">
                                                     <#assign orderItemAdjAmt = Static["java.math.BigDecimal"].ZERO>
                                                     <#assign copayPatient = Static["org.ofbiz.order.order.OrderReadHelper"].getOrderItemCopay(netAmount, orderItem)?default(0.000)>
                                                     <#assign patientCopay = Static["org.ofbiz.order.order.OrderReadHelper"].getOrderItemCopay(netAmount, orderItem)?default(0.000)>
                                                     <#assign itemDeductible = Static["org.ofbiz.order.order.OrderReadHelper"].getOrderItemDeductible(netAmount, orderItem)?default(0.000)>
+
                                                     <#if orderItem.computeBy?has_content && orderItem.computeBy == "GROSS">
                                                         <#assign grossAmount = Static["org.ofbiz.order.order.OrderReadHelper"].getOrderItemGrossAmount(orderItem)?default(0.000)>
                                                         <#assign copayPatient = copayPatient + lineItemAdjTot + orderItemAdjAmount>
-                                                        <#assign copayInsurance = grossAmount - (copayPatient + itemDeductible)>
+                                                        <#-- <#assign copayInsurance = grossAmount - (copayPatient + itemDeductible)> -->
+                                                        <#if copayPatient lt 0>
+                                                            <#assign deductibleAmount = Static["org.ofbiz.order.order.OrderReadHelper"].getOrderItemDeductible(netAmount, orderItem)?default(0.000)>
+                                                            <#assign deductible = deductibleAmount + copayPatient>
+                                                            <#if deductible lt 0>
+                                                                <#assign copayInsurance = grossAmount - (patientCopay + itemDeductible) + deductible>
+                                                                <#assign copayPatient = Static["java.math.BigDecimal"].ZERO>
+                                                            <#elseif deductible lt deductibleAmount>
+                                                                <#assign copayInsurance = grossAmount - (patientCopay + itemDeductible)>
+                                                            <#else>
+                                                                <#assign copayInsurance = grossAmount - (patientCopay + itemDeductible) - deductible>
+                                                            </#if>
+                                                        <#else>
+                                                            <#assign copayInsurance = grossAmount - (patientCopay + itemDeductible)>
+                                                        </#if>
                                                     <#else>
                                                         <#assign copayInsurance = netAmount - (copayPatient + itemDeductible)>
                                                     </#if>
                                                     <#if orderItem.authorizationAmount?exists>
-                                                        <#assign copayPatient = copayPatient + copayInsurance - orderItem.authorizationAmount>
+                                                        <#if copayPatient == 0>
+                                                            <#assign copayPatient = copayPatient + copayInsurance - orderItem.authorizationAmount - deductibleAmount>
+                                                        <#else>
+                                                            <#assign copayPatient = copayPatient + copayInsurance - orderItem.authorizationAmount>
+                                                        </#if>
                                                     </#if>
                                                     <#if copayPatient lt 0>
                                                         <#assign copayPatient = Static["java.math.BigDecimal"].ZERO>
@@ -821,20 +839,36 @@ under the License.
                                                         <#assign totalCopayPatient = totalCopayPatient + copayPatient>
                                                     </#if>
                                                 <#else>
+                                                    <#assign orderItemAdjAmt = Static["java.math.BigDecimal"].ZERO>
                                                     <#assign copayPatient = Static["org.ofbiz.order.order.OrderReadHelper"].getOrderItemCopay(netAmount, orderItem)?default(0.000)>
+                                                    <#assign patientCopay = Static["org.ofbiz.order.order.OrderReadHelper"].getOrderItemCopay(netAmount, orderItem)?default(0.000)>
                                                     <#assign itemDeductible = Static["org.ofbiz.order.order.OrderReadHelper"].getOrderItemDeductible(netAmount, orderItem)?default(0.000)>
+
                                                     <#if orderItem.computeBy?has_content && orderItem.computeBy == "GROSS">
                                                         <#assign grossAmount = Static["org.ofbiz.order.order.OrderReadHelper"].getOrderItemGrossAmount(orderItem)?default(0.000)>
-                                                        <#assign copayPatient = grossAmount - itemDeductible + lineItemAdjTot + orderItemAdjAmount>
+                                                        <#assign copayPatient = copayPatient + lineItemAdjTot + orderItemAdjAmount>
+                                                        <#-- <#assign copayInsurance = grossAmount - (copayPatient + itemDeductible)> -->
+                                                        <#if copayPatient lt 0>
+                                                            <#assign deductibleAmount = Static["org.ofbiz.order.order.OrderReadHelper"].getOrderItemDeductible(netAmount, orderItem)?default(0.000)>
+                                                            <#assign deductible = deductibleAmount + copayPatient>
+                                                            <#assign copayPatient = Static["java.math.BigDecimal"].ZERO>
+                                                            <#if deductible lt 0>
+                                                                <#assign copayInsurance = grossAmount - (patientCopay + itemDeductible) + deductible>
+                                                            <#else>
+                                                                <#assign copayInsurance = grossAmount - (patientCopay + itemDeductible)>
+                                                            </#if>
+                                                        <#else>
+                                                            <#assign copayInsurance = grossAmount - (patientCopay + itemDeductible)>
+                                                        </#if>
                                                     <#else>
-                                                        <#assign copayPatient = netAmount - itemDeductible>
+                                                        <#assign copayInsurance = netAmount - (copayPatient + itemDeductible)>
                                                     </#if>
+                                                    <#assign copayPatient = copayPatient + copayInsurance>
                                                     <@ofbizCurrency amount=copayPatient isoCode=currencyUomId/>
                                                     <#assign totalCopayPatient = totalCopayPatient + copayPatient>
                                                 </#if>
                                             </td>
                                             <td style="text-align:right;padding-right:10px;" valign="top" nowrap="nowrap">
-
                                                 <#assign netAmount = Static["java.math.BigDecimal"].ZERO>
                                                 <#assign orderItemAdjAmount = Static["java.math.BigDecimal"].ZERO>
                                                 <#assign lineItemAdjTot = Static["java.math.BigDecimal"].ZERO>
@@ -965,21 +999,41 @@ under the License.
                                                     </#if>
                                                 </#if>
 
-
                                                 <#-- <#assign copayPatient = Static["org.ofbiz.order.order.OrderReadHelper"].getOrderItemCopay(orderItem)?default(0.000)> -->
                                                 <#if orderItem.authorized == "Y">
                                                     <#assign orderItemAdjAmt = Static["java.math.BigDecimal"].ZERO>
+                                                    <#assign copay = Static["java.math.BigDecimal"].ZERO>
                                                     <#assign copayPatient = Static["org.ofbiz.order.order.OrderReadHelper"].getOrderItemCopay(netAmount, orderItem)?default(0.000)>
+                                                    <#assign patientCopay = Static["org.ofbiz.order.order.OrderReadHelper"].getOrderItemCopay(netAmount, orderItem)?default(0.000)>
                                                     <#assign itemDeductible = Static["org.ofbiz.order.order.OrderReadHelper"].getOrderItemDeductible(netAmount, orderItem)?default(0.000)>
                                                     <#if orderItem.computeBy?has_content && orderItem.computeBy == "GROSS">
                                                         <#assign grossAmount = Static["org.ofbiz.order.order.OrderReadHelper"].getOrderItemGrossAmount(orderItem)?default(0.000)>
                                                         <#assign copayPatient = copayPatient + lineItemAdjTot + orderItemAdjAmount>
-                                                        <#assign copayInsurance = grossAmount - (copayPatient + itemDeductible)>
+                                                        <#-- <#assign copayInsurance = grossAmount - (copayPatient + itemDeductible)> -->
+
+                                                        <#if copayPatient lt 0>
+                                                            <#assign deductibleAmount = Static["org.ofbiz.order.order.OrderReadHelper"].getOrderItemDeductible(netAmount, orderItem)?default(0.000)>
+                                                            <#assign deductible = deductibleAmount + copayPatient>
+                                                            <#if deductible lt 0>
+                                                                <#assign copayInsurance = grossAmount - (patientCopay + itemDeductible) + deductible>
+                                                                <#assign copayPatient = Static["java.math.BigDecimal"].ZERO>
+                                                            <#elseif deductible lt deductibleAmount>
+                                                                <#assign copayInsurance = grossAmount - (patientCopay + itemDeductible)>
+                                                            <#else>
+                                                                <#assign copayInsurance = grossAmount - (patientCopay + itemDeductible) - deductible>
+                                                            </#if>
+                                                        <#else>
+                                                            <#assign copayInsurance = grossAmount - (copayPatient + itemDeductible)>
+                                                        </#if>
                                                     <#else>
                                                         <#assign copayInsurance = netAmount - (copayPatient + itemDeductible)>
                                                     </#if>
                                                     <#if orderItem.authorizationAmount?exists>
-                                                        <#assign copayPatient = copayPatient + copayInsurance - orderItem.authorizationAmount>
+                                                        <#if copayPatient == 0>
+                                                            <#assign copayPatient = copayPatient + copayInsurance - orderItem.authorizationAmount - deductibleAmount>
+                                                        <#else>
+                                                            <#assign copayPatient = copayPatient + copayInsurance - orderItem.authorizationAmount>
+                                                        </#if>
                                                     </#if>
                                                     <#if copayPatient lt 0>
                                                         <#-- <#assign deductibleAmount = Static["org.ofbiz.order.order.OrderReadHelper"].getOrderItemDeductible(orderItem)?default(0.000)> -->
@@ -1002,30 +1056,49 @@ under the License.
                                                 <#else>
                                                     <#assign orderItemAdjAmt = Static["java.math.BigDecimal"].ZERO>
                                                     <#assign patientCopay = Static["org.ofbiz.order.order.OrderReadHelper"].getOrderItemCopay(netAmount, orderItem)?default(0.000)>
+                                                    <#assign copayPatient = Static["org.ofbiz.order.order.OrderReadHelper"].getOrderItemCopay(netAmount, orderItem)?default(0.000)>
                                                     <#assign itemDeductible = Static["org.ofbiz.order.order.OrderReadHelper"].getOrderItemDeductible(netAmount, orderItem)?default(0.000)>
+
                                                     <#if orderItem.computeBy?has_content && orderItem.computeBy == "GROSS">
                                                         <#assign grossAmount = Static["org.ofbiz.order.order.OrderReadHelper"].getOrderItemGrossAmount(orderItem)?default(0.000)>
-                                                        <#assign copayPatient = grossAmount - itemDeductible + lineItemAdjTot + orderItemAdjAmount>
+                                                        <#assign copayPatient = copayPatient + lineItemAdjTot + orderItemAdjAmount>
+                                                        <#-- <#assign copayInsurance = grossAmount - (copayPatient + itemDeductible)> -->
+                                                        <#if copayPatient lt 0>
+                                                            <#assign deductibleAmount = Static["org.ofbiz.order.order.OrderReadHelper"].getOrderItemDeductible(netAmount, orderItem)?default(0.000)>
+                                                            <#assign deductible = deductibleAmount + copayPatient>
+                                                            <#assign copay = Static["java.math.BigDecimal"].ZERO>
+                                                            <#if deductible lt 0>
+                                                                <#assign deductible = Static["java.math.BigDecimal"].ZERO>
+                                                                <@ofbizCurrency amount=deductible isoCode=currencyUomId/>
+                                                                <#assign totalDeductible = totalDeductible + deductible>
+                                                            <#else>
+                                                                <@ofbizCurrency amount=deductible isoCode=currencyUomId/>
+                                                                <#assign totalDeductible = totalDeductible + deductible>
+                                                            </#if>
+                                                        <#else>
+                                                            <@ofbizCurrency amount=itemDeductible isoCode=currencyUomId/>
+                                                            <#assign totalDeductible = totalDeductible + itemDeductible>
+                                                        </#if>
                                                     <#else>
                                                         <#assign copayPatient = netAmount - itemDeductible>
-                                                    </#if>
-                                                    <#if copayPatient lt 0>
-                                                        <#-- <#assign deductibleAmount = Static["org.ofbiz.order.order.OrderReadHelper"].getOrderItemDeductible(orderItem)?default(0.000)> -->
-                                                        <#assign deductibleAmount = Static["org.ofbiz.order.order.OrderReadHelper"].getOrderItemDeductible(netAmount, orderItem)?default(0.000)>
-                                                        <#assign deductible = deductibleAmount + copayPatient>
-                                                        <#if deductible lt 0>
-                                                            <#assign deductible = Static["java.math.BigDecimal"].ZERO>
-                                                            <@ofbizCurrency amount=deductible isoCode=currencyUomId/>
-                                                            <#assign totalDeductible = totalDeductible + deductible>
+                                                        <#if copayPatient lt 0>
+                                                            <#-- <#assign deductibleAmount = Static["org.ofbiz.order.order.OrderReadHelper"].getOrderItemDeductible(orderItem)?default(0.000)> -->
+                                                            <#assign deductibleAmount = Static["org.ofbiz.order.order.OrderReadHelper"].getOrderItemDeductible(netAmount, orderItem)?default(0.000)>
+                                                            <#assign deductible = deductibleAmount + copayPatient>
+                                                            <#if deductible lt 0>
+                                                                <#assign deductible = Static["java.math.BigDecimal"].ZERO>
+                                                                <@ofbizCurrency amount=deductible isoCode=currencyUomId/>
+                                                                <#assign totalDeductible = totalDeductible + deductible>
+                                                            <#else>
+                                                                <@ofbizCurrency amount=deductible isoCode=currencyUomId/>
+                                                                <#assign totalDeductible = totalDeductible + deductible>
+                                                            </#if>
                                                         <#else>
+                                                            <#-- <#assign deductible = Static["org.ofbiz.order.order.OrderReadHelper"].getOrderItemDeductible(orderItem)?default(0.000)> -->
+                                                            <#assign deductible = Static["org.ofbiz.order.order.OrderReadHelper"].getOrderItemDeductible(netAmount, orderItem)?default(0.000)>
                                                             <@ofbizCurrency amount=deductible isoCode=currencyUomId/>
                                                             <#assign totalDeductible = totalDeductible + deductible>
                                                         </#if>
-                                                    <#else>
-                                                        <#-- <#assign deductible = Static["org.ofbiz.order.order.OrderReadHelper"].getOrderItemDeductible(orderItem)?default(0.000)> -->
-                                                        <#assign deductible = Static["org.ofbiz.order.order.OrderReadHelper"].getOrderItemDeductible(netAmount, orderItem)?default(0.000)>
-                                                        <@ofbizCurrency amount=deductible isoCode=currencyUomId/>
-                                                        <#assign totalDeductible = totalDeductible + deductible>
                                                     </#if>
                                                 </#if>
                                             </td>
