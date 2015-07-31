@@ -70,7 +70,7 @@
                 table-type="InnoDB" character-set="latin1" collate="latin1_general_cs">
         <read-data reader-name="seed"/>
         <inline-jdbc jdbc-driver="com.mysql.jdbc.Driver"
-                     jdbc-uri="jdbc:mysql://127.0.0.1/ofbiztenant?createDatabaseIfNotExist=true&amp;characterEncoding=UTF-8&amp;characterSetResults=UTF-8"
+                     jdbc-uri="jdbc:mysql://127.0.0.1/afya_pharmacy_tenant?createDatabaseIfNotExist=true&amp;characterEncoding=UTF-8&amp;characterSetResults=UTF-8"
                      jdbc-username="root" jdbc-password="welcome" isolation-level="ReadCommitted"
                      pool-minsize="10" pool-maxsize="10"/>
     </datasource>
