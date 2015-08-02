@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 
 import org.ofbiz.base.util.UtilHttp;
 import org.ofbiz.base.util.UtilMisc;
+import org.ofbiz.base.util.UtilNumber;
 import org.ofbiz.base.util.UtilProperties;
 import org.ofbiz.base.util.UtilValidate;
 import org.ofbiz.entity.Delegator;
@@ -13,6 +14,9 @@ import org.ofbiz.entity.GenericDelegator;
 import org.ofbiz.entity.GenericEntityException;
 import org.ofbiz.entity.GenericValue;
 import org.ofbiz.entity.condition.EntityCondition;
+import org.ofbiz.entity.condition.EntityConditionList;
+import org.ofbiz.entity.condition.EntityExpr;
+import org.ofbiz.entity.condition.EntityOperator;
 import org.ofbiz.entity.util.EntityUtil;
 import org.ofbiz.service.LocalDispatcher;
 import org.springframework.http.HttpEntity;
@@ -32,6 +36,7 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 
 import javolution.util.FastList;
+import javolution.util.FastMap;
 
 /**
  * Created by Naren on 02-04-2015.
@@ -44,6 +49,11 @@ public class AfyaSalesOrderController {
     private static final String FACILITY_ID = "facility.id.default";
     private static final String CUSTOMER_PARTY_ID = "10000";
     private static final String SHIPPING_LOC_ID = "default.customer.contact.mech.default";
+
+    public static final int scale = UtilNumber.getBigDecimalScale("order.decimals");
+    public static final int rounding = UtilNumber.getBigDecimalRoundingMode("order.rounding");
+    public static final BigDecimal ZERO = (BigDecimal.ZERO).setScale(scale, rounding);
+    public static final BigDecimal percentage = (new BigDecimal("0.01")).setScale(scale, rounding);
 
     public static String createSalesOrderForPrescription(HttpServletRequest request, HttpServletResponse response) {
         Map responseStatus = new HashMap();
@@ -259,7 +269,7 @@ public class AfyaSalesOrderController {
             System.out.println(" calculateProductPrice " + result);
             BigDecimal quantity = eachRxRow.getQuantity();
             BigDecimal unitPrice = (BigDecimal) result.get("defaultPrice");
-            BigDecimal selectedAmount = BigDecimal.ZERO;
+            BigDecimal selectedAmount = ZERO;
             String itemType = "PRODUCT_ORDER_ITEM";
             boolean triggerExternalOpsBool = false;
             boolean triggerPriceRulesBool = false;
@@ -276,6 +286,53 @@ public class AfyaSalesOrderController {
     private static GenericValue fetchMatchingProduct(Delegator delegator, String productName) throws GenericEntityException {
         List<GenericValue> values = delegator.findList("Product", EntityCondition.makeCondition("internalName", productName), null, null, null, true);
         return EntityUtil.getFirst(values);
+    }
+
+    public static Map<String, Object> fetchItemsByRxOrder(HttpServletRequest request, HttpServletResponse response) {
+        Delegator delegator = (GenericDelegator) request.getAttribute("delegator");
+
+        String orderId = request.getParameter("orderId");
+        BigDecimal orderSubTotal = ZERO;
+
+        List<GenericValue> orderItemsList = null;
+        List<Map<String, Object>> rxOrderItemList = FastList.newInstance();
+        Map<String,Object> rxOrderMap = new HashMap<String, Object>();
+
+        EntityConditionList<EntityExpr> condition = EntityCondition.makeCondition(UtilMisc.toList(
+                EntityCondition.makeCondition("orderId", orderId),
+                EntityCondition.makeCondition("statusId", EntityOperator.IN, UtilMisc.toList("ITEM_CREATED","ITEM_APPROVED"))),
+                EntityOperator.AND);
+
+        try {
+            orderItemsList = delegator.findList("OrderItem", condition, null, null, null, false);
+        } catch (GenericEntityException e) {
+            e.printStackTrace();
+        }
+        if(UtilValidate.isNotEmpty(orderItemsList)) {
+
+            for (GenericValue oi : orderItemsList) {
+
+                Map<String, Object> orderItem = FastMap.newInstance();
+                BigDecimal quantity = oi.getBigDecimal("quantity");
+                BigDecimal unitPrice = oi.getBigDecimal("unitPrice");
+                BigDecimal itemSubTotal = quantity.multiply(unitPrice).setScale(scale, rounding);
+
+                orderItem.put("drugName", oi.getString("itemDescription"));
+                orderItem.put("frequency", oi.getString("comments"));
+                orderItem.put("quantity", quantity);
+                orderItem.put("unitPrice", unitPrice);
+                orderItem.put("itemSubTotal", itemSubTotal);
+                rxOrderItemList.add(orderItem);
+
+                orderSubTotal = orderSubTotal.add(itemSubTotal);
+
+            }
+            rxOrderMap.put("orderId", orderId);
+            rxOrderMap.put("orderItems", rxOrderItemList);
+            rxOrderMap.put("orderSubTotal", orderSubTotal);
+        }
+
+        return rxOrderMap;
     }
 
     public static String testJsonPost(HttpServletRequest request, HttpServletResponse response) throws IOException {

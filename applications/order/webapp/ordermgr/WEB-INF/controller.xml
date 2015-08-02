@@ -2228,7 +2228,7 @@
 		<security https="true" auth="true" />
 		<event type="jsonjava" path="org.ofbiz.order.shoppingcart.AfyaSalesOrderController"
 			   invoke="createSalesOrderForPrescription" />
-		<response name="success" type="view" value="main" />
+		<response name="success" type="none" />
 	</request-map>
 
 	<request-map uri="testOrderRx">
@@ -2236,6 +2236,13 @@
 		<event type="jsonjava" path="org.ofbiz.order.shoppingcart.AfyaSalesOrderController"
 			   invoke="testJsonPost" />
 		<response name="success" type="view" value="main" />
+	</request-map>
+
+	<request-map uri="fetchItemsByRxOrder">
+		<security https="true" auth="true" />
+		<event type="jsonjava" path="org.ofbiz.order.shoppingcart.AfyaSalesOrderController"
+			   invoke="fetchItemsByRxOrder" />
+		<response name="success" type="view" value="none" />
 	</request-map>
 
 	<!-- These are just examples of reports developed using JasperReport and not really useful reports. In order to run them you'll have to follow the notes in the
@@ -2336,6 +2343,7 @@
         <response name="success" type="view" value="orderHelp" />
     </request-map>
 
+	<!-- Afya Patient Request Map -->
 	<request-map uri="newPatient">
 		<security auth="true"/>
 		<response name="success" type="view" value="newpatient"/>
@@ -2371,8 +2379,7 @@
 
 	<request-map uri="newInsurance">
 		<security auth="true"/>
-		<response name="success" type="view" value="addInsurance">
-		</response>
+		<response name="success" type="view" value="addInsurance"/>
 	</request-map>
 
 	<request-map uri="viewInsurances">
@@ -2426,6 +2433,59 @@
 		<response name="success" type="view" value="findPatients"/>
 	</request-map>
 
+	<!-- Afya Referral Contract Request Map -->
+	<request-map uri="newContract">
+		<security auth="true"/>
+		<response name="success" type="view" value="newContract"/>
+	</request-map>
+	
+	<request-map uri="editContract">
+		<security auth="true"/>
+		<response name="success" type="view" value="newContract"/>
+	</request-map>
+
+	<request-map uri="findContracts">
+		<security auth="true"/>
+		<response name="success" type="view" value="findContracts"/>
+	</request-map>
+
+	<request-map uri="listReferralContracts">
+		<security auth="true"/>
+		<response name="success" type="view" value="listReferralContracts"/>
+	</request-map>
+
+	<request-map uri="createReferralContract">
+		<security auth="true"/>
+		<event type="service" invoke="createReferralContract"/>
+		<response name="success" type="request-redirect" value="editContract">
+			<redirect-parameter name="contractId"/>
+		</response>
+	</request-map>
+	
+	<request-map uri="updateReferralContract">
+		<security auth="true"/>
+		<event type="service" invoke="updateReferralContract"/>
+		<response name="success" type="request-redirect" value="editContract">
+			<redirect-parameter name="contractId"/>
+		</response>
+	</request-map>
+
+	<request-map uri="addReferralServiceContract">
+		<security auth="true"/>
+		<event type="service" invoke="addReferralServiceContract"/>
+		<response name="success" type="request-redirect" value="editContract">
+			<redirect-parameter name="contractId"/>
+		</response>
+	</request-map>
+
+	<request-map uri="removeReferralServiceContract">
+		<security auth="true"/>
+		<event type="service" invoke="removeReferralServiceContract"/>
+		<response name="success" type="request-redirect" value="editContract">
+			<redirect-parameter name="contractId"/>
+		</response>
+	</request-map>
+
 	<!-- end of request mappings -->
 
 	<!-- View Mappings -->
@@ -2444,6 +2504,10 @@
 	<view-map name="searchPatientResult" type="screen" page="component://order/widget/ordermgr/OrderEntryScreens.xml#SearchPatientResult" />
 
 	<view-map name="findPatients" type="screen" page="component://order/widget/ordermgr/OrderViewScreens.xml#FindPatient" />
+
+	<view-map name="newContract" type="screen" page="component://order/widget/ordermgr/OrderViewScreens.xml#NewContract" />
+	<view-map name="listReferralContracts" type="screen" page="component://order/widget/ordermgr/OrderViewScreens.xml#ListContracts" />
+	<view-map name="findContracts" type="screen" page="component://order/widget/ordermgr/OrderViewScreens.xml#FindContracts" />
 
 	<view-map name="orderstats" type="screen" page="component://order/widget/ordermgr/OrderViewScreens.xml#OrderStats" />
 	<view-map name="findorders" type="screen" page="component://order/widget/ordermgr/OrderViewScreens.xml#OrderFindOrder" />
