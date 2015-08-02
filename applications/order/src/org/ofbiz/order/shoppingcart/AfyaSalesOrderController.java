@@ -34,7 +34,7 @@ import java.util.*;
 import javolution.util.FastList;
 
 /**
- * Created by pradyumna on 02-04-2015.
+ * Created by Naren on 02-04-2015.
  */
 public class AfyaSalesOrderController {
 
@@ -47,6 +47,7 @@ public class AfyaSalesOrderController {
 
     public static String createSalesOrderForPrescription(HttpServletRequest request, HttpServletResponse response) {
         Map responseStatus = new HashMap();
+        String orderId = null;
         try {
             ObjectMapper mapper = new ObjectMapper();
             mapper.configure(SerializationFeature.WRITE_DATE_KEYS_AS_TIMESTAMPS, false);
@@ -127,7 +128,7 @@ public class AfyaSalesOrderController {
             cart.setPatientInfo(patientInfo);
             CheckOutHelper checkOutHelper = new CheckOutHelper(dispatcher, dispatcher.getDelegator(), cart);
             java.util.Map orderCreate = checkOutHelper.createOrder(userLogin);
-            String orderId = (String) orderCreate.get("orderId");
+            orderId = (String) orderCreate.get("orderId");
             /*responseStatus.put("statusCode",200);
             responseStatus.put("orderId",orderId);
             responseStatus.put("message","Order successfully placed.");*/
@@ -142,9 +143,9 @@ public class AfyaSalesOrderController {
             }  else {
                 patientDetails = delegator.findByAnd("Patient", UtilMisc.toMap("firstName", firstName, "thirdName", thirdName, "dateOfBirth"), null, false);
             }
-            
+
             if(UtilValidate.isEmpty(patientDetails)) {
-            
+
                 RestTemplate restTemplate = new RestTemplate();
                 HttpHeaders httpHeaders = new HttpHeaders();
                 httpHeaders.setContentType(MediaType.APPLICATION_JSON);
@@ -177,44 +178,44 @@ public class AfyaSalesOrderController {
                     if(map.get("gender").equals("Male")) {
                         patient.set("gender", "M");
                     } else if(map.get("gender").equals("Female")) {
-                    	patient.set("gender", "F");
+                        patient.set("gender", "F");
                     } else {
                         patient.set("gender", null);
                     }
                     patient.set("dateOfBirth", new java.sql.Date(format.parse(dateOfBirth).getTime()));
                     patient.set("bloodGroup", map.get("bloodGroup"));
                     patient.set("rH", map.get("rh"));
-                    
+
                     if( map.get("maritalStatus") != null ){
-                    
-	                    if(map.get("maritalStatus").equals("Annulled")) {
-	                    	patient.set("maritalStatus", "ANNULLED");
-	                    } else if(map.get("maritalStatus").equals("Divorced")) {
-	                    	patient.set("maritalStatus", "DIVORCED");
-	                    } else if(map.get("maritalStatus").equals("Domestic Partner")) {
-	                    	patient.set("maritalStatus", "DOMESTIC_PARTNER");
-	                    } else if(map.get("maritalStatus").equals("Legally Separated")) {
-	                    	patient.set("maritalStatus", "LEGALLY_SEPARATED");
-	                    } else if(map.get("maritalStatus").equals("Living Together")) {
-	                    	patient.set("maritalStatus", "LIVING_TOGETHER");
-	                    } else if(map.get("maritalStatus").equals("Married")) {
-	                    	patient.set("maritalStatus", "MARRIED");
-	                    } else if(map.get("maritalStatus").equals("Other")) {
-	                    	patient.set("maritalStatus", "OTHER");
-	                    } else if(map.get("maritalStatus").equals("Separated")) {
-	                    	patient.set("maritalStatus", "SEPARATED");
-	                    } else if(map.get("maritalStatus").equals("Single")) {
-	                    	patient.set("maritalStatus", "SINGLE");
-	                    } else if(map.get("maritalStatus").equals("Unmarried")) {
-	                    	patient.set("maritalStatus", "UNMARRIED");
-	                    } else if(map.get("maritalStatus").equals("Widowed")) {
-	                    	patient.set("maritalStatus", "WIDOWED");
-	                    } else {
-	                    	patient.set("maritalStatus", map.get("maritalStatus"));
-	                    }
-	                    
+
+                        if(map.get("maritalStatus").equals("Annulled")) {
+                            patient.set("maritalStatus", "ANNULLED");
+                        } else if(map.get("maritalStatus").equals("Divorced")) {
+                            patient.set("maritalStatus", "DIVORCED");
+                        } else if(map.get("maritalStatus").equals("Domestic Partner")) {
+                            patient.set("maritalStatus", "DOMESTIC_PARTNER");
+                        } else if(map.get("maritalStatus").equals("Legally Separated")) {
+                            patient.set("maritalStatus", "LEGALLY_SEPARATED");
+                        } else if(map.get("maritalStatus").equals("Living Together")) {
+                            patient.set("maritalStatus", "LIVING_TOGETHER");
+                        } else if(map.get("maritalStatus").equals("Married")) {
+                            patient.set("maritalStatus", "MARRIED");
+                        } else if(map.get("maritalStatus").equals("Other")) {
+                            patient.set("maritalStatus", "OTHER");
+                        } else if(map.get("maritalStatus").equals("Separated")) {
+                            patient.set("maritalStatus", "SEPARATED");
+                        } else if(map.get("maritalStatus").equals("Single")) {
+                            patient.set("maritalStatus", "SINGLE");
+                        } else if(map.get("maritalStatus").equals("Unmarried")) {
+                            patient.set("maritalStatus", "UNMARRIED");
+                        } else if(map.get("maritalStatus").equals("Widowed")) {
+                            patient.set("maritalStatus", "WIDOWED");
+                        } else {
+                            patient.set("maritalStatus", map.get("maritalStatus"));
+                        }
+                        
                     }
-                    
+
                     patient.set("address1", map.get("address"));
                     patient.set("address2", map.get("additionalAddress"));
                     patient.set("city", map.get("city"));
@@ -228,14 +229,14 @@ public class AfyaSalesOrderController {
                     patient.set("homePhone", map.get("homePhone"));
                     patient.set("officePhone", map.get("officePhone"));
                     patient.set("selectionType", "CIVIL_ID");
-                    
+
                     delegator.create(patient);
-                    
+
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
             }
-            
+
         } catch (Exception e) {
             e.printStackTrace();
             /*responseStatus.put("statusCode",500);
@@ -243,7 +244,7 @@ public class AfyaSalesOrderController {
             e.printStackTrace();
             response.setStatus(500);*/
         }
-        return "success";
+        return orderId;
 
     }
 
@@ -264,11 +265,11 @@ public class AfyaSalesOrderController {
             boolean triggerPriceRulesBool = false;
             boolean skipInventoryChecks = true;
             boolean skipProductChecks = false;
-            ShoppingCartItem cartItem = ShoppingCartItem.makeItem(cartIndex++, productGV.getString("productId"), selectedAmount, quantity, unitPrice
-                    , null, null, null, null, null, null, null, null, null, itemType, itemGroup, dispatcher, cart, triggerExternalOpsBool, triggerPriceRulesBool, null, skipInventoryChecks, skipProductChecks);
+            ShoppingCartItem cartItem = ShoppingCartItem.makeItem(cartIndex++, productGV.getString("productId"), selectedAmount, quantity, unitPrice,
+                    null, null, null, null, null, null, null, null, null, itemType, itemGroup, dispatcher, cart, triggerExternalOpsBool, triggerPriceRulesBool, null, skipInventoryChecks, skipProductChecks);
             cartItem.setItemComment(eachRxRow.getDetails());
             cartItem.setHomeService(eachRxRow.isHomeService());
-//            cart.setItemShipGroupQty(cartItem, quantity, 1);
+            //cart.setItemShipGroupQty(cartItem, quantity, 1);
         }
     }
 
@@ -497,16 +498,15 @@ public class AfyaSalesOrderController {
             this.corporatePrimaryPayer = corporatePrimaryPayer;
         }
 
-		public Boolean getMobileNumberVisibleForDelivery() {
-			return mobileNumberVisibleForDelivery;
-		}
+        public Boolean getMobileNumberVisibleForDelivery() {
+            return mobileNumberVisibleForDelivery;
+        }
 
-		public void setMobileNumberVisibleForDelivery(
-				Boolean mobileNumberVisibleForDelivery) {
-			this.mobileNumberVisibleForDelivery = mobileNumberVisibleForDelivery;
-		}
+        public void setMobileNumberVisibleForDelivery(Boolean mobileNumberVisibleForDelivery) {
+            this.mobileNumberVisibleForDelivery = mobileNumberVisibleForDelivery;
+        }
 
-		@Override
+        @Override
         public String toString() {
             return "Prescription{" +
                     "clinicId='" + clinicId + '\'' +
