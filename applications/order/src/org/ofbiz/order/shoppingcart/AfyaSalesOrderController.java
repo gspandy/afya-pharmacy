@@ -291,12 +291,20 @@ public class AfyaSalesOrderController {
     public static Map<String, Object> fetchItemsByRxOrder(HttpServletRequest request, HttpServletResponse response) {
         Delegator delegator = (GenericDelegator) request.getAttribute("delegator");
 
+        String currencyUom = UtilProperties.getPropertyValue(generalPropertiesFiles, currencyPropName);
         String orderId = request.getParameter("orderId");
         BigDecimal orderSubTotal = ZERO;
 
         List<GenericValue> orderItemsList = null;
         List<Map<String, Object>> rxOrderItemList = FastList.newInstance();
         Map<String,Object> rxOrderMap = new HashMap<String, Object>();
+
+        try {
+            GenericValue orderHeader = delegator.findOne("OrderHeader", UtilMisc.toMap("orderId", orderId), false);
+            currencyUom = orderHeader.getString("currencyUom");
+        } catch (GenericEntityException e) {
+            e.printStackTrace();
+        }
 
         EntityConditionList<EntityExpr> condition = EntityCondition.makeCondition(UtilMisc.toList(
                 EntityCondition.makeCondition("orderId", orderId),
@@ -305,8 +313,8 @@ public class AfyaSalesOrderController {
 
         try {
             orderItemsList = delegator.findList("OrderItem", condition, null, null, null, false);
-        } catch (GenericEntityException e) {
-            e.printStackTrace();
+        } catch (GenericEntityException e1) {
+            e1.printStackTrace();
         }
         if(UtilValidate.isNotEmpty(orderItemsList)) {
 
@@ -322,14 +330,20 @@ public class AfyaSalesOrderController {
                 orderItem.put("quantity", quantity);
                 orderItem.put("unitPrice", unitPrice);
                 orderItem.put("itemSubTotal", itemSubTotal);
+                orderItem.put("currencyUom", currencyUom);
                 rxOrderItemList.add(orderItem);
 
                 orderSubTotal = orderSubTotal.add(itemSubTotal);
 
             }
+
+            Map<String, Object> amountPayable = FastMap.newInstance();
+            amountPayable.put("netPayableAmount", orderSubTotal);
+            amountPayable.put("currencyUom", currencyUom);
+
             rxOrderMap.put("orderId", orderId);
             rxOrderMap.put("orderItems", rxOrderItemList);
-            rxOrderMap.put("orderSubTotal", orderSubTotal);
+            rxOrderMap.put("amountPayable", amountPayable);
         }
 
         return rxOrderMap;
