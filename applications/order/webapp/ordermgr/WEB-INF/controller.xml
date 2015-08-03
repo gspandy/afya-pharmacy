@@ -2235,14 +2235,14 @@
 		<security https="true" auth="true" />
 		<event type="jsonjava" path="org.ofbiz.order.shoppingcart.AfyaSalesOrderController"
 			   invoke="testJsonPost" />
-		<response name="success" type="view" value="main" />
+		<response name="success" type="none" />
 	</request-map>
 
 	<request-map uri="fetchItemsByRxOrder">
 		<security https="true" auth="true" />
 		<event type="jsonjava" path="org.ofbiz.order.shoppingcart.AfyaSalesOrderController"
 			   invoke="fetchItemsByRxOrder" />
-		<response name="success" type="view" value="none" />
+		<response name="success" type="none" />
 	</request-map>
 
 	<!-- These are just examples of reports developed using JasperReport and not really useful reports. In order to run them you'll have to follow the notes in the

@@ -31,6 +31,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.io.PrintWriter;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -63,7 +64,6 @@ public class AfyaSalesOrderController {
             mapper.configure(SerializationFeature.WRITE_DATE_KEYS_AS_TIMESTAMPS, false);
             mapper.setDateFormat(new SimpleDateFormat("yyyy-MM-dd")); // 1.8 and above
             Prescription prescription = mapper.readValue(request.getInputStream(), Prescription.class);
-
 
             LocalDispatcher dispatcher = (LocalDispatcher) request.getAttribute("dispatcher");
             Delegator delegator = (GenericDelegator) request.getAttribute("delegator");
@@ -254,7 +254,21 @@ public class AfyaSalesOrderController {
             e.printStackTrace();
             response.setStatus(500);*/
         }
-        return orderId;
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.configure(SerializationFeature.WRITE_DATE_KEYS_AS_TIMESTAMPS, false);
+        objectMapper.setDateFormat(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss"));
+
+        try {
+            request.setCharacterEncoding("utf8");
+            response.setContentType("application/json");
+            PrintWriter out = response.getWriter();
+            objectMapper.writeValue(out, orderId);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return "success";
 
     }
 
@@ -288,7 +302,7 @@ public class AfyaSalesOrderController {
         return EntityUtil.getFirst(values);
     }
 
-    public static Map<String, Object> fetchItemsByRxOrder(HttpServletRequest request, HttpServletResponse response) {
+    public static String fetchItemsByRxOrder(HttpServletRequest request, HttpServletResponse response) {
         Delegator delegator = (GenericDelegator) request.getAttribute("delegator");
 
         String currencyUom = UtilProperties.getPropertyValue(generalPropertiesFiles, currencyPropName);
@@ -321,8 +335,8 @@ public class AfyaSalesOrderController {
             for (GenericValue oi : orderItemsList) {
 
                 Map<String, Object> orderItem = FastMap.newInstance();
-                BigDecimal quantity = oi.getBigDecimal("quantity");
-                BigDecimal unitPrice = oi.getBigDecimal("unitPrice");
+                BigDecimal quantity = oi.getBigDecimal("quantity").setScale(scale, rounding);
+                BigDecimal unitPrice = oi.getBigDecimal("unitPrice").setScale(scale, rounding);
                 BigDecimal itemSubTotal = quantity.multiply(unitPrice).setScale(scale, rounding);
 
                 orderItem.put("drugName", oi.getString("itemDescription"));
@@ -344,9 +358,24 @@ public class AfyaSalesOrderController {
             rxOrderMap.put("orderId", orderId);
             rxOrderMap.put("orderItems", rxOrderItemList);
             rxOrderMap.put("amountPayable", amountPayable);
+
+            ObjectMapper objectMapper = new ObjectMapper();
+            objectMapper.configure(SerializationFeature.WRITE_DATE_KEYS_AS_TIMESTAMPS, false);
+            objectMapper.setDateFormat(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss"));
+
+            try {
+                request.setCharacterEncoding("utf8");
+                response.setContentType("application/json");
+                PrintWriter out = response.getWriter();
+                objectMapper.writeValue(out, rxOrderMap);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
         }
 
-        return rxOrderMap;
+        return "success";
+
     }
 
     public static String testJsonPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
