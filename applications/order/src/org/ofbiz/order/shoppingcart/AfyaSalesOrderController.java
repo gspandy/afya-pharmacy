@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 
+import org.ofbiz.base.util.Debug;
 import org.ofbiz.base.util.UtilHttp;
 import org.ofbiz.base.util.UtilMisc;
 import org.ofbiz.base.util.UtilNumber;
@@ -18,6 +19,7 @@ import org.ofbiz.entity.condition.EntityConditionList;
 import org.ofbiz.entity.condition.EntityExpr;
 import org.ofbiz.entity.condition.EntityOperator;
 import org.ofbiz.entity.util.EntityUtil;
+import org.ofbiz.service.GenericServiceException;
 import org.ofbiz.service.LocalDispatcher;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -43,6 +45,9 @@ import javolution.util.FastMap;
  * Created by Naren on 02-04-2015.
  */
 public class AfyaSalesOrderController {
+
+    public static final String module = AfyaSalesOrderController.class.getName();
+    public static final String resource_error = "OrderErrorUiLabels";
 
     private static final String PRODUCT_STORE_ID = "store.id.default";
     private static final String generalPropertiesFiles = "general.properties";
@@ -78,7 +83,7 @@ public class AfyaSalesOrderController {
             cart.setUserLogin(userLogin, dispatcher);
             cart.setDefaultCheckoutOptions(dispatcher);
 
-            addItemsToCart(dispatcher, cart, prescription.getRows());
+            addItemsToCart(dispatcher, cart, prescription.getRows())
             String facilityId = UtilProperties.getPropertyValue(generalPropertiesFiles, FACILITY_ID);
             String destination = UtilProperties.getPropertyValue(generalPropertiesFiles, SHIPPING_LOC_ID);
             cart.setPlacingCustomerPartyId(CUSTOMER_PARTY_ID);
@@ -106,7 +111,11 @@ public class AfyaSalesOrderController {
             patientInfo.setDoctorName(prescription.getDoctorName());
             patientInfo.setVisitDate(prescription.getVisitDate());
             patientInfo.setVisitId(prescription.getVisitId());
-            patientInfo.setPatientType(prescription.getPatientType());
+            if(prescription.getPatientType().equals("CASH PAYING")) {
+                patientInfo.setPatientType("CASH");
+            } else {
+                patientInfo.setPatientType(prescription.getPatientType());
+            }
             patientInfo.setAddress(prescription.getAddress());
             patientInfo.setHisBenefitId(prescription.getHisBenefitId());
             patientInfo.setModuleName(prescription.getModuleName());
@@ -137,7 +146,7 @@ public class AfyaSalesOrderController {
 
             cart.setPatientInfo(patientInfo);
             CheckOutHelper checkOutHelper = new CheckOutHelper(dispatcher, dispatcher.getDelegator(), cart);
-            java.util.Map orderCreate = checkOutHelper.createOrder(userLogin);
+            Map orderCreate = checkOutHelper.createOrder(userLogin);
             orderId = (String) orderCreate.get("orderId");
             /*responseStatus.put("statusCode",200);
             responseStatus.put("orderId",orderId);
@@ -372,6 +381,64 @@ public class AfyaSalesOrderController {
                 e.printStackTrace();
             }
 
+        }
+
+        return "success";
+
+    }
+
+    public static String receiveActivePrescriptionPayment(HttpServletRequest request, HttpServletResponse response) {
+        Locale locale = UtilHttp.getLocale(request);
+        Delegator delegator = (GenericDelegator) request.getAttribute("delegator");
+
+        String orderId = request.getParameter("orderId");
+        BigDecimal totalAmount = new BigDecimal(request.getParameter("totalAmount")).setScale(scale, rounding);
+        String currencyUom = request.getParameter("currencyUom") != null ? request.getParameter("currencyUom") : UtilProperties.getPropertyValue(generalPropertiesFiles, currencyPropName);
+
+        try {
+            EntityConditionList<EntityExpr> condition = EntityCondition.makeCondition(UtilMisc.toList(
+                    EntityCondition.makeCondition("orderId", orderId),
+                    EntityCondition.makeCondition("paymentMethodTypeId", "CASH"),
+                    EntityCondition.makeCondition("statusId", "PAYMENT_NOT_RECEIVED")),
+                    EntityOperator.AND);
+            List<GenericValue> currentPaymentPrefs = delegator.findList("OrderPaymentPreference", condition, null, null, null, false);
+            if(UtilValidate.isNotEmpty(currentPaymentPrefs)) {
+                GenericValue currentPaymentPref = EntityUtil.getFirst(currentPaymentPrefs);
+                currentPaymentPref.set("amountReceived", totalAmount);
+                currentPaymentPref.set("statusId", "PAYMENT_RECEIVED");
+                delegator.store(currentPaymentPref);
+
+                ObjectMapper objectMapper = new ObjectMapper();
+                objectMapper.configure(SerializationFeature.WRITE_DATE_KEYS_AS_TIMESTAMPS, false);
+                objectMapper.setDateFormat(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss"));
+                try {
+                    request.setCharacterEncoding("utf8");
+                    response.setContentType("application/json");
+                    PrintWriter out = response.getWriter();
+                    String successMsg = "Amount " + currencyUom + " " + totalAmount + " paid successfully for the Order '" + orderId + "'.";
+                    objectMapper.writeValue(out, successMsg);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            } else {
+                ObjectMapper objectMapper = new ObjectMapper();
+                objectMapper.configure(SerializationFeature.WRITE_DATE_KEYS_AS_TIMESTAMPS, false);
+                objectMapper.setDateFormat(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss"));
+                try {
+                    request.setCharacterEncoding("utf8");
+                    response.setContentType("application/json");
+                    PrintWriter out = response.getWriter();
+                    String errorMsg = "Amount " + currencyUom + " " + totalAmount + " can not paid for the Order '" + orderId + "'. Please contact customer service.";
+                    objectMapper.writeValue(out, errorMsg);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        } catch (GenericEntityException e) {
+            e.printStackTrace();
+            Debug.logError(e, "Problems getting payment preference for order: " + orderId, module);
+            request.setAttribute("_ERROR_MESSAGE_", UtilProperties.getMessage(resource_error, "checkhelper.problems_getting_payment_preference", locale));
+            return "error";
         }
 
         return "success";
