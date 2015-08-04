@@ -1183,6 +1183,7 @@ public class OrderServices {
                         "visitDate", UtilDateTime.toSqlDate(patientInfo.getVisitDate()),
                         "doctorName", patientInfo.getDoctorName(),
                         "clinicName", patientInfo.getClinicName(),
+                        "isOrderFromClinic", patientInfo.getIsOrderFromClinic(),
                         "patientType", patientInfo.getPatientType(),
                         "mobileNumber", patientInfo.getMobile(),
                         "mobileNumberVisibleForDelivery", patientInfo.getMobileNumberVisibleForDelivery(),
@@ -1193,7 +1194,8 @@ public class OrderServices {
                         "moduleName", patientInfo.getModuleName(),
                         "copay", patientInfo.getCopay(),
                         "copayType", patientInfo.getCopayType(),
-                        "primaryPayer", patientInfo.getPrimaryPayer());
+                        "primaryPayer", patientInfo.getPrimaryPayer(),
+                        "referralAmount", patientInfo.getReferralAmount());
                 GenericValue genericValue = delegator.makeValidValue("OrderRxHeader", presciptionData);
                 toBeStored.add(genericValue);
 

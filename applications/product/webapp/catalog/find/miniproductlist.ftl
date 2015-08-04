@@ -29,9 +29,10 @@ under the License.
                 ${product.productName?default("${uiLabelMap.CommonNo} ${uiLabelMap.ProductInternalName} / ${uiLabelMap.ProductProductName}")}
               </#if>    
             </a>
-            <div>
+            &nbsp;<b>(${product.productId})</b>
+            <#-- <div>
               <b>${product.productId}</b>
-            </div>
+            </div> -->
           </div>
       </#list>
       <#if (listSize > viewSize)>

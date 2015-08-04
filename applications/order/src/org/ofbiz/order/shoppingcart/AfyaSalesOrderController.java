@@ -62,7 +62,7 @@ public class AfyaSalesOrderController {
     public static final BigDecimal percentage = (new BigDecimal("0.01")).setScale(scale, rounding);
 
     public static String createSalesOrderForPrescription(HttpServletRequest request, HttpServletResponse response) {
-        Map responseStatus = new HashMap();
+        //Map responseStatus = new HashMap();
         String orderId = null;
         try {
             ObjectMapper mapper = new ObjectMapper();
@@ -84,6 +84,10 @@ public class AfyaSalesOrderController {
             cart.setDefaultCheckoutOptions(dispatcher);
 
             addItemsToCart(dispatcher, cart, prescription.getRows());
+            String doctor = prescription.getDoctorName();
+            String clinic = prescription.getClinicName();
+            String clinicId = prescription.getClinicId();
+            BigDecimal referralAmount = getReferralAmount(dispatcher, delegator, doctor, clinic, clinicId, prescription.getRows());
             String facilityId = UtilProperties.getPropertyValue(generalPropertiesFiles, FACILITY_ID);
             String destination = UtilProperties.getPropertyValue(generalPropertiesFiles, SHIPPING_LOC_ID);
             cart.setPlacingCustomerPartyId(CUSTOMER_PARTY_ID);
@@ -111,7 +115,7 @@ public class AfyaSalesOrderController {
             patientInfo.setDoctorName(prescription.getDoctorName());
             patientInfo.setVisitDate(prescription.getVisitDate());
             patientInfo.setVisitId(prescription.getVisitId());
-            if(prescription.getPatientType().equals("CASH PAYING")) {
+            if (prescription.getPatientType().equals("CASH PAYING")) {
                 patientInfo.setPatientType("CASH");
             } else {
                 patientInfo.setPatientType(prescription.getPatientType());
@@ -121,32 +125,22 @@ public class AfyaSalesOrderController {
             patientInfo.setModuleName(prescription.getModuleName());
             patientInfo.setBenefitId(prescription.getBenefitId());
             patientInfo.setIsOrderApproved(prescription.getIsOrderApproved());
+            patientInfo.setIsOrderFromClinic("Y");
             patientInfo.setMobileNumberVisibleForDelivery(String.valueOf(prescription.getMobileNumberVisibleForDelivery()));
 
-            if(prescription.getCorporateCopay() != null)
+            if (prescription.getCorporateCopay() != null)
                 patientInfo.setCopay(prescription.getCorporateCopay());
+
             patientInfo.setCopayType(prescription.getCorporateCopayType());
             patientInfo.setPrimaryPayer(prescription.getCorporatePrimaryPayer());
 
-            /*patientInfo.setCopay(BigDecimal.TEN);
-            patientInfo.setCopayType("PERCENT");
-            patientInfo.setPrimaryPayer("Corporate");*/
-
-            /*patientInfo.setCopay(BigDecimal.TEN);
-            patientInfo.setCopayType("AMOUNT");
-            patientInfo.setPrimaryPayer("Corporate");*/
-
-            /*patientInfo.setCopay(null);
-            patientInfo.setCopayType(null);
-            patientInfo.setPrimaryPayer("Corporate");*/
-
-            /*patientInfo.setCopay(null);
-            patientInfo.setCopayType(null);
-            patientInfo.setPrimaryPayer("Patient");*/
+            if (referralAmount != ZERO)
+                patientInfo.setReferralAmount(referralAmount);
 
             cart.setPatientInfo(patientInfo);
+
             CheckOutHelper checkOutHelper = new CheckOutHelper(dispatcher, dispatcher.getDelegator(), cart);
-            Map orderCreate = checkOutHelper.createOrder(userLogin);
+            Map<String, Object> orderCreate = checkOutHelper.createOrder(userLogin);
             orderId = (String) orderCreate.get("orderId");
             /*responseStatus.put("statusCode",200);
             responseStatus.put("orderId",orderId);
@@ -157,13 +151,13 @@ public class AfyaSalesOrderController {
             String thirdName = orderRxHeader.getString("thirdName");
             Date dob = ((Date) orderRxHeader.get("dateOfBirth"));
             List<GenericValue> patientDetails = FastList.newInstance();
-            if(afyaId != null || UtilValidate.isNotEmpty(afyaId)) {
+            if (afyaId != null || UtilValidate.isNotEmpty(afyaId)) {
                 patientDetails = delegator.findByAnd("Patient", UtilMisc.toMap("afyaId", afyaId), null, false);
             }  else {
                 patientDetails = delegator.findByAnd("Patient", UtilMisc.toMap("firstName", firstName, "thirdName", thirdName, "dateOfBirth"), null, false);
             }
 
-            if(UtilValidate.isEmpty(patientDetails)) {
+            if (UtilValidate.isEmpty(patientDetails)) {
 
                 RestTemplate restTemplate = new RestTemplate();
                 HttpHeaders httpHeaders = new HttpHeaders();
@@ -175,7 +169,7 @@ public class AfyaSalesOrderController {
                 ResponseEntity<String> responseEntity = restTemplate.exchange("http://5.9.249.197:7878/afya-portal/anon/fetchPatientByAfyaId?afyaId={afyaId}", HttpMethod.GET, requestEntity, String.class, afyaId);
                 String repsonseJson = responseEntity.getBody();
                 mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
-                Map<String, Object> map = new HashMap();
+                Map<String, Object> map = new HashMap<String, Object>();
                 try {
                     map = mapper.readValue(repsonseJson, map.getClass());
                     String patientId = delegator.getNextSeqId("Patient");
@@ -184,7 +178,7 @@ public class AfyaSalesOrderController {
                     GenericValue patient = delegator.makeValidValue("Patient", UtilMisc.toMap("patientId", patientId));
                     patient.set("afyaId", map.get("afyaId"));
                     patient.set("civilId", map.get("civilId"));
-                    if(map.get("patientType").equals("CASH PAYING")) {
+                    if (map.get("patientType").equals("CASH PAYING")) {
                         patient.set("patientType", "CASH");
                     } else {
                         patient.set("patientType", map.get("patientType"));
@@ -194,9 +188,9 @@ public class AfyaSalesOrderController {
                     patient.set("secondName", map.get("middleName"));
                     patient.set("thirdName", map.get("lastName"));
                     patient.set("fourthName", map.get("endMostName"));
-                    if(map.get("gender").equals("Male")) {
+                    if (map.get("gender").equals("Male")) {
                         patient.set("gender", "M");
-                    } else if(map.get("gender").equals("Female")) {
+                    } else if (map.get("gender").equals("Female")) {
                         patient.set("gender", "F");
                     } else {
                         patient.set("gender", null);
@@ -205,34 +199,34 @@ public class AfyaSalesOrderController {
                     patient.set("bloodGroup", map.get("bloodGroup"));
                     patient.set("rH", map.get("rh"));
 
-                    if( map.get("maritalStatus") != null ){
+                    if (map.get("maritalStatus") != null){
 
-                        if(map.get("maritalStatus").equals("Annulled")) {
+                        if (map.get("maritalStatus").equals("Annulled")) {
                             patient.set("maritalStatus", "ANNULLED");
-                        } else if(map.get("maritalStatus").equals("Divorced")) {
+                        } else if (map.get("maritalStatus").equals("Divorced")) {
                             patient.set("maritalStatus", "DIVORCED");
-                        } else if(map.get("maritalStatus").equals("Domestic Partner")) {
+                        } else if (map.get("maritalStatus").equals("Domestic Partner")) {
                             patient.set("maritalStatus", "DOMESTIC_PARTNER");
-                        } else if(map.get("maritalStatus").equals("Legally Separated")) {
+                        } else if (map.get("maritalStatus").equals("Legally Separated")) {
                             patient.set("maritalStatus", "LEGALLY_SEPARATED");
-                        } else if(map.get("maritalStatus").equals("Living Together")) {
+                        } else if (map.get("maritalStatus").equals("Living Together")) {
                             patient.set("maritalStatus", "LIVING_TOGETHER");
-                        } else if(map.get("maritalStatus").equals("Married")) {
+                        } else if (map.get("maritalStatus").equals("Married")) {
                             patient.set("maritalStatus", "MARRIED");
-                        } else if(map.get("maritalStatus").equals("Other")) {
+                        } else if (map.get("maritalStatus").equals("Other")) {
                             patient.set("maritalStatus", "OTHER");
-                        } else if(map.get("maritalStatus").equals("Separated")) {
+                        } else if (map.get("maritalStatus").equals("Separated")) {
                             patient.set("maritalStatus", "SEPARATED");
-                        } else if(map.get("maritalStatus").equals("Single")) {
+                        } else if (map.get("maritalStatus").equals("Single")) {
                             patient.set("maritalStatus", "SINGLE");
-                        } else if(map.get("maritalStatus").equals("Unmarried")) {
+                        } else if (map.get("maritalStatus").equals("Unmarried")) {
                             patient.set("maritalStatus", "UNMARRIED");
-                        } else if(map.get("maritalStatus").equals("Widowed")) {
+                        } else if (map.get("maritalStatus").equals("Widowed")) {
                             patient.set("maritalStatus", "WIDOWED");
                         } else {
                             patient.set("maritalStatus", map.get("maritalStatus"));
                         }
-                        
+
                     }
 
                     patient.set("address1", map.get("address"));
@@ -281,6 +275,119 @@ public class AfyaSalesOrderController {
 
     }
 
+    private static BigDecimal getReferralAmount(LocalDispatcher dispatcher, Delegator delegator, String doctor, String clinic, String clinicId, List<LineItem> rxLineItems) throws GenericEntityException, GenericServiceException {
+        BigDecimal referralAmount = ZERO;
+        List<Map<String, Object>> orderItemList = new ArrayList<>();
+        for (LineItem eachRxRow : rxLineItems) {
+            Map<String, Object> orderItem = new LinkedHashMap<>();
+            String productName = eachRxRow.getTradeName();
+            GenericValue productGV = fetchMatchingProduct(dispatcher.getDelegator(), productName);
+            Map<String, Object> result = dispatcher.runSync("calculateProductPrice", UtilMisc.toMap("product", productGV));
+            System.out.println(" calculateProductPrice " + result);
+            String productId = productGV.getString("productId");
+            BigDecimal quantity = eachRxRow.getQuantity();
+            BigDecimal unitPrice = (BigDecimal) result.get("defaultPrice");
+            BigDecimal subTotal = quantity.multiply(unitPrice);
+            orderItem.put("productId", productId);
+            orderItem.put("subTotal", subTotal);
+            orderItemList.add(orderItem);
+        }
+        if (UtilValidate.isNotEmpty(orderItemList)) {
+            Iterator<Map<String, Object>> oi = orderItemList.iterator();
+            Map<String, List<GenericValue>> orderItemAndCategoryMapping = new HashMap<String, List<GenericValue>>();
+
+            while (oi.hasNext()) {
+                Map<String, Object> orderLineItem = oi.next();
+                try {
+                    GenericValue productGv = delegator.findOne("Product", UtilMisc.toMap("productId", orderLineItem.get("productId")), false);
+                    String primaryProductCategoryId = productGv.getString("primaryProductCategoryId");
+                    GenericValue productCategory = delegator.findOne("ProductCategory", false, "productCategoryId", primaryProductCategoryId);
+                    if (productCategory != null) {
+                        String mappedProductCategories = productCategory.getString("productCategoryId");
+                        if (mappedProductCategories != null) {
+                            if (mappedProductCategories.indexOf(",") != -1) {
+                                for (String categoryId : mappedProductCategories.split(",")) {
+                                    List oiList = (List) orderItemAndCategoryMapping.get(categoryId);
+                                    if (oiList == null) {
+                                        oiList = new ArrayList();
+                                    }
+                                    oiList.add(orderLineItem);
+                                    orderItemAndCategoryMapping.put(categoryId, oiList);
+                                }
+                            } else {
+                                List oiList = (List) orderItemAndCategoryMapping.get(mappedProductCategories);
+                                if (oiList == null) {
+                                    oiList = new ArrayList();
+                                }
+                                oiList.add(orderLineItem);
+                                orderItemAndCategoryMapping.put(mappedProductCategories, oiList);
+                            }
+                        }
+                    }
+                } catch (GenericEntityException e) {
+                    e.printStackTrace();
+                }
+            }
+            List<EntityExpr> exprs = FastList.newInstance();
+            exprs.add(EntityCondition.makeCondition("referralName", EntityOperator.EQUALS, doctor));
+            exprs.add(EntityCondition.makeCondition("clinicName", EntityOperator.EQUALS, clinic));
+            exprs.add(EntityCondition.makeCondition("clinicId", EntityOperator.EQUALS, clinicId));
+            exprs.add(EntityCondition.makeCondition("contractStatus", EntityOperator.EQUALS, "ACTIVE"));
+            List<GenericValue> referralList = delegator.findList("ReferralContract", EntityCondition.makeCondition(exprs, EntityOperator.AND), null, null, null, true);
+            if (UtilValidate.isNotEmpty(referralList)) {
+                GenericValue referralContract = EntityUtil.getFirst(referralList);
+                if ("PERCENTAGE_OF_BILL".equals(referralContract.getString("paymentMode"))) {
+                    BigDecimal percentageOnBill = referralContract.getBigDecimal("percentageOnBill");
+                    for (Map<String, Object> orderItem : orderItemList) {
+                        referralAmount = referralAmount.add((BigDecimal) orderItem.get("subTotal"));
+                    }
+                    referralAmount = referralAmount.multiply(percentageOnBill).setScale(scale, rounding).multiply(percentage);
+                } else if ("PERCENTAGE_SERVICE_ITEM".equals(referralContract.getString("paymentMode"))) {
+                    Map<String,Object> categoryMap = new LinkedHashMap<String, Object>();
+                    BigDecimal lineItemSubTotal = ZERO;
+
+                    for (Map.Entry<String, List<GenericValue>> oic: orderItemAndCategoryMapping.entrySet()) {
+                        String categoryId = oic.getKey();
+                        List<GenericValue> values = oic.getValue();
+                        for (Map<String, Object> value : values) {
+                            BigDecimal subTotal = new BigDecimal(value.get("subTotal").toString()).setScale(scale, rounding);
+                            lineItemSubTotal = lineItemSubTotal.add(subTotal);
+                        }
+                        categoryMap.put(categoryId,lineItemSubTotal);
+                    }
+                    if (categoryMap != null) {
+                        for (Map.Entry<String, Object> category : categoryMap.entrySet()) {
+                            String contractId = referralContract.getString("contractId");
+                            String categoryId = category.getKey();
+                            GenericValue contractServiceGv = delegator.findOne("ReferralContractService", UtilMisc.toMap("contractId", contractId, "productCategoryId", categoryId),false);
+                            if (contractServiceGv != null && contractServiceGv.getBigDecimal("paymentPercentage") != null) {
+                                BigDecimal productCategoryTotal = new BigDecimal(category.getValue().toString()).setScale(scale, rounding);
+                                BigDecimal paymentPercentage = contractServiceGv.getBigDecimal("paymentPercentage");
+                                BigDecimal categoryAmount = productCategoryTotal.multiply(paymentPercentage).setScale(scale, rounding).multiply(percentage);
+                                referralAmount = referralAmount.add(categoryAmount).setScale(scale, rounding);
+                            }
+                        }
+                    }
+                } else if ("FIX_AMOUNT_PER_SERVICE".equals(referralContract.getString("paymentMode"))) {
+                    if (orderItemAndCategoryMapping != null) {
+                        Set<String> categoryIds = orderItemAndCategoryMapping.keySet();
+                        for (String categoryId : categoryIds) {
+                            String contractId = referralContract.getString("contractId");
+                            GenericValue contractServiceGv = delegator.findOne("ReferralContractService", UtilMisc.toMap("contractId", contractId, "productCategoryId", categoryId),false);
+                            if (contractServiceGv != null && contractServiceGv.getBigDecimal("paymentAmount") != null) {
+                                BigDecimal paymentAmount = contractServiceGv.getBigDecimal("paymentAmount");
+                                referralAmount = referralAmount.add(paymentAmount);
+                            }
+                        }
+                    }
+                } else {
+                    referralAmount = ZERO;
+                }
+            }
+        }
+        return referralAmount;
+    }
+
     private static void addItemsToCart(LocalDispatcher dispatcher, ShoppingCart cart, List<LineItem> rxLineItems) throws Exception {
 
         int cartIndex = 0;
@@ -288,7 +395,7 @@ public class AfyaSalesOrderController {
         for (LineItem eachRxRow : rxLineItems) {
             String productName = eachRxRow.getTradeName();
             GenericValue productGV = fetchMatchingProduct(dispatcher.getDelegator(), productName);
-            Map result = dispatcher.runSync("calculateProductPrice", UtilMisc.toMap("product", productGV));
+            Map<String, Object> result = dispatcher.runSync("calculateProductPrice", UtilMisc.toMap("product", productGV));
             System.out.println(" calculateProductPrice " + result);
             BigDecimal quantity = eachRxRow.getQuantity();
             BigDecimal unitPrice = (BigDecimal) result.get("defaultPrice");
@@ -339,7 +446,7 @@ public class AfyaSalesOrderController {
         } catch (GenericEntityException e1) {
             e1.printStackTrace();
         }
-        if(UtilValidate.isNotEmpty(orderItemsList)) {
+        if (UtilValidate.isNotEmpty(orderItemsList)) {
 
             for (GenericValue oi : orderItemsList) {
 
@@ -408,7 +515,7 @@ public class AfyaSalesOrderController {
                     EntityCondition.makeCondition("statusId", "PAYMENT_NOT_RECEIVED")),
                     EntityOperator.AND);
             List<GenericValue> currentPaymentPrefs = delegator.findList("OrderPaymentPreference", condition, null, null, null, false);
-            if(UtilValidate.isNotEmpty(currentPaymentPrefs)) {
+            if (UtilValidate.isNotEmpty(currentPaymentPrefs)) {
                 GenericValue currentPaymentPref = EntityUtil.getFirst(currentPaymentPrefs);
                 currentPaymentPref.set("amountReceived", totalAmount);
                 currentPaymentPref.set("statusId", "PAYMENT_RECEIVED");
@@ -563,7 +670,7 @@ public class AfyaSalesOrderController {
         }
 
         public Date getVisitDate() {
-            if(visitDate==null){
+            if (visitDate == null){
                 return new Date();
             }
             return visitDate;

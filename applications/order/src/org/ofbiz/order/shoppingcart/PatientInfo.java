@@ -37,10 +37,12 @@ public class PatientInfo {
     private String moduleId;
     private String moduleName;
     private String isOrderApproved;
+    private String isOrderFromClinic;
     private BigDecimal copay;
     private String copayType;
     private String primaryPayer;
     private String mobileNumberVisibleForDelivery;
+    private BigDecimal referralAmount;
 
     PatientInfo(HttpServletRequest request) throws ParseException {
         String dob = request.getParameter("dateOfBirth");
@@ -66,11 +68,17 @@ public class PatientInfo {
         this.moduleId=request.getParameter("moduleId");
         this.moduleName=request.getParameter("moduleName");
         this.isOrderApproved=request.getParameter("isOrderApproved");
+        if (request.getParameter("isOrderFromClinic") != null)
+            this.isOrderFromClinic=request.getParameter("isOrderFromClinic");
+        else
+            this.isOrderFromClinic="N";
         if (request.getParameter("copay") != null)
             this.copay=new BigDecimal(request.getParameter("copay"));
         this.copayType=request.getParameter("copayType");
         this.primaryPayer=request.getParameter("primaryPayer");
         this.mobileNumberVisibleForDelivery=request.getParameter("mobileNumberVisibleForDelivery");
+        if (request.getParameter("referralAmount") != null)
+            this.referralAmount=new BigDecimal(request.getParameter("referralAmount"));
     }
 
     public PatientInfo() {
@@ -261,7 +269,15 @@ public class PatientInfo {
 		this.isOrderApproved = isOrderApproved;
 	}
 
-    public BigDecimal getCopay() {
+	public String getIsOrderFromClinic() {
+		return isOrderFromClinic;
+	}
+
+	public void setIsOrderFromClinic(String isOrderFromClinic) {
+		this.isOrderFromClinic = isOrderFromClinic;
+	}
+
+	public BigDecimal getCopay() {
 		return copay;
 	}
 
@@ -291,6 +307,14 @@ public class PatientInfo {
 
 	public void setMobileNumberVisibleForDelivery(String mobileNumberVisibleForDelivery) {
 		this.mobileNumberVisibleForDelivery = mobileNumberVisibleForDelivery;
+	}
+
+	public BigDecimal getReferralAmount() {
+		return referralAmount;
+	}
+
+	public void setReferralAmount(BigDecimal referralAmount) {
+		this.referralAmount = referralAmount;
 	}
 
 }

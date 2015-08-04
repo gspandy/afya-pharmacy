@@ -96,7 +96,12 @@ jQuery.validator.addMethod("currencylimiter", function(value, element) {
 jQuery.validator.addMethod("adjustment", function(value, element) {
 	$(element).val($(element).val().replace(/,/g,''));
 	return this.optional(element) || /^-?\d+(\.(\d+))?$/.test($(element).val());
-	}, "A positive or negative decimal number please");
+}, "A positive or negative decimal number please");
+
+jQuery.validator.addMethod("percentage", function(value, element) {
+	$(element).val($(element).val().replace(/,/g,''));
+	return this.optional(element) || /^\d+(\.(\d+))?$/.test($(element).val());
+}, "A positive decimal number for percentage please");
 
 /**
 * Return true, if the value is a valid vehicle identification number (VIN).

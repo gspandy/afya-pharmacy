@@ -45,8 +45,8 @@
 
 	<PortalPage portalPageId="OrderPortalPage" sequenceNum="0" portalPageName="Order Portal Page"
 		description="Order main page using flexible Portal technology" ownerUserLoginId="_NA_" />
-	<PortalPageColumn portalPageId="OrderPortalPage" columnSeqId="00001" />
-	<PortalPageColumn portalPageId="OrderPortalPage" columnSeqId="00002" />
+	<PortalPageColumn portalPageId="OrderPortalPage" columnSeqId="00001" columnWidthPercentage="50" />
+	<PortalPageColumn portalPageId="OrderPortalPage" columnSeqId="00002" columnWidthPercentage="50" />
 	
 	<PortalPage portalPageId="OrderPortalPagePo" sequenceNum="0" portalPageName="Order Portal Page For PO"
 		description="Purchase Order main page using flexible Portal technology" ownerUserLoginId="_NA_" />

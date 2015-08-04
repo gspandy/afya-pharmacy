@@ -159,7 +159,16 @@ under the License.
                 <link target="findPatients"/>
             </menu-item>
         </menu-item>
-      <!--  <menu-item name="return" title="${uiLabelMap.OrderOrderReturns}">
+        <menu-item name="referralContract" title="Referral Contracts">
+            <link target="listReferralContracts"/>
+            <menu-item name="newContract" title="Create New Referral Contract">
+                <link target="newContract"/>
+            </menu-item>
+            <menu-item name="patientList" title="Find Referral Contracts">
+                <link target="findContracts"/>
+            </menu-item>
+        </menu-item>
+        <!-- <menu-item name="return" title="${uiLabelMap.OrderOrderReturns}">
             <condition>
                 <if-has-permission permission="ORDERMGR" action="_RETURN"/>
             </condition>
@@ -175,7 +184,7 @@ under the License.
             </condition>
             <link target="findreturn"/>
           </menu-item> 
-       </menu-item>-->
+        </menu-item> -->
 
         <menu-item name="requirement" title="${uiLabelMap.OrderRequirements}">
            <link target="FindRequirements"/>

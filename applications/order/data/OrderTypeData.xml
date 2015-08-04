@@ -272,6 +272,12 @@ under the License.
     <StatusValidChange condition="" statusId="QUO_APPROVED" statusIdTo="QUO_ORDERED" transitionName="Order Quote"/>
     <StatusValidChange condition="" statusId="QUO_APPROVED" statusIdTo="QUO_REJECTED" transitionName="Reject Quote"/>
 
+    <!-- Referral Contract statuses -->
+    <StatusType description="Referral Contract Status" hasTable="N" parentTypeId="" statusTypeId="REF_CONTRACT_STATUS"/>
+    <StatusItem description="Active" sequenceId="01" statusCode="ACTIVE" statusId="ACTIVE" statusTypeId="REF_CONTRACT_STATUS"/>
+    <StatusItem description="Inactive" sequenceId="02" statusCode="INACTIVE" statusId="INACTIVE" statusTypeId="REF_CONTRACT_STATUS"/>
+    <StatusItem description="Expired" sequenceId="03" statusCode="EXPIRED" statusId="EXPIRED" statusTypeId="REF_CONTRACT_STATUS"/>
+
     <!-- Return Adjustment Types-->
     <ReturnAdjustmentType description="Return Promotion" hasTable="N" returnAdjustmentTypeId="RET_PROMOTION_ADJ" parentTypeId=""/>
     <ReturnAdjustmentType description="Return Replacement" hasTable="N" returnAdjustmentTypeId="RET_REPLACE_ADJ" parentTypeId=""/>
@@ -351,15 +357,15 @@ under the License.
     <ReturnItemTypeMap returnHeaderTypeId="CUSTOMER_RETURN" returnItemMapKey="FG_SERIALIZED" returnItemTypeId="RET_FPROD_ITEM"/>
 
 
-	<ReturnItemTypeMap returnHeaderTypeId="VENDOR_RETURN" returnItemMapKey="EDUCESS_ADJUSTMENT" returnItemTypeId="RET_EDUCESS_ADJ"/>
+    <ReturnItemTypeMap returnHeaderTypeId="VENDOR_RETURN" returnItemMapKey="EDUCESS_ADJUSTMENT" returnItemTypeId="RET_EDUCESS_ADJ"/>
     <ReturnItemTypeMap returnHeaderTypeId="CUSTOMER_RETURN" returnItemMapKey="EDUCESS_ADJUSTMENT" returnItemTypeId="RET_EDUCESS_ADJ"/>
 
-	<ReturnItemTypeMap returnHeaderTypeId="VENDOR_RETURN" returnItemMapKey="HIGH_EDU_CESS" returnItemTypeId="RET_HIGHEDU_ADJ"/>
+    <ReturnItemTypeMap returnHeaderTypeId="VENDOR_RETURN" returnItemMapKey="HIGH_EDU_CESS" returnItemTypeId="RET_HIGHEDU_ADJ"/>
     <ReturnItemTypeMap returnHeaderTypeId="CUSTOMER_RETURN" returnItemMapKey="HIGH_EDU_CESS" returnItemTypeId="RET_HIGHEDU_ADJ"/>
-    
+
     <ReturnItemTypeMap returnHeaderTypeId="VENDOR_RETURN" returnItemMapKey="MKTG_PKG_AUTO_ADJUST" returnItemTypeId="RET_MKTG_PKG_ADJ"/>
     <ReturnItemTypeMap returnHeaderTypeId="CUSTOMER_RETURN" returnItemMapKey="MKTG_PKG_AUTO_ADJUST" returnItemTypeId="RET_MKTG_PKG_ADJ"/>
-    
+
     <ReturnItemTypeMap returnHeaderTypeId="VENDOR_RETURN" returnItemMapKey="MISCELLANEOUS_CHARGE" returnItemTypeId="RET_MISC_ADJ"/>
     <ReturnItemTypeMap returnHeaderTypeId="CUSTOMER_RETURN" returnItemMapKey="MISCELLANEOUS_CHARGE" returnItemTypeId="RET_MISC_ADJ"/>
 

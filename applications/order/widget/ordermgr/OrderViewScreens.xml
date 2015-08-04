@@ -1067,7 +1067,7 @@
                 <set field="headerItem" value="Patient List"/>
                 <set field="entityName" value="Patient"/>
                 <set field="viewIndex" from-field="parameters.VIEW_INDEX" type="Integer"/>
-                <set field="viewSize" from-field="parameters.VIEW_SIZE" type="Integer" default-value="50"/>
+                <set field="viewSize" from-field="parameters.VIEW_SIZE" type="Integer" default-value="20"/>
             </actions>
             <widgets>
                 <decorator-screen name="main-decorator" location="${parameters.mainDecoratorLocation}">
@@ -1122,6 +1122,101 @@
                                     <html-template location="component://order/webapp/ordermgr/order/insurancePlanDetail.ftl"/>
                                 </html>
                             </platform-specific>
+                        </screenlet>
+                    </decorator-section>
+                </decorator-screen>
+            </widgets>
+        </section>
+    </screen>
+
+    <screen name="NewContract">
+        <section>
+            <actions>
+                <set field="titleProperty" value="Referral Contract"/>
+                <set field="contractId" from-field="parameters.contractId"/>
+                <property-to-field field="defaultCurrencyUomId" resource="general" property="currency.uom.id.default"/>
+                <entity-one entity-name="ReferralContract" value-field="contract" auto-field-map="true"/>
+                <entity-and entity-name="ReferralContractService" list="referralContractServiceList">
+                    <field-map field-name="contractId" from-field="contractId"/>
+                    <order-by field-name="-createdTxStamp"/>
+                </entity-and>
+                <entity-condition list="currencyUomList" entity-name="Uom">
+                    <condition-list>
+                        <condition-expr field-name="uomTypeId" operator="equals" value="CURRENCY_MEASURE"/>
+                    </condition-list>
+                    <order-by field-name="description"/>
+                </entity-condition>
+                <entity-condition list="contractStatusList" entity-name="StatusItem">
+                    <condition-list>
+                        <condition-expr field-name="statusTypeId" operator="equals" value="REF_CONTRACT_STATUS"/>
+                    </condition-list>
+                    <order-by field-name="sequenceId"/>
+                </entity-condition>
+                <entity-condition list="paymentModeList" entity-name="PaymentType">
+                    <condition-list>
+                        <condition-expr field-name="parentTypeId" operator="equals" value="PAYMENT_MODE"/>
+                    </condition-list>
+                </entity-condition>
+                <entity-condition list="paymentPointList" entity-name="PaymentType">
+                    <condition-list>
+                        <condition-expr field-name="parentTypeId" operator="equals" value="PAYMENT_POINT"/>
+                    </condition-list>
+                </entity-condition>
+                <set field="layoutSettings.javaScripts[]" value="/ordermgr/images/js/referralContract.js" global="true"/>
+                <set field="layoutSettings.javaScripts[]" value="/images/selectall.js" global="true"/>
+            </actions>
+            <widgets>
+                <decorator-screen name="main-decorator" location="${parameters.mainDecoratorLocation}">
+                    <decorator-section name="body">
+                        <container id="ContractId">
+                            <platform-specific><html><html-template location="component://order/webapp/ordermgr/entry/order/referralContract.ftl"/></html></platform-specific>
+                        </container>
+                    </decorator-section>
+                </decorator-screen>
+            </widgets>
+        </section>
+    </screen>
+
+    <screen name="FindContracts">
+        <section>
+            <actions>
+                <set field="titleProperty" value="Find Referral Contracts"/>
+                <set field="headerItem" value="List of Referral Contract"/>
+                <set field="entityName" value="ReferralContract"/>
+                <set field="viewIndex" from-field="parameters.VIEW_INDEX" type="Integer"/>
+                <set field="viewSize" from-field="parameters.VIEW_SIZE" type="Integer" default-value="20"/>
+            </actions>
+            <widgets>
+                <decorator-screen name="main-decorator" location="${parameters.mainDecoratorLocation}">
+                    <decorator-section name="body">
+                        <screenlet title="Find Referral Contracts">
+                            <include-form name="FindContracts" location="component://order/widget/forms/ReferralContractForms.xml"/>
+                        </screenlet>
+                        <screenlet title="Referral Contracts List">
+                            <include-form name="ContractSearchResults" location="component://order/widget/forms/ReferralContractForms.xml"/>
+                        </screenlet>
+                    </decorator-section>
+                </decorator-screen>
+            </widgets>
+        </section>
+    </screen>
+
+    <screen name="ListContracts">
+        <section>
+            <actions>
+                <set field="titleProperty" value="Referral Contracts List"/>
+                <set field="headerItem" value="List of Referral Contracts"/>
+                <entity-condition entity-name="ReferralContract" list="referralContractList">
+                    <order-by field-name="-createdTxStamp"/>
+                </entity-condition>
+                <set field="viewIndex" from-field="parameters.VIEW_INDEX" type="Integer"/>
+                <set field="viewSize" from-field="parameters.VIEW_SIZE" type="Integer" default-value="20"/>
+            </actions>
+            <widgets>
+                <decorator-screen name="main-decorator" location="${parameters.mainDecoratorLocation}">
+                    <decorator-section name="body">
+                        <screenlet title="List of Referral Contracts">
+                            <include-form name="ContractList" location="component://order/widget/forms/ReferralContractForms.xml"/>
                         </screenlet>
                     </decorator-section>
                 </decorator-screen>

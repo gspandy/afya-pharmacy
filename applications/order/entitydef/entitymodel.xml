@@ -3111,17 +3111,18 @@
 		<field name="hisBenefitId" type="short-varchar"></field>
 		<field name="moduleId" type="short-varchar"></field>
 		<field name="moduleName" type="short-varchar"></field>
-		<field name="patientType" type="id-ne"/>
-		<field name="mobileNumber" type="id-ne"/>
-		<field name="mobileNumberVisibleForDelivery" type="very-short"/>
+		<field name="patientType" type="id-ne"></field>
+		<field name="mobileNumber" type="id-ne"></field>
+		<field name="mobileNumberVisibleForDelivery" type="very-short"></field>
 		<field name="visitDate" type="date"></field>
 		<field name="doctorName" type="id-vlong-ne"></field>
 		<field name="address" type="text"></field>
 		<field name="clinicName" type="id-vlong-ne"></field>
-
+		<field name="isOrderFromClinic" type="indicator"></field>
 		<field name="copay" type="currency-amount"></field>
 		<field name="copayType" type="short-varchar"></field>
 		<field name="primaryPayer" type="short-varchar"></field>
+		<field name="referralAmount" type="currency-amount"></field>
 		<prim-key field="orderId" />
 	</entity>
 
@@ -3232,7 +3233,6 @@
 		</view-link>
 	</view-entity>
 
-
 	<entity entity-name="CorporateMaster" package-name="org.ofbiz.order.order" title="Corporate Master Details">
 		<field name="id" type="id-ne"/>
 		<field name="corporateName" type="short-varchar"></field>
@@ -3241,6 +3241,63 @@
 		<field name="primaryPayer" type="short-varchar"></field>
 		<field name="corporateId" type="short-varchar"></field>
 		<prim-key field="id" />
+	</entity>
+
+	<entity entity-name="ReferralContract" package-name="org.ofbiz.order.order" title="Referral Contract Entity">
+		<field name="contractId" type="id"></field>
+		<field name="referralType" type="short-varchar"></field>
+		<field name="referralId" type="short-varchar"></field>
+		<field name="referralName" type="short-varchar"></field>
+		<field name="clinicId" type="short-varchar"></field>
+		<field name="clinicName" type="short-varchar"></field>
+		<field name="contractFromDate" type="date"></field>
+		<field name="contractThruDate" type="date"></field>
+		<field name="paymentMode" type="short-varchar"></field>
+		<field name="paymentPoint" type="short-varchar"></field>
+		<field name="percentageOnBill" type="fixed-point"></field>
+		<field name="contractStatus" type="short-varchar"></field>
+		<field name="deactivationReason" type="long-varchar"></field>
+		<field name="deactivatedBy" type="id-vlong"></field>
+		<field name="createdBy" type="id-vlong"></field>
+		<field name="updatedBy" type="id-vlong"></field>
+
+		<prim-key field="contractId" />
+		<relation type="one-nofk" rel-entity-name="UserLogin">
+			<key-map field-name="createdBy" rel-field-name="userLoginId" />
+		</relation>
+		<relation type="one-nofk" rel-entity-name="UserLogin">
+			<key-map field-name="updatedBy" rel-field-name="userLoginId" />
+		</relation>
+		<relation type="one-nofk" rel-entity-name="UserLogin">
+			<key-map field-name="deactivatedBy" rel-field-name="userLoginId" />
+		</relation>
+	</entity>
+
+	<entity entity-name="ReferralContractService" package-name="org.ofbiz.order.order" title="Referral Contract Service Entity">
+		<field name="contractId" type="id-ne"></field>
+		<field name="productCategoryId" type="id-ne"></field>
+		<field name="serviceId" type="id"></field>
+		<field name="paymentPercentage" type="fixed-point"></field>
+		<field name="paymentAmount" type="currency-amount"></field>
+		<field name="currencyUomId" type="id"></field>
+		<field name="createdBy" type="id-vlong"></field>
+		<field name="updatedBy" type="id-vlong"></field>
+
+		<prim-key field="contractId" />
+		<prim-key field="productCategoryId" />
+
+		<relation type="one" fk-name="REF_CNTRCT_SRVC_REF_CNTRCT" rel-entity-name="ReferralContract">
+			<key-map field-name="contractId" />
+		</relation>
+		<relation type="one" fk-name="REF_CNTRCT_SRVC_PROD_CTGRY" rel-entity-name="ProductCategory">
+			<key-map field-name="productCategoryId" />
+		</relation>
+		<relation type="one-nofk" rel-entity-name="UserLogin">
+			<key-map field-name="createdBy" rel-field-name="userLoginId" />
+		</relation>
+		<relation type="one-nofk" rel-entity-name="UserLogin">
+			<key-map field-name="updatedBy" rel-field-name="userLoginId" />
+		</relation>
 	</entity>
 
 </entitymodel>

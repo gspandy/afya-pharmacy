@@ -709,24 +709,31 @@
 	<Enumeration description="Sales Invoice Line Item Sales Tax" enumCode="ITM_SALES_TAX" enumId="ITM_SALES_TAX" sequenceId="02" enumTypeId="TAXABLE_INV_ITM_TY" />
 	<Enumeration description="Purchase Invoice Sales Tax" enumCode="PINV_SALES_TAX" enumId="PINV_SALES_TAX" sequenceId="03" enumTypeId="TAXABLE_INV_ITM_TY" />
 	<Enumeration description="Purchase Invoice Line Item Sales Tax" enumCode="PITM_SALES_TAX" enumId="PITM_SALES_TAX" sequenceId="04" enumTypeId="TAXABLE_INV_ITM_TY" />
-	<Enumeration description="Customer Return Sales Tax Adjustment" enumCode="CRT_SALES_TAX_ADJ" enumId="CRT_SALES_TAX_ADJ" sequenceId="05"
-		enumTypeId="TAXABLE_INV_ITM_TY" />
-	<Enumeration description="Customer Return Excise Tax Adjustment" enumCode="CRT_EXCISE_TAX_ADJ" enumId="CRT_EXCISE_TAX_ADJ" sequenceId="06"
-		enumTypeId="TAXABLE_INV_ITM_TY" />
+	<Enumeration description="Customer Return Sales Tax Adjustment" enumCode="CRT_SALES_TAX_ADJ" enumId="CRT_SALES_TAX_ADJ" sequenceId="05" enumTypeId="TAXABLE_INV_ITM_TY" />
+	<Enumeration description="Customer Return Excise Tax Adjustment" enumCode="CRT_EXCISE_TAX_ADJ" enumId="CRT_EXCISE_TAX_ADJ" sequenceId="06" enumTypeId="TAXABLE_INV_ITM_TY" />
 
+	<!-- PaymentMode & PaymentPoint for Referral Contract in PaymentType Entity -->
+	<PaymentType description="Payment Mode" hasTable="N" parentTypeId="" paymentTypeId="PAYMENT_MODE" />
+	<PaymentType description="% of Bill Amount" hasTable="N" parentTypeId="PAYMENT_MODE" paymentTypeId="PERCENTAGE_OF_BILL" />
+	<PaymentType description="% of each Service" hasTable="N" parentTypeId="PAYMENT_MODE" paymentTypeId="PERCENTAGE_SERVICE_ITEM" />
+	<PaymentType description="Fixed Amount for each Service" hasTable="N" parentTypeId="PAYMENT_MODE" paymentTypeId="FIX_AMOUNT_PER_SERVICE" />
+	<PaymentType description="Payment Point" hasTable="N" parentTypeId="" paymentTypeId="PAYMENT_POINT" />
+	<PaymentType description="On Billing" hasTable="N" parentTypeId="PAYMENT_POINT" paymentTypeId="ON_BILL" />
+	<PaymentType description="On Partial Receipt" hasTable="N" parentTypeId="PAYMENT_POINT" paymentTypeId="ON_PARTIAL_RECEIPT" />
+	<PaymentType description="On Full Receipt" hasTable="N" parentTypeId="PAYMENT_POINT" paymentTypeId="ON_FULL_RECEIPT" />
 
-
+	<!-- Payment Method Types -->
 	<PaymentMethodType description="COD/Cash" paymentMethodTypeId="EXT_COD" />
 	<PaymentMethodType description="Financial Account" paymentMethodTypeId="FIN_ACCOUNT" />
 	<PaymentMethodType description="Billing Account" paymentMethodTypeId="EXT_BILLACT" />
-    <PaymentMethodType description="Check" paymentMethodTypeId="COMPANY_CHECK"/>
-    <PaymentMethodType description="Cash" paymentMethodTypeId="CASH"/>
-    <PaymentMethodType description="Credit Card" paymentMethodTypeId="CREDIT_CARD"/>
-    <PaymentMethodType description="Corporate" paymentMethodTypeId="CORPORATE"/>
-    <PaymentMethodType description="Insurance" paymentMethodTypeId="INSURANCE"/>
-    <PaymentMethodType description="Patient" paymentMethodTypeId="PATIENT"/>
+	<PaymentMethodType description="Check" paymentMethodTypeId="COMPANY_CHECK"/>
+	<PaymentMethodType description="Cash" paymentMethodTypeId="CASH"/>
+	<PaymentMethodType description="Credit Card" paymentMethodTypeId="CREDIT_CARD"/>
+	<PaymentMethodType description="Corporate" paymentMethodTypeId="CORPORATE"/>
+	<PaymentMethodType description="Insurance" paymentMethodTypeId="INSURANCE"/>
+	<PaymentMethodType description="Patient" paymentMethodTypeId="PATIENT"/>
 
-
+	<!-- Payment Types -->
 	<PaymentType description="Disbursement" hasTable="N" parentTypeId="" paymentTypeId="DISBURSEMENT" />
 	<PaymentType description="Customer Refund" hasTable="N" parentTypeId="DISBURSEMENT" paymentTypeId="CUSTOMER_REFUND" /> <!-- a refund TO the customer -->
 	<PaymentType description="Vendor Payment" hasTable="N" parentTypeId="DISBURSEMENT" paymentTypeId="VENDOR_PAYMENT" />
@@ -738,14 +745,14 @@
 	<PaymentType description="Sales Tax Payment" hasTable="N" parentTypeId="TAX_PAYMENT" paymentTypeId="SALES_TAX_PAYMENT" />
 	<PaymentType description="Payroll Tax Payment" hasTable="N" parentTypeId="TAX_PAYMENT" paymentTypeId="PAYROLL_TAX_PAYMENT" />
 	<PaymentType description="Income Tax Payment" hasTable="N" parentTypeId="TAX_PAYMENT" paymentTypeId="INCOME_TAX_PAYMENT" />
-    <Enumeration description="Customer Return Excise Tax Adjustment" enumCode="CRT_EXCISE_TAX_ADJ" enumId="CRT_EXCISE_TAX_ADJ" sequenceId="06" enumTypeId="TAXABLE_INV_ITM_TY"/>
+	<Enumeration description="Customer Return Excise Tax Adjustment" enumCode="CRT_EXCISE_TAX_ADJ" enumId="CRT_EXCISE_TAX_ADJ" sequenceId="06" enumTypeId="TAXABLE_INV_ITM_TY"/>
 
 	<PaymentType description="Receipt" hasTable="N" parentTypeId="" paymentTypeId="RECEIPT" />
 	<PaymentType description="Customer Payment" hasTable="N" parentTypeId="RECEIPT" paymentTypeId="CUSTOMER_PAYMENT" /> <!-- a payment FROM the customer -->
 	<PaymentType description="Customer Deposit" hasTable="N" parentTypeId="RECEIPT" paymentTypeId="CUSTOMER_DEPOSIT" />
 	<PaymentType description="Interest Receipt" hasTable="N" parentTypeId="RECEIPT" paymentTypeId="INTEREST_RECEIPT" />
 
-	
+
 	<!-- Payment Group Type -->
 	<PaymentGroupType paymentGroupTypeId="CHECK_RUN" parentTypeId="" hasTable="N" description="Check Run" />
 	<PaymentGroupType paymentGroupTypeId="BATCH_PAYMENT" parentTypeId="" hasTable="N" description="Batch of Payments" />
@@ -945,11 +952,11 @@
 	<Enumeration enumTypeId="TAX_CALC" enumCode="ON_TOT_EXCISE" enumId="ON_TOT_EXCISE" description="On Total Excise Duty"/>
 	<Enumeration enumTypeId="TAX_CALC" enumCode="ON_TOT_VAT" enumId="ON_TOT_VAT" description="On Total VAT"/>
 
-    <!-- Gl Account Default  -->
+	<!-- Gl Account Default  -->
 
-    <EnumerationType description="Method of Calculation" enumTypeId="TAX_CALC" hasTable="N" parentTypeId="" />
-    <Enumeration description="On Assessable Value" enumCode="ON_ASSESSABLE_VALUE" enumId="ON_ASSESSABLE_VALUE" sequenceId="01" enumTypeId="TAX_CALC" />
-    <Enumeration description="On Total Excise Duty" enumCode="ON_TOT_EXCISE" enumId="ON_TOT_EXCISE" sequenceId="02" enumTypeId="TAX_CALC" />
-    <Enumeration description="On Total VAT" enumCode="ON_TOT_VAT" enumId="ON_TOT_VAT" sequenceId="03" enumTypeId="TAX_CALC" />
+	<EnumerationType description="Method of Calculation" enumTypeId="TAX_CALC" hasTable="N" parentTypeId="" />
+	<Enumeration description="On Assessable Value" enumCode="ON_ASSESSABLE_VALUE" enumId="ON_ASSESSABLE_VALUE" sequenceId="01" enumTypeId="TAX_CALC" />
+	<Enumeration description="On Total Excise Duty" enumCode="ON_TOT_EXCISE" enumId="ON_TOT_EXCISE" sequenceId="02" enumTypeId="TAX_CALC" />
+	<Enumeration description="On Total VAT" enumCode="ON_TOT_VAT" enumId="ON_TOT_VAT" sequenceId="03" enumTypeId="TAX_CALC" />
 
 </entity-engine-xml>
