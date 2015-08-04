@@ -83,7 +83,7 @@ public class AfyaSalesOrderController {
             cart.setUserLogin(userLogin, dispatcher);
             cart.setDefaultCheckoutOptions(dispatcher);
 
-            addItemsToCart(dispatcher, cart, prescription.getRows())
+            addItemsToCart(dispatcher, cart, prescription.getRows());
             String facilityId = UtilProperties.getPropertyValue(generalPropertiesFiles, FACILITY_ID);
             String destination = UtilProperties.getPropertyValue(generalPropertiesFiles, SHIPPING_LOC_ID);
             cart.setPlacingCustomerPartyId(CUSTOMER_PARTY_ID);
@@ -256,25 +256,25 @@ public class AfyaSalesOrderController {
                 }
             }
 
+            ObjectMapper objectMapper = new ObjectMapper();
+            objectMapper.configure(SerializationFeature.WRITE_DATE_KEYS_AS_TIMESTAMPS, false);
+            objectMapper.setDateFormat(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss"));
+
+            try {
+                request.setCharacterEncoding("utf8");
+                response.setContentType("application/json");
+                PrintWriter out = response.getWriter();
+                objectMapper.writeValue(out, orderId);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
         } catch (Exception e) {
             e.printStackTrace();
             /*responseStatus.put("statusCode",500);
             responseStatus.put("message",e.getMessage());
             e.printStackTrace();
             response.setStatus(500);*/
-        }
-
-        ObjectMapper objectMapper = new ObjectMapper();
-        objectMapper.configure(SerializationFeature.WRITE_DATE_KEYS_AS_TIMESTAMPS, false);
-        objectMapper.setDateFormat(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss"));
-
-        try {
-            request.setCharacterEncoding("utf8");
-            response.setContentType("application/json");
-            PrintWriter out = response.getWriter();
-            objectMapper.writeValue(out, orderId);
-        } catch (Exception e) {
-            e.printStackTrace();
         }
 
         return "success";
@@ -320,7 +320,7 @@ public class AfyaSalesOrderController {
 
         List<GenericValue> orderItemsList = null;
         List<Map<String, Object>> rxOrderItemList = FastList.newInstance();
-        Map<String,Object> rxOrderMap = new HashMap<String, Object>();
+        Map<String,Object> rxOrderMap = new LinkedHashMap<String, Object>();
 
         try {
             GenericValue orderHeader = delegator.findOne("OrderHeader", UtilMisc.toMap("orderId", orderId), false);
@@ -395,6 +395,12 @@ public class AfyaSalesOrderController {
         BigDecimal totalAmount = new BigDecimal(request.getParameter("totalAmount")).setScale(scale, rounding);
         String currencyUom = request.getParameter("currencyUom") != null ? request.getParameter("currencyUom") : UtilProperties.getPropertyValue(generalPropertiesFiles, currencyPropName);
 
+        Map<String,Object> paymentStatusMap = new LinkedHashMap<String, Object>();
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.configure(SerializationFeature.WRITE_DATE_KEYS_AS_TIMESTAMPS, false);
+        objectMapper.setDateFormat(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss"));
+
         try {
             EntityConditionList<EntityExpr> condition = EntityCondition.makeCondition(UtilMisc.toList(
                     EntityCondition.makeCondition("orderId", orderId),
@@ -408,28 +414,26 @@ public class AfyaSalesOrderController {
                 currentPaymentPref.set("statusId", "PAYMENT_RECEIVED");
                 delegator.store(currentPaymentPref);
 
-                ObjectMapper objectMapper = new ObjectMapper();
-                objectMapper.configure(SerializationFeature.WRITE_DATE_KEYS_AS_TIMESTAMPS, false);
-                objectMapper.setDateFormat(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss"));
                 try {
                     request.setCharacterEncoding("utf8");
                     response.setContentType("application/json");
                     PrintWriter out = response.getWriter();
                     String successMsg = "Amount " + currencyUom + " " + totalAmount + " paid successfully for the Order '" + orderId + "'.";
-                    objectMapper.writeValue(out, successMsg);
+                    paymentStatusMap.put("status", "success");
+                    paymentStatusMap.put("message", successMsg);
+                    objectMapper.writeValue(out, paymentStatusMap);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
             } else {
-                ObjectMapper objectMapper = new ObjectMapper();
-                objectMapper.configure(SerializationFeature.WRITE_DATE_KEYS_AS_TIMESTAMPS, false);
-                objectMapper.setDateFormat(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss"));
                 try {
                     request.setCharacterEncoding("utf8");
                     response.setContentType("application/json");
                     PrintWriter out = response.getWriter();
                     String errorMsg = "Amount " + currencyUom + " " + totalAmount + " can not paid for the Order '" + orderId + "'. Please contact customer service.";
-                    objectMapper.writeValue(out, errorMsg);
+                    paymentStatusMap.put("status", "error");
+                    paymentStatusMap.put("message", errorMsg);
+                    objectMapper.writeValue(out, paymentStatusMap);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
