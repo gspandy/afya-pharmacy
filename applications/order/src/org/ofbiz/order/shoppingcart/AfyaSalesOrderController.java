@@ -254,11 +254,20 @@ public class AfyaSalesOrderController {
             objectMapper.configure(SerializationFeature.WRITE_DATE_KEYS_AS_TIMESTAMPS, false);
             objectMapper.setDateFormat(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss"));
 
+            GenericValue ordHeader = delegator.findOne("OrderHeader", UtilMisc.toMap("orderId", orderId), false);
+            String currencyUomId = ordHeader.getString("currencyUom");
+            BigDecimal orderSubTotal = getOrderSubTotal(dispatcher, delegator, orderId);
+
+            OrderHeader orderDetail = new OrderHeader();
+            orderDetail.setOrderId(orderId);
+            orderDetail.setCurrencyUom(currencyUomId);
+            orderDetail.setTotalAmount(orderSubTotal);
+
             try {
                 request.setCharacterEncoding("utf8");
                 response.setContentType("application/json");
                 PrintWriter out = response.getWriter();
-                objectMapper.writeValue(out, orderId);
+                objectMapper.writeValue(out, orderDetail);
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -273,6 +282,36 @@ public class AfyaSalesOrderController {
 
         return "success";
 
+    }
+
+    private static BigDecimal getOrderSubTotal(LocalDispatcher dispatcher, Delegator delegator, String orderId) {
+        List<GenericValue> orderItemsList = null;
+
+        BigDecimal orderSubTotal = ZERO;
+        
+        EntityConditionList<EntityExpr> condition = EntityCondition.makeCondition(UtilMisc.toList(
+                EntityCondition.makeCondition("orderId", orderId),
+                EntityCondition.makeCondition("statusId", EntityOperator.IN, UtilMisc.toList("ITEM_CREATED","ITEM_APPROVED"))),
+                EntityOperator.AND);
+
+        try {
+            orderItemsList = delegator.findList("OrderItem", condition, null, null, null, false);
+        } catch (GenericEntityException e1) {
+            e1.printStackTrace();
+        }
+        if (UtilValidate.isNotEmpty(orderItemsList) || orderItemsList != null) {
+
+            for (GenericValue oi : orderItemsList) {
+
+                BigDecimal quantity = oi.getBigDecimal("quantity").setScale(scale, rounding);
+                BigDecimal unitPrice = oi.getBigDecimal("unitPrice").setScale(scale, rounding);
+                BigDecimal itemSubTotal = quantity.multiply(unitPrice).setScale(scale, rounding);
+                
+                orderSubTotal = orderSubTotal.add(itemSubTotal);
+            }
+        }
+
+        return orderSubTotal;
     }
 
     private static BigDecimal getReferralAmount(LocalDispatcher dispatcher, Delegator delegator, String doctor, String clinic, String clinicId, List<LineItem> rxLineItems) throws GenericEntityException, GenericServiceException {
@@ -429,13 +468,6 @@ public class AfyaSalesOrderController {
         List<Map<String, Object>> rxOrderItemList = FastList.newInstance();
         Map<String,Object> rxOrderMap = new LinkedHashMap<String, Object>();
 
-        try {
-            GenericValue orderHeader = delegator.findOne("OrderHeader", UtilMisc.toMap("orderId", orderId), false);
-            currencyUom = orderHeader.getString("currencyUom");
-        } catch (GenericEntityException e) {
-            e.printStackTrace();
-        }
-
         EntityConditionList<EntityExpr> condition = EntityCondition.makeCondition(UtilMisc.toList(
                 EntityCondition.makeCondition("orderId", orderId),
                 EntityCondition.makeCondition("statusId", EntityOperator.IN, UtilMisc.toList("ITEM_CREATED","ITEM_APPROVED"))),
@@ -443,6 +475,8 @@ public class AfyaSalesOrderController {
 
         try {
             orderItemsList = delegator.findList("OrderItem", condition, null, null, null, false);
+            GenericValue orderHeader = delegator.findOne("OrderHeader", UtilMisc.toMap("orderId", orderId), false);
+            currencyUom = orderHeader.getString("currencyUom");
         } catch (GenericEntityException e1) {
             e1.printStackTrace();
         }
@@ -569,6 +603,37 @@ public class AfyaSalesOrderController {
             e.printStackTrace();
         }
         return "";
+    }
+
+    static class OrderHeader {
+        private String orderId;
+        private String currencyUom;
+        private BigDecimal totalAmount;
+
+        public String getOrderId() {
+            return orderId;
+        }
+
+        public void setOrderId(String orderId) {
+            this.orderId = orderId;
+        }
+
+        public String getCurrencyUom() {
+            return currencyUom;
+        }
+
+        public void setCurrencyUom(String currencyUom) {
+            this.currencyUom = currencyUom;
+        }
+
+        public BigDecimal getTotalAmount() {
+            return totalAmount;
+        }
+
+        public void setTotalAmount(BigDecimal totalAmount) {
+            this.totalAmount = totalAmount;
+        }
+
     }
 
     static class Prescription {
