@@ -1,0 +1,106 @@
+<forms xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="http://ofbiz.apache.org/dtds/widget-form.xsd">
+
+    <form name="ContractList" target="listReferralContracts" title="List of Referral Contracts" type="list" list-name="referralContractList"
+          odd-row-style="alternate-row" header-row-style="header-row-2" default-table-style="basic-table hover-bar">
+        <field name="contractId">
+            <hyperlink description="${contractId}" target="editContract" target-window="_blank">
+				<parameter param-name="contractId"/>
+			</hyperlink>
+        </field>
+        <field name="referralName" title="Referred By">
+            <display/>
+        </field>
+        <field name="clinicName" title="Clinic">
+            <display/>
+        </field>
+        <field name="contractFromDate" title="Contract Date">
+            <display description="${bsh:org.ofbiz.base.util.UtilDateTime.toDateString(contractFromDate,&quot; dd/MM/yyyy &quot;)}"/>
+        </field>
+        <field name="contractThruDate" title="Expiry Date">
+            <display description="${bsh:org.ofbiz.base.util.UtilDateTime.toDateString(contractThruDate,&quot; dd/MM/yyyy &quot;)}"/>
+        </field>
+        <field name="paymentMode" title="Payment Mode">
+            <display-entity entity-name="PaymentType" key-field-name="paymentTypeId"/>
+        </field>
+        <field name="contractStatus" title="Contract Status">
+            <display-entity entity-name="StatusItem" key-field-name="statusId"/>
+        </field>
+        <!-- <field use-when="" name="editButton" action="editPatient" title="Edit" widget-style="btn btn-mini btn-success">
+            <hyperlink target="editPatient" description="${uiLabelMap.CommonEdit}" also-hidden="false">
+                <parameter param-name="patientId"/>
+            </hyperlink>
+        </field> -->
+    </form>
+
+    <form name="FindContracts" type="single" target="findContracts" title=""
+          default-title-style="tableheadtext" default-widget-style="tabletext" default-tooltip-style="tabletext">
+        <field name="referralName" title="Referred By" position="1">
+            <text-find/>
+        </field>
+        <field name="contractStatus" title="Contract Status" position="2">
+            <drop-down allow-empty="true">
+                <option key="ACTIVE" description="Active"/>
+                <option key="INACTIVE" description="Inactive"/>
+                <option key="EXPIRED" description="Expired"/>
+            </drop-down>
+        </field>
+        <field name="clinicName" title="Clinic" position="1">
+            <text-find/>
+        </field>
+        <field name="paymentMode" title="Payment Mode" position="2">
+            <drop-down allow-empty="true">
+                <option key="PERCENTAGE_OF_BILL" description="% of Bill Amount"/>
+                <option key="PERCENTAGE_SERVICE_ITEM" description="% of each Service"/>
+                <option key="FIX_AMOUNT_PER_SERVICE" description="Fixed Amount for each Service"/>
+            </drop-down>
+        </field>
+        <!-- <field name="contractFromDate" title="Contract Date" position="1">
+            <date-find type="date"/>
+        </field>
+        <field name="contractThruDate" title="Expiry Date" position="2">
+            <date-find type="date"/>
+        </field> -->
+        <field name="submitButton" title="${uiLabelMap.CommonFind}" widget-style="btn btn-primary">
+            <submit button-type="button"/>
+        </field>
+    </form>
+
+    <form name="ContractSearchResults" type="list" use-row-submit="true" target="findContracts" title="" list-name="listIt"
+          odd-row-style="alternate-row" header-row-style="header-row-2" default-table-style="basic-table hover-bar"
+          paginate-target="findContracts">
+        <actions>
+            <set field="entityName" value="ReferralContract"/>
+            <service service-name="performFind" result-map="result" result-map-list="listIt">
+                <field-map field-name="inputFields" from-field="parameters"/>
+                <field-map field-name="orderBy" value="-createdTxStamp"/>
+                <field-map field-name="entityName" from-field="entityName"/>
+                <field-map field-name="viewIndex" from-field="viewIndex"/>
+                <field-map field-name="viewSize" from-field="viewSize"/>
+            </service>
+        </actions>
+        <field name="contractId">
+            <hyperlink description="${contractId}" target="editContract" target-window="_blank">
+				<parameter param-name="contractId"/>
+			</hyperlink>
+        </field>
+        <field name="referralName" title="Referred By">
+            <display/>
+        </field>
+        <field name="clinicName" title="Clinic">
+            <display/>
+        </field>
+        <field name="contractFromDate" title="Contract Date">
+            <display description="${bsh:org.ofbiz.base.util.UtilDateTime.toDateString(contractFromDate,&quot; dd/MM/yyyy &quot;)}"/>
+        </field>
+        <field name="contractThruDate" title="Expiry Date">
+            <display description="${bsh:org.ofbiz.base.util.UtilDateTime.toDateString(contractThruDate,&quot; dd/MM/yyyy &quot;)}"/>
+        </field>
+        <field name="paymentMode" title="Payment Mode">
+            <display-entity entity-name="PaymentType" key-field-name="paymentTypeId"/>
+        </field>
+        <field name="contractStatus" title="Contract Status">
+            <display-entity entity-name="StatusItem" key-field-name="statusId"/>
+        </field>
+    </form>
+</forms>

@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Licensed to the Apache Software Foundation (ASF) under one or more contributor license agreements. See the NOTICE file distributed with this work for additional 
+	information regarding copyright ownership. The ASF licenses this file to you under the Apache License, Version 2.0 (the "License"); you may not use this file except 
+	in compliance with the License. You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0 Unless required by applicable law or agreed to 
+	in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See 
+	the License for the specific language governing permissions and limitations under the License. -->
+<simple-methods xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://ofbiz.apache.org/dtds/simple-methods-v2.xsd">
+
+    <simple-method method-name="createReferralContract" login-required="true" use-transaction="true" short-description="For creating a new Referral Contract">
+        <make-value entity-name="ReferralContract" value-field="newEntity" />
+        <set-nonpk-fields map="parameters" set-if-null="true" value-field="newEntity"/>
+        <sequenced-id sequence-name="ReferralContract" field="newEntity.contractId" get-long-only="false"/>
+        <set field="newEntity.createdBy" from="userLogin.userLoginId" set-if-empty="true" set-if-null="false"/>
+        <create-value do-cache-clear="true" or-store="false" value-field="newEntity"/>
+        <field-to-result field="newEntity.contractId" result-name="contractId"/>
+    </simple-method>
+
+	<simple-method method-name="updateReferralContract" login-required="true" use-transaction="true" short-description="Updates Referral Contract">
+		<make-value entity-name="ReferralContract" value-field="lookupPKMap" />
+		<set-pk-fields map="parameters" value-field="lookupPKMap" />
+		<find-by-primary-key entity-name="ReferralContract" map="lookupPKMap" value-field="lookedUpValue" />
+		<set-nonpk-fields map="parameters" value-field="lookedUpValue" />
+		<set field="lookedUpValue.updatedBy" from="userLogin.userLoginId" set-if-empty="true" set-if-null="false"/>
+		<store-value value-field="lookedUpValue" />
+		<field-to-result field="lookedUpValue.contractId" result-name="contractId" />
+	</simple-method>
+
+    <simple-method method-name="addReferralServiceContract" short-description="For adding a new Referral Service Contract">
+        <make-value entity-name="ReferralContractService" value-field="newEntity" />
+        <set-nonpk-fields map="parameters" value-field="newEntity"/>
+        <set-pk-fields map="parameters" value-field="newEntity"/>
+        <set field="newEntity.createdBy" from="userLogin.userLoginId" set-if-empty="true" set-if-null="false"/>
+        <create-value do-cache-clear="true" or-store="false" value-field="newEntity"/>
+        <field-to-result field="newEntity.contractId" result-name="contractId"/>
+    </simple-method>
+
+    <simple-method method-name="removeReferralServiceContract" login-required="true" use-transaction="true" short-description="Remove a Referral Service Contract">
+        <entity-one entity-name="ReferralContractService" value-field="lookedUpValue">
+            <field-map field-name="contractId" from-field="parameters.contractId"/>
+            <field-map field-name="productCategoryId" from-field="parameters.productCategoryId"/>
+        </entity-one>
+        <remove-value value-field="lookedUpValue"/>
+    </simple-method>
+
+</simple-methods>
