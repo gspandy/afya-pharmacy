@@ -1195,6 +1195,37 @@
 			<index-field name="needsNsfRetry" />
 		</index>
 	</entity>
+	<entity entity-name="OrderPaymentPreferenceHistory" package-name="org.ofbiz.order.order" never-cache="true" title="The Order Payment Preference History Entity">
+		<field name="paymentPrefHistoryId" type="id-ne"></field>
+		<field name="paymentPreferenceId" type="id"></field>
+		<field name="orderId" type="id"></field>
+		<field name="statusId" type="id"></field>
+		<field name="paymentMethodTypeId" type="id"></field>
+		<field name="currencyUomId" type="id"></field>
+		<field name="amount" type="currency-amount"></field>
+		<field name="amountRefNum" type="short-varchar"></field>
+		<field name="receivedDate" type="date-time"></field>
+		<field name="receivedBy" type="id-vlong"></field>
+		<prim-key field="paymentPrefHistoryId" />
+		<relation type="one" fk-name="ORDER_PMPRF_HIST_ORDPMPRF" rel-entity-name="OrderPaymentPreference">
+			<key-map field-name="paymentPreferenceId" rel-field-name="orderPaymentPreferenceId" />
+		</relation>
+		<relation type="one" fk-name="ORDER_PMPRF_HIST_OHDR" rel-entity-name="OrderHeader">
+			<key-map field-name="orderId" />
+		</relation>
+		<relation type="one" fk-name="ORDER_PMPRF_HIST_STTS" rel-entity-name="StatusItem">
+			<key-map field-name="statusId" />
+		</relation>
+		<relation type="one" fk-name="ORDER_PMPRF_HIST_PMTP" rel-entity-name="PaymentMethodType">
+			<key-map field-name="paymentMethodTypeId" />
+		</relation>
+		<relation type="one" fk-name="ORDER_PMPRF_HIST_CUOM" title="Currency" rel-entity-name="Uom">
+			<key-map field-name="currencyUomId" rel-field-name="uomId" />
+		</relation>
+		<relation type="one" fk-name="ORDER_PMPRF_HIST_PARTY" rel-entity-name="Party">
+			<key-map field-name="receivedBy" rel-field-name="partyId"/>
+		</relation>
+	</entity>
 	<entity entity-name="OrderProductPromoCode" package-name="org.ofbiz.order.order" title="Order Product Promo Code Entity">
 		<field name="orderId" type="id-ne"></field>
 		<field name="productPromoCodeId" type="id-ne"></field>
