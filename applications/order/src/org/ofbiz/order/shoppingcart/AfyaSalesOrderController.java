@@ -245,9 +245,11 @@ public class AfyaSalesOrderController {
                     patient.set("selectionType", "CIVIL_ID");
 
                     delegator.create(patient);
+                    Debug.logError(patient.toString(), module);
 
                 } catch (IOException e) {
                     e.printStackTrace();
+                    Debug.logError("Inside Patient Creation Error", module);
                 }
             }
 
@@ -269,14 +271,15 @@ public class AfyaSalesOrderController {
                 response.setContentType("application/json");
                 PrintWriter out = response.getWriter();
                 objectMapper.writeValue(out, orderDetail);
+                Debug.logError(orderDetail.toString(), module);
             } catch (Exception e) {
                 e.printStackTrace();
-                Debug.logError(e, module);
+                Debug.logError("Inside Response Error", module);
             }
 
         } catch (Exception e) {
             e.printStackTrace();
-            Debug.logError(e, module);
+            Debug.logError("Inside Main Try Error", module);
             /*responseStatus.put("statusCode",500);
             responseStatus.put("message",e.getMessage());
             e.printStackTrace();
