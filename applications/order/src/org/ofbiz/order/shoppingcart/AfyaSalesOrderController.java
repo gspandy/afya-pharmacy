@@ -179,7 +179,7 @@ public class AfyaSalesOrderController {
                     GenericValue patient = delegator.makeValidValue("Patient", UtilMisc.toMap("patientId", patientId));
                     patient.set("afyaId", map.get("afyaId"));
                     patient.set("civilId", map.get("civilId"));
-                    if (map.get("patientType").equals("CASH PAYING")) {
+                    if (map.get("patientType") == null || map.get("patientType").equals("CASH PAYING")) {
                         patient.set("patientType", "CASH");
                     } else {
                         patient.set("patientType", map.get("patientType"));
