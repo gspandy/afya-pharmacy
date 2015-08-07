@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 
 import org.ofbiz.base.util.Debug;
+import org.ofbiz.base.util.UtilDateTime;
 import org.ofbiz.base.util.UtilHttp;
 import org.ofbiz.base.util.UtilMisc;
 import org.ofbiz.base.util.UtilNumber;
@@ -158,7 +159,7 @@ public class AfyaSalesOrderController {
                 patientDetails = delegator.findByAnd("Patient", UtilMisc.toMap("firstName", firstName, "thirdName", thirdName, "dateOfBirth"), null, false);
             }
 
-            /*if (UtilValidate.isEmpty(patientDetails)) {
+            if (UtilValidate.isEmpty(patientDetails)) {
 
                 RestTemplate restTemplate = new RestTemplate();
                 HttpHeaders httpHeaders = new HttpHeaders();
@@ -251,7 +252,7 @@ public class AfyaSalesOrderController {
                     e.printStackTrace();
                     Debug.logError("Inside Patient Creation Error", module);
                 }
-            }*/
+            }
 
             ObjectMapper objectMapper = new ObjectMapper();
             objectMapper.configure(SerializationFeature.WRITE_DATE_KEYS_AS_TIMESTAMPS, false);
@@ -293,7 +294,7 @@ public class AfyaSalesOrderController {
         List<GenericValue> orderItemsList = null;
 
         BigDecimal orderSubTotal = ZERO;
-        
+
         EntityConditionList<EntityExpr> condition = EntityCondition.makeCondition(UtilMisc.toList(
                 EntityCondition.makeCondition("orderId", orderId),
                 EntityCondition.makeCondition("statusId", EntityOperator.IN, UtilMisc.toList("ITEM_CREATED","ITEM_APPROVED"))),
@@ -311,7 +312,7 @@ public class AfyaSalesOrderController {
                 BigDecimal quantity = oi.getBigDecimal("quantity").setScale(scale, rounding);
                 BigDecimal unitPrice = oi.getBigDecimal("unitPrice").setScale(scale, rounding);
                 BigDecimal itemSubTotal = quantity.multiply(unitPrice).setScale(scale, rounding);
-                
+
                 orderSubTotal = orderSubTotal.add(itemSubTotal);
             }
         }
@@ -465,8 +466,18 @@ public class AfyaSalesOrderController {
     public static String fetchItemsByRxOrder(HttpServletRequest request, HttpServletResponse response) {
         Delegator delegator = (GenericDelegator) request.getAttribute("delegator");
 
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.configure(SerializationFeature.WRITE_DATE_KEYS_AS_TIMESTAMPS, false);
+        mapper.setDateFormat(new SimpleDateFormat("yyyy-MM-dd")); // 1.8 and above
+        Map<String,String> map = null;
+        try {
+            map = mapper.readValue(request.getInputStream(), Map.class);
+        } catch (IOException e1) {
+            e1.printStackTrace();
+        }
+
+        String orderId = map.get("orderId");
         String currencyUom = UtilProperties.getPropertyValue(generalPropertiesFiles, currencyPropName);
-        String orderId = request.getParameter("orderId");
         BigDecimal orderSubTotal = ZERO;
 
         List<GenericValue> orderItemsList = null;
@@ -536,6 +547,13 @@ public class AfyaSalesOrderController {
         Locale locale = UtilHttp.getLocale(request);
         Delegator delegator = (GenericDelegator) request.getAttribute("delegator");
 
+        GenericValue userLogin = (GenericValue) request.getAttribute("userLogin");
+        HttpSession session = request.getSession();
+
+        if(userLogin==null){
+            userLogin = (GenericValue)session.getAttribute("userLogin");
+        }
+
         ObjectMapper mapper = new ObjectMapper();
         mapper.configure(SerializationFeature.WRITE_DATE_KEYS_AS_TIMESTAMPS, false);
         mapper.setDateFormat(new SimpleDateFormat("yyyy-MM-dd")); // 1.8 and above
@@ -548,7 +566,7 @@ public class AfyaSalesOrderController {
 
         String orderId = map.get("orderId");
         BigDecimal totalAmount = new BigDecimal(map.get("totalAmount")).setScale(scale, rounding);
-        String currencyUom = request.getParameter("currencyUom") != null ? request.getParameter("currencyUom") : UtilProperties.getPropertyValue(generalPropertiesFiles, currencyPropName);
+        String currencyUom = UtilProperties.getPropertyValue(generalPropertiesFiles, currencyPropName);
 
         Map<String,Object> paymentStatusMap = new LinkedHashMap<String, Object>();
 
@@ -557,17 +575,55 @@ public class AfyaSalesOrderController {
         objectMapper.setDateFormat(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss"));
 
         try {
+            GenericValue orderHeader = delegator.findOne("OrderHeader", UtilMisc.toMap("orderId", orderId), false);
+            currencyUom = orderHeader.getString("currencyUom");
+
             EntityConditionList<EntityExpr> condition = EntityCondition.makeCondition(UtilMisc.toList(
                     EntityCondition.makeCondition("orderId", orderId),
                     EntityCondition.makeCondition("paymentMethodTypeId", "CASH"),
                     EntityCondition.makeCondition("statusId", "PAYMENT_NOT_RECEIVED")),
                     EntityOperator.AND);
-            List<GenericValue> currentPaymentPrefs = delegator.findList("OrderPaymentPreference", condition, null, null, null, false);
-            if (UtilValidate.isNotEmpty(currentPaymentPrefs)) {
-                GenericValue currentPaymentPref = EntityUtil.getFirst(currentPaymentPrefs);
-                currentPaymentPref.set("amountReceived", totalAmount);
-                currentPaymentPref.set("statusId", "PAYMENT_RECEIVED");
-                delegator.store(currentPaymentPref);
+            List<GenericValue> orderPaymentPrefs = delegator.findList("OrderPaymentPreference", condition, null, null, null, false);
+            if (UtilValidate.isNotEmpty(orderPaymentPrefs)) {
+                GenericValue orderPaymentPref = EntityUtil.getFirst(orderPaymentPrefs);
+                orderId = orderPaymentPref.getString("orderId");
+                String paymentPreferenceId = orderPaymentPref.getString("orderPaymentPreferenceId");
+
+                String paymentPrefHistoryId = delegator.getNextSeqId("OrderPaymentPreferenceHistory");
+                GenericValue orderPaymentPrefHistory = delegator.makeValidValue("OrderPaymentPreferenceHistory", UtilMisc.toMap(
+                            "paymentPrefHistoryId", paymentPrefHistoryId));
+
+                orderPaymentPrefHistory.set("paymentPrefHistoryId", paymentPrefHistoryId);
+                orderPaymentPrefHistory.set("paymentPreferenceId", paymentPreferenceId);
+                orderPaymentPrefHistory.set("orderId", orderId);
+                orderPaymentPrefHistory.set("paymentMethodTypeId", "CREDIT_CARD");
+                orderPaymentPrefHistory.set("currencyUomId", currencyUom);
+                orderPaymentPrefHistory.set("amount", totalAmount);
+                orderPaymentPrefHistory.set("statusId", "PMNT_RECEIVED");
+                orderPaymentPrefHistory.set("receivedDate", UtilDateTime.nowTimestamp());
+                orderPaymentPrefHistory.set("receivedBy", userLogin.get("partyId"));
+
+                delegator.create(orderPaymentPrefHistory);
+
+
+                /* For OrderPaymentPreference updation */
+                GenericValue opp = delegator.findOne("OrderPaymentPreference", UtilMisc.toMap("orderPaymentPreferenceId", paymentPreferenceId), false);
+
+                /*(List<GenericValue> orderPaymentPrefHistoryList = delegator.findList("OrderPaymentPreferenceHistory", EntityCondition.makeCondition(
+                            EntityCondition.makeCondition(UtilMisc.toMap("paymentPreferenceId",paymentPreferenceId,"orderId", orderId))), null, null,null, false);
+
+                if (UtilValidate.isNotEmpty(orderPaymentPrefHistoryList)) {
+                    BigDecimal totalAmountReceived = ZERO;
+                    for (GenericValue orderPaymentPrefHist : orderPaymentPrefHistoryList) {
+                        totalAmountReceived = totalAmountReceived.add(orderPaymentPrefHist.getBigDecimal("amount")).setScale(taxDecimals, taxRounding);
+                    }
+                    if (totalAmountReceived.compareTo(totalAmount) == 0)
+                        opp.set("statusId", "PAYMENT_RECEIVED");
+                }*/
+
+                opp.set("amountReceived", totalAmount);
+                opp.set("statusId", "PAYMENT_RECEIVED");
+                delegator.store(opp);
 
                 try {
                     request.setCharacterEncoding("utf8");
