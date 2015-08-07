@@ -30,6 +30,7 @@ import org.springframework.web.client.RestTemplate;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -270,10 +271,12 @@ public class AfyaSalesOrderController {
                 objectMapper.writeValue(out, orderDetail);
             } catch (Exception e) {
                 e.printStackTrace();
+                Debug.logError(e, module);
             }
 
         } catch (Exception e) {
             e.printStackTrace();
+            Debug.logError(e, module);
             /*responseStatus.put("statusCode",500);
             responseStatus.put("message",e.getMessage());
             e.printStackTrace();
@@ -281,7 +284,6 @@ public class AfyaSalesOrderController {
         }
 
         return "success";
-
     }
 
     private static BigDecimal getOrderSubTotal(LocalDispatcher dispatcher, Delegator delegator, String orderId) {
@@ -525,15 +527,24 @@ public class AfyaSalesOrderController {
         }
 
         return "success";
-
     }
 
     public static String receiveActivePrescriptionPayment(HttpServletRequest request, HttpServletResponse response) {
         Locale locale = UtilHttp.getLocale(request);
         Delegator delegator = (GenericDelegator) request.getAttribute("delegator");
 
-        String orderId = request.getParameter("orderId");
-        BigDecimal totalAmount = new BigDecimal(request.getParameter("totalAmount")).setScale(scale, rounding);
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.configure(SerializationFeature.WRITE_DATE_KEYS_AS_TIMESTAMPS, false);
+        mapper.setDateFormat(new SimpleDateFormat("yyyy-MM-dd")); // 1.8 and above
+        Map<String,String> map = null;
+        try {
+            map = mapper.readValue(request.getInputStream(), Map.class);
+        } catch (IOException e1) {
+            e1.printStackTrace();
+        }
+
+        String orderId = map.get("orderId");
+        BigDecimal totalAmount = new BigDecimal(map.get("totalAmount")).setScale(scale, rounding);
         String currencyUom = request.getParameter("currencyUom") != null ? request.getParameter("currencyUom") : UtilProperties.getPropertyValue(generalPropertiesFiles, currencyPropName);
 
         Map<String,Object> paymentStatusMap = new LinkedHashMap<String, Object>();
@@ -587,7 +598,65 @@ public class AfyaSalesOrderController {
         }
 
         return "success";
+    }
 
+    public static String completeActivePrescriptionOrder(HttpServletRequest request, HttpServletResponse response) {
+        Delegator delegator = (GenericDelegator) request.getAttribute("delegator");
+        LocalDispatcher dispatcher = (LocalDispatcher) request.getAttribute("dispatcher");
+
+        GenericValue userLogin = (GenericValue) request.getAttribute("userLogin");
+        HttpSession session = request.getSession();
+
+        if(userLogin==null){
+            userLogin = (GenericValue)session.getAttribute("userLogin");
+        }
+
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.configure(SerializationFeature.WRITE_DATE_KEYS_AS_TIMESTAMPS, false);
+        mapper.setDateFormat(new SimpleDateFormat("yyyy-MM-dd")); // 1.8 and above
+        Map<String,String> map = null;
+        try {
+            map = mapper.readValue(request.getInputStream(), Map.class);
+        } catch (IOException e1) {
+            e1.printStackTrace();
+        }
+
+        String orderId = map.get("orderId");
+        String productStoreId = UtilProperties.getPropertyValue(generalPropertiesFiles, PRODUCT_STORE_ID);
+        Map<String,Object> orderStatusMap = new LinkedHashMap<String, Object>();
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.configure(SerializationFeature.WRITE_DATE_KEYS_AS_TIMESTAMPS, false);
+        objectMapper.setDateFormat(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss"));
+
+        try {
+            GenericValue orderHeader = delegator.findOne("OrderHeader", UtilMisc.toMap("orderId", orderId), false);
+            if (orderHeader != null)
+                productStoreId = orderHeader.getString("productStoreId");
+            GenericValue productStore = delegator.findOne("ProductStore", UtilMisc.toMap("productStoreId", productStoreId), false);
+            if (productStore != null && productStore.getString("reserveInventory").equals("Y"))
+                try {
+                    dispatcher.runSync("quickShipEntireOrder", UtilMisc.toMap("orderId", orderId, "userLogin", userLogin));
+                    try {
+                        request.setCharacterEncoding("utf8");
+                        response.setContentType("application/json");
+                        PrintWriter out = response.getWriter();
+                        String successMsg = "Order '" + orderId + "' completed successfully.";
+                        orderStatusMap.put("status", "success");
+                        orderStatusMap.put("message", successMsg);
+                        objectMapper.writeValue(out, orderStatusMap);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                } catch (GenericServiceException e) {
+                    e.printStackTrace();
+                }
+                
+        } catch (GenericEntityException e) {
+            e.printStackTrace();
+        }
+
+        return "success";
     }
 
     public static String testJsonPost(HttpServletRequest request, HttpServletResponse response) throws IOException {

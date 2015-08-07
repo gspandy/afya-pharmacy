@@ -2252,6 +2252,13 @@
 		<response name="success" type="none" />
 	</request-map>
 
+	<request-map uri="completeActivePrescriptionOrder">
+		<security https="true" auth="true" />
+		<event type="jsonjava" path="org.ofbiz.order.shoppingcart.AfyaSalesOrderController"
+			   invoke="completeActivePrescriptionOrder" />
+		<response name="success" type="none" />
+	</request-map>
+
 	<!-- These are just examples of reports developed using JasperReport and not really useful reports. In order to run them you'll have to follow the notes in the
 		OPTIONAL_LIBRARIES files, add the following entry: <handler name="jasperreportspdf" type="view" class="org.ofbiz.webapp.view.JasperReportsPdfViewHandler"/> to the 
 		handler section of this file and uncomment the following lines: <request-map uri="orderreportjasper.pdf"><security https="true" auth="true"/> <event type="bsf" path="/reports/" 
