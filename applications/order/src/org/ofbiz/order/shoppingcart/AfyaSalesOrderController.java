@@ -158,7 +158,7 @@ public class AfyaSalesOrderController {
                 patientDetails = delegator.findByAnd("Patient", UtilMisc.toMap("firstName", firstName, "thirdName", thirdName, "dateOfBirth"), null, false);
             }
 
-            if (UtilValidate.isEmpty(patientDetails)) {
+            /*if (UtilValidate.isEmpty(patientDetails)) {
 
                 RestTemplate restTemplate = new RestTemplate();
                 HttpHeaders httpHeaders = new HttpHeaders();
@@ -251,7 +251,7 @@ public class AfyaSalesOrderController {
                     e.printStackTrace();
                     Debug.logError("Inside Patient Creation Error", module);
                 }
-            }
+            }*/
 
             ObjectMapper objectMapper = new ObjectMapper();
             objectMapper.configure(SerializationFeature.WRITE_DATE_KEYS_AS_TIMESTAMPS, false);
