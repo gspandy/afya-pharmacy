@@ -85,9 +85,14 @@ public class OrderServices {
     public static final String module = OrderServices.class.getName();
     public static final String resource = "OrderUiLabels";
     public static final String resource_error = "OrderErrorUiLabels";
+
+    private static final String generalPropertiesFiles = "general.properties";
+    private static final String currencyPropName = "currency.uom.id.default";
+
     public static final int taxDecimals = UtilNumber.getBigDecimalScale("salestax.calc.decimals");
     public static final int taxRounding = UtilNumber.getBigDecimalRoundingMode("salestax.rounding");
     public static final BigDecimal ZERO = BigDecimal.ZERO.setScale(taxDecimals, taxRounding);
+    public static final BigDecimal percentage = (new BigDecimal("0.01")).setScale(taxDecimals, taxRounding);
     public static final int orderDecimals = UtilNumber.getBigDecimalScale("order.decimals");
     public static final int orderRounding = UtilNumber.getBigDecimalRoundingMode("order.rounding");
     public static Map<String, String> salesAttributeRoleMap = FastMap.newInstance();
@@ -3249,8 +3254,10 @@ public class OrderServices {
             locale = Locale.getDefault();
         }
 
-        ResourceBundleMapWrapper uiLabelMap = UtilProperties.getResourceBundleMap("EcommerceUiLabels", locale);
+        /*ResourceBundleMapWrapper uiLabelMap = UtilProperties.getResourceBundleMap("EcommerceUiLabels", locale);
         uiLabelMap.addBottomResourceBundle("OrderUiLabels");
+        uiLabelMap.addBottomResourceBundle("CommonUiLabels");*/
+        ResourceBundleMapWrapper uiLabelMap = UtilProperties.getResourceBundleMap("OrderUiLabels", locale);
         uiLabelMap.addBottomResourceBundle("CommonUiLabels");
 
         Map bodyParameters =
@@ -5704,7 +5711,7 @@ public class OrderServices {
         return ServiceUtil.returnSuccess();
     }
 
-    public static Map editOrderPaymentPreference(DispatchContext dctx, Map context) {
+    /*public static Map editOrderPaymentPreference(DispatchContext dctx, Map context) {
         Delegator delegator = dctx.getDelegator();
         LocalDispatcher dispatcher = dctx.getDispatcher();
         GenericValue userLogin = (GenericValue) context.get("userLogin");
@@ -5777,6 +5784,115 @@ public class OrderServices {
                 opp.store();
                 results.put("orderPaymentPreferenceId", opp.get("orderPaymentPreferenceId"));
             }
+
+            return results;
+        } catch (GenericEntityException e) {
+            Debug.logError(e, module);
+            return ServiceUtil.returnError(e.getMessage());
+        }
+    }*/
+
+    public static Map editOrderPaymentPreference(DispatchContext dctx, Map context) {
+        Delegator delegator = dctx.getDelegator();
+        LocalDispatcher dispatcher = dctx.getDispatcher();
+        GenericValue userLogin = (GenericValue) context.get("userLogin");
+        Locale locale = (Locale) context.get("locale");
+
+        String currencyUom = UtilProperties.getPropertyValue(generalPropertiesFiles, currencyPropName);
+        String orderId = (String) context.get("orderId");
+        String orderPaymentPreferenceId = (String) context.get("orderPaymentPreferenceId");
+        String checkOutPaymentId = (String) context.get("checkOutPaymentId");
+        String statusId = (String) context.get("statusId");
+        String maxAmountString = (String) context.get("maxAmount");
+        String receivedAmountStr = (String) context.get("receivedAmount");
+        String receivedAmtRefNum = (String) context.get("receivedAmtRefNum");
+        // String creditCardNumber = (String) context.get("creditCardNumber");
+
+        try {
+            GenericValue orderHeader = delegator.findOne("OrderHeader", UtilMisc.toMap("orderId", orderId), false);
+            currencyUom = orderHeader.getString("currencyUom");
+
+            String paymentPrefHistoryId = delegator.getNextSeqId("OrderPaymentPreferenceHistory");
+            GenericValue orderPaymentPrefHistory = delegator.makeValidValue("OrderPaymentPreferenceHistory", UtilMisc.toMap("paymentPrefHistoryId", paymentPrefHistoryId));
+
+            String paymentMethodId = null;
+            String paymentMethodTypeId = null;
+            BigDecimal amountReceived = ZERO;
+
+            orderPaymentPrefHistory.set("paymentPrefHistoryId", paymentPrefHistoryId);
+            orderPaymentPrefHistory.set("orderId", orderId);
+            orderPaymentPrefHistory.set("paymentPreferenceId", orderPaymentPreferenceId);
+            orderPaymentPrefHistory.set("statusId", "PMNT_RECEIVED");
+
+            if (checkOutPaymentId != null) {
+                List paymentMethodTypes = delegator.findList("PaymentMethodType", null, null, null, null, true);
+                for (Iterator iter = paymentMethodTypes.iterator(); iter.hasNext();) {
+                    GenericValue type = (GenericValue) iter.next();
+                    if (type.get("paymentMethodTypeId").equals(checkOutPaymentId)) {
+                        paymentMethodTypeId = (String) type.get("paymentMethodTypeId");
+                        break;
+                    }
+                }
+                if (paymentMethodTypeId == null) {
+                    GenericValue method = delegator.findByPrimaryKey("PaymentMethod", UtilMisc.toMap("paymentMethodTypeId", paymentMethodTypeId));
+                    paymentMethodId = checkOutPaymentId;
+                    paymentMethodTypeId = (String) method.get("paymentMethodTypeId");
+                }
+            }
+            orderPaymentPrefHistory.set("paymentMethodTypeId", paymentMethodTypeId);
+
+            if (UtilValidate.isNotEmpty(receivedAmountStr)) {
+                try {
+                    amountReceived = (BigDecimal) ObjectType.simpleTypeConvert(receivedAmountStr, "BigDecimal", null, locale);
+                } catch (GeneralException e) {
+                    String errorMessage = UtilProperties.getMessage(resource_error, "OrderProblemsPaymentParsingAmount", UtilMisc.toMap("orderId", orderId), locale);
+                    Debug.logError(errorMessage, module);
+                    return ServiceUtil.returnError(errorMessage);
+                }
+                orderPaymentPrefHistory.set("currencyUomId", currencyUom);
+                orderPaymentPrefHistory.set("amount", amountReceived);
+            } else {
+                orderPaymentPrefHistory.set("currencyUomId", currencyUom);
+                orderPaymentPrefHistory.set("amount", amountReceived);
+            }
+
+            orderPaymentPrefHistory.set("amountRefNum", receivedAmtRefNum);
+            orderPaymentPrefHistory.set("receivedDate", UtilDateTime.nowTimestamp());
+            orderPaymentPrefHistory.set("receivedBy", userLogin.get("partyId"));
+
+            delegator.create(orderPaymentPrefHistory);
+
+            /* For OrderPaymentPreference updation */
+            GenericValue opp = delegator.findByPrimaryKey("OrderPaymentPreference", UtilMisc.toMap("orderPaymentPreferenceId", orderPaymentPreferenceId));
+
+            List<GenericValue> orderPaymentPrefHistoryList = delegator.findList("OrderPaymentPreferenceHistory", EntityCondition.makeCondition(EntityCondition.makeCondition(
+                                                                UtilMisc.toMap("paymentPreferenceId", orderPaymentPreferenceId, "orderId", orderId))), null, null, null, false);
+
+            if (!UtilValidate.isEmpty(maxAmountString)) {
+                BigDecimal maxAmount = ZERO;
+                try {
+                    maxAmount = (BigDecimal) ObjectType.simpleTypeConvert(maxAmountString, "BigDecimal", null, locale);
+                } catch (GeneralException e) {
+                    String errorMessage = UtilProperties.getMessage(resource_error, "OrderProblemsPaymentParsingAmount", UtilMisc.toMap("orderId", orderId), locale);
+                    Debug.logError(errorMessage, module);
+                    return ServiceUtil.returnError(errorMessage);
+                }
+                opp.set("maxAmount", maxAmount);
+
+                if (UtilValidate.isNotEmpty(orderPaymentPrefHistoryList)) {
+                    BigDecimal totalAmountReceived = ZERO;
+                    for (GenericValue orderPaymentPrefHist : orderPaymentPrefHistoryList) {
+                        totalAmountReceived = totalAmountReceived.add(orderPaymentPrefHist.getBigDecimal("amount")).setScale(taxDecimals, taxRounding);
+                    }
+                    if (totalAmountReceived.compareTo(maxAmount) == 0)
+                        opp.set("amountReceived", totalAmountReceived);
+                        opp.set("statusId", "PAYMENT_RECEIVED");
+                }
+            }
+
+            Map results = ServiceUtil.returnSuccess();
+            opp.store();
+            results.put("orderPaymentPreferenceId", opp.get("orderPaymentPreferenceId"));
 
             return results;
         } catch (GenericEntityException e) {

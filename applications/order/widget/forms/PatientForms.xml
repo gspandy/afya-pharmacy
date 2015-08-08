@@ -88,6 +88,9 @@
         <field name="dateOfBirth">
             <hidden value="${patient.dateOfBirth}"/>
         </field>
+        <field name="isOrderFromClinic">
+            <hidden value="N"/>
+        </field>
         <field name="civilId" title="Civil ID" id-name="civilId" position="1">
             <display/>
         </field>

@@ -1279,8 +1279,10 @@ public class ShipmentServices {
         if (locale == null) {
             locale = Locale.getDefault();
         }
-        ResourceBundleMapWrapper uiLabelMap = UtilProperties.getResourceBundleMap("EcommerceUiLabels", locale);
+        /*ResourceBundleMapWrapper uiLabelMap = UtilProperties.getResourceBundleMap("EcommerceUiLabels", locale);
         uiLabelMap.addBottomResourceBundle("OrderUiLabels");
+        uiLabelMap.addBottomResourceBundle("CommonUiLabels");*/
+        ResourceBundleMapWrapper uiLabelMap = UtilProperties.getResourceBundleMap("OrderUiLabels", locale);
         uiLabelMap.addBottomResourceBundle("CommonUiLabels");
 
         Map<String, Object> bodyParameters = UtilMisc.<String, Object>toMap("partyId", partyId, "shipmentId", shipmentId,

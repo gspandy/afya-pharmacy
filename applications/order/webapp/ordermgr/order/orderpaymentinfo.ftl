@@ -56,68 +56,68 @@ under the License.
                     <#list payments as payment>
                         <#assign statusItem = payment.getRelatedOne("StatusItem")>
                         <#assign partyName = delegator.findOne("PartyNameView", {"partyId" : payment.partyIdTo}, true)>
-                    <tr>
-                        <#if security.hasPermission("PAY_INFO_VIEW", session) || security.hasPermission("PAY_INFO_ADMIN", session)>
-                            <td><a href="/accounting/control/paymentOverview?paymentId=${payment.paymentId}">${payment.paymentId}</a></td>
-                        <#else>
-                            <td>${payment.paymentId}</td>
-                        </#if>
-                        <td>
-                            ${partyName.groupName?if_exists}${partyName.lastName?if_exists} ${partyName.firstName?if_exists} ${partyName.middleName?if_exists}
-                            <#if security.hasPermission("PARTYMGR_VIEW", session) || security.hasPermission("PARTYMGR_ADMIN", session)>
-                                [<a href="/partymgr/control/viewprofile?partyId=${partyId}">${partyId}</a>]
+                        <tr>
+                            <#if security.hasPermission("PAY_INFO_VIEW", session) || security.hasPermission("PAY_INFO_ADMIN", session)>
+                                <td><a href="/accounting/control/paymentOverview?paymentId=${payment.paymentId}">${payment.paymentId}</a></td>
                             <#else>
-                                [${partyId}]
+                                <td>${payment.paymentId}</td>
                             </#if>
-                        </td>
-                        <td><@ofbizCurrency amount=payment.amount?if_exists/></td>
-                        <td>${statusItem.description}</td>
-                    </tr>
+                            <td>
+                                ${partyName.groupName?if_exists}${partyName.lastName?if_exists} ${partyName.firstName?if_exists} ${partyName.middleName?if_exists}
+                                <#if security.hasPermission("PARTYMGR_VIEW", session) || security.hasPermission("PARTYMGR_ADMIN", session)>
+                                    [<a href="/partymgr/control/viewprofile?partyId=${partyId}">${partyId}</a>]
+                                <#else>
+                                    [${partyId}]
+                                </#if>
+                            </td>
+                            <td><@ofbizCurrency amount=payment.amount?if_exists/></td>
+                            <td>${statusItem.description}</td>
+                        </tr>
                     </#list>
                 </#list>
-            <#-- invoices -->
 
+                <#-- invoices -->
                 <#if invoices?has_content>
-                <tr><td colspan="4"><hr /></td></tr>
-                <tr>
-                    <td align="right" valign="top" width="29%">&nbsp;<span class="label">${uiLabelMap.OrderInvoices}</span></td>
-                    <td width="1%">&nbsp;</td>
-                    <td valign="top" width="60%">
-                        <#list invoices as invoice>
-                            <#assign invoiceGv = delegator.findOne("Invoice", {"invoiceId" : invoice}, false)>
-                            <#assign statusItem = delegator.findOne("StatusItem", {"statusId" : invoiceGv.statusId}, false)>
-                            <div>${uiLabelMap.CommonNbr}<a target="_blank" href="/accounting/control/invoiceOverview?invoiceId=${invoice}&amp;externalLoginKey=${externalLoginKey}" class="buttontext">${invoice}</a>
-                            <block style="margin-right:12px;font-weight:bold;"> ${statusItem.description?if_exists} </block>
-                            <#if orderTypeId == "SALES_ORDER">(<a target="_blank" href="/accounting/control/invoice.pdf?invoiceId=${invoice}&amp;externalLoginKey=${externalLoginKey}" class="buttontext">PDF</a>)</#if></div>
-                        </#list>
-                    </td>
-                    <td width="10%">&nbsp;</td>
-                </tr>
+                    <tr><td colspan="4"><hr /></td></tr>
+                    <tr>
+                        <td align="right" valign="top" width="29%">&nbsp;<span class="label">${uiLabelMap.OrderInvoices}</span></td>
+                        <td width="1%">&nbsp;</td>
+                        <td valign="top" width="60%">
+                            <#list invoices as invoice>
+                                <#assign invoiceGv = delegator.findOne("Invoice", {"invoiceId" : invoice}, false)>
+                                <#assign statusItem = delegator.findOne("StatusItem", {"statusId" : invoiceGv.statusId}, false)>
+                                <div>${uiLabelMap.CommonNbr}<a target="_blank" href="/accounting/control/invoiceOverview?invoiceId=${invoice}&amp;externalLoginKey=${externalLoginKey}" class="buttontext">${invoice}</a>
+                                <block style="margin-right:12px;font-weight:bold;"> ${statusItem.description?if_exists} </block>
+                                <#if orderTypeId == "SALES_ORDER">(<a target="_blank" href="/accounting/control/invoice.pdf?invoiceId=${invoice}&amp;externalLoginKey=${externalLoginKey}" class="buttontext">PDF</a>)</#if></div>
+                            </#list>
+                        </td>
+                        <td width="10%">&nbsp;</td>
+                    </tr>
                 </#if>
             <#else>
 
-            <#-- order payment status -->
-            <#-- <tr>
-                <td align="center" valign="top" width="29%" class="label">&nbsp;${uiLabelMap.OrderStatusHistory}</td>
-                <td width="1%">&nbsp;</td>
-                <td width="60%">
-                    <#assign orderPaymentStatuses = orderReadHelper.getOrderPaymentStatuses()>
-                    <#if orderPaymentStatuses?has_content>
-                        <#list orderPaymentStatuses as orderPaymentStatus>
-                            <#assign statusItem = orderPaymentStatus.getRelatedOne("StatusItem")?if_exists>
-                            <#if statusItem?has_content>
-                                <div>
-                                ${statusItem.get("description",locale)} <#if orderPaymentStatus.statusDatetime?has_content>- ${orderPaymentStatus.statusDatetime?if_exists?string("dd/MM/yyyy HH:mm:ss")}</#if><!-- ${Static["org.ofbiz.base.util.UtilFormatOut"].formatDateTime(orderPaymentStatus.statusDatetime, "", locale, timeZone)!} &ndash;&gt;
-                                    &nbsp;
-                                ${uiLabelMap.CommonBy} - [${orderPaymentStatus.statusUserLogin?if_exists}]
-                                </div>
-                            </#if>
-                        </#list>
-                    </#if>
-                </td>
-                <td width="10%">&nbsp;</td>
-            </tr>
-            <tr><td colspan="4"><hr /></td></tr> -->
+                <#-- order payment status -->
+                <#-- <tr>
+                    <td align="center" valign="top" width="29%" class="label">&nbsp;${uiLabelMap.OrderStatusHistory}</td>
+                    <td width="1%">&nbsp;</td>
+                    <td width="60%">
+                        <#assign orderPaymentStatuses = orderReadHelper.getOrderPaymentStatuses()>
+                        <#if orderPaymentStatuses?has_content>
+                            <#list orderPaymentStatuses as orderPaymentStatus>
+                                <#assign statusItem = orderPaymentStatus.getRelatedOne("StatusItem")?if_exists>
+                                <#if statusItem?has_content>
+                                    <div>
+                                    ${statusItem.get("description",locale)} <#if orderPaymentStatus.statusDatetime?has_content>- ${orderPaymentStatus.statusDatetime?if_exists?string("dd/MM/yyyy HH:mm:ss")}</#if><!-- ${Static["org.ofbiz.base.util.UtilFormatOut"].formatDateTime(orderPaymentStatus.statusDatetime, "", locale, timeZone)!} &ndash;&gt;
+                                        &nbsp;
+                                    ${uiLabelMap.CommonBy} - [${orderPaymentStatus.statusUserLogin?if_exists}]
+                                    </div>
+                                </#if>
+                            </#list>
+                        </#if>
+                    </td>
+                    <td width="10%">&nbsp;</td>
+                </tr>
+                <tr><td colspan="4"><hr /></td></tr> -->
                 <#if orderPaymentPreferences?has_content || billingAccount?has_content || invoices?has_content>
                     <#list orderPaymentPreferences as orderPaymentPreference>
                         <#assign paymentList = orderPaymentPreference.getRelated("Payment")>
@@ -198,14 +198,14 @@ under the License.
                                         <td valign="top" width="60%">
                                             <div>
                                                 <#if (finAccountType?has_content)>
-                                                ${finAccountType.description?default(finAccountType.finAccountTypeId)}&nbsp;
+                                                    ${finAccountType.description?default(finAccountType.finAccountTypeId)}&nbsp;
                                                 </#if>
                                                 #${finAccount.finAccountCode?default(finAccount.finAccountId)} (<a href="/accounting/control/EditFinAccount?finAccountId=${finAccount.finAccountId}&amp;externalLoginKey=${externalLoginKey}" class="buttontext">${finAccount.finAccountId}</a>)
                                                 <br />
-                                            ${finAccount.finAccountName?if_exists}
+                                                ${finAccount.finAccountName?if_exists}
                                                 <br />
 
-                                            <#-- Authorize and Capture transactions -->
+                                                <#-- Authorize and Capture transactions -->
                                                 <div>
                                                     <#if orderPaymentPreference.statusId != "PAYMENT_SETTLED">
                                                         <a href="/accounting/control/AuthorizeTransaction?orderId=${orderId?if_exists}&amp;orderPaymentPreferenceId=${orderPaymentPreference.orderPaymentPreferenceId}&amp;externalLoginKey=${externalLoginKey}" class="buttontext">${uiLabelMap.AccountingAuthorize}</a>
@@ -220,7 +220,7 @@ under the License.
                                                     <hr />
                                                     <#list gatewayResponses as gatewayResponse>
                                                         <#assign transactionCode = gatewayResponse.getRelatedOne("TranCodeEnumeration")>
-                                                    ${(transactionCode.get("description",locale))?default("Unknown")}:
+                                                        ${(transactionCode.get("description",locale))?default("Unknown")}:
                                                         <#if gatewayResponse.transactionDate?has_content> ${gatewayResponse.transactionDate?if_exists?string("dd/MM/yyyy")}</#if><#-- ${Static["org.ofbiz.base.util.UtilFormatOut"].formatDateTime(gatewayResponse.transactionDate, "", locale, timeZone)!} -->
                                                         <@ofbizCurrency amount=gatewayResponse.amount isoCode=currencyUomId/><br />
                                                         (<span class="label">${uiLabelMap.OrderReference}</span>&nbsp;${gatewayResponse.referenceNum?if_exists}
@@ -272,11 +272,14 @@ under the License.
                                             <div>&nbsp;<span class="label">${paymentMethodType.get("description",locale)?if_exists}</span>&nbsp;
                                                 <#if orderPaymentPreference.maxAmount?has_content && (!(orderHeader.statusId.equals("ORDER_CANCELLED")) && !(orderHeader.statusId.equals("ORDER_REJECTED")))>
                                                     <br /><#-- ${uiLabelMap.OrderPaymentMaximumAmount}: <@ofbizCurrency amount=orderPaymentPreference.maxAmount?default(0.000) isoCode=currencyUomId/> -->
-                                                    Amount:
+                                                    ${uiLabelMap.OrderPaymentMaximumAmount}:
                                                     <#assign totalCopayPatient = Static["java.math.BigDecimal"].ZERO>
                                                     <#assign totalPatientPayable = Static["java.math.BigDecimal"].ZERO>
                                                     <#assign totalCopayInsurance = Static["java.math.BigDecimal"].ZERO>
+                                                    <#assign totalAmountPaid = Static["java.math.BigDecimal"].ZERO>
+                                                    <#assign maximumAmount = Static["java.math.BigDecimal"].ZERO>
                                                     <#assign maxAmt = 0.000>
+                                                    <#assign pendingAmount = 0.000>
                                                     <#if orderRxHeader?has_content && "INSURANCE"==orderRxHeader.patientType>
                                                       <#if ("CASH" == paymentMethodType.paymentMethodTypeId || "CASH PAYING" == paymentMethodType.paymentMethodTypeId || "CREDIT_CARD" == paymentMethodType.paymentMethodTypeId || "PATIENT" == paymentMethodType.paymentMethodTypeId)>
 
@@ -428,6 +431,15 @@ under the License.
                                                         <#assign totalPatientPayable = totalCopayPatient + totalDeductible>
                                                         <@ofbizCurrency amount=totalPatientPayable isoCode=currencyUomId/>
                                                         <#assign maxAmt = totalPatientPayable?default(0.000)?string("0.000")/>
+                                                        <#assign maximumAmount = totalPatientPayable/>
+                                                        <#assign orderPaymentPreferenceHistory = delegator.findByAnd("OrderPaymentPreferenceHistory",{"orderId",orderItem.orderId,"paymentPreferenceId",orderPaymentPreference.orderPaymentPreferenceId,"statusId","PMNT_RECEIVED"})>
+                                                        <#if orderPaymentPreferenceHistory?has_content>
+                                                          <#list orderPaymentPreferenceHistory as orderPaymentPrefHist>
+                                                            <#assign totalAmountPaid = totalAmountPaid + orderPaymentPrefHist.amount>
+                                                          </#list>
+                                                        </#if>
+                                                        <#assign remainingAmount = maximumAmount - totalAmountPaid>
+                                                        <#assign pendingAmount = remainingAmount?default(0.000)?string("0.000")>
 
                                                       <#elseif "INSURANCE" == paymentMethodType.paymentMethodTypeId>
 
@@ -537,6 +549,15 @@ under the License.
                                                         </#if>
                                                         <@ofbizCurrency amount=totalCopayInsurance isoCode=currencyUomId/>
                                                         <#assign maxAmt = totalCopayInsurance?default(0.000)?string("0.000")/>
+                                                        <#assign maximumAmount = totalCopayInsurance/>
+                                                        <#assign orderPaymentPreferenceHistory = delegator.findByAnd("OrderPaymentPreferenceHistory",{"orderId",orderItem.orderId,"paymentPreferenceId",orderPaymentPreference.orderPaymentPreferenceId,"statusId","PMNT_RECEIVED"})>
+                                                        <#if orderPaymentPreferenceHistory?has_content>
+                                                          <#list orderPaymentPreferenceHistory as orderPaymentPrefHist>
+                                                            <#assign totalAmountPaid = totalAmountPaid + orderPaymentPrefHist.amount>
+                                                          </#list>
+                                                        </#if>
+                                                        <#assign remainingAmount = maximumAmount - totalAmountPaid>
+                                                        <#assign pendingAmount = remainingAmount?default(0.000)?string("0.000")>
                                                       </#if>
                                                     <#elseif orderRxHeader?has_content && "CORPORATE"==orderRxHeader.patientType>
                                                       <#assign primaryPayer = orderRxHeader.primaryPayer>
@@ -597,6 +618,15 @@ under the License.
                                                         <#assign totalPatientPayable = totalCopayPatient>
                                                         <@ofbizCurrency amount=totalPatientPayable isoCode=currencyUomId/>
                                                         <#assign maxAmt = totalPatientPayable?default(0.000)?string("0.000")/>
+                                                        <#assign maximumAmount = totalPatientPayable/>
+                                                        <#assign orderPaymentPreferenceHistory = delegator.findByAnd("OrderPaymentPreferenceHistory",{"orderId",orderItem.orderId,"paymentPreferenceId",orderPaymentPreference.orderPaymentPreferenceId,"statusId","PMNT_RECEIVED"})>
+                                                        <#if orderPaymentPreferenceHistory?has_content>
+                                                          <#list orderPaymentPreferenceHistory as orderPaymentPrefHist>
+                                                            <#assign totalAmountPaid = totalAmountPaid + orderPaymentPrefHist.amount>
+                                                          </#list>
+                                                        </#if>
+                                                        <#assign remainingAmount = maximumAmount - totalAmountPaid>
+                                                        <#assign pendingAmount = remainingAmount?default(0.000)?string("0.000")>
 
                                                       <#elseif "CORPORATE" == paymentMethodType.paymentMethodTypeId>
 
@@ -663,6 +693,15 @@ under the License.
                                                         </#if>
                                                         <@ofbizCurrency amount=totalCopayCorporate isoCode=currencyUomId/>
                                                         <#assign maxAmt = totalCopayCorporate?default(0.000)?string("0.000")/>
+                                                        <#assign maximumAmount = totalCopayCorporate/>
+                                                        <#assign orderPaymentPreferenceHistory = delegator.findByAnd("OrderPaymentPreferenceHistory",{"orderId",orderItem.orderId,"paymentPreferenceId",orderPaymentPreference.orderPaymentPreferenceId,"statusId","PMNT_RECEIVED"})>
+                                                        <#if orderPaymentPreferenceHistory?has_content>
+                                                          <#list orderPaymentPreferenceHistory as orderPaymentPrefHist>
+                                                            <#assign totalAmountPaid = totalAmountPaid + orderPaymentPrefHist.amount>
+                                                          </#list>
+                                                        </#if>
+                                                        <#assign remainingAmount = maximumAmount - totalAmountPaid>
+                                                        <#assign pendingAmount = remainingAmount?default(0.000)?string("0.000")>
                                                       </#if>
                                                     <#elseif (orderRxHeader?has_content && ("CASH"==orderRxHeader.patientType || "CASH PAYING"==orderRxHeader.patientType))>
                                                       <#if ("CASH" == paymentMethodType.paymentMethodTypeId || "CASH PAYING" == paymentMethodType.paymentMethodTypeId || "CREDIT_CARD" == paymentMethodType.paymentMethodTypeId || "PATIENT" == paymentMethodType.paymentMethodTypeId)>
@@ -699,6 +738,15 @@ under the License.
                                                         </#if>
                                                         <@ofbizCurrency amount=totalCopayPatient isoCode=currencyUomId/>
                                                         <#assign maxAmt = totalCopayPatient?default(0.000)?string("0.000")/>
+                                                        <#assign maximumAmount = totalCopayPatient/>
+                                                        <#assign orderPaymentPreferenceHistory = delegator.findByAnd("OrderPaymentPreferenceHistory",{"orderId",orderItem.orderId,"paymentPreferenceId",orderPaymentPreference.orderPaymentPreferenceId,"statusId","PMNT_RECEIVED"})>
+                                                        <#if orderPaymentPreferenceHistory?has_content>
+                                                          <#list orderPaymentPreferenceHistory as orderPaymentPrefHist>
+                                                            <#assign totalAmountPaid = totalAmountPaid + orderPaymentPrefHist.amount>
+                                                          </#list>
+                                                        </#if>
+                                                        <#assign remainingAmount = maximumAmount - totalAmountPaid>
+                                                        <#assign pendingAmount = remainingAmount?default(0.000)?string("0.000")>
                                                       </#if>
                                                     <#elseif ("CASH" == paymentMethodType.paymentMethodTypeId || "CASH PAYING" == paymentMethodType.paymentMethodTypeId || "CREDIT_CARD" == paymentMethodType.paymentMethodTypeId || "PATIENT" == paymentMethodType.paymentMethodTypeId)>
                                                       <#if orderItemList?has_content>
@@ -733,6 +781,15 @@ under the License.
                                                         </#list>
                                                         <@ofbizCurrency amount=totalCopayPatient isoCode=currencyUomId/>
                                                         <#assign maxAmt = totalCopayPatient?default(0.000)?string("0.000")/>
+                                                        <#assign maximumAmount = totalCopayPatient/>
+                                                        <#assign orderPaymentPreferenceHistory = delegator.findByAnd("OrderPaymentPreferenceHistory",{"orderId",orderItem.orderId,"paymentPreferenceId",orderPaymentPreference.orderPaymentPreferenceId,"statusId","PMNT_RECEIVED"})>
+                                                        <#if orderPaymentPreferenceHistory?has_content>
+                                                          <#list orderPaymentPreferenceHistory as orderPaymentPrefHist>
+                                                            <#assign totalAmountPaid = totalAmountPaid + orderPaymentPrefHist.amount>
+                                                          </#list>
+                                                        </#if>
+                                                        <#assign remainingAmount = maximumAmount - totalAmountPaid>
+                                                        <#assign pendingAmount = remainingAmount?default(0.000)?string("0.000")>
                                                       </#if>
                                                     </#if>
                                                 </#if>
@@ -740,7 +797,7 @@ under the License.
                                         </td>
 
                                         <td width="1%">&nbsp;</td>
-                                        <#if (paymentMethodType.paymentMethodTypeId=='INSURANCE' || paymentMethodType.paymentMethodTypeId=='CASH' || paymentMethodType.paymentMethodTypeId=='CASH PAYING' || paymentMethodType.paymentMethodTypeId=='CREDIT_CARD') &&  orderPaymentPreference.statusId!='PAYMENT_NOT_RECEIVED' && (!(orderHeader.statusId.equals("ORDER_CANCELLED")) && !(orderHeader.statusId.equals("ORDER_REJECTED")))>
+                                        <#if (paymentMethodType.paymentMethodTypeId=='INSURANCE' || paymentMethodType.paymentMethodTypeId=='PATIENT' || paymentMethodType.paymentMethodTypeId=='CASH' || paymentMethodType.paymentMethodTypeId=='CASH PAYING' || paymentMethodType.paymentMethodTypeId=='CREDIT_CARD') &&  orderPaymentPreference.statusId!='PAYMENT_NOT_RECEIVED' && pendingAmount=="0.000" && (!(orderHeader.statusId.equals("ORDER_CANCELLED")) && !(orderHeader.statusId.equals("ORDER_REJECTED")))>
                                             <td width="60%">
                                                 <div>
                                                     <#if orderPaymentPreference.maxAmount?has_content>
@@ -749,21 +806,29 @@ under the License.
                                                     </#if>
                                                     <br />&nbsp;[<#if oppStatusItem?exists>${oppStatusItem.get("description",locale)}<#else>${orderPaymentPreference.statusId}</#if>]
                                                 </div>
-                                            <#--
-                                            <div><@ofbizCurrency amount=orderPaymentPreference.maxAmount?default(0.000) isoCode=currencyUomId/>&nbsp;-&nbsp;${(orderPaymentPreference.authDate.toString())?if_exists}</div>
-                                            <div>&nbsp;<#if orderPaymentPreference.authRefNum?exists>(${uiLabelMap.OrderReference}: ${orderPaymentPreference.authRefNum})</#if></div>
-                                            -->
+                                                <#--
+                                                <div><@ofbizCurrency amount=orderPaymentPreference.maxAmount?default(0.000) isoCode=currencyUomId/>&nbsp;-&nbsp;${(orderPaymentPreference.authDate.toString())?if_exists}</div>
+                                                <div>&nbsp;<#if orderPaymentPreference.authRefNum?exists>(${uiLabelMap.OrderReference}: ${orderPaymentPreference.authRefNum})</#if></div>
+                                                -->
                                             </td>
                                         <#else>
-                                            <td align="right" width="60%">
-                                                <#if orderPaymentPreference.orderPaymentPreferenceId?has_content && (!(orderHeader.statusId.equals("ORDER_CANCELLED")) && !(orderHeader.statusId.equals("ORDER_REJECTED")))>
-                                                    <a href="<@ofbizUrl>receivepayment?${paramString}&amp;orderPaymentPreferenceId=${orderPaymentPreference.orderPaymentPreferenceId}&amp;amount=${maxAmt}</@ofbizUrl>" class="buttontext">${uiLabelMap.AccountingReceivePayment}</a>
-                                                <#elseif (!(orderHeader.statusId.equals("ORDER_CANCELLED")) && !(orderHeader.statusId.equals("ORDER_REJECTED"))) && maxAmt!="0.000">
+                                            <td align="right" width="50%">
+                                                <#if orderPaymentPreference.orderPaymentPreferenceId?has_content && (!(orderHeader.statusId.equals("ORDER_CANCELLED")) && !(orderHeader.statusId.equals("ORDER_REJECTED"))) && pendingAmount!="0.000">
+                                                    <a href="javascript:document.Receivepayment_${orderPaymentPreference.orderPaymentPreferenceId}.submit()" class="buttontext">${uiLabelMap.AccountingReceivePayment}</a>
+                                                    <form name="Receivepayment_${orderPaymentPreference.orderPaymentPreferenceId}" method="post" action="<@ofbizUrl>receivepayment?${paramString}</@ofbizUrl>">
+                                                        <input type="hidden" name="orderPaymentPreferenceId" value="${orderPaymentPreference.orderPaymentPreferenceId}" />
+                                                        <input type="hidden" name="maxAmount" value="${maxAmt}" />
+                                                        <input type="hidden" name="pendingAmount" value="${pendingAmount}" />
+                                                    </form>
+                                                <#elseif (!(orderHeader.statusId.equals("ORDER_CANCELLED")) && !(orderHeader.statusId.equals("ORDER_REJECTED"))) && pendingAmount!="0.000">
                                                     <a href="<@ofbizUrl>receivepayment?${paramString}</@ofbizUrl>" class="buttontext">${uiLabelMap.AccountingReceivePayment}</a>
+                                                <#else>
+                                                    ${paymentMethodType.paymentMethodTypeId} ${pendingAmount} ${orderPaymentPreference.statusId} ${orderPaymentPreference.maxAmount} ${orderHeader.statusId}
                                                 </#if>
                                             </td>
                                         </#if>
-                                        <td width="10%">
+
+                                        <#-- <td width="10%">
                                             <#if !(orderHeader.statusId.equals("ORDER_REJECTED")) && !(orderHeader.statusId.equals("ORDER_CANCELLED"))>
                                                 <#if orderPaymentPreference.statusId != "PAYMENT_SETTLED">
                                                     <div>
@@ -777,7 +842,7 @@ under the License.
                                                     </div>
                                                 </#if>
                                             </#if>
-                                        </td>
+                                        </td> -->
                                         <#-- <td width="10%">
                                             <#if (!orderHeader.statusId.equals("ORDER_COMPLETED")) && !(orderHeader.statusId.equals("ORDER_REJECTED")) && !(orderHeader.statusId.equals("ORDER_CANCELLED"))>
                                                 <#if orderPaymentPreference.statusId != "PAYMENT_SETTLED">
@@ -794,6 +859,66 @@ under the License.
                                             </#if>
                                         </td> -->
                                     </tr>
+                                    <#assign orderPaymentPrefHistory = delegator.findByAnd("OrderPaymentPreferenceHistory",{"orderId",orderItem.orderId,"paymentPreferenceId",orderPaymentPreference.orderPaymentPreferenceId,"statusId","PMNT_RECEIVED"})>
+                                    <#if orderPaymentPrefHistory?has_content>
+                                      <#list orderPaymentPrefHistory as ordrPaymntPrefHist>
+                                        <tr><td>&nbsp;</td><td colspan="3"><hr /></td></tr>
+                                        <tr>
+                                          <td>&nbsp;</td>
+                                          <td align="right" valign="top">
+                                            <#assign paymentMethodType = delegator.findOne("PaymentMethodType", {"paymentMethodTypeId" : ordrPaymntPrefHist.paymentMethodTypeId}, false)>
+                                            <#if paymentMethodType?exists>
+                                              <div>&nbsp;<span class="label">${paymentMethodType.get("description",locale)?if_exists}</span></div>
+                                            <#else>
+                                              <div>&nbsp;<span class="label">${ordrPaymntPrefHist.paymentMethodTypeId?if_exists}</span></div>
+                                            </#if>
+                                          </td>
+                                          <td colspan="2">
+                                            Amount Received: <@ofbizCurrency amount=ordrPaymntPrefHist.amount?default(0.000) isoCode=ordrPaymntPrefHist.currencyUomId/>
+                                          </td>
+                                          <td>&nbsp;</td>
+                                        </tr>
+                                        <tr>
+                                          <td colspan="2">&nbsp;</td>
+                                          <td>
+                                            <#if ordrPaymntPrefHist.receivedBy?exists && ordrPaymntPrefHist.receivedBy != "system">
+                                              <#assign receivedByUser = delegator.findByPrimaryKey("PartyNameView",{"partyId":ordrPaymntPrefHist.receivedBy})>
+                                              <#if receivedByUser?has_content>
+                                                <#assign receivedBy = receivedByUser.firstName?if_exists + " " + receivedByUser.lastName?if_exists + " " + receivedByUser.groupName?if_exists>
+                                                Received By: ${receivedBy?if_exists}
+                                              <#else>
+                                                Received By: ${ordrPaymntPrefHist.receivedBy?if_exists}
+                                              </#if>
+                                            <#else>
+                                              Received By: ${ordrPaymntPrefHist.receivedBy?if_exists}
+                                            </#if>
+                                          </td>
+                                          <td>
+                                            <#-- <#if !(orderHeader.statusId.equals("ORDER_REJECTED")) && !(orderHeader.statusId.equals("ORDER_CANCELLED"))>
+                                                <#if ordrPaymntPrefHist.statusId != "PMNT_CANCELLED" && (orderPaymentPreference.statusId != "PAYMENT_RECEIVED" ||  pendingAmount!="0.000")>
+                                                    <div>
+                                                        <a href="javascript:document.CancelOrderPaymentPreferenceHistory_${ordrPaymntPrefHist.paymentPreferenceHistoryId}.submit()" class="btn btn-mini btn-danger">${uiLabelMap.CommonCancel}</a>
+                                                        <form name="CancelOrderPaymentPreferenceHistory_${ordrPaymntPrefHist.paymentPreferenceHistoryId}" method="post" action="<@ofbizUrl>cancelOrderPaymentPreferenceHistory</@ofbizUrl>">
+                                                            <input type="hidden" name="paymentPrefHistoryId" value="${ordrPaymntPrefHist.paymentPreferenceHistoryId}" />
+                                                            <input type="hidden" name="paymentPreferenceId" value="${ordrPaymntPrefHist.paymentPreferenceId}" />
+                                                            <input type="hidden" name="orderId" value="${ordrPaymntPrefHist.orderId}" />
+                                                            <input type="hidden" name="paymentMethodTypeId" value="${ordrPaymntPrefHist.paymentMethodTypeId?if_exists}" />
+                                                            <input type="hidden" name="statusId" value="PMNT_CANCELLED" />
+                                                        </form>
+                                                    </div>
+                                                </#if>
+                                            </#if> -->
+                                          </td>
+                                        </tr>
+                                        <tr>
+                                          <td colspan="2">&nbsp;</td>
+                                          <td>
+                                            Received Date: ${ordrPaymntPrefHist.receivedDate?string("dd/MM/yyyy HH:mm:ss")}
+                                          </td>
+                                          <td>&nbsp;</td>
+                                        </tr>
+                                      </#list>
+                                    </#if>
                                 </#if>
                                 <#if paymentList?has_content>
                                     <tr>

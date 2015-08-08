@@ -43,12 +43,12 @@ under the License.
   </tr>
   <tr>
   	<td>
-  SME Business Mantra Team
+  		Afya Team
   	</td>
   </tr>
   <tr>
   	<td>
-  		www.nthdimenzion.com
+  		www.afyaarabia.com
   	</td>
   </tr>
   </table>
