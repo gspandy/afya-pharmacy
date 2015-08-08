@@ -1439,7 +1439,7 @@ public class ValueLinkServices {
         GenericValue productStoreEmail = null;
         String emailType = "PRDS_GC_RELOAD";
         try {
-        	List<GenericValue> pseList = delegator.findByAnd("ProductStoreEmailSetting", UtilMisc.toMap("productStoreId", productStoreId, "emailType", emailType));
+            List<GenericValue> pseList = delegator.findByAnd("ProductStoreEmailSetting", UtilMisc.toMap("productStoreId", productStoreId, "emailType", emailType));
             productStoreEmail = EntityUtil.getFirst(pseList);
         } catch (GenericEntityException e) {
             Debug.logError(e, "Unable to get product store email setting for gift card purchase", module);
@@ -1448,6 +1448,9 @@ public class ValueLinkServices {
             Debug.logError("No gift card purchase email setting found for this store; cannot send gift card information", module);
         } else {
             Map emailCtx = new HashMap();
+            /*ResourceBundleMapWrapper uiLabelMap = (ResourceBundleMapWrapper) UtilProperties.getResourceBundleMap("EcommerceUiLabels", locale);
+            uiLabelMap.addBottomResourceBundle("OrderUiLabels");
+            uiLabelMap.addBottomResourceBundle("CommonUiLabels");*/
             ResourceBundleMapWrapper uiLabelMap = (ResourceBundleMapWrapper) UtilProperties.getResourceBundleMap("OrderUiLabels", locale);
             uiLabelMap.addBottomResourceBundle("CommonUiLabels");
             answerMap.put("uiLabelMap", uiLabelMap);
