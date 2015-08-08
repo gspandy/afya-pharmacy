@@ -159,7 +159,7 @@ public class AfyaSalesOrderController {
                 patientDetails = delegator.findByAnd("Patient", UtilMisc.toMap("firstName", firstName, "thirdName", thirdName, "dateOfBirth"), null, false);
             }
 
-            /*if (UtilValidate.isEmpty(patientDetails)) {
+            if (UtilValidate.isEmpty(patientDetails)) {
 
                 RestTemplate restTemplate = new RestTemplate();
                 HttpHeaders httpHeaders = new HttpHeaders();
@@ -170,89 +170,91 @@ public class AfyaSalesOrderController {
                 HttpEntity<String> requestEntity = new HttpEntity<String>(httpHeaders);
                 ResponseEntity<String> responseEntity = restTemplate.exchange("http://5.9.249.197:7878/afya-portal/anon/fetchPatientByAfyaId?afyaId={afyaId}", HttpMethod.GET, requestEntity, String.class, afyaId);
                 String repsonseJson = responseEntity.getBody();
-                mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
-                Map<String, Object> map = new HashMap<String, Object>();
-                try {
-                    map = mapper.readValue(repsonseJson, map.getClass());
-                    String patientId = delegator.getNextSeqId("Patient");
-                    String dateOfBirth = (String) map.get("dateOfBirth");
-                    SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
-                    GenericValue patient = delegator.makeValidValue("Patient", UtilMisc.toMap("patientId", patientId));
-                    patient.set("afyaId", map.get("afyaId"));
-                    patient.set("civilId", map.get("civilId"));
-                    if (map.get("patientType") == null || map.get("patientType").equals("CASH PAYING")) {
-                        patient.set("patientType", "CASH");
-                    } else {
-                        patient.set("patientType", map.get("patientType"));
-                    }
-                    patient.set("title", map.get("salutation"));
-                    patient.set("firstName", map.get("firstName"));
-                    patient.set("secondName", map.get("middleName"));
-                    patient.set("thirdName", map.get("lastName"));
-                    patient.set("fourthName", map.get("endMostName"));
-                    if (map.get("gender").equals("Male")) {
-                        patient.set("gender", "M");
-                    } else if (map.get("gender").equals("Female")) {
-                        patient.set("gender", "F");
-                    } else {
-                        patient.set("gender", null);
-                    }
-                    patient.set("dateOfBirth", new java.sql.Date(format.parse(dateOfBirth).getTime()));
-                    patient.set("bloodGroup", map.get("bloodGroup"));
-                    patient.set("rH", map.get("rh"));
-
-                    if (map.get("maritalStatus") != null){
-
-                        if (map.get("maritalStatus").equals("Annulled")) {
-                            patient.set("maritalStatus", "ANNULLED");
-                        } else if (map.get("maritalStatus").equals("Divorced")) {
-                            patient.set("maritalStatus", "DIVORCED");
-                        } else if (map.get("maritalStatus").equals("Domestic Partner")) {
-                            patient.set("maritalStatus", "DOMESTIC_PARTNER");
-                        } else if (map.get("maritalStatus").equals("Legally Separated")) {
-                            patient.set("maritalStatus", "LEGALLY_SEPARATED");
-                        } else if (map.get("maritalStatus").equals("Living Together")) {
-                            patient.set("maritalStatus", "LIVING_TOGETHER");
-                        } else if (map.get("maritalStatus").equals("Married")) {
-                            patient.set("maritalStatus", "MARRIED");
-                        } else if (map.get("maritalStatus").equals("Other")) {
-                            patient.set("maritalStatus", "OTHER");
-                        } else if (map.get("maritalStatus").equals("Separated")) {
-                            patient.set("maritalStatus", "SEPARATED");
-                        } else if (map.get("maritalStatus").equals("Single")) {
-                            patient.set("maritalStatus", "SINGLE");
-                        } else if (map.get("maritalStatus").equals("Unmarried")) {
-                            patient.set("maritalStatus", "UNMARRIED");
-                        } else if (map.get("maritalStatus").equals("Widowed")) {
-                            patient.set("maritalStatus", "WIDOWED");
+                if(repsonseJson != null) {
+                    mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
+                    Map<String, Object> map = new HashMap<String, Object>();
+                    try {
+                        map = mapper.readValue(repsonseJson, map.getClass());
+                        String patientId = delegator.getNextSeqId("Patient");
+                        String dateOfBirth = (String) map.get("dateOfBirth");
+                        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+                        GenericValue patient = delegator.makeValidValue("Patient", UtilMisc.toMap("patientId", patientId));
+                        patient.set("afyaId", map.get("afyaId"));
+                        patient.set("civilId", map.get("civilId"));
+                        if (map.get("patientType") == null || map.get("patientType").equals("CASH PAYING")) {
+                            patient.set("patientType", "CASH");
                         } else {
-                            patient.set("maritalStatus", map.get("maritalStatus"));
+                            patient.set("patientType", map.get("patientType"));
+                        }
+                        patient.set("title", map.get("salutation"));
+                        patient.set("firstName", map.get("firstName"));
+                        patient.set("secondName", map.get("middleName"));
+                        patient.set("thirdName", map.get("lastName"));
+                        patient.set("fourthName", map.get("endMostName"));
+                        if (map.get("gender").equals("Male")) {
+                            patient.set("gender", "M");
+                        } else if (map.get("gender").equals("Female")) {
+                            patient.set("gender", "F");
+                        } else {
+                            patient.set("gender", null);
+                        }
+                        patient.set("dateOfBirth", new java.sql.Date(format.parse(dateOfBirth).getTime()));
+                        patient.set("bloodGroup", map.get("bloodGroup"));
+                        patient.set("rH", map.get("rh"));
+
+                        if (map.get("maritalStatus") != null){
+
+                            if (map.get("maritalStatus").equals("Annulled")) {
+                                patient.set("maritalStatus", "ANNULLED");
+                            } else if (map.get("maritalStatus").equals("Divorced")) {
+                                patient.set("maritalStatus", "DIVORCED");
+                            } else if (map.get("maritalStatus").equals("Domestic Partner")) {
+                                patient.set("maritalStatus", "DOMESTIC_PARTNER");
+                            } else if (map.get("maritalStatus").equals("Legally Separated")) {
+                                patient.set("maritalStatus", "LEGALLY_SEPARATED");
+                            } else if (map.get("maritalStatus").equals("Living Together")) {
+                                patient.set("maritalStatus", "LIVING_TOGETHER");
+                            } else if (map.get("maritalStatus").equals("Married")) {
+                                patient.set("maritalStatus", "MARRIED");
+                            } else if (map.get("maritalStatus").equals("Other")) {
+                                patient.set("maritalStatus", "OTHER");
+                            } else if (map.get("maritalStatus").equals("Separated")) {
+                                patient.set("maritalStatus", "SEPARATED");
+                            } else if (map.get("maritalStatus").equals("Single")) {
+                                patient.set("maritalStatus", "SINGLE");
+                            } else if (map.get("maritalStatus").equals("Unmarried")) {
+                                patient.set("maritalStatus", "UNMARRIED");
+                            } else if (map.get("maritalStatus").equals("Widowed")) {
+                                patient.set("maritalStatus", "WIDOWED");
+                            } else {
+                                patient.set("maritalStatus", map.get("maritalStatus"));
+                            }
+
                         }
 
+                        patient.set("address1", map.get("address"));
+                        patient.set("address2", map.get("additionalAddress"));
+                        patient.set("city", map.get("city"));
+                        patient.set("governorate", map.get("state"));
+                        patient.set("postalCode", map.get("postalCode"));
+                        patient.set("country", map.get("country"));
+                        patient.set("nationality", map.get("nationality"));
+                        patient.set("emailAddress", map.get("emailId"));
+                        patient.set("isdCode", map.get("isdCode"));
+                        patient.set("mobilePhone", map.get("mobileNumber"));
+                        patient.set("homePhone", map.get("homePhone"));
+                        patient.set("officePhone", map.get("officePhone"));
+                        patient.set("selectionType", "CIVIL_ID");
+
+                        delegator.create(patient);
+                        Debug.logError(patient.toString(), module);
+
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                        Debug.logError("Inside Patient Creation Error", module);
                     }
-
-                    patient.set("address1", map.get("address"));
-                    patient.set("address2", map.get("additionalAddress"));
-                    patient.set("city", map.get("city"));
-                    patient.set("governorate", map.get("state"));
-                    patient.set("postalCode", map.get("postalCode"));
-                    patient.set("country", map.get("country"));
-                    patient.set("nationality", map.get("nationality"));
-                    patient.set("emailAddress", map.get("emailId"));
-                    patient.set("isdCode", map.get("isdCode"));
-                    patient.set("mobilePhone", map.get("mobileNumber"));
-                    patient.set("homePhone", map.get("homePhone"));
-                    patient.set("officePhone", map.get("officePhone"));
-                    patient.set("selectionType", "CIVIL_ID");
-
-                    delegator.create(patient);
-                    Debug.logError(patient.toString(), module);
-
-                } catch (IOException e) {
-                    e.printStackTrace();
-                    Debug.logError("Inside Patient Creation Error", module);
                 }
-            }*/
+            }
 
             ObjectMapper objectMapper = new ObjectMapper();
             objectMapper.configure(SerializationFeature.WRITE_DATE_KEYS_AS_TIMESTAMPS, false);
