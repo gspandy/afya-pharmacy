@@ -825,7 +825,6 @@ public class GiftCertificateServices {
                 /*ResourceBundleMapWrapper uiLabelMap = (ResourceBundleMapWrapper) UtilProperties.getResourceBundleMap("EcommerceUiLabels", locale);
                 uiLabelMap.addBottomResourceBundle("OrderUiLabels");
                 uiLabelMap.addBottomResourceBundle("CommonUiLabels");*/
-                answerMap.put("uiLabelMap", uiLabelMap);
                 ResourceBundleMapWrapper uiLabelMap = (ResourceBundleMapWrapper) UtilProperties.getResourceBundleMap("OrderUiLabels", locale);
                 uiLabelMap.addBottomResourceBundle("CommonUiLabels");
                 answerMap.put("uiLabelMap", uiLabelMap);
