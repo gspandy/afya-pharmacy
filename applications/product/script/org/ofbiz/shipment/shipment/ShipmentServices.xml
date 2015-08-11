@@ -1986,6 +1986,22 @@
                    short-description="Quick ships an entire order from multiple facilities" use-transaction="true">
         <!-- first get the order header; make sure we have a product store -->
         <entity-one auto-field-map="true" entity-name="OrderHeader" use-cache="false" value-field="orderHeader"/>
+        <entity-one auto-field-map="true" entity-name="OrderRxHeader" use-cache="false" value-field="lookedUpValue"/>
+        <if-not-empty field="lookedUpValue.orderId">
+            <if-compare field="parameters.patientPayable" type="BigDecimal" operator="not-equals" value="">
+                <set field="lookedUpValue.patientPayable" value="${parameters.patientPayable}"/>
+                <log level="always" message="Patient Payable Amount : ${parameters.patientPayable}"/>
+            </if-compare>
+            <if-compare field="parameters.corporatePayable" type="BigDecimal" operator="not-equals" value="">
+                <set field="lookedUpValue.corporatePayable" value="${parameters.corporatePayable}"/>
+                <log level="always" message="Corporate Payable Amount : ${parameters.corporatePayable}"/>
+            </if-compare>
+            <if-compare field="parameters.insurancePayable" type="BigDecimal" operator="not-equals" value="">
+                <set field="lookedUpValue.insurancePayable" value="${parameters.insurancePayable}"/>
+                <log level="always" message="Insurance Payable Amount : ${parameters.insurancePayable}"/>
+            </if-compare>
+            <store-value do-cache-clear="true" value-field="lookedUpValue"/>
+        </if-not-empty>
         <if-empty field="orderHeader.productStoreId">
             <!-- no store cannot use quick ship; throw error -->
             <add-error error-list-name="error_list">

@@ -1106,7 +1106,7 @@ under the License.
                                                 <@ofbizCurrency amount=Static["org.ofbiz.order.order.OrderReadHelper"].getOrderItemCopay(orderItem)?default(0.000) isoCode=currencyUomId/>
                                             </td> -->
                                           <#elseif orderRxHeader?has_content && "CORPORATE"==orderRxHeader.patientType>
-                                            <#assign primaryPayer = orderRxHeader.primaryPayer>
+                                            <#assign primaryPayer = orderRxHeader.primaryPayer?if_exists>
                                             <td style="text-align:right;padding-right:10px;" valign="top" nowrap="nowrap">
                                                 <#assign netAmount = Static["java.math.BigDecimal"].ZERO>
                                                 <#assign orderItemAdjAmount = Static["java.math.BigDecimal"].ZERO>

@@ -3150,6 +3150,11 @@
 		<field name="address" type="text"></field>
 		<field name="clinicName" type="id-vlong-ne"></field>
 		<field name="isOrderFromClinic" type="indicator"></field>
+
+		<field name="patientPayable" type="currency-amount"></field>
+		<field name="corporatePayable" type="currency-amount"></field>
+		<field name="insurancePayable" type="currency-amount"></field>
+
 		<field name="copay" type="currency-amount"></field>
 		<field name="copayType" type="short-varchar"></field>
 		<field name="primaryPayer" type="short-varchar"></field>

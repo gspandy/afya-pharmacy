@@ -116,6 +116,9 @@ under the License.
         <attribute name="originFacilityId" type="String" mode="IN" optional="true"/>
         <attribute name="setPackedOnly" type="String" mode="IN" optional="true"/>
         <attribute name="eventDate" type="Timestamp" mode="IN" optional="true"/>
+        <attribute name="patientPayable" type="BigDecimal" mode="IN" optional="true"/>
+        <attribute name="corporatePayable" type="BigDecimal" mode="IN" optional="true"/>
+        <attribute name="insurancePayable" type="BigDecimal" mode="IN" optional="true"/>
         <!-- A List of Maps, each with a shipmentId,a facilityId, and a shipGroupSeqId for each shipment created -->
         <attribute name="shipmentShipGroupFacilityList" type="List" mode="OUT" optional="false"/>
     </service>

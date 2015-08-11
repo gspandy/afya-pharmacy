@@ -560,7 +560,7 @@ under the License.
                                                         <#assign pendingAmount = remainingAmount?default(0.000)?string("0.000")>
                                                       </#if>
                                                     <#elseif orderRxHeader?has_content && "CORPORATE"==orderRxHeader.patientType>
-                                                      <#assign primaryPayer = orderRxHeader.primaryPayer>
+                                                      <#assign primaryPayer = orderRxHeader.primaryPayer?if_exists>
                                                       <#if ("CASH" == paymentMethodType.paymentMethodTypeId || "CASH PAYING" == paymentMethodType.paymentMethodTypeId || "CREDIT_CARD" == paymentMethodType.paymentMethodTypeId || "PATIENT" == paymentMethodType.paymentMethodTypeId)>
 
                                                         <#if orderItemList?has_content>
@@ -822,8 +822,6 @@ under the License.
                                                     </form>
                                                 <#elseif (!(orderHeader.statusId.equals("ORDER_CANCELLED")) && !(orderHeader.statusId.equals("ORDER_REJECTED"))) && pendingAmount!="0.000">
                                                     <a href="<@ofbizUrl>receivepayment?${paramString}</@ofbizUrl>" class="buttontext">${uiLabelMap.AccountingReceivePayment}</a>
-                                                <#else>
-                                                    ${paymentMethodType.paymentMethodTypeId} ${pendingAmount} ${orderPaymentPreference.statusId} ${orderPaymentPreference.maxAmount} ${orderHeader.statusId}
                                                 </#if>
                                             </td>
                                         </#if>
