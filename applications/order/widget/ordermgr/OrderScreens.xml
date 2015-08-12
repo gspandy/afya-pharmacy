@@ -29,7 +29,7 @@ under the License.
             </widgets>
         </section>
     </screen>
-    
+
     <screen name="emailOrderItems">
         <section>
             <widgets>
@@ -37,7 +37,24 @@ under the License.
             </widgets>
         </section>
     </screen>
-    
+
+    <screen name="emailSalesOrderItems">
+        <section>
+            <actions>
+                <property-map resource="AccountingUiLabels" map-name="uiLabelMap" global="true"/>
+                <property-map resource="OrderUiLabels" map-name="uiLabelMap" global="true"/>
+                <property-map resource="PartyUiLabels" map-name="uiLabelMap" global="true"/>
+                <set field="title" value="${uiLabelMap.PageTitleOrderConfirmationNotice}"/>
+                <set field="baseEmailOrderSecureUrl" value="${baseSecureUrl}/order/control/"/>
+                <set field="allowAnonymousView" value="Y"/>  <!-- this field will instruction OrderStatus.groovy to allow an anonymous order to be viewed by anybody, so the email confirmation screen will work -->
+                <script location="component://order/webapp/ordermgr/WEB-INF/actions/order/SalesOrderView.groovy"/>
+            </actions>
+            <widgets>
+                <platform-specific><html><html-template location="component://order/webapp/ordermgr/order/emailSalesOrderItems.ftl"/></html></platform-specific>
+            </widgets>
+        </section>
+    </screen>
+
     <screen name="emailOrderPayment">
         <section>
             <widgets>

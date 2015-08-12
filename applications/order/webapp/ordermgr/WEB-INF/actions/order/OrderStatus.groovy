@@ -163,6 +163,17 @@ if (orderHeader) {
         }
     }
 
+    List<GenericValue> orderItemsList = orderReadHelper.getOrderItems();
+    homeService = "N";
+    if (UtilValidate.isNotEmpty(orderItemsList) || orderItemsList != null) {
+        for(GenericValue orderItem : orderItemsList) {
+            if("Y".equals(orderItem.homeService)) {
+                homeService = "Y";
+                break;
+            }
+        }
+    }
+    context.homeService = homeService;
     // check if there are returnable items
     returned = 0.00;
     totalItems = 0.00;
@@ -190,6 +201,11 @@ if (orderHeader) {
             salesTax.put("amount", amount.add(gv.getBigDecimal("amount")));
             salesTax.put("name",gv.getString("comments"));
         }
+    }
+
+    if ("SALES_ORDER".equals(orderHeader.orderTypeId)) {
+        GenericValue orderRxHeader = delegator.findOne("OrderRxHeader",true,"orderId",orderId);
+        context.orderRxHeader=orderRxHeader;
     }
 
     context.orderId = orderId;

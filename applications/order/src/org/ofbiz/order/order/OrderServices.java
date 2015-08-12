@@ -3279,6 +3279,27 @@ public class OrderServices {
         sendMap.put("sendBcc", productStoreEmail.get("bccAddress"));
         if ((sendTo != null) && UtilValidate.isEmail(sendTo)) {
             sendMap.put("sendTo", sendTo);
+        } else if ("SALES_ORDER".equals(orderHeader.getString("orderTypeId"))) {
+            GenericValue orderRxHeader = null;
+            List<GenericValue> patientDetails = FastList.newInstance();
+            try {
+                orderRxHeader = delegator.findOne("OrderRxHeader", UtilMisc.toMap("orderId", orderId), false);
+                String afyaId = orderRxHeader.getString("afyaId");
+                String firstName = orderRxHeader.getString("firstName");
+                String thirdName = orderRxHeader.getString("thirdName");
+                if (afyaId != null || UtilValidate.isNotEmpty(afyaId)) {
+                    patientDetails = delegator.findByAnd("Patient", UtilMisc.toMap("afyaId", afyaId), null, false);
+                } else {
+                    patientDetails = delegator.findByAnd("Patient", UtilMisc.toMap("firstName", firstName, "thirdName", thirdName, "dateOfBirth"), null, false);
+                }
+                if (UtilValidate.isNotEmpty(patientDetails)) {
+                    GenericValue patient = EntityUtil.getFirst(patientDetails);
+                    String emailAddress = patient.getString("emailAddress");
+                    sendMap.put("sendTo", emailAddress);
+                }
+            } catch (GenericEntityException e) {
+                e.printStackTrace();
+            }
         } else {
             sendMap.put("sendTo", emailString);
         }

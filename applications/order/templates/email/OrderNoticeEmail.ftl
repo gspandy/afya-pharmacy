@@ -136,9 +136,15 @@ under the License.
     <#if orderHeader?exists>
         ${screens.render("component://order/widget/ordermgr/OrderScreens.xml#emailOrderHeader")}
         <br />
-        ${screens.render("component://order/widget/ordermgr/OrderScreens.xml#emailOrderItems")}
-        <br />
-        ${screens.render("component://order/widget/ordermgr/OrderScreens.xml#emailOrderPayment")}
+        <#if orderHeader.orderTypeId == "SALES_ORDER">
+            ${screens.render("component://order/widget/ordermgr/OrderScreens.xml#emailSalesOrderItems")}
+        <#else>
+            ${screens.render("component://order/widget/ordermgr/OrderScreens.xml#emailOrderItems")}
+        </#if>
+        <#if orderHeader.orderTypeId != "SALES_ORDER">
+            <br />
+            ${screens.render("component://order/widget/ordermgr/OrderScreens.xml#emailOrderPayment")}
+        </#if>
     <#else>
         <h1>Order not found with ID [${orderId?if_exists}], or not allowed to view.</h1>
     </#if>
