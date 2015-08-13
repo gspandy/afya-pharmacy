@@ -3220,11 +3220,11 @@ public class OrderServices {
         sendMap.put("webSiteId", orderHeader.get("webSiteId"));
 
         OrderReadHelper orh = new OrderReadHelper(orderHeader);
-        String emailString = orh.getOrderEmailString();
+        /*String emailString = orh.getOrderEmailString();
         if (UtilValidate.isEmpty(emailString)) {
             Debug.logInfo("Customer is not setup to receive emails; no address(s) found [" + orderId + "]", module);
             return ServiceUtil.returnError("No sendTo email address found");
-        }
+        }*/
 
         // where to get the locale... from PLACING_CUSTOMER's UserLogin.lastLocale,
         // or if not available then from ProductStore.defaultLocaleString
@@ -3279,7 +3279,7 @@ public class OrderServices {
         sendMap.put("sendBcc", productStoreEmail.get("bccAddress"));
         if ((sendTo != null) && UtilValidate.isEmail(sendTo)) {
             sendMap.put("sendTo", sendTo);
-        } else if ("SALES_ORDER".equals(orderHeader.getString("orderTypeId"))) {
+        } else if (sendTo == null && "SALES_ORDER".equals(orderHeader.getString("orderTypeId"))) {
             GenericValue orderRxHeader = null;
             List<GenericValue> patientDetails = FastList.newInstance();
             try {
@@ -3300,9 +3300,9 @@ public class OrderServices {
             } catch (GenericEntityException e) {
                 e.printStackTrace();
             }
-        } else {
+        } /*else {
             sendMap.put("sendTo", emailString);
-        }
+        }*/
         if ((sendCc != null) && UtilValidate.isEmail(sendCc)) {
             sendMap.put("sendCc", sendCc);
         } else {
