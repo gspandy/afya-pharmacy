@@ -600,7 +600,8 @@ public class CheckOutHelper {
 	}
 
 	public Map<String, Object> createOrder(GenericValue userLogin) {
-	return createOrder(userLogin, null, null, null, false, null, null);
+		String webSiteId = "OrderEntry";
+		return createOrder(userLogin, null, null, null, false, null, webSiteId);
 	}
 
 	// Create order event - uses createOrder service for processing

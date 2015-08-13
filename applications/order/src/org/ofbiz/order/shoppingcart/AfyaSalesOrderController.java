@@ -141,22 +141,16 @@ public class AfyaSalesOrderController {
 
             cart.setPatientInfo(patientInfo);
 
-            CheckOutHelper checkOutHelper = new CheckOutHelper(dispatcher, dispatcher.getDelegator(), cart);
-            Map<String, Object> orderCreate = checkOutHelper.createOrder(userLogin);
-            orderId = (String) orderCreate.get("orderId");
-            /*responseStatus.put("statusCode",200);
-            responseStatus.put("orderId",orderId);
-            responseStatus.put("message","Order successfully placed.");*/
-            GenericValue orderRxHeader = delegator.findOne("OrderRxHeader", UtilMisc.toMap("orderId", orderId), false);
-            String afyaId = orderRxHeader.getString("afyaId");
-            String firstName = orderRxHeader.getString("firstName");
-            String thirdName = orderRxHeader.getString("thirdName");
-            Date dob = ((Date) orderRxHeader.get("dateOfBirth"));
+            String afyaId = prescription.getAfyaId();
+            String firstName = prescription.getFirstName();
+            String thirdName = prescription.getLastName();
+            java.sql.Date dob = UtilDateTime.toSqlDate(prescription.getDateOfBirth());
+
             List<GenericValue> patientDetails = FastList.newInstance();
             if (afyaId != null || UtilValidate.isNotEmpty(afyaId)) {
                 patientDetails = delegator.findByAnd("Patient", UtilMisc.toMap("afyaId", afyaId), null, false);
             }  else {
-                patientDetails = delegator.findByAnd("Patient", UtilMisc.toMap("firstName", firstName, "thirdName", thirdName, "dateOfBirth"), null, false);
+                patientDetails = delegator.findByAnd("Patient", UtilMisc.toMap("firstName", firstName, "thirdName", thirdName, "dateOfBirth", dob), null, false);
             }
 
             if (UtilValidate.isEmpty(patientDetails)) {
@@ -254,6 +248,14 @@ public class AfyaSalesOrderController {
                     }
                 }
             }
+
+            CheckOutHelper checkOutHelper = new CheckOutHelper(dispatcher, dispatcher.getDelegator(), cart);
+            Map<String, Object> orderCreate = checkOutHelper.createOrder(userLogin);
+            orderId = (String) orderCreate.get("orderId");
+            /*responseStatus.put("statusCode",200);
+            responseStatus.put("orderId",orderId);
+            responseStatus.put("message","Order successfully placed.");*/
+            dispatcher.runSync("sendOrderConfirmation", UtilMisc.toMap("orderId", orderId, "userLogin", userLogin));
 
             ObjectMapper objectMapper = new ObjectMapper();
             objectMapper.configure(SerializationFeature.WRITE_DATE_KEYS_AS_TIMESTAMPS, false);

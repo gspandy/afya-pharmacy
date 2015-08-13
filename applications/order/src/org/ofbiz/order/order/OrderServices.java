@@ -3287,10 +3287,11 @@ public class OrderServices {
                 String afyaId = orderRxHeader.getString("afyaId");
                 String firstName = orderRxHeader.getString("firstName");
                 String thirdName = orderRxHeader.getString("thirdName");
+                java.sql.Date dob = orderRxHeader.getDate("dateOfBirth");
                 if (afyaId != null || UtilValidate.isNotEmpty(afyaId)) {
                     patientDetails = delegator.findByAnd("Patient", UtilMisc.toMap("afyaId", afyaId), null, false);
                 } else {
-                    patientDetails = delegator.findByAnd("Patient", UtilMisc.toMap("firstName", firstName, "thirdName", thirdName, "dateOfBirth"), null, false);
+                    patientDetails = delegator.findByAnd("Patient", UtilMisc.toMap("firstName", firstName, "thirdName", thirdName, "dateOfBirth", dob), null, false);
                 }
                 if (UtilValidate.isNotEmpty(patientDetails)) {
                     GenericValue patient = EntityUtil.getFirst(patientDetails);
