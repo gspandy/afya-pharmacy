@@ -1266,14 +1266,14 @@ public class ShipmentServices {
         String partyId = shipment.getString("partyIdTo");
 
         // get the email address
-        String emailString = null;
+        /*String emailString = null;
         GenericValue email = PartyWorker.findPartyLatestContactMech(partyId, "EMAIL_ADDRESS", delegator);
         if (UtilValidate.isNotEmpty(email)) {
             emailString = email.getString("infoString");
         }
         if (UtilValidate.isEmpty(emailString)) {
             return ServiceUtil.returnError("No sendTo email address found");
-        }
+        }*/
 
         Locale locale = PartyWorker.findPartyLastLocale(partyId, delegator);
         if (locale == null) {
@@ -1299,9 +1299,31 @@ public class ShipmentServices {
 
         if ((sendTo != null) && UtilValidate.isEmail(sendTo)) {
             sendMap.put("sendTo", sendTo);
-        } else {
+        } else if (sendTo == null && "SALES_ORDER".equals(orderHeader.getString("orderTypeId"))) {
+            GenericValue orderRxHeader = null;
+            List<GenericValue> patientDetails = FastList.newInstance();
+            try {
+                orderRxHeader = delegator.findOne("OrderRxHeader", UtilMisc.toMap("orderId",  orderHeader.get("orderId")), false);
+                String afyaId = orderRxHeader.getString("afyaId");
+                String firstName = orderRxHeader.getString("firstName");
+                String thirdName = orderRxHeader.getString("thirdName");
+                java.sql.Date dob = orderRxHeader.getDate("dateOfBirth");
+                if (afyaId != null || UtilValidate.isNotEmpty(afyaId)) {
+                    patientDetails = delegator.findByAnd("Patient", UtilMisc.toMap("afyaId", afyaId), null, false);
+                } else {
+                    patientDetails = delegator.findByAnd("Patient", UtilMisc.toMap("firstName", firstName, "thirdName", thirdName, "dateOfBirth", dob), null, false);
+                }
+                if (UtilValidate.isNotEmpty(patientDetails)) {
+                    GenericValue patient = EntityUtil.getFirst(patientDetails);
+                    String emailAddress = patient.getString("emailAddress");
+                    sendMap.put("sendTo", emailAddress);
+                }
+            } catch (GenericEntityException e) {
+                e.printStackTrace();
+            }
+        }/* else {
             sendMap.put("sendTo", emailString);
-        }
+        }*/
         // send the notification
         Map<String, Object> sendResp = null;
         try {
