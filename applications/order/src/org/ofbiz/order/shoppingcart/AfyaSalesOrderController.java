@@ -37,6 +37,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.math.BigDecimal;
+import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -65,6 +66,7 @@ public class AfyaSalesOrderController {
 
     public static String createSalesOrderForPrescription(HttpServletRequest request, HttpServletResponse response) {
         //Map responseStatus = new HashMap();
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
         String orderId = null;
         try {
             ObjectMapper mapper = new ObjectMapper();
@@ -168,9 +170,9 @@ public class AfyaSalesOrderController {
                     Map<String, Object> map = new HashMap<String, Object>();
                     try {
                         map = mapper.readValue(repsonseJson, map.getClass());
-                        String patientId = delegator.getNextSeqId("Patient");
                         String dateOfBirth = (String) map.get("dateOfBirth");
-                        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+
+                        String patientId = delegator.getNextSeqId("Patient");
                         GenericValue patient = delegator.makeValidValue("Patient", UtilMisc.toMap("patientId", patientId));
                         patient.set("afyaId", map.get("afyaId"));
                         patient.set("civilId", map.get("civilId"));
@@ -255,7 +257,18 @@ public class AfyaSalesOrderController {
             /*responseStatus.put("statusCode",200);
             responseStatus.put("orderId",orderId);
             responseStatus.put("message","Order successfully placed.");*/
-            dispatcher.runSync("sendOrderConfirmation", UtilMisc.toMap("orderId", orderId, "userLogin", userLogin));
+
+            String contractPaymentId = delegator.getNextSeqId("ReferralContractPayment");
+            GenericValue referralPayment = delegator.makeValidValue("ReferralContractPayment", UtilMisc.toMap("contractPaymentId", contractPaymentId));
+            referralPayment.set("orderId", orderId);
+            referralPayment.set("referralName", prescription.getDoctorName());
+            referralPayment.set("clinicId", prescription.getClinicId());
+            referralPayment.set("clinicName", prescription.getClinicName());
+            referralPayment.set("referralPayableAmount", referralAmount);
+            referralPayment.set("payableCurrencyUomId", currencyUom);
+            referralPayment.set("paymentStatusId", "REF_PMNT_PENDING");
+            delegator.create(referralPayment);
+            Debug.logError(referralPayment.toString(), module);
 
             ObjectMapper objectMapper = new ObjectMapper();
             objectMapper.configure(SerializationFeature.WRITE_DATE_KEYS_AS_TIMESTAMPS, false);
@@ -280,6 +293,11 @@ public class AfyaSalesOrderController {
                 e.printStackTrace();
                 Debug.logError("Inside Response Error", module);
             }
+
+            /*RxOrder Confirmation Notification Mail*/
+            String patientName = prescription.getFirstName() + " " + prescription.getLastName();
+            System.out.println("Sending Order Rx Confirmation Notification Mail to " + patientName);
+            dispatcher.runSync("sendOrderConfirmation", UtilMisc.toMap("orderId", orderId, "userLogin", userLogin));
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -376,11 +394,14 @@ public class AfyaSalesOrderController {
                     e.printStackTrace();
                 }
             }
+            //Timestamp nowTimestamp = UtilDateTime.nowTimestamp();
             List<EntityExpr> exprs = FastList.newInstance();
             exprs.add(EntityCondition.makeCondition("referralName", EntityOperator.EQUALS, doctor));
             exprs.add(EntityCondition.makeCondition("clinicName", EntityOperator.EQUALS, clinic));
             exprs.add(EntityCondition.makeCondition("clinicId", EntityOperator.EQUALS, clinicId));
             exprs.add(EntityCondition.makeCondition("contractStatus", EntityOperator.EQUALS, "ACTIVE"));
+            //exprs.add(EntityCondition.makeCondition("contractFromDate", EntityOperator.LESS_THAN_EQUAL_TO, nowTimestamp));
+            //exprs.add(EntityCondition.makeCondition("contractThruDate", EntityOperator.GREATER_THAN_EQUAL_TO, nowTimestamp));
             List<GenericValue> referralList = delegator.findList("ReferralContract", EntityCondition.makeCondition(exprs, EntityOperator.AND), null, null, null, true);
             if (UtilValidate.isNotEmpty(referralList)) {
                 GenericValue referralContract = EntityUtil.getFirst(referralList);

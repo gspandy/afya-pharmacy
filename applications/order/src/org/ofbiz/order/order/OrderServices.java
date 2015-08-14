@@ -5834,6 +5834,13 @@ public class OrderServices {
             GenericValue orderHeader = delegator.findOne("OrderHeader", UtilMisc.toMap("orderId", orderId), false);
             currencyUom = orderHeader.getString("currencyUom");
 
+            GenericValue orderRxHeader = delegator.findOne("OrderRxHeader", UtilMisc.toMap("orderId", orderId), false);
+            String doctor = orderRxHeader.getString("doctorName");
+            String clinic = orderRxHeader.getString("clinicName");
+            String clinicId = orderRxHeader.getString("clinicId");
+            String isOrderFromClinic = orderRxHeader.getString("isOrderFromClinic");
+            //Timestamp nowTimestamp = UtilDateTime.nowTimestamp();
+
             String paymentPrefHistoryId = delegator.getNextSeqId("OrderPaymentPreferenceHistory");
             GenericValue orderPaymentPrefHistory = delegator.makeValidValue("OrderPaymentPreferenceHistory", UtilMisc.toMap("paymentPrefHistoryId", paymentPrefHistoryId));
 
@@ -5847,7 +5854,7 @@ public class OrderServices {
             orderPaymentPrefHistory.set("statusId", "PMNT_RECEIVED");
 
             if (checkOutPaymentId != null) {
-                List paymentMethodTypes = delegator.findList("PaymentMethodType", null, null, null, null, true);
+                List paymentMethodTypes = delegator.findList("PaymentMethodType", null, null, null, null, false);
                 for (Iterator iter = paymentMethodTypes.iterator(); iter.hasNext();) {
                     GenericValue type = (GenericValue) iter.next();
                     if (type.get("paymentMethodTypeId").equals(checkOutPaymentId)) {
@@ -5884,6 +5891,34 @@ public class OrderServices {
 
             delegator.create(orderPaymentPrefHistory);
 
+            if("Y".equalsIgnoreCase(isOrderFromClinic)) {
+                List<EntityExpr> exprs = FastList.newInstance();
+                exprs.add(EntityCondition.makeCondition("referralName", EntityOperator.EQUALS, doctor));
+                exprs.add(EntityCondition.makeCondition("clinicName", EntityOperator.EQUALS, clinic));
+                exprs.add(EntityCondition.makeCondition("clinicId", EntityOperator.EQUALS, clinicId));
+                exprs.add(EntityCondition.makeCondition("paymentPoint", EntityOperator.EQUALS, "ON_PARTIAL_RECEIPT"));
+                exprs.add(EntityCondition.makeCondition("contractStatus", EntityOperator.EQUALS, "ACTIVE"));
+                //exprs.add(EntityCondition.makeCondition("contractFromDate", EntityOperator.LESS_THAN_EQUAL_TO, nowTimestamp));
+                //exprs.add(EntityCondition.makeCondition("contractThruDate", EntityOperator.GREATER_THAN_EQUAL_TO, nowTimestamp));
+                List<GenericValue> referralList = delegator.findList("ReferralContract", EntityCondition.makeCondition(exprs, EntityOperator.AND), null, null, null, false);
+                if (UtilValidate.isNotEmpty(referralList)) {
+                    EntityConditionList<EntityExpr> condition = EntityCondition.makeCondition(UtilMisc.toList(
+                            EntityCondition.makeCondition("orderId", orderId),
+                            EntityCondition.makeCondition("paymentStatusId", "REF_PMNT_PENDING")),
+                            EntityOperator.AND);
+                    List<GenericValue> refferalContractPayments = delegator.findList("ReferralContractPayment", condition, null, null, null, false);
+                    if (UtilValidate.isNotEmpty(refferalContractPayments)) {
+                        GenericValue refCntrctPayment = EntityUtil.getFirst(refferalContractPayments);
+                        orderId = refCntrctPayment.getString("orderId");
+                        String contractPaymentId = refCntrctPayment.getString("contractPaymentId");
+                        /* For ReferralContractPayment updation */
+                        GenericValue rcp = delegator.findOne("ReferralContractPayment", UtilMisc.toMap("contractPaymentId", contractPaymentId), false);
+                        rcp.set("paymentStatusId", "REF_PMNT_READY");
+                        delegator.store(rcp);
+                    }
+                }
+            }
+            
             /* For OrderPaymentPreference updation */
             GenericValue opp = delegator.findByPrimaryKey("OrderPaymentPreference", UtilMisc.toMap("orderPaymentPreferenceId", orderPaymentPreferenceId));
 
@@ -5906,14 +5941,46 @@ public class OrderServices {
                     for (GenericValue orderPaymentPrefHist : orderPaymentPrefHistoryList) {
                         totalAmountReceived = totalAmountReceived.add(orderPaymentPrefHist.getBigDecimal("amount")).setScale(taxDecimals, taxRounding);
                     }
-                    if (totalAmountReceived.compareTo(maxAmount) == 0)
+                    if (totalAmountReceived.compareTo(maxAmount) == 0) {
                         opp.set("amountReceived", totalAmountReceived);
                         opp.set("statusId", "PAYMENT_RECEIVED");
+
+                        if("Y".equalsIgnoreCase(isOrderFromClinic)) {
+                            List<EntityExpr> exprs1 = FastList.newInstance();
+                            exprs1.add(EntityCondition.makeCondition("referralName", EntityOperator.EQUALS, doctor));
+                            exprs1.add(EntityCondition.makeCondition("clinicName", EntityOperator.EQUALS, clinic));
+                            exprs1.add(EntityCondition.makeCondition("clinicId", EntityOperator.EQUALS, clinicId));
+                            exprs1.add(EntityCondition.makeCondition("paymentPoint", EntityOperator.EQUALS, "ON_FULL_RECEIPT"));
+                            exprs1.add(EntityCondition.makeCondition("contractStatus", EntityOperator.EQUALS, "ACTIVE"));
+                            //exprs1.add(EntityCondition.makeCondition("contractFromDate", EntityOperator.LESS_THAN_EQUAL_TO, nowTimestamp));
+                            //exprs1.add(EntityCondition.makeCondition("contractThruDate", EntityOperator.GREATER_THAN_EQUAL_TO, nowTimestamp));
+                            List<GenericValue> refList = delegator.findList("ReferralContract", EntityCondition.makeCondition(exprs1, EntityOperator.AND), null, null, null, false);
+                            if (UtilValidate.isNotEmpty(refList)) {
+                                EntityConditionList<EntityExpr> condition = EntityCondition.makeCondition(UtilMisc.toList(
+                                        EntityCondition.makeCondition("orderId", orderId),
+                                        EntityCondition.makeCondition("paymentStatusId", "REF_PMNT_PENDING")),
+                                        EntityOperator.AND);
+                                List<GenericValue> refferalContractPayments = delegator.findList("ReferralContractPayment", condition, null, null, null, false);
+                                if (UtilValidate.isNotEmpty(refferalContractPayments)) {
+                                    GenericValue refCntrctPayment = EntityUtil.getFirst(refferalContractPayments);
+                                    orderId = refCntrctPayment.getString("orderId");
+                                    String contractPaymentId = refCntrctPayment.getString("contractPaymentId");
+                                    /* For ReferralContractPayment updation */
+                                    GenericValue rcp = delegator.findOne("ReferralContractPayment", UtilMisc.toMap("contractPaymentId", contractPaymentId), false);
+                                    rcp.set("paymentStatusId", "REF_PMNT_READY");
+                                    delegator.store(rcp);
+                                }
+                            }
+                        }
+
+                    }
                 }
+
+                opp.store();
+
             }
 
             Map results = ServiceUtil.returnSuccess();
-            opp.store();
             results.put("orderPaymentPreferenceId", opp.get("orderPaymentPreferenceId"));
 
             return results;

@@ -5,8 +5,8 @@
           odd-row-style="alternate-row" header-row-style="header-row-2" default-table-style="basic-table hover-bar">
         <field name="contractId">
             <hyperlink description="${contractId}" target="editContract" target-window="_blank">
-				<parameter param-name="contractId"/>
-			</hyperlink>
+                <parameter param-name="contractId"/>
+            </hyperlink>
         </field>
         <field name="referralName" title="Referred By">
             <display/>
@@ -81,8 +81,8 @@
         </actions>
         <field name="contractId">
             <hyperlink description="${contractId}" target="editContract" target-window="_blank">
-				<parameter param-name="contractId"/>
-			</hyperlink>
+                <parameter param-name="contractId"/>
+            </hyperlink>
         </field>
         <field name="referralName" title="Referred By">
             <display/>
@@ -103,4 +103,55 @@
             <display-entity entity-name="StatusItem" key-field-name="statusId"/>
         </field>
     </form>
+
+    <form name="FindContractPayments" type="single" target="findContractPayments" title=""
+          default-title-style="tableheadtext" default-widget-style="tabletext" default-tooltip-style="tabletext">
+        <field name="referralName" title="Referred By" position="1">
+            <text-find/>
+        </field>
+        <field name="clinicName" title="Clinic" position="2">
+            <text-find/>
+        </field>
+        <field name="submitButton" title="${uiLabelMap.CommonFind}" widget-style="btn btn-primary">
+            <submit button-type="button"/>
+        </field>
+    </form>
+
+    <form name="ContractPaymentSearchResults" type="list" use-row-submit="true" target="findContractPayments" title="" list-name="listIt"
+          odd-row-style="alternate-row" header-row-style="header-row-2" default-table-style="basic-table hover-bar"
+          paginate-target="findContractPayments">
+        <actions>
+            <set field="parameters.paymentStatusId" value="REF_PMNT_READY"/>
+            <set field="entityName" value="ReferralContractPayment"/>
+            <service service-name="performFind" result-map="result" result-map-list="listIt">
+                <field-map field-name="inputFields" from-field="parameters"/>
+                <field-map field-name="orderBy" value="contractPaymentId"/>
+                <!-- <field-map field-name="orderBy" value="-createdTxStamp|contractPaymentId"/> -->
+                <field-map field-name="entityName" from-field="entityName"/>
+                <field-map field-name="viewIndex" from-field="viewIndex"/>
+                <field-map field-name="viewSize" from-field="viewSize"/>
+            </service>
+        </actions>
+        <field name="contractPaymentId">
+            <hidden/>
+        </field>
+        <field name="orderId">
+            <display/>
+        </field>
+        <field name="referralName" title="Referred By">
+            <display/>
+        </field>
+        <field name="clinicName" title="Clinic">
+            <display/>
+        </field>
+        <field name="referralPayableAmount" title="Referral Payable">
+            <display type="currency" currency="${payableCurrencyUomId}"/>
+        </field>
+        <field name="submitButton" title="${uiLabelMap.FormFieldTitle_actionEnumId}" widget-style="btn btn-mini btn-success">
+           <hyperlink description="Make Payment" target="makeReferralPayment">
+                <parameter param-name="contractPaymentId"/>
+            </hyperlink>
+        </field>
+    </form>
+
 </forms>

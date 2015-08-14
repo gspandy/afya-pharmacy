@@ -164,8 +164,11 @@ under the License.
             <menu-item name="newContract" title="Create New Referral Contract">
                 <link target="newContract"/>
             </menu-item>
-            <menu-item name="patientList" title="Find Referral Contracts">
+            <menu-item name="referralList" title="Find Referral Contracts">
                 <link target="findContracts"/>
+            </menu-item>
+            <menu-item name="referralPayment" title="Find Referral Payments">
+                <link target="findContractPayments"/>
             </menu-item>
         </menu-item>
         <!-- <menu-item name="return" title="${uiLabelMap.OrderOrderReturns}">

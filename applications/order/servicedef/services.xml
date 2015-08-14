@@ -1247,4 +1247,12 @@ under the License.
         <auto-attributes mode="IN" entity-name="ReferralContractService" optional="false" include="pk" />
     </service>
 
+    <service name="makeReferralPayment" engine="simple"
+             location="component://order/script/org/ofbiz/order/order/ReferralContractSimpleMethods.xml" invoke="makeReferralPayment"
+             default-entity-name="ReferralContractPayment">
+        <description>Make Referral Contract Payment</description>
+        <auto-attributes mode="IN" entity-name="ReferralContractPayment" optional="true"/>
+        <attribute name="contractPaymentId" type="String" mode="INOUT" optional="false"/>
+    </service>
+
 </services>

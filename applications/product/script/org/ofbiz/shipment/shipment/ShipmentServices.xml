@@ -2001,6 +2001,33 @@
                 <log level="always" message="Insurance Payable Amount : ${parameters.insurancePayable}"/>
             </if-compare>
             <store-value do-cache-clear="true" value-field="lookedUpValue"/>
+
+            <set field="orderId" from="lookedUpValue.orderId" set-if-empty="true" set-if-null="false"/>
+            <set field="doctor" from="lookedUpValue.doctorName" set-if-empty="true" set-if-null="false"/>
+            <set field="clinic" from="lookedUpValue.clinicName" set-if-empty="true" set-if-null="false"/>
+            <set field="clinicId" from="lookedUpValue.clinicId" set-if-empty="true" set-if-null="false"/>
+            <set field="isOrderFromClinic" from="lookedUpValue.isOrderFromClinic" set-if-empty="true" set-if-null="false"/>
+
+            <if-compare field="isOrderFromClinic" operator="equals" type="String" value="Y">
+                <entity-and entity-name="ReferralContract" filter-by-date="false" list="referralList" use-cache="false">
+                    <field-map field-name="referralName" from-field="doctor"/>
+                    <field-map field-name="clinicName" from-field="clinic"/>
+                    <field-map field-name="clinicId" from-field="clinicId"/>
+                    <field-map field-name="paymentPoint" value="ON_BILL"/>
+                    <field-map field-name="contractStatus" value="ACTIVE"/>
+                </entity-and>
+                <if-not-empty field="referralList">
+                    <entity-and entity-name="ReferralContractPayment" filter-by-date="false" list="referralContractPaymentList" use-cache="false">
+                        <field-map field-name="orderId" from-field="orderId"/>
+                        <field-map field-name="paymentStatusId" value="REF_PMNT_PENDING"/>
+                    </entity-and>
+                    <if-not-empty field="referralContractPaymentList">
+                        <first-from-list entry="referralContractPayment" list="referralContractPaymentList"/>
+                        <set field="referralContractPayment.paymentStatusId" value="REF_PMNT_READY"/>
+                        <store-value do-cache-clear="true" value-field="referralContractPayment"/>
+                    </if-not-empty>
+                </if-not-empty>
+            </if-compare>
         </if-not-empty>
         <if-empty field="orderHeader.productStoreId">
             <!-- no store cannot use quick ship; throw error -->

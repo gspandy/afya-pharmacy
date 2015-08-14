@@ -2500,6 +2500,17 @@
 		</response>
 	</request-map>
 
+	<request-map uri="findContractPayments">
+		<security auth="true"/>
+		<response name="success" type="view" value="findContractPayments"/>
+	</request-map>
+
+	<request-map uri="makeReferralPayment">
+		<security auth="true"/>
+		<event type="service" invoke="makeReferralPayment"/>
+		<response name="success" type="view" value="findContractPayments"/>
+	</request-map>
+
 	<!-- end of request mappings -->
 
 	<!-- View Mappings -->
@@ -2522,6 +2533,7 @@
 	<view-map name="newContract" type="screen" page="component://order/widget/ordermgr/OrderViewScreens.xml#NewContract" />
 	<view-map name="listReferralContracts" type="screen" page="component://order/widget/ordermgr/OrderViewScreens.xml#ListContracts" />
 	<view-map name="findContracts" type="screen" page="component://order/widget/ordermgr/OrderViewScreens.xml#FindContracts" />
+	<view-map name="findContractPayments" type="screen" page="component://order/widget/ordermgr/OrderViewScreens.xml#FindContractPayments" />
 
 	<view-map name="orderstats" type="screen" page="component://order/widget/ordermgr/OrderViewScreens.xml#OrderStats" />
 	<view-map name="findorders" type="screen" page="component://order/widget/ordermgr/OrderViewScreens.xml#OrderFindOrder" />

@@ -1177,6 +1177,29 @@
         </section>
     </screen>
 
+    <screen name="ListContracts">
+        <section>
+            <actions>
+                <set field="titleProperty" value="Referral Contracts List"/>
+                <set field="headerItem" value="List of Referral Contracts"/>
+                <entity-condition entity-name="ReferralContract" list="referralContractList">
+                    <order-by field-name="-createdTxStamp"/>
+                </entity-condition>
+                <set field="viewIndex" from-field="parameters.VIEW_INDEX" type="Integer"/>
+                <set field="viewSize" from-field="parameters.VIEW_SIZE" type="Integer" default-value="20"/>
+            </actions>
+            <widgets>
+                <decorator-screen name="main-decorator" location="${parameters.mainDecoratorLocation}">
+                    <decorator-section name="body">
+                        <screenlet title="List of Referral Contracts">
+                            <include-form name="ContractList" location="component://order/widget/forms/ReferralContractForms.xml"/>
+                        </screenlet>
+                    </decorator-section>
+                </decorator-screen>
+            </widgets>
+        </section>
+    </screen>
+
     <screen name="FindContracts">
         <section>
             <actions>
@@ -1201,22 +1224,23 @@
         </section>
     </screen>
 
-    <screen name="ListContracts">
+    <screen name="FindContractPayments">
         <section>
             <actions>
-                <set field="titleProperty" value="Referral Contracts List"/>
-                <set field="headerItem" value="List of Referral Contracts"/>
-                <entity-condition entity-name="ReferralContract" list="referralContractList">
-                    <order-by field-name="-createdTxStamp"/>
-                </entity-condition>
+                <set field="titleProperty" value="Find Referral Contract Payments"/>
+                <set field="headerItem" value="List of Referral Contract Payment"/>
+                <set field="entityName" value="ReferralContractPayment"/>
                 <set field="viewIndex" from-field="parameters.VIEW_INDEX" type="Integer"/>
                 <set field="viewSize" from-field="parameters.VIEW_SIZE" type="Integer" default-value="20"/>
             </actions>
             <widgets>
                 <decorator-screen name="main-decorator" location="${parameters.mainDecoratorLocation}">
                     <decorator-section name="body">
-                        <screenlet title="List of Referral Contracts">
-                            <include-form name="ContractList" location="component://order/widget/forms/ReferralContractForms.xml"/>
+                        <screenlet title="Find Referral Contract Payments">
+                            <include-form name="FindContractPayments" location="component://order/widget/forms/ReferralContractForms.xml"/>
+                        </screenlet>
+                        <screenlet title="Referral Contract Payments List">
+                            <include-form name="ContractPaymentSearchResults" location="component://order/widget/forms/ReferralContractForms.xml"/>
                         </screenlet>
                     </decorator-section>
                 </decorator-screen>

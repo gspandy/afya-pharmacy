@@ -3336,4 +3336,34 @@
 		</relation>
 	</entity>
 
+	<entity entity-name="ReferralContractPayment" package-name="org.ofbiz.order.order" title="Referral Contract Payment Entity">
+		<field name="contractPaymentId" type="id-ne"></field>
+		<field name="orderId" type="id"></field>
+		<field name="referralType" type="short-varchar"></field>
+		<field name="referralName" type="short-varchar"></field>
+		<field name="clinicId" type="short-varchar"></field>
+		<field name="clinicName" type="short-varchar"></field>
+		<field name="referralPayableAmount" type="currency-amount"></field>
+		<field name="payableCurrencyUomId" type="id"></field>
+		<field name="paymentStatusId" type="short-varchar"></field>
+		<field name="referralPaidAmount" type="currency-amount"></field>
+		<field name="paidCurrencyUomId" type="id"></field>
+		<field name="paidBy" type="id-vlong"></field>
+		<field name="paidDate" type="date-time"></field>
+
+		<prim-key field="contractPaymentId" />
+		<relation type="one" fk-name="REF_CNTRCT_PMNT_ORXHD" rel-entity-name="OrderRxHeader">
+			<key-map field-name="orderId" />
+		</relation>
+		<relation type="one" fk-name="REF_CNTRCT_PMNT_PAY_CUOM" rel-entity-name="Uom">
+			<key-map field-name="payableCurrencyUomId" rel-field-name="uomId" />
+		</relation>
+		<relation type="one" fk-name="REF_CNTRCT_PMNT_PAID_CUOM" rel-entity-name="Uom">
+			<key-map field-name="paidCurrencyUomId" rel-field-name="uomId" />
+		</relation>
+		<relation type="one-nofk" rel-entity-name="UserLogin">
+			<key-map field-name="paidBy" rel-field-name="userLoginId" />
+		</relation>
+	</entity>
+
 </entitymodel>

@@ -42,4 +42,19 @@
         <remove-value value-field="lookedUpValue"/>
     </simple-method>
 
+    <simple-method method-name="makeReferralPayment" login-required="true" use-transaction="true" short-description="Makes Referral Contract Payment">
+        <make-value entity-name="ReferralContractPayment" value-field="lookupPKMap" />
+        <set-pk-fields map="parameters" value-field="lookupPKMap" />
+        <find-by-primary-key entity-name="ReferralContractPayment" map="lookupPKMap" value-field="lookedUpValue" />
+        <set-nonpk-fields map="parameters" value-field="lookedUpValue" />
+        <now-timestamp field="nowTimestamp"/>
+        <set field="lookedUpValue.referralPaidAmount" from="lookedUpValue.referralPayableAmount" set-if-empty="true" set-if-null="false"/>
+        <set field="lookedUpValue.paidCurrencyUomId" from="lookedUpValue.payableCurrencyUomId" set-if-empty="true" set-if-null="false"/>
+        <set field="lookedUpValue.paidBy" from="userLogin.userLoginId" set-if-empty="true" set-if-null="false"/>
+        <set field="lookedUpValue.paidDate" from="nowTimestamp" set-if-empty="true" set-if-null="false"/>
+        <set field="lookedUpValue.paymentStatusId" value="REF_PMNT_PAID"/>
+        <store-value value-field="lookedUpValue" />
+        <field-to-result field="lookedUpValue.contractPaymentId" result-name="contractPaymentId" />
+    </simple-method>
+
 </simple-methods>
