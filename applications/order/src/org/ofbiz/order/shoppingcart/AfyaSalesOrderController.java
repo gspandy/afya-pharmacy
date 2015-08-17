@@ -81,7 +81,13 @@ public class AfyaSalesOrderController {
             String productStoreId = UtilProperties.getPropertyValue(generalPropertiesFiles, PRODUCT_STORE_ID);
 
             ShoppingCart cart = new org.ofbiz.order.shoppingcart.ShoppingCart(delegator, productStoreId, locale, currencyUom);
-            GenericValue userLogin = delegator.findOne("UserLogin", true, "userLoginId", "system");
+            //GenericValue userLogin = delegator.findOne("UserLogin", true, "userLoginId", "system");
+            GenericValue userLogin = (GenericValue) request.getAttribute("userLogin");
+            HttpSession session = request.getSession();
+
+            if(userLogin==null){
+                userLogin = (GenericValue)session.getAttribute("userLogin");
+            }
 
             cart.setOrderType("SALES_ORDER");
             cart.setUserLogin(userLogin, dispatcher);
@@ -91,7 +97,20 @@ public class AfyaSalesOrderController {
             String doctor = prescription.getDoctorName();
             String clinic = prescription.getClinicName();
             String clinicId = prescription.getClinicId();
-            BigDecimal referralAmount = getReferralAmount(dispatcher, delegator, doctor, clinic, clinicId, prescription.getRows());
+            BigDecimal referralAmount = ZERO;
+
+            //Timestamp nowTimestamp = UtilDateTime.nowTimestamp();
+            List<EntityExpr> exprs = FastList.newInstance();
+            exprs.add(EntityCondition.makeCondition("referralName", EntityOperator.EQUALS, doctor));
+            exprs.add(EntityCondition.makeCondition("clinicName", EntityOperator.EQUALS, clinic));
+            exprs.add(EntityCondition.makeCondition("clinicId", EntityOperator.EQUALS, clinicId));
+            exprs.add(EntityCondition.makeCondition("contractStatus", EntityOperator.EQUALS, "ACTIVE"));
+            //exprs.add(EntityCondition.makeCondition("contractFromDate", EntityOperator.LESS_THAN_EQUAL_TO, nowTimestamp));
+            //exprs.add(EntityCondition.makeCondition("contractThruDate", EntityOperator.GREATER_THAN_EQUAL_TO, nowTimestamp));
+            List<GenericValue> referralList = delegator.findList("ReferralContract", EntityCondition.makeCondition(exprs, EntityOperator.AND), null, null, null, true);
+
+            if (UtilValidate.isNotEmpty(referralList))
+                referralAmount = getReferralAmount(dispatcher, delegator, doctor, clinic, clinicId, prescription.getRows());
             String facilityId = UtilProperties.getPropertyValue(generalPropertiesFiles, FACILITY_ID);
             String destination = UtilProperties.getPropertyValue(generalPropertiesFiles, SHIPPING_LOC_ID);
             cart.setPlacingCustomerPartyId(CUSTOMER_PARTY_ID);
@@ -176,7 +195,7 @@ public class AfyaSalesOrderController {
                         GenericValue patient = delegator.makeValidValue("Patient", UtilMisc.toMap("patientId", patientId));
                         patient.set("afyaId", map.get("afyaId"));
                         patient.set("civilId", map.get("civilId"));
-                        if (map.get("patientType") == null || map.get("patientType").equals("CASH PAYING")) {
+                        if (map.get("patientType") == null || ("CASH PAYING").equals(map.get("patientType"))) {
                             patient.set("patientType", "CASH");
                         } else {
                             patient.set("patientType", map.get("patientType"));
@@ -186,40 +205,41 @@ public class AfyaSalesOrderController {
                         patient.set("secondName", map.get("middleName"));
                         patient.set("thirdName", map.get("lastName"));
                         patient.set("fourthName", map.get("endMostName"));
-                        if (map.get("gender").equals("Male")) {
+                        if (("Male").equals(map.get("gender"))) {
                             patient.set("gender", "M");
-                        } else if (map.get("gender").equals("Female")) {
+                        } else if (("Female").equals(map.get("gender"))) {
                             patient.set("gender", "F");
                         } else {
                             patient.set("gender", null);
                         }
-                        patient.set("dateOfBirth", new java.sql.Date(format.parse(dateOfBirth).getTime()));
+                        if(dateOfBirth != null)
+                            patient.set("dateOfBirth", new java.sql.Date(format.parse(dateOfBirth).getTime()));
                         patient.set("bloodGroup", map.get("bloodGroup"));
                         patient.set("rH", map.get("rh"));
 
                         if (map.get("maritalStatus") != null){
 
-                            if (map.get("maritalStatus").equals("Annulled")) {
+                            if (("Annulled").equals(map.get("maritalStatus"))) {
                                 patient.set("maritalStatus", "ANNULLED");
-                            } else if (map.get("maritalStatus").equals("Divorced")) {
+                            } else if (("Divorced").equals(map.get("maritalStatus"))) {
                                 patient.set("maritalStatus", "DIVORCED");
-                            } else if (map.get("maritalStatus").equals("Domestic Partner")) {
+                            } else if (("Domestic Partner").equals(map.get("maritalStatus"))) {
                                 patient.set("maritalStatus", "DOMESTIC_PARTNER");
-                            } else if (map.get("maritalStatus").equals("Legally Separated")) {
+                            } else if (("Legally Separated").equals(map.get("maritalStatus"))) {
                                 patient.set("maritalStatus", "LEGALLY_SEPARATED");
-                            } else if (map.get("maritalStatus").equals("Living Together")) {
+                            } else if (("Living Together").equals(map.get("maritalStatus"))) {
                                 patient.set("maritalStatus", "LIVING_TOGETHER");
-                            } else if (map.get("maritalStatus").equals("Married")) {
+                            } else if (("Married").equals(map.get("maritalStatus"))) {
                                 patient.set("maritalStatus", "MARRIED");
-                            } else if (map.get("maritalStatus").equals("Other")) {
+                            } else if (("Other").equals(map.get("maritalStatus"))) {
                                 patient.set("maritalStatus", "OTHER");
-                            } else if (map.get("maritalStatus").equals("Separated")) {
+                            } else if (("Separated").equals(map.get("maritalStatus"))) {
                                 patient.set("maritalStatus", "SEPARATED");
-                            } else if (map.get("maritalStatus").equals("Single")) {
+                            } else if (("Single").equals(map.get("maritalStatus"))) {
                                 patient.set("maritalStatus", "SINGLE");
-                            } else if (map.get("maritalStatus").equals("Unmarried")) {
+                            } else if (("Unmarried").equals(map.get("maritalStatus"))) {
                                 patient.set("maritalStatus", "UNMARRIED");
-                            } else if (map.get("maritalStatus").equals("Widowed")) {
+                            } else if (("Widowed").equals(map.get("maritalStatus"))) {
                                 patient.set("maritalStatus", "WIDOWED");
                             } else {
                                 patient.set("maritalStatus", map.get("maritalStatus"));
@@ -258,17 +278,19 @@ public class AfyaSalesOrderController {
             responseStatus.put("orderId",orderId);
             responseStatus.put("message","Order successfully placed.");*/
 
-            String contractPaymentId = delegator.getNextSeqId("ReferralContractPayment");
-            GenericValue referralPayment = delegator.makeValidValue("ReferralContractPayment", UtilMisc.toMap("contractPaymentId", contractPaymentId));
-            referralPayment.set("orderId", orderId);
-            referralPayment.set("referralName", prescription.getDoctorName());
-            referralPayment.set("clinicId", prescription.getClinicId());
-            referralPayment.set("clinicName", prescription.getClinicName());
-            referralPayment.set("referralPayableAmount", referralAmount);
-            referralPayment.set("payableCurrencyUomId", currencyUom);
-            referralPayment.set("paymentStatusId", "REF_PMNT_PENDING");
-            delegator.create(referralPayment);
-            Debug.logError(referralPayment.toString(), module);
+            if (UtilValidate.isNotEmpty(referralList)) {
+                String contractPaymentId = delegator.getNextSeqId("ReferralContractPayment");
+                GenericValue referralPayment = delegator.makeValidValue("ReferralContractPayment", UtilMisc.toMap("contractPaymentId", contractPaymentId));
+                referralPayment.set("orderId", orderId);
+                referralPayment.set("referralName", prescription.getDoctorName());
+                referralPayment.set("clinicId", prescription.getClinicId());
+                referralPayment.set("clinicName", prescription.getClinicName());
+                referralPayment.set("referralPayableAmount", referralAmount);
+                referralPayment.set("payableCurrencyUomId", currencyUom);
+                referralPayment.set("paymentStatusId", "REF_PMNT_PENDING");
+                delegator.create(referralPayment);
+                Debug.logError(referralPayment.toString(), module);
+            }
 
             ObjectMapper objectMapper = new ObjectMapper();
             objectMapper.configure(SerializationFeature.WRITE_DATE_KEYS_AS_TIMESTAMPS, false);
