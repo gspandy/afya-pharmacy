@@ -753,6 +753,73 @@ public class AfyaSalesOrderController {
         return "success";
     }
 
+    public static String cancelActivePrescriptionOrder(HttpServletRequest request, HttpServletResponse response) {
+        Delegator delegator = (GenericDelegator) request.getAttribute("delegator");
+        LocalDispatcher dispatcher = (LocalDispatcher) request.getAttribute("dispatcher");
+
+        GenericValue userLogin = (GenericValue) request.getAttribute("userLogin");
+        HttpSession session = request.getSession();
+
+        if(userLogin==null){
+            userLogin = (GenericValue)session.getAttribute("userLogin");
+        }
+
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.configure(SerializationFeature.WRITE_DATE_KEYS_AS_TIMESTAMPS, false);
+        mapper.setDateFormat(new SimpleDateFormat("yyyy-MM-dd")); // 1.8 and above
+        Map<String,String> map = null;
+        try {
+            map = mapper.readValue(request.getInputStream(), Map.class);
+        } catch (IOException e1) {
+            e1.printStackTrace();
+        }
+
+        String orderId = map.get("orderId");
+        String statusId = "ORDER_CANCELLED";
+        String setItemStatus = "Y";
+        String productStoreId = UtilProperties.getPropertyValue(generalPropertiesFiles, PRODUCT_STORE_ID);
+
+        Map<String,Object> orderStatusMap = new LinkedHashMap<String, Object>();
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.configure(SerializationFeature.WRITE_DATE_KEYS_AS_TIMESTAMPS, false);
+        objectMapper.setDateFormat(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss"));
+
+        try {
+            /*RxOrder Cancellation Service Call*/
+            System.out.println("Cancelling Active Prescription Order '" + orderId + "'.");
+            dispatcher.runSync("changeOrderStatus", UtilMisc.toMap("orderId", orderId, "statusId", statusId, "setItemStatus", setItemStatus, "userLogin", userLogin));
+        } catch (GenericServiceException e) {
+            e.printStackTrace();
+        }
+
+        try {
+            request.setCharacterEncoding("utf8");
+            response.setContentType("application/json");
+            PrintWriter out = response.getWriter();
+            String successMsg = "Order '" + orderId + "' cancelled successfully.";
+            orderStatusMap.put("status", "success");
+            orderStatusMap.put("message", successMsg);
+            objectMapper.writeValue(out, orderStatusMap);
+        } catch (Exception e1) {
+            e1.printStackTrace();
+        }
+
+        try {
+            GenericValue orderRxHeader = delegator.findOne("OrderRxHeader", UtilMisc.toMap("orderId", orderId), false);
+            if (orderRxHeader != null) {
+                String patientName = orderRxHeader.getString("firstName") + " " + orderRxHeader.getString("thirdName");
+                /*RxOrder Calcellation Notification Mail*/
+                //System.out.println("Sending Order Rx Calcellation Notification Mail to " + patientName);
+                //dispatcher.runSync("sendOrderConfirmation", UtilMisc.toMap("orderId", orderId, "userLogin", userLogin));
+            }
+        } catch (GenericEntityException e2) {
+            e2.printStackTrace();
+        }
+
+        return "success";
+    }
+
     public static String testJsonPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
         ObjectMapper mapper = new ObjectMapper();
         mapper.configure(SerializationFeature.WRITE_DATE_KEYS_AS_TIMESTAMPS, false);
