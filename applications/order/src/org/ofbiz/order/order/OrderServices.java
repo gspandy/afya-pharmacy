@@ -3192,7 +3192,6 @@ public class OrderServices {
                     delegator.findByAnd("ProductStoreEmailSetting",
                             UtilMisc.toMap("productStoreId", orderHeader.get("productStoreId"), "emailType", emailType));
             productStoreEmail = EntityUtil.getFirst(pseList);
-            productStoreEmail = EntityUtil.getFirst(pseList);
         } catch (GenericEntityException e) {
             Debug.logError(e,
                     "Problem getting the ProductStoreEmailSetting for productStoreId=" + orderHeader.get("productStoreId")

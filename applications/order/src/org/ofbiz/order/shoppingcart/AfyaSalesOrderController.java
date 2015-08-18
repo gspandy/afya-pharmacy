@@ -20,8 +20,12 @@ import org.ofbiz.entity.condition.EntityConditionList;
 import org.ofbiz.entity.condition.EntityExpr;
 import org.ofbiz.entity.condition.EntityOperator;
 import org.ofbiz.entity.util.EntityUtil;
+import org.ofbiz.marketing.tracking.TrackingCodeEvents;
+import org.ofbiz.product.catalog.CatalogWorker;
+import org.ofbiz.product.store.ProductStoreWorker;
 import org.ofbiz.service.GenericServiceException;
 import org.ofbiz.service.LocalDispatcher;
+import org.ofbiz.webapp.stats.VisitHandler;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -85,9 +89,27 @@ public class AfyaSalesOrderController {
             GenericValue userLogin = (GenericValue) request.getAttribute("userLogin");
             HttpSession session = request.getSession();
 
-            if(userLogin==null){
+            if (UtilValidate.isEmpty(userLogin)) {
                 userLogin = (GenericValue)session.getAttribute("userLogin");
             }
+
+            // remove this whenever creating an order so quick reorder cache will
+            // refresh/recalc
+            session.removeAttribute("_QUICK_REORDER_PRODUCTS_");
+
+            boolean areOrderItemsExploded = explodeOrderItems(delegator, cart);
+
+            // get the TrackingCodeOrder List
+            /*
+             * Changes made for not to use marketing service
+             * TrackingCodeEvents.java Since marketing module is deleted in this
+             */
+            List trackingCodeOrders = TrackingCodeEvents.makeTrackingCodeOrders(request);
+
+            String distributorId = (String) session.getAttribute("_DISTRIBUTOR_ID_");
+            String affiliateId = (String) session.getAttribute("_AFFILIATE_ID_");
+            String visitId = VisitHandler.getVisitId(session);
+            String webSiteId = CatalogWorker.getWebSiteId(request);
 
             cart.setOrderType("SALES_ORDER");
             cart.setUserLogin(userLogin, dispatcher);
@@ -111,19 +133,19 @@ public class AfyaSalesOrderController {
 
             if (UtilValidate.isNotEmpty(referralList))
                 referralAmount = getReferralAmount(dispatcher, delegator, doctor, clinic, clinicId, prescription.getRows());
-            String facilityId = UtilProperties.getPropertyValue(generalPropertiesFiles, FACILITY_ID);
+            /*String facilityId = UtilProperties.getPropertyValue(generalPropertiesFiles, FACILITY_ID);
             String destination = UtilProperties.getPropertyValue(generalPropertiesFiles, SHIPPING_LOC_ID);
             cart.setPlacingCustomerPartyId(CUSTOMER_PARTY_ID);
             cart.setBillToCustomerPartyId(CUSTOMER_PARTY_ID);
             cart.setShipToCustomerPartyId(CUSTOMER_PARTY_ID);
-            cart.setEndUserCustomerPartyId(CUSTOMER_PARTY_ID);
+            cart.setEndUserCustomerPartyId(CUSTOMER_PARTY_ID);*/
             cart.setChannelType("AFYA_SALES_CHANNEL");
             cart.setShipmentMethodTypeId("PICKUP");
             cart.setCarrierPartyId("_NA_");
-            cart.setShippingOriginContactMechId(1, destination);
+            //cart.setShippingOriginContactMechId(1, destination);
             cart.setBillFromVendorPartyId("Company");
-            cart.setFacilityId(facilityId);
-            cart.setOrderPartyId(CUSTOMER_PARTY_ID);
+            //cart.setFacilityId(facilityId);
+            cart.setOrderPartyId("admin");
 
             PatientInfo patientInfo = new PatientInfo();
             patientInfo.setAfyaId(prescription.getAfyaId());
@@ -272,7 +294,8 @@ public class AfyaSalesOrderController {
             }
 
             CheckOutHelper checkOutHelper = new CheckOutHelper(dispatcher, dispatcher.getDelegator(), cart);
-            Map<String, Object> orderCreate = checkOutHelper.createOrder(userLogin);
+            Map<String, Object> orderCreate = checkOutHelper.createOrder(userLogin, distributorId, affiliateId, trackingCodeOrders, areOrderItemsExploded, visitId, webSiteId);
+            //Map<String, Object> orderCreate = checkOutHelper.createOrder(userLogin);
             orderId = (String) orderCreate.get("orderId");
             /*responseStatus.put("statusCode",200);
             responseStatus.put("orderId",orderId);
@@ -477,6 +500,16 @@ public class AfyaSalesOrderController {
             }
         }
         return referralAmount;
+    }
+
+    public static boolean explodeOrderItems(Delegator delegator, ShoppingCart cart) {
+        if (cart == null)
+            return false;
+        GenericValue productStore = ProductStoreWorker.getProductStore(cart.getProductStoreId(), delegator);
+        if (productStore == null || productStore.get("explodeOrderItems") == null) {
+            return false;
+        }
+        return productStore.getBoolean("explodeOrderItems").booleanValue();
     }
 
     private static void addItemsToCart(LocalDispatcher dispatcher, ShoppingCart cart, List<LineItem> rxLineItems) throws Exception {
