@@ -743,10 +743,12 @@ public class AfyaSalesOrderController {
         LocalDispatcher dispatcher = (LocalDispatcher) request.getAttribute("dispatcher");
 
         GenericValue userLogin = (GenericValue) request.getAttribute("userLogin");
+        System.out.println("\n\n\n UserLogin from request attribute : " + userLogin + "\n\n\n");
         HttpSession session = request.getSession();
 
         if(userLogin==null){
             userLogin = (GenericValue)session.getAttribute("userLogin");
+            System.out.println("\n\n\n UserLogin from session attribute : " + userLogin + "\n\n\n");
         }
 
         ObjectMapper mapper = new ObjectMapper();
@@ -785,6 +787,7 @@ public class AfyaSalesOrderController {
             GenericValue productStore = delegator.findOne("ProductStore", UtilMisc.toMap("productStoreId", productStoreId), false);
             if (productStore != null && productStore.getString("reserveInventory").equals("Y"))
                 try {
+                    System.out.println("\n\n\n\n\n Calling quickShipEntireOrder service \n\n\n\n\n");
                     dispatcher.runSync("quickShipEntireOrder", UtilMisc.toMap("orderId", orderId, "patientPayable", patientPayable, "userLogin", userLogin));
                     try {
                         request.setCharacterEncoding("utf8");
