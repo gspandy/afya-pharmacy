@@ -743,12 +743,10 @@ public class AfyaSalesOrderController {
         LocalDispatcher dispatcher = (LocalDispatcher) request.getAttribute("dispatcher");
 
         GenericValue userLogin = (GenericValue) request.getAttribute("userLogin");
-        System.out.println("\n\n\n UserLogin from request attribute : " + userLogin + "\n\n\n");
         HttpSession session = request.getSession();
 
         if(userLogin==null){
             userLogin = (GenericValue)session.getAttribute("userLogin");
-            System.out.println("\n\n\n UserLogin from session attribute : " + userLogin + "\n\n\n");
         }
 
         ObjectMapper mapper = new ObjectMapper();

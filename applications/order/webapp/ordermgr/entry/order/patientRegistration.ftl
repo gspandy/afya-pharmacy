@@ -654,13 +654,16 @@ under the License.
               <span id="passport_textField" style="display:none"><input type="text" name="passport" id="passport" size="20"/></span>
             </td>
             <td id="expiryDate_title" class="label" style="display:none"><span id="expiryDate_title">Expiry Date</span></td>
-            <td id="expiryDate_dateField" colspan="4" style="display:none">
+            <td id="expiryDate_dateField" style="display:none">
               <span id="expiryDate_dateField">
                   <@htmlTemplate.renderDateTimeField name="expiryDate" id="expiryDate" value="" className="date" alert="" 
                       title="Format: MM/dd/yyyy" size="15" maxlength="10" dateType="date-time" shortDateInput=true 
                       timeDropdownParamName="" defaultDateTimeString="" localizedIconTitle="" timeDropdown="" timeHourName="" classString="" 
                       hour1="" hour2="" timeMinutesName="" minutes="" isTwelveHour="" ampmName="" amSelected="" pmSelected="" compositeType="" formName="patientRegistrationForm"/>
               </span>
+            </td>
+            <td id="scanButton">
+                <a id="scanButton" href="javascript:void(0)" class="btn btn-success"><i class="icon-search"></i> Scan </a>
             </td>
           </tr>
           <tr>
@@ -748,7 +751,7 @@ under the License.
             </td>
             <td class="label"><span id="dateOfBirth_title">Date of Birth</span><font color="red"> *</font></td>
             <td id="dateOfBirth_dateField">
-              <@htmlTemplate.renderDateTimeField name="dateOfBirth" id="dateOfBirth" value="" className="date required" alert="" 
+              <@htmlTemplate.renderDateTimeField name="dateOfBirth" id="dateOfBirth" value="${value!''}" className="date required" alert="" 
                       title="Format: dd/MM/yyyy" size="15" maxlength="10" dateType="date-time" shortDateInput=true 
                       timeDropdownParamName="" defaultDateTimeString="" localizedIconTitle="" timeDropdown="" timeHourName="" classString="" 
                       hour1="" hour2="" timeMinutesName="" minutes="" isTwelveHour="" ampmName="" amSelected="" pmSelected="" compositeType="" formName="patientRegistrationForm"/>
