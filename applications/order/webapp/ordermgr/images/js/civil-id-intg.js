@@ -23,14 +23,22 @@ $(document).ready(function () {
                     } else if (attr == "endMostName") {
                         $("#fourthName").val(value);
                     } else if (attr == "dateOfBirth") {
-                        var input = value,
+                        var afyaDateFormat = Date.CultureInfo.formatPatterns.shortDate;
+                        var ofbizDateFormat = "yyyy-MM-dd";
+                        var ofbizTime = "yyyy-MM-dd";
+                        var dateObj = Date.parseExact(value, ofbizTime);
+                        var dobToInsert = dateObj.toString(ofbizDateFormat);
+                        var dobToDisplay = dateObj.toString(afyaDateFormat);
+                        $('#dateOfBirth').val(dobToInsert);
+                        $('#dateOfBirth_i18n').val(dobToDisplay);
+                        /*var input = value,
                         datePart = input.match(/\d+/g),
                         year = datePart[0],
                         month = datePart[1],
                         day = datePart[2],
                         dob = day+'/'+month+'/'+year;
-                        $("#dateOfBirth").val(dob);
-                        $('#dateOfBirth_i18n').val(dob);
+                        $("#dateOfBirth").val(value);
+                        $('#dateOfBirth_i18n').val(dob);*/
                     } else if (attr == "nationality") {
                         $.getJSON("http://5.9.249.197:7878/afya-portal/anon/getNationalityByNationalityCode?nationalityCode=" + value,
                         function (data) {
@@ -156,8 +164,22 @@ $(document).ready(function () {
                 } else if (attr == "gender")
                     $('#gender').val(value);
                 else if (attr == "dateOfBirth") {
-                    $('#dateOfBirth').val(value);
-                    $('#dateOfBirth_i18n').val(value);
+                    var afyaDateFormat = Date.CultureInfo.formatPatterns.shortDate;
+                    var ofbizDateFormat = "yyyy-MM-dd";
+                    var ofbizTime = "dd/MM/yyyy";
+                    var dateObj = Date.parseExact(value, ofbizTime);
+                    var dobToInsert = dateObj.toString(ofbizDateFormat);
+                    var dobToDisplay = dateObj.toString(afyaDateFormat);
+                    $('#dateOfBirth').val(dobToInsert);
+                    $('#dateOfBirth_i18n').val(dobToDisplay);
+                    /*var input = value,
+                    datePart = input.match(/\d+/g),
+                    year = datePart[0],
+                    month = datePart[1],
+                    day = datePart[2],
+                    dob = day+'-'+month+'-'+year;
+                    $('#dateOfBirth').val(dob);
+                    $('#dateOfBirth_i18n').val(value);*/
                 } else if (attr == "emailId")
                     $('#emailId').val(value);
                 else if (attr == "mobileNumber")
