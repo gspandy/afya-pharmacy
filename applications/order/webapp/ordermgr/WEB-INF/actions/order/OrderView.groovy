@@ -374,7 +374,7 @@ if (orderHeader) {
         GenericValue orderRxHeader = delegator.findOne("OrderRxHeader",true,"orderId",orderId);
         context.orderRxHeader=orderRxHeader;
 
-        if(UtilValidate.isNotEmpty(orderRxHeader) && orderRxHeader.benefitPlanId!=null) {
+        if(UtilValidate.isNotEmpty(orderRxHeader) && "INSURANCE".equals(orderRxHeader.patientType) && orderRxHeader.benefitPlanId!=null) {
             List<GenericValue> patientInsuranceList = delegator.findList("PatientInsurance",EntityCondition.makeCondition("benefitPlanId", orderRxHeader.benefitPlanId),null,null,null,false);
 
             if (UtilValidate.isNotEmpty(patientInsuranceList)) {
