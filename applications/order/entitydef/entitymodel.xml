@@ -3150,6 +3150,7 @@
 		<field name="address" type="text"></field>
 		<field name="clinicName" type="id-vlong-ne"></field>
 		<field name="isOrderFromClinic" type="indicator"></field>
+		<field name="isHomeService" type="indicator"></field>
 
 		<field name="patientPayable" type="currency-amount"></field>
 		<field name="corporatePayable" type="currency-amount"></field>
