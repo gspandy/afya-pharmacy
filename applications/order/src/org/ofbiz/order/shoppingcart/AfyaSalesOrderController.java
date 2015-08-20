@@ -49,7 +49,7 @@ import javolution.util.FastList;
 import javolution.util.FastMap;
 
 /**
- * Created by Naren on 02-04-2015.
+ * Created by Naren on 02-04-2015
  */
 public class AfyaSalesOrderController {
 
@@ -147,6 +147,8 @@ public class AfyaSalesOrderController {
             //cart.setFacilityId(facilityId);
             cart.setOrderPartyId("admin");
 
+            Boolean isHomeService = getHomeService(dispatcher, delegator, prescription.getRows());
+
             PatientInfo patientInfo = new PatientInfo();
             patientInfo.setAfyaId(prescription.getAfyaId());
             patientInfo.setCivilId(prescription.getCivilId());
@@ -171,6 +173,7 @@ public class AfyaSalesOrderController {
             patientInfo.setBenefitId(prescription.getBenefitId());
             patientInfo.setIsOrderApproved(prescription.getIsOrderApproved());
             patientInfo.setIsOrderFromClinic("Y");
+            patientInfo.setIsHomeService(isHomeService);
             patientInfo.setMobileNumberVisibleForDelivery(String.valueOf(prescription.getMobileNumberVisibleForDelivery()));
 
             if (prescription.getCorporateCopay() != null)
@@ -354,6 +357,17 @@ public class AfyaSalesOrderController {
         }
 
         return "success";
+    }
+
+    private static Boolean getHomeService(LocalDispatcher dispatcher, Delegator delegator, List<LineItem> rxLineItems) throws Exception {
+        Boolean homeServiceFlag = false;
+        for (LineItem eachRxRow : rxLineItems) {
+            if (eachRxRow.isHomeService()) {
+                homeServiceFlag = true;
+                break;
+            }
+        }
+        return homeServiceFlag;
     }
 
     private static BigDecimal getOrderSubTotal(LocalDispatcher dispatcher, Delegator delegator, String orderId) {

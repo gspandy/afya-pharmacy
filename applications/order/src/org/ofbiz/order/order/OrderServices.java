@@ -1189,6 +1189,7 @@ public class OrderServices {
                         "doctorName", patientInfo.getDoctorName(),
                         "clinicName", patientInfo.getClinicName(),
                         "isOrderFromClinic", patientInfo.getIsOrderFromClinic(),
+                        "isHomeService", patientInfo.getIsHomeService(),
                         "patientType", patientInfo.getPatientType(),
                         "mobileNumber", patientInfo.getMobile(),
                         "mobileNumberVisibleForDelivery", patientInfo.getMobileNumberVisibleForDelivery(),

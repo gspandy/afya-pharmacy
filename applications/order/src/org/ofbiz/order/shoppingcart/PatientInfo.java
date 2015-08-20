@@ -38,6 +38,7 @@ public class PatientInfo {
     private String moduleName;
     private String isOrderApproved;
     private String isOrderFromClinic;
+    private Boolean isHomeService;
     private BigDecimal copay;
     private String copayType;
     private String primaryPayer;
@@ -72,6 +73,10 @@ public class PatientInfo {
             this.isOrderFromClinic=request.getParameter("isOrderFromClinic");
         else
             this.isOrderFromClinic="N";
+        if (request.getParameter("isHomeService") != null)
+            this.isHomeService=Boolean.valueOf(request.getParameter("isHomeService"));
+        else
+            this.isHomeService=false;
         if (request.getParameter("copay") != null)
             this.copay=new BigDecimal(request.getParameter("copay"));
         this.copayType=request.getParameter("copayType");
@@ -275,6 +280,14 @@ public class PatientInfo {
 
 	public void setIsOrderFromClinic(String isOrderFromClinic) {
 		this.isOrderFromClinic = isOrderFromClinic;
+	}
+
+	public Boolean getIsHomeService() {
+		return isHomeService;
+	}
+
+	public void setIsHomeService(Boolean isHomeService) {
+		this.isHomeService = isHomeService;
 	}
 
 	public BigDecimal getCopay() {
