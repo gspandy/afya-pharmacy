@@ -377,14 +377,16 @@ if (orderHeader) {
         if(UtilValidate.isNotEmpty(orderRxHeader) && orderRxHeader.benefitPlanId!=null) {
             List<GenericValue> patientInsuranceList = delegator.findList("PatientInsurance",EntityCondition.makeCondition("benefitPlanId", orderRxHeader.benefitPlanId),null,null,null,false);
 
-            GenericValue patientInsurance = EntityUtil.getFirst(patientInsuranceList);
-            println '************** '+ patientInsurance;
+            if (UtilValidate.isNotEmpty(patientInsuranceList)) {
+                GenericValue patientInsurance = EntityUtil.getFirst(patientInsuranceList);
+                println '\n************** Patient Insurance **************\n' + patientInsurance;
 
-            context.benefitPlanName = patientInsurance.benefitPlanName;
-            context.benefitPlanId=patientInsurance.benefitPlanId;
-            context.policyNo = patientInsurance.policyNo;
-            context.healthPolicyName = patientInsurance.healthPolicyName;
-            context.healthPolicyId=patientInsurance.healthPolicyId;
+                context.benefitPlanName = patientInsurance.benefitPlanName;
+                context.benefitPlanId = patientInsurance.benefitPlanId;
+                context.policyNo = patientInsurance.policyNo;
+                context.healthPolicyName = patientInsurance.healthPolicyName;
+                context.healthPolicyId = patientInsurance.healthPolicyId;
+            }
         }
         context.returnHeaderTypeId = "CUSTOMER_RETURN";
         // also set the product store facility Id for sales orders
